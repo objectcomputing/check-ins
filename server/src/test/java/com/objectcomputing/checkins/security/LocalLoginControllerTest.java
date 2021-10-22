@@ -53,7 +53,10 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
         assertNotNull(response);
-        assertTrue(response.contains("\"roles\":[\"ADMIN\",\"PDL\",\"MEMBER\"]"));
+        assertTrue(response.contains("\"roles\":"));
+        assertTrue(response.contains("\"ADMIN\""));
+        assertTrue(response.contains("\"PDL\""));
+        assertTrue(response.contains("\"MEMBER\""));
         assertTrue(response.contains("\"username\":\"ADMIN\""));
         assertTrue(response.contains("\"access_token\":\""));
     }
@@ -72,7 +75,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
     @Test
     void testPostLoginAlreadyExistingUserNoOverrides() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.ADMIN, memberProfile);
+        createAndAssignRole(RoleType.ADMIN, memberProfile);
         HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", ""))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
@@ -85,8 +88,8 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
     @Test
     void testPostLoginAlreadyExistingUserWithOverrides() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.ADMIN, memberProfile);
-        createDefaultRole(RoleType.PDL, memberProfile);
+        createAndAssignRole(RoleType.ADMIN, memberProfile);
+        createAndAssignRole(RoleType.PDL, memberProfile);
         HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", RoleType.Constants.MEMBER_ROLE))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
@@ -100,7 +103,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
     void testPostLoginDoesNotThrowNullPointerIfUserNameIsNull() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         memberProfile.setFirstName(null);
-        createDefaultRole(RoleType.ADMIN, memberProfile);
+        createAndAssignRole(RoleType.ADMIN, memberProfile);
         HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", ""))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);

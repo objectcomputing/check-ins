@@ -38,7 +38,7 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
     @Test
     void testCreateAEntityTag() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Tag tag = createADefaultTag() ;
@@ -101,7 +101,7 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
     @Test
     void createAEntityTagForNonExistingTag() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         EntityTagCreateDTO entityTagCreateDTO = new EntityTagCreateDTO();
         entityTagCreateDTO.setEntityId(UUID.randomUUID());
@@ -124,7 +124,7 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
     @Test
     void createAEntityTagForExistingTag() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -150,7 +150,7 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
     void deleteEntityTagAsAdmin() {
 
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Tag tag = createADefaultTag();

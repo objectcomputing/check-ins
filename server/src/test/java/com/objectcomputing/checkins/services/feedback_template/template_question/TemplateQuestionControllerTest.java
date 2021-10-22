@@ -76,7 +76,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     void testPostAuthorizedByAdmin() {
         final MemberProfile memberOne = createADefaultMemberProfile();
         final MemberProfile admin = createASecondDefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         final FeedbackTemplate feedbackTemplate = saveFeedbackTemplate(memberOne.getId());
 
@@ -159,7 +159,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     void testGetByIdAuthorizedByAdmin() {
         final MemberProfile memberOne = createADefaultMemberProfile();
         final MemberProfile admin = createASecondDefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         final FeedbackTemplate template = saveFeedbackTemplate(memberOne.getId());
         final TemplateQuestion question1 = saveTemplateQuestion(template, 1);
@@ -296,7 +296,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     @Test
     void testUpdateByAdmin() {
         final MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
         final MemberProfile memberOne = createASecondDefaultMemberProfile();
         FeedbackTemplate template = saveFeedbackTemplate(memberOne.getId());
         final TemplateQuestion question = saveTemplateQuestion(template, 1);
@@ -362,7 +362,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     @Test
     void testDeleteQuestionByAdmin() {
         final MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
         final MemberProfile memberOne = createASecondDefaultMemberProfile();
 
         final FeedbackTemplate template = saveFeedbackTemplate(memberOne.getId());

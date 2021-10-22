@@ -77,6 +77,8 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         dto.setTitle(feedbackTemplate.getTitle());
         dto.setDescription(feedbackTemplate.getDescription());
         dto.setCreatorId(feedbackTemplate.getCreatorId());
+        dto.setIsPublic(feedbackTemplate.getIsPublic());
+        dto.setIsAdHoc(feedbackTemplate.getIsAdHoc());
         return dto;
     }
 
@@ -97,6 +99,8 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertEquals(content.getDescription(), dto.getDescription());
         assertEquals(content.getCreatorId(), dto.getCreatorId());
         assertEquals(content.getActive(), dto.getActive());
+        assertEquals(content.getIsPublic(), dto.getIsPublic());
+        assertEquals(content.getIsAdHoc(), dto.getIsAdHoc());
     }
 
     void assertUnauthorized(HttpClientResponseException exception) {
@@ -124,7 +128,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testPostAllowedByAdmin() {
          MemberProfile admin = createADefaultMemberProfile();
-         createDefaultAdminRole(admin);
+         createAndAssignAdminRole(admin);
          FeedbackTemplate feedbackTemplate = createFeedbackTemplate(admin.getId());
          FeedbackTemplateCreateDTO createDTO = createDTO(feedbackTemplate);
 
@@ -140,7 +144,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testPostInvalidCreator() {
         MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
         FeedbackTemplate feedbackTemplate = createFeedbackTemplate(UUID.randomUUID());
         FeedbackTemplateCreateDTO createDTO = createDTO(feedbackTemplate);
 
@@ -168,7 +172,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testUpdateByAdmin() {
         final MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         // Template created by non-admin
         final MemberProfile memberOne = createASecondDefaultMemberProfile();
@@ -452,6 +456,71 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     }
 
     @Test
+    void testGetPrivateTemplateByAdmin() {
+        final MemberProfile admin = createADefaultMemberProfile();
+        final MemberProfile memberOne = createASecondDefaultMemberProfile();
+        createAndAssignAdminRole(admin);
+
+        final FeedbackTemplate privateTemplate = createFeedbackTemplate(memberOne.getId());
+        privateTemplate.setIsPublic(false);
+        getFeedbackTemplateRepository().save(privateTemplate);
+        final FeedbackTemplate publicTemplate = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET("/")
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(2, response.getBody().get().size());
+        assertContentEqualsEntity(privateTemplate, response.getBody().get().get(0));
+        assertContentEqualsEntity(publicTemplate, response.getBody().get().get(1));
+    }
+
+    @Test
+    void testGetPrivateTemplateByCreator() {
+        final MemberProfile memberOne = createASecondDefaultMemberProfile();
+
+        final FeedbackTemplate privateTemplate = createFeedbackTemplate(memberOne.getId());
+        privateTemplate.setIsPublic(false);
+        getFeedbackTemplateRepository().save(privateTemplate);
+        final FeedbackTemplate publicTemplate = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET("/")
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(2, response.getBody().get().size());
+        assertContentEqualsEntity(privateTemplate, response.getBody().get().get(0));
+        assertContentEqualsEntity(publicTemplate, response.getBody().get().get(1));
+    }
+
+    @Test
+    void testGetPrivateTemplateNotPermitted() {
+        final MemberProfile memberOne = createASecondDefaultMemberProfile();
+        final MemberProfile random = createAnUnrelatedUser();
+
+        final FeedbackTemplate privateTemplate = createFeedbackTemplate(memberOne.getId());
+        privateTemplate.setIsPublic(false);
+        getFeedbackTemplateRepository().save(privateTemplate);
+        final FeedbackTemplate publicTemplate = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET("/")
+                .basicAuth(random.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(1, response.getBody().get().size());
+        assertContentEqualsEntity(publicTemplate, response.getBody().get().get(0));
+    }
+
+    @Test
     void testDeleteValidAuthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
@@ -507,6 +576,68 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
 
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", template.getId()))
                 .basicAuth(memberTwo.getWorkEmail(), MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+        assertEquals("You are not authorized to do this operation", exception.getMessage());
+    }
+
+    @Test
+    void testDeleteByCreatorIdAuthorizedByAdmin() {
+        final MemberProfile admin = createADefaultMemberProfile();
+        createAndAssignAdminRole(admin);
+        final MemberProfile memberOne = createASecondDefaultMemberProfile();
+
+        // Save two ad-hoc feedback templates
+        final FeedbackTemplate templateOne = createFeedbackTemplate(memberOne.getId());
+        templateOne.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateOne);
+        final FeedbackTemplate templateTwo = createAnotherFeedbackTemplate(memberOne.getId());
+        templateTwo.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateTwo);
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/creator/%s", memberOne.getId()))
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testDeleteByCreatorIdAuthorizedByCreator() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+
+        // Save two ad-hoc feedback templates
+        final FeedbackTemplate templateOne = createFeedbackTemplate(memberOne.getId());
+        templateOne.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateOne);
+        final FeedbackTemplate templateTwo = createAnotherFeedbackTemplate(memberOne.getId());
+        templateTwo.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateTwo);
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/creator/%s", memberOne.getId()))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testDeleteByCreatorIdUnauthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final MemberProfile unrelatedUser = createAnUnrelatedUser();
+
+        // Save two ad-hoc feedback templates
+        final FeedbackTemplate templateOne = createFeedbackTemplate(memberOne.getId());
+        templateOne.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateOne);
+        final FeedbackTemplate templateTwo = createAnotherFeedbackTemplate(memberOne.getId());
+        templateTwo.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateTwo);
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/creator/%s", memberOne.getId()))
+                .basicAuth(unrelatedUser.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 

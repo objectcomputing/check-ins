@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="error-boundary"
+  role="alert"
+>
+  <div
+    className="message-section"
+  >
+    <h1
+      className="message"
+    >
+      Something went wrong
+      <span
+        aria-label="sad face"
+        role="img"
+      >
+        😕
+      </span>
+    </h1>
+    <h1
+      className="error"
+    >
+      Error: 
+    </h1>
+    <h1
+      className="new-issue-message"
+    >
+      Would you mind creating a new issue and explaining what happened?
+    </h1>
+    <button
+      className="MuiButtonBase-root MuiButton-root MuiButton-text create-new-issue-button MuiButton-textPrimary"
+      disabled={false}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={0}
+      type="button"
+    >
+      <span
+        className="MuiButton-label"
+      >
+        Create New GitHub Issue
+      </span>
+    </button>
+  </div>
+</div>
+`;

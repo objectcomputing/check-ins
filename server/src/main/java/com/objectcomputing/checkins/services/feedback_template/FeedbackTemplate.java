@@ -24,7 +24,6 @@ public class FeedbackTemplate {
     @Schema(description = "unique id of the feedback template ", required = true)
     private UUID id;
 
-
     @Column(name = "title")
     @NotBlank
     @TypeDef(type = DataType.STRING)
@@ -55,19 +54,35 @@ public class FeedbackTemplate {
     @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
     private Boolean active;
 
+    @Column(name = "is_public")
+    @NotBlank
+    @TypeDef(type = DataType.BOOLEAN)
+    @Schema(description = "whether the template is accessible to everyone or just the creator", required = true)
+    private Boolean isPublic;
+
+    @Column(name = "is_ad_hoc")
+    @NotBlank
+    @TypeDef(type = DataType.BOOLEAN)
+    @Schema(description = "whether the template is an ad-hoc template", required = true)
+    private Boolean isAdHoc;
+
     /**
      * Constructs a new {@link FeedbackTemplate} to save
      *
      * @param title The title of the template
      * @param description An optional description of the template
      * @param creatorId The {@link UUID} of the user who created the template
+     * @param isPublic Whether the template is public or private
+     * @param isAdHoc Whether the template is an ad-hoc template
      */
-    public FeedbackTemplate(String title, @Nullable String description, UUID creatorId) {
+    public FeedbackTemplate(String title, @Nullable String description, UUID creatorId, Boolean isPublic, Boolean isAdHoc) {
         this.id = null;
         this.title = title;
         this.description = description;
         this.creatorId = creatorId;
         this.active = true;
+        this.isPublic = isPublic;
+        this.isAdHoc = isAdHoc;
     }
 
     /**
@@ -132,6 +147,22 @@ public class FeedbackTemplate {
         this.active = active;
     }
 
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+
+    public Boolean getIsAdHoc() {
+        return isAdHoc;
+    }
+
+    public void setIsAdHoc(Boolean isAdHoc) {
+        this.isAdHoc = isAdHoc;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -142,12 +173,14 @@ public class FeedbackTemplate {
                 Objects.equals(description, that.description) &&
                 Objects.equals(creatorId, that.creatorId) &&
                 Objects.equals(dateCreated, that.dateCreated) &&
-                Objects.equals(active, that.active);
+                Objects.equals(active, that.active) &&
+                Objects.equals(isPublic, that.isPublic) &&
+                Objects.equals(isAdHoc, that.isAdHoc);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, creatorId, dateCreated, active);
+        return Objects.hash(id, title, description, creatorId, dateCreated, active, isPublic, isAdHoc);
     }
 
     @Override
@@ -159,6 +192,8 @@ public class FeedbackTemplate {
                 ", creatorId=" + creatorId +
                 ", dateCreated=" + dateCreated +
                 ", active=" + active +
+                ", isPublic=" + isPublic +
+                ", isAdHoc=" + isAdHoc +
                 '}';
     }
 }

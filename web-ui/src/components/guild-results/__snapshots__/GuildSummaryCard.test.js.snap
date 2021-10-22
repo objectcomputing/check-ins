@@ -18,7 +18,19 @@ exports[`renders correctly 1`] = `
       <span
         className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-3 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
       >
-        string
+        <div
+          aria-describedby={null}
+          className=""
+          onBlur={[Function]}
+          onFocus={[Function]}
+          onMouseLeave={[Function]}
+          onMouseOver={[Function]}
+          onTouchEnd={[Function]}
+          onTouchStart={[Function]}
+          title="string"
+        >
+          string
+        </div>
       </span>
     </div>
   </div>
@@ -59,7 +71,19 @@ exports[`renders correctly for ADMIN 1`] = `
       <span
         className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-3 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
       >
-        string
+        <div
+          aria-describedby={null}
+          className=""
+          onBlur={[Function]}
+          onFocus={[Function]}
+          onMouseLeave={[Function]}
+          onMouseOver={[Function]}
+          onTouchEnd={[Function]}
+          onTouchStart={[Function]}
+          title="string"
+        >
+          string
+        </div>
       </span>
     </div>
   </div>
@@ -174,7 +198,19 @@ exports[`renders correctly for guild lead 1`] = `
       <span
         className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-3 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
       >
-        
+        <div
+          aria-describedby={null}
+          className=""
+          onBlur={[Function]}
+          onFocus={[Function]}
+          onMouseLeave={[Function]}
+          onMouseOver={[Function]}
+          onTouchEnd={[Function]}
+          onTouchStart={[Function]}
+          title=""
+        >
+          
+        </div>
       </span>
     </div>
   </div>
@@ -222,6 +258,9 @@ exports[`renders correctly for guild lead 1`] = `
           >
             Edit Guild
           </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
         </button>
         <button
           aria-haspopup="menu"
@@ -257,6 +296,9 @@ exports[`renders correctly for guild lead 1`] = `
               />
             </svg>
           </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
         </button>
       </div>
     </div>

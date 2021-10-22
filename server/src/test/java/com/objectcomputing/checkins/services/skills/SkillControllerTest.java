@@ -199,7 +199,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     void testUpdateSkillAsAdmin() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         Skill skill = createADefaultSkill();
 
@@ -231,7 +231,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     public void testPUTUpdateNonexistentSkill() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
         skillCreateDTO.setName("reincarnation");
@@ -263,7 +263,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     void deleteSkillAsAdmin() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         Skill skill = createADefaultSkill();
 

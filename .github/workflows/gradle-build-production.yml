@@ -2,7 +2,7 @@ name: Gradle Build & Deploy - Production
 on:
   push:
     branches:
-      - 'master'
+      - "master"
 
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node 14
         uses: actions/setup-node@v2-beta
         with:
-          node-version: '14'
+          node-version: "14"
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
@@ -30,12 +30,12 @@ jobs:
         run: ./gradlew assemble
         env:
           REACT_APP_API_URL: https://checkins.objectcomputing.com
-#      - name: Gradle runs tests
-#        run: ./gradlew check
+      #      - name: Gradle runs tests
+      #        run: ./gradlew check
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@master
         with:
-          version: '290.0.1'
+          version: "290.0.1"
           service_account_key: ${{ secrets.RUN_SA_KEY }}
           project_id: ${{ secrets.RUN_PROJECT }}
       - name: Auth Configure Docker
@@ -76,6 +76,12 @@ jobs:
             --set-env-vars "AUTH_PROVIDER_X509_CERT_URL=${{ secrets.SA_AUTH_PROVIDER_X509_CERT_URL }}" \
             --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.SA_CLIENT_X509_CERT_URL }}" \
             --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
+            --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
+            --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
+            --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
+            --set-env-vars "WEB_ADDRESS=https://checkins.objectcomputing.com" \
+            --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
+            --set-env-vars "FROM_NAME=Check-Ins" \
             --platform "managed" \
             --max-instances 10 \
             --allow-unauthenticated

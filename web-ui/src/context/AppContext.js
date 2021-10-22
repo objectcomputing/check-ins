@@ -190,25 +190,25 @@ const AppContextProvider = (props) => {
     }
   }, [csrf]);
 
-  useEffect(() => {
-    const getRoles = async () => {
-      const res = await getAllRoles(csrf);
-      const data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
-          ? res.payload.data
-          : null;
-      if (data && data.length > 0) {
-        dispatch({ type: SET_ROLES, payload: data });
-      }
-    };
-    if (csrf) {
-      getRoles();
-    }
-  }, [csrf]);
+ useEffect(() => {
+   const getRoles = async () => {
+     const res = await getAllRoles(csrf);
+     const data =
+       res &&
+       res.payload &&
+       res.payload.data &&
+       res.payload.status === 200 &&
+       !res.error
+         ? res.payload.data
+         : null;
+     if (data && data.length > 0) {
+       dispatch({ type: SET_ROLES, payload: data });
+     }
+   };
+   if (csrf) {
+     getRoles();
+   }
+ }, [csrf]);
 
   const value = useMemo(() => {
     return { state, dispatch };

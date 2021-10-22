@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {TextField} from "@material-ui/core";
 import PropTypes from "prop-types";
-
 const propTypes = {
   onFormChange: PropTypes.func
 }
@@ -27,13 +26,14 @@ const AdHocCreationForm = (props) => {
         placeholder="Ad Hoc"
         fullWidth
         margin="normal"
+        required={true}
         value={title}
         onChange={(event) => {
           setTitle(event.target.value);
         }}/>
       <TextField
         label="Description"
-        placeholder="Ask a single question"
+        placeholder="Give a brief description of the template (optional)"
         fullWidth
         margin="normal"
         value={description}
@@ -47,6 +47,7 @@ const AdHocCreationForm = (props) => {
         multiline
         rowsMax={10}
         margin="normal"
+        required={true}
         value={question}
         onChange={(event) => {
           setQuestion(event.target.value);

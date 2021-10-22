@@ -5,17 +5,16 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
 public class FeedbackAnswerCreateDTO {
 
-    @NotBlank
+    @Nullable
     @Schema(description = "the content of the answer", required = true)
     private String answer;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "id of the feedback question the answer is linked to", required = true)
     private UUID questionId;
 
@@ -43,11 +42,12 @@ public class FeedbackAnswerCreateDTO {
         this.questionId = questionId;
     }
 
+    @Nullable
     public UUID getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(UUID requestId) {
+    public void setRequestId(@Nullable UUID requestId) {
         this.requestId = requestId;
     }
 

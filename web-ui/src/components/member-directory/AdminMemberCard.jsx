@@ -7,7 +7,7 @@ import { UPDATE_MEMBER_PROFILES } from "../../context/actions";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 
-import { Card, CardActions, CardHeader } from "@material-ui/core";
+import { Card, CardActions, CardHeader, Tooltip } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
 
@@ -54,6 +54,7 @@ const AdminMemberCard = ({ member, index }) => {
   const memberId = member?.id;
   const supervisorProfile = selectProfileMap(state)[supervisorid];
   const pdlProfile = selectProfileMap(state)[pdlId];
+  const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   const classes = useStyles();
 
@@ -116,7 +117,16 @@ const AdminMemberCard = ({ member, index }) => {
                 <Avatar className={"large"} src={getAvatarURL(workEmail)} />
               ) : (
                 <Avatar className={"large"}>
-                  <PriorityHighIcon />
+                  <Tooltip
+                    open={tooltipIsOpen}
+                    onOpen={() => setTooltipIsOpen(true)}
+                    onClose={() => setTooltipIsOpen(false)}
+                    enterTouchDelay={0}
+                    placement="top-start"
+                    title={"This member has been terminated"}
+                  >
+                    <PriorityHighIcon />
+                  </Tooltip>
                 </Avatar>
               )
             }

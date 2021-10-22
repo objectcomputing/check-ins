@@ -26,20 +26,26 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
     }
 
     @Override
-    public List<AnniversaryReportResponseDTO> findByValue(@Nullable String month) {
+    public List<AnniversaryReportResponseDTO> findByValue(@Nullable String[] months) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You do not have permission to access this resource.");
         }
 
+        List<MemberProfile> memberProfileAll = new ArrayList<>();
         List<MemberProfile> memberProfiles = memberProfileServices.findAll();
-        if (month != null) {
-            memberProfiles = memberProfiles
-                    .stream()
-                    .filter(member -> member.getStartDate() != null && month.equalsIgnoreCase(member.getStartDate().getMonth().name()) && member.getTerminationDate() == null)
-                    .collect(Collectors.toList());
+        if (months != null) {
+            for (String month : months) {
+                List<MemberProfile> memberProfile = new ArrayList<>();
+                if (month != null) {
+                    memberProfile = memberProfiles
+                            .stream()
+                            .filter(member -> member.getStartDate() != null && month.equalsIgnoreCase(member.getStartDate().getMonth().name()) && member.getTerminationDate() == null)
+                            .collect(Collectors.toList());
+                }
+                memberProfileAll.addAll(memberProfile);
+            }
         }
-
-        return profileToAnniversaryResponseDto(memberProfiles);
+        return profileToAnniversaryResponseDto(memberProfileAll);
 
     }
 

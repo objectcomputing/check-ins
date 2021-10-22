@@ -48,6 +48,7 @@ public class FeedbackRequestUpdateDTO {
     public String getStatus() {
         return status;
     }
+
     @Nullable
     public void setStatus(String status) {
         this.status = status;
@@ -61,5 +62,4 @@ public class FeedbackRequestUpdateDTO {
     public void setSubmitDate(@Nullable LocalDate submitDate) {
         this.submitDate = submitDate;
     }
-
 }

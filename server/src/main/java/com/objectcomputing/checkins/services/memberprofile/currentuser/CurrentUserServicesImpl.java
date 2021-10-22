@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
 
@@ -20,13 +21,15 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     private final MemberProfileRepository memberProfileRepo;
     private final SecurityService securityService;
     private final RoleServices roleServices;
+    private final MemberRoleServices memberRoleServices;
 
     public CurrentUserServicesImpl(MemberProfileRepository memberProfileRepository,
                                    RoleServices roleServices,
-                                   SecurityService securityService) {
+                                   SecurityService securityService, MemberRoleServices memberRoleServices) {
         this.memberProfileRepo = memberProfileRepository;
         this.roleServices = roleServices;
         this.securityService = securityService;
+        this.memberRoleServices = memberRoleServices;
     }
 
     @Override
@@ -70,7 +73,13 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
                 "", workEmail, "", null, "", null, null, null, null, null));
 
-        roleServices.save(new Role(RoleType.MEMBER, "role description", createdMember.getId()));
+        Optional<Role> role = roleServices.findByRole("MEMBER");
+        if(role.isPresent()){
+            memberRoleServices.saveByIds(createdMember.getId(), role.get().getId());
+        } else{
+            Role memberRole = roleServices.save(new Role(RoleType.MEMBER.name(), "role description"));
+            memberRoleServices.saveByIds(createdMember.getId(), memberRole.getId());
+        }
 
         return createdMember;
     }

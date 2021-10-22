@@ -91,17 +91,7 @@ const ProfilePage = () => {
       if (!csrf) {
         return;
       }
-      if (newVal.length > 3) {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "error",
-            toast:
-              "You must contact the guild leader in order to be added to more guilds",
-          },
-        });
-        return;
-      }
+
       const myGuildsSet = new Set(myGuilds?.map((guild) => guild.id));
       const newValSet = new Set(newVal?.map((val) => val.id));
 
@@ -113,6 +103,17 @@ const ProfilePage = () => {
       );
 
       for (const guildId of newInSet2.values()) {
+        if (newVal.length > 3) {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast:
+                "You must contact the guild leader in order to be added to more guilds",
+            },
+          });
+          return;
+        }
         let res = await addGuildMember(id, false, guildId, csrf);
         const match = newVal.find((guild) => guild.id === guildId);
         let data =
@@ -140,13 +141,16 @@ const ProfilePage = () => {
           const memberToDelete = guildMembers.find(
             (member) => member.memberId === id
           );
-          await deleteGuildMember(memberToDelete.id, csrf);
-          const newGuildMembers = match.guildMembers.filter(
-            (member) => member.memberId !== id
-          );
-          let newGuild = { ...match };
-          newGuild.guildMembers = newGuildMembers;
-          dispatch({ type: UPDATE_GUILD, payload: newGuild });
+          let res = await deleteGuildMember(memberToDelete.id, csrf);
+          let success = res.payload && !res.error ? true : false;
+          if (success) {
+            const newGuildMembers = match.guildMembers.filter(
+              (member) => member.memberId !== id
+            );
+            let newGuild = { ...match };
+            newGuild.guildMembers = newGuildMembers;
+            dispatch({ type: UPDATE_GUILD, payload: newGuild });
+          }
         }
       }
     },
@@ -180,7 +184,13 @@ const ProfilePage = () => {
           <Grid item xs>
             {myHours && (
               <Card style={{ minHeight: 150 }}>
-                <CardHeader avatar={<Info />} title="Contribution Hours" />
+                <CardHeader
+                  avatar={<Info />}
+                  subheader={`As Of: ${new Date(
+                    myHours?.asOfDate
+                  ).toLocaleDateString()}`}
+                  title="Contribution Hours"
+                />
                 <CardContent>
                   <ProgressBar {...myHours} />
                 </CardContent>
@@ -199,6 +209,7 @@ const ProfilePage = () => {
             />
             <CardContent>
               <Autocomplete
+                disableClearable
                 id="guildsSelect"
                 getOptionLabel={(option) => option.name}
                 getOptionSelected={(option, value) =>
@@ -212,11 +223,7 @@ const ProfilePage = () => {
                 required
                 value={myGuilds}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    className="halfWidth"
-                    placeholder="Join a guild..."
-                  />
+                  <TextField {...params} placeholder="Join a guild..." />
                 )}
               />
             </CardContent>

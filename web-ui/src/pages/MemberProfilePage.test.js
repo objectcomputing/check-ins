@@ -12,7 +12,7 @@ const initialState = {
     ],
     userProfile: {
       memberProfile: {
-        id: "12345",
+        id: "1234",
         name: "mr. test",
       },
     },
@@ -20,7 +20,7 @@ const initialState = {
 };
 
 it("renders correctly", () => {
-  const history = createMemoryHistory(`/profile/12345`);
+  const history = createMemoryHistory(`/profile/1234`);
   snapshot(
     <Router history={history}>
       <AppContextProvider value={initialState}>

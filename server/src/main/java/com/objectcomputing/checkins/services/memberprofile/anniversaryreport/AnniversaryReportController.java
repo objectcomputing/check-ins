@@ -45,7 +45,7 @@ public class AnniversaryReportController {
      */
 
     @Get("/{?month}")
-    public Single<HttpResponse<List<AnniversaryReportResponseDTO>>> findByValue(@Nullable String month) {
+    public Single<HttpResponse<List<AnniversaryReportResponseDTO>>> findByValue(@Nullable String[] month) {
 
         return Single.fromCallable(() -> anniversaryServices.findByValue(month))
                 .observeOn(Schedulers.from(eventLoopGroup))

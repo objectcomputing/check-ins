@@ -23,19 +23,26 @@ public class BirthDayServicesImpl implements BirthDayServices{
     }
 
     @Override
-    public List<BirthDayResponseDTO> findByValue(String month) {
+    public List<BirthDayResponseDTO> findByValue(String[] months) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You do not have permission to access this resource.");
         }
+        List<MemberProfile> memberProfileAll = new ArrayList<>();
         List<MemberProfile> memberProfiles = memberProfileServices.findAll();
-        if (month != null) {
-            memberProfiles = memberProfiles
-                    .stream()
-                    .filter(member -> member.getBirthDate() != null && month.equalsIgnoreCase(member.getBirthDate().getMonth().name()) && member.getTerminationDate() == null)
-                    .collect(Collectors.toList());
+        if (months != null) {
+            for (String month : months) {
+                List<MemberProfile> memberProfile = new ArrayList<>();
+                if (month != null) {
+                    memberProfile = memberProfiles
+                            .stream()
+                            .filter(member -> member.getBirthDate() != null && month.equalsIgnoreCase(member.getBirthDate().getMonth().name()) && member.getTerminationDate() == null)
+                            .collect(Collectors.toList());
+                }
+                memberProfileAll.addAll(memberProfile);
+            }
         }
 
-        return profileToBirthDateResponseDto(memberProfiles);
+        return profileToBirthDateResponseDto(memberProfileAll);
     }
 
     private List<BirthDayResponseDTO> profileToBirthDateResponseDto(List<MemberProfile> memberProfiles) {

@@ -7,6 +7,7 @@ import org.apache.commons.io.input.BOMInputStream;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,13 +19,13 @@ public class EmployeeaHoursCSVHelper {
 
             InputStreamReader input = new InputStreamReader(new BOMInputStream(inputStream,false));
             CSVParser csvParser = CSVFormat.RFC4180.withFirstRecordAsHeader().withIgnoreSurroundingSpaces().withNullString("").parse(input);
-
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
             for (CSVRecord csvRecord : csvParser) {
-                String fl = csvRecord.get("targetHours");
                 EmployeeHours employeeHours = new EmployeeHours(csvRecord.get("employeeId"),
                         Float.parseFloat(csvRecord.get("contributionHours")),
                         Float.parseFloat(csvRecord.get("billableHours")),
-                         Float.parseFloat(csvRecord.get("ptoHours")), LocalDate.now(),Float.parseFloat(csvRecord.get("targetHours")));
+                         Float.parseFloat(csvRecord.get("ptoHours")), LocalDate.now(),Float.parseFloat(csvRecord.get("targetHours")),
+                        LocalDate.parse(csvRecord.get("asOfDate"), formatter));
                 employeeHoursList.add(employeeHours);
             }
             return employeeHoursList;

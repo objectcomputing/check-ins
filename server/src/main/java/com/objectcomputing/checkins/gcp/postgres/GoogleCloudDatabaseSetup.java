@@ -19,13 +19,12 @@ public class GoogleCloudDatabaseSetup implements BeanCreatedEventListener<Dataso
     public static final String CLOUD_DB_CONNECTION_NAME = "cloud.db.connection.name";
     public static final String DATASOURCES_DEFAULT_USERNAME = "datasources.default.username";
     public static final String DATASOURCES_DEFAULT_PASSWORD = "datasources.default.password";
-
     private static final String DB_NAME = System.getenv("DB_NAME");
     private final String cloudSqlInstanceName;
 
     public GoogleCloudDatabaseSetup(@Property(name = CLOUD_DB_CONNECTION_NAME) String cloudSqlInstanceName,
             @Property(name = DATASOURCES_DEFAULT_USERNAME) String defaultUsername,
-            @Property(name = DATASOURCES_DEFAULT_PASSWORD) String defaultPassword) {
+            @Property(name = DATASOURCES_DEFAULT_PASSWORD) String defaultPassword){
         this.cloudSqlInstanceName = cloudSqlInstanceName;
     }
 

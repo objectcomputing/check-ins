@@ -46,6 +46,7 @@ micronaut:
           - isAuthenticated()
     reject-not-found: false
     redirect:
+      prior-to-login: true
       login-success: /
       on-rejection: /oauth/login/google
       unauthorized:
@@ -80,6 +81,7 @@ check-ins:
       notifications:
         subject: "Feedback request"
         content: "You have received a feedback request. Please go to the "
+  web-address: ${ WEB_ADDRESS }
 ---
 flyway:
   enabled: enabled
@@ -109,3 +111,10 @@ ehcache:
   caches:
     photo-cache:
       enabled: true
+---
+mail-jet:
+  from_address: ${ FROM_ADDRESS }
+  from_name: ${ FROM_NAME }
+---
+github-credentials:
+  github_token: ${ GITHUB_TOKEN }
