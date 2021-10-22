@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.drive.Drive;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.context.event.ApplicationEventListener;
@@ -11,12 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 @Requires(notEnv = Environment.TEST)
-@Requires(notEnv = "integration")
+@Requires(notEnv = Util.INTEGRATION)
 @Singleton
+
 public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEvent> {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleApiAccess.class);

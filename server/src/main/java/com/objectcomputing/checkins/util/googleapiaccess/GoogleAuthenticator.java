@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.util.googleapiaccess;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import org.slf4j.Logger;
@@ -18,8 +19,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Requires(notEnv = Environment.TEST)
-@Requires(notEnv = "integration")
+@Requires(notEnv = Util.INTEGRATION)
 @Singleton
+
 public class GoogleAuthenticator {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleAuthenticator.class);
