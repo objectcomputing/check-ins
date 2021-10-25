@@ -189,29 +189,31 @@ const ProfilePage = () => {
   return (
     <div className="Profile">
       <Profile memberId={id} pdlId={pdlId} />
-      <Card>
-        <CardHeader
-          avatar={<Info />}
-          title="Bio"
-          titleTypographyProps={{ variant: "h5", component: "h2" }}
-        />
-        <CardContent>
-          <TextField
-            onChange={handleBioChange}
-            value={bio}
-            id="Bio"
-            style={{ margin: 8 }}
-            placeholder="Tell us about yourself..."
-            multiline
-            fullWidth
-          />
-        </CardContent>
-      </Card>
-      <Grid container spacing={3}>
+      <div class="profile-grid">
+        <div className="profile-page-bio">
+          <Card>
+            <CardHeader
+              avatar={<Info />}
+              title="Bio"
+              titleTypographyProps={{ variant: "h5", component: "h2" }}
+            />
+            <CardContent>
+              <TextField
+                onChange={handleBioChange}
+                value={bio}
+                id="Bio"
+                placeholder="Tell us about yourself..."
+                multiline
+                rows={3}
+                fullWidth
+              />
+            </CardContent>
+          </Card>
+        </div>
         {myHours ? (
-          <Grid item xs>
+          <div className="profile-hours">
             {myHours && (
-              <Card style={{ minHeight: 150 }}>
+              <Card>
                 <CardHeader
                   avatar={<Info />}
                   subheader={subheader}
@@ -222,11 +224,11 @@ const ProfilePage = () => {
                 </CardContent>
               </Card>
             )}
-          </Grid>
+          </div>
         ) : (
           ""
         )}
-        <Grid item xs>
+        <div className="profile-guilds">
           <Card style={{ minHeight: 150 }}>
             <CardHeader
               avatar={<GroupIcon />}
@@ -254,36 +256,36 @@ const ProfilePage = () => {
               />
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </div>
+        <div className="profile-teams">
+          <Card>
+            <CardHeader
+              avatar={<GroupIcon />}
+              title="Teams"
+              titleTypographyProps={{ variant: "h5", component: "h1" }}
+            />
+            <CardContent>
+              <div className="profile-teams">
+                {teams.length > 0 ? (
+                  teams.map((team) => (
+                    <Chip
+                      className="chip"
+                      // color="primary"
+                      key={team.id}
+                      label={team.name}
+                    />
+                  ))
+                ) : (
+                  <h3>No teams found</h3>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
-      <Grid item xs>
-        <Card>
-          <CardHeader
-            avatar={<GroupIcon />}
-            title="Teams"
-            titleTypographyProps={{ variant: "h5", component: "h1" }}
-          />
-          <CardContent>
-            <div className="profile-teams">
-              {teams.length > 0 ? (
-                teams.map((team) => (
-                  <Chip
-                    className="chip"
-                    // color="primary"
-                    key={team.id}
-                    label={team.name}
-                  />
-                ))
-              ) : (
-                <h3>No teams found</h3>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </Grid>
     </div>
   );
 };
