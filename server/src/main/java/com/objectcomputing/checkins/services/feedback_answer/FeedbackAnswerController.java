@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
+import com.objectcomputing.checkins.services.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
@@ -40,6 +42,7 @@ public class FeedbackAnswerController {
      * @param requestBody {@link FeedbackAnswerCreateDTO} New feedback answer to create
      * @return {@link FeedbackAnswerResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_FEEDBACK)
     @Post()
     public Single<HttpResponse<FeedbackAnswerResponseDTO>> save(@Body @Valid @NotNull FeedbackAnswerCreateDTO requestBody) {
         return Single.fromCallable(() -> feedbackAnswerServices.save(fromDTO(requestBody)))
@@ -56,6 +59,7 @@ public class FeedbackAnswerController {
      * @param requestBody {@link FeedbackAnswerUpdateDTO} The updated feedback answer
      * @return {@link FeedbackAnswerResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_FEEDBACK)
     @Put()
     public Single<HttpResponse<FeedbackAnswerResponseDTO>> update(@Body @Valid @NotNull FeedbackAnswerUpdateDTO requestBody) {
         return Single.fromCallable(() -> feedbackAnswerServices.update(fromDTO(requestBody)))
@@ -73,6 +77,7 @@ public class FeedbackAnswerController {
      * @param id {@link UUID} ID of the feedback answer
      * @return {@link FeedbackAnswerResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK)
     @Get("/{id}")
     public Single<HttpResponse<FeedbackAnswerResponseDTO>> getById(UUID id) {
         return Single.fromCallable(() -> feedbackAnswerServices.getById(id))
@@ -91,6 +96,7 @@ public class FeedbackAnswerController {
      * @param requestId The attached {@link UUID} of the request that corresponds with the answer
      * @return {@link FeedbackAnswerResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK)
     @Get("/{?questionId,requestId}")
     public Single<HttpResponse<List<FeedbackAnswerResponseDTO>>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
         return Single.fromCallable(() -> feedbackAnswerServices.findByValues(questionId, requestId))
