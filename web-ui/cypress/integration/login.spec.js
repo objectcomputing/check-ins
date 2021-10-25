@@ -3,37 +3,26 @@ describe("Tests for login page", () => {
 
   // TODO: setup http://localhost:8080 as base url in configuration
   it("ensure components are displayed", () => {
-    cy.visit("http://localhost:8080/oauth/login/google");
+    cy.visit("https://checkins.objectcomputing.com");
     cy.get("form");
-    // Ensure LOCAL LOGIN text exists
-    // Ensure 'Email:' text exists
-
-
-    // Ensure input for email exists
-    cy.get('input[name="email"]')
+    cy.get('input[name="email"]')                     // Ensure input for email exists
       .type("sharmag@objectcomputing.com")
       .should("have.value", "sharmag@objectcomputing.com");
-
-    // Ensure 'Role Override:' text exists
-
-    // Ensure input for role exists
-    cy.get('input[name="role"]')
+    cy.get('input[name="role"]')                      // Ensure input for role exists
       .type("ADMIN")
       .should("have.value", "ADMIN")
-
-    // Ensure submit button exists
-    cy.get('input[name="Submit"]')
-      .type()//make sure this exists;
+    cy.get('input[name="Submit"]')                    // Ensure submit button exists
+      .type("Submit")
   });
 
-  it("ensure rest call was initiated on form submit", () => {
-    cy.visit("http://localhost:8080/oauth/login/google");
-    cy.get("form");
-    cy.get('input[name="email"]').type("sharmag@objectcomputing.com");
-    cy.get('input[name="role"]').type("ADMIN");
-    cy.get('input[name="Submit"]').click();
-    // assert that a post call was intercepted
-  });
+  // it("ensure rest call was initiated on form submit", () => {
+  //   cy.visit("http://localhost:8080/oauth/login/google");
+  //   cy.get("form");
+  //   cy.get('input[name="email"]').type("sharmag@objectcomputing.com");
+  //   cy.get('input[name="role"]').type("ADMIN");
+  //   cy.get('input[name="Submit"]').click();
+  //   // assert that a post call was intercepted
+  // });
 
 
 
