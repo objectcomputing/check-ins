@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.services.feedback.FeedbackResponseDTO;
-import com.objectcomputing.checkins.services.permissions.Permissions;
+import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;

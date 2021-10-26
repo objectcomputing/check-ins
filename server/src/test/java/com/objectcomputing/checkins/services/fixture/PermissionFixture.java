@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.Permissions;
+import com.objectcomputing.checkins.security.permissions.Permissions;
 
 import java.util.List;
 import java.util.UUID;

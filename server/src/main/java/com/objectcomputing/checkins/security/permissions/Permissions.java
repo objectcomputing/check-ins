@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.permissions;
+package com.objectcomputing.checkins.security.permissions;
 
 public enum Permissions {
     CAN_VIEW_FEEDBACK,

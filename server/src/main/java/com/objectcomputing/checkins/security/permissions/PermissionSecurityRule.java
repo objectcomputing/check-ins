@@ -36,11 +36,9 @@ public class PermissionSecurityRule implements SecurityRule {
                     final String requiredPermission = optionalPermission.get();
                     final String userPermissions = claims.get("permissions").toString();
 
-                    if (!userPermissions.contains(requiredPermission)) {
-                        return SecurityRuleResult.REJECTED;
-                    }
-
-                    return SecurityRuleResult.ALLOWED;
+                   return userPermissions.contains(requiredPermission)
+                            ? SecurityRuleResult.ALLOWED
+                            : SecurityRuleResult.REJECTED;
                 }
             }
         }
