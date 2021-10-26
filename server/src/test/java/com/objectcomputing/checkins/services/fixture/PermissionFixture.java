@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.Permissions;
+import com.objectcomputing.checkins.security.permissions.Permissions;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,23 +10,22 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
 
     // Add MEMBER Permissions here
     List<Permissions> memberPermissions = List.of(
-            Permissions.CAN_VIEW_FEEDBACK,
-            Permissions.CAN_CREATE_FEEDBACK,
-            Permissions.CAN_DELETE_FEEDBACK
+            Permissions.CAN_VIEW_FEEDBACK_REQUEST,
+            Permissions.CAN_DELETE_FEEDBACK_REQUEST
     );
 
     // Add PDL Permissions here
     List<Permissions> pdlPermissions = List.of(
-            Permissions.CAN_VIEW_FEEDBACK,
-            Permissions.CAN_CREATE_FEEDBACK,
-            Permissions.CAN_DELETE_FEEDBACK
+            Permissions.CAN_VIEW_FEEDBACK_REQUEST,
+            Permissions.CAN_CREATE_FEEDBACK_REQUEST,
+            Permissions.CAN_DELETE_FEEDBACK_REQUEST
     );
 
     // Add ADMIN Permissions here
     List<Permissions> adminPermissions = List.of(
-            Permissions.CAN_VIEW_FEEDBACK,
-            Permissions.CAN_CREATE_FEEDBACK,
-            Permissions.CAN_DELETE_FEEDBACK,
+            Permissions.CAN_VIEW_FEEDBACK_REQUEST,
+            Permissions.CAN_CREATE_FEEDBACK_REQUEST,
+            Permissions.CAN_DELETE_FEEDBACK_REQUEST,
             Permissions.CAN_DELETE_ORGANIZATION_MEMBERS,
             Permissions.CAN_CREATE_ORGANIZATION_MEMBERS
     );

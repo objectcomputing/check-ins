@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.permissions;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+
 public @interface RequiredPermission {
 
     /**

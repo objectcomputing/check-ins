@@ -8,7 +8,6 @@ import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
-import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.core.annotation.Nullable;
@@ -29,7 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
-@Requires(env = {Util.LOCAL, Environment.TEST})
+@Requires(env = {"local", Environment.TEST})
 public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
 
     private final CurrentUserServices currentUserServices;
