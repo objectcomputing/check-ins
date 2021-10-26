@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.security;
 
+import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.security.permissions.ExtendedUserDetails;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -28,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
-@Requires(env = {"local", Environment.TEST})
+@Requires(env = {Environments.LOCAL, Environment.TEST})
 public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
 
     private final CurrentUserServices currentUserServices;
