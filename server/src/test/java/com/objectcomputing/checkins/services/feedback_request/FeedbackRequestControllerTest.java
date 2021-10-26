@@ -256,7 +256,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
-        assertUnauthorized(responseException);
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test

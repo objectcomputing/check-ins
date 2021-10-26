@@ -5,7 +5,6 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
-import com.objectcomputing.checkins.util.Util;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -18,9 +17,12 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@MicronautTest(environments = {Util.LOCAL, Util.LOCALTEST}, transactional = false)
+@MicronautTest(environments = {"local", "localtest"}, transactional = false)
 public class LocalLoginControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Client("/oauth/login/google")
