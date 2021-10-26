@@ -6,6 +6,7 @@ import {
   selectCurrentUser,
   selectMyGuilds,
   selectUserProfile,
+  selectMyTeams,
 } from "../context/selectors";
 import {
   UPDATE_GUILD,
@@ -15,7 +16,6 @@ import {
 import { addGuildMember, deleteGuildMember } from "../api/guild";
 import { updateMember } from "../api/member";
 import { getEmployeeHours } from "../api/hours";
-import { getTeamByMember } from "../api/team";
 import Profile from "../components/profile/Profile";
 import SkillSection from "../components/skills/SkillSection";
 import ProgressBar from "../components/contribution_hours/ProgressBar";
@@ -48,27 +48,10 @@ const ProfilePage = () => {
 
   const [bio, setBio] = useState();
   const [myHours, setMyHours] = useState(null);
-  const [teams, setTeams] = useState([]);
+
+  const myTeams = selectMyTeams(state);
 
   const myGuilds = selectMyGuilds(state);
-
-  useEffect(() => {
-    async function getTeams() {
-      if (id) {
-        let teamRes = await getTeamByMember(id, csrf);
-        let teamData =
-          teamRes.payload && teamRes.payload.status === 200
-            ? teamRes.payload.data
-            : null;
-        let memberTeams = teamData && !teamRes.error ? teamData : [];
-        memberTeams.sort((a, b) => a.name.localeCompare(b.name));
-        setTeams(memberTeams);
-      }
-    }
-    if (csrf) {
-      getTeams();
-    }
-  }, [csrf, id]);
 
   useEffect(() => {
     async function getHours() {
@@ -265,8 +248,8 @@ const ProfilePage = () => {
             />
             <CardContent>
               <div className="profile-teams">
-                {teams.length > 0 ? (
-                  teams.map((team) => (
+                {myTeams.length > 0 ? (
+                  myTeams.map((team) => (
                     <Chip
                       className="chip"
                       // color="primary"
