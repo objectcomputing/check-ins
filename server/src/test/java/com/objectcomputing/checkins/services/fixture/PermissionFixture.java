@@ -11,14 +11,16 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
     // Add MEMBER Permissions here
     List<Permissions> memberPermissions = List.of(
             Permissions.CAN_VIEW_FEEDBACK_REQUEST,
-            Permissions.CAN_DELETE_FEEDBACK_REQUEST
+            Permissions.CAN_DELETE_FEEDBACK_REQUEST,
+            Permissions.CAN_VIEW_FEEDBACK_ANSWER
     );
 
     // Add PDL Permissions here
     List<Permissions> pdlPermissions = List.of(
             Permissions.CAN_VIEW_FEEDBACK_REQUEST,
             Permissions.CAN_CREATE_FEEDBACK_REQUEST,
-            Permissions.CAN_DELETE_FEEDBACK_REQUEST
+            Permissions.CAN_DELETE_FEEDBACK_REQUEST,
+            Permissions.CAN_VIEW_FEEDBACK_ANSWER
     );
 
     // Add ADMIN Permissions here
@@ -26,6 +28,7 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
             Permissions.CAN_VIEW_FEEDBACK_REQUEST,
             Permissions.CAN_CREATE_FEEDBACK_REQUEST,
             Permissions.CAN_DELETE_FEEDBACK_REQUEST,
+            Permissions.CAN_VIEW_FEEDBACK_ANSWER,
             Permissions.CAN_DELETE_ORGANIZATION_MEMBERS,
             Permissions.CAN_CREATE_ORGANIZATION_MEMBERS
     );
