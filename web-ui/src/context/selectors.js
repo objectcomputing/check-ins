@@ -68,8 +68,8 @@ export const selectCurrentMembers = createSelector(
 );
 
 export const selectCurrentMemberIds = createSelector(
-    selectCurrentMembers,
-    (members) => members.map((member) => member.id)
+  selectCurrentMembers,
+  (members) => members.map((member) => member.id)
 );
 
 export const selectProfileMap = createSelector(
@@ -303,5 +303,14 @@ export const selectMyGuilds = createSelector(
   (id, guilds) =>
     guilds?.filter((guild) =>
       guild.guildMembers?.some((member) => member.memberId === id)
+    )
+);
+
+export const selectMyTeams = createSelector(
+  selectCurrentUserId,
+  selectTeams,
+  (id, teams) =>
+    teams?.filter((team) =>
+      team.teamMembers?.some((member) => member.memberId === id)
     )
 );
