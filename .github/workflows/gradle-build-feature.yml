@@ -11,6 +11,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgresql:
+        image: postgres:11.6
+        env:
+          POSTGRES_DB: checkinsdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - "5432:5432"
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - name: Set up Node 14
@@ -27,12 +41,24 @@ jobs:
         run: chmod +x gradlew
       - name: Gradle package
         run: ./gradlew assemble
-      - name: Gradle runs tests
-        run: ./gradlew check
+      - name: Build docker image
+        run: ./gradlew dockerBuild
+      - name: Run docker container
+        run: ./gradlew dockerRun
+      - name: Cypress runs tests
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: web-ui
+          build: yarn build
+          start: yarn start
       - name: Sleep for 30 seconds
         uses: jakejarvis/wait-action@master
         with:
           time: '30s'
+      - name: Gradle docker stop
+        run: ./gradlew dockerStop
+      - name: Gradle runs tests
+        run: ./gradlew check
       - name: Do SonarQube checks
         run: |
           ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
