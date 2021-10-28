@@ -49,6 +49,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: web-ui
+          config: pageLoadTimeout=100000,baseUrl=http://localhost:8080
           build: yarn build
           start: yarn start
       - name: Sleep for 30 seconds
