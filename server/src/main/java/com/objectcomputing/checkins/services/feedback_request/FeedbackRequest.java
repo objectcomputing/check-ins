@@ -90,16 +90,6 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
-    public FeedbackRequest(UUID id,
-                           @Nullable LocalDate dueDate,
-                           String status,
-                           @Nullable LocalDate submitDate) {
-        this.id = id;
-        this.dueDate = dueDate;
-        this.status = status;
-        this.submitDate = submitDate;
-    }
-
     public FeedbackRequest() {}
 
     public UUID getId() {

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.security;
 
+import com.objectcomputing.checkins.Environments;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
@@ -9,7 +10,7 @@ import io.micronaut.core.naming.conventions.StringConvention;
 import java.util.HashMap;
 import java.util.List;
 
-@Requires(env = {"local", Environment.TEST})
+@Requires(env = {Environments.LOCAL, Environment.TEST})
 @ConfigurationProperties("credentials")
 public class UsersStore {
 

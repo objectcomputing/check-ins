@@ -9,13 +9,18 @@ import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
-import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
-
 import io.micronaut.core.annotation.Nullable;
+
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 

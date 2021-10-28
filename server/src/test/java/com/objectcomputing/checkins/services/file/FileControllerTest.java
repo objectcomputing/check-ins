@@ -17,7 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import javax.inject.Inject;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,9 +27,15 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static io.micronaut.http.MediaType.MULTIPART_FORM_DATA;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -116,12 +124,12 @@ public class FileControllerTest {
 
     @Test
     public void testDownloadDocument() {
-
         String uploadDocId = "some.upload.id";
+
         when(fileServices.downloadFiles(uploadDocId)).thenReturn(testFile);
 
         final HttpRequest<?> request= HttpRequest.GET(String.format("/%s/download", uploadDocId))
-                                                            .basicAuth("some.email", MEMBER_ROLE);
+                                                            .basicAuth("some.email.id", MEMBER_ROLE);
         final HttpResponse<File> response = client.toBlocking().exchange(request, File.class);
 
         assertNotNull(response);
@@ -144,7 +152,7 @@ public class FileControllerTest {
 
         final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", testCheckinId), MultipartBody.builder()
                                         .addPart("file", testFile).build())
-                                        .basicAuth("some.email", MEMBER_ROLE)
+                                        .basicAuth("some.email.id", MEMBER_ROLE)
                                         .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> response = client.toBlocking().exchange(request, FileInfoDTO.class);
 

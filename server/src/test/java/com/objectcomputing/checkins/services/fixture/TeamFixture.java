@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.team.TeamUpdateDTO;
 
 import java.util.UUID;
 
-public interface TeamFixture extends MemberProfileFixture, RepositoryFixture{
+public interface TeamFixture extends MemberProfileFixture, RepositoryFixture {
 
     default Team createDefaultTeam() {
         return getTeamRepository().save(new Team(UUID.randomUUID(), "Ninja", "Warriors"));
