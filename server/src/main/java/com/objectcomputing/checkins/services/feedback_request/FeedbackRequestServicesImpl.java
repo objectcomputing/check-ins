@@ -3,19 +3,18 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.gcp.postgres.GoogleCloudDatabaseSetup;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
-import io.micronaut.context.annotation.Requires;
-
 import javax.inject.Singleton;
 import java.time.LocalDate;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 @Singleton
 public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
@@ -99,13 +98,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
-    public FeedbackRequest update(FeedbackRequest feedbackRequest) {
+    public FeedbackRequest update(FeedbackRequestUpdateDTO feedbackRequestUpdateDTO) {
         /*
          * only creator can update due date--only field they can update without making new request
          * status has to be updated with any permissions--fired on submission from any recipient
          * submit date can be updated only when the recipient is logged in--fired on submission from any recipient
          */
 
+        final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         FeedbackRequest originalFeedback = null;
 
@@ -223,5 +223,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         return isAdmin || currentUserId.equals(feedbackRequest.getRecipientId());
+    }
+
+    private FeedbackRequest getFromDTO(FeedbackRequestUpdateDTO dto) {
+        FeedbackRequest feedbackRequest = this.getById(dto.getId());
+        feedbackRequest.setDueDate(dto.getDueDate());
+        feedbackRequest.setStatus(dto.getStatus());
+        feedbackRequest.setSubmitDate(dto.getSubmitDate());
+
+        return feedbackRequest;
     }
 }

@@ -1,27 +1,35 @@
 package com.objectcomputing.checkins.security;
 
+import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.security.permissions.ExtendedUserDetails;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.PermissionServices;
-import com.objectcomputing.checkins.services.role.*;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
-import io.micronaut.security.authentication.*;
+import io.micronaut.security.authentication.AuthenticationFailed;
+import io.micronaut.security.authentication.AuthenticationProvider;
+import io.micronaut.security.authentication.AuthenticationRequest;
+import io.micronaut.security.authentication.AuthenticationResponse;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
-import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
-@Requires(env = "local")
+@Requires(env = {Environments.LOCAL, Environment.TEST})
 public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
 
     private final CurrentUserServices currentUserServices;
@@ -72,6 +80,10 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
         Set<Role> userRoles = roleServices.findUserRoles(memberProfile.getId());
         List<String> rolesAsString = userRoles.stream().map(o -> o.getRole()).collect(Collectors.toList());
 
-        return Flowable.just(new ExtendedUserDetails(email, rolesAsString, permissionsAsString));
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("permissions", permissionsAsString);
+        attributes.put("email", memberProfile.getWorkEmail());
+
+        return Flowable.just(new ExtendedUserDetails(email, rolesAsString, attributes));
     }
 }

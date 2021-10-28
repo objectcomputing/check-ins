@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.role;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
@@ -22,7 +21,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 class RoleControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, MemberRoleFixture {
 
     @Inject
@@ -31,11 +29,12 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
       void testCreateARole() {
+        createAndAssignRoles();
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createAndAssignAdminRole(unrelatedProfile);
+        Role authRole = assignAdminRole(unrelatedProfile);
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
-        roleCreateDTO.setRole(RoleType.MEMBER.name());
+        roleCreateDTO.setRole("TEST.ROLE");
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
                 .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());

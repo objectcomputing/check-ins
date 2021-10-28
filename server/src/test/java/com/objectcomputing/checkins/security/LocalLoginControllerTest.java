@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.security;
 
+import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
@@ -17,9 +18,12 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@MicronautTest(environments = {"local", "localtest"}, transactional = false)
+@MicronautTest(environments = {Environments.LOCAL, Environments.LOCALTEST}, transactional = false)
 public class LocalLoginControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Client("/oauth/login/google")

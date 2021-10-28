@@ -1,9 +1,6 @@
 package com.objectcomputing.checkins.security.permissions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.objectcomputing.checkins.services.permissions.Permission;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.runtime.ApplicationConfiguration;
@@ -14,7 +11,6 @@ import io.micronaut.security.token.jwt.generator.claims.JWTClaimsSetGenerator;
 import io.micronaut.security.token.jwt.generator.claims.JwtIdGenerator;
 
 import javax.inject.Singleton;
-import java.util.List;
 
 @Singleton
 @Replaces(bean = JWTClaimsSetGenerator.class)
