@@ -32,49 +32,11 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     });
   };
 
-  // if (!editedMember.startDate) {
-  //   setMember({ ...editedMember, startDate: new Date() });
-  //   console.log("NOT START DATE", editedMember);
-  // }
+  const birthDay = editedMember?.birthDay;
 
-  // const birthDay =
-  //   editedMember && editedMember.birthDay
-  //     ? new Date(editedMember.birthDay.join("/"))
-  //     : null;
+  const terminationDate = editedMember?.terminationDate;
 
-  // const terminationDate =
-  //   editedMember && editedMember.terminationDate
-  //     ? new Date(editedMember.terminationDate.join("/"))
-  //     : null;
-
-  const birthDay =
-    editedMember &&
-    editedMember.birthDay &&
-    Array.isArray(editedMember.birthDay)
-      ? new Date(editedMember.birthDay.join("/"))
-      : editedMember && editedMember.birthDay
-      ? editedMember.birthDay
-      : null;
-
-  const terminationDate =
-    editedMember &&
-    editedMember.terminationDate &&
-    Array.isArray(editedMember.terminationDate)
-      ? new Date(editedMember.terminationDate.join("/"))
-      : editedMember && editedMember.terminationDate
-      ? editedMember.terminationDate
-      : null;
-
-  const startDate =
-    editedMember &&
-    editedMember.startDate &&
-    Array.isArray(editedMember.startDate)
-      ? new Date(editedMember.startDate.join("/"))
-      : editedMember && editedMember.startDate
-      ? editedMember.startDate
-      : null;
-
-  console.log(Array.isArray(editedMember.startDate));
+  const startDate = editedMember?.startDate;
 
   const onPdlChange = (event, newValue) => {
     setMember({
