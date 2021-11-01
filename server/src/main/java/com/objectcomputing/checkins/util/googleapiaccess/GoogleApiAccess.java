@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.drive.Drive;
-import com.objectcomputing.checkins.util.Util;
+import com.objectcomputing.checkins.Environments;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.context.event.ApplicationEventListener;
@@ -15,7 +15,7 @@ import javax.inject.Singleton;
 import java.io.IOException;
 
 @Requires(notEnv = Environment.TEST)
-@Requires(notEnv = Util.INTEGRATION)
+@Requires(notEnv = Environments.INTEGRATION)
 @Singleton
 
 public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEvent> {

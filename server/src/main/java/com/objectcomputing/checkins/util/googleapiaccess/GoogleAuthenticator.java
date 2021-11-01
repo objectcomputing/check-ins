@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Requires;
@@ -19,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Requires(notEnv = Environment.TEST)
-@Requires(notEnv = Util.INTEGRATION)
+@Requires(notEnv = Environments.INTEGRATION)
 @Singleton
 
 public class GoogleAuthenticator {

@@ -10,6 +10,8 @@ import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.util.Util;
+import com.objectcomputing.checkins.Environments;
+
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
@@ -22,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Requires(notEnv = Environment.TEST)
-@Requires(notEnv = Util.INTEGRATION)
+@Requires(notEnv = Environments.INTEGRATION)
 @Singleton
 public class GoogleAccessor {
 
