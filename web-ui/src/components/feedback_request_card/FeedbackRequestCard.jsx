@@ -209,16 +209,6 @@ const FeedbackRequestCard = ({
       withinDateRange(response.sendDate)
     );
 
-    // useEffect(() => {
-    // let responsesCopy = [...responses];
-    // responsesCopy = responsesCopy.filter((response) =>
-    //   withinDateRange(
-    //     Array.isArray(response.sendDate)
-    //       ? new Date(response.sendDate.join("/"))
-    //       : response.sendDate
-    //   )
-    // );
-
     let sortMethod;
     switch (sortType) {
       case SortOption.SENT_DATE:
