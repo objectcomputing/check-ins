@@ -18,17 +18,42 @@ exports[`renders correctly 1`] = `
         className="MuiFormControl-root MuiTextField-root fullWidth MuiFormControl-fullWidth"
       >
         <label
-          className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
-          data-shrink={false}
+          className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink"
+          data-shrink={true}
           htmlFor="monthSelect"
           id="monthSelect-label"
         >
           Select a month
         </label>
         <div
-          className="MuiInputBase-root MuiInput-root MuiInput-underline MuiAutocomplete-inputRoot MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedEnd"
+          className="MuiInputBase-root MuiInput-root MuiInput-underline MuiAutocomplete-inputRoot MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedStart MuiInputBase-adornedEnd"
           onClick={[Function]}
         >
+          <div
+            className="MuiChip-root MuiAutocomplete-tag MuiChip-deletable"
+            data-tag-index={0}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            role="button"
+            tabIndex={-1}
+          >
+            <span
+              className="MuiChip-label"
+            >
+              November
+            </span>
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root MuiChip-deleteIcon"
+              focusable="false"
+              onClick={[Function]}
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"
+              />
+            </svg>
+          </div>
           <input
             aria-activedescendant={null}
             aria-autocomplete="list"
@@ -37,7 +62,7 @@ exports[`renders correctly 1`] = `
             autoCapitalize="none"
             autoComplete="off"
             autoFocus={false}
-            className="MuiInputBase-input MuiInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedEnd"
+            className="MuiInputBase-input MuiInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedStart MuiInputBase-inputAdornedEnd"
             disabled={false}
             id="monthSelect"
             onAnimationStart={[Function]}
