@@ -45,8 +45,6 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     });
   };
 
-  console.log({ startDate, sortedMembers, editedMember });
-
   return (
     <Modal open={open} onClose={onClose}>
       <div className="member-modal">

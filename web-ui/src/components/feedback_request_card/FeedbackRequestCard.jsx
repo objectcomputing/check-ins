@@ -1,19 +1,19 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
-import Card from '@material-ui/core/Card';
-import {Avatar, Typography} from '@material-ui/core';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Collapse from '@material-ui/core/Collapse';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import IconButton from '@material-ui/core/IconButton';
-import Grid from '@material-ui/core/Grid';
-import {useHistory} from "react-router-dom";
+import Card from "@material-ui/core/Card";
+import { Avatar, Typography } from "@material-ui/core";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import IconButton from "@material-ui/core/IconButton";
+import Grid from "@material-ui/core/Grid";
+import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import "./FeedbackRequestCard.css";
-import {selectProfile} from "../../context/selectors";
-import {AppContext} from "../../context/AppContext";
+import { selectProfile } from "../../context/selectors";
+import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
@@ -24,61 +24,71 @@ const useStyles = makeStyles({
     color: "gray",
     width: "100%",
     maxHeight: "10%",
-    ['@media (max-width:769px)']: { // eslint-disable-line no-useless-computed-key
-      width: '100%',
-      maxWidth: '100%',
+    ["@media (max-width:769px)"]: {
+      // eslint-disable-line no-useless-computed-key
+      width: "100%",
+      maxWidth: "100%",
     },
   },
   expandClose: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
+    transform: "rotate(0deg)",
+    marginLeft: "auto",
     transition: "transform 0.1s linear",
   },
   expandOpen: {
-    transform: 'rotate(180deg)',
+    transform: "rotate(180deg)",
     transition: "transform 0.1s linear",
-    marginLeft: 'auto',
+    marginLeft: "auto",
   },
 });
 
-const useStylesCardContent = makeStyles({
-  root: {
-    paddingBottom: 0,
-    paddingTop: 0,
-    '&:last-child': {
+const useStylesCardContent = makeStyles(
+  {
+    root: {
       paddingBottom: 0,
-    }
-  }
-}, { name: "MuiCardContent" });
-
-const useStylesCardActions = makeStyles({
-  root: {
-    padding: 0,
-    maxHeight: "30px",
-  },
-
-}, { name: 'MuiCardActions' });
-
-const useStylesText = makeStyles({
-  body1: {
-    ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
-      fontSize: "0.7rem",
+      paddingTop: 0,
+      "&:last-child": {
+        paddingBottom: 0,
+      },
     },
-  }
-}, { name: "MuiTypography" });
+  },
+  { name: "MuiCardContent" }
+);
+
+const useStylesCardActions = makeStyles(
+  {
+    root: {
+      padding: 0,
+      maxHeight: "30px",
+    },
+  },
+  { name: "MuiCardActions" }
+);
+
+const useStylesText = makeStyles(
+  {
+    body1: {
+      ["@media (max-width:767px)"]: {
+        // eslint-disable-line no-useless-computed-key
+        fontSize: "0.7rem",
+      },
+    },
+  },
+  { name: "MuiTypography" }
+);
 
 const SortOption = {
   SENT_DATE: "sent_date",
   SUBMISSION_DATE: "submission_date",
   RECIPIENT_NAME_ALPHABETICAL: "recipient_name_alphabetical",
-  RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical"
+  RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical",
 };
 
 const DateRange = {
   THREE_MONTHS: "3mo",
   SIX_MONTHS: "6mo",
   ONE_YEAR: "1yr",
-  ALL_TIME: "all"
+  ALL_TIME: "all",
 };
 
 const propTypes = {
@@ -89,18 +99,25 @@ const propTypes = {
     SortOption.SENT_DATE,
     SortOption.SUBMISSION_DATE,
     SortOption.RECIPIENT_NAME_ALPHABETICAL,
-    SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL
+    SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL,
   ]).isRequired,
   dateRange: PropTypes.oneOf([
     DateRange.THREE_MONTHS,
     DateRange.SIX_MONTHS,
     DateRange.ONE_YEAR,
-    DateRange.ALL_TIME]).isRequired
+    DateRange.ALL_TIME,
+  ]).isRequired,
 };
 
-const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, dateRange }) => {
+const FeedbackRequestCard = ({
+  requesteeId,
+  templateName,
+  responses,
+  sortType,
+  dateRange,
+}) => {
   const classes = useStyles();
-  const {state} = useContext(AppContext);
+  const { state } = useContext(AppContext);
   const requesteeProfile = selectProfile(state, requesteeId);
   const avatarURL = getAvatarURL(requesteeProfile?.workEmail);
   useStylesCardActions();
@@ -114,29 +131,34 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
     setExpanded(!expanded);
   };
 
-  const withinDateRange = useCallback((requestDate) => {
-    let oldestDate = new Date();
-    switch (dateRange) {
-      case DateRange.THREE_MONTHS:
-        oldestDate.setMonth(oldestDate.getMonth() - 3);
-        break;
-      case DateRange.SIX_MONTHS:
-        oldestDate.setMonth(oldestDate.getMonth() - 6);
-        break;
-      case DateRange.ONE_YEAR:
-        oldestDate.setFullYear(oldestDate.getFullYear() - 1);
-        break;
-      case DateRange.ALL_TIME:
-        return true;
-      default:
-        oldestDate.setMonth(oldestDate.getMonth() - 3);
-    }
+  const withinDateRange = useCallback(
+    (requestDate) => {
+      let oldestDate = new Date();
+      console.log({ oldestDate, requestDate });
+      switch (dateRange) {
+        case DateRange.THREE_MONTHS:
+          oldestDate.setMonth(oldestDate.getMonth() - 3);
+          break;
+        case DateRange.SIX_MONTHS:
+          oldestDate.setMonth(oldestDate.getMonth() - 6);
+          break;
+        case DateRange.ONE_YEAR:
+          oldestDate.setFullYear(oldestDate.getFullYear() - 1);
+          break;
+        case DateRange.ALL_TIME:
+          return true;
+        default:
+          oldestDate.setMonth(oldestDate.getMonth() - 3);
+      }
 
-    if (Array.isArray(requestDate)) {
-      requestDate = new Date(requestDate);
-    }
-    return requestDate >= oldestDate;
-  }, [dateRange]);
+      if (Array.isArray(requestDate)) {
+        requestDate = new Date(requestDate.join("/"));
+        // have to do for Safari
+      }
+      return requestDate >= oldestDate;
+    },
+    [dateRange]
+  );
 
   const noRequestsMessage = useCallback(() => {
     let message;
@@ -156,8 +178,14 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
 
     return (
       <React.Fragment>
-        <Divider/>
-        <div style={{padding: "12px 12px", textAlign: "center", backgroundColor: "#ececec"}}>
+        <Divider />
+        <div
+          style={{
+            padding: "12px 12px",
+            textAlign: "center",
+            backgroundColor: "#ececec",
+          }}
+        >
           <Typography variant="body1">{message}</Typography>
         </div>
       </React.Fragment>
@@ -168,33 +196,58 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
     if (sortedResponses.length === 0) return;
     const requestIds = sortedResponses.map((response) => response.id);
     const params = {
-      request: requestIds
+      request: requestIds,
     };
 
     history.push(`/feedback/view/responses/?${queryString.stringify(params)}`);
-  }
+  };
 
   // Sort the responses by either the send date or the submit date
   useEffect(() => {
     let responsesCopy = [...responses];
-    responsesCopy = responsesCopy.filter((response) => withinDateRange(response.sendDate));
+    responsesCopy = responsesCopy.filter((response) =>
+      withinDateRange(response.sendDate)
+    );
+
+    // useEffect(() => {
+    // let responsesCopy = [...responses];
+    // responsesCopy = responsesCopy.filter((response) =>
+    //   withinDateRange(
+    //     Array.isArray(response.sendDate)
+    //       ? new Date(response.sendDate.join("/"))
+    //       : response.sendDate
+    //   )
+    // );
 
     let sortMethod;
     switch (sortType) {
       case SortOption.SENT_DATE:
-        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
+        sortMethod = (a, b) =>
+          new Date(a.sendDate) > new Date(b.sendDate) ? -1 : 1;
         break;
       case SortOption.SUBMISSION_DATE:
-        sortMethod = ((a, b) => (!a.submitDate || (new Date(a.submitDate) > new Date(b.submitDate))) ? -1 : 1);
+        sortMethod = (a, b) =>
+          !a.submitDate || new Date(a.submitDate) > new Date(b.submitDate)
+            ? -1
+            : 1;
         break;
       case SortOption.RECIPIENT_NAME_ALPHABETICAL:
-        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? 1 : -1);
+        sortMethod = (a, b) =>
+          selectProfile(state, a.recipientId).name >
+          selectProfile(state, b.recipientId).name
+            ? 1
+            : -1;
         break;
       case SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL:
-        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? -1 : 1);
+        sortMethod = (a, b) =>
+          selectProfile(state, a.recipientId).name >
+          selectProfile(state, b.recipientId).name
+            ? -1
+            : 1;
         break;
       default:
-        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
+        sortMethod = (a, b) =>
+          new Date(a.sendDate) > new Date(b.sendDate) ? -1 : 1;
         break;
     }
     responsesCopy.sort(sortMethod);
@@ -208,24 +261,34 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
           <CardContent className={classes.noBottomPadding}>
             <Grid container spacing={0}>
               <Grid item xs={12}>
-                <Grid container
+                <Grid
+                  container
                   direction="row"
                   alignItems="center"
                   className="no-wrap"
                 >
                   <Grid item>
-                    <Avatar style={{marginRight: "1em"}} src={avatarURL}/>
+                    <Avatar style={{ marginRight: "1em" }} src={avatarURL} />
                   </Grid>
                   <Grid item xs className="small-margin">
-                    <Typography className="person-name">{requesteeProfile?.name}</Typography>
-                    <Typography className="position-text">{requesteeProfile?.title}</Typography>
+                    <Typography className="person-name">
+                      {requesteeProfile?.name}
+                    </Typography>
+                    <Typography className="position-text">
+                      {requesteeProfile?.title}
+                    </Typography>
                   </Grid>
                   <Grid item xs={4} className="align-end">
-                    <Typography className="dark-gray-text">{templateName}</Typography>
+                    <Typography className="dark-gray-text">
+                      {templateName}
+                    </Typography>
                     <Button
                       className="response-link red-text"
                       onClick={handleViewAllResponsesClick}
-                      disabled={sortedResponses.length === 0 || sortedResponses.every(o => o.status === "pending") }
+                      disabled={
+                        sortedResponses.length === 0 ||
+                        sortedResponses.every((o) => o.status === "pending")
+                      }
                     >
                       View all responses
                     </Button>
@@ -246,19 +309,24 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
           </IconButton>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent style={{padding: 0}}>
+          <CardContent style={{ padding: 0 }}>
             {sortedResponses && sortedResponses.length
-              ? sortedResponses.map((response) => (
-                <FeedbackRequestSubcard key={response.id} request={response}/>
-              ))
-              : noRequestsMessage()
-            }
+              ? sortedResponses.map((response) => {
+                  console.log({ response });
+                  return (
+                    <FeedbackRequestSubcard
+                      key={response.id}
+                      request={response}
+                    />
+                  );
+                })
+              : noRequestsMessage()}
           </CardContent>
         </Collapse>
       </Card>
     </div>
   );
-}
+};
 
 FeedbackRequestCard.propTypes = propTypes;
 
