@@ -24,8 +24,7 @@ const useStyles = makeStyles({
     color: "gray",
     width: "100%",
     maxHeight: "10%",
-    ["@media (max-width:769px)"]: {
-      // eslint-disable-line no-useless-computed-key
+    '@media (max-width:769px)': {
       width: "100%",
       maxWidth: "100%",
     },
@@ -68,8 +67,7 @@ const useStylesCardActions = makeStyles(
 const useStylesText = makeStyles(
   {
     body1: {
-      ["@media (max-width:767px)"]: {
-        // eslint-disable-line no-useless-computed-key
+      '@media (max-width:767px)': {
         fontSize: "0.7rem",
       },
     },
