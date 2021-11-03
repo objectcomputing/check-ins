@@ -50,7 +50,7 @@ const FeedbackRequestSubcard = ({ request }) => {
 
   const handleReminderClick = useCallback(() => {
     const handleReminderNotification = async () => {
-      let res = await sendReminderNotification(request.id, [recipient.workEmail], csrf);
+      let res = await sendReminderNotification(request?.id, [recipient?.workEmail], csrf);
       let reminderResponse =
         res &&
         res.payload &&
@@ -77,11 +77,11 @@ const FeedbackRequestSubcard = ({ request }) => {
     if (csrf) {
       handleReminderNotification();
     }
-  }, [request.id, recipient.workEmail, csrf]);
+  }, [request?.id, recipient?.workEmail, csrf]);
 
   const handleDeleteClick = useCallback(() => {
     const handleDeleteFeedback = async () => {
-      let res = await deleteFeedbackRequestById(request.id, csrf);
+      let res = await deleteFeedbackRequestById(request?.id, csrf);
       let reminderResponse =
         res &&
         res.payload &&
@@ -108,7 +108,7 @@ const FeedbackRequestSubcard = ({ request }) => {
     if (csrf) {
       handleDeleteFeedback();
     }
-  }, [request.id, csrf])
+  }, [request?.id, csrf])
 
   const Submitted = () => {
     if (request.dueDate) {

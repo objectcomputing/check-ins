@@ -253,6 +253,9 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       case 12:
         toReturn =
           (<TextField
+            multiline
+            rows={5}
+            rowsMax={10}
             className="fullWidth"
             variant="outlined"
             InputProps={{
