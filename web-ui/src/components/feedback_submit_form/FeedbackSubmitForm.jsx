@@ -230,7 +230,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }
 
   const getQuestionHeader = (index, isReview) => isReview && index === 1
-    && (<h2>How often has the team member has displayed each of the following in the past year, if at all...</h2>);
+    && (<h2>How often has this team member displayed each of the following in the past year...</h2>);
 
   const getReviewInput = (questionAnswerPair, isReviewing, index) => {
     let toReturn = null;
