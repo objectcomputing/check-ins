@@ -48,9 +48,11 @@ const FeedbackRequestSubcard = ({ request }) => {
   dueDate = dueDate ? dateFns.format(new Date(dueDate.join("-")), "LLLL dd, yyyy"): null;
   sendDate = dateFns.format(new Date(sendDate.join("-")), "LLLL dd, yyyy");
 
+  const recipientId = request?.id;
+  const recipientEmail = recipient?.workEmail;
   const handleReminderClick = useCallback(() => {
     const handleReminderNotification = async () => {
-      let res = await sendReminderNotification(request?.id, [recipient?.workEmail], csrf);
+      let res = await sendReminderNotification(recipientId, [recipientEmail], csrf);
       let reminderResponse =
         res &&
         res.payload &&
@@ -77,11 +79,11 @@ const FeedbackRequestSubcard = ({ request }) => {
     if (csrf) {
       handleReminderNotification();
     }
-  }, [request?.id, recipient?.workEmail, csrf]);
+  }, [recipientId, recipientEmail, csrf]);
 
   const handleDeleteClick = useCallback(() => {
     const handleDeleteFeedback = async () => {
-      let res = await deleteFeedbackRequestById(request?.id, csrf);
+      let res = await deleteFeedbackRequestById(recipientId, csrf);
       let reminderResponse =
         res &&
         res.payload &&
@@ -108,7 +110,7 @@ const FeedbackRequestSubcard = ({ request }) => {
     if (csrf) {
       handleDeleteFeedback();
     }
-  }, [request?.id, csrf])
+  }, [recipientId, csrf])
 
   const Submitted = () => {
     if (request.dueDate) {
@@ -135,7 +137,7 @@ const FeedbackRequestSubcard = ({ request }) => {
             alignItems="center"
             className="no-wrap">
             <Grid item>
-              <Avatar style={{marginRight: "1em"}} src={getAvatarURL(recipient?.workEmail)}/>
+              <Avatar style={{marginRight: "1em"}} src={getAvatarURL(recipientEmail)}/>
             </Grid>
             <Grid item xs className="small-margin">
               <Typography className="person-name">{recipient?.name}</Typography>
