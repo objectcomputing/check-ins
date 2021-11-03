@@ -1,12 +1,14 @@
-import React, {useContext} from "react";
+import React, {useContext, useCallback} from "react";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import {sendReminderNotification} from "../../../api/notifications";
+import {deleteFeedbackRequestById} from "../../../api/feedback";
 import IconButton from "@material-ui/core/IconButton";
 import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
+import TrashIcon from "@material-ui/icons/Delete";
 import {AppContext} from "../../../context/AppContext";
 import {selectCsrfToken, selectProfile} from "../../../context/selectors";
 import {Avatar, Tooltip} from "@material-ui/core";
@@ -46,8 +48,8 @@ const FeedbackRequestSubcard = ({ request }) => {
   dueDate = dueDate ? dateFns.format(new Date(dueDate.join("-")), "LLLL dd, yyyy"): null;
   sendDate = dateFns.format(new Date(sendDate.join("-")), "LLLL dd, yyyy");
 
-  const handleReminderNotification = async () => {
-    if (csrf) {
+  const handleReminderClick = useCallback(() => {
+    const handleReminderNotification = async () => {
       let res = await sendReminderNotification(request.id, [recipient.workEmail], csrf);
       let reminderResponse =
         res &&
@@ -71,12 +73,42 @@ const FeedbackRequestSubcard = ({ request }) => {
           },
         });
       }
+    };
+    if (csrf) {
+      handleReminderNotification();
     }
-  }
+  }, [request.id, recipient.workEmail, csrf]);
 
-  const handleReminderClick = () => {
-    handleReminderNotification();
-  }
+  const handleDeleteClick = useCallback(() => {
+    const handleDeleteFeedback = async () => {
+      let res = await deleteFeedbackRequestById(request.id, csrf);
+      let reminderResponse =
+        res &&
+        res.payload &&
+        res.payload.status === 200 &&
+        !res.error
+      if (reminderResponse) {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "success",
+            toast: "Feedback request deleted."
+          },
+        });
+      } else {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "There was an error deleting the feedback request. Please contact your administrator."
+          },
+        });
+      }
+    };
+    if (csrf) {
+      handleDeleteFeedback();
+    }
+  }, [request.id, csrf])
 
   const Submitted = () => {
     if (request.dueDate) {
@@ -118,6 +150,15 @@ const FeedbackRequestSubcard = ({ request }) => {
             </Grid>
             <Grid item xs={2} className="align-end">
               {request && !request.submitDate &&
+                <>
+                <Tooltip title={"Delete Request"} aria-label={"Delete Request"}>
+                  <IconButton
+                    onClick={handleDeleteClick}
+                    aria-label="Delete Request"
+                  label = "Delete Request">
+                    <TrashIcon/>
+                  </IconButton>
+                </Tooltip>
                 <Tooltip title={"Send Reminder"} aria-label={"Send Reminder"}>
                   <IconButton
                     onClick={handleReminderClick}
@@ -126,6 +167,7 @@ const FeedbackRequestSubcard = ({ request }) => {
                     <NotificationsActiveIcon/>
                   </IconButton>
                 </Tooltip>
+                </>
               }
               {request && request.submitDate && request.id
                 ? <Link to={`/feedback/view/responses/?request=${request.id}`} className="response-link">View response</Link>
