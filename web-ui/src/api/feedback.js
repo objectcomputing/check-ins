@@ -34,6 +34,15 @@ export const updateFeedbackRequest = async (feedbackRequest, cookie) => {
   });
 };
 
+export const deleteFeedbackRequestById = async (id, cookie) => {
+  return resolve({
+    method: "delete",
+    url: `${feedbackRequestURL}/${id}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+};
+
 export const getFeedbackRequestById = async (id, cookie) => {
   return resolve({
     url: `${feedbackRequestURL}/${id}`,
