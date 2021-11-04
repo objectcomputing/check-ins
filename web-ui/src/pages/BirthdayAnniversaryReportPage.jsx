@@ -36,7 +36,7 @@ const BirthdayAnniversaryReportPage = () => {
   const [searchBirthdayResults, setSearchBirthdayResults] = useState([]);
   const [searchAnniversaryResults, setSearchAnniversaryResults] = useState([]);
   const currentMonth = new Date().getMonth();
-  const [selectedMonth, setSelectedMonth] = useState(months[currentMonth]);
+  const [selectedMonths, setSelectedMonths] = useState([months[currentMonth]]);
   const [hasSearched, setHasSearched] = useState(false);
 
   const handleBirthday = () => {
@@ -47,10 +47,10 @@ const BirthdayAnniversaryReportPage = () => {
     setAnniversary(!anniversary);
   };
 
-  const handleSearch = async (monthToSearch) => {
+  const handleSearch = async (monthsToSearch) => {
     let anniversaryResults;
     let birthdayResults;
-    const { month } = monthToSearch;
+    const months = monthsToSearch.map((m) => m.month);
     if (!birthday && !anniversary) {
       window.snackDispatch({
         type: UPDATE_TOAST,
@@ -62,40 +62,54 @@ const BirthdayAnniversaryReportPage = () => {
       return;
     }
     if (!birthday) {
-      anniversaryResults = await getAnniversary(month, csrf);
+      anniversaryResults = await getAnniversary(months, csrf);
       setSearchAnniversaryResults(anniversaryResults.payload.data);
       setSearchBirthdayResults([]);
     } else if (!anniversary) {
-      birthdayResults = await getBirthday(month, csrf);
+      birthdayResults = await getBirthday(months, csrf);
       setSearchBirthdayResults(birthdayResults.payload.data);
       setSearchAnniversaryResults([]);
     } else {
-      anniversaryResults = await getAnniversary(month, csrf);
-      birthdayResults = await getBirthday(month, csrf);
-      setSearchBirthdayResults(birthdayResults.payload.data.sort((a,b)=>Number(b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)) - Number(a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length))));
-      setSearchAnniversaryResults(anniversaryResults.payload.data.sort((a,b)=>b.yearsOfService - a.yearsOfService));
+      anniversaryResults = await getAnniversary(months, csrf);
+      birthdayResults = await getBirthday(months, csrf);
+      setSearchBirthdayResults(
+        birthdayResults.payload.data.sort(
+          (a, b) =>
+            Number(
+              b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)
+            ) -
+            Number(
+              a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length)
+            )
+        )
+      );
+      setSearchAnniversaryResults(
+        anniversaryResults.payload.data.sort(
+          (a, b) => b.yearsOfService - a.yearsOfService
+        )
+      );
     }
     setHasSearched(true);
   };
 
   function onMonthChange(event, newValue) {
-    setSelectedMonth(newValue !== null ? newValue : months[currentMonth].month);
+    setSelectedMonths(newValue);
   }
 
   return (
     <div>
       <div className="select-month">
         <Autocomplete
+          multiple
           id="monthSelect"
           options={months}
-          value={selectedMonth ? selectedMonth : months[currentMonth].month}
+          defaultValue={months[currentMonth].month}
+          value={selectedMonths}
           onChange={onMonthChange}
-          getOptionSelected={(option, value) =>
-            value ? value.id === option.id : false
-          }
-          getOptionLabel={(option) =>
-            option.month || months[currentMonth].month
-          }
+          getOptionSelected={(option, value) => {
+            return value ? value.month === option.month : false;
+          }}
+          getOptionLabel={(option) => option.month}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -109,7 +123,7 @@ const BirthdayAnniversaryReportPage = () => {
       <div className="birthday-anniversary-search halfWidth">
         <Button
           onClick={() => {
-            if (!selectedMonth) {
+            if (!selectedMonths) {
               window.snackDispatch({
                 type: UPDATE_TOAST,
                 payload: {
@@ -119,7 +133,7 @@ const BirthdayAnniversaryReportPage = () => {
               });
               return;
             }
-            handleSearch(selectedMonth);
+            handleSearch(selectedMonths);
           }}
           color="primary"
         >
