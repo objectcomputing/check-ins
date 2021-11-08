@@ -49,7 +49,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: web-ui
-          config: pageLoadTimeout=100000,baseUrl=http://host.docker.internal:8080
+          config: pageLoadTimeout=100000,baseUrl=http://host.docker.internal:8080/oauth/login/google
       - name: Sleep for 30 seconds
         uses: jakejarvis/wait-action@master
         with:
