@@ -2,7 +2,7 @@
 describe("Tests that login page exists and functions properly", () => {
 
   it("ensure components are displayed on home page before login", () => {
-    cy.visit("/oauth/login/google");
+    cy.visit("/login");
     cy.get("form");
     cy.get('input[name="email"]')                     // Ensure input for email exists
       .type("sharmag@objectcomputing.com")

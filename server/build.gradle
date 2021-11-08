@@ -174,5 +174,5 @@ dockerRun {
     name 'check-ins-server'
     image 'check-ins-server'
     ports '8080:8080'
-    env 'DIRECTORY_ID':'bogus', 'MICRONAUT_ENVIRONMENTS':'integration', 'AES_KEY':'1462A8C8DD3A8FD9484BA067C46A0D22668C48C941EA205411B13C17BA83E58F', 'JDBC_URL':'jdbc:postgresql://172.17.0.1:5432/checkinsdb'
+    env 'DIRECTORY_ID':'bogus', 'MICRONAUT_ENVIRONMENTS':'test,integration', 'AES_KEY':'1462A8C8DD3A8FD9484BA067C46A0D22668C48C941EA205411B13C17BA83E58F', 'JDBC_URL':'jdbc:postgresql://172.17.0.1:5432/checkinsdb'
 }
