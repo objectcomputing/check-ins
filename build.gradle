@@ -33,7 +33,7 @@ sonarqube {
     }
 }
 
-project(":server") {
+project(":check-ins-server") {
     assemble {
         dependsOn ":web-ui:assemble"
     }
@@ -56,7 +56,7 @@ project(":web-ui") {
     }
 }
 
-project.tasks["sonarqube"].dependsOn ":web-ui:yarn_run_coverage", ":server:jacocoTestReport"
+project.tasks["sonarqube"].dependsOn ":web-ui:yarn_run_coverage", ":check-ins-server:jacocoTestReport"
 ////// ################### SONARCLOUD PLUGIN END#########################
 
 
@@ -95,7 +95,3 @@ publishing {
         }
     }
 }
-
-
-
-

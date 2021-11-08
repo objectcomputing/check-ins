@@ -9,6 +9,9 @@ import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
+import com.objectcomputing.checkins.util.Util;
+import com.objectcomputing.checkins.Environments;
+
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
