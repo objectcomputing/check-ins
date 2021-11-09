@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.memberprofile.anniversaryreport;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.fixture.*;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -19,8 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -43,10 +42,11 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
         createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?month=%s", encodeValue("dnc"))).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+                GET(String.format("/?month=%s", encodeValue(memberProfileOfAdmin.getStartDate().getMonth().toString()))).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<List<AnniversaryReportResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(AnniversaryReportResponseDTO.class));
 
+        assertEquals(memberProfileOfAdmin.getId(), Objects.requireNonNull(response.body()).get(0).getUserId());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
@@ -73,13 +73,11 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         createAndAssignAdminRole(memberProfileOfAdmin);
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
         final HttpRequest<Object> request = HttpRequest.GET("").basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<List<AnniversaryReportResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(AnniversaryReportResponseDTO.class));
 
-        assertEquals(memberProfileOfAdmin.getId(), response.body().get(0).getUserId());
-        assertEquals(memberProfile.getId(), response.body().get(1).getUserId());
+        assertEquals(0, Objects.requireNonNull(response.body()).size());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 }

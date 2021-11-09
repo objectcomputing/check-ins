@@ -4,7 +4,12 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
-import com.objectcomputing.checkins.services.fixture.*;
+import com.objectcomputing.checkins.services.fixture.FeedbackAnswerFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.fixture.TemplateQuestionFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
@@ -14,15 +19,17 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FeedbackAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture, FeedbackTemplateFixture, TemplateQuestionFixture {
 
@@ -30,8 +37,13 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     @Client("/services/feedback/answers")
     HttpClient client;
 
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
+
     public FeedbackAnswer createSampleAnswer(MemberProfile sender, MemberProfile recipient) {
-        createAndAssignRole(RoleType.PDL, sender);
+        assignPdlRole(sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createADefaultSupervisor();
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
@@ -77,7 +89,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     @Test
     void testPostAnswerByAdminUnauthorized() {
         MemberProfile admin = createADefaultMemberProfile();
-        createAndAssignAdminRole(admin);
+        assignAdminRole(admin);
 
         MemberProfile sender = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
@@ -144,7 +156,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     @Test
     void testUpdateByAdminUnauthorized() {
         MemberProfile admin = createADefaultMemberProfile();
-        createAndAssignAdminRole(admin);
+        assignAdminRole(admin);
         MemberProfile sender = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
@@ -222,7 +234,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     void testGetByRequestAndQuestionIdAuthorizedRequestOnly() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createAndAssignRole(RoleType.PDL, sender);
+        assignPdlRole(sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createADefaultSupervisor();
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());

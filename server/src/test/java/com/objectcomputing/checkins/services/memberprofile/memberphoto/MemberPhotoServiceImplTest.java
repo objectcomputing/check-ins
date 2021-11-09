@@ -1,11 +1,12 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.UserPhoto;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.context.env.Environment;
-import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,8 +59,8 @@ public class MemberPhotoServiceImplTest {
     private MemberPhotoServiceImpl services;
 
     @BeforeAll
-    void initMocks() {
-        MockitoAnnotations.initMocks(this);
+    void initMocks() throws IOException {
+        MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
@@ -103,24 +104,19 @@ public class MemberPhotoServiceImplTest {
     }
 
     @Test
-    public void testDirectoryServiceThrowsIOException() throws IOException {
+    public void testDirectoryServiceThrowsGoogleJsonResponseException() throws IOException {
         String testEmail = "test@test.com";
-        String testPhotoData = "test.photo.data";
-        InputStream testInputStream = new ByteArrayInputStream(testPhotoData.getBytes(StandardCharsets.UTF_8));
-        final URL mockUrl = this.setupUrl();
 
         when(mockGoogleApiAccess.getDirectory()).thenReturn(mockDirectory);
         when(mockDirectory.users()).thenReturn(mockUsers);
         when(mockUsers.photos()).thenReturn(mockPhotos);
         when(mockPhotos.get(testEmail)).thenReturn(mockGet);
-        when(mockGet.execute()).thenThrow(IOException.class);
-        when(mockEnvironment.getResource(anyString())).thenReturn(Optional.of(mockUrl));
-        when(mockUrl.openStream()).thenReturn(testInputStream);
+        when(mockGet.execute()).thenThrow(GoogleJsonResponseException.class);
 
         final byte[] result = services.getImageByEmailAddress(testEmail);
 
         assertNotNull(result);
-        assertEquals(testPhotoData, new String(result, StandardCharsets.UTF_8));
+        assertEquals("", new String(result, StandardCharsets.UTF_8));
         verify(mockGoogleApiAccess, times(1)).getDirectory();
         verify(mockGet, times(1)).execute();
     }

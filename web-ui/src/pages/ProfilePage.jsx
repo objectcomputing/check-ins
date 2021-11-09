@@ -43,6 +43,8 @@ const ProfilePage = () => {
   const [bio, setBio] = useState();
   const [myHours, setMyHours] = useState(null);
 
+  const myTeams = selectMyTeams(state);
+
   const myGuilds = selectMyGuilds(state);
 
   useEffect(() => {
@@ -153,17 +155,10 @@ const ProfilePage = () => {
     [guilds]
   );
 
-  const subheader = (
-    <>
-      As Of: {new Date(myHours?.asOfDate).toLocaleDateString()} <br />
-      Updated On: {new Date(myHours?.updatedDate).toLocaleDateString()}
-    </>
-  );
-
   return (
     <div className="Profile">
       <Profile memberId={id} pdlId={pdlId} />
-      <div className="profile-grid">
+      <div class="profile-grid">
         <div className="profile-page-bio">
           <Card>
             <CardHeader
@@ -180,26 +175,29 @@ const ProfilePage = () => {
                 multiline
                 rows={3}
                 fullWidth
-                variant="standard"
               />
             </CardContent>
-        </Card>
+          </Card>
         </div>
-        {myHours && (
+        {myHours ? (
           <div className="profile-hours">
-            <Card>
-              <CardHeader
-                avatar={<Info />}
-                subheader={`As Of: ${new Date(
-                  myHours?.asOfDate
-                ).toLocaleDateString()}`}
-                title="Contribution Hours"
-              />
-              <CardContent>
-                <ProgressBar {...myHours} />
-              </CardContent>
-            </Card>
+            {myHours && (
+              <Card>
+                <CardHeader
+                  avatar={<Info />}
+                  subheader={`As Of: ${new Date(
+                    myHours?.asOfDate
+                  ).toLocaleDateString()}`}
+                  title="Contribution Hours"
+                />
+                <CardContent>
+                  <ProgressBar {...myHours} />
+                </CardContent>
+              </Card>
+            )}
           </div>
+        ) : (
+          ""
         )}
         <div className="profile-guilds">
           <Card style={{ minHeight: 150 }}>
@@ -224,7 +222,7 @@ const ProfilePage = () => {
                 required
                 value={myGuilds}
                 renderInput={(params) => (
-                  <TextField {...params} placeholder="Join a guild..."/>
+                  <TextField {...params} placeholder="Join a guild..." />
                 )}
               />
             </CardContent>
@@ -233,14 +231,14 @@ const ProfilePage = () => {
         <div className="profile-teams">
           <Card>
             <CardHeader
-              avatar={<GroupIcon/>}
+              avatar={<GroupIcon />}
               title="Teams"
-              titleTypographyProps={{variant: "h5", component: "h1"}}
+              titleTypographyProps={{ variant: "h5", component: "h1" }}
             />
             <CardContent>
               <div className="profile-teams">
-                {myTeams.length > 0
-                  ? myTeams.map((team) => (
+                {myTeams.length > 0 ? (
+                  myTeams.map((team) => (
                     <Chip
                       className="chip"
                       // color="primary"
@@ -248,8 +246,9 @@ const ProfilePage = () => {
                       label={team.name}
                     />
                   ))
-                  : <h3>No teams found</h3>
-                }
+                ) : (
+                  <h3>No teams found</h3>
+                )}
               </div>
             </CardContent>
           </Card>

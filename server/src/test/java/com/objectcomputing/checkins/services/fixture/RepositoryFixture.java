@@ -23,6 +23,7 @@ import com.objectcomputing.checkins.services.question_category.QuestionCategoryR
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleRepository;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionRepository;
 import com.objectcomputing.checkins.services.settings.SettingsRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
@@ -168,5 +169,9 @@ public interface RepositoryFixture {
 
     default PermissionRepository getPermissionRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(PermissionRepository.class);
+    }
+
+    default RolePermissionRepository getRolePermissionRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(RolePermissionRepository.class);
     }
 }

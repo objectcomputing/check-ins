@@ -55,7 +55,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     public MemberProfile getCurrentUser() {
         if (securityService != null) {
             Optional<Authentication> auth = securityService.getAuthentication();
-            if (auth.isPresent()) {
+            if (auth.isPresent() && auth.get().getAttributes().get("email") != null) {
                 String workEmail = auth.get().getAttributes().get("email").toString();
                 return memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
             }

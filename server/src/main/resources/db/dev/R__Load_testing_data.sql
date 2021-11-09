@@ -438,7 +438,20 @@ insert into permissions
 values
     ('0f299d11-df47-406f-a426-8e3160eaeb21', 'CAN_DELETE_ORGANIZATION_MEMBERS');
 
+insert into permissions
+    (id, permission)
+values
+    ('008f6641-0b0a-4e89-84f0-c580f912b80d', 'CAN_VIEW_FEEDBACK');
 
+insert into permissions
+    (id, permission)
+values
+    ('1bf32dfe-a204-4c80-889e-829ca66c999b', 'CAN_CREATE_FEEDBACK');
+
+insert into permissions
+    (id, permission)
+values
+    ('a574feb9-f2d4-4cbf-9353-bfaccdffa74f', 'CAN_DELETE_FEEDBACK');
 
 insert into role_permissions
     (roleid, permissionid)
@@ -453,8 +466,52 @@ values
 insert into role_permissions
     (roleid, permissionid)
 values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '008f6641-0b0a-4e89-84f0-c580f912b80d');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1bf32dfe-a204-4c80-889e-829ca66c999b');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '008f6641-0b0a-4e89-84f0-c580f912b80d');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '1bf32dfe-a204-4c80-889e-829ca66c999b');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '439ad8a8-500f-4f3f-963b-a86437d5820a');
 
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '008f6641-0b0a-4e89-84f0-c580f912b80d');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '1bf32dfe-a204-4c80-889e-829ca66c999b');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f');
 
 INSERT INTO feedback_templates
 (id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
