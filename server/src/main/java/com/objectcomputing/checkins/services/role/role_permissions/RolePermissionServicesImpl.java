@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.role.RoleServices;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Singleton
 public class RolePermissionServicesImpl implements RolePermissionServices {
@@ -34,7 +35,8 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
             List<Permission> permissionsAssociatedWithRole = new ArrayList<>();
             for(RolePermission rolePermission : records) {
                 if(role.getId().equals(rolePermission.getRoleId())) {
-                    permissionsAssociatedWithRole.add(permissions.stream().filter(s-> s.getId().equals(rolePermission.getPermissionId())).findFirst().get());
+                    Optional<Permission> permission = permissions.stream().filter(s-> s.getId().equals(rolePermission.getPermissionId())).findFirst();
+                    permission.ifPresent(permissionsAssociatedWithRole::add);
                 }
             }
 
