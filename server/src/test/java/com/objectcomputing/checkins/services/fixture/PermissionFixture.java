@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.security.permissions.Permissions;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PermissionFixture extends RepositoryFixture, RolePermissionFixture {
@@ -12,7 +13,8 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
     List<Permissions> memberPermissions = List.of(
             Permissions.CAN_VIEW_FEEDBACK_REQUEST,
             Permissions.CAN_DELETE_FEEDBACK_REQUEST,
-            Permissions.CAN_VIEW_FEEDBACK_ANSWER
+            Permissions.CAN_VIEW_FEEDBACK_ANSWER,
+            Permissions.CAN_VIEW_PERMISSIONS
     );
 
     // Add PDL Permissions here
@@ -20,7 +22,8 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
             Permissions.CAN_VIEW_FEEDBACK_REQUEST,
             Permissions.CAN_CREATE_FEEDBACK_REQUEST,
             Permissions.CAN_DELETE_FEEDBACK_REQUEST,
-            Permissions.CAN_VIEW_FEEDBACK_ANSWER
+            Permissions.CAN_VIEW_FEEDBACK_ANSWER,
+            Permissions.CAN_VIEW_PERMISSIONS
     );
 
     // Add ADMIN Permissions here
@@ -30,19 +33,13 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
             Permissions.CAN_DELETE_FEEDBACK_REQUEST,
             Permissions.CAN_VIEW_FEEDBACK_ANSWER,
             Permissions.CAN_DELETE_ORGANIZATION_MEMBERS,
-            Permissions.CAN_CREATE_ORGANIZATION_MEMBERS
+            Permissions.CAN_CREATE_ORGANIZATION_MEMBERS,
+            Permissions.CAN_VIEW_ROLE_PERMISSIONS,
+            Permissions.CAN_VIEW_PERMISSIONS
     );
 
-    default Permission createADefaultPermission() {
-        return getPermissionRepository().save(new Permission(null,"A sample permission", "sample description"));
-    }
-
-    default Permission createADifferentPermission() {
-        return getPermissionRepository().save(new Permission(null,"Other sample permission", "Other sample description"));
-    }
-
-    default Permission createACustomPermission(String name) {
-        return getPermissionRepository().save(new Permission(null, name, null));
+    default Permission createACustomPermission(Permissions perm) {
+        return getPermissionRepository().save(new Permission(null, perm.name(), null));
     }
 
     default void saveAllPermissions() {
@@ -54,21 +51,24 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
     default void setPermissionsForAdmin(UUID roleID) {
         List<Permission> permissions = getPermissionRepository().findAll();
         for(Permissions adminPermission : adminPermissions) {
-            setRolePermission(roleID, permissions.stream().filter(s -> s.getPermission().equals(adminPermission.name())).findFirst().get().getId());
+            Optional<Permission> permission = permissions.stream().filter(s -> s.getPermission().equals(adminPermission.name())).findFirst();
+            permission.ifPresent(value -> setRolePermission(roleID, value.getId()));
         }
     }
 
     default void setPermissionsForPdl(UUID roleID) {
         List<Permission> permissions = getPermissionRepository().findAll();
         for(Permissions pdlPermission : pdlPermissions) {
-            setRolePermission(roleID, permissions.stream().filter(s -> s.getPermission().equals(pdlPermission.name())).findFirst().get().getId());
+            Optional<Permission> permission = permissions.stream().filter(s -> s.getPermission().equals(pdlPermission.name())).findFirst();
+            permission.ifPresent(value -> setRolePermission(roleID, value.getId()));
         }
     }
 
     default void setPermissionsForMember(UUID roleID) {
         List<Permission> permissions = getPermissionRepository().findAll();
         for(Permissions memberPermission : memberPermissions) {
-            setRolePermission(roleID, permissions.stream().filter(s -> s.getPermission().equals(memberPermission.name())).findFirst().get().getId());
+            Optional<Permission> permission = permissions.stream().filter(s -> s.getPermission().equals(memberPermission.name())).findFirst();
+            permission.ifPresent(value -> setRolePermission(roleID, value.getId()));
         }
     }
 }

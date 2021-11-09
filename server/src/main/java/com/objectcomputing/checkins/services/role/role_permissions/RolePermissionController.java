@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutorService;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Role Permissions")
-@Controller("/services/roles/permissions")
+@Controller("/services/roles/role-permissions")
 public class RolePermissionController {
 
     private final RolePermissionServices rolePermissionServices;

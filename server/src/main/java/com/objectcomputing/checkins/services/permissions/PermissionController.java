@@ -40,7 +40,7 @@ public class PermissionController {
      * @return {@link List < Permission > list of Permissions}
      */
     @RequiredPermission(Permissions.CAN_VIEW_PERMISSIONS)
-    @Get
+    @Get("/OrderByPermission")
     public Single<HttpResponse<List<Permission>>> listOrderByPermission() {
 
         return Single.fromCallable(permissionServices::listOrderByPermission)
