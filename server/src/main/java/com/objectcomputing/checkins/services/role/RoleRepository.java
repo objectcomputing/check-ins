@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.role;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
@@ -36,5 +37,9 @@ public interface RoleRepository extends CrudRepository<Role, UUID> {
 
     @Override
     <S extends Role> S save(@Valid @NotNull @NonNull S entity);
+
+    @Query("SELECT * " +
+            "from role " )
+    List<Role> findAll();
 
 }

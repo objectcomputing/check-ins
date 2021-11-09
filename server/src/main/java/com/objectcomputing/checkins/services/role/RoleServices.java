@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.role;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -17,4 +18,6 @@ public interface RoleServices {
     Optional<Role> findByRole(String role);
 
     Set<Role> findUserRoles(UUID memberId);
+
+    List<Role> findAllRoles();
 }

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.permissions;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
@@ -38,10 +39,26 @@ public class PermissionController {
      *
      * @return {@link List < Permission > list of Permissions}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_PERMISSIONS)
     @Get
     public Single<HttpResponse<List<Permission>>> listOrderByPermission() {
 
         return Single.fromCallable(permissionServices::listOrderByPermission)
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
+                .subscribeOn(Schedulers.from(ioExecutorService));
+    }
+
+    /**
+     * Get all permissions
+     *
+     * @return {@link List < Permission > list of Permissions}
+     */
+    @RequiredPermission(Permissions.CAN_VIEW_PERMISSIONS)
+    @Get
+    public Single<HttpResponse<List<Permission>>> getAllPermissions() {
+
+        return Single.fromCallable(permissionServices::findAll)
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
                 .subscribeOn(Schedulers.from(ioExecutorService));
