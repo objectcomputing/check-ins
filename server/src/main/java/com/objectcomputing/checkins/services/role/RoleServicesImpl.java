@@ -68,6 +68,6 @@ public class RoleServicesImpl implements RoleServices {
     }
 
     public List<Role> findAllRoles() {
-        return roleRepo.findAll();
+        return (List<Role>) roleRepo.findAll();
     }
 }

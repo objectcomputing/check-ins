@@ -103,17 +103,17 @@ VALUES
 INSERT INTO role
     (id, description, role)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'is an admin', 'ADMIN');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', PGP_SYM_ENCRYPT('is an admin','${aeskey}'), 'ADMIN');
 
 INSERT INTO role
     (id, description, role)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'is a member', 'MEMBER');
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', PGP_SYM_ENCRYPT('is a member','${aeskey}'), 'MEMBER');
 
 INSERT INTO role
     (id, description, role)
 VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'is a pdl', 'PDL');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', PGP_SYM_ENCRYPT('is a pdl','${aeskey}'), 'PDL');
 
 
 
