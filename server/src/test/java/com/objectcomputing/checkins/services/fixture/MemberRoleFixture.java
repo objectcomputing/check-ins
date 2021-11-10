@@ -6,7 +6,6 @@ import com.objectcomputing.checkins.services.role.member_roles.MemberRole;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleId;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public interface MemberRoleFixture extends RepositoryFixture {
 

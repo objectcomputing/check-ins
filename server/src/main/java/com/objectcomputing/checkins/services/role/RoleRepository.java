@@ -16,12 +16,12 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface RoleRepository extends CrudRepository<Role, UUID> {
 
-    @Query("SELECT * " +
+    @Query("SELECT DISTINCT role.id, role.role,  PGP_SYM_DECRYPT(cast(role.description as bytea), '${aes.key}') as description  " +
             "from role " +
             "WHERE LOWER(role.role) = LOWER(:role)")
     Optional<Role> findByRole(String role);
 
-    @Query("SELECT DISTINCT role.id, role.role, role.description  " +
+    @Query("SELECT DISTINCT role.id, role.role,  PGP_SYM_DECRYPT(cast(role.description as bytea), '${aes.key}') as description  " +
             "FROM member_profile " +
             "JOIN member_roles " +
             "    ON member_profile.id = member_roles.memberid " +
