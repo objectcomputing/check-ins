@@ -1,4 +1,7 @@
 .submit-form {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
     margin-top: 3em;
     margin-left: 2em;
     margin-right: 2em;
@@ -9,6 +12,11 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+}
+
+.feedback-submit-question {
+    width: calc(100% - 6em);
+    margin: .75em 0em;
 }
 
 .wrapper {
