@@ -32,9 +32,9 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     });
   };
 
-  const birthDay = editedMember?.birthDay;
+  const birthDay = editedMember?.birthDay || null;
 
-  const terminationDate = editedMember?.terminationDate;
+  const terminationDate = editedMember?.terminationDate || null;
 
   const startDate = editedMember?.startDate;
 
