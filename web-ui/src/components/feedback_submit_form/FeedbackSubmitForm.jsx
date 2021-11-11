@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
@@ -136,6 +136,15 @@ const getSliderValue = (marks, text) => {
   return value;
 }
 
+const realUpdateAnswer = async (answer, csrf) => {
+    if (csrf) {
+      const res = updateSingleAnswer(answer, csrf);
+      return res;
+    }
+};
+
+const updateFeedbackAnswer = debounce(realUpdateAnswer, 1000);
+
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
@@ -146,12 +155,10 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const [templateTitle, setTemplateTitle] = useState(null)
   let currentlyBeingEdited = -1
 
-  const updateAnswer = debounce(async () => {
-    if (csrf) {
-      const res = updateSingleAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf)
-      return res;
-    }
-  }, 1000)
+  const updateAnswer = useCallback(
+    () => updateFeedbackAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf),
+    [questionAnswerPairs, currentlyBeingEdited, csrf]
+  );
 
   async function updateRequestSubmit() {
     request.status = "submitted"
