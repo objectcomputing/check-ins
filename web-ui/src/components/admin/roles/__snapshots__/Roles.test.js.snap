@@ -17,16 +17,16 @@ exports[`renders correctly 1`] = `
           Roles
         </h2>
         <div
-          className="MuiFormControl-root MuiTextField-root role-search"
+          className="MuiFormControl-root MuiTextField-root role-search MuiFormControl-fullWidth"
         >
           <label
             className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
             data-shrink={false}
           >
-            Search Roles...
+            Search Roles
           </label>
           <div
-            className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+            className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl"
             onClick={[Function]}
           >
             <input
@@ -38,7 +38,7 @@ exports[`renders correctly 1`] = `
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
-              placeholder="Role Name"
+              placeholder="Role"
               required={false}
               type="text"
               value=""

@@ -46,6 +46,7 @@ micronaut:
           - isAuthenticated()
     reject-not-found: false
     redirect:
+      prior-to-login: true
       login-success: /
       on-rejection: /oauth/login/google
       unauthorized:
@@ -91,7 +92,6 @@ flyway:
       placeholders:
         aeskey: ${ AES_KEY }
 ---
-
 service-account-credentials:
   directory_id: ${ DIRECTORY_ID }
   type: ${ TYPE }
@@ -111,8 +111,10 @@ ehcache:
   caches:
     photo-cache:
       enabled: true
-
 ---
 mail-jet:
   from_address: ${ FROM_ADDRESS }
   from_name: ${ FROM_NAME }
+---
+github-credentials:
+  github_token: ${ GITHUB_TOKEN }

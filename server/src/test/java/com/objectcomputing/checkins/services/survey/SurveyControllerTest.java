@@ -37,7 +37,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     public void testCreateASurvey(){
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -80,7 +80,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testCreateSurveyForNonExistingMember(){
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
         surveyResponseCreateDTO.setName("Name");
@@ -118,7 +118,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testCreateASurveyForInvalidDate() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
@@ -142,7 +142,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     public void testGETFindByValueName() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -157,7 +157,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     public void testGetFindByCreatedBy() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -173,7 +173,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     public void testGetFindAll() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -191,7 +191,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testFindSurveyAllParams(){
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -208,7 +208,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testSurveyDoesNotExist() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s",UUID.randomUUID())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
@@ -221,7 +221,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testUpdateSurvey(){
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -239,7 +239,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testUpdateNonExistingSurvey(){
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -263,7 +263,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testUpdateNotExistingMemberSurvey(){
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -287,7 +287,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testUpdateNotMemberSurveyWithoutId(){
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -339,7 +339,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testUpdateInvalidDateSurvey(){
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -437,7 +437,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void deleteTeamByMember() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 

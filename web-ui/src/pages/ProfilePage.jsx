@@ -6,6 +6,7 @@ import {
   selectCurrentUser,
   selectMyGuilds,
   selectUserProfile,
+  selectMyTeams,
 } from "../context/selectors";
 import {
   UPDATE_GUILD,
@@ -24,7 +25,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Grid,
+  Chip,
   TextField,
 } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
@@ -47,6 +48,8 @@ const ProfilePage = () => {
 
   const [bio, setBio] = useState();
   const [myHours, setMyHours] = useState(null);
+
+  const myTeams = selectMyTeams(state);
 
   const myGuilds = selectMyGuilds(state);
 
@@ -161,33 +164,35 @@ const ProfilePage = () => {
   return (
     <div className="Profile">
       <Profile memberId={id} pdlId={pdlId} />
-      <Card>
-        <CardHeader
-          avatar={<Info />}
-          title="Bio"
-          titleTypographyProps={{ variant: "h5", component: "h2" }}
-        />
-        <CardContent>
-          <TextField
-            onChange={handleBioChange}
-            value={bio}
-            id="Bio"
-            style={{ margin: 8 }}
-            placeholder="Tell us about yourself..."
-            multiline
-            fullWidth
-          />
-        </CardContent>
-      </Card>
-      <Grid container spacing={3}>
+      <div class="profile-grid">
+        <div className="profile-page-bio">
+          <Card>
+            <CardHeader
+              avatar={<Info />}
+              title="Bio"
+              titleTypographyProps={{ variant: "h5", component: "h2" }}
+            />
+            <CardContent>
+              <TextField
+                onChange={handleBioChange}
+                value={bio}
+                id="Bio"
+                placeholder="Tell us about yourself..."
+                multiline
+                rows={3}
+                fullWidth
+              />
+            </CardContent>
+          </Card>
+        </div>
         {myHours ? (
-          <Grid item xs>
+          <div className="profile-hours">
             {myHours && (
-              <Card style={{ minHeight: 150 }}>
+              <Card>
                 <CardHeader
                   avatar={<Info />}
-                  subheader={`Updated On: ${new Date(
-                    myHours.updatedDate
+                  subheader={`As Of: ${new Date(
+                    myHours?.asOfDate
                   ).toLocaleDateString()}`}
                   title="Contribution Hours"
                 />
@@ -196,11 +201,11 @@ const ProfilePage = () => {
                 </CardContent>
               </Card>
             )}
-          </Grid>
+          </div>
         ) : (
           ""
         )}
-        <Grid item xs>
+        <div className="profile-guilds">
           <Card style={{ minHeight: 150 }}>
             <CardHeader
               avatar={<GroupIcon />}
@@ -223,16 +228,38 @@ const ProfilePage = () => {
                 required
                 value={myGuilds}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="Join a guild..."
-                  />
+                  <TextField {...params} placeholder="Join a guild..." />
                 )}
               />
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </div>
+        <div className="profile-teams">
+          <Card>
+            <CardHeader
+              avatar={<GroupIcon />}
+              title="Teams"
+              titleTypographyProps={{ variant: "h5", component: "h1" }}
+            />
+            <CardContent>
+              <div className="profile-teams">
+                {myTeams.length > 0 ? (
+                  myTeams.map((team) => (
+                    <Chip
+                      className="chip"
+                      // color="primary"
+                      key={team.id}
+                      label={team.name}
+                    />
+                  ))
+                ) : (
+                  <h3>No teams found</h3>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>

@@ -51,12 +51,14 @@ public class CheckInServicesImpl implements CheckInServices {
             throw new NotFoundException(String.format("Checkin %s not found", checkinId));
         });
 
-        Set<Role> memberRoles = roleServices.findByFields(RoleType.ADMIN, memberTryingToGainAccess.getId());
-        boolean isAdmin = !memberRoles.isEmpty();
+        boolean isAdmin = false;
+        if (roleServices.findByRole(RoleType.ADMIN.name()).isPresent()){
+            isAdmin = roleServices.findUserRoles(memberTryingToGainAccess.getId())
+                    .contains(roleServices.findByRole(RoleType.ADMIN.name()).get());
+            LOG.debug("Member is Admin: {}", isAdmin);
+        }
 
-        LOG.debug("Member is Admin: {}", isAdmin);
-
-        if (isAdmin) {
+        if(isAdmin){
             grantAccess = true;
         } else {
             MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {

@@ -41,10 +41,10 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
     public void testGetSucceedAdmin() {
         final Feedback feedback = setupGet(true);
         final MemberProfile admin = getMemberProfileRepository().save(mkMemberProfile("admin"));
-        final Role role = createDefaultAdminRole(admin);
+        final Role role = createAndAssignAdminRole(admin);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedback.getId()))
-                .basicAuth(admin.getWorkEmail(), role.getRole().name());
+                .basicAuth(admin.getWorkEmail(), role.getRole());
         final HttpResponse<FeedbackResponseDTO> response = client.toBlocking().exchange(request, FeedbackResponseDTO.class);
 
         assertEntityEqualsResponse(feedback, response.body());
@@ -134,10 +134,10 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
     public void testFindAllAdmin() {
         final List<Feedback> feedbacks = setupFind();
         final MemberProfile admin = getMemberProfileRepository().save(mkMemberProfile("admin"));
-        final Role role = createDefaultAdminRole(admin);
+        final Role role = createAndAssignAdminRole(admin);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(admin.getWorkEmail(), role.getRole().name());
+                .basicAuth(admin.getWorkEmail(), role.getRole());
         final HttpResponse<List<FeedbackResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackResponseDTO.class));
 
@@ -206,10 +206,10 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
         final Feedback toAlice = createFeedback("A private feedback", alice, bob, true);
         final Feedback toBob = createFeedback("Another private feedback", bob, alice, true);
         final MemberProfile admin = getMemberProfileRepository().save(mkMemberProfile("boss"));
-        final Role role = createDefaultAdminRole(admin);
+        final Role role = createAndAssignAdminRole(admin);
 
         HttpRequest<?> request = HttpRequest.GET(String.format("/?confidential=true"))
-                .basicAuth(admin.getWorkEmail(), role.getRole().name());
+                .basicAuth(admin.getWorkEmail(), role.getRole());
         HttpResponse<List<FeedbackResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackResponseDTO.class));
 
@@ -224,7 +224,7 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
         assertEquals(HttpStatus.OK, response.getStatus());
 
         request = HttpRequest.GET(String.format("/?confidential=false"))
-                .basicAuth(admin.getWorkEmail(), role.getRole().name());
+                .basicAuth(admin.getWorkEmail(), role.getRole());
         response = client.toBlocking().exchange(request, Argument.listOf(FeedbackResponseDTO.class));
 
         assertEquals(0, response.body().size());
@@ -320,7 +320,7 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
 
         // Update by admin
         final MemberProfile admin = getMemberProfileRepository().save(mkMemberProfile("admin"));
-        Role role = createDefaultAdminRole(admin);
+        Role role = createAndAssignAdminRole(admin);
 
         final FeedbackUpdateDTO dto = new FeedbackUpdateDTO();
         dto.setId(feedback.getId());
@@ -328,7 +328,7 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
         dto.setConfidential(false);
 
         HttpRequest<?> request = HttpRequest.PUT("", dto)
-                .basicAuth(admin.getWorkEmail(), role.getRole().name());
+                .basicAuth(admin.getWorkEmail(), role.getRole());
         HttpResponse<FeedbackResponseDTO> response = client.toBlocking().exchange(request, FeedbackResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());

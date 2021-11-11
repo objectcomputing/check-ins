@@ -216,7 +216,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultAdminRole(memberProfile);
+        createAndAssignAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
 
@@ -232,7 +232,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateNonExistingOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultAdminRole(memberProfile);
+        createAndAssignAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
         opportunitiesResponse.setId(UUID.randomUUID());
@@ -254,7 +254,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateNotExistingMemberOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultAdminRole(memberProfile);
+        createAndAssignAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
         opportunitiesResponse.setSubmittedBy(UUID.randomUUID());
@@ -276,7 +276,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateNotMemberOpportunitiesWithoutId(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultAdminRole(memberProfile);
+        createAndAssignAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
         opportunitiesResponse.setId(null);
@@ -326,7 +326,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateInvalidDateOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultAdminRole(memberProfile);
+        createAndAssignAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
         opportunitiesResponse.setSubmittedOn(LocalDate.of(1965,12,11));
@@ -413,7 +413,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testdeleteOpportunitiesIfAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultAdminRole(memberProfile);
+        createAndAssignAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
 

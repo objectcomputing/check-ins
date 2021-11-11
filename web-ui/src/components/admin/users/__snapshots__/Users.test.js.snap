@@ -41,6 +41,21 @@ exports[`renders correctly 1`] = `
       </div>
     </div>
     <div
+      className="checkbox-row"
+    >
+      <label
+        htmlFor="includeterminated"
+      >
+        Include Terminated Members
+      </label>
+      <input
+        checked={false}
+        id="includeterminated"
+        onClick={[Function]}
+        type="checkbox"
+      />
+    </div>
+    <div
       className="MuiGrid-root makeStyles-members-3 MuiGrid-item"
     />
   </div>

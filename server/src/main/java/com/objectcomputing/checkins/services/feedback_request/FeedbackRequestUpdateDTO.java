@@ -19,7 +19,7 @@ public class FeedbackRequestUpdateDTO {
     @Schema(description = "date request is due, if applicable")
     private LocalDate dueDate;
 
-    @Nullable
+    @NotNull
     @Schema(description = "Completion status of request", required = true)
     private String status;
 
@@ -44,11 +44,10 @@ public class FeedbackRequestUpdateDTO {
         this.dueDate = dueDate;
     }
 
-    @Nullable
     public String getStatus() {
         return status;
     }
-    @Nullable
+
     public void setStatus(String status) {
         this.status = status;
     }
@@ -61,5 +60,4 @@ public class FeedbackRequestUpdateDTO {
     public void setSubmitDate(@Nullable LocalDate submitDate) {
         this.submitDate = submitDate;
     }
-
 }

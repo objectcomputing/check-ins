@@ -60,7 +60,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         MemberProfile memberProfile2 = createAnUnrelatedUser();
 
         MemberProfile memberProfileOfAdmin = createADefaultMemberProfileForPdl(memberProfile1);
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         Skill skill1 = createADefaultSkill();
         Skill skill2 = createASecondarySkill();
@@ -205,7 +205,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         MemberProfile memberProfile2 = createAnUnrelatedUser();
 
         MemberProfile memberProfileOfAdmin = createADefaultMemberProfileForPdl(memberProfile1);
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         Skill skill1 = createADefaultSkill();
         Skill skill2 = createASecondarySkill();
@@ -258,7 +258,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         MemberProfile memberProfile2 = createAnUnrelatedUser();
 
         MemberProfile memberProfileOfAdmin = createADefaultMemberProfileForPdl(memberProfile1);
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         Skill skill1 = createADefaultSkill();
         Skill skill2 = createASecondarySkill();
