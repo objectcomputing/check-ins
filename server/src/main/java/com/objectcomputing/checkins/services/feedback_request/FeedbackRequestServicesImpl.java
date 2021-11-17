@@ -122,7 +122,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
-        if(currentUserId.equals(originalFeedback.getRecipientId()) && (dueDateUpdateAttempted || submitDateUpdateAttempted)) {
+        if(dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
