@@ -5,15 +5,17 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import {Link} from "react-router-dom";
 import Divider from "@mui/material/Divider";
-import {sendReminderNotification} from "../../../api/notifications";
+import { sendReminderNotification } from "../../../api/notifications";
+import { deleteFeedbackRequestById } from "../../../api/feedback";
 import IconButton from "@mui/material/IconButton";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import {AppContext} from "../../../context/AppContext";
-import {selectCsrfToken, selectProfile} from "../../../context/selectors";
-import {Avatar, Tooltip} from "@mui/material";
+import TrashIcon from "@material-ui/icons/Delete";
+import { AppContext } from "../../../context/AppContext";
+import { selectCsrfToken, selectProfile } from "../../../context/selectors";
+import { Avatar, Tooltip } from "@mui/material";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
-import {getAvatarURL} from "../../../api/api";
+import { getAvatarURL } from "../../../api/api";
 
 const PREFIX = 'FeedbackRequestSubcard';
 const classes = {
