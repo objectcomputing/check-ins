@@ -150,7 +150,7 @@ const FeedbackRequestPage = () => {
 
   const isValidDate = useCallback((dateString) => {
     let today = new Date();
-    today = dateUtils.format(today, "yyyy-MM-dd");
+    today = dateUtils.format(today, "MM/dd/yyyy");
     let timeStamp = Date.parse(dateString)
     if (dateString < today)
       return false;
@@ -208,6 +208,8 @@ const FeedbackRequestPage = () => {
 
   const handleSubmit = () => {
     const from = query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : [];
+    const sendDate = query.send ? dateUtils.format(dateUtils.parse(query.send, "MM/dd/yyyy", new Date()), "yyyy-MM-dd") : new Date();
+    const dueDate = query.due ? dateUtils.format(dateUtils.parse(query.due, "MM/dd/yyyy", new Date()), "yyyy-MM-dd") : undefined;
     for (const recipient of from) {
        const feedbackRequest = {
          id: null,
@@ -215,8 +217,8 @@ const FeedbackRequestPage = () => {
          requesteeId: query.for,
          recipientId: recipient,
          templateId: query.template,
-         sendDate: query.send,
-         dueDate: query.due,
+         sendDate,
+         dueDate,
          status: "pending",
          submitDate: null
        };

@@ -1,12 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import { styled } from '@mui/material/styles';
+import React, { useContext, useEffect, useState, useCallback } from "react";
+import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import { green } from '@mui/material/colors';
+import { green } from "@mui/material/colors";
 import Button from "@mui/material/Button";
+import Slider from "@mui/material/Slider";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import "./FeedbackSubmitForm.css";
-import { Alert, AlertTitle } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
+import { Alert, AlertTitle } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
 import { blue } from "@mui/material/colors";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
@@ -24,7 +28,7 @@ import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
 
 const dateUtils = new DateFnsUtils();
-const PREFIX = 'FeedbackSubmitForm';
+const PREFIX = "FeedbackSubmitForm";
 const classes = {
   announcement: `${PREFIX}-announcement`,
   tip: `${PREFIX}-tip`,
@@ -32,6 +36,56 @@ const classes = {
   button: `${PREFIX}-button`,
   coloredButton: `${PREFIX}-coloredButton`
 };
+
+const frequencyMarks = [
+  {
+    value: 0,
+    label: "Very Infrequently",
+    text: "Very Infrequently"
+  },
+  {
+    value: 1,
+    text: "Infrequently"
+  },
+  {
+    value: 2,
+    text: "Neither Frequently nor Infrequently"
+  },
+  {
+    value: 3,
+    text: "Frequently"
+  },
+  {
+    value: 4,
+    label: "Very Frequently",
+    text: "Very Frequently"
+  }
+];
+
+const agreeMarks = [
+  {
+    value: 0,
+    label: "Strongly Disagree",
+    text: "Strongly Disagree"
+  },
+  {
+    value: 1,
+    text: "Disagree"
+  },
+  {
+    value: 2,
+    text: "Neither Agree nor Disagree"
+  },
+  {
+    value: 3,
+    text: "Agree"
+  },
+  {
+    value: 4,
+    label: "Strongly Agree",
+    text: "Strongly Agree"
+  }
+];
 
 const Root = styled('div')({
   [`& .${classes.announcement}`]: {
@@ -80,22 +134,33 @@ const propTypes = {
   request: PropTypes.any.isRequired,
 }
 
+const getSliderValue = (marks, text) => {
+  const value = marks?.find((mark) => mark?.text === text)?.value
+  return value;
+}
+
+const realUpdateAnswer = async (answer, csrf) => {
+    if (csrf) {
+      const res = updateSingleAnswer(answer, csrf);
+      return res;
+    }
+};
+
+const updateFeedbackAnswer = debounce(realUpdateAnswer, 1000);
+
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([])
+  const [templateTitle, setTemplateTitle] = useState(null)
   let currentlyBeingEdited = -1
 
-
-  const updateAnswer = debounce(async () => {
-    if (csrf) {
-      const res = updateSingleAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf)
-      return res;
-    }
-  }, 1000)
-
+  const updateAnswer = useCallback(
+    () => updateFeedbackAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf),
+    [questionAnswerPairs, currentlyBeingEdited, csrf]
+  );
 
   async function updateRequestSubmit() {
     request.status = "submitted"
@@ -149,23 +214,116 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     })
   }
 
+  const onSliderChange = (event, index, marks, value) => {
+    let questionAnswerCopy = [...questionAnswerPairs];
+    questionAnswerCopy[index].answer.answer = marks?.find((mark) => mark.value === value)?.text;
+    currentlyBeingEdited = index;
+    setQuestionAnswerPairs(questionAnswerCopy);
+    updateAnswer();
+  }
+
+  const onRadioChange = (event, index, value) => {
+    let questionAnswerCopy = [...questionAnswerPairs];
+    questionAnswerCopy[index].answer.answer = value;
+    currentlyBeingEdited = index;
+    setQuestionAnswerPairs(questionAnswerCopy);
+    updateAnswer()
+  }
 
   const onChangeHandler = (event, index) => {
-    let questionAnswerCopy = questionAnswerPairs;
+    let questionAnswerCopy = [...questionAnswerPairs];
     questionAnswerCopy[index].answer.answer = event.target.value;
     currentlyBeingEdited = index;
     setQuestionAnswerPairs(questionAnswerCopy);
     updateAnswer();
   }
 
+  const getQuestionHeader = (index, isReview) => isReview && index === 1
+    && (<h2>How often has this team member displayed each of the following in the past year...</h2>);
 
+  const getReviewInput = (questionAnswerPair, isReviewing, index) => {
+    let toReturn = null;
+    switch(index) {
+      case 0:
+      case 8:
+        // Strongly Disagree - Strongly Agree
+        toReturn =
+          (<Slider
+            disabled={isReviewing}
+            min={0}
+            max={4}
+            value={getSliderValue(agreeMarks, questionAnswerPair.answer.answer)}
+            step={1}
+            marks={agreeMarks}
+            onChange={(e, value) => onSliderChange(e, index, agreeMarks, value)}
+          />);
+        break;
+      case 7:
+      case 12:
+        toReturn =
+          (<TextField
+            multiline
+            rows={5}
+            maxRows={10}
+            className="fullWidth"
+            variant="outlined"
+            InputProps={{
+              readOnly: isReviewing,
+            }}
+            onChange={(e) => onChangeHandler(e, index)}
+            defaultValue={questionAnswerPair.answer.answer}
+          />);
+        break;
+      case 9:
+      case 10:
+      case 11:
+        // Yes, No, I don't know...
+        toReturn =
+          (<RadioGroup row value={questionAnswerPair.answer.answer} onChange={(event, value) => onRadioChange(event, index, value)}>
+            <FormControlLabel disabled={isReviewing} value="Yes" control={<Radio />} label="Yes" />
+            <FormControlLabel disabled={isReviewing} value="No" control={<Radio />} label="No" />
+            <FormControlLabel disabled={isReviewing} value="I don't know." control={<Radio />} label="I don't know" />
+          </RadioGroup>);
+        break;
+      default:
+        // Very Infrequently - Very Frequently
+        toReturn =
+          (<Slider
+            disabled={isReviewing}
+            min={0}
+            max={4}
+            value={getSliderValue(frequencyMarks, questionAnswerPair.answer.answer)}
+            step={1}
+            marks={frequencyMarks}
+            onChange={(e, value) => onSliderChange(e, index, frequencyMarks, value)}
+          />);
+        break;
+    }
 
+    return toReturn;
+  }
+
+  const getInput = (questionAnswerPair, isReviewing, index, isReview) => {
+      return !isReview ? (<TextField
+          className="fullWidth"
+          variant="outlined"
+          multiline
+          rows={10}
+          maxRows={20}
+          InputProps={{
+            readOnly: isReviewing,
+          }}
+          onChange={(e) => onChangeHandler(e, index)}
+          defaultValue={questionAnswerPair.answer.answer}
+        />) : getReviewInput(questionAnswerPair, isReviewing, index);
+  }
 
   useEffect(() => {
     async function getQuestions(requestId, cookie) {
       if (!requestId) return;
       const res = await getQuestionsByRequestId(requestId, cookie);
-      let questionsList = res.questions ? res.questions : [];
+      setTemplateTitle(res?.title);
+      let questionsList = res?.questions ? res.questions : [];
       return questionsList;
     }
 
@@ -186,6 +344,8 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     }
   }, [requestId, csrf]);
 
+  const isReview = templateTitle === "Annual Review";
+
   return (
     <Root className="submit-form">
       <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{requesteeName}</b></Typography>
@@ -202,19 +362,9 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       }
       {questionAnswerPairs.map((questionAnswerPair, index) => (
         <div className="feedback-submit-question" key={questionAnswerPair.question.id}>
+          {getQuestionHeader(index, isReview)}
           <Typography variant="body1"><b>Q{questionAnswerPair.question.questionNumber}:</b> {questionAnswerPair.question.question}</Typography>
-          <TextField
-            className="fullWidth"
-            variant="outlined"
-            multiline
-            rows={10}
-            maxRows={20}
-            InputProps={{
-              readOnly: isReviewing,
-            }}
-            onChange={(e) => onChangeHandler(e, index)}
-            defaultValue={questionAnswerPair.answer.answer}
-          />
+          {getInput(questionAnswerPair, isReviewing, index, isReview)}
         </div>
 
       ))}

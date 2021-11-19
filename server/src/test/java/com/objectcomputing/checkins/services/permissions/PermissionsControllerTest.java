@@ -1,7 +1,13 @@
 package com.objectcomputing.checkins.services.permissions;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.PermissionFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -9,78 +15,85 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PermissionsControllerTest extends TestContainersSuite implements PermissionFixture {
+public class PermissionsControllerTest extends TestContainersSuite implements PermissionFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/permissions")
     HttpClient client;
 
     @Test
-    void testGetAllPermissions() {
-        Permission permission = createADefaultPermission();
-        Permission otherPermission = createADifferentPermission();
-        List<Permission> list = new ArrayList<>(Arrays.asList(permission, otherPermission));
-        final HttpRequest<Object> request = HttpRequest.
-                GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<List<Permission>> response =
-                client.toBlocking().exchange(request, Argument.listOf(Permission.class));
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.getBody().isPresent());
-        assertEquals(response.getBody().get(), list);
-    }
-
-    @Test
     void testGetAllPermissionsEnsureAlphabeticalOrder() {
-        Permission lastPermission = createACustomPermission("z");
-        Permission firstPermission = createACustomPermission("A");
-        Permission middlePermission = createACustomPermission("H");
-        List<Permission> list = new ArrayList<>(Arrays.asList(firstPermission, middlePermission, lastPermission));
+        // create role and permissions
+        Role memberRole = createRole(new Role(RoleType.MEMBER.name(), "Member Role"));
+        Permission someTestPermission = createACustomPermission(Permissions.CAN_VIEW_ROLE_PERMISSIONS);
+        Permission someOtherPermission = createACustomPermission(Permissions.CAN_VIEW_PERMISSIONS);
+        setPermissionsForMember(memberRole.getId());
+
+        // assign role to user
+        MemberProfile user = createADefaultMemberProfile();
+        assignMemberRole(user);
+
+        List<Permission> expected = new ArrayList<>(Arrays.asList(someOtherPermission, someTestPermission));
         final HttpRequest<Object> request = HttpRequest.
-                GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET("/OrderByPermission").basicAuth(user.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
 
         final HttpResponse<List<Permission>> response =
                 client.toBlocking().exchange(request, Argument.listOf(Permission.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
-        assertEquals(response.getBody().get(), list);
+        assertEquals(expected, response.getBody().get());
     }
 
     @Test
-    void testGetPermissionsNoneExistsReturnsEmptyList(){
+    void getOrderByPermissionIsNotAuthenticatedThrowsError() {
+        final HttpRequest<Object> request = HttpRequest.GET("/OrderByPermission");
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+    }
+
+    @Test
+    void testGetAllPermissions() {
+        // create role and permissions
+        Role memberRole = createRole(new Role(RoleType.MEMBER.name(), "Member Role"));
+        Permission someTestPermission = createACustomPermission(Permissions.CAN_VIEW_ROLE_PERMISSIONS);
+        Permission someOtherPermission = createACustomPermission(Permissions.CAN_VIEW_PERMISSIONS);
+        setPermissionsForMember(memberRole.getId());
+
+        // assign role to user
+        MemberProfile user = createADefaultMemberProfile();
+        assignMemberRole(user);
+
+        List<Permission> expected = new ArrayList<>(Arrays.asList(someTestPermission, someOtherPermission));
         final HttpRequest<Object> request = HttpRequest.
-                GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET("/").basicAuth(user.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
 
         final HttpResponse<List<Permission>> response =
                 client.toBlocking().exchange(request, Argument.listOf(Permission.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        Assertions.assertTrue(response.getBody().isPresent());
-        assertTrue(response.getBody().get().isEmpty());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(expected, response.getBody().get());
     }
 
     @Test
-    void getPermissionsIsNotAuthenticatedThrowsError(){
-        final HttpRequest<Object> request = HttpRequest.
-                GET("/");
+    void getAllPermissionsnIsNotAuthenticatedThrowsError() {
+        final HttpRequest<Object> request = HttpRequest.GET("/");
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));

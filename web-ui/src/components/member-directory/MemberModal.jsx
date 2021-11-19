@@ -20,6 +20,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const [editedMember, setMember] = useState(member);
   const sortedPdls = selectOrderedPdls(state);
   const sortedMembers = selectOrderedMemberFirstName(state);
+
   const onSupervisorChange = (event, newValue) => {
     setMember({
       ...editedMember,
@@ -27,21 +28,11 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     });
   };
 
-  if (!editedMember.startDate) {
-    setMember({ ...editedMember, startDate: new Date() });
-  }
+  const birthDay = editedMember?.birthDay || null;
 
-  const birthDay =
-    editedMember && editedMember.birthDay
-      ? new Date(editedMember.birthDay)
-      : null;
+  const terminationDate = editedMember?.terminationDate || null;
 
-  const terminationDate =
-    editedMember && editedMember.terminationDate
-      ? new Date(editedMember.terminationDate)
-      : null;
-
-  const startDate = new Date(editedMember.startDate);
+  const startDate = editedMember?.startDate;
 
   const onPdlChange = (event, newValue) => {
     setMember({

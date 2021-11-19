@@ -25,7 +25,6 @@ import {
   UPDATE_TEAM_MEMBERS,
   UPDATE_TOAST,
   UPDATE_USER_BIO,
-
 } from "./actions";
 
 export const initialState = {
@@ -120,6 +119,23 @@ export const reducer = (state, action) => {
       state.teams.sort((a, b) => a.name.localeCompare(b.name));
       break;
     case UPDATE_MEMBER_PROFILES:
+      action.payload.forEach((member) => {
+        member.birthDay = Array.isArray(member.birthDay)
+          ? new Date(member.birthDay.join("/"))
+          : member && member.birthDay
+          ? member.birthDay
+          : null;
+        member.startDate = Array.isArray(member.startDate)
+          ? new Date(member.startDate.join("/"))
+          : member && member.startDate
+          ? member.startDate
+          : new Date();
+        member.terminationDate = Array.isArray(member.terminationDate)
+          ? new Date(member.terminationDate.join("/"))
+          : member && member.terminationDate
+          ? member.terminationDate
+          : null;
+      });
       state.memberProfiles = action.payload;
       break;
     case UPDATE_TERMINATED_MEMBERS:

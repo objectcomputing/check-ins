@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.role.member_roles.MemberRoleReposit
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -64,5 +65,9 @@ public class RoleServicesImpl implements RoleServices {
 
     public Optional<Role> findByRole(String roleType) {
         return roleRepo.findByRole(roleType);
+    }
+
+    public List<Role> findAllRoles() {
+        return (List<Role>) roleRepo.findAll();
     }
 }

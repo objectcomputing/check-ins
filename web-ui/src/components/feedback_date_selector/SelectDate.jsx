@@ -35,26 +35,26 @@ const propTypes = {
 const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
     const hasPushedInitialValues = useRef(false);
     let todayDate = new Date();
-    const sendDate = sendDateQuery ? dateUtils.parse(sendDateQuery.toString(), "yyyy-MM-dd") : todayDate;
-    const dueDate = dueDateQuery ? dateUtils.parse(dueDateQuery?.toString(), "yyyy-MM-dd") : null;
+    const sendDate = sendDateQuery ? dateUtils.parse(sendDateQuery.toString(), "MM/dd/yyyy", new Date()) : todayDate;
+    const dueDate = dueDateQuery ? dateUtils.parse(dueDateQuery?.toString(), "MM/dd/yyyy", new Date()) : null;
 
     useEffect(() => {
       if (!hasPushedInitialValues.current && sendDate !== null && sendDate !== undefined && dueDate !== undefined) {
-        changeQuery("send", dateUtils.format(sendDate, "yyyy-MM-dd"));
+        changeQuery("send", dateUtils.format(sendDate, "MM/dd/yyyy"));
         if (dueDate !== null) {
-          changeQuery("due", dateUtils.format(dueDate, "yyyy-MM-dd"));
+          changeQuery("due", dateUtils.format(dueDate, "MM/dd/yyyy"));
         }
         hasPushedInitialValues.current = true;
       }
     });
 
     const handleDueDateChange = useCallback((date) => {
-      const dueDate = date ? dateUtils.format(date, "yyyy-MM-dd") : null;
+      const dueDate = date ? dateUtils.format(date, "MM/dd/yyyy") : null;
       changeQuery("due", dueDate ? dueDate : undefined);
     },[changeQuery]);
 
     const handleSendDateChange = useCallback((date) => {
-      const sendDate = dateUtils.format(date, "yyyy-MM-dd");
+      const sendDate = dateUtils.format(date, "MM/dd/yyyy");
       changeQuery("send", sendDate);
     },[changeQuery]);
 

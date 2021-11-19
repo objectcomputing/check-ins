@@ -103,17 +103,17 @@ VALUES
 INSERT INTO role
     (id, description, role)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'is an admin', 'ADMIN');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', PGP_SYM_ENCRYPT('is an admin','${aeskey}'), 'ADMIN');
 
 INSERT INTO role
     (id, description, role)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'is a member', 'MEMBER');
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', PGP_SYM_ENCRYPT('is a member','${aeskey}'), 'MEMBER');
 
 INSERT INTO role
     (id, description, role)
 VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'is a pdl', 'PDL');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', PGP_SYM_ENCRYPT('is a pdl','${aeskey}'), 'PDL');
 
 
 
@@ -441,17 +441,32 @@ values
 insert into permissions
     (id, permission)
 values
-    ('008f6641-0b0a-4e89-84f0-c580f912b80d', 'CAN_VIEW_FEEDBACK');
+    ('008f6641-0b0a-4e89-84f0-c580f912b80d', 'CAN_VIEW_FEEDBACK_REQUEST');
 
 insert into permissions
     (id, permission)
 values
-    ('1bf32dfe-a204-4c80-889e-829ca66c999b', 'CAN_CREATE_FEEDBACK');
+    ('1bf32dfe-a204-4c80-889e-829ca66c999b', 'CAN_CREATE_FEEDBACK_REQUEST');
 
 insert into permissions
     (id, permission)
 values
-    ('a574feb9-f2d4-4cbf-9353-bfaccdffa74f', 'CAN_DELETE_FEEDBACK');
+    ('a574feb9-f2d4-4cbf-9353-bfaccdffa74f', 'CAN_DELETE_FEEDBACK_REQUEST');
+
+insert into permissions
+    (id, permission)
+values
+    ('26a2f861-3f7d-4dc3-8762-716b184a3a47', 'CAN_VIEW_FEEDBACK_ANSWER');
+
+insert into permissions
+    (id, permission)
+values
+    ('1fd790d9-df9a-4201-818b-3a9ac5e5be3b', 'CAN_VIEW_ROLE_PERMISSIONS');
+
+insert into permissions
+    (id, permission)
+values
+    ('f6961946-a792-4a16-b675-d8cf7980c17a', 'CAN_VIEW_PERMISSIONS');
 
 insert into role_permissions
     (roleid, permissionid)
@@ -477,6 +492,21 @@ insert into role_permissions
     (roleid, permissionid)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '26a2f861-3f7d-4dc3-8762-716b184a3a47');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1fd790d9-df9a-4201-818b-3a9ac5e5be3b');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f6961946-a792-4a16-b675-d8cf7980c17a');
 
 insert into role_permissions
     (roleid, permissionid)
