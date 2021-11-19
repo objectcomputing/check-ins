@@ -9,7 +9,7 @@ import { sendReminderNotification } from "../../../api/notifications";
 import { deleteFeedbackRequestById } from "../../../api/feedback";
 import IconButton from "@mui/material/IconButton";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import TrashIcon from "@material-ui/icons/Delete";
+import TrashIcon from "@mui/icons-material/icons/Delete";
 import { AppContext } from "../../../context/AppContext";
 import { selectCsrfToken, selectProfile } from "../../../context/selectors";
 import { Avatar, Tooltip } from "@mui/material";
