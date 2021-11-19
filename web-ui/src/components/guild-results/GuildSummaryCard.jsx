@@ -1,5 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 
+import { styled } from '@mui/material/styles';
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_GUILDS, UPDATE_TOAST } from "../../context/actions";
 import EditGuildModal from "./EditGuildModal";
@@ -16,27 +17,32 @@ import {
   DialogContent,
   DialogActions,
   Tooltip,
-} from "@material-ui/core";
+} from "@mui/material";
 import PropTypes from "prop-types";
 import { deleteGuild, updateGuild } from "../../api/guild.js";
 import SplitButton from "../split-button/SplitButton";
 
-import { makeStyles } from "@material-ui/core/styles";
-const useStyles = makeStyles((theme) => ({
-  card: {
+const PREFIX = 'GuildSummaryCard';
+const classes = {
+  card: `${PREFIX}-card`,
+  header: `${PREFIX}-header`,
+  title: `${PREFIX}-title`
+};
+const StyledCard = styled(Card)(() => ({
+  [`&.${classes.card}`]: {
     width: "340px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  header: {
+  [`& .${classes.header}`]: {
     width: "100%",
   },
-  title: {
+  [`& .${classes.title}`]: {
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-  },
+  }
 }));
 
 const propTypes = {
@@ -50,7 +56,6 @@ const propTypes = {
 const displayName = "GuildSummaryCard";
 
 const GuildSummaryCard = ({ guild, index }) => {
-  const classes = useStyles();
   const { state, dispatch } = useContext(AppContext);
   const { guilds, userProfile, csrf } = state;
   const [open, setOpen] = useState(false);
@@ -79,9 +84,10 @@ const GuildSummaryCard = ({ guild, index }) => {
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
-  const deleteAGuild = async (id) => {
-    if (id && csrf) {
-      const result = await deleteGuild(id, csrf);
+  const guildId = guild?.id;
+  const deleteAGuild = useCallback(async () => {
+    if (guildId && csrf) {
+      const result = await deleteGuild(guildId, csrf);
       if (result && result.payload && result.payload.status === 200) {
         window.snackDispatch({
           type: UPDATE_TOAST,
@@ -91,7 +97,7 @@ const GuildSummaryCard = ({ guild, index }) => {
           },
         });
         let newGuilds = guilds.filter((guild) => {
-          return guild.id !== id;
+          return guild.id !== guildId;
         });
         dispatch({
           type: UPDATE_GUILDS,
@@ -99,7 +105,7 @@ const GuildSummaryCard = ({ guild, index }) => {
         });
       }
     }
-  };
+  }, [guildId, csrf, dispatch, guilds]);
 
   const options =
     isAdmin || isGuildLead ? ["Edit Guild", "Delete Guild"] : ["Edit Guild"];
@@ -113,7 +119,7 @@ const GuildSummaryCard = ({ guild, index }) => {
   };
 
   return (
-    <Card className={classes.card}>
+    <StyledCard className={classes.card}>
       <CardHeader
         classes={{
           content: classes.header,
@@ -178,7 +184,6 @@ const GuildSummaryCard = ({ guild, index }) => {
                   Cancel
                 </Button>
                 <Button
-                  disabled
                   onClick={deleteAGuild}
                   color="primary"
                   autoFocus
@@ -211,7 +216,7 @@ const GuildSummaryCard = ({ guild, index }) => {
         }}
         headerText="Edit Your Guild"
       />
-    </Card>
+    </StyledCard>
   );
 };
 

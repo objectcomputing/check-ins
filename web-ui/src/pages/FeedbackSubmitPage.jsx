@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useRef} from "react";
+import { styled } from '@mui/material/styles';
 import { useState } from 'react'
 import "./FeedbackRequestPage.css";
 import FeedbackSubmissionTips from "../components/feedback_submission_tips/FeedbackSubmissionTips";
@@ -7,13 +8,17 @@ import {useHistory, useLocation} from "react-router-dom";
 import {selectCsrfToken, selectCurrentUser, selectProfile} from "../context/selectors";
 import {AppContext} from "../context/AppContext";
 import {getFeedbackRequestById} from "../api/feedback";
-import Typography from "@material-ui/core/Typography";
-import {makeStyles} from "@material-ui/core/styles";
+import Typography from "@mui/material/Typography";
 import {UPDATE_TOAST} from "../context/actions";
 import * as queryString from "query-string";
 
-const useStyles = makeStyles({
-  announcement: {
+const PREFIX = 'FeedbackSubmitPage';
+const classes = {
+  announcement: `${PREFIX}-announcement`
+};
+
+const Root = styled('div')({
+  [`& .${classes.announcement}`]: {
     textAlign: "center",
     marginTop: "3em",
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
@@ -30,7 +35,6 @@ const FeedbackSubmitPage = () => {
   const history = useHistory();
   const query = queryString.parse(location?.search);
   const requestQuery = query.request?.toString();
-  const classes = useStyles();
   const [showTips, setShowTips] = useState(true);
   const [feedbackRequest, setFeedbackRequest] = useState(null);
   const [requestee, setRequestee] = useState(null);
@@ -109,17 +113,17 @@ const FeedbackSubmitPage = () => {
   }, [feedbackRequest, state]);
 
   return (
-    <div className="feedback-submit-page">
+    <Root className="feedback-submit-page">
       {requestSubmitted ?
         <Typography className={classes.announcement} variant="h3">You have already submitted this feedback form. Thank you!</Typography> :
-        <React.Fragment>
+        <>
           {feedbackRequestFetched.current && (showTips ?
             <FeedbackSubmissionTips onNextClick={() => setShowTips(false)}/> :
             <FeedbackSubmitForm requesteeName={requestee?.name} requestId={requestQuery} request={feedbackRequest}/>
           )}
-        </React.Fragment>
+        </>
       }
-    </div>
+    </Root>
   );
 };
 export default FeedbackSubmitPage;

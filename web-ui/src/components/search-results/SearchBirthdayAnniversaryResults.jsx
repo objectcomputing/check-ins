@@ -11,7 +11,7 @@ import {
   Container,
   List,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 
 const SearchBirthdayAnniversaryResults = ({
   hasSearched,

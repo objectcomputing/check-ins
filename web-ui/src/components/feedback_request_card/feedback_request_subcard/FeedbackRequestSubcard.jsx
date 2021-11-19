@@ -1,34 +1,43 @@
 import React, { useContext, useCallback } from "react";
+import { styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import { Link } from "react-router-dom";
-import Divider from "@material-ui/core/Divider";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import {Link} from "react-router-dom";
+import Divider from "@mui/material/Divider";
 import { sendReminderNotification } from "../../../api/notifications";
 import { deleteFeedbackRequestById } from "../../../api/feedback";
-import IconButton from "@material-ui/core/IconButton";
-import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
-import TrashIcon from "@material-ui/icons/Delete";
+import IconButton from "@mui/material/IconButton";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import TrashIcon from "@mui/icons-material/Delete";
 import { AppContext } from "../../../context/AppContext";
 import { selectCsrfToken, selectProfile } from "../../../context/selectors";
-import { Avatar, Tooltip } from "@material-ui/core";
+import { Avatar, Tooltip } from "@mui/material";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
 import { getAvatarURL } from "../../../api/api";
-import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles({
-  redTypography: {
-    color: "#FF0000",
+const PREFIX = 'FeedbackRequestSubcard';
+const classes = {
+  redTypography: `${PREFIX}-redTypography`,
+  yellowTypography: `${PREFIX}-yellowTypography`,
+  greenTypography: `${PREFIX}-greenTypography`,
+  darkGrayTypography: `${PREFIX}-darkGrayTypography`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.redTypography}`]: {
+    color: "#FF0000"
   },
-  yellowTypography: {
-    color: "#EE8C00",
+  [`& .${classes.yellowTypography}`]: {
+      color: "#EE8C00"
   },
-  greenTypography: {
-    color: "#006400",
+  [`& .${classes.greenTypography}`]: {
+      color: "#006400"
   },
-  darkGrayTypography: {
-    color: "#333333",
+  [`& .${classes.darkGrayTypography}`]: {
+    color: "#333333"
   },
 });
 
@@ -41,7 +50,6 @@ const propTypes = {
 const FeedbackRequestSubcard = ({ request }) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
-  const classes = useStyles();
   let { submitDate, dueDate, sendDate } = request;
   const recipient = selectProfile(state, request?.recipientId);
   submitDate = submitDate
@@ -142,7 +150,7 @@ const FeedbackRequestSubcard = ({ request }) => {
   };
 
   return (
-    <React.Fragment>
+    <Root>
       <Divider className="person-divider" />
       <Grid
         container
@@ -199,8 +207,8 @@ const FeedbackRequestSubcard = ({ request }) => {
                     onClick={handleReminderClick}
                     aria-label="Send Reminder"
                     label="Send Reminder"
-                  >
-                    <NotificationsActiveIcon />
+                    size="large">
+                    <NotificationsActiveIcon/>
                   </IconButton>
                 </Tooltip>
                 </>
@@ -212,7 +220,7 @@ const FeedbackRequestSubcard = ({ request }) => {
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Root>
   );
 };
 

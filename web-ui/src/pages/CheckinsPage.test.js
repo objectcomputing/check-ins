@@ -1,10 +1,9 @@
 import React from "react";
 import CheckinsPage from "./CheckinsPage";
 import { AppContextProvider } from "../context/AppContext";
-import { createMemoryHistory } from "history";
-import { Router } from "react-router-dom";
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import {MemoryRouter} from "react-router-dom";
+import {LocalizationProvider} from "@mui/lab";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 
 const mockMemberId = "bf9975f8-a5b2-4551-b729-afd56b49e2cc";
 const mockCheckinId = "3a1906df-d45c-4ff5-a6f8-7dacba97ff1a";
@@ -44,16 +43,13 @@ const initialState = {
 };
 
 it("renders correctly", () => {
-  const history = createMemoryHistory(
-    `/checkins/${mockMemberId}/${mockCheckinId}`
-  );
   snapshot(
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <Router history={history}>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <MemoryRouter>
         <AppContextProvider value={initialState}>
           <CheckinsPage />
         </AppContextProvider>
-      </Router>
-    </MuiPickersUtilsProvider>
+      </MemoryRouter>
+    </LocalizationProvider>
   );
 });

@@ -1,9 +1,8 @@
-import React, { useContext, useState } from "react";
-
+import React, { useContext, useState, useCallback } from "react";
+import { styled } from '@mui/material/styles';
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TEAMS, UPDATE_TOAST } from "../../context/actions";
 import EditTeamModal from "./EditTeamModal";
-
 import {
   Button,
   Card,
@@ -16,28 +15,34 @@ import {
   DialogContentText,
   DialogTitle,
   Tooltip,
-} from "@material-ui/core";
+} from "@mui/material";
 import PropTypes from "prop-types";
 import { deleteTeam, updateTeam } from "../../api/team.js";
 import SplitButton from "../split-button/SplitButton";
 
-import { makeStyles } from "@material-ui/core/styles";
-const useStyles = makeStyles((theme) => ({
-  card: {
+const PREFIX = 'TeamSummaryCard';
+const classes = {
+  card: `${PREFIX}-card`,
+  header: `${PREFIX}-header`,
+  title: `${PREFIX}-title`
+};
+
+const StyledCard = styled(Card)({
+  [`&.${classes.card}`]: {
     width: "340px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  header: {
+  [`& .${classes.header}`]: {
     width: "100%",
   },
-  title: {
+  [`& .${classes.title}`]: {
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-  },
-}));
+  }
+});
 
 const propTypes = {
   team: PropTypes.shape({
@@ -50,10 +55,8 @@ const propTypes = {
 const displayName = "TeamSummaryCard";
 
 const TeamSummaryCard = ({ team, index }) => {
-  const classes = useStyles();
   const { state, dispatch } = useContext(AppContext);
   const { teams, userProfile, csrf } = state;
-  const { id } = team;
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
@@ -81,9 +84,10 @@ const TeamSummaryCard = ({ team, index }) => {
   const handleClose = () => setOpen(false);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
-  const deleteATeam = async () => {
-    if (id && csrf) {
-      const result = await deleteTeam(id, csrf);
+  const teamId = team?.id;
+  const deleteATeam = useCallback(async () => {
+    if (teamId && csrf) {
+      const result = await deleteTeam(teamId, csrf);
       if (result && result.payload && result.payload.status === 200) {
         window.snackDispatch({
           type: UPDATE_TOAST,
@@ -93,7 +97,7 @@ const TeamSummaryCard = ({ team, index }) => {
           },
         });
         let newTeams = teams.filter((team) => {
-          return team.id !== id;
+          return team.id !== teamId;
         });
         dispatch({
           type: UPDATE_TEAMS,
@@ -101,7 +105,7 @@ const TeamSummaryCard = ({ team, index }) => {
         });
       }
     }
-  };
+  }, [teamId, csrf, dispatch, teams]);
 
   const options =
     isAdmin || isTeamLead ? ["Edit Team", "Delete Team"] : ["Edit Team"];
@@ -115,7 +119,7 @@ const TeamSummaryCard = ({ team, index }) => {
   };
 
   return (
-    <Card className={classes.card}>
+    <StyledCard className={classes.card}>
       <CardHeader
         classes={{
           content: classes.header,
@@ -180,7 +184,6 @@ const TeamSummaryCard = ({ team, index }) => {
                   Cancel
                 </Button>
                 <Button
-                  disabled
                   onClick={deleteATeam}
                   color="primary"
                   autoFocus
@@ -213,7 +216,7 @@ const TeamSummaryCard = ({ team, index }) => {
         }}
         headerText="Edit Your Team"
       />
-    </Card>
+    </StyledCard>
   );
 };
 

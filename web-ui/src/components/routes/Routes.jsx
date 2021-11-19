@@ -7,7 +7,7 @@ import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReport
 import CheckinsPage from "../../pages/CheckinsPage";
 import CheckinsReportPage from "../../pages/CheckinsReportPage";
 import EditSkillsPage from "../../pages/EditSkillsPage";
-import GroupIcon from "@material-ui/icons/Group";
+import GroupIcon from "@mui/icons-material/Group";
 import GuildsPage from "../../pages/GuildsPage";
 import Header from "../header/Header";
 import HomePage from "../../pages/HomePage";

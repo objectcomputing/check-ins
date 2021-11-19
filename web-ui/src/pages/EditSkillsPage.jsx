@@ -5,7 +5,7 @@ import { selectOrderedSkills, selectPendingSkills } from "../context/selectors";
 import EditSkillsCard from "../components/edit_skills/EditSkillsCard";
 import EditSkillsModal from "../components/edit_skills/EditSkillsModal";
 
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField } from "@mui/material";
 
 import "./EditSkillsPage.css";
 

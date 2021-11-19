@@ -1,13 +1,20 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import {makeStyles} from '@material-ui/core/styles';
+import { styled } from '@mui/material/styles';
+import Typography from "@mui/material/Typography";
 
 import "./FeedbackSubmissionTips.css";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import PropTypes from "prop-types";
 
-const useStyles = makeStyles({
-  title: {
+const PREFIX = 'FeedbackSubmissionTips';
+const classes = {
+  title: `${PREFIX}-title`,
+  button: `${PREFIX}-button`,
+  announcement: `${PREFIX}-announcement`
+};
+
+const Root = styled('div')({
+  [`& .${classes.title}`]: {
     textAlign: "center",
     gridColumn: 2,
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
@@ -17,16 +24,15 @@ const useStyles = makeStyles({
 
     }
   },
-
-  button: {
+  [`& .${classes.button}`]: {
     justifySelf: "end",
     marginRight: "3em",
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
       marginRight: "0",
     }
-    },
 
-  announcement: {
+  },
+  [`& .${classes.announcement}`]: {
     textAlign: "center",
     marginBottom: "0px",
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
@@ -58,9 +64,8 @@ const propTypes = {
 }
 
 const FeedbackSubmissionTips = (props) => {
-  const classes = useStyles();
   return (
-    <div className="sbi-tips-page">
+    <Root className="sbi-tips-page">
       <div className="header">
         <Typography className={classes.title} variant="h2"><b>Feedback Tips</b></Typography>
         <div className={classes.button}>
@@ -84,7 +89,7 @@ const FeedbackSubmissionTips = (props) => {
           </div>
         ))}
       </div>
-    </div>
+    </Root>
   );
 }
 

@@ -6,8 +6,8 @@ import {
   selectCurrentMembers,
 } from "../../context/selectors";
 
-import { Button, Modal, TextField } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Button, Modal, TextField } from "@mui/material";
+import Autocomplete from '@mui/material/Autocomplete';
 import "./EditGuildModal.css";
 
 const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
@@ -203,7 +203,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           }
           onChange={onGuildMembersChange}
           getOptionLabel={(option) => option.name}
-          getOptionSelected={(option, value) =>
+          isOptionEqualToValue={(option, value) =>
             value ? value.id === option.id : false
           }
           renderInput={(params) => (

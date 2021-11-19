@@ -1,11 +1,10 @@
 import React from "react";
 import CheckinsHistory from "./CheckinHistory";
 import { AppContextProvider } from "../../context/AppContext";
-import { render } from "@testing-library/react";
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
+import { LocalizationProvider } from "@mui/lab";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 
 const mockMemberId = "bf9975f8-a5b2-4551-b729-afd56b49e2cc";
 const mockCheckinId = "3a1906df-d45c-4ff5-a6f8-7dacba97ff1a";
@@ -47,7 +46,7 @@ const initialState = {
 it("renders correctly", async () => {
   const customHistory = createBrowserHistory();
   snapshot(
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
     <Router history={customHistory}>
       <AppContextProvider value={initialState}>
         <CheckinsHistory
@@ -57,6 +56,6 @@ it("renders correctly", async () => {
         />
       </AppContextProvider>
     </Router>
-    </MuiPickersUtilsProvider>
+    </LocalizationProvider>
   );
 });

@@ -1,18 +1,23 @@
 import React, { useContext, useState } from "react";
 
+import { styled } from '@mui/material/styles';
 import GuildSummaryCard from "./GuildSummaryCard";
 import { AppContext } from "../../context/AppContext";
 import GuildsActions from "./GuildsActions";
 import PropTypes from "prop-types";
-import { TextField } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { TextField } from "@mui/material";
 import "./GuildResults.css";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader"
 
-const useStyles = makeStyles((theme) => ({
-  searchInput: {
+const PREFIX = 'GuildResults';
+const classes = {
+  searchInput: `${PREFIX}-searchInput`
+};
+
+const Root = styled('div')(() => ({
+  [`& .${classes.searchInput}`]: {
     width: "20em",
-  },
+  }
 }));
 
 const propTypes = {
@@ -32,10 +37,8 @@ const GuildResults = () => {
   const { guilds } = state;
   const [searchText, setSearchText] = useState("");
 
-  const classes = useStyles();
-
   return (
-    <div>
+    <Root>
       <div className="guild-search">
         <TextField
           className={classes.searchInput}
@@ -63,7 +66,7 @@ const GuildResults = () => {
             .map((_, index) => <SkeletonLoader key={index} type="guild" />)
         }
       </div>
-    </div>
+    </Root>
   );
 };
 

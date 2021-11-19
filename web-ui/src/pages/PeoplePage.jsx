@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 
+import { styled } from '@mui/material/styles';
 import MemberSummaryCard from "../components/member-directory/MemberSummaryCard";
 import { AppContext } from "../context/AppContext";
 import {
@@ -7,23 +8,29 @@ import {
   selectNormalizedMembersAdmin,
 } from "../context/selectors";
 
-import { TextField, Grid } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { TextField, Grid } from "@mui/material";
 
 import "./PeoplePage.css";
 
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader"
 
-const useStyles = makeStyles({
-  search: {
+const PREFIX = 'PeoplePage';
+const classes = {
+  search: `${PREFIX}-search`,
+  searchInput: `${PREFIX}-searchInput`,
+  members: `${PREFIX}-members`
+};
+
+const Root = styled('div')({
+  [`& .${classes.search}`]: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  searchInput: {
+  [`& .${classes.searchInput}`]: {
     width: "20em",
   },
-  members: {
+  [`& .${classes.members}`]: {
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "space-evenly",
@@ -34,8 +41,6 @@ const useStyles = makeStyles({
 const PeoplePage = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-
-  const classes = useStyles();
 
   const [searchText, setSearchText] = useState("");
 
@@ -57,7 +62,7 @@ const PeoplePage = () => {
   });
 
   return (
-    <div className="people-page">
+    <Root className="people-page">
       <Grid container spacing={3}>
         <Grid item xs={12} className={classes.search}>
           <TextField
@@ -77,7 +82,7 @@ const PeoplePage = () => {
           }
         </Grid>
       </Grid>
-    </div>
+    </Root>
   );
 };
 

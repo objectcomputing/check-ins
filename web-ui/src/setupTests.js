@@ -3,13 +3,13 @@ import fetch from "jest-fetch-mock";
 import requestAnimationFrame from "raf/polyfill";
 import Enzyme, { shallow } from "enzyme";
 import renderer from "react-test-renderer";
-import Adapter from "enzyme-adapter-react-16";
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import "@testing-library/jest-dom/extend-expect";
 
 Enzyme.configure({ adapter: new Adapter() });
 
-global.snapshot = (component) =>
-  expect(renderer.create(component).toJSON()).toMatchSnapshot();
+global.snapshot = (component, options) =>
+  expect(renderer.create(component, options).toJSON()).toMatchSnapshot();
 global.shallowSnapshot = (component) =>
   expect(shallow(component)).toMatchSnapshot();
 

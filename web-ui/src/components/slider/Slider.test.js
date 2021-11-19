@@ -3,21 +3,16 @@ import Slider from "./Slider";
 import renderer from "react-test-renderer";
 import { mount } from "enzyme";
 
-jest.mock('react-dom', () => ({
-  findDOMNode: jest.fn()
-}))
-
-jest.mock('react', () => {
-  const originReact = jest.requireActual('react');
-  const mUseRef = jest.fn(() => ({current: {update: jest.fn()}}));
-  return {
-    ...originReact,
-    useRef: mUseRef,
-  };
-});
-
 it("renders slider with title", () => {
-  snapshot(<Slider title="Some skill" />);
+  snapshot(<Slider title="Some skill" />, {
+    createNodeMock: (element) => {
+      if (element.type === 'div') {
+        return {
+          addEventListener: jest.fn(),
+        };
+      }
+    },
+  });
 });
 
 it("value change is reported to the handler correctly", () => {

@@ -1,22 +1,33 @@
 import React, {useContext, useEffect, useState} from "react";
+import {styled} from '@mui/material/styles';
 import {AppContext} from "../context/AppContext";
 import {selectCsrfToken, selectCurrentUserId, selectProfile} from "../context/selectors";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
-import {makeStyles} from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import {Search as SearchIcon} from "@material-ui/icons";
-import {Collapse, IconButton, InputAdornment} from "@material-ui/core";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import {Search as SearchIcon} from "@mui/icons-material";
+import {Collapse, IconButton, InputAdornment} from "@mui/material";
 import ReceivedRequestCard from "../components/received_request_card/ReceivedRequestCard";
 import {getFeedbackRequestsByRecipient} from "../api/feedback";
 import "./ReceivedRequestsPage.css";
 import {UPDATE_TOAST} from "../context/actions";
-import Divider from "@material-ui/core/Divider";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Divider from "@mui/material/Divider";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const useStyles = makeStyles({
-  pageTitle: {
+const PREFIX = 'ReceivedRequestsPage';
+const classes = {
+  pageTitle: `${PREFIX}-pageTitle`,
+  textField: `${PREFIX}-textField`,
+  searchField: `${PREFIX}-searchField`,
+  formControl: `${PREFIX}-formControl`,
+  notFoundMessage: `${PREFIX}-notFoundMessage`,
+  expandClose: `${PREFIX}-expandClose`,
+  expandOpen: `${PREFIX}-expandOpen`
+};
+
+const Root = styled('div')({
+  [`& .${classes.pageTitle}`]: {
     paddingRight: "0.4em",
     minWidth: "330px",
     ['@media screen and (max-width: 600px)']: { // eslint-disable-line no-useless-computed-key
@@ -27,29 +38,29 @@ const useStyles = makeStyles({
       minWidth: "10px"
     },
   },
-  textField: {
+  [`& .${classes.textField}`]: {
     width: "100%",
   },
-  searchField: {
+  [`& .${classes.searchField}`]: {
     width: "100%",
     ['@media screen and (max-width: 840px)']: { // eslint-disable-line no-useless-computed-key
       marginBottom: "1em"
     },
   },
-  formControl: {
+  [`& .${classes.formControl}`]: {
     marginRight: "1em"
   },
-  notFoundMessage: {
+  [`& .${classes.notFoundMessage}`]: {
     color: "gray",
     marginTop: "4em",
     textAlign: "center"
   },
-  expandClose: {
+  [`& .${classes.expandClose}`]: {
     transform: 'rotate(0deg)',
     marginLeft: 'auto',
     transition: "transform 0.1s linear",
   },
-  expandOpen: {
+  [`& .${classes.expandOpen}`]: {
     transform: 'rotate(180deg)',
     transition: "transform 0.1s linear",
     marginLeft: 'auto',
@@ -64,7 +75,6 @@ const SortOption = {
 const ReceivedRequestsPage = () => {
   const {state} = useContext(AppContext);
   const csrf = selectCsrfToken(state);
-  const classes = useStyles();
   const [searchText, setSearchText] = useState("");
   const [sortValue, setSortValue] = useState(SortOption.DATE_DESCENDING);
   const [receivedRequests, setReceivedRequests] = useState([]);
@@ -142,7 +152,7 @@ const ReceivedRequestsPage = () => {
   }, [state, receivedRequests, submittedRequests, searchText, sortValue]);
 
   return (
-    <div className="received-requests-page">
+    <Root className="received-requests-page">
       <div className="received-requests-header-container">
         <Typography variant="h4" className={classes.pageTitle}>Received Feedback Requests</Typography>
         <div className="received-requests-filter-container">
@@ -187,7 +197,7 @@ const ReceivedRequestsPage = () => {
           onClick={() => setReceivedRequestsExpanded(!receivedRequestsExpanded)}
           aria-label="show more"
           className={receivedRequestsExpanded ? classes.expandOpen : classes.expandClose}
-        >
+          size="large">
           <ExpandMoreIcon/>
         </IconButton>
       </div>
@@ -216,7 +226,7 @@ const ReceivedRequestsPage = () => {
           onClick={() => setSubmittedRequestsExpanded(!submittedRequestsExpanded)}
           aria-label="show more"
           className={submittedRequestsExpanded ? classes.expandOpen : classes.expandClose}
-        >
+          size="large">
           <ExpandMoreIcon/>
         </IconButton>
       </div>
@@ -239,7 +249,7 @@ const ReceivedRequestsPage = () => {
           ))}
         </div>
       </Collapse>
-    </div>
+    </Root>
   );
 
 }

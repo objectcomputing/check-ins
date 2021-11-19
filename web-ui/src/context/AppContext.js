@@ -201,7 +201,7 @@ const AppContextProvider = (props) => {
        !res.error
          ? res.payload.data
          : null;
-     if (data && data.length > 0) {
+     if (data && Array.isArray(data) && data.length > 0) {
        dispatch({ type: SET_ROLES, payload: data });
      }
    };

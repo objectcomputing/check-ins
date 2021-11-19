@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { styled } from '@mui/material/styles';
 import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_recipient_card/FeedbackRecipientCard";
 import { AppContext } from "../../context/AppContext";
@@ -10,34 +10,37 @@ import {
 } from "../../context/selectors";
 import { getFeedbackSuggestion } from "../../api/feedback";
 import { selectCurrentUser } from "../../context/selectors";
-import Typography from "@material-ui/core/Typography";
-import { TextField, Grid, InputAdornment } from "@material-ui/core";
-import { Search } from "@material-ui/icons";
+import Typography from "@mui/material/Typography";
+import { TextField, Grid, InputAdornment } from "@mui/material";
+import { Search } from "@mui/icons-material";
 import PropTypes from "prop-types";
 
-const useStyles = makeStyles({
-  search: {
+const PREFIX = 'FeedbackRecipientSelector';
+const classes = {
+  search: `${PREFIX}-search`,
+  searchInput: `${PREFIX}-searchInput`,
+  searchInputIcon: `${PREFIX}-searchInputIcon`,
+  members: `${PREFIX}-members`,
+  textField: `${PREFIX}-textField`
+};
+
+const StyledGrid = styled(Grid)({
+  [`& .${classes.search}`]: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  searchInput: {
+  [`& .${classes.searchInput}`]: {
     width: "20em",
   },
-  searchInputIcon: {
+  [`& .${classes.searchInputIcon}`]: {
     color: "gray",
   },
-  members: {
+  [`& .${classes.members}`]: {
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "space-evenly",
     width: "100%",
-  },
-  textField: {
-    width: "40ch",
-    "@media (max-width:767px)": {
-      width: "100%",
-    },
   },
 });
 
@@ -49,7 +52,6 @@ const propTypes = {
 
 const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
   const { state } = useContext(AppContext);
-  const classes = useStyles();
   const csrf = selectCsrfToken(state);
   const userProfile = selectCurrentUser(state);
   const { id } = userProfile;
@@ -201,7 +203,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
   };
 
   return (
-    <Grid className="feedback-recipient-selector">
+    <StyledGrid className="feedback-recipient-selector">
       <Grid container spacing={3}>
         <Grid item xs={12} className={classes.search}>
           <TextField
@@ -249,7 +251,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
           <p>Can't get suggestions, please come back later :(</p>
         )}
       </div>
-    </Grid>
+    </StyledGrid>
   );
 };
 

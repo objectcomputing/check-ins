@@ -12,7 +12,7 @@ import {
   List,
   ListItem,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 
 const SearchResults = ({ searchResults }) => {
   const { state } = useContext(AppContext);

@@ -9,14 +9,14 @@ import {
 import { AppContext } from "../../../context/AppContext";
 import { UPDATE_TOAST } from "../../../context/actions";
 import { selectCsrfToken, selectCurrentUser, selectIsPDL, selectIsAdmin, selectCheckin } from "../../../context/selectors";
-import DescriptionIcon from "@material-ui/icons/Description";
-import IconButton from "@material-ui/core/IconButton";
-import DeleteIcon from "@material-ui/icons/Delete";
-import { CircularProgress } from "@material-ui/core";
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
+import DescriptionIcon from "@mui/icons-material/Description";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { CircularProgress } from "@mui/material";
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
 
 import "./CheckinDocs.css";
 
@@ -123,7 +123,7 @@ const UploadDocs = () => {
                   );
                 }
               }}
-            >
+              size="large">
               <DeleteIcon />
             </IconButton>
           </div>

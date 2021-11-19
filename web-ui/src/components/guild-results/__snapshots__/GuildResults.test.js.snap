@@ -1,27 +1,717 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<div>
+.emotion-0 .GuildResults-searchInput {
+  width: 20em;
+}
+
+.emotion-1 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  vertical-align: top;
+}
+
+.emotion-2 {
+  color: rgba(0, 0, 0, 0.6);
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  padding: 0;
+  position: relative;
+  display: block;
+  transform-origin: top left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 24px);
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-transform: translate(14px, 16px) scale(1);
+  -moz-transform: translate(14px, 16px) scale(1);
+  -ms-transform: translate(14px, 16px) scale(1);
+  transform: translate(14px, 16px) scale(1);
+  -webkit-transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,-webkit-transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.emotion-2.Mui-focused {
+  color: #1976d2;
+}
+
+.emotion-2.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-2.Mui-error {
+  color: #d32f2f;
+}
+
+.emotion-3 {
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.87);
+  box-sizing: border-box;
+  position: relative;
+  cursor: text;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  border-radius: 4px;
+}
+
+.emotion-3.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+  cursor: default;
+}
+
+.emotion-3:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.87);
+}
+
+@media (hover: none) {
+  .emotion-3:hover .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(0, 0, 0, 0.23);
+  }
+}
+
+.emotion-3.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2;
+  border-width: 2px;
+}
+
+.emotion-3.Mui-error .MuiOutlinedInput-notchedOutline {
+  border-color: #d32f2f;
+}
+
+.emotion-3.Mui-disabled .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-4 {
+  font: inherit;
+  letter-spacing: inherit;
+  color: currentColor;
+  padding: 4px 0 5px;
+  border: 0;
+  box-sizing: content-box;
+  background: none;
+  height: 1.4375em;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  -webkit-animation-name: mui-auto-fill-cancel;
+  animation-name: mui-auto-fill-cancel;
+  -webkit-animation-duration: 10ms;
+  animation-duration: 10ms;
+  padding: 16.5px 14px;
+}
+
+.emotion-4::-webkit-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4::-moz-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4:-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4::-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4:focus {
+  outline: 0;
+}
+
+.emotion-4:invalid {
+  box-shadow: none;
+}
+
+.emotion-4::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4::-webkit-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4::-moz-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4::-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-webkit-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-moz-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus:-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+.emotion-4.Mui-disabled {
+  opacity: 1;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-4:-webkit-autofill {
+  -webkit-animation-duration: 5000s;
+  animation-duration: 5000s;
+  -webkit-animation-name: mui-auto-fill;
+  animation-name: mui-auto-fill;
+}
+
+.emotion-4:-webkit-autofill {
+  border-radius: inherit;
+}
+
+.emotion-5 {
+  text-align: left;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  top: -5px;
+  left: 0;
+  margin: 0;
+  padding: 0 8px;
+  pointer-events: none;
+  border-radius: inherit;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  min-width: 0%;
+  border-color: rgba(0, 0, 0, 0.23);
+}
+
+.emotion-6 {
+  display: block;
+  width: auto;
+  padding: 0;
+  height: 11px;
+  font-size: 0.75em;
+  visibility: hidden;
+  max-width: 0.01px;
+  -webkit-transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+}
+
+.emotion-6>span {
+  padding-left: 5px;
+  padding-right: 5px;
+  display: inline-block;
+}
+
+.emotion-7 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  -webkit-transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  color: #1976d2;
+}
+
+.emotion-7::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-7.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-7 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-7:hover {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: rgba(25, 118, 210, 0.04);
+}
+
+@media (hover: none) {
+  .emotion-7:hover {
+    background-color: transparent;
+  }
+}
+
+.emotion-7.Mui-disabled {
+  color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-8 {
+  display: inherit;
+  margin-right: 8px;
+  margin-left: -4px;
+}
+
+.emotion-8>*:nth-of-type(1) {
+  font-size: 20px;
+}
+
+.emotion-9 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  fill: currentColor;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  font-size: 1.5rem;
+}
+
+.emotion-10 {
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+}
+
+.emotion-11 {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+.emotion-11.GuildSummaryCard-card {
+  width: 340px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+}
+
+.emotion-11 .GuildSummaryCard-header {
+  width: 100%;
+}
+
+.emotion-11 .GuildSummaryCard-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emotion-12 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.emotion-13 {
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+}
+
+.emotion-14 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.334;
+  letter-spacing: 0em;
+  display: block;
+}
+
+.emotion-15 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.6);
+  display: block;
+}
+
+.emotion-16 {
+  padding: 16px;
+}
+
+.emotion-16:last-child {
+  padding-bottom: 24px;
+}
+
+.emotion-17 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 8px;
+}
+
+.emotion-17>:not(:first-of-type) {
+  margin-left: 8px;
+}
+
+.emotion-18 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  border-radius: 4px;
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.emotion-18 .MuiButtonGroup-grouped {
+  min-width: 40px;
+  box-shadow: none;
+}
+
+.emotion-18 .MuiButtonGroup-grouped:not(:first-of-type) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.emotion-18 .MuiButtonGroup-grouped:not(:last-of-type) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 1px solid #bdbdbd;
+  border-color: #1565c0;
+}
+
+.emotion-18 .MuiButtonGroup-grouped:not(:last-of-type).Mui-disabled {
+  border-right: 1px solid rgba(0, 0, 0, 0.26);
+}
+
+.emotion-18 .MuiButtonGroup-grouped:hover {
+  box-shadow: none;
+}
+
+.emotion-19 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  padding: 6px 16px;
+  border-radius: 4px;
+  -webkit-transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  color: #fff;
+  background-color: #1976d2;
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.emotion-19::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-19.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-19 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-19:hover {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: #1565c0;
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+@media (hover: none) {
+  .emotion-19:hover {
+    background-color: #1976d2;
+  }
+}
+
+.emotion-19:active {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.emotion-19.Mui-focusVisible {
+  box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12);
+}
+
+.emotion-19.Mui-disabled {
+  color: rgba(0, 0, 0, 0.26);
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.emotion-21 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  -webkit-transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  color: #fff;
+  background-color: #1976d2;
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.emotion-21::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-21.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-21 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-21:hover {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: #1565c0;
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+@media (hover: none) {
+  .emotion-21:hover {
+    background-color: #1976d2;
+  }
+}
+
+.emotion-21:active {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.emotion-21.Mui-focusVisible {
+  box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12);
+}
+
+.emotion-21.Mui-disabled {
+  color: rgba(0, 0, 0, 0.26);
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+<div
+  className="emotion-0"
+>
   <div
     className="guild-search"
   >
     <div
-      className="MuiFormControl-root MuiTextField-root makeStyles-searchInput-1"
+      className="MuiFormControl-root MuiTextField-root GuildResults-searchInput emotion-1"
     >
       <label
-        className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+        className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-2"
         data-shrink={false}
       >
         Search guilds...
       </label>
       <div
-        className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+        className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl emotion-3"
         onClick={[Function]}
       >
         <input
           aria-invalid={false}
           autoFocus={false}
-          className="MuiInputBase-input MuiInput-input"
+          className="MuiOutlinedInput-input MuiInputBase-input emotion-4"
           disabled={false}
           onAnimationStart={[Function]}
           onBlur={[Function]}
@@ -32,16 +722,29 @@ exports[`renders correctly 1`] = `
           type="text"
           value=""
         />
+        <fieldset
+          aria-hidden={true}
+          className="MuiOutlinedInput-notchedOutline emotion-5"
+        >
+          <legend
+            className="emotion-6"
+          >
+            <span>
+              Search guilds...
+            </span>
+          </legend>
+        </fieldset>
       </div>
     </div>
     <div
       className="guild-actions"
     >
       <button
-        className="MuiButtonBase-root MuiButton-root MuiButton-text"
+        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root emotion-7"
         disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
+        onContextMenu={[Function]}
         onDragLeave={[Function]}
         onFocus={[Function]}
         onKeyDown={[Function]}
@@ -56,26 +759,23 @@ exports[`renders correctly 1`] = `
         type="button"
       >
         <span
-          className="MuiButton-label"
+          className="MuiButton-startIcon MuiButton-iconSizeMedium emotion-8"
         >
-          <span
-            className="MuiButton-startIcon MuiButton-iconSizeMedium"
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+            data-testid="GroupIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
           >
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
-              />
-            </svg>
-          </span>
-          Add Guild
+            <path
+              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+            />
+          </svg>
         </span>
+        Add Guild
         <span
-          className="MuiTouchRipple-root"
+          className="MuiTouchRipple-root emotion-10"
         />
       </button>
     </div>
@@ -84,32 +784,32 @@ exports[`renders correctly 1`] = `
     className="guilds"
   >
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card emotion-11"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-12"
       >
         <div
-          className="MuiCardHeader-content makeStyles-header-3"
+          className="GuildSummaryCard-header MuiCardHeader-content emotion-13"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title makeStyles-title-4 MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 GuildSummaryCard-title MuiCardHeader-title emotion-14"
           >
             string
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-4 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 GuildSummaryCard-title MuiCardHeader-subheader emotion-15"
           >
             <div
-              aria-describedby={null}
-              className=""
+              aria-label="string"
+              aria-labelledby={null}
+              data-mui-internal-clone-element={true}
               onBlur={[Function]}
               onFocus={[Function]}
               onMouseLeave={[Function]}
               onMouseOver={[Function]}
               onTouchEnd={[Function]}
               onTouchStart={[Function]}
-              title="string"
             >
               string
             </div>
@@ -117,7 +817,7 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiCardContent-root"
+        className="MuiCardContent-root emotion-16"
       >
         <strong>
           Guild Leads: 
@@ -130,19 +830,20 @@ exports[`renders correctly 1`] = `
         None Assigned
       </div>
       <div
-        className="MuiCardActions-root MuiCardActions-spacing"
+        className="MuiCardActions-root MuiCardActions-spacing emotion-17"
       >
         <div>
           <div
             aria-label="split button"
-            className="MuiButtonGroup-root MuiButtonGroup-contained"
+            className="MuiButtonGroup-root MuiButtonGroup-contained emotion-18"
             role="group"
           >
             <button
-              className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary"
+              className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-19"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
+              onContextMenu={[Function]}
               onDragLeave={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
@@ -156,22 +857,19 @@ exports[`renders correctly 1`] = `
               tabIndex={0}
               type="button"
             >
+              Edit Guild
               <span
-                className="MuiButton-label"
-              >
-                Edit Guild
-              </span>
-              <span
-                className="MuiTouchRipple-root"
+                className="MuiTouchRipple-root emotion-10"
               />
             </button>
             <button
               aria-haspopup="menu"
               aria-label="select merge strategy"
-              className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary MuiButton-containedSizeSmall MuiButton-sizeSmall"
+              className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-21"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
+              onContextMenu={[Function]}
               onDragLeave={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
@@ -185,22 +883,19 @@ exports[`renders correctly 1`] = `
               tabIndex={0}
               type="button"
             >
-              <span
-                className="MuiButton-label"
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+                data-testid="ArrowDropDownIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  aria-hidden={true}
-                  className="MuiSvgIcon-root"
-                  focusable="false"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M7 10l5 5 5-5z"
-                  />
-                </svg>
-              </span>
+                <path
+                  d="m7 10 5 5 5-5z"
+                />
+              </svg>
               <span
-                className="MuiTouchRipple-root"
+                className="MuiTouchRipple-root emotion-10"
               />
             </button>
           </div>
@@ -208,32 +903,32 @@ exports[`renders correctly 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card emotion-11"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-12"
       >
         <div
-          className="MuiCardHeader-content makeStyles-header-3"
+          className="GuildSummaryCard-header MuiCardHeader-content emotion-13"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title makeStyles-title-4 MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 GuildSummaryCard-title MuiCardHeader-title emotion-14"
           >
             stuff
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-4 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 GuildSummaryCard-title MuiCardHeader-subheader emotion-15"
           >
             <div
-              aria-describedby={null}
-              className=""
+              aria-label=""
+              aria-labelledby={null}
+              data-mui-internal-clone-element={true}
               onBlur={[Function]}
               onFocus={[Function]}
               onMouseLeave={[Function]}
               onMouseOver={[Function]}
               onTouchEnd={[Function]}
               onTouchStart={[Function]}
-              title=""
             >
               
             </div>
@@ -241,7 +936,7 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiCardContent-root"
+        className="MuiCardContent-root emotion-16"
       >
         <strong>
           Guild Leads: 
@@ -254,19 +949,20 @@ exports[`renders correctly 1`] = `
         None Assigned
       </div>
       <div
-        className="MuiCardActions-root MuiCardActions-spacing"
+        className="MuiCardActions-root MuiCardActions-spacing emotion-17"
       >
         <div>
           <div
             aria-label="split button"
-            className="MuiButtonGroup-root MuiButtonGroup-contained"
+            className="MuiButtonGroup-root MuiButtonGroup-contained emotion-18"
             role="group"
           >
             <button
-              className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary"
+              className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-19"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
+              onContextMenu={[Function]}
               onDragLeave={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
@@ -280,22 +976,19 @@ exports[`renders correctly 1`] = `
               tabIndex={0}
               type="button"
             >
+              Edit Guild
               <span
-                className="MuiButton-label"
-              >
-                Edit Guild
-              </span>
-              <span
-                className="MuiTouchRipple-root"
+                className="MuiTouchRipple-root emotion-10"
               />
             </button>
             <button
               aria-haspopup="menu"
               aria-label="select merge strategy"
-              className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary MuiButton-containedSizeSmall MuiButton-sizeSmall"
+              className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-21"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
+              onContextMenu={[Function]}
               onDragLeave={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
@@ -309,22 +1002,19 @@ exports[`renders correctly 1`] = `
               tabIndex={0}
               type="button"
             >
-              <span
-                className="MuiButton-label"
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+                data-testid="ArrowDropDownIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  aria-hidden={true}
-                  className="MuiSvgIcon-root"
-                  focusable="false"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M7 10l5 5 5-5z"
-                  />
-                </svg>
-              </span>
+                <path
+                  d="m7 10 5 5 5-5z"
+                />
+              </svg>
               <span
-                className="MuiTouchRipple-root"
+                className="MuiTouchRipple-root emotion-10"
               />
             </button>
           </div>
@@ -336,27 +1026,488 @@ exports[`renders correctly 1`] = `
 `;
 
 exports[`renders correctly when no guilds are loaded 1`] = `
-<div>
+@keyframes animation-0 {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.emotion-0 .GuildResults-searchInput {
+  width: 20em;
+}
+
+.emotion-1 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  vertical-align: top;
+}
+
+.emotion-2 {
+  color: rgba(0, 0, 0, 0.6);
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  padding: 0;
+  position: relative;
+  display: block;
+  transform-origin: top left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 24px);
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-transform: translate(14px, 16px) scale(1);
+  -moz-transform: translate(14px, 16px) scale(1);
+  -ms-transform: translate(14px, 16px) scale(1);
+  transform: translate(14px, 16px) scale(1);
+  -webkit-transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,-webkit-transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.emotion-2.Mui-focused {
+  color: #1976d2;
+}
+
+.emotion-2.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-2.Mui-error {
+  color: #d32f2f;
+}
+
+.emotion-3 {
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.87);
+  box-sizing: border-box;
+  position: relative;
+  cursor: text;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  border-radius: 4px;
+}
+
+.emotion-3.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+  cursor: default;
+}
+
+.emotion-3:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.87);
+}
+
+@media (hover: none) {
+  .emotion-3:hover .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(0, 0, 0, 0.23);
+  }
+}
+
+.emotion-3.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2;
+  border-width: 2px;
+}
+
+.emotion-3.Mui-error .MuiOutlinedInput-notchedOutline {
+  border-color: #d32f2f;
+}
+
+.emotion-3.Mui-disabled .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-4 {
+  font: inherit;
+  letter-spacing: inherit;
+  color: currentColor;
+  padding: 4px 0 5px;
+  border: 0;
+  box-sizing: content-box;
+  background: none;
+  height: 1.4375em;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  -webkit-animation-name: mui-auto-fill-cancel;
+  animation-name: mui-auto-fill-cancel;
+  -webkit-animation-duration: 10ms;
+  animation-duration: 10ms;
+  padding: 16.5px 14px;
+}
+
+.emotion-4::-webkit-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4::-moz-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4:-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4::-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4:focus {
+  outline: 0;
+}
+
+.emotion-4:invalid {
+  box-shadow: none;
+}
+
+.emotion-4::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4::-webkit-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4::-moz-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4::-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-webkit-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-moz-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus:-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+.emotion-4.Mui-disabled {
+  opacity: 1;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-4:-webkit-autofill {
+  -webkit-animation-duration: 5000s;
+  animation-duration: 5000s;
+  -webkit-animation-name: mui-auto-fill;
+  animation-name: mui-auto-fill;
+}
+
+.emotion-4:-webkit-autofill {
+  border-radius: inherit;
+}
+
+.emotion-5 {
+  text-align: left;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  top: -5px;
+  left: 0;
+  margin: 0;
+  padding: 0 8px;
+  pointer-events: none;
+  border-radius: inherit;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  min-width: 0%;
+  border-color: rgba(0, 0, 0, 0.23);
+}
+
+.emotion-6 {
+  display: block;
+  width: auto;
+  padding: 0;
+  height: 11px;
+  font-size: 0.75em;
+  visibility: hidden;
+  max-width: 0.01px;
+  -webkit-transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+}
+
+.emotion-6>span {
+  padding-left: 5px;
+  padding-right: 5px;
+  display: inline-block;
+}
+
+.emotion-7 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  -webkit-transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  color: #1976d2;
+}
+
+.emotion-7::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-7.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-7 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-7:hover {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: rgba(25, 118, 210, 0.04);
+}
+
+@media (hover: none) {
+  .emotion-7:hover {
+    background-color: transparent;
+  }
+}
+
+.emotion-7.Mui-disabled {
+  color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-8 {
+  display: inherit;
+  margin-right: 8px;
+  margin-left: -4px;
+}
+
+.emotion-8>*:nth-of-type(1) {
+  font-size: 20px;
+}
+
+.emotion-9 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  fill: currentColor;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  font-size: 1.5rem;
+}
+
+.emotion-10 {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+.emotion-10.SkeletonLoader-card {
+  width: 340px;
+}
+
+.emotion-11 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.emotion-12 {
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+}
+
+.emotion-13 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.334;
+  letter-spacing: 0em;
+  display: block;
+}
+
+.emotion-14 {
+  display: block;
+  background-color: rgba(0, 0, 0, 0.11);
+  height: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  transform-origin: 0 55%;
+  -webkit-transform: scale(1, 0.60);
+  -moz-transform: scale(1, 0.60);
+  -ms-transform: scale(1, 0.60);
+  transform: scale(1, 0.60);
+  border-radius: 4px/6.7px;
+  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+}
+
+.emotion-14:empty:before {
+  content: "\\00a0";
+}
+
+.emotion-15 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.6);
+  display: block;
+}
+
+.emotion-17 {
+  margin-top: 16px;
+  margin-left: 16px;
+  margin-right: 16px;
+  height: 80px;
+}
+
+.emotion-19 {
+  height: 10px;
+}
+
+<div
+  className="emotion-0"
+>
   <div
     className="guild-search"
   >
     <div
-      className="MuiFormControl-root MuiTextField-root makeStyles-searchInput-1"
+      className="MuiFormControl-root MuiTextField-root GuildResults-searchInput emotion-1"
     >
       <label
-        className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+        className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-2"
         data-shrink={false}
       >
         Search guilds...
       </label>
       <div
-        className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+        className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl emotion-3"
         onClick={[Function]}
       >
         <input
           aria-invalid={false}
           autoFocus={false}
-          className="MuiInputBase-input MuiInput-input"
+          className="MuiOutlinedInput-input MuiInputBase-input emotion-4"
           disabled={false}
           onAnimationStart={[Function]}
           onBlur={[Function]}
@@ -367,16 +1518,29 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           type="text"
           value=""
         />
+        <fieldset
+          aria-hidden={true}
+          className="MuiOutlinedInput-notchedOutline emotion-5"
+        >
+          <legend
+            className="emotion-6"
+          >
+            <span>
+              Search guilds...
+            </span>
+          </legend>
+        </fieldset>
       </div>
     </div>
     <div
       className="guild-actions"
     >
       <button
-        className="MuiButtonBase-root MuiButton-root MuiButton-text"
+        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root emotion-7"
         disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
+        onContextMenu={[Function]}
         onDragLeave={[Function]}
         onFocus={[Function]}
         onKeyDown={[Function]}
@@ -391,24 +1555,21 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         type="button"
       >
         <span
-          className="MuiButton-label"
+          className="MuiButton-startIcon MuiButton-iconSizeMedium emotion-8"
         >
-          <span
-            className="MuiButton-startIcon MuiButton-iconSizeMedium"
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+            data-testid="GroupIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
           >
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
-              />
-            </svg>
-          </span>
-          Add Guild
+            <path
+              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+            />
+          </svg>
         </span>
+        Add Guild
       </button>
     </div>
   </div>
@@ -416,19 +1577,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
     className="guilds"
   >
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -438,10 +1599,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -453,10 +1614,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-6"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -465,10 +1626,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-7"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -477,7 +1638,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -488,19 +1649,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -510,10 +1671,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -525,10 +1686,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-8"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -537,10 +1698,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-9"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -549,7 +1710,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -560,19 +1721,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -582,10 +1743,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -597,10 +1758,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-10"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -609,10 +1770,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-11"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -621,7 +1782,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -632,19 +1793,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -654,10 +1815,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -669,10 +1830,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-12"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -681,10 +1842,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-13"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -693,7 +1854,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -704,19 +1865,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -726,10 +1887,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -741,10 +1902,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-14"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -753,10 +1914,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-15"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -765,7 +1926,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -776,19 +1937,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -798,10 +1959,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -813,10 +1974,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-16"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -825,10 +1986,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-17"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -837,7 +1998,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -848,19 +2009,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -870,10 +2031,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -885,10 +2046,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-18"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -897,10 +2058,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-19"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -909,7 +2070,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -920,19 +2081,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -942,10 +2103,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -957,10 +2118,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-20"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -969,10 +2130,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-21"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -981,7 +2142,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -992,19 +2153,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1014,10 +2175,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1029,10 +2190,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-22"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1041,10 +2202,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-23"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1053,7 +2214,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1064,19 +2225,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1086,10 +2247,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1101,10 +2262,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-24"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1113,10 +2274,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-25"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1125,7 +2286,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1136,19 +2297,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1158,10 +2319,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1173,10 +2334,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-26"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1185,10 +2346,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-27"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1197,7 +2358,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1208,19 +2369,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1230,10 +2391,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1245,10 +2406,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-28"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1257,10 +2418,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-29"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1269,7 +2430,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1280,19 +2441,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1302,10 +2463,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1317,10 +2478,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-30"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1329,10 +2490,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-31"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1341,7 +2502,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1352,19 +2513,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1374,10 +2535,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1389,10 +2550,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-32"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1401,10 +2562,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-33"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1413,7 +2574,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1424,19 +2585,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1446,10 +2607,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1461,10 +2622,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-34"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1473,10 +2634,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-35"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1485,7 +2646,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1496,19 +2657,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1518,10 +2679,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1533,10 +2694,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-36"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1545,10 +2706,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-37"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1557,7 +2718,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1568,19 +2729,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1590,10 +2751,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1605,10 +2766,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-38"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1617,10 +2778,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-39"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1629,7 +2790,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1640,19 +2801,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1662,10 +2823,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1677,10 +2838,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-40"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1689,10 +2850,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-41"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1701,7 +2862,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1712,19 +2873,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1734,10 +2895,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1749,10 +2910,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-42"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1761,10 +2922,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-43"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1773,7 +2934,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1784,19 +2945,19 @@ exports[`renders correctly when no guilds are loaded 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root makeStyles-card-5 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-10"
     >
       <div
-        className="MuiCardHeader-root"
+        className="MuiCardHeader-root emotion-11"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content emotion-12"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-13"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": 50,
@@ -1806,10 +2967,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
             />
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-15"
           >
             <span
-              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+              className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
               style={
                 Object {
                   "height": undefined,
@@ -1821,10 +2982,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
         </div>
       </div>
       <div
-        className="MuiBox-root MuiBox-root-44"
+        className="MuiBox-root emotion-17"
       >
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1833,10 +2994,10 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <div
-          className="MuiBox-root MuiBox-root-45"
+          className="MuiBox-root emotion-19"
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,
@@ -1845,7 +3006,7 @@ exports[`renders correctly when no guilds are loaded 1`] = `
           }
         />
         <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-14"
           style={
             Object {
               "height": 15,

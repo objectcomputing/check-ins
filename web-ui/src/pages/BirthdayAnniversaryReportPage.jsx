@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 
 import { AppContext } from "../context/AppContext";
 
-import { Button, TextField } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Button, TextField } from "@mui/material";
+import Autocomplete from '@mui/material/Autocomplete';
 
 import "./BirthdayAnniversaryReportPage.css";
 
@@ -106,7 +106,7 @@ const BirthdayAnniversaryReportPage = () => {
           defaultValue={months[currentMonth].month}
           value={selectedMonths}
           onChange={onMonthChange}
-          getOptionSelected={(option, value) => {
+          isOptionEqualToValue={(option, value) => {
             return value ? value.month === option.month : false;
           }}
           getOptionLabel={(option) => option.month}
@@ -145,14 +145,14 @@ const BirthdayAnniversaryReportPage = () => {
         <input
           id="birthday"
           checked={birthday}
-          onClick={handleBirthday}
+          onChange={handleBirthday}
           type="checkbox"
         />
         <label htmlFor="anniversary">Include Anniversaries</label>
         <input
           id="anniversary"
           checked={anniversary}
-          onClick={handleAnniversary}
+          onChange={handleAnniversary}
           type="checkbox"
         />
       </div>

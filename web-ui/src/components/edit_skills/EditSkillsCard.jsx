@@ -25,7 +25,7 @@ import {
   CardContent,
   Modal,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import "./EditSkills.css";
 

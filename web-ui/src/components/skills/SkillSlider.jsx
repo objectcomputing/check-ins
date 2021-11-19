@@ -1,24 +1,27 @@
 import React, { useState } from "react";
-
+import { styled } from '@mui/material/styles';
 import "./SkillSlider.css";
-
 import {
   Checkbox,
   FormControl,
   FormControlLabel,
   IconButton,
   Tooltip,
-} from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import TextField from "@material-ui/core/TextField";
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
-import { makeStyles } from "@material-ui/core/styles";
 import DiscreteSlider from "../slider/Slider";
 
-const useStyles = makeStyles((theme) => ({
-  hidden: {
+const PREFIX = 'SkillSlider';
+const classes = {
+  hidden: `${PREFIX}-hidden`
+};
+
+const Root = styled('span')(() => ({
+  [`& .${classes.hidden}`]: {
     display: "none",
-  },
+  }
 }));
 
 const SkillSlider = ({
@@ -35,8 +38,6 @@ const SkillSlider = ({
   let [lastUsed, setLastUsed] = useState(lastUsedDate);
   let [skillLevel, setSkillLevel] = useState(startLevel);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
-
-  const classes = useStyles();
 
   const datePickerVisibility = (event) => {
     setCurrCheck(!currCheck);
@@ -64,8 +65,8 @@ const SkillSlider = ({
   };
 
   return (
-    <React.Fragment>
-      <div>
+    <>
+      <Root>
         <Tooltip
           open={tooltipIsOpen && description ? true : false}
           onOpen={() => setTooltipIsOpen(true)}
@@ -92,7 +93,7 @@ const SkillSlider = ({
             />
           </FormControl>
         )}
-      </div>
+      </Root>
       {false && (
         <TextField
           className={currCheck ? classes.hidden : undefined}
@@ -101,10 +102,10 @@ const SkillSlider = ({
           defaultValue={formatDate(lastUsed)}
         />
       )}
-      <IconButton onClick={(event) => onDelete(id)}>
+      <IconButton onClick={(event) => onDelete(id)} size="large">
         <DeleteIcon />
       </IconButton>
-    </React.Fragment>
+    </>
   );
 };
 export default SkillSlider;

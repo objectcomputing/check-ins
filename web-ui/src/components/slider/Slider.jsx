@@ -1,51 +1,28 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Slider from '@material-ui/core/Slider';
-import Tooltip from '@material-ui/core/Tooltip';
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import Slider from '@mui/material/Slider';
+import Tooltip from '@mui/material/Tooltip';
 import './Slider.css';
 
-import { createMuiTheme } from "@material-ui/core/styles";
-import { ThemeProvider } from "@material-ui/styles";
-import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
-
-const customBreakpointValues = {
-  values: {
-    xs: 0,
-    sm: 360,
-    md: 768,
-    lg: 992,
-    xl: 1200,
-  },
-}
-
-const breakpoints = createBreakpoints({ ...customBreakpointValues })
-
-const muiTheme = createMuiTheme({
-  breakpoints: {
-    ...customBreakpointValues,
-  },
-  overrides: {
-    MuiSlider: {
-      markLabel:{
-      [breakpoints.down('sm')]: {
-        fontSize: "0.25rem",
-        },
-      [breakpoints.between('sm', 'md')]: {
-        fontSize: "0.525rem",
-        },
-      [breakpoints.between('md', 'lg')]: {
-        fontSize: "0.775rem",
-        },
-      [breakpoints.up('lg')]: {
-        fontSize: "0.875rem",
-        },
-      }
-    }
+const Root = styled('div')(({theme}) => ({
+  '& .MuiSlider-markLabel': {
+    [theme.breakpoints.down('md')]: {
+      fontSize: "0.25rem",
+    },
+    [theme.breakpoints.between('sm', 'lg')]: {
+      fontSize: "0.525rem",
+    },
+    [theme.breakpoints.between('md', 'xl')]: {
+      fontSize: "0.775rem",
+    },
+    [theme.breakpoints.up('lg')]: {
+      fontSize: "0.875rem",
+    },
   }
-});
+}));
 
 const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos}) => {
-
   const defaultMarks = [
     {
       value: 1,
@@ -116,7 +93,7 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
         <ul>
           {
             children && children.map((child) => {
-              return(<li>{child}</li>);
+              return(<li key={child}>{child}</li>);
             })
           }
         </ul>
@@ -149,20 +126,22 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
       <Typography id="discrete-slider-restrict" gutterBottom>
         {title}
       </Typography>
-      <ThemeProvider theme={muiTheme}>
-      <Slider
-        min={0.5}
-        max={marks.length+.5}
-        value={startPos}
-        valueLabelDisplay="auto"
-        ValueLabelComponent={ValueLabelComponent}
-        getAriaValueText={valuetext}
-        step={null}
-        marks={marks}
-        onChange={onChange}
-        onChangeCommitted={onChangeCommitted}
-      />
-      </ThemeProvider>
+      <Root>
+        <Slider
+          min={0.5}
+          max={marks.length+.5}
+          value={startPos}
+          valueLabelDisplay="auto"
+          components={{
+            ValueLabel: ValueLabelComponent
+          }}
+          getAriaValueText={valuetext}
+          step={null}
+          marks={marks}
+          onChange={onChange}
+          onChangeCommitted={onChangeCommitted}
+        />
+      </Root>
     </div>
   );
 };

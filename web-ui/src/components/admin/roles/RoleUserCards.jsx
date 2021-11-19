@@ -1,7 +1,7 @@
 import React from "react";
 import { getAvatarURL } from "../../../api/api.js";
 
-import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Avatar,
   Divider,
@@ -9,7 +9,7 @@ import {
   ListItemText,
   ListItemAvatar,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 
 const RoleUserCards = ({ role, roleToMemberMap, removeFromRole }) => {
   roleToMemberMap[role].sort((a, b) => a.name.localeCompare(b.name));
