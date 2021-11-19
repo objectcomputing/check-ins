@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 
 import { styled } from '@mui/material/styles';
 import { AppContext } from "../../context/AppContext";
@@ -84,9 +84,10 @@ const GuildSummaryCard = ({ guild, index }) => {
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
-  const deleteAGuild = async (id) => {
-    if (id && csrf) {
-      const result = await deleteGuild(id, csrf);
+  const guildId = guild?.id;
+  const deleteAGuild = useCallback(async () => {
+    if (guildId && csrf) {
+      const result = await deleteGuild(guildId, csrf);
       if (result && result.payload && result.payload.status === 200) {
         window.snackDispatch({
           type: UPDATE_TOAST,
@@ -96,7 +97,7 @@ const GuildSummaryCard = ({ guild, index }) => {
           },
         });
         let newGuilds = guilds.filter((guild) => {
-          return guild.id !== id;
+          return guild.id !== guildId;
         });
         dispatch({
           type: UPDATE_GUILDS,
@@ -104,7 +105,7 @@ const GuildSummaryCard = ({ guild, index }) => {
         });
       }
     }
-  };
+  }, [guildId, csrf, dispatch, guilds]);
 
   const options =
     isAdmin || isGuildLead ? ["Edit Guild", "Delete Guild"] : ["Edit Guild"];
@@ -183,7 +184,6 @@ const GuildSummaryCard = ({ guild, index }) => {
                   Cancel
                 </Button>
                 <Button
-                  disabled
                   onClick={deleteAGuild}
                   color="primary"
                   autoFocus

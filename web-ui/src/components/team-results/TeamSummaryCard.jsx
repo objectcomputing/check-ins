@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 import { styled } from '@mui/material/styles';
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TEAMS, UPDATE_TOAST } from "../../context/actions";
@@ -85,9 +85,10 @@ const TeamSummaryCard = ({ team, index }) => {
   const handleClose = () => setOpen(false);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
-  const deleteATeam = async () => {
-    if (id && csrf) {
-      const result = await deleteTeam(id, csrf);
+  const teamId = team?.id;
+  const deleteATeam = useCallback(async () => {
+    if (teamId && csrf) {
+      const result = await deleteTeam(teamId, csrf);
       if (result && result.payload && result.payload.status === 200) {
         window.snackDispatch({
           type: UPDATE_TOAST,
@@ -97,7 +98,7 @@ const TeamSummaryCard = ({ team, index }) => {
           },
         });
         let newTeams = teams.filter((team) => {
-          return team.id !== id;
+          return team.id !== teamId;
         });
         dispatch({
           type: UPDATE_TEAMS,
@@ -105,7 +106,7 @@ const TeamSummaryCard = ({ team, index }) => {
         });
       }
     }
-  };
+  }, [teamId, csrf, dispatch, teams]);
 
   const options =
     isAdmin || isTeamLead ? ["Edit Team", "Delete Team"] : ["Edit Team"];
@@ -184,7 +185,6 @@ const TeamSummaryCard = ({ team, index }) => {
                   Cancel
                 </Button>
                 <Button
-                  disabled
                   onClick={deleteATeam}
                   color="primary"
                   autoFocus
