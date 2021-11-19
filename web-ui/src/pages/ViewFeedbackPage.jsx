@@ -176,7 +176,7 @@ const ViewFeedbackPage = () => {
         dateRange={dateRange}
       />
       ));
-  }, [searchText, sortValue, dateRange, feedbackRequests, classes.notFoundMessage]);
+  }, [searchText, sortValue, dateRange, feedbackRequests]);
 
   return (
     <Root className="view-feedback-page">
