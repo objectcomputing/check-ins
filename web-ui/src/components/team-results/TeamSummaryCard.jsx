@@ -57,7 +57,6 @@ const displayName = "TeamSummaryCard";
 const TeamSummaryCard = ({ team, index }) => {
   const { state, dispatch } = useContext(AppContext);
   const { teams, userProfile, csrf } = state;
-  const { id } = team;
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
