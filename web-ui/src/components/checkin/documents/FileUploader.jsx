@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AppContext } from "../../../context/AppContext";
 import { selectCheckin } from "../../../context/selectors";
-import Button from "@material-ui/core/Button";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
+import Button from "@mui/material/Button";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 // Style the Button component
 
 const FileUploader = ({ fileRef, handleFile }) => {

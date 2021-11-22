@@ -1,10 +1,10 @@
 import React, {useState, useCallback} from "react";
 import PropTypes from "prop-types";
-import IconButton from "@material-ui/core/IconButton";
-import {NotInterested, SentimentSatisfied, SentimentVeryDissatisfied, SentimentVerySatisfied} from "@material-ui/icons";
-import {Popover} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import IconButton from "@mui/material/IconButton";
+import {NotInterested, SentimentSatisfied, SentimentVeryDissatisfied, SentimentVerySatisfied} from "@mui/icons-material";
+import {Popover} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import "./SentimentIcon.css";
 
 const sentimentThreshold = 0.4;
@@ -48,7 +48,7 @@ const SentimentIcon = (props) => {
       <IconButton
         onClick={(event) => handlePopoverOpen(event)}
         style={buttonStyle}
-      >
+        size="large">
         {sentimentIcon}
       </IconButton>
     );
@@ -62,7 +62,7 @@ const SentimentIcon = (props) => {
         key={sentimentScore}
         onClick={() => setSelectedSentiment(sentimentScore)}
         style={buttonStyle}
-      >
+        size="large">
         {sentimentIcon}
       </IconButton>
     );
@@ -99,7 +99,7 @@ const SentimentIcon = (props) => {
 
   if (props.sentimentScore === undefined || currentSentiment < -1 || 1 < currentSentiment) {
     return (
-      <IconButton disabled>
+      <IconButton disabled size="large">
         <NotInterested style={{color: "gray"}}/>
       </IconButton>
     );

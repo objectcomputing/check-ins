@@ -1,33 +1,30 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import Typography from "@material-ui/core/Typography";
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { makeStyles } from '@material-ui/core/styles';
+import { styled } from '@mui/material/styles';
+import Typography from "@mui/material/Typography";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {selectCsrfToken, selectCurrentUser, selectProfile} from "../../context/selectors";
 import { AppContext } from "../../context/AppContext";
 import { useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import "./FeedbackSubmitConfirmation.css";
-import { green } from "@material-ui/core/colors";
+import { green } from "@mui/material/colors";
 import {getFeedbackRequestById} from "../../api/feedback";
 
-const useStyles = makeStyles({
-  announcement: {
+const PREFIX = 'FeedbackSubmitConfirmation';
+const classes = {
+  announcement: `${PREFIX}-announcement`,
+};
+
+const Root = styled('div')({
+  [`& .${classes.announcement}`]: {
     textAlign: "center",
     ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "x-large",
     },
   },
-
-  checkmark: {
-    ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
-      width: "65%",
-    },
-  },
-
 });
 
 const FeedbackSubmitConfirmation = (props) => {
-  const classes = useStyles();
   const { state } = useContext(AppContext);
   const location = useLocation();
   const query = queryString.parse(location?.search);
@@ -77,10 +74,10 @@ const FeedbackSubmitConfirmation = (props) => {
   }, [feedbackRequest, state]);
 
   return (
-    <div className="submit-confirmation">
+    <Root className="submit-confirmation">
       <CheckCircleIcon style={{ color: green[500], fontSize: '40vh' }}>checkmark-image</CheckCircleIcon>
       <Typography className={classes.announcement} variant="h3">Thank you for your feedback on <b>{requestee?.name}</b></Typography>
-    </div>
+    </Root>
   );
 }
 

@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
 
 import MemberModal from "./MemberModal";
@@ -7,9 +8,9 @@ import { UPDATE_MEMBER_PROFILES } from "../../context/actions";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 
-import { Card, CardActions, CardHeader, Tooltip } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
+import { Card, CardActions, CardHeader, Tooltip } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 
 import "./MemberSummaryCard.css";
 import SplitButton from "../split-button/SplitButton";
@@ -27,14 +28,18 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  makeStyles,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 
-const useStyles = makeStyles(() => ({
-  header: {
+const PREFIX = 'AdminMemberCard';
+const classes = {
+  header: `${PREFIX}-header`
+};
+
+const StyledBox = styled(Box)(() => ({
+  [`& .${classes.header}`]: {
     cursor: "pointer",
-  },
+  }
 }));
 
 const AdminMemberCard = ({ member, index }) => {
@@ -55,8 +60,6 @@ const AdminMemberCard = ({ member, index }) => {
   const supervisorProfile = selectProfileMap(state)[supervisorid];
   const pdlProfile = selectProfileMap(state)[pdlId];
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
-
-  const classes = useStyles();
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -93,7 +96,7 @@ const AdminMemberCard = ({ member, index }) => {
   };
 
   return (
-    <Box display="flex" flexWrap="wrap">
+    <StyledBox display="flex" flexWrap="wrap">
       <Card className={"member-card"}>
         <Link
           style={{ color: "black", textDecoration: "none" }}
@@ -207,7 +210,7 @@ const AdminMemberCard = ({ member, index }) => {
           </CardActions>
         )}
       </Card>
-    </Box>
+    </StyledBox>
   );
 };
 

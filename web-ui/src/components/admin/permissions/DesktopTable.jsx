@@ -1,28 +1,32 @@
-import { 
-  makeStyles, 
-  Paper, 
-  Table, 
-  TableBody, TableCell, 
-  TableRow, 
-  TableHead, 
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TableHead,
   TableContainer,
   Checkbox,
-} from '@material-ui/core'
-
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
 import React from 'react'
 
-const useStyles = makeStyles({
-  table: {
+const PREFIX = 'DesktopTable';
+const classes = {
+  table: `${PREFIX}-table`
+};
+
+const StyledTableContainer = styled(TableContainer)({
+  [`& .${classes.table}`]: {
     minWidth: 650,
   },
 });
 
 
 export default function DesktopTable({roles, allPermissions, handleChange}) {
-  const classes = useStyles();
 
   return (
-    <TableContainer component={Paper}>
+    <StyledTableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -55,6 +59,6 @@ export default function DesktopTable({roles, allPermissions, handleChange}) {
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
-  )
+    </StyledTableContainer>
+  );
 }

@@ -1,79 +1,68 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import {styled} from '@mui/styles';
 import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
-import Card from "@material-ui/core/Card";
-import { Avatar, Typography } from "@material-ui/core";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Collapse from "@material-ui/core/Collapse";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import IconButton from "@material-ui/core/IconButton";
-import Grid from "@material-ui/core/Grid";
-import { useHistory } from "react-router-dom";
+import Card from '@mui/material/Card';
+import {Avatar, Typography} from '@mui/material';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Collapse from '@mui/material/Collapse';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import IconButton from '@mui/material/IconButton';
+import Grid from '@mui/material/Grid';
+import {useHistory} from "react-router-dom";
 import PropTypes from "prop-types";
 import "./FeedbackRequestCard.css";
 import { selectProfile } from "../../context/selectors";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
-import Divider from "@material-ui/core/Divider";
-import Button from "@material-ui/core/Button";
+import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button";
 import queryString from "query-string";
 
-const useStyles = makeStyles({
-  root: {
+const PREFIX = 'FeedbackRequestCard';
+const classes = {
+  root: `${PREFIX}-root`,
+  expandClose: `${PREFIX}-expandClose`,
+  expandOpen: `${PREFIX}-expandOpen`
+};
+
+const StyledCard = styled(Card)({
+  [`&.${classes.root}`]: {
     color: "gray",
     width: "100%",
     maxHeight: "10%",
-    '@media (max-width:769px)': {
+    "@media (max-width:769px)": {
       width: "100%",
       maxWidth: "100%",
     },
   },
-  expandClose: {
+  [`& .${classes.expandClose}`]: {
     transform: "rotate(0deg)",
     marginLeft: "auto",
     transition: "transform 0.1s linear",
   },
-  expandOpen: {
+  [`& .${classes.expandOpen}`]: {
     transform: "rotate(180deg)",
     transition: "transform 0.1s linear",
     marginLeft: "auto",
   },
+  "& .MuiCardContent-root": {
+    paddingBottom: 0,
+    paddingTop: 0,
+    "&:last-child": {
+      paddingBottom: 0
+    }
+  },
+  "& .MuiCardActions-root": {
+    padding: 0,
+    maxHeight: "30px"
+  },
+  "& .MuiTypography-body1": {
+    "@media (max-width:767px)": {
+      fontSize: "0.7rem",
+    }
+  }
 });
-
-const useStylesCardContent = makeStyles(
-  {
-    root: {
-      paddingBottom: 0,
-      paddingTop: 0,
-      "&:last-child": {
-        paddingBottom: 0,
-      },
-    },
-  },
-  { name: "MuiCardContent" }
-);
-
-const useStylesCardActions = makeStyles(
-  {
-    root: {
-      padding: 0,
-      maxHeight: "30px",
-    },
-  },
-  { name: "MuiCardActions" }
-);
-
-const useStylesText = makeStyles(
-  {
-    body1: {
-      '@media (max-width:767px)': {
-        fontSize: "0.7rem",
-      },
-    },
-  },
-  { name: "MuiTypography" }
-);
 
 const SortOption = {
   SENT_DATE: "sent_date",
@@ -114,13 +103,9 @@ const FeedbackRequestCard = ({
   sortType,
   dateRange,
 }) => {
-  const classes = useStyles();
   const { state } = useContext(AppContext);
   const requesteeProfile = selectProfile(state, requesteeId);
   const avatarURL = getAvatarURL(requesteeProfile?.workEmail);
-  useStylesCardActions();
-  useStylesText();
-  useStylesCardContent();
   const history = useHistory();
   const [expanded, setExpanded] = React.useState(false);
   const [sortedResponses, setSortedResponses] = useState(responses);
@@ -244,7 +229,7 @@ const FeedbackRequestCard = ({
 
   return (
     <div className="feedback-request-card">
-      <Card className={classes.root}>
+      <StyledCard className={classes.root}>
         <div className="has-padding-top">
           <CardContent className={classes.noBottomPadding}>
             <Grid container spacing={0}>
@@ -292,7 +277,7 @@ const FeedbackRequestCard = ({
             aria-expanded={expanded}
             aria-label="show more"
             className={expanded ? classes.expandOpen : classes.expandClose}
-          >
+            size="large">
             <ExpandMoreIcon />
           </IconButton>
         </CardActions>
@@ -311,7 +296,7 @@ const FeedbackRequestCard = ({
               : noRequestsMessage()}
           </CardContent>
         </Collapse>
-      </Card>
+      </StyledCard>
     </div>
   );
 };

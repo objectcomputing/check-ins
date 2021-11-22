@@ -1,9 +1,20 @@
 import React from "react";
+import { styled } from '@mui/material/styles';
 import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import LinearProgress from "@mui/material/LinearProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+
+const PREFIX = 'LinearBuffer';
+const classes = {
+  root: `${PREFIX}-root`
+};
+
+const Root = styled('div')({
+  [`&.${classes.root}`]: {
+    width: "100%",
+  },
+});
 
 function LinearProgressWithLabel(props) {
   return (
@@ -26,22 +37,15 @@ const propTypes = {
   ptoHours: PropTypes.number,
 };
 
-const useStyles = makeStyles({
-  root: {
-    width: "100%",
-  },
-});
-
 const LinearBuffer = ({
   billableHours,
   contributionHours = 925,
   targetHours = 1850,
   ptoHours = 0,
 }) => {
-  const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <Root className={classes.root}>
       <LinearProgressWithLabel
         variant={billableHours ? "buffer" : "determinate"}
         value={
@@ -63,7 +67,7 @@ const LinearBuffer = ({
         {contributionHours} - Target Hours: {targetHours} - PTO Hours:{" "}
         {ptoHours}
       </Typography>
-    </div>
+    </Root>
   );
 };
 LinearBuffer.propTypes = propTypes;

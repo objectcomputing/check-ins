@@ -1,30 +1,385 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
+@keyframes animation-0 {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.emotion-0 .GuildResults-searchInput {
+  width: 20em;
+}
+
+.emotion-1 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  vertical-align: top;
+}
+
+.emotion-2 {
+  color: rgba(0, 0, 0, 0.6);
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  padding: 0;
+  position: relative;
+  display: block;
+  transform-origin: top left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 24px);
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-transform: translate(14px, 16px) scale(1);
+  -moz-transform: translate(14px, 16px) scale(1);
+  -ms-transform: translate(14px, 16px) scale(1);
+  transform: translate(14px, 16px) scale(1);
+  -webkit-transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,-webkit-transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.emotion-2.Mui-focused {
+  color: #1976d2;
+}
+
+.emotion-2.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-2.Mui-error {
+  color: #d32f2f;
+}
+
+.emotion-3 {
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.87);
+  box-sizing: border-box;
+  position: relative;
+  cursor: text;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  border-radius: 4px;
+}
+
+.emotion-3.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+  cursor: default;
+}
+
+.emotion-3:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.87);
+}
+
+@media (hover: none) {
+  .emotion-3:hover .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(0, 0, 0, 0.23);
+  }
+}
+
+.emotion-3.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2;
+  border-width: 2px;
+}
+
+.emotion-3.Mui-error .MuiOutlinedInput-notchedOutline {
+  border-color: #d32f2f;
+}
+
+.emotion-3.Mui-disabled .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-4 {
+  font: inherit;
+  letter-spacing: inherit;
+  color: currentColor;
+  padding: 4px 0 5px;
+  border: 0;
+  box-sizing: content-box;
+  background: none;
+  height: 1.4375em;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  -webkit-animation-name: mui-auto-fill-cancel;
+  animation-name: mui-auto-fill-cancel;
+  -webkit-animation-duration: 10ms;
+  animation-duration: 10ms;
+  padding: 16.5px 14px;
+}
+
+.emotion-4::-webkit-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4::-moz-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4:-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4::-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-4:focus {
+  outline: 0;
+}
+
+.emotion-4:invalid {
+  box-shadow: none;
+}
+
+.emotion-4::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4::-webkit-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4::-moz-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4::-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-webkit-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-moz-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus:-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+.emotion-4.Mui-disabled {
+  opacity: 1;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-4:-webkit-autofill {
+  -webkit-animation-duration: 5000s;
+  animation-duration: 5000s;
+  -webkit-animation-name: mui-auto-fill;
+  animation-name: mui-auto-fill;
+}
+
+.emotion-4:-webkit-autofill {
+  border-radius: inherit;
+}
+
+.emotion-5 {
+  text-align: left;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  top: -5px;
+  left: 0;
+  margin: 0;
+  padding: 0 8px;
+  pointer-events: none;
+  border-radius: inherit;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  min-width: 0%;
+  border-color: rgba(0, 0, 0, 0.23);
+}
+
+.emotion-6 {
+  display: block;
+  width: auto;
+  padding: 0;
+  height: 11px;
+  font-size: 0.75em;
+  visibility: hidden;
+  max-width: 0.01px;
+  -webkit-transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+}
+
+.emotion-6>span {
+  padding-left: 5px;
+  padding-right: 5px;
+  display: inline-block;
+}
+
+.emotion-7 {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+.emotion-7.SkeletonLoader-card {
+  width: 340px;
+}
+
+.emotion-8 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.emotion-9 {
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+}
+
+.emotion-10 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.334;
+  letter-spacing: 0em;
+  display: block;
+}
+
+.emotion-11 {
+  display: block;
+  background-color: rgba(0, 0, 0, 0.11);
+  height: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  transform-origin: 0 55%;
+  -webkit-transform: scale(1, 0.60);
+  -moz-transform: scale(1, 0.60);
+  -ms-transform: scale(1, 0.60);
+  transform: scale(1, 0.60);
+  border-radius: 4px/6.7px;
+  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+}
+
+.emotion-11:empty:before {
+  content: "\\00a0";
+}
+
+.emotion-12 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.6);
+  display: block;
+}
+
+.emotion-14 {
+  margin-top: 16px;
+  margin-left: 16px;
+  margin-right: 16px;
+  height: 80px;
+}
+
+.emotion-16 {
+  height: 10px;
+}
+
 <div
   className="guilds-page"
 >
-  <div>
+  <div
+    className="emotion-0"
+  >
     <div
       className="guild-search"
     >
       <div
-        className="MuiFormControl-root MuiTextField-root makeStyles-searchInput-1"
+        className="MuiFormControl-root MuiTextField-root GuildResults-searchInput emotion-1"
       >
         <label
-          className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+          className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-2"
           data-shrink={false}
         >
           Search guilds...
         </label>
         <div
-          className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+          className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl emotion-3"
           onClick={[Function]}
         >
           <input
             aria-invalid={false}
             autoFocus={false}
-            className="MuiInputBase-input MuiInput-input"
+            className="MuiOutlinedInput-input MuiInputBase-input emotion-4"
             disabled={false}
             onAnimationStart={[Function]}
             onBlur={[Function]}
@@ -35,6 +390,18 @@ exports[`renders correctly 1`] = `
             type="text"
             value=""
           />
+          <fieldset
+            aria-hidden={true}
+            className="MuiOutlinedInput-notchedOutline emotion-5"
+          >
+            <legend
+              className="emotion-6"
+            >
+              <span>
+                Search guilds...
+              </span>
+            </legend>
+          </fieldset>
         </div>
       </div>
       <div
@@ -45,19 +412,19 @@ exports[`renders correctly 1`] = `
       className="guilds"
     >
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -67,10 +434,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -82,10 +449,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-3"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -94,10 +461,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-4"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -106,7 +473,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -117,19 +484,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -139,10 +506,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -154,10 +521,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-5"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -166,10 +533,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-6"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -178,7 +545,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -189,19 +556,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -211,10 +578,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -226,10 +593,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-7"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -238,10 +605,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-8"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -250,7 +617,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -261,19 +628,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -283,10 +650,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -298,10 +665,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-9"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -310,10 +677,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-10"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -322,7 +689,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -333,19 +700,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -355,10 +722,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -370,10 +737,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-11"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -382,10 +749,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-12"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -394,7 +761,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -405,19 +772,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -427,10 +794,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -442,10 +809,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-13"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -454,10 +821,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-14"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -466,7 +833,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -477,19 +844,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -499,10 +866,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -514,10 +881,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-15"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -526,10 +893,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-16"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -538,7 +905,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -549,19 +916,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -571,10 +938,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -586,10 +953,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-17"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -598,10 +965,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-18"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -610,7 +977,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -621,19 +988,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -643,10 +1010,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -658,10 +1025,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-19"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -670,10 +1037,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-20"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -682,7 +1049,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -693,19 +1060,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -715,10 +1082,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -730,10 +1097,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-21"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -742,10 +1109,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-22"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -754,7 +1121,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -765,19 +1132,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -787,10 +1154,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -802,10 +1169,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-23"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -814,10 +1181,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-24"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -826,7 +1193,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -837,19 +1204,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -859,10 +1226,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -874,10 +1241,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-25"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -886,10 +1253,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-26"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -898,7 +1265,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -909,19 +1276,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -931,10 +1298,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -946,10 +1313,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-27"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -958,10 +1325,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-28"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -970,7 +1337,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -981,19 +1348,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -1003,10 +1370,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -1018,10 +1385,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-29"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1030,10 +1397,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-30"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1042,7 +1409,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1053,19 +1420,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -1075,10 +1442,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -1090,10 +1457,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-31"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1102,10 +1469,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-32"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1114,7 +1481,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1125,19 +1492,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -1147,10 +1514,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -1162,10 +1529,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-33"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1174,10 +1541,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-34"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1186,7 +1553,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1197,19 +1564,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -1219,10 +1586,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -1234,10 +1601,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-35"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1246,10 +1613,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-36"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1258,7 +1625,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1269,19 +1636,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -1291,10 +1658,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -1306,10 +1673,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-37"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1318,10 +1685,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-38"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1330,7 +1697,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1341,19 +1708,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -1363,10 +1730,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -1378,10 +1745,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-39"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1390,10 +1757,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-40"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1402,7 +1769,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1413,19 +1780,19 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card emotion-7"
       >
         <div
-          className="MuiCardHeader-root"
+          className="MuiCardHeader-root emotion-8"
         >
           <div
-            className="MuiCardHeader-content"
+            className="MuiCardHeader-content emotion-9"
           >
             <span
-              className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title emotion-10"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": 50,
@@ -1435,10 +1802,10 @@ exports[`renders correctly 1`] = `
               />
             </span>
             <span
-              className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+              className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader emotion-12"
             >
               <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
                 style={
                   Object {
                     "height": undefined,
@@ -1450,10 +1817,10 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiBox-root MuiBox-root-41"
+          className="MuiBox-root emotion-14"
         >
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1462,10 +1829,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <div
-            className="MuiBox-root MuiBox-root-42"
+            className="MuiBox-root emotion-16"
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,
@@ -1474,7 +1841,7 @@ exports[`renders correctly 1`] = `
             }
           />
           <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse emotion-11"
             style={
               Object {
                 "height": 15,

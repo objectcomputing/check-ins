@@ -1,6 +1,5 @@
 import React from "react";
 import {AppContextProvider} from "../../context/AppContext";
-import { createMount } from "@material-ui/core/test-utils";
 import EditGuildModal from "./EditGuildModal";
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
@@ -83,8 +82,9 @@ it("Cannot save without lead", async () => {
   expect(guildNameInput).toHaveValue(testGuild.name);
   expect(guildDescriptionInput).toHaveValue(testGuild.description);
 
-  await act(() => user.click(screen.getByText(/Save Guild/i)));
-
+  const saveBtn = screen.getByText(/Save Guild/i);
+  expect(saveBtn).toBeDisabled();
+  expect(() => user.click(saveBtn)).toThrow();
   expect(mockOnSave).not.toHaveBeenCalledWith({...testGuild});
 });
 

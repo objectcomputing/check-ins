@@ -8,11 +8,11 @@ import {
 import { combineSkill } from "../../api/skill";
 import { getMemberSkills } from "../../api/memberskill";
 
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Checkbox, Modal, TextField } from "@material-ui/core";
-import { Button } from "@material-ui/core";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import Autocomplete from '@mui/material/Autocomplete';
+import { Checkbox, Modal, TextField } from "@mui/material";
+import { Button } from "@mui/material";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 import "./EditSkills.css";
 

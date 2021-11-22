@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { styled } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import { green } from '@material-ui/core/colors';
-import Button from "@material-ui/core/Button";
-import Slider from '@material-ui/core/Slider';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { green } from "@mui/material/colors";
+import Button from "@mui/material/Button";
+import Slider from "@mui/material/Slider";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import "./FeedbackSubmitForm.css";
-import { Alert, AlertTitle } from "@material-ui/lab";
-import InfoIcon from '@material-ui/icons/Info';
-import { blue } from "@material-ui/core/colors";
+import { Alert, AlertTitle } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
+import { blue } from "@mui/material/colors";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken } from "../../context/selectors";
@@ -23,11 +23,19 @@ import {
   updateSingleAnswer,
   updateFeedbackRequest
 } from "../../api/feedback";
-import TextField from "@material-ui/core/TextField";
+import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
 
 const dateUtils = new DateFnsUtils();
+const PREFIX = "FeedbackSubmitForm";
+const classes = {
+  announcement: `${PREFIX}-announcement`,
+  tip: `${PREFIX}-tip`,
+  warning: `${PREFIX}-warning`,
+  button: `${PREFIX}-button`,
+  coloredButton: `${PREFIX}-coloredButton`
+};
 
 const frequencyMarks = [
   {
@@ -79,26 +87,31 @@ const agreeMarks = [
   }
 ];
 
-const useStyles = makeStyles({
-  announcement: {
+const Root = styled('div')({
+  [`& .${classes.announcement}`]: {
     textAlign: "center",
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "22px"
     }
   },
-
-  tip: {
+  [`& .${classes.tip}`]: {
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "15px"
     }
   },
-
-  warning: {
+  [`& .${classes.warning}`]: {
     marginTop: "20px"
   },
-
-  button: {
-    margin: "3em 1em 1em 1em"
+  [`& .${classes.button}`]: {
+    margin: "3em 1em 1em 1em",
+  },
+  [`& .${classes.coloredButton}`]: {
+    margin: "3em 1em 1em 1em",
+    color: "white",
+    backgroundColor: green[500],
+    '&:hover': {
+      backgroundColor: green[700],
+    },
   }
 });
 
@@ -114,16 +127,6 @@ const randomTip = [
 ];
 
 const tip = randomTip[Math.floor(Math.random() * randomTip.length)];
-
-const ColorButton = withStyles({
-  root: {
-    color: "white",
-    backgroundColor: green[500],
-    '&:hover': {
-      backgroundColor: green[700],
-    },
-  },
-})(Button);
 
 const propTypes = {
   requesteeName: PropTypes.string.isRequired,
@@ -148,7 +151,6 @@ const updateFeedbackAnswer = debounce(realUpdateAnswer, 1000);
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
-  const classes = useStyles();
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([])
@@ -262,7 +264,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
           (<TextField
             multiline
             rows={5}
-            rowsMax={10}
+            maxRows={10}
             className="fullWidth"
             variant="outlined"
             InputProps={{
@@ -307,7 +309,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
           variant="outlined"
           multiline
           rows={10}
-          rowsMax={20}
+          maxRows={20}
           InputProps={{
             readOnly: isReviewing,
           }}
@@ -345,7 +347,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const isReview = templateTitle === "Annual Review";
 
   return (
-    <div className="submit-form">
+    <Root className="submit-form">
       <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{requesteeName}</b></Typography>
       <div className="wrapper">
         <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}>info-icon</InfoIcon>
@@ -369,13 +371,13 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       <div className="submit-action-buttons">
         {isReviewing ?
           <React.Fragment>
-            <ColorButton
-              className={classes.button}
+            <Button
+              className={classes.coloredButton}
               onClick={() => setIsReviewing(false)}
               variant="contained"
               color="primary">
               Edit
-            </ColorButton>
+            </Button>
             <Button
               className={classes.button}
               onClick={onSubmitHandler}
@@ -384,16 +386,16 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
               Submit
             </Button>
           </React.Fragment> :
-          <ColorButton
-            className={classes.button}
+          <Button
+            className={classes.coloredButton}
             onClick={() => setIsReviewing(true)}
             variant="contained"
             color="primary">
             Review
-          </ColorButton>
+          </Button>
         }
       </div>
-    </div>
+    </Root>
   );
 };
 

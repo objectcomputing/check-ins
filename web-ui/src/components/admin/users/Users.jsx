@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 
+import { styled } from '@mui/material/styles';
 import AdminMemberCard from "../../member-directory/AdminMemberCard";
 import MemberModal from "../../member-directory/MemberModal";
 import { createMember } from "../../../api/member";
@@ -10,22 +11,36 @@ import {
   selectNormalizedMembersAdmin,
 } from "../../../context/selectors";
 
-import { Button, TextField, Grid } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import PersonIcon from "@material-ui/icons/Person";
+import { Button, TextField, Grid } from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
 
 import "./Users.css";
 
-const useStyles = makeStyles({
-  search: {
+const PREFIX = 'Users';
+const classes = {
+  page: `${PREFIX}-page`,
+  search: `${PREFIX}-search`,
+  searchInput: `${PREFIX}-searchInput`,
+  members: `${PREFIX}-members`
+};
+
+const Root = styled('div')({
+  '& .MuiGrid-spacing-xs-3 > .MuiGrid-item': {
+    padding: '12px'
+  },
+  '& .MuiGrid-root.MuiGrid-container': {
+    width: 'calc(100% + 24px)',
+    margin: '-12px'
+  },
+  [`& .${classes.search}`]: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  searchInput: {
+  [`& .${classes.searchInput}`]: {
     width: "20em",
   },
-  members: {
+  [`& .${classes.members}`]: {
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "space-evenly",
@@ -36,8 +51,6 @@ const useStyles = makeStyles({
 const Users = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, memberProfiles, userProfile } = state;
-
-  const classes = useStyles();
 
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -69,6 +82,7 @@ const Users = () => {
   });
 
   return (
+    <Root>
     <div className="user-page">
       <Grid container spacing={3}>
         <Grid item xs={12} className={classes.search}>
@@ -124,7 +138,7 @@ const Users = () => {
             <input
               id="includeterminated"
               checked={includeTerminated}
-              onClick={handleIncludeTerminated}
+              onChange={handleIncludeTerminated}
               type="checkbox"
             />
           </div>
@@ -133,6 +147,7 @@ const Users = () => {
         </Grid>
       </Grid>
     </div>
+    </Root>
   );
 };
 

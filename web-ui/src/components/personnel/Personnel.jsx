@@ -5,13 +5,13 @@ import { getCheckinByMemberId } from "../../api/checkins";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_CHECKINS } from "../../context/actions";
 import { selectCurrentUserId, selectMostRecentCheckin, selectCsrfToken } from "../../context/selectors";
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import GroupIcon from "@material-ui/icons/Group";
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import GroupIcon from "@mui/icons-material/Group";
 import Avatar from "../avatar/Avatar"
 import { getAvatarURL } from "../../api/api.js";
 

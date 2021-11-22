@@ -1,29 +1,28 @@
 import React, { useContext, useState } from "react";
+import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
 
 import { AppContext } from "../../context/AppContext";
 import { selectIsAdmin, selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 
-import { Card, CardHeader } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
+import { Card, CardHeader } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 
 import "./MemberSummaryCard.css";
 
-import {
-  Box,
-  CardContent,
-  Container,
-  makeStyles,
-  Tooltip,
-  Typography,
-} from "@material-ui/core";
+import { Box, CardContent, Container, Tooltip, Typography } from "@mui/material";
 
-const useStyles = makeStyles(() => ({
-  header: {
+const PREFIX = 'MemberSummaryCard';
+const classes = {
+  header: `${PREFIX}-header`
+};
+
+const StyledBox = styled(Box)(() => ({
+  [`& .${classes.header}`]: {
     cursor: "pointer",
-  },
+  }
 }));
 
 const MemberSummaryCard = ({ member }) => {
@@ -42,10 +41,8 @@ const MemberSummaryCard = ({ member }) => {
   const pdlProfile = selectProfileMap(state)[pdlId];
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
-  const classes = useStyles();
-
   return (
-    <Box display="flex" flexWrap="wrap">
+    <StyledBox display="flex" flexWrap="wrap">
       <Card className={"member-card"}>
         <Link
           style={{ color: "black", textDecoration: "none" }}
@@ -105,7 +102,7 @@ const MemberSummaryCard = ({ member }) => {
           </Container>
         </CardContent>
       </Card>
-    </Box>
+    </StyledBox>
   );
 };
 

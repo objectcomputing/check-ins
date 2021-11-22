@@ -1,6 +1,5 @@
 import React from "react";
 import {AppContextProvider} from "../../context/AppContext";
-import { createMount } from "@material-ui/core/test-utils";
 import EditTeamModal from "./EditTeamModal";
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
@@ -8,7 +7,7 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import user from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
-
+// /**  * @jest-environment jsdom-sixteen  */
 window.snackDispatch = jest.fn();
 
 const server = setupServer(
@@ -83,8 +82,9 @@ it("Cannot save without lead", async () => {
   expect(teamNameInput).toHaveValue(testTeam.name);
   expect(teamDescriptionInput).toHaveValue(testTeam.description);
 
-  await act(() => user.click(screen.getByText(/Save Team/i)));
-
+  const saveBtn = screen.getByText(/Save Team/i);
+  expect(saveBtn).toBeDisabled();
+  expect(() => user.click(saveBtn)).toThrow();
   expect(mockOnSave).not.toHaveBeenCalledWith({...testTeam});
 });
 

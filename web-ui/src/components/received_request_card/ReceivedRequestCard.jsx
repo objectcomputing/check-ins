@@ -1,30 +1,37 @@
 import React, { useContext } from "react";
-import { Avatar, Card, Tooltip, IconButton } from "@material-ui/core";
+import { styled } from "@mui/material/styles";
+import { Avatar, Card, Tooltip, IconButton } from "@mui/material";
 import { getAvatarURL } from "../../api/api";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { selectProfile } from "../../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 import { AppContext } from "../../context/AppContext";
-import { makeStyles } from "@material-ui/core/styles";
-import { Edit as EditIcon } from "@material-ui/icons";
+import { Edit as EditIcon } from "@mui/icons-material";
 
 const dateFns = new DateFnsUtils();
+const PREFIX = 'ReceivedRequestCard';
+const classes = {
+  redTypography: `${PREFIX}-redTypography`,
+  yellowTypography: `${PREFIX}-yellowTypography`,
+  greenTypography: `${PREFIX}-greenTypography`,
+  darkGrayTypography: `${PREFIX}-darkGrayTypography`
+};
 
-const useStyles = makeStyles({
-  redTypography: {
+const StyledCard = styled(Card)({
+  [`& .${classes.redTypography}`]: {
     color: "#FF0000",
   },
-  yellowTypography: {
+  [`& .${classes.yellowTypography}`]: {
     color: "#EE8C00",
   },
-  greenTypography: {
+  [`& .${classes.greenTypography}`]: {
     color: "#006400",
   },
-  darkGrayTypography: {
+  [`& .${classes.darkGrayTypography}`]: {
     color: "#333333",
-  },
+  }
 });
 
 const propTypes = {
@@ -34,7 +41,6 @@ const propTypes = {
 const ReceivedRequestCard = ({ request }) => {
   let { submitDate, dueDate, sendDate } = request;
   const { state } = useContext(AppContext);
-  const classes = useStyles();
   const requestCreator = selectProfile(state, request?.creatorId);
   const requestee = selectProfile(state, request?.requesteeId);
   submitDate = submitDate
@@ -70,7 +76,7 @@ const ReceivedRequestCard = ({ request }) => {
   };
 
   return (
-    <Card style={{ paddingLeft: "16px", paddingRight: "16px" }}>
+    <StyledCard style={{ paddingLeft: "16px", paddingRight: "16px" }}>
       <div className="card-content-grid">
         <div className="request-members-container">
           <div className="member-chip">
@@ -128,7 +134,7 @@ const ReceivedRequestCard = ({ request }) => {
                 style={{ textDecoration: "none" }}
               >
                 <Tooltip title="Give feedback" arrow>
-                  <IconButton>
+                  <IconButton size="large">
                     <EditIcon />
                   </IconButton>
                 </Tooltip>
@@ -137,7 +143,7 @@ const ReceivedRequestCard = ({ request }) => {
           </div>
         </div>
       </div>
-    </Card>
+    </StyledCard>
   );
 };
 ReceivedRequestCard.propTypes = propTypes;

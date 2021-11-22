@@ -1,24 +1,28 @@
 import React, { useContext } from "react";
+import { styled } from '@mui/material/styles';
 import { AppContext } from "../../context/AppContext";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
-import { Card, CardHeader } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
-import { green } from "@material-ui/core/colors";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import Divider from "@material-ui/core/Divider";
+import { Card, CardHeader } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import { green } from "@mui/material/colors";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Divider from "@mui/material/Divider";
 import "./FeedbackRecipientCard.css";
-import {
-  Box,
-  CardContent,
-  Container,
-  makeStyles,
-  Typography,
-} from "@material-ui/core";
+import { Box, CardContent, Container, Typography } from "@mui/material";
 
-const useStyles = makeStyles({
-  root: {
+const PREFIX = 'FeedbackRecipientCard';
+const classes = {
+  root: `${PREFIX}-root`,
+  header: `${PREFIX}-header`,
+  cardContent: `${PREFIX}-cardContent`,
+  divider: `${PREFIX}-divider`,
+  recommendationText: `${PREFIX}-recommendationText`
+};
+
+const StyledBox = styled(Box)({
+  [`&.${classes.root}`]: { // currently defined but not used
     minWidth: "10em",
     maxWidth: "20em",
     marginRight: "2em",
@@ -30,10 +34,10 @@ const useStyles = makeStyles({
       width: "80%",
     },
   },
-  header: {
+  [`& .${classes.header}`]: {
     cursor: "pointer",
   },
-  cardContent: {
+  [`& .${classes.cardContent}`]: { // currently defined but not used
     display: "flex",
     alignItems: "center",
     alignContent: "center",
@@ -41,13 +45,13 @@ const useStyles = makeStyles({
     justifyContent: "center",
     textAlign: "center",
   },
-  divider: {
+  [`& .${classes.divider}`]: {
     backgroundColor: "grey",
     width: "90%",
     marginBottom: "1em",
     marginTop: "1em",
   },
-  recommendationText: {
+  [`& .${classes.recommendationText}`]: {
     color: "#333333",
   },
 });
@@ -64,10 +68,8 @@ const FeedbackRecipientCard = ({
   ];
   const pdlProfile = selectProfileMap(state)[recipientProfile?.pdlId];
 
-  const classes = useStyles();
-
   return (
-    <Box display="flex" flexWrap="wrap">
+    <StyledBox display="flex" flexWrap="wrap">
       <Card onClick={onClick} className="member-card" selected={selected}>
         <CardHeader
           className={classes.header}
@@ -136,7 +138,7 @@ const FeedbackRecipientCard = ({
           </Container>
         </CardContent>
       </Card>
-    </Box>
+    </StyledBox>
   );
 };
 

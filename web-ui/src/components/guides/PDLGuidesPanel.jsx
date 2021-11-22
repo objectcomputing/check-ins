@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
-import PdfIcon from '@material-ui/icons/PictureAsPdf';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import List from '@material-ui/core/List';
+import PdfIcon from '@mui/icons-material/PictureAsPdf';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import List from '@mui/material/List';
 import "./GuidesPanel.css";
 import GuideLink from "./GuideLink";
 

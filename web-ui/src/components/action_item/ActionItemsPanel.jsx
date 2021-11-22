@@ -11,15 +11,15 @@ import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
 import { selectCsrfToken, selectCurrentUser, selectCheckin } from "../../context/selectors";
 import { debounce } from "lodash/function";
-import DragIndicator from "@material-ui/icons/DragIndicator";
-import Skeleton from "@material-ui/lab/Skeleton";
-import IconButton from "@material-ui/core/IconButton";
-import SaveIcon from "@material-ui/icons/Done";
-import RemoveIcon from "@material-ui/icons/Remove";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import DragIndicator from "@mui/icons-material/DragIndicator";
+import Skeleton from '@mui/material/Skeleton';
+import IconButton from "@mui/material/IconButton";
+import SaveIcon from "@mui/icons-material/Done";
+import RemoveIcon from "@mui/icons-material/Remove";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
 
 import "./ActionItemsPanel.css";
 
@@ -208,7 +208,7 @@ const ActionItemsPanel = () => {
                     aria-label="delete"
                     className="delete-icon"
                     onClick={() => killActionItem(actionItem.id)}
-                  >
+                    size="large">
                     <RemoveIcon />
                   </IconButton>
                 </div>
@@ -253,7 +253,7 @@ const ActionItemsPanel = () => {
             aria-label="create"
             className="edit-icon"
             onClick={() => makeActionItem()}
-          >
+            size="large">
             <SaveIcon />
           </IconButton>
         </div>

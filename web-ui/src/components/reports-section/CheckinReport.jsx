@@ -17,7 +17,7 @@ import {
   Chip,
   Container,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import "./CheckinReport.css";
 

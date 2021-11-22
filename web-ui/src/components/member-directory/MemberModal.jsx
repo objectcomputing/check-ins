@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+    import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import {
   selectOrderedPdls,
@@ -6,15 +6,11 @@ import {
   selectCurrentMembers,
 } from "../../context/selectors";
 
-import { Modal, TextField } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import {
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider,
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import { Modal, TextField } from "@mui/material";
+import Autocomplete from '@mui/material/Autocomplete';
+import DatePicker from "@mui/lab/DatePicker";
 import { format } from "date-fns";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 
 import "./MemberModal.css";
 
@@ -123,24 +119,22 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             setMember({ ...editedMember, location: e.target.value })
           }
         />
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            className="halfWidth"
-            margin="normal"
-            id="bday-datepicker-dialog"
-            required
-            label="Member Birthday"
-            format="MM/dd/yyyy"
-            value={birthDay}
-            openTo="year"
-            onChange={(date) => {
-              setMember({ ...editedMember, birthDay: date });
-            }}
-            KeyboardButtonProps={{
-              "aria-label": "Change Date",
-            }}
-          />
-        </MuiPickersUtilsProvider>
+        <DatePicker
+          renderInput={props => <TextField className="halfWidth" {...props}/>}
+          margin="normal"
+          id="bday-datepicker-dialog"
+          required
+          label="Member Birthday"
+          format="MM/dd/yyyy"
+          value={birthDay}
+          openTo="year"
+          onChange={(date) => {
+            setMember({ ...editedMember, birthDay: date });
+          }}
+          KeyboardButtonProps={{
+            "aria-label": "Change Date",
+          }}
+        />
         <TextField
           id="member-employeeId-input"
           label="EmployeeId"
@@ -191,37 +185,37 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             />
           )}
         />
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            margin="normal"
-            id="start-datepicker-dialog"
-            required
-            label="Start Date"
-            format="MM/dd/yyyy"
-            value={startDate}
-            onChange={(e) => {
-              setMember({ ...editedMember, startDate: e });
-            }}
-            KeyboardButtonProps={{
-              "aria-label": "Change Date",
-            }}
-          />
-          <KeyboardDatePicker
-            margin="normal"
-            id="termination-datepicker-dialog"
-            label="Termination Date"
-            clearable
-            format="MM/dd/yyyy"
-            value={terminationDate}
-            placeholder={format(new Date(), "MM/dd/yyy")}
-            onChange={(date) => {
-              setMember({ ...editedMember, terminationDate: date });
-            }}
-            KeyboardButtonProps={{
-              "aria-label": "Change Date",
-            }}
-          />
-        </MuiPickersUtilsProvider>
+        <DatePicker
+          renderInput={props => <TextField {...props}/>}
+          margin="normal"
+          id="start-datepicker-dialog"
+          required
+          label="Start Date"
+          format="MM/dd/yyyy"
+          value={startDate}
+          onChange={(e) => {
+            setMember({ ...editedMember, startDate: e });
+          }}
+          KeyboardButtonProps={{
+            "aria-label": "Change Date",
+          }}
+        />
+        <DatePicker
+          renderInput={props => <TextField {...props}/>}
+          margin="normal"
+          id="termination-datepicker-dialog"
+          label="Termination Date"
+          clearable
+          format="MM/dd/yyyy"
+          value={terminationDate}
+          placeholder={format(new Date(), "MM/dd/yyy")}
+          onChange={(date) => {
+            setMember({ ...editedMember, terminationDate: date });
+          }}
+          KeyboardButtonProps={{
+            "aria-label": "Change Date",
+          }}
+        />
         <div className="member-modal-actions fullWidth">
           <Button onClick={onClose} color="secondary">
             Cancel

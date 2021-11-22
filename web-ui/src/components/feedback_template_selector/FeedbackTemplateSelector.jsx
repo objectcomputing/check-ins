@@ -2,10 +2,10 @@ import React, {useState, useContext, useEffect, useCallback, useRef} from "react
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
-import {InputAdornment, TextField} from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import {Tooltip} from "@material-ui/core";
-import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import {InputAdornment, TextField} from "@mui/material";
+import Button from "@mui/material/Button";
+import {Tooltip} from "@mui/material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import {
   createFeedbackTemplateWithQuestion,
   getAllFeedbackTemplates
@@ -13,7 +13,7 @@ import {
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
 import "./FeedbackTemplateSelector.css";
-import {Search} from "@material-ui/icons";
+import {Search} from "@mui/icons-material";
 import {UPDATE_TOAST} from "../../context/actions";
 
 const propTypes = {

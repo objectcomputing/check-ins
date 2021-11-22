@@ -1,18 +1,29 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Avatar, Typography, Hidden } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { styled } from '@mui/material/styles';
+import { Avatar, Typography } from "@mui/material";
 import { AppContext } from "../../context/AppContext";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 import { getMember } from "../../api/member";
 
-const useStyles = makeStyles((theme) => ({
-  profileInfo: {
+const PREFIX = 'Profile';
+
+const classes = {
+  profileInfo: `${PREFIX}-profileInfo`,
+  profileImage: `${PREFIX}-profileImage`,
+  flexRow: `${PREFIX}-flexRow`,
+  header: `${PREFIX}-header`,
+  title: `${PREFIX}-title`,
+  smallAvatar: `${PREFIX}-smallAvatar`
+};
+
+const Root = styled('div')(() => ({
+  [`& .${classes.profileInfo}`]: {
     display: "flex",
     flexDirection: "row",
     margin: "14px",
   },
-  profileImage: {
+  [`& .${classes.profileImage}`]: {
     marginRight: "20px",
     marginTop: "10px",
     marginBottom: "10px",
@@ -20,29 +31,28 @@ const useStyles = makeStyles((theme) => ({
     width: "160px",
     height: "160px",
   },
-  flexRow: {
+  [`&.${classes.flexRow}`]: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: "16px",
   },
-  header: {
+  [`& .${classes.header}`]: {
     display: "flex",
     flexDirection: "row",
     marginBottom: "16px",
     alignItems: "center",
   },
-  title: {
+  [`& .${classes.title}`]: {
     display: "flex",
     flexDirection: "column",
   },
-  smallAvatar: {
+  [`& .${classes.smallAvatar}`]: {
     marginRight: "16px",
-  },
+  }
 }));
 
 const Profile = ({ memberId, pdlId, checkinPdlId }) => {
-  const classes = useStyles();
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const userProfile = selectProfileMap(state)[memberId];
@@ -103,23 +113,21 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
   }, [csrf, supervisorid]);
 
   return (
-    <div className={classes.flexRow}>
-      <Hidden xsDown>
-        <Avatar
-          className={classes.profileImage}
-          alt="Profile"
-          src={getAvatarURL(workEmail)}
-        />
-      </Hidden>
+    <Root className={classes.flexRow}>
+      <Avatar
+        className={classes.profileImage}
+        alt="Profile"
+        src={getAvatarURL(workEmail)}
+        sx={{ display: { xs: 'none', sm: 'flex' } }}
+      />
       <div className={classes.profileInfo}>
         <div>
           <div className={classes.header}>
-            <Hidden smUp>
-              <Avatar
-                className={classes.smallAvatar}
-                src={getAvatarURL(workEmail)}
-              />
-            </Hidden>
+            <Avatar
+              className={classes.smallAvatar}
+              src={getAvatarURL(workEmail)}
+              sx={{ display: { sm: 'none', xs: 'flex' } }}
+            />
             <div className={classes.title}>
               <Typography variant="h5" component="h2">
                 {name}
@@ -150,7 +158,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
           </Typography>
         </div>
       </div>
-    </div>
+    </Root>
   );
 };
 

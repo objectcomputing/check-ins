@@ -1,14 +1,655 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
+.emotion-0 .ViewFeedbackPage-pageTitle {
+  padding-right: 0.4em;
+  min-width: 330px;
+}
+
+@media screen and (max-width: 600px) {
+  .emotion-0 .ViewFeedbackPage-pageTitle {
+    font-size: 30px;
+    width: 100%;
+    padding: 0;
+    text-align: center;
+    min-width: 10px;
+  }
+}
+
+.emotion-0 .ViewFeedbackPage-textField {
+  width: 100%;
+}
+
+.emotion-0 .ViewFeedbackPage-searchField {
+  width: 100%;
+  -webkit-align-self: start;
+  -ms-flex-item-align: start;
+  align-self: start;
+  margin-top: 30px;
+}
+
+.emotion-0 .ViewFeedbackPage-formControl {
+  margin-right: 1em;
+}
+
+.emotion-0 .ViewFeedbackPage-notFoundMessage {
+  color: gray;
+  margin-top: 4em;
+  text-align: center;
+}
+
+.emotion-1 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 2.125rem;
+  line-height: 1.235;
+  letter-spacing: 0.00735em;
+}
+
+.emotion-2 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  vertical-align: top;
+}
+
+.emotion-3 {
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.87);
+  box-sizing: border-box;
+  position: relative;
+  cursor: text;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  border-radius: 4px;
+  padding-left: 14px;
+}
+
+.emotion-3.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+  cursor: default;
+}
+
+.emotion-3:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.87);
+}
+
+@media (hover: none) {
+  .emotion-3:hover .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(0, 0, 0, 0.23);
+  }
+}
+
+.emotion-3.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2;
+  border-width: 2px;
+}
+
+.emotion-3.Mui-error .MuiOutlinedInput-notchedOutline {
+  border-color: #d32f2f;
+}
+
+.emotion-3.Mui-disabled .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 0.01em;
+  max-height: 2em;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.54);
+  margin-right: 8px;
+}
+
+.emotion-5 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  fill: currentColor;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  font-size: 1.5rem;
+}
+
+.emotion-6 {
+  font: inherit;
+  letter-spacing: inherit;
+  color: currentColor;
+  padding: 4px 0 5px;
+  border: 0;
+  box-sizing: content-box;
+  background: none;
+  height: 1.4375em;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  -webkit-animation-name: mui-auto-fill-cancel;
+  animation-name: mui-auto-fill-cancel;
+  -webkit-animation-duration: 10ms;
+  animation-duration: 10ms;
+  padding: 16.5px 14px;
+  padding-left: 0;
+}
+
+.emotion-6::-webkit-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-6::-moz-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-6:-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-6::-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-6:focus {
+  outline: 0;
+}
+
+.emotion-6:invalid {
+  box-shadow: none;
+}
+
+.emotion-6::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-6::-webkit-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-6::-moz-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-6:-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-6::-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-6:focus::-webkit-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-6:focus::-moz-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-6:focus:-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-6:focus::-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+.emotion-6.Mui-disabled {
+  opacity: 1;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-6:-webkit-autofill {
+  -webkit-animation-duration: 5000s;
+  animation-duration: 5000s;
+  -webkit-animation-name: mui-auto-fill;
+  animation-name: mui-auto-fill;
+}
+
+.emotion-6:-webkit-autofill {
+  border-radius: inherit;
+}
+
+.emotion-7 {
+  text-align: left;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  top: -5px;
+  left: 0;
+  margin: 0;
+  padding: 0 8px;
+  pointer-events: none;
+  border-radius: inherit;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  min-width: 0%;
+  border-color: rgba(0, 0, 0, 0.23);
+}
+
+.emotion-8 {
+  padding: 0;
+  line-height: 11px;
+  -webkit-transition: width 150ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: width 150ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+}
+
+.emotion-9 {
+  color: rgba(0, 0, 0, 0.6);
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.66;
+  letter-spacing: 0.03333em;
+  text-align: left;
+  margin-top: 3px;
+  margin-right: 14px;
+  margin-bottom: 0;
+  margin-left: 14px;
+}
+
+.emotion-9.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-9.Mui-error {
+  color: #d32f2f;
+}
+
+.emotion-10 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  vertical-align: top;
+}
+
+.emotion-11 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  vertical-align: top;
+  width: 100%;
+}
+
+.emotion-12 {
+  color: rgba(0, 0, 0, 0.6);
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  padding: 0;
+  position: relative;
+  display: block;
+  transform-origin: top left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 24px);
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-transform: translate(14px, 9px) scale(1);
+  -moz-transform: translate(14px, 9px) scale(1);
+  -ms-transform: translate(14px, 9px) scale(1);
+  transform: translate(14px, 9px) scale(1);
+  -webkit-transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,-webkit-transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.emotion-12.Mui-focused {
+  color: #1976d2;
+}
+
+.emotion-12.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-12.Mui-error {
+  color: #d32f2f;
+}
+
+.emotion-13 {
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.87);
+  box-sizing: border-box;
+  position: relative;
+  cursor: text;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  border-radius: 4px;
+}
+
+.emotion-13.Mui-disabled {
+  color: rgba(0, 0, 0, 0.38);
+  cursor: default;
+}
+
+.emotion-13:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.87);
+}
+
+@media (hover: none) {
+  .emotion-13:hover .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(0, 0, 0, 0.23);
+  }
+}
+
+.emotion-13.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2;
+  border-width: 2px;
+}
+
+.emotion-13.Mui-error .MuiOutlinedInput-notchedOutline {
+  border-color: #d32f2f;
+}
+
+.emotion-13.Mui-disabled .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-14 {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  color: currentColor;
+  padding: 4px 0 5px;
+  border: 0;
+  box-sizing: content-box;
+  background: none;
+  height: 1.4375em;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  -webkit-animation-name: mui-auto-fill-cancel;
+  animation-name: mui-auto-fill-cancel;
+  -webkit-animation-duration: 10ms;
+  animation-duration: 10ms;
+  padding-top: 1px;
+  padding: 8.5px 14px;
+}
+
+.emotion-14:focus {
+  border-radius: 4px;
+}
+
+.emotion-14::-ms-expand {
+  display: none;
+}
+
+.emotion-14.Mui-disabled {
+  cursor: default;
+}
+
+.emotion-14[multiple] {
+  height: auto;
+}
+
+.emotion-14:not([multiple]) option,
+.emotion-14:not([multiple]) optgroup {
+  background-color: #fff;
+}
+
+.emotion-14.emotion-14.emotion-14 {
+  padding-right: 32px;
+}
+
+.emotion-14.MuiSelect-select {
+  height: auto;
+  min-height: 1.4375em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.emotion-14::-webkit-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-14::-moz-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-14:-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-14::-ms-input-placeholder {
+  color: currentColor;
+  opacity: 0.42;
+  -webkit-transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-14:focus {
+  outline: 0;
+}
+
+.emotion-14:invalid {
+  box-shadow: none;
+}
+
+.emotion-14::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-14::-webkit-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-14::-moz-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-14:-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-14::-ms-input-placeholder {
+  opacity: 0!important;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-14:focus::-webkit-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-14:focus::-moz-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-14:focus:-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl .emotion-14:focus::-ms-input-placeholder {
+  opacity: 0.42;
+}
+
+.emotion-14.Mui-disabled {
+  opacity: 1;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-14:-webkit-autofill {
+  -webkit-animation-duration: 5000s;
+  animation-duration: 5000s;
+  -webkit-animation-name: mui-auto-fill;
+  animation-name: mui-auto-fill;
+}
+
+.emotion-14:-webkit-autofill {
+  border-radius: inherit;
+}
+
+.emotion-15 {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.emotion-16 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  fill: currentColor;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  font-size: 1.5rem;
+  position: absolute;
+  right: 7px;
+  top: calc(50% - .5em);
+  pointer-events: none;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.emotion-16.Mui-disabled {
+  color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-18 {
+  display: block;
+  width: auto;
+  padding: 0;
+  height: 11px;
+  font-size: 0.75em;
+  visibility: hidden;
+  max-width: 0.01px;
+  -webkit-transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+}
+
+.emotion-18>span {
+  padding-left: 5px;
+  padding-right: 5px;
+  display: inline-block;
+}
+
+.emotion-28 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.334;
+  letter-spacing: 0em;
+}
+
 <div
-  className="view-feedback-page"
+  className="view-feedback-page emotion-0"
 >
   <div
     className="view-feedback-header-container"
   >
     <h4
-      className="MuiTypography-root makeStyles-pageTitle-1 MuiTypography-h4"
+      className="MuiTypography-root MuiTypography-h4 ViewFeedbackPage-pageTitle emotion-1"
     >
       Feedback Requests
     </h4>
@@ -16,23 +657,32 @@ exports[`renders correctly 1`] = `
       className="input-row"
     >
       <div
-        className="MuiFormControl-root MuiTextField-root makeStyles-searchField-3"
+        className="MuiFormControl-root MuiTextField-root ViewFeedbackPage-searchField emotion-2"
       >
         <div
-          className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedStart"
+          className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedStart emotion-3"
           onClick={[Function]}
         >
           <div
-            className="MuiInputAdornment-root MuiInputAdornment-positionStart"
+            className="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-outlined MuiInputAdornment-sizeMedium emotion-4"
             style={
               Object {
                 "color": "gray",
               }
             }
           >
+            <span
+              className="notranslate"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "&#8203;",
+                }
+              }
+            />
             <svg
               aria-hidden={true}
-              className="MuiSvgIcon-root"
+              className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-5"
+              data-testid="SearchIcon"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -44,7 +694,7 @@ exports[`renders correctly 1`] = `
           <input
             aria-invalid={false}
             autoFocus={false}
-            className="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedStart"
+            className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedStart emotion-6"
             disabled={false}
             onAnimationStart={[Function]}
             onBlur={[Function]}
@@ -54,11 +704,29 @@ exports[`renders correctly 1`] = `
             required={false}
             type="text"
           />
+          <fieldset
+            aria-hidden={true}
+            className="MuiOutlinedInput-notchedOutline emotion-7"
+          >
+            <legend
+              className="emotion-8"
+            >
+              <span
+                className="notranslate"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "&#8203;",
+                  }
+                }
+              />
+            </legend>
+          </fieldset>
         </div>
         <p
-          className="MuiFormHelperText-root"
+          className="MuiFormHelperText-root MuiFormHelperText-sizeMedium MuiFormHelperText-contained emotion-9"
         >
           <span
+            className="notranslate"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "&#8203;",
@@ -68,14 +736,14 @@ exports[`renders correctly 1`] = `
         </p>
       </div>
       <div
-        className="MuiFormControl-root makeStyles-textField-2"
+        className="MuiFormControl-root ViewFeedbackPage-textField emotion-10"
         value="3mo"
       >
         <div
-          className="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
+          className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root emotion-11"
         >
           <label
-            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-marginDense MuiInputLabel-outlined"
+            className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-12"
             data-shrink={false}
             htmlFor="select-time"
             id="select-time-label"
@@ -83,13 +751,14 @@ exports[`renders correctly 1`] = `
             Show requests sent within
           </label>
           <div
-            className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-marginDense MuiOutlinedInput-marginDense"
+            className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall MuiSelect-root emotion-13"
             onClick={[Function]}
           >
             <div
+              aria-expanded="false"
               aria-haspopup="listbox"
               aria-labelledby="select-time-label select-time"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMarginDense MuiOutlinedInput-inputMarginDense"
+              className="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputSizeSmall emotion-14"
               id="select-time"
               onBlur={[Function]}
               onFocus={[Function]}
@@ -103,7 +772,8 @@ exports[`renders correctly 1`] = `
             <input
               aria-hidden={true}
               autoFocus={false}
-              className="MuiSelect-nativeInput"
+              className="MuiSelect-nativeInput emotion-15"
+              disabled={false}
               onAnimationStart={[Function]}
               onChange={[Function]}
               required={false}
@@ -112,7 +782,8 @@ exports[`renders correctly 1`] = `
             />
             <svg
               aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
+              className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined emotion-16"
+              data-testid="ArrowDropDownIcon"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -122,10 +793,10 @@ exports[`renders correctly 1`] = `
             </svg>
             <fieldset
               aria-hidden={true}
-              className="PrivateNotchedOutline-root-6 MuiOutlinedInput-notchedOutline"
+              className="MuiOutlinedInput-notchedOutline emotion-7"
             >
               <legend
-                className="PrivateNotchedOutline-legendLabelled-8"
+                className="emotion-18"
               >
                 <span>
                   Show requests sent within
@@ -136,14 +807,14 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiFormControl-root makeStyles-textField-2"
+        className="MuiFormControl-root ViewFeedbackPage-textField emotion-10"
         value="sent_date"
       >
         <div
-          className="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
+          className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root emotion-11"
         >
           <label
-            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-marginDense MuiInputLabel-outlined"
+            className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-12"
             data-shrink={false}
             htmlFor="select-sort-method"
             id="select-sort-method-label"
@@ -151,13 +822,14 @@ exports[`renders correctly 1`] = `
             Sort by
           </label>
           <div
-            className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-marginDense MuiOutlinedInput-marginDense"
+            className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall MuiSelect-root emotion-13"
             onClick={[Function]}
           >
             <div
+              aria-expanded="false"
               aria-haspopup="listbox"
               aria-labelledby="select-sort-method-label select-sort-method"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMarginDense MuiOutlinedInput-inputMarginDense"
+              className="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputSizeSmall emotion-14"
               id="select-sort-method"
               onBlur={[Function]}
               onFocus={[Function]}
@@ -171,7 +843,8 @@ exports[`renders correctly 1`] = `
             <input
               aria-hidden={true}
               autoFocus={false}
-              className="MuiSelect-nativeInput"
+              className="MuiSelect-nativeInput emotion-15"
+              disabled={false}
               onAnimationStart={[Function]}
               onChange={[Function]}
               required={false}
@@ -180,7 +853,8 @@ exports[`renders correctly 1`] = `
             />
             <svg
               aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
+              className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined emotion-16"
+              data-testid="ArrowDropDownIcon"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -190,10 +864,10 @@ exports[`renders correctly 1`] = `
             </svg>
             <fieldset
               aria-hidden={true}
-              className="PrivateNotchedOutline-root-6 MuiOutlinedInput-notchedOutline"
+              className="MuiOutlinedInput-notchedOutline emotion-7"
             >
               <legend
-                className="PrivateNotchedOutline-legendLabelled-8"
+                className="emotion-18"
               >
                 <span>
                   Sort by
@@ -209,7 +883,7 @@ exports[`renders correctly 1`] = `
     className="feedback-requests-list-container"
   >
     <h5
-      className="MuiTypography-root makeStyles-notFoundMessage-5 MuiTypography-h5"
+      className="MuiTypography-root MuiTypography-h5 ViewFeedbackPage-notFoundMessage emotion-28"
     >
       No feedback requests found
     </h5>
