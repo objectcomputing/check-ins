@@ -8,7 +8,8 @@ export const selectTeamMembers = (state) => state.teamMembers;
 export const selectUserProfile = (state) => state.userProfile;
 export const selectCheckins = (state) => state.checkins;
 export const selectCsrfToken = (state) => state.csrf;
-export const selectMemberRoles = (state) => state.roles;
+export const selectRoles = (state) => state.roles;
+export const selectUserRoles = (state) => state.userRoles;
 export const selectTeams = (state) => state.teams;
 export const selectGuilds = (state) => state.guilds;
 
@@ -107,16 +108,17 @@ export const selectPendingSkills = createSelector(selectSkills, (skills) =>
   skills?.filter((skill) => skill.pending)
 );
 
-export const selectPdlRoles = createSelector(selectMemberRoles, (roles) =>
+export const selectPdlRoles = createSelector(selectRoles, (roles) =>
   roles?.filter((role) => role.role?.includes("PDL"))
 );
 
 export const selectMappedPdls = createSelector(
   selectProfileMap,
   selectPdlRoles,
-  (memberProfileMap, roles) =>
-    roles?.map((role) =>
-      role.memberid in memberProfileMap ? memberProfileMap[role.memberid] : {}
+  selectUserRoles,
+  (memberProfileMap, roles, userRoles) =>
+    userRoles?.filter((userRole) => roles.find((role) => role.id === userRole?.memberRoleId?.roleId ) !== undefined)?.map((userRole) =>
+      userRole?.memberRoleId?.memberId in memberProfileMap ? memberProfileMap[userRole?.memberRoleId?.memberId] : {}
     )
 );
 

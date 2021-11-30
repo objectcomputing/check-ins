@@ -11,6 +11,7 @@ import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
   SET_ROLES,
+  SET_USER_ROLES,
   UPDATE_CHECKIN,
   UPDATE_CHECKINS,
   UPDATE_MEMBER_PROFILES,
@@ -35,6 +36,7 @@ export const initialState = {
   terminatedMembers: [],
   memberSkills: [],
   roles: [],
+  userRoles: [],
   skills: [],
   teams: [],
   guilds: [],
@@ -168,6 +170,9 @@ export const reducer = (state, action) => {
       break;
     case SET_ROLES:
       state.roles = action.payload;
+      break;
+    case SET_USER_ROLES:
+      state.userRoles = action.payload;
       break;
     case DELETE_ROLE:
       state.roles = state.roles.filter((role) => role.id !== action.payload);
