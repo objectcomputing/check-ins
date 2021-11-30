@@ -59,7 +59,7 @@ public class RoleServicesImpl implements RoleServices {
     }
 
     public void delete(@NotNull UUID id) {
-        memberRoleRepo.removeAllByRoleId(id);
+        memberRoleRepo.deleteByRoleId(id);
         roleRepo.deleteById(id);
     }
 
