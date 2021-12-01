@@ -89,33 +89,33 @@ export const getFeedbackTemplateWithQuestions = async (templateId, cookie) => {
   const templateReq = getFeedbackTemplate(templateId, cookie);
   const questionsReq = getQuestionsOnTemplate(templateId, cookie);
 
-  return Promise.all([templateReq, questionsReq]).then(([templateRes, questionsRes]) => {
-    const templateData =
-      templateRes.payload &&
-      templateRes.payload.data &&
-      !templateRes.error
-        ? templateRes.payload.data
-        : null;
+  const [templateRes, questionsRes] = await Promise.all([templateReq, questionsReq]);
 
-    const questionsData =
-      questionsRes.payload &&
-      questionsRes.payload.data &&
-      !questionsRes.error
-        ? questionsRes.payload.data
-        : null;
+  const templateData =
+    templateRes.payload &&
+    templateRes.payload.data &&
+    !templateRes.error
+      ? templateRes.payload.data
+      : null;
 
-    let templateWithQuestions = {};
-    if (templateData) {
-      if (questionsData) {
-        templateData.questions = questionsData;
-      } else {
-        templateData.questions = [];
-      }
-      templateWithQuestions = templateData;
+  const questionsData =
+    questionsRes.payload &&
+    questionsRes.payload.data &&
+    !questionsRes.error
+      ? questionsRes.payload.data
+      : null;
+
+  let templateWithQuestions = {};
+  if (templateData) {
+    if (questionsData) {
+      templateData.questions = questionsData;
+    } else {
+      templateData.questions = [];
     }
+    templateWithQuestions = templateData;
+  }
 
-    return templateWithQuestions;
-  });
+  return templateWithQuestions;
 }
 
 export const softDeleteAdHocTemplates = async (creatorId, cookie) => {
