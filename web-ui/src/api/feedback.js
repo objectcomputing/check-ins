@@ -145,3 +145,15 @@ export const getFeedbackRequestsByRecipient = async(recipientId, cookie) => {
     headers: { "X-CSRF-Header": cookie }
   });
 }
+
+export const getFeedbackRequestsByRequestee = async(requesteeId, oldestDate, cookie) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      requesteeId,
+      oldestDate
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}

@@ -17,6 +17,7 @@ import Roles from "../admin/roles/Roles";
 import SkillReportPage from "../../pages/SkillReportPage";
 import TeamsPage from "../../pages/TeamsPage";
 import TeamSkillReportPage from "../../pages/TeamSkillReportPage";
+import AnnualReviewReportPage from "../../pages/AnnualReviewReportPage";
 import Users from "../admin/users/Users";
 
 import { selectIsAdmin } from "../../context/selectors";
@@ -97,16 +98,20 @@ export default function Routes() {
             <CheckinsReportPage />
           </Route>
           <Route path="/skills-reports">
-            <Header title="Skill Reports" />
+            <Header title="Skill Report" />
             <SkillReportPage />
           </Route>
           <Route path="/team-skills-reports">
-            <Header title="Team Skill Reports" />
+            <Header title="Team Skill Report" />
             <TeamSkillReportPage />
           </Route>
           <Route path="/birthday-anniversary-reports">
-            <Header title="Birthday & Anniversary Reports" />
+            <Header title="Birthday & Anniversary Report" />
             <BirthdayAnniversaryReportPage />
+          </Route>
+          <Route path="/annual-review-reports">
+            <Header title="Annual Review Report" />
+            <AnnualReviewReportPage />
           </Route>
           <Route path="/admin/roles">
             <Header title="Roles"></Header>
