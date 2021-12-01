@@ -21,6 +21,7 @@ exports[`renders correctly 1`] = `
           "toast": "",
         },
         "userProfile": Object {},
+        "userRoles": Array [],
       },
     }
   }

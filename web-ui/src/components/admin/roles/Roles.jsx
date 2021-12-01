@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "../../../context/AppContext";
 import {
-  DELETE_ROLE,
   UPDATE_ROLES,
+  SET_USER_ROLES,
   UPDATE_TOAST,
 } from "../../../context/actions";
 import {
@@ -32,7 +32,7 @@ import "./Roles.css";
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, memberProfiles, roles } = state;
+  const { csrf, memberProfiles, roles, userRoles } = state;
 
   const [showAddUser, setShowAddUser] = useState(false);
   const [showAddRole, setShowAddRole] = useState(false);
@@ -46,38 +46,43 @@ const Roles = () => {
   memberProfiles.sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
-    const memberMap = {};
-    for (const member of memberProfiles) {
-      memberMap[member.id] = member;
-    }
+      const memberMap = {};
+      for (const member of memberProfiles) {
+        memberMap[member.id] = member;
+      }
 
-    const newRoleToMemberMap = {};
-    for (const role of roles || []) {
-      let memberList = newRoleToMemberMap[role.role];
-      if (!memberList) {
-        memberList = newRoleToMemberMap[role.role] = [];
+      const newRoleToMemberMap = {};
+      for (const userRole of userRoles || []) {
+        const role = roles.find((role) => role.id === userRole?.memberRoleId?.roleId);
+        if(role) {
+          let memberList = newRoleToMemberMap[role.role];
+          if (!memberList) {
+            memberList = newRoleToMemberMap[role.role] = [];
+          }
+          if (memberMap[userRole?.memberRoleId?.memberId] !== undefined) {
+            memberList.push({ ...memberMap[userRole?.memberRoleId?.memberId], roleId: role.id });
+          }
+        }
       }
-      if (memberMap[role.memberid] !== undefined) {
-        memberList.push({ ...memberMap[role.memberid], roleId: role.id });
-      }
-    }
-    setRoleToMemberMap(newRoleToMemberMap);
-  }, [memberProfiles, roles]);
+      setRoleToMemberMap(newRoleToMemberMap);
+    }, [userRoles, memberProfiles, roles]);
 
   const uniqueRoles = Object.keys(roleToMemberMap);
 
   const removeFromRole = async (member, role) => {
     const members = roleToMemberMap[role];
     const { roleId } = members.find((m) => member.id === m.id);
-    let res = await removeUserFromRole(roleId, csrf);
+    let res = await removeUserFromRole(roleId, member.id, csrf);
     let data =
       res.payload && res.payload.status === 200 && !res.error
         ? res.payload
         : null;
     if (data) {
+// TODO: Remove role from map....
+      const filtered = userRoles.filter((userRole) => userRole?.memberRoleId?.roleId !== roleId || userRole?.memberRoleId?.memberId !== member.id);
       dispatch({
-        type: DELETE_ROLE,
-        payload: roleId,
+        type: SET_USER_ROLES,
+        payload: filtered,
       });
       window.snackDispatch({
         type: UPDATE_TOAST,
@@ -90,14 +95,15 @@ const Roles = () => {
   };
 
   const addToRole = async (member) => {
-    let res = await addUserToRole(selectedRole, member.id, csrf);
+    const role = roles.find((role) => role.role === selectedRole);
+    let res = await addUserToRole(role.id, member.id, csrf);
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
     if (data) {
       setShowAddUser(false);
       dispatch({
-        type: UPDATE_ROLES,
-        payload: data,
+        type: SET_USER_ROLES,
+        payload: [...userRoles, data],
       });
       window.snackDispatch({
         type: UPDATE_TOAST,

@@ -40,8 +40,5 @@ public interface MemberRoleRepository extends CrudRepository<MemberRole, MemberR
             "WHERE (memberid) = (:memberid)")
     void removeMemberFromRoles(String memberid);
 
-    @Query("DELETE FROM " +
-            "member_roles " +
-            "WHERE (roleid) = (:roleId)")
-    void removeAllByRoleId(UUID roleId);
+    void deleteByRoleId(UUID roleId);
 }

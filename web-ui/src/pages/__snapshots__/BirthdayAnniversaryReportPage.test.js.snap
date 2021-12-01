@@ -852,7 +852,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-7:focus::-ms-input-p
             <span
               className="MuiChip-label MuiChip-labelMedium emotion-5"
             >
-              November
+              December
             </span>
             <svg
               aria-hidden={true}

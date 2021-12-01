@@ -2,22 +2,39 @@ import { resolve } from "./api.js";
 
 const roleURL = "/services/roles";
 
-export const removeUserFromRole = async (id, cookie) => {
+export const getAllRoles = async (cookie) => {
   return resolve({
-    method: "delete",
-    url: roleURL + `/${id}`,
+    url: roleURL,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });
 };
 
-export const addUserToRole = async (role, memberid, cookie) => {
+
+export const getAllUserRoles = async (cookie) => {
+  return resolve({
+    url: roleURL + '/members',
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const removeUserFromRole = async (roleId, memberId, cookie) => {
+  return resolve({
+    method: "delete",
+    url: roleURL + `/members/${roleId}/${memberId}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const addUserToRole = async (roleId, memberId, cookie) => {
   return resolve({
     method: "post",
-    url: roleURL,
+    url: roleURL + '/members',
     data: {
-      role: role,
-      memberid: memberid,
+      roleId,
+      memberId,
     },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },

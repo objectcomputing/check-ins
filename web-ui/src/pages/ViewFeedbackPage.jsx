@@ -101,15 +101,32 @@ const ViewFeedbackPage = () => {
     const getRequestAndTemplateInfo = async (currentUserId) => {
       //get feedback requests
       const feedbackRequests = await getFeedbackRequests(currentUserId);
-      //use returned feedback request information to then get template information, bind request
-      //and associated template info together
-      for (let i = 0; i < feedbackRequests.length; i++) {
-        feedbackRequests[i].templateInfo = await getTemplateInfo(feedbackRequests[i].templateId);
-      }
       return feedbackRequests;
     }
 
-    getRequestAndTemplateInfo(currentUserId).then(requestList => {
+    const getTemplates = async (feedbackRequests) => {
+      //use returned feedback request information to then get template information, bind request
+      //and associated template info together
+      const templateReqs = [];
+      const templateIds = [];
+      for(let i=0; i<feedbackRequests.length; i++) {
+        if(!templateIds.includes(feedbackRequests[i].templateId)) {
+          templateIds.push(feedbackRequests[i].templateId);
+          templateReqs.push(getTemplateInfo(feedbackRequests[i].templateId));
+        }
+      }
+      let templates = await Promise.all(templateReqs);
+      templates = templates.reduce((map, template) => {
+        map[template.id] = template;
+        return map;
+      }, {});
+      feedbackRequests.forEach((request) => {
+        request.templateInfo = templates[request.templateId];
+      });
+      return feedbackRequests;
+    }
+
+    getRequestAndTemplateInfo(currentUserId).then(getTemplates).then(requestList => {
       if (requestList) {
         let groups = [];
         for (let i = 0; i < requestList.length; i++) {

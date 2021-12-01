@@ -14,7 +14,7 @@ public interface MemberRoleServices {
 
     MemberRole saveByIds(UUID memberid, UUID roleid);
 
-//    void deleteById(String memberid, String roleid);
+    void delete(@NotNull MemberRoleId id);
 
     void removeMemberFromRoles(UUID memberid);
 

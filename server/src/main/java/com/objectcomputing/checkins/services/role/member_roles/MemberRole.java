@@ -18,34 +18,16 @@ public class MemberRole {
     @EmbeddedId
     private final MemberRoleId memberRoleId;
 
-    @Column(name = "memberid")
-    @TypeDef(type = DataType.STRING)
-    private final UUID memberId;
-
-    @Column(name = "roleid")
-    @TypeDef(type = DataType.STRING)
-    private final UUID roleId;
-
-    public MemberRole(MemberRoleId memberRoleId, UUID memberId, UUID roleId) {
+    public MemberRole(MemberRoleId memberRoleId) {
         this.memberRoleId = memberRoleId;
-        this.memberId = memberId;
-        this.roleId = roleId;
     }
 
     public MemberRole(UUID memberProfileId, UUID roleId) {
-        this(null, memberProfileId, roleId);
+        this(new MemberRoleId(memberProfileId, roleId));
     }
 
     public MemberRoleId getMemberRoleId() {
         return memberRoleId;
-    }
-
-    public UUID getMemberId() {
-        return memberId;
-    }
-
-    public UUID getRoleId() {
-        return roleId;
     }
 
 }

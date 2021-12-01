@@ -98,6 +98,22 @@ public class RoleController {
     }
 
 
+
+    /**
+     * List all roles
+     *
+     * @return {@link Role}
+     */
+    @Get()
+    public Single<HttpResponse<List<Role>>> findAll() {
+        return Single.fromCallable(() -> {
+            List<Role> result = roleServices.findAllRoles();
+            return result;
+        }).observeOn(Schedulers.from(eventLoopGroup)).map(userRole -> {
+            return (HttpResponse<List<Role>>) HttpResponse.ok(userRole);
+        }).subscribeOn(Schedulers.from(ioExecutorService));
+    }
+
     /**
      * Delete role
      *

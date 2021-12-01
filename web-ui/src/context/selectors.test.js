@@ -1,7 +1,6 @@
 import {
   selectMemberProfiles,
   selectProfileMap,
-  selectMemberRoles,
   selectPdlRoles,
   selectMappedPdls,
   selectOrderedPdls,
@@ -128,47 +127,6 @@ describe("Selectors", () => {
     expect(selectProfileMap(testState)).toEqual(matchingProfiles);
   });
 
-  it("selectMemberRoles should return an array of all member roles", () => {
-    const testMemberRoles = [
-      {
-        id: "1",
-        memberid: "11",
-        role: "MEMBER",
-      },
-      {
-        id: "2",
-        memberid: "12",
-        role: "PDL",
-      },
-      {
-        id: "3",
-        memberid: "13",
-        role: "PDL",
-      },
-    ];
-    const testState = {
-      roles: [
-        {
-          id: "11",
-          memberid: "1",
-          role: "MEMBER",
-        },
-        {
-          id: "12",
-          memberid: "2",
-          role: "PDL",
-        },
-        {
-          id: "13",
-          memberid: "3",
-          role: "PDL",
-        },
-      ],
-    };
-
-    expect(selectMemberRoles(testState)).toEqual(testState.roles);
-  });
-
   it("selectPdlRoles should return an array of all member PDL roles", () => {
     const matchingRoles = [
       {
@@ -286,27 +244,43 @@ describe("Selectors", () => {
       },
     ];
 
-    const matchingRoles = [
-      {
-        id: "12",
-        memberid: "2",
-        role: "PDL",
-      },
-      {
-        id: "13",
-        memberid: "3",
-        role: "PDL",
-      },
-    ];
-    const testMemberRoles = [
+    const testRoles = [
       {
         id: "11",
-        memberid: "1",
-        role: "MEMBER",
+        role: "MEMBER"
+      },
+      {
+        id: "12",
+        role: "PDL"
+      }
+    ]
+
+    const matchingRoles = [
+      {
+        memberRoleId: {
+          roleId: "12",
+          memberId: "2",
+        }
+      },
+      {
+        memberRoleId: {
+          roleId: "12",
+          memberId: "3",
+        }
+      },
+    ];
+
+    const testMemberRoles = [
+      {
+        memberRoleId: {
+          roleId: "11",
+          memberId: "1",
+        }
       },
       matchingRoles[0],
       matchingRoles[1],
     ];
+
     const testState = {
       memberProfiles: [
         {
@@ -349,23 +323,8 @@ describe("Selectors", () => {
           startDate: [2012, 9, 29],
         },
       ],
-      roles: [
-        {
-          id: "11",
-          memberid: "1",
-          role: "MEMBER",
-        },
-        {
-          id: "12",
-          memberid: "2",
-          role: "PDL",
-        },
-        {
-          id: "13",
-          memberid: "3",
-          role: "PDL",
-        },
-      ],
+      roles: testRoles,
+      userRoles: testMemberRoles,
     };
     expect(selectMappedPdls(testState)).toEqual(matchingMembers);
   });
@@ -442,23 +401,43 @@ describe("Selectors", () => {
       },
     ];
 
-    const testMemberRoles = [
+    const testRoles = [
       {
         id: "11",
-        memberid: "1",
-        role: "MEMBER",
+        role: "MEMBER"
       },
       {
         id: "12",
-        memberid: "2",
-        role: "PDL",
+        role: "PDL"
+      }
+    ]
+
+    const matchingRoles = [
+      {
+        memberRoleId: {
+          roleId: "12",
+          memberId: "2",
+        }
       },
       {
-        id: "13",
-        memberid: "3",
-        role: "PDL",
+        memberRoleId: {
+          roleId: "12",
+          memberId: "3",
+        }
       },
     ];
+
+    const testMemberRoles = [
+      {
+        memberRoleId: {
+          roleId: "11",
+          memberId: "1",
+        }
+      },
+      matchingRoles[0],
+      matchingRoles[1],
+    ];
+
     const testState = {
       memberProfiles: [
         {
@@ -501,23 +480,8 @@ describe("Selectors", () => {
           startDate: [2012, 9, 29],
         },
       ],
-      roles: [
-        {
-          id: "11",
-          memberid: "1",
-          role: "MEMBER",
-        },
-        {
-          id: "12",
-          memberid: "2",
-          role: "PDL",
-        },
-        {
-          id: "13",
-          memberid: "3",
-          role: "PDL",
-        },
-      ],
+      roles: testRoles,
+      userRoles: testMemberRoles,
     };
     expect(selectOrderedPdls(testState)).toEqual(matchingMembers);
   });
