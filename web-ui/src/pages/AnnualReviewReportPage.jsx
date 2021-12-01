@@ -1,9 +1,10 @@
-import React, { useContext, useState, useCallback } from "react";
+import React, { useContext, useState, useCallback, useEffect } from "react";
 
 import { AppContext } from "../context/AppContext";
 import AnnualReviewReport from "../components/annual-review-report/AnnualReviewReport";
 import {
   selectCurrentMembers,
+  selectCurrentUserId,
 } from "../context/selectors";
 import { TextField } from "@mui/material";
 import Autocomplete from '@mui/material/Autocomplete';
@@ -13,8 +14,19 @@ import "./AnnualReviewReportPage.css";
 const AnnualReviewReportPage = () => {
   const { state } = useContext(AppContext);
   const users = selectCurrentMembers(state);
+  const currentUserId = selectCurrentUserId(state);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [peer, setPeer] = useState(false);
+
+  useEffect(() => {
+    if(users && users.length > 0) {
+      const filtered = users.filter((user) => user.id !== currentUserId);
+      setFilteredUsers(filtered);
+    } else {
+      setFilteredUsers([]);
+    }
+  }, [users, currentUserId]);
 
   const onUserChange = useCallback((event, newValue) => {
     setSelectedUser(newValue);
@@ -31,7 +43,7 @@ const AnnualReviewReportPage = () => {
           id="userSelect"
           disablePortal
           fullWidth
-          options={users}
+          options={filteredUsers}
           onChange={onUserChange}
           getOptionLabel={(option) => option.name}
           renderInput={(params) => (
