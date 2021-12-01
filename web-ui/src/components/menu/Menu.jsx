@@ -110,6 +110,7 @@ const getFeedbackLinks = (isAdmin, isPDL) => isAdmin || isPDL ?
     [ ["/feedback/received-requests", "Received Requests"] ];
 
 const reportsLinks = [
+  ["/annual-review-reports", "Annual Reviews"],
   ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
   ["/checkins-reports", "Check-ins"],
   ["/skills-reports", "Skills"],

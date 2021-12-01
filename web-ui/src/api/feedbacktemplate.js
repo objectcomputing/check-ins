@@ -98,13 +98,14 @@ export const getFeedbackTemplateWithQuestions = async (templateId, cookie) => {
       ? templateRes.payload.data
       : null;
 
-  const questionsData =
+  let questionsData =
     questionsRes.payload &&
     questionsRes.payload.data &&
     !questionsRes.error
       ? questionsRes.payload.data
       : null;
 
+  questionsData = questionsData ? questionsData.sort((a,b) => a.questionNumber - b.questionNumber): null;
   let templateWithQuestions = {};
   if (templateData) {
     if (questionsData) {
