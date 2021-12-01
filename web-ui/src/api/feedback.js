@@ -90,17 +90,11 @@ export const getAllAnswersFromRequestAndQuestionId = async (requestId, questions
 }
 
 export const getQuestionsByRequestId = async (requestId, cookie) => {
-  const requestReq = getFeedbackRequestById(requestId, cookie);
-  let getFeedbackReq = requestReq.then((requestRes) => {
-    if (requestRes.payload && requestRes.payload.data && !requestRes.error) {
-      return getFeedbackTemplateWithQuestions(requestRes.payload.data.templateId, cookie)
-    }
-  });
+  const requestRes = await getFeedbackRequestById(requestId, cookie);
 
-  return Promise.all([requestReq, getFeedbackReq]).then(([requestRes, getFeedbackRes]) => {
-    return getFeedbackRes;
-  });
-
+  if (requestRes.payload && requestRes.payload.data && !requestRes.error) {
+    return getFeedbackTemplateWithQuestions(requestRes.payload.data.templateId, cookie);
+  }
 }
 
 export const updateSingleAnswer = (answer, cookie) => {

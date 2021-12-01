@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
 import javax.inject.Singleton;
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,9 +20,9 @@ public class MemberRoleServicesImpl implements MemberRoleServices {
     }
 
 
-//    public void delete(MemberRole role){
-//        memberRoleRepository.delete(role);
-//    }
+    public void delete(MemberRoleId id){
+        memberRoleRepository.deleteById(id);
+    }
 
     public void removeMemberFromRoles(UUID memberid){
         // errors occurred when using UUID directly in query but string works
@@ -30,7 +31,7 @@ public class MemberRoleServicesImpl implements MemberRoleServices {
     }
 
     public MemberRole saveByIds(UUID memberId, UUID roleId){
-        return memberRoleRepository.saveByIds(memberId, roleId);
+        return memberRoleRepository.save(new MemberRole(memberId, roleId));
     }
 
 
@@ -39,6 +40,6 @@ public class MemberRoleServicesImpl implements MemberRoleServices {
     }
 
     public void removeAllByRoleId(UUID roleId){
-        memberRoleRepository.removeAllByRoleId(roleId);
+        memberRoleRepository.deleteByRoleId(roleId);
     }
 }

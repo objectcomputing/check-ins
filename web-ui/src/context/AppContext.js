@@ -5,6 +5,7 @@ import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
   SET_ROLES,
+  SET_USER_ROLES,
   UPDATE_GUILDS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_MEMBER_PROFILES,
@@ -15,9 +16,9 @@ import {
 import {
   getCurrentUser,
   getAllMembers,
-  getAllRoles,
   getAllTerminatedMembers,
 } from "../api/member";
+import { getAllRoles, getAllUserRoles } from "../api/roles";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
 import { getAllGuilds } from "../api/guild";
@@ -209,6 +210,26 @@ const AppContextProvider = (props) => {
      getRoles();
    }
  }, [csrf]);
+
+ useEffect(() => {
+   const getUserRoles = async () => {
+     // make call to the API
+     let res = await getAllUserRoles(csrf);
+     return (
+       res.payload &&
+       res.payload.data &&
+       res.payload.status === 200 &&
+       !res.error)
+       ? res.payload.data
+       : null;
+   };
+
+   if (csrf) {
+     getUserRoles().then((userRoles) => {
+       dispatch({ type: SET_USER_ROLES, payload: userRoles });
+     });
+   }
+}, [csrf]);
 
   const value = useMemo(() => {
     return { state, dispatch };

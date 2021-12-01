@@ -21,14 +21,6 @@ export const getAllTerminatedMembers = async (cookie) => {
   });
 };
 
-export const getAllRoles = async (cookie) => {
-  return resolve({
-    url: "services/roles",
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
-  });
-};
-
 export const getAllPDLs = async (cookie) => {
   return resolve({
     url: "/services/roles?role=PDL",
