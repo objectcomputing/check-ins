@@ -66,7 +66,7 @@ const propTypes = {
 const FeedbackSubmissionTips = (props) => {
   return (
     <Root className="sbi-tips-page">
-      <div className="header">
+      <div className="submission-tips-header">
         <Typography className={classes.title} variant="h2"><b>Feedback Tips</b></Typography>
         <div className={classes.button}>
           <Button
