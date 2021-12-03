@@ -123,7 +123,7 @@ const QuestionResults = ({question, responses, requests}) => {
         responses?.map((response) => {
           const request = findRequestById(requests, response.requestId);
           const fromProfile = selectProfile(state, request?.recipientId)
-          return (<QuestionResponse fromProfile={fromProfile} responseText={response.answer} submitDate={request.submitDate} dueDate={request.dueDate} />);
+          return (<QuestionResponse fromProfile={fromProfile} responseText={response.answer} submitDate={request?.submitDate} dueDate={request?.dueDate} />);
         })
       }
     </Root>
@@ -135,7 +135,8 @@ const FeedbackTemplateResults = ({includeUnsubmitted, template, requests, answer
     <h2>{template?.title}</h2>
     {includeUnsubmitted && requests.filter((request) => request.status !== "submitted").map((request)=> {
       const fromProfile = selectProfile(state, request?.recipientId)
-      const {submitDate,dueDate} = request;
+      const submitDate = request?.submitDate;
+      const dueDate = request?.dueDate;
       return (
         <Grid container
               direction="row"
