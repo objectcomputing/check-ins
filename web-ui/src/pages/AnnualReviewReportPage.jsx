@@ -17,7 +17,7 @@ const AnnualReviewReportPage = () => {
   const currentUserId = selectCurrentUserId(state);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [peer, setPeer] = useState(false);
+  const [unsubmitted, setUnsubmitted] = useState(false);
 
   useEffect(() => {
     if(users && users.length > 0) {
@@ -32,9 +32,9 @@ const AnnualReviewReportPage = () => {
     setSelectedUser(newValue);
   }, [setSelectedUser]);
 
-  const handlePeer = useCallback(() => {
-    setPeer(!peer);
-  }, [setPeer, peer]);
+  const handleUnsubmitted = useCallback(() => {
+    setUnsubmitted(!unsubmitted);
+  }, [setUnsubmitted, unsubmitted]);
 
   return (
     <div>
@@ -56,10 +56,10 @@ const AnnualReviewReportPage = () => {
         />
       </div>
       <div className="checkbox-row">
-        <label htmlFor="peer">Include peer feedback</label>
-        <input id="peer" onClick={handlePeer} value={peer} type="checkbox" />
+        <label htmlFor="unsubmitted">Include unsubmitted feedback</label>
+        <input id="unsubmitted" onClick={handleUnsubmitted} value={unsubmitted} type="checkbox" />
       </div>
-      { selectedUser && (<AnnualReviewReport userId={selectedUser?.id} includePeer={peer} />) }
+      { selectedUser && (<AnnualReviewReport userId={selectedUser?.id} includeUnsubmitted={unsubmitted} />) }
     </div>
   );
 };

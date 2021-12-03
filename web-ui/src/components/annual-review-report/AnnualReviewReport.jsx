@@ -6,7 +6,7 @@ import { selectProfile } from "../../context/selectors";
 import { getFeedbackRequestsByRequestee } from "../../api/feedback.js";
 import { getFeedbackTemplateWithQuestions } from "../../api/feedbacktemplate.js";
 import { getAnswersFromRequest } from "../../api/feedbackanswer";
-
+import DateFnsAdapter from "@date-io/date-fns";
 import {
   Avatar,
   Card,
@@ -17,8 +17,69 @@ import {
   ListItem,
   Grid,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-const QuestionResponse = ({fromProfile, responseText}) => (
+const dateFns = new DateFnsAdapter();
+
+const PREFIX = 'FeedbackRequestSubcard';
+const classes = {
+  redTypography: `${PREFIX}-redTypography`,
+  yellowTypography: `${PREFIX}-yellowTypography`,
+  greenTypography: `${PREFIX}-greenTypography`,
+  darkGrayTypography: `${PREFIX}-darkGrayTypography`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  marginBottom:"1em",
+  [`& .${classes.redTypography}`]: {
+    color: "#FF0000",
+    marginRight: "1em",
+  },
+  [`& .${classes.yellowTypography}`]: {
+      color: "#EE8C00",
+      marginRight: "1em",
+  },
+  [`& .${classes.greenTypography}`]: {
+      color: "#006400",
+      marginRight: "1em",
+  },
+  [`& .${classes.darkGrayTypography}`]: {
+    color: "#333333",
+    marginRight: "1em",
+  },
+});
+
+const Submitted = ({submitDate, dueDate}) => {
+    if (dueDate) {
+      let today = new Date();
+      let due = new Date(dueDate);
+      if (!submitDate && today > due) {
+        return (
+          <Typography className={classes.redTypography}>Overdue</Typography>
+        );
+      }
+    }
+    if (submitDate) {
+      return (
+        <React.Fragment>
+          <Typography className={classes.greenTypography}>
+            Submitted
+          </Typography>
+          <Typography className={classes.greenTypography}>
+            {dateFns.format(new Date(submitDate.join("/")), "LLLL dd, yyyy")}
+          </Typography>
+        </React.Fragment>
+      );
+    } else
+      return (
+        <Typography className={classes.yellowTypography}>
+          Not Submitted
+        </Typography>
+      );
+  };
+
+const QuestionResponse = ({fromProfile, responseText, submitDate, dueDate}) => (
     <Grid container spacing={0} style={{marginBottom:"1em"}}>
       <Grid item xs={12}>
         <Grid
@@ -27,7 +88,7 @@ const QuestionResponse = ({fromProfile, responseText}) => (
           alignItems="center"
           className="no-wrap"
         >
-          <Grid item>
+          <Grid item xs={1}>
             <Avatar style={{ marginRight: "1em" }} src={getAvatarURL(fromProfile?.workEmail)} />
           </Grid>
           <Grid item xs={3} className="small-margin">
@@ -38,7 +99,10 @@ const QuestionResponse = ({fromProfile, responseText}) => (
               {fromProfile?.title}
             </Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={3} className="small-margin">
+            <Submitted submitDate={submitDate} dueDate={dueDate} />
+          </Grid>
+          <Grid item xs={5}>
             <Typography className="dark-gray-text">
               {responseText}
             </Typography>
@@ -48,31 +112,59 @@ const QuestionResponse = ({fromProfile, responseText}) => (
     </Grid>
 );
 
-const getFromProfile = (requests, requestId, state) => selectProfile(state, requests?.find((request) => request.id === requestId)?.recipientId);
+const findRequestById = (requests, requestId) => requests?.find((request) => request.id === requestId);
 
 const QuestionResults = ({question, responses, requests}) => {
   const { state } = useContext(AppContext);
   return (
-    <div style={{marginBottom:"1em"}} >
+    <Root>
       <Typography className="dark-gray-text">{question.question}</Typography>
       {
         responses?.map((response) => {
-          const fromProfile = getFromProfile(requests, response.requestId, state);
-          return (<QuestionResponse fromProfile={fromProfile} responseText={response.answer} />);
+          const request = findRequestById(requests, response.requestId);
+          const fromProfile = selectProfile(state, request?.recipientId)
+          return (<QuestionResponse fromProfile={fromProfile} responseText={response.answer} submitDate={request.submitDate} dueDate={request.dueDate} />);
         })
       }
-    </div>
+    </Root>
   )
 };
 
-const FeedbackTemplateResults = ({template, requests, answers}) => (
-  <div>
+const FeedbackTemplateResults = ({includeUnsubmitted, template, requests, answers, state}) => (
+  <Root>
     <h2>{template?.title}</h2>
+    {includeUnsubmitted && requests.filter((request) => request.status !== "submitted").map((request)=> {
+      const fromProfile = selectProfile(state, request?.recipientId)
+      const {submitDate,dueDate} = request;
+      return (
+        <Grid container
+              direction="row"
+              alignItems="center"
+              className="no-wrap"
+              spacing={0}
+              style={{marginBottom:"1em"}}>
+          <Grid item xs={1}>
+            <Avatar style={{ marginRight: "1em" }} src={getAvatarURL(fromProfile?.workEmail)} />
+          </Grid>
+          <Grid item xs={3} className="small-margin">
+            <Typography className="person-name">
+              {fromProfile?.name}
+            </Typography>
+            <Typography className="position-text">
+              {fromProfile?.title}
+            </Typography>
+          </Grid>
+          <Grid item xs={3} className="small-margin">
+            <Submitted submitDate={submitDate} dueDate={dueDate} />
+          </Grid>
+        </Grid>
+      );
+    })}
     {template?.questions?.map((question) => (<QuestionResults question={question} responses={answers[question.id]} requests={requests} />))}
-  </div>
+  </Root>
 );
 
-const AnnualReviewReport = ({ userId, includePeer }) => {
+const AnnualReviewReport = ({ userId, includeUnsubmitted }) => {
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const [feedbackRequests, setFeedbackRequests] = useState([]);
@@ -85,15 +177,17 @@ const AnnualReviewReport = ({ userId, includePeer }) => {
   useEffect(() => {
     const loadRequests = async () => {
         const res = await getFeedbackRequestsByRequestee(userId, null, csrf);
-        const feedbackRequests = res.payload && res.payload.data && !res.error ? res.payload.data : [];
-
+        let feedbackRequests = res.payload && res.payload.data && !res.error ? res.payload.data : [];
+        if(!includeUnsubmitted) {
+          feedbackRequests = feedbackRequests.filter((request) => request.status === "submitted");
+        }
         setFeedbackRequests(feedbackRequests);
     }
 
     if(csrf && userId) {
       loadRequests();
     }
-  }, [userId, csrf]);
+  }, [userId, includeUnsubmitted, csrf]);
 
   useEffect(() => {
     const newRequestMap = {};
@@ -161,7 +255,7 @@ const AnnualReviewReport = ({ userId, includePeer }) => {
       />
       <CardContent>
         <List>
-          {Object.entries(templateRequestMap).map(([templateId, feedbackRequests]) => (<ListItem><FeedbackTemplateResults template={templatesMap[templateId]} requests={templateRequestMap[templateId]} answers={answers} /></ListItem>))}
+          {Object.entries(templateRequestMap).map(([templateId, feedbackRequests]) => (<ListItem><FeedbackTemplateResults includeUnsubmitted={includeUnsubmitted} template={templatesMap[templateId]} requests={templateRequestMap[templateId]} answers={answers} state={state}/></ListItem>))}
         </List>
       </CardContent>
     </Card>
