@@ -130,14 +130,41 @@ const QuestionResults = ({question, responses, requests}) => {
   )
 };
 
-const FeedbackTemplateResults = ({template, requests, answers}) => (
-  <div>
+const FeedbackTemplateResults = ({includeUnsubmitted, template, requests, answers, state}) => (
+  <Root>
     <h2>{template?.title}</h2>
+    {includeUnsubmitted && requests.filter((request) => request.status !== "submitted").map((request)=> {
+      const fromProfile = selectProfile(state, request?.recipientId)
+      const {submitDate,dueDate} = request;
+      return (
+        <Grid container
+              direction="row"
+              alignItems="center"
+              className="no-wrap"
+              spacing={0}
+              style={{marginBottom:"1em"}}>
+          <Grid item xs={1}>
+            <Avatar style={{ marginRight: "1em" }} src={getAvatarURL(fromProfile?.workEmail)} />
+          </Grid>
+          <Grid item xs={3} className="small-margin">
+            <Typography className="person-name">
+              {fromProfile?.name}
+            </Typography>
+            <Typography className="position-text">
+              {fromProfile?.title}
+            </Typography>
+          </Grid>
+          <Grid item xs={3} className="small-margin">
+            <Submitted submitDate={submitDate} dueDate={dueDate} />
+          </Grid>
+        </Grid>
+      );
+    })}
     {template?.questions?.map((question) => (<QuestionResults question={question} responses={answers[question.id]} requests={requests} />))}
-  </div>
+  </Root>
 );
 
-const AnnualReviewReport = ({ userId, includePeer }) => {
+const AnnualReviewReport = ({ userId, includeUnsubmitted }) => {
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const [feedbackRequests, setFeedbackRequests] = useState([]);
@@ -150,15 +177,17 @@ const AnnualReviewReport = ({ userId, includePeer }) => {
   useEffect(() => {
     const loadRequests = async () => {
         const res = await getFeedbackRequestsByRequestee(userId, null, csrf);
-        const feedbackRequests = res.payload && res.payload.data && !res.error ? res.payload.data : [];
-
+        let feedbackRequests = res.payload && res.payload.data && !res.error ? res.payload.data : [];
+        if(!includeUnsubmitted) {
+          feedbackRequests = feedbackRequests.filter((request) => request.status === "submitted");
+        }
         setFeedbackRequests(feedbackRequests);
     }
 
     if(csrf && userId) {
       loadRequests();
     }
-  }, [userId, csrf]);
+  }, [userId, includeUnsubmitted, csrf]);
 
   useEffect(() => {
     const newRequestMap = {};
@@ -226,7 +255,7 @@ const AnnualReviewReport = ({ userId, includePeer }) => {
       />
       <CardContent>
         <List>
-          {Object.entries(templateRequestMap).map(([templateId, feedbackRequests]) => (<ListItem><FeedbackTemplateResults template={templatesMap[templateId]} requests={templateRequestMap[templateId]} answers={answers} /></ListItem>))}
+          {Object.entries(templateRequestMap).map(([templateId, feedbackRequests]) => (<ListItem><FeedbackTemplateResults includeUnsubmitted={includeUnsubmitted} template={templatesMap[templateId]} requests={templateRequestMap[templateId]} answers={answers} state={state}/></ListItem>))}
         </List>
       </CardContent>
     </Card>
