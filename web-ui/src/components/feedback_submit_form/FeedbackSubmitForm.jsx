@@ -155,11 +155,10 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([])
   const [templateTitle, setTemplateTitle] = useState(null)
-  let currentlyBeingEdited = -1
 
   const updateAnswer = useCallback(
-    () => updateFeedbackAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf),
-    [questionAnswerPairs, currentlyBeingEdited, csrf]
+    (index) => updateFeedbackAnswer(questionAnswerPairs[index]?.answer, csrf),
+    [questionAnswerPairs, csrf]
   );
 
   async function updateRequestSubmit() {
@@ -172,7 +171,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   async function updateAllAnswersSubmit(){
     let answers= [];
     for (let i = 0; i < questionAnswerPairs.length; ++i) {
-      answers.push(questionAnswerPairs[i].answer)
+      answers.push(questionAnswerPairs[i].answer || {})
     }
     const res = await updateAllAnswers(answers, csrf)
     return res;
@@ -216,26 +215,26 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
 
   const onSliderChange = (event, index, marks, value) => {
     let questionAnswerCopy = [...questionAnswerPairs];
+    questionAnswerCopy[index].answer = questionAnswerCopy[index].answer || {};
     questionAnswerCopy[index].answer.answer = marks?.find((mark) => mark.value === value)?.text;
-    currentlyBeingEdited = index;
     setQuestionAnswerPairs(questionAnswerCopy);
-    updateAnswer();
+    updateAnswer(index);
   }
 
   const onRadioChange = (event, index, value) => {
     let questionAnswerCopy = [...questionAnswerPairs];
+    questionAnswerCopy[index].answer = questionAnswerCopy[index].answer || {};
     questionAnswerCopy[index].answer.answer = value;
-    currentlyBeingEdited = index;
     setQuestionAnswerPairs(questionAnswerCopy);
-    updateAnswer()
+    updateAnswer(index);
   }
 
   const onChangeHandler = (event, index) => {
     let questionAnswerCopy = [...questionAnswerPairs];
+    questionAnswerCopy[index].answer = questionAnswerCopy[index].answer || {};
     questionAnswerCopy[index].answer.answer = event.target.value;
-    currentlyBeingEdited = index;
     setQuestionAnswerPairs(questionAnswerCopy);
-    updateAnswer();
+    updateAnswer(index);
   }
 
   const getQuestionHeader = (index, isReview) => isReview && index === 1
@@ -252,7 +251,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             disabled={isReviewing}
             min={0}
             max={4}
-            value={getSliderValue(agreeMarks, questionAnswerPair.answer.answer)}
+            value={getSliderValue(agreeMarks, questionAnswerPair?.answer?.answer)}
             step={1}
             marks={agreeMarks}
             onChange={(e, value) => onSliderChange(e, index, agreeMarks, value)}
@@ -271,7 +270,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
               readOnly: isReviewing,
             }}
             onChange={(e) => onChangeHandler(e, index)}
-            defaultValue={questionAnswerPair.answer.answer}
+            defaultValue={questionAnswerPair?.answer?.answer}
           />);
         break;
       case 9:
@@ -279,7 +278,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       case 11:
         // Yes, No, I don't know...
         toReturn =
-          (<RadioGroup row value={questionAnswerPair.answer.answer} onChange={(event, value) => onRadioChange(event, index, value)}>
+          (<RadioGroup row value={questionAnswerPair?.answer?.answer} onChange={(event, value) => onRadioChange(event, index, value)}>
             <FormControlLabel disabled={isReviewing} value="Yes" control={<Radio />} label="Yes" />
             <FormControlLabel disabled={isReviewing} value="No" control={<Radio />} label="No" />
             <FormControlLabel disabled={isReviewing} value="I don't know." control={<Radio />} label="I don't know" />
@@ -292,7 +291,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             disabled={isReviewing}
             min={0}
             max={4}
-            value={getSliderValue(frequencyMarks, questionAnswerPair.answer.answer)}
+            value={getSliderValue(frequencyMarks, questionAnswerPair?.answer?.answer)}
             step={1}
             marks={frequencyMarks}
             onChange={(e, value) => onSliderChange(e, index, frequencyMarks, value)}
@@ -314,7 +313,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             readOnly: isReviewing,
           }}
           onChange={(e) => onChangeHandler(e, index)}
-          defaultValue={questionAnswerPair.answer.answer}
+          defaultValue={questionAnswerPair?.answer?.answer}
         />) : getReviewInput(questionAnswerPair, isReviewing, index);
   }
 
