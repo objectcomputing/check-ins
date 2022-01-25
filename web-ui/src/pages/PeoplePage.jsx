@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-
+import React, { useContext, useState, useRef } from "react";
 import { styled } from '@mui/material/styles';
 import MemberSummaryCard from "../components/member-directory/MemberSummaryCard";
 import { AppContext } from "../context/AppContext";
@@ -7,11 +6,8 @@ import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin,
 } from "../context/selectors";
-
 import { TextField, Grid } from "@mui/material";
-
 import "./PeoplePage.css";
-
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader"
 
 const PREFIX = 'PeoplePage';
@@ -40,6 +36,7 @@ const Root = styled('div')({
 
 const PeoplePage = () => {
   const { state } = useContext(AppContext);
+  const doneLoading = useRef(false);
   const { userProfile } = state;
 
   const [searchText, setSearchText] = useState("");
@@ -51,7 +48,15 @@ const PeoplePage = () => {
     ? selectNormalizedMembersAdmin(state, searchText)
     : selectNormalizedMembers(state, searchText);
 
+  if (userProfile?.role && normalizedMembers.length === 0) {
+      doneLoading.current=true;
+  }
+
   const createMemberCards = normalizedMembers.map((member, index) => {
+    doneLoading.current=false;
+    if (normalizedMembers.length-1===index) {
+      doneLoading.current=true;
+    }
     return (
       <MemberSummaryCard
         key={`${member.name}-${member.id}`}
@@ -59,7 +64,10 @@ const PeoplePage = () => {
         member={member}
       />
     );
-  });
+
+  })
+
+
 
   return (
     <Root className="people-page">
@@ -71,15 +79,14 @@ const PeoplePage = () => {
             placeholder="Member Name"
             value={searchText}
             onChange={(e) => {
+              doneLoading.current=false;
               setSearchText(e.target.value);
             }}
           />
         </Grid>
         <Grid item className={classes.members}>
-          {createMemberCards.length? 
-            createMemberCards : 
-            Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />)
-          }
+          {!doneLoading?.current ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />):
+           createMemberCards?.length && doneLoading?.current ? createMemberCards : null}
         </Grid>
       </Grid>
     </Root>
