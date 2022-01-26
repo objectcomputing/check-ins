@@ -70,6 +70,10 @@ const ViewFeedbackResponses = () => {
   const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
   const retrievedQuestionsAndAnswers = useRef(false);
 
+  console.log("Questions and answers" + JSON.stringify(questionsAndAnswers))
+  console.log("Filtered questions and aswers " + JSON.stringify(filteredQuestionsAndAnswers))
+
+
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
   }, [location.search]);
@@ -106,7 +110,6 @@ const ViewFeedbackResponses = () => {
       }
   })
     retrieveQuestionsAndAnswers(query.request, csrf).then((res) => {
-
       if (res) {
         setQuestionsAndAnswers(res);
       } else {
@@ -140,18 +143,19 @@ const ViewFeedbackResponses = () => {
 
   useEffect(() => {
     let responsesToDisplay = [...questionsAndAnswers];
-
-    responsesToDisplay = responsesToDisplay.map((response) => {
+    responsesToDisplay = responsesToDisplay?.map((response) => {
+      console.log("response " + JSON.stringify(response))
       // Filter based on selected responders
-      let filteredAnswers = response.answers.filter((answer) => selectedResponders.includes(answer.responder));
+      let filteredAnswers = response?.answers?.filter((answer) => selectedResponders.includes(answer.responder));
       if (searchText.trim()) {
         // Filter based on search text
-        filteredAnswers = filteredAnswers.filter(({answer}) => answer.toLowerCase().includes(searchText.trim().toLowerCase()));
+        filteredAnswers = filteredAnswers?.filter(({answer}) => answer?.toLowerCase().includes(searchText.trim().toLowerCase()));
       }
       return {...response, answers: filteredAnswers}
     });
 
     setFilteredQuestionsAndAnswers(responsesToDisplay);
+  
 
   }, [searchText, selectedResponders]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -199,7 +203,7 @@ const ViewFeedbackResponses = () => {
                 style={{marginRight: 8}}
                 checked={selected}
               />
-              {selectProfile(state, responderId).name}
+              {selectProfile(state, responderId)?.name}
             </React.Fragment>
           )}
           renderInput={(params) => (
