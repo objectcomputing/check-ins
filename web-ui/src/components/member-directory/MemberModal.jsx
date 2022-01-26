@@ -32,7 +32,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
 
   const terminationDate = editedMember?.terminationDate || null;
 
-  const startDate = editedMember?.startDate;
+  const startDate = editedMember?.startDate ? editedMember?.startDate : setMember({...editedMember, startDate: new Date()})  ;
 
   const onPdlChange = (event, newValue) => {
     setMember({
