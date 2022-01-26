@@ -36,6 +36,7 @@ const PrivateNote = () => {
 
   const noteRef = useRef([]);
   const [note, setNote] = useState();
+  console.log(note)
   const [isLoading, setIsLoading] = useState(true);
 
   const pdlorAdmin = selectIsPDL(state) || isAdmin;

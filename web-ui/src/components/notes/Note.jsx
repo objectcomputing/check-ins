@@ -15,14 +15,17 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import MarkdownNote from "../markdown-note/MarkdownNote";
 import "./Note.css";
+import { sanitizeQuillElements } from "../../helpers/sanitizehtml";
 
 async function realUpdate(note, csrf) {
-  await updateCheckinNote(note, csrf);
+  let cleanedNote = sanitizeQuillElements(note.description)
+  await updateCheckinNote(cleanedNote, csrf);
 }
 
 const updateNote = debounce(realUpdate, 1000);
 
 const Notes = (props) => {
+  console.log("bro am i an idiot ;/")
   const { state } = useContext(AppContext);
   const { checkinId, memberId } = useParams();
   const csrf = selectCsrfToken(state);
@@ -31,9 +34,9 @@ const Notes = (props) => {
   const currentCheckin = selectCheckin(state, checkinId);
   const currentMember = selectProfile(state, memberId);
   const pdlId = currentMember?.pdlId;
-
   const noteRef = useRef([]);
   const [note, setNote] = useState();
+  console.log("Note???" + note)
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -42,11 +45,13 @@ const Notes = (props) => {
       try {
         let res = await getNoteByCheckinId(checkinId, csrf);
         if (res.error) throw new Error(res.error);
-        const currentNote =
+        let currentNote =
           res.payload && res.payload.data && res.payload.data.length > 0
             ? res.payload.data[0]
             : null;
         if (currentNote) {
+           currentNote.description= sanitizeQuillElements(currentNote.description)
+          console.log("Current note " + currentNote)
           setNote(currentNote);
         } else if (currentUserId === pdlId) {
           if (!noteRef.current.some((id) => id === checkinId)) {
@@ -81,6 +86,7 @@ const Notes = (props) => {
       setIsLoading(false);
     }
     if (csrf) {
+      console.log('get notes')
       getNotes();
     }
   }, [csrf, checkinId, currentUserId, pdlId]);
