@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { AppContext } from "../../context/AppContext";
 import {
   selectOrderedPdls,
@@ -14,6 +14,7 @@ import { Button } from "@mui/material";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import "./MemberModal.css";
+import { useCallback } from "react";
 
 const emptyMember = {
   employeeId:'',
@@ -31,11 +32,12 @@ const emptyMember = {
   terminationDate:null
 }
 
-const MemberModal = ({ member, open, onSave, onClose, isNewMember }) => {
+const MemberModal = ({ member, open, onSave, onClose }) => {
   const { state, dispatch } = useContext(AppContext);
   const memberProfiles = selectCurrentMembers(state);
   const [editedMember, setMember] = useState(member);
   const sortedPdls = selectOrderedPdls(state);
+  const isNewMember = useRef(JSON.stringify(member)==='{}'? true : false)
   const sortedMembers = selectOrderedMemberFirstName(state);
   const onSupervisorChange = (event, newValue) => {
     setMember({
@@ -57,17 +59,19 @@ const MemberModal = ({ member, open, onSave, onClose, isNewMember }) => {
     });
   };
 
-  const validateRequiredInputs = () => {
-    return (editedMember.firstName?.length > 0 && editedMember.lastName?.length > 0
-       && editedMember.workEmail?.length > 0 && editedMember.title?.length > 0 && editedMember.location?.length >0 && editedMember.employeeId?.length > 0 && startDate )
-  }
-  
-  const submitMemberClick = async () => {
+  const validateRequiredInputs = useCallback(() => {
+      return (editedMember.firstName?.length > 0 && editedMember.lastName?.length > 0
+         && editedMember.workEmail?.length > 0 && editedMember.title?.length > 0 && editedMember.location?.length >0 && editedMember.employeeId?.length > 0 && startDate )
+  }, [editedMember, startDate])
+
+  const submitMemberClick = useCallback(async () => {
     let required = validateRequiredInputs()
     if (required) {
+      console.log(editedMember)
       onSave(editedMember).then(() => {
-        if (isNewMember) {
+        if (isNewMember.current) {
           setMember({emptyMember})
+          isNewMember.current = !isNewMember.current
         }
       })
     } else {
@@ -79,7 +83,7 @@ const MemberModal = ({ member, open, onSave, onClose, isNewMember }) => {
         },
       });
     }
-  }
+  }, [validateRequiredInputs, onSave, dispatch, editedMember])
 
   return (
     <Modal open={open} onClose={onClose}>

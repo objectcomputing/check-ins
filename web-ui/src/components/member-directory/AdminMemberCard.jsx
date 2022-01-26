@@ -184,7 +184,6 @@ const AdminMemberCard = ({ member, index }) => {
               </DialogActions>
             </Dialog>
             <MemberModal
-              isNewMember={false}
               member={member}
               open={open}
               onClose={handleClose}

@@ -95,13 +95,12 @@ const Users = () => {
           />
           {isAdmin && (
             <div className="add-member">
-              <Button startIcon={<PersonIcon />} onClick={()=>handleOpen(true)}>
+              <Button startIcon={<PersonIcon />} onClick={handleOpen}>
                 Add Member
               </Button>
 
               <MemberModal
                 member={{}}
-                isNewMember={true}
                 open={open}
                 onClose={handleClose}
                 onSave={async (member) => {
