@@ -179,11 +179,10 @@ export const selectOpenCheckinsForMember = createSelector(
 
 export const selectMostRecentCheckin = createSelector(
   selectCheckinsForMember,
-  selectOpenCheckinsForMember,
-  (checkins, openCheckins) => {
-    if (openCheckins && openCheckins.length > 0) {
-      return openCheckins[openCheckins.length - 1];
-    } else return checkins && checkins[checkins.length - 1];
+  (checkins) => {
+    if (checkins && checkins.length > 0) {
+      return checkins && checkins[checkins.length-1]
+    }
   }
 );
 
