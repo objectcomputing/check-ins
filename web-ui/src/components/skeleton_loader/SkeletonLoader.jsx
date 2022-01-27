@@ -113,6 +113,9 @@ export default function SkeletonLoader({type}) {
                    <Skeleton height={"2vh"} sx={{ m: 0 }} variant="rectangular" width={"2vh"}/>
                     </Box>
                     </Box>
+                    <Grid item xs className={additionalClasses.flexShrink}>
+                    <Skeleton className={additionalClasses.smallMargin} height={30} variant="text" width={"10vw"} />
+                  </Grid>
                   </Grid>
                 </Grid>
               </Grid>
@@ -122,5 +125,53 @@ export default function SkeletonLoader({type}) {
       )
  
 
+    }
+    else if (type === "received_requests") {
+      return(
+      <StyledCard width = {100}>
+      <CardContent className = {additionalClasses.noTopBottomPadding}>
+        <Grid container spacing={0}>
+          <Grid item xs={12}>
+            <Grid
+              container
+              paddingTop={"1em"}
+              direction="row"
+              alignItems="center"
+              justifyContent={"space-around"}
+            >
+              <Grid item>
+              <Skeleton variant="rectangular" className={additionalClasses.smallMargin} width={"12vw"} height={"4vw"}>
+              </Skeleton>
+              </Grid>
+              <Grid item xs className={additionalClasses.flexShrink}>
+                <Skeleton className={additionalClasses.smallMargin} height={30} variant="rectangular" width={"12vw"} />
+              </Grid>
+              <Grid item xs className={additionalClasses.flexShrink}>
+              <Skeleton variant="rectangular" className={additionalClasses.smallMargin} width={"12vw"} height={"4vw"}/>
+              </Grid>
+              <Grid item xs>
+                <Box
+                display="flex"
+                justifyContent="flex-end"
+                className={additionalClasses.flexShrink}>
+                  <Box
+                  display = "flex"
+                  flexDirection={"column"}>
+                    <Skeleton height={30}  sx={{ m: 0 }} variant="text" width={"15vw"} />
+                    <Skeleton height={30} sx={{ m: 0 }} variant="text" width={"10vw"} />
+                  </Box>
+                </Box>
+                <Grid item xs className={additionalClasses.flexShrink}>
+              <Skeleton variant= "text" className={additionalClasses.smallMargin} width={"12vw"} height={"4vw"}/>
+              </Grid>
+
+
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </CardContent>
+  </StyledCard>
+      )
     }
 }

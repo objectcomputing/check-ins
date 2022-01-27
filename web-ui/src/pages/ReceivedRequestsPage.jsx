@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useRef} from "react";
 import {styled} from '@mui/material/styles';
 import {AppContext} from "../context/AppContext";
 import {selectCsrfToken, selectCurrentUserId, selectProfile} from "../context/selectors";
@@ -14,6 +14,7 @@ import "./ReceivedRequestsPage.css";
 import {UPDATE_TOAST} from "../context/actions";
 import Divider from "@mui/material/Divider";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
 
 const PREFIX = 'ReceivedRequestsPage';
 const classes = {
@@ -77,6 +78,7 @@ const ReceivedRequestsPage = () => {
   const csrf = selectCsrfToken(state);
   const [searchText, setSearchText] = useState("");
   const [sortValue, setSortValue] = useState(SortOption.DATE_DESCENDING);
+  const doneLoading = useRef(false)
   const [receivedRequests, setReceivedRequests] = useState([]);
   const [filteredReceivedRequests, setFilteredReceivedRequests] = useState([]);
   const [submittedRequests, setSubmittedRequests] = useState([]);
@@ -106,6 +108,7 @@ const ReceivedRequestsPage = () => {
         if (data) {
           setReceivedRequests(data.filter((req) => req.submitDate === undefined));
           setSubmittedRequests(data.filter((req) => req.submitDate && req.submitDate.length === 3));
+          doneLoading.current = true;
         }
       });
     }
@@ -238,6 +241,8 @@ const ReceivedRequestsPage = () => {
       </Collapse>
       <Collapse in={submittedRequestsExpanded} timeout="auto" unmountOnExit>
         <div className="submitted-requests-container">
+        {Array.from({length: 10})
+            .map((_, index) => <SkeletonLoader key={index} type="received_requests" />)}
           {submittedRequests.length === 0 &&
           <div className="no-requests-message"><Typography variant="body1">No submitted feedback requests</Typography></div>
           }
@@ -247,6 +252,8 @@ const ReceivedRequestsPage = () => {
           {filteredSubmittedRequests.map((request) => (
             <ReceivedRequestCard key={request.id} request={request}/>
           ))}
+            {/* {doneLoading.current ? getFilteredFeedbackRequests(): Array.from({length: 10})
+            .map((_, index) => <SkeletonLoader key={index} type="feedback_requests" />)} */}
         </div>
       </Collapse>
     </Root>
