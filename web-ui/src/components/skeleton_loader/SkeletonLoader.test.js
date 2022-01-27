@@ -25,3 +25,10 @@ it("renders correctly when 'people' is passed as prop ", () => {
     )
     expect(component.toJSON()).toMatchSnapshot();
 });
+
+it("renders correctly when 'feedback_requests' is passed as prop ", () => {
+  const component = renderer.create(
+    <SkeletonLoader type="feedback_requests"/>
+  )
+  expect(component.toJSON()).toMatchSnapshot();
+});

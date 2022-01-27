@@ -12,6 +12,7 @@ import {getFeedbackRequestsByCreator} from "../api/feedback";
 import {AppContext} from "../context/AppContext";
 import {selectCsrfToken, selectCurrentUserId, selectProfile} from "../context/selectors";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
+import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader"
 
 const PREFIX = 'ViewFeedbackPage';
 const classes = {
@@ -75,6 +76,7 @@ const ViewFeedbackPage = () => {
   const csrf = selectCsrfToken(state);
   const currentUserId =  selectCurrentUserId(state);
   const gotRequests = useRef(false);
+  const doneLoading = useRef(false)
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
 
@@ -149,6 +151,7 @@ const ViewFeedbackPage = () => {
             groups[existingGroup].responses.push(request);
           }
         }
+        doneLoading.current = true
         setFeedbackRequests(groups);
       }
     });
@@ -259,7 +262,8 @@ const ViewFeedbackPage = () => {
         </div>
       </div>
       <div className="feedback-requests-list-container">
-        {getFilteredFeedbackRequests()}
+        {doneLoading.current ? getFilteredFeedbackRequests(): Array.from({length: 10})
+            .map((_, index) => <SkeletonLoader key={index} type="feedback_requests" />)}
       </div>
     </Root>
   );
