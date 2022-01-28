@@ -1,4 +1,4 @@
-    import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { AppContext } from "../../context/AppContext";
 import {
   selectOrderedPdls,
@@ -11,16 +11,34 @@ import Autocomplete from '@mui/material/Autocomplete';
 import DatePicker from "@mui/lab/DatePicker";
 import { format } from "date-fns";
 import { Button } from "@mui/material";
+import { UPDATE_TOAST } from "../../context/actions";
 
 import "./MemberModal.css";
+import { useCallback } from "react";
 
-const MemberModal = ({ member = {}, open, onSave, onClose }) => {
-  const { state } = useContext(AppContext);
+const emptyMember = {
+  employeeId:'',
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  suffix:'',
+  workEmail:'',
+  title:'',
+  location:'',
+  birthDay:null,
+  pdlId:'',
+  supervisorid:'',
+  startDate: new Date(),
+  terminationDate:null
+}
+
+const MemberModal = ({ member, open, onSave, onClose }) => {
+  const { state, dispatch } = useContext(AppContext);
   const memberProfiles = selectCurrentMembers(state);
   const [editedMember, setMember] = useState(member);
   const sortedPdls = selectOrderedPdls(state);
+  const isNewMember = useRef(JSON.stringify(member)==='{}'? true : false)
   const sortedMembers = selectOrderedMemberFirstName(state);
-
   const onSupervisorChange = (event, newValue) => {
     setMember({
       ...editedMember,
@@ -40,6 +58,32 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
       pdlId: newValue ? newValue.id : "",
     });
   };
+
+  const validateRequiredInputs = useCallback(() => {
+      return (editedMember.firstName?.length > 0 && editedMember.lastName?.length > 0
+         && editedMember.workEmail?.length > 0 && editedMember.title?.length > 0 && editedMember.location?.length >0 && editedMember.employeeId?.length > 0 && startDate )
+  }, [editedMember, startDate])
+
+  const submitMemberClick = useCallback(async () => {
+    let required = validateRequiredInputs()
+    if (required) {
+      console.log(editedMember)
+      onSave(editedMember).then(() => {
+        if (isNewMember.current) {
+          setMember({emptyMember})
+          isNewMember.current = !isNewMember.current
+        }
+      })
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "One or more required fields are empty. Check starred input fields",
+        },
+      });
+    }
+  }, [validateRequiredInputs, onSave, dispatch, editedMember])
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -221,9 +265,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             Cancel
           </Button>
           <Button
-            onClick={async () => {
-              onSave(editedMember);
-            }}
+          onClick={submitMemberClick}
             color="primary"
           >
             Save Member

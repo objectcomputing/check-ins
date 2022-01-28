@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState} from "react";
 
 import { styled } from '@mui/material/styles';
 import AdminMemberCard from "../../member-directory/AdminMemberCard";
@@ -51,11 +51,9 @@ const Root = styled('div')({
 const Users = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, memberProfiles, userProfile } = state;
-
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [includeTerminated, setIncludeTerminated] = useState(false);
-
   const handleIncludeTerminated = () => {
     setIncludeTerminated(!includeTerminated);
   };
@@ -67,7 +65,7 @@ const Users = () => {
     ? selectNormalizedMembersAdmin(state, searchText)
     : selectNormalizedMembers(state, searchText);
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => setOpen(true)
 
   const handleClose = () => setOpen(false);
 
@@ -102,6 +100,7 @@ const Users = () => {
               </Button>
 
               <MemberModal
+                member={{}}
                 open={open}
                 onClose={handleClose}
                 onSave={async (member) => {
@@ -115,7 +114,6 @@ const Users = () => {
                     csrf
                   ) {
                     let res = await createMember(member, csrf);
-
                     let data =
                       res.payload && res.payload.data && !res.error
                         ? res.payload.data
