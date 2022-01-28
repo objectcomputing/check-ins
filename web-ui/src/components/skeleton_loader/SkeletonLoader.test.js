@@ -32,3 +32,23 @@ it("renders correctly when 'feedback_requests' is passed as prop ", () => {
   )
   expect(component.toJSON()).toMatchSnapshot();
 });
+
+it("renders correctly when 'feedback_requests' is passed as prop ", () => {
+  const component = renderer.create(
+    <SkeletonLoader type="received_requests"/>
+  )
+  expect(component.toJSON()).toMatchSnapshot();
+});
+it("renders correctly when 'feedback_requests' is passed as prop ", () => {
+  const component = renderer.create(
+    <SkeletonLoader type="received_requests"/>
+  )
+  expect(component.toJSON()).toMatchSnapshot();
+});
+it("renders correctly when 'feedback_requests' is passed as prop ", () => {
+  const component = renderer.create(
+    <SkeletonLoader type="view_feedback_responses"/>
+  )
+  expect(component.toJSON()).toMatchSnapshot();
+});
+

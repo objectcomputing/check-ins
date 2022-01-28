@@ -16,6 +16,7 @@ import { Autocomplete } from '@mui/material';
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import {getAvatarURL} from "../../api/api";
+import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 
 const PREFIX = 'MuiCardContent';
 const classes = {
@@ -63,6 +64,7 @@ const ViewFeedbackResponses = () => {
   const location = useLocation();
   const [query, setQuery] = useState({});
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]);
+  const doneLoading = useRef(false)
   const [requestInfo, setRequestInfo] = useState({});
   const [searchText, setSearchText] = useState("");
   const [responderOptions, setResponderOptions] = useState([]);
@@ -129,7 +131,6 @@ const ViewFeedbackResponses = () => {
       allResponders.push(...responders);
     });
     allResponders = [...(new Set(allResponders))]  // Remove duplicate responders
-
     setResponderOptions(allResponders);
   }, [state, questionsAndAnswers]);
 
@@ -224,7 +225,12 @@ const ViewFeedbackResponses = () => {
           }
         />
       </div>
-      {filteredQuestionsAndAnswers.map((question) => {
+
+      {!retrievedQuestionsAndAnswers.current && 
+                Array.from({ length: 10 })
+                 .map((_, index) => <SkeletonLoader key={index} type="view_feedback_responses" />)
+      }
+      {retrievedQuestionsAndAnswers.current && filteredQuestionsAndAnswers.map((question) => {
         return (
           <div className="question-responses-container"
                key={`question-id-${question.id}`}>

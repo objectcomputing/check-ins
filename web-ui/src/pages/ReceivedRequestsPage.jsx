@@ -1,17 +1,17 @@
-import React, {useContext, useEffect, useState, useRef} from "react";
-import {styled} from '@mui/material/styles';
-import {AppContext} from "../context/AppContext";
-import {selectCsrfToken, selectCurrentUserId, selectProfile} from "../context/selectors";
+import React, { useContext, useEffect, useState, useRef } from "react";
+import { styled } from '@mui/material/styles';
+import { AppContext } from "../context/AppContext";
+import { selectCsrfToken, selectCurrentUserId, selectProfile } from "../context/selectors";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
-import {Search as SearchIcon} from "@mui/icons-material";
-import {Collapse, IconButton, InputAdornment} from "@mui/material";
+import { Search as SearchIcon } from "@mui/icons-material";
+import { Collapse, IconButton, InputAdornment } from "@mui/material";
 import ReceivedRequestCard from "../components/received_request_card/ReceivedRequestCard";
-import {getFeedbackRequestsByRecipient} from "../api/feedback";
+import { getFeedbackRequestsByRecipient } from "../api/feedback";
 import "./ReceivedRequestsPage.css";
-import {UPDATE_TOAST} from "../context/actions";
+import { UPDATE_TOAST } from "../context/actions";
 import Divider from "@mui/material/Divider";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
@@ -74,7 +74,7 @@ const SortOption = {
 };
 
 const ReceivedRequestsPage = () => {
-  const {state} = useContext(AppContext);
+  const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const [searchText, setSearchText] = useState("");
   const [sortValue, setSortValue] = useState(SortOption.DATE_DESCENDING);
@@ -85,7 +85,7 @@ const ReceivedRequestsPage = () => {
   const [filteredSubmittedRequests, setFilteredSubmittedRequests] = useState([]);
   const [receivedRequestsExpanded, setReceivedRequestsExpanded] = useState(true);
   const [submittedRequestsExpanded, setSubmittedRequestsExpanded] = useState(false);
-  const currentUserId =  selectCurrentUserId(state);
+  const currentUserId = selectCurrentUserId(state);
 
   useEffect(() => {
     const getAllFeedbackRequests = async () => {
@@ -170,7 +170,7 @@ const ReceivedRequestsPage = () => {
               setSubmittedRequestsExpanded(true);
             }}
             InputProps={{
-              endAdornment: <InputAdornment style={{color: "gray"}} position="end"><SearchIcon/></InputAdornment>
+              endAdornment: <InputAdornment style={{ color: "gray" }} position="end"><SearchIcon /></InputAdornment>
             }}
           />
 
@@ -201,27 +201,39 @@ const ReceivedRequestsPage = () => {
           aria-label="show more"
           className={receivedRequestsExpanded ? classes.expandOpen : classes.expandClose}
           size="large">
-          <ExpandMoreIcon/>
+          <ExpandMoreIcon />
         </IconButton>
       </div>
-      <Divider/>
+      <Divider />
       <Collapse in={!receivedRequestsExpanded} timeout="auto" unmountOnExit>
-        <div style={{marginTop: "1em"}} className="no-requests-message">
+        <div style={{ marginTop: "1em" }} className="no-requests-message">
           <Typography variant="body1">{receivedRequests.length} received request{receivedRequests.length === 1 ? "" : "s"} currently hidden</Typography>
         </div>
+
       </Collapse>
       <Collapse in={receivedRequestsExpanded} timeout="auto" unmountOnExit>
-        <div className="received-requests-container">
-          {receivedRequests.length === 0 &&
-          <div className="no-requests-message"><Typography variant="body1">No received feedback requests</Typography></div>
-          }
-          {receivedRequests.length > 0 && filteredReceivedRequests.length === 0 &&
-          <div className="no-requests-message"><Typography variant="body1">No matching feedback requests</Typography></div>
-          }
-          {filteredReceivedRequests.map((request) => (
-            <ReceivedRequestCard key={request.id} request={request}/>
-          ))}
-        </div>
+        {!doneLoading.current &&
+          <div style={{ marginTop: "1em" }} >
+            {Array.from({ length: 1 })
+              .map((_, index) =>
+                <SkeletonLoader key={index} type="received_requests" />
+              )
+            }
+          </div>
+        }
+        {doneLoading.current &&
+          <div className="received-requests-container">
+            {receivedRequests.length === 0 &&
+              <div className="no-requests-message"><Typography variant="body1">No received feedback requests</Typography></div>
+            }
+            {receivedRequests.length > 0 && filteredReceivedRequests.length === 0 &&
+              <div className="no-requests-message"><Typography variant="body1">No matching feedback requests</Typography></div>
+            }
+            {filteredReceivedRequests.map((request) => (
+              <ReceivedRequestCard key={request.id} request={request} />
+            ))}
+          </div>
+        }
       </Collapse>
       <div className="request-section-header">
         <Typography variant="h5">Submitted Requests</Typography>
@@ -230,31 +242,37 @@ const ReceivedRequestsPage = () => {
           aria-label="show more"
           className={submittedRequestsExpanded ? classes.expandOpen : classes.expandClose}
           size="large">
-          <ExpandMoreIcon/>
+          <ExpandMoreIcon />
         </IconButton>
       </div>
-      <Divider/>
+      <Divider />
       <Collapse in={!submittedRequestsExpanded} timeout="auto" unmountOnExit>
-        <div style={{marginTop: "1em"}} className="no-requests-message">
+        {!doneLoading.current &&
+          <div style={{ marginTop: "1em" }}>
+            {Array.from({ length: 1 })
+              .map((_, index) => <SkeletonLoader key={index} type="received_requests" />)
+            }
+          </div>
+        }
+        {doneLoading.current && <div style={{ marginTop: "1em" }} className="no-requests-message">
           <Typography variant="body1">{submittedRequests.length} submitted request{submittedRequests.length === 1 ? "" : "s"} currently hidden</Typography>
         </div>
+        }
       </Collapse>
       <Collapse in={submittedRequestsExpanded} timeout="auto" unmountOnExit>
-        <div className="submitted-requests-container">
-        {Array.from({length: 10})
-            .map((_, index) => <SkeletonLoader key={index} type="received_requests" />)}
-          {submittedRequests.length === 0 &&
-          <div className="no-requests-message"><Typography variant="body1">No submitted feedback requests</Typography></div>
-          }
-          {submittedRequests.length > 0 && filteredSubmittedRequests.length === 0 &&
-          <div className="no-requests-message"><Typography variant="body1">No submitted feedback requests</Typography></div>
-          }
-          {filteredSubmittedRequests.map((request) => (
-            <ReceivedRequestCard key={request.id} request={request}/>
-          ))}
-            {/* {doneLoading.current ? getFilteredFeedbackRequests(): Array.from({length: 10})
-            .map((_, index) => <SkeletonLoader key={index} type="feedback_requests" />)} */}
-        </div>
+        {doneLoading.current &&
+          <div className="submitted-requests-container">
+            {submittedRequests.length === 0 &&
+              <div className="no-requests-message"><Typography variant="body1">No submitted feedback requests</Typography></div>
+            }
+            {submittedRequests.length > 0 && filteredSubmittedRequests.length === 0 &&
+              <div className="no-requests-message"><Typography variant="body1">No submitted feedback requests</Typography></div>
+            }
+            {filteredSubmittedRequests.map((request) => (
+              <ReceivedRequestCard key={request.id} request={request} />
+            ))}
+          </div>
+        }
       </Collapse>
     </Root>
   );
