@@ -9,6 +9,7 @@ import { getGuildsForMember } from "../api/guild";
 import { getAvatarURL } from "../api/api.js";
 import ProfilePage from "./ProfilePage";
 import { levelList } from "../context/util";
+import { getMember } from "../api/member.js";
 
 import "./MemberProfilePage.css";
 
@@ -29,6 +30,37 @@ const MemberProfilePage = () => {
   const { csrf, skills, userProfile } = state;
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
+  const [supervisor, setSupervisor] = useState(null)
+  const[pdl, setPDL ] = useState(null)
+
+  useEffect(() => {
+    async function getPDLName() {
+      if (selectedMember?.pdlId) {
+        let res = await getMember(selectedMember.pdlId, csrf);
+        let pdlProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setPDL(pdlProfile ? pdlProfile.name : "");
+      }
+    }
+    if (csrf) {
+      getPDLName();
+    }
+  }, [csrf, selectedMember]);
+
+useEffect(() => {
+    async function getSupervisorName() {
+      if (selectedMember?.supervisorid) {
+        let res = await getMember(selectedMember.supervisorid, csrf);
+        let supervisorProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setSupervisor(supervisorProfile ? supervisorProfile.name : "");
+      }
+    }
+    if (csrf) {
+      getSupervisorName();
+    }
+  }, [csrf, selectedMember]);
+
 
   useEffect(() => {
     // in the case of a terminated member, member details will still display
@@ -145,6 +177,8 @@ const MemberProfilePage = () => {
                       <h4>Email: {selectedMember.workEmail || ""}</h4>
                       <h4>Location: {selectedMember.location || ""}</h4>
                       <h4>Bio: {selectedMember.bioText || ""}</h4>
+                      {supervisor && <h4>Supervisor: {supervisor || ""}</h4>}
+                      {pdl && <h4>PDL: {pdl || ""}</h4>}
                     </Typography>
                   </Container>
                 </CardContent>
