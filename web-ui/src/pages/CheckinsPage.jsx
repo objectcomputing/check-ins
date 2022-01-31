@@ -29,6 +29,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import "./CheckinsPage.css";
 import { updateCheckin } from "../api/checkins";
+import { uploadEvent } from "../api/calendar";
 
 const PREFIX = 'CheckinsPage';
 const classes = {
@@ -110,6 +111,18 @@ const CheckinsPage = () => {
     handleClose();
   };
 
+  const uploadCalendarEvent = async() => {
+    const res = await uploadEvent(
+      csrf
+    );
+    const updated =
+      res.payload && res.payload.data && !res.error ? res.payload.data : null;
+      console.log("updated")
+      console.log(updated)
+    }
+
+  
+
   const handleCreate = async () => {
     if (!selectedProfile.pdlId) {
       window.snackDispatch({
@@ -127,6 +140,9 @@ const CheckinsPage = () => {
 
   return (
     <Root className={classes.root} >
+      <Button onClick={uploadCalendarEvent}>
+        CLICK TO TRIGGER CALENDAR
+      </Button>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={9}>
           <Profile

@@ -12,6 +12,7 @@ import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
+import com.google.api.services.calendar.Calendar;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -55,6 +56,23 @@ public class GoogleAccessor {
                 .setApplicationName(applicationName)
                 .build();
     }
+
+        /**
+     * Create and return the google drive access object
+     *
+     * @return a google drive access object
+     * @throws IOException
+     */
+    public Calendar accessGoogleCalendar() throws IOException {
+
+        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
+        List<String> scope = Collections.singletonList(apiScope);
+
+        HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(authenticator.setupCredentials(scope));
+        return new Calendar.Builder(httpTransport, JSON_FACTORY, requestInitializer).setApplicationName(applicationName).build();
+    }
+
+
 
     /**
      * Create and return the google directory access object

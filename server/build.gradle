@@ -83,6 +83,7 @@ dependencies {
     implementation "com.google.apis:google-api-services-drive:v3-rev20200326-1.30.9"
     implementation "com.google.apis:google-api-services-gmail:v1-rev20200203-1.30.9"
     implementation "com.google.apis:google-api-services-admin-directory:directory_v1-rev118-1.25.0"
+    implementation 'com.google.apis:google-api-services-calendar:v3-rev20211026-1.32.1'
     implementation "jakarta.persistence:jakarta.persistence-api:2.2.2"
     //implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion", {
     //    exclude group: 'io.micronaut', module: 'micronaut-jdbc'
