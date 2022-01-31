@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_GUILDS, UPDATE_TOAST } from "../../context/actions";
 import EditGuildModal from "./EditGuildModal";
+import { Link } from "react-router-dom";
 
 import {
   Button,
@@ -151,14 +152,24 @@ const GuildSummaryCard = ({ guild, index }) => {
           <React.Fragment>
             <strong>Guild Leads: </strong>
             {leads.map((lead, index) => {
-              return index !== leads.length - 1 ? `${lead.name}, ` : lead.name;
+              return index !== leads.length - 1 
+              ? <Link key ={lead?.memberId} to={`/profile/${lead?.memberId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.87)" }}>
+                {lead?.name},&nbsp;
+                </Link>
+                : <Link key ={lead?.memberId} to={`/profile/${lead?.memberId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.87)" }}>
+                {lead?.name}
+                </Link>
             })}
             <br />
             <strong>Guild Members: </strong>
             {nonLeads.map((member, index) => {
               return index !== nonLeads.length - 1
-                ? `${member.name}, `
-                : member.name;
+                ? <Link key ={member?.memberId} to={`/profile/${member?.memberId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.87)" }}>
+                {member?.name},&nbsp;
+                </Link>
+                : <Link key ={member?.memberId} to={`/profile/${member?.memberId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.87)" }}>
+                {member?.name}
+                </Link>
             })}
           </React.Fragment>
         )}

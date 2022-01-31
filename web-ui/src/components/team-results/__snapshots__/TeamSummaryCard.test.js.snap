@@ -753,7 +753,18 @@ exports[`renders correctly for team lead 1`] = `
     <strong>
       Team Leads: 
     </strong>
-    testname
+    <a
+      href="/profile/undefined"
+      onClick={[Function]}
+      style={
+        Object {
+          "color": "rgba(0, 0, 0, 0.87)",
+          "textDecoration": "none",
+        }
+      }
+    >
+      testname
+    </a>
     <br />
     <strong>
       Team Members: 
