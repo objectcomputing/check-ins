@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import { sendReminderNotification } from "../../../api/notifications";
 import { deleteFeedbackRequestById } from "../../../api/feedback";
@@ -16,31 +16,40 @@ import { Avatar, Tooltip } from "@mui/material";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
 import { getAvatarURL } from "../../../api/api";
+import { makeStyles } from "@mui/styles";
 
-const PREFIX = 'FeedbackRequestSubcard';
+const PREFIX = "FeedbackRequestSubcard";
 const classes = {
   redTypography: `${PREFIX}-redTypography`,
   yellowTypography: `${PREFIX}-yellowTypography`,
   greenTypography: `${PREFIX}-greenTypography`,
-  darkGrayTypography: `${PREFIX}-darkGrayTypography`
+  darkGrayTypography: `${PREFIX}-darkGrayTypography`,
 };
 
 // TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
-const Root = styled('div')({
+const Root = styled("div")({
   [`& .${classes.redTypography}`]: {
-    color: "#FF0000"
+    color: "#FF0000",
   },
   [`& .${classes.yellowTypography}`]: {
-      color: "#EE8C00"
+    color: "#EE8C00",
   },
   [`& .${classes.greenTypography}`]: {
-      color: "#006400"
+    color: "#006400",
   },
   [`& .${classes.darkGrayTypography}`]: {
-    color: "#333333"
+    color: "#333333",
   },
 });
 
+const useResponsiveStyles = makeStyles({
+  marginMobile: {
+    '@media (max-width:960px)': {
+      marginBottom: "0.5vh",
+      marginTop: "2vh",
+    },
+  },
+});
 const dateFns = new DateFnsAdapter();
 
 const propTypes = {
@@ -50,6 +59,7 @@ const propTypes = {
 const FeedbackRequestSubcard = ({ request }) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
+  const responsiveClasses = useResponsiveStyles();
   let { submitDate, dueDate, sendDate } = request;
   const recipient = selectProfile(state, request?.recipientId);
   submitDate = submitDate
@@ -98,16 +108,13 @@ const FeedbackRequestSubcard = ({ request }) => {
     const handleDeleteFeedback = async () => {
       let res = await deleteFeedbackRequestById(recipientId, csrf);
       let reminderResponse =
-        res &&
-        res.payload &&
-        res.payload.status === 200 &&
-        !res.error
+        res && res.payload && res.payload.status === 200 && !res.error;
       if (reminderResponse) {
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
             severity: "success",
-            toast: "Feedback request deleted."
+            toast: "Feedback request deleted.",
           },
         });
       } else {
@@ -115,7 +122,8 @@ const FeedbackRequestSubcard = ({ request }) => {
           type: UPDATE_TOAST,
           payload: {
             severity: "error",
-            toast: "There was an error deleting the feedback request. Please contact your administrator."
+            toast:
+              "There was an error deleting the feedback request. Please contact your administrator.",
           },
         });
       }
@@ -154,7 +162,7 @@ const FeedbackRequestSubcard = ({ request }) => {
       <Divider className="person-divider" />
       <Grid
         container
-        spacing={6}
+        spacing={8}
         style={{ paddingLeft: "16px", paddingRight: "16px" }}
         className="person-row"
       >
@@ -165,19 +173,19 @@ const FeedbackRequestSubcard = ({ request }) => {
             alignItems="center"
             className="no-wrap"
           >
-            <Grid item>
+            <Grid item s={2}>
               <Avatar
                 style={{ marginRight: "1em" }}
                 src={getAvatarURL(recipientEmail)}
               />
             </Grid>
-            <Grid item xs className="small-margin">
+            <Grid item xs={8} lg className="small-margin">
               <Typography className="person-name">{recipient?.name}</Typography>
               <Typography className="position-text">
                 {recipient?.title}
               </Typography>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={12} lg className={responsiveClasses.marginMobile}>
               <Typography
                 className={classes.darkGrayTypography}
                 variant="body1"
@@ -188,34 +196,44 @@ const FeedbackRequestSubcard = ({ request }) => {
                 {request?.dueDate ? `Due on ${dueDate}` : "No due date"}
               </Typography>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={6} md>
               <Submitted />
             </Grid>
-            <Grid item xs={2} className="align-end">
+            <Grid item xs={6} md className="align-end">
               {request && !request.submitDate && (
                 <>
-                <Tooltip title={"Delete Request"} aria-label={"Delete Request"}>
-                  <IconButton
-                    onClick={handleDeleteClick}
-                    aria-label="Delete Request"
-                  label = "Delete Request">
-                    <TrashIcon/>
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={"Send Reminder"} aria-label={"Send Reminder"}>
-                  <IconButton
-                    onClick={handleReminderClick}
-                    aria-label="Send Reminder"
-                    label="Send Reminder"
-                    size="large">
-                    <NotificationsActiveIcon/>
-                  </IconButton>
-                </Tooltip>
+                  <Tooltip
+                    title={"Delete Request"}
+                    aria-label={"Delete Request"}
+                  >
+                    <IconButton
+                      onClick={handleDeleteClick}
+                      aria-label="Delete Request"
+                      label="Delete Request"
+                    >
+                      <TrashIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title={"Send Reminder"} aria-label={"Send Reminder"}>
+                    <IconButton
+                      onClick={handleReminderClick}
+                      aria-label="Send Reminder"
+                      label="Send Reminder"
+                      size="large"
+                    >
+                      <NotificationsActiveIcon />
+                    </IconButton>
+                  </Tooltip>
                 </>
               )}
-              {request && request.submitDate && request.id
-                ? <Link to={`/feedback/view/responses/?request=${request.id}`} className="response-link">View response</Link>
-                : null}
+              {request && request.submitDate && request.id ? (
+                <Link
+                  to={`/feedback/view/responses/?request=${request.id}`}
+                  className="response-link"
+                >
+                  View response
+                </Link>
+              ) : null}
             </Grid>
           </Grid>
         </Grid>
