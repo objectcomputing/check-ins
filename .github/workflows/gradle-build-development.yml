@@ -64,6 +64,7 @@ jobs:
             --set-env-vars "AES_KEY=${{ secrets.AES_KEY }}" \
             --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
             --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
+            --set-env-vars "OAUTH_CALLBACK_URI"=${{ secrets.OAUTH_CALLBACK_URI }} \
             --set-env-vars "DIRECTORY_ID=${{ secrets.DIRECTORY_ID }}" \
             --set-env-vars "TYPE=${{ secrets.SA_KEY_TYPE }}" \
             --set-env-vars "PROJECT_ID=${{ secrets.RUN_PROJECT }}" \

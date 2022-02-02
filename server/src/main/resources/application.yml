@@ -29,6 +29,7 @@ micronaut:
     enabled: true
     authentication: cookie
     oauth2:
+      callback-uri: ${ OAUTH_CALLBACK_URI }
       clients:
         google:
           client-id: ${ OAUTH_CLIENT_ID }

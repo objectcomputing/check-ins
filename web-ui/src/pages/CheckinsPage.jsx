@@ -63,13 +63,6 @@ const CheckinsPage = () => {
   const currentUserId = memberProfile?.id;
   const mostRecent = selectMostRecentCheckin(state, memberId);
 
-  const getCheckinDate = () => {
-    if (mostRecent) {
-      const [year, month, day, hour, minute] = mostRecent.checkInDate;
-      return new Date(year, month - 1, day, hour, minute, 0).getTime();
-    }
-  };
-
   const selectedProfile = selectProfile(state, memberId);
   const memberCheckins = selectCheckinsForMember(
     state,
@@ -91,22 +84,6 @@ const CheckinsPage = () => {
       history.push(`/checkins/${memberId}/${mostRecent.id}`);
     }
   }, [currentUserId, memberId, checkinId, mostRecent, history]);
-
-  useEffect(() => {
-    const isOpenInPast =
-      !mostRecent?.completed &&
-      new Date(getCheckinDate()) < new Date(Date.now());
-    if (isOpenInPast === true) {
-      window.snackDispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "success",
-          toast: `Just so you know, this open Check-In is in the past`,
-        },
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mostRecent]);
 
   const currentCheckin = selectCheckin(state, checkinId);
   const isAdmin = selectIsAdmin(state);
