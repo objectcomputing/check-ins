@@ -18,14 +18,14 @@ import "./Note.css";
 import { sanitizeQuillElements } from "../../helpers/sanitizehtml";
 
 async function realUpdate(note, csrf) {
-  let cleanedNote = sanitizeQuillElements(note.description)
-  await updateCheckinNote(cleanedNote, csrf);
+  //Clean note of potential malicious content before upload
+  note.description = sanitizeQuillElements(note.description)
+  await updateCheckinNote(note,csrf)
 }
 
 const updateNote = debounce(realUpdate, 1000);
 
 const Notes = (props) => {
-  console.log("bro am i an idiot ;/")
   const { state } = useContext(AppContext);
   const { checkinId, memberId } = useParams();
   const csrf = selectCsrfToken(state);
@@ -36,8 +36,8 @@ const Notes = (props) => {
   const pdlId = currentMember?.pdlId;
   const noteRef = useRef([]);
   const [note, setNote] = useState();
-  console.log("Note???" + note)
   const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     async function getNotes() {
@@ -50,8 +50,8 @@ const Notes = (props) => {
             ? res.payload.data[0]
             : null;
         if (currentNote) {
-           currentNote.description= sanitizeQuillElements(currentNote.description)
-          console.log("Current note " + currentNote)
+          //Clean note of potential malicious content from database before rendering
+          currentNote.description= sanitizeQuillElements(currentNote.description)
           setNote(currentNote);
         } else if (currentUserId === pdlId) {
           if (!noteRef.current.some((id) => id === checkinId)) {
@@ -86,8 +86,7 @@ const Notes = (props) => {
       setIsLoading(false);
     }
     if (csrf) {
-      console.log('get notes')
-      getNotes();
+      getNotes()
     }
   }, [csrf, checkinId, currentUserId, pdlId]);
 
