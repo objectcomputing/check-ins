@@ -852,7 +852,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-7:focus::-ms-input-p
             <span
               className="MuiChip-label MuiChip-labelMedium emotion-5"
             >
+<<<<<<< HEAD
               February
+=======
+              January
+>>>>>>> 28166408 (Added similar solution to teams page. solution v1, now looking into solution v2)
             </span>
             <svg
               aria-hidden={true}
