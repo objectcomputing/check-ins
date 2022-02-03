@@ -10,6 +10,10 @@ exports[`renders correctly 1`] = `
         "csrf": undefined,
         "guilds": Array [],
         "index": 0,
+        "loading": Object {
+          "memberProfiles": false,
+          "teams": false,
+        },
         "memberProfiles": Array [],
         "memberSkills": Array [],
         "roles": Array [],

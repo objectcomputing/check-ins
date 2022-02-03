@@ -13,11 +13,13 @@ import Skeleton from '@mui/material/Skeleton';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-
 import "./PrivateNote.css";
 import MarkdownNote from "../markdown-note/MarkdownNote";
+import { sanitizeQuillElements } from "../../helpers/sanitizehtml";
 
 async function realUpdate(note, csrf) {
+  //Clean note of potential malicious content before upload
+  note.description = sanitizeQuillElements(note.description)
   await updatePrivateNote(note, csrf);
 }
 
@@ -52,6 +54,8 @@ const PrivateNote = () => {
             ? res.payload.data[0]
             : null;
         if (currentNote) {
+          //Clean note of potential malicious content from database before rendering
+          currentNote.description= sanitizeQuillElements(currentNote.description)
           setNote(currentNote);
         } else if (currentUserId === pdlId) {
           if (!noteRef.current.some((id) => id === checkinId)) {

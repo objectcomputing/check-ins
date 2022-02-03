@@ -1,6 +1,7 @@
 import React from "react";
 import GuildSummaryCard from "./GuildSummaryCard";
 import { AppContextProvider } from "../../context/AppContext";
+import { BrowserRouter } from "react-router-dom";
 
 const guilds = [
   {
@@ -43,9 +44,11 @@ adminState.state.userProfile.role = ["MEMBER", "ADMIN"];
 it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
+      <BrowserRouter>
       <GuildSummaryCard
         guild={guilds[0]}
       />
+      </BrowserRouter>
     </AppContextProvider>
   );
 });
@@ -53,9 +56,11 @@ it("renders correctly", () => {
 it("renders correctly for ADMIN", () => {
   snapshot(
     <AppContextProvider value={adminState}>
+      <BrowserRouter>
       <GuildSummaryCard
         guild={guilds[0]}
       />
+      </BrowserRouter>
     </AppContextProvider>
   );
 });
@@ -63,9 +68,11 @@ it("renders correctly for ADMIN", () => {
 it("renders correctly for guild lead", () => {
   snapshot(
       <AppContextProvider value={initialState}>
+        <BrowserRouter>
         <GuildSummaryCard
             guild={guilds[1]}
         />
+        </BrowserRouter>
       </AppContextProvider>
   );
 });

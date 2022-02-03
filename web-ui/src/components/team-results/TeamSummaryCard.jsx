@@ -1,8 +1,9 @@
 import React, { useContext, useState, useCallback } from "react";
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TEAMS, UPDATE_TOAST } from "../../context/actions";
 import EditTeamModal from "./EditTeamModal";
+import { Link } from "react-router-dom";
 import {
   Button,
   Card,
@@ -20,11 +21,11 @@ import PropTypes from "prop-types";
 import { deleteTeam, updateTeam } from "../../api/team.js";
 import SplitButton from "../split-button/SplitButton";
 
-const PREFIX = 'TeamSummaryCard';
+const PREFIX = "TeamSummaryCard";
 const classes = {
   card: `${PREFIX}-card`,
   header: `${PREFIX}-header`,
-  title: `${PREFIX}-title`
+  title: `${PREFIX}-title`,
 };
 
 const StyledCard = styled(Card)({
@@ -41,7 +42,7 @@ const StyledCard = styled(Card)({
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-  }
+  },
 });
 
 const propTypes = {
@@ -142,23 +143,45 @@ const TeamSummaryCard = ({ team, index }) => {
       />
       <CardContent>
         {team.teamMembers == null ? (
-          <React.Fragment>
+          <React.Fragment key ={`empty-team-${team.name}`}>
             <strong>Team Leads: </strong>None Assigned
             <br />
             <strong>Team Members: </strong>None Assigned
           </React.Fragment>
         ) : (
-          <React.Fragment>
+          <React.Fragment key ={`active-team-${team.name}`}>
             <strong>Team Leads: </strong>
             {leads.map((lead, index) => {
-              return index !== leads.length - 1 ? `${lead.name}, ` : lead.name;
+              return (
+                <Link
+                  key={lead?.memberId}
+                  to={`/profile/${lead?.memberId}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "rgba(0, 0, 0, 0.87)",
+                  }}
+                >
+                  {index !== leads.length - 1 ? `${lead?.name}, ` : lead?.name}
+                </Link>
+              );
             })}
             <br />
             <strong>Team Members: </strong>
             {nonLeads.map((member, index) => {
-              return index !== nonLeads.length - 1
-                ? `${member.name}, `
-                : member.name;
+              return (
+                <Link
+                  key={member?.memberId}
+                  to={`/profile/${member?.memberId}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "rgba(0, 0, 0, 0.87)",
+                  }}
+                >
+                  {index !== nonLeads.length - 1
+                    ? `${member?.name}, `
+                    : member?.name}
+                </Link>
+              );
             })}
           </React.Fragment>
         )}
@@ -183,11 +206,7 @@ const TeamSummaryCard = ({ team, index }) => {
                 <Button onClick={handleCloseDeleteConfirmation} color="primary">
                   Cancel
                 </Button>
-                <Button
-                  onClick={deleteATeam}
-                  color="primary"
-                  autoFocus
-                >
+                <Button onClick={deleteATeam} color="primary" autoFocus>
                   Yes
                 </Button>
               </DialogActions>

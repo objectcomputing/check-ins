@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@mui/styles";
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import {AppContextProvider } from "../../../context/AppContext";
@@ -7,6 +8,7 @@ it("renders correctly", () => {
   snapshot(
     <BrowserRouter>
       <AppContextProvider>
+        <ThemeProvider>
         <FeedbackRequestSubcard
           request={{
             id: "c15961e4-6e9b-42cd-8140-ece9efe2445c",
@@ -19,6 +21,7 @@ it("renders correctly", () => {
             submitDate: [2020, 7, 8],
             status: "submitted"
           }}/>
+        </ThemeProvider>
       </AppContextProvider>
     </BrowserRouter>
 

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 
 import MemberModal from "./MemberModal";
@@ -31,15 +31,15 @@ import {
   Typography,
 } from "@mui/material";
 
-const PREFIX = 'AdminMemberCard';
+const PREFIX = "AdminMemberCard";
 const classes = {
-  header: `${PREFIX}-header`
+  header: `${PREFIX}-header`,
 };
 
 const StyledBox = styled(Box)(() => ({
   [`& .${classes.header}`]: {
     cursor: "pointer",
-  }
+  },
 }));
 
 const AdminMemberCard = ({ member, index }) => {
@@ -148,9 +148,31 @@ const AdminMemberCard = ({ member, index }) => {
               <br />
               Location: {location}
               <br />
-              Supervisor: {supervisorProfile?.name}
+              Supervisor:{" "}
+              {supervisorid && (
+                <Link
+                  to={`/profile/${supervisorid}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "rgba(0, 0, 0, 0.6)",
+                  }}
+                >
+                  {supervisorProfile?.name}
+                </Link>
+              )}
               <br />
-              PDL: {pdlProfile?.name}
+              PDL:{" "}
+              {pdlId && (
+                <Link
+                  to={`/profile/${pdlId}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "rgba(0, 0, 0, 0.6)",
+                  }}
+                >
+                  {pdlProfile?.name}
+                </Link>
+              )}
               <br />
             </Typography>
           </Container>

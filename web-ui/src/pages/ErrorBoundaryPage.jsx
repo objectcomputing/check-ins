@@ -9,6 +9,7 @@ import MarkdownNote from "../components/markdown-note/MarkdownNote";
 import { Button, Modal, TextField } from "@mui/material";
 
 import "./ErrorBoundaryPage.css";
+import { sanitizeQuillElements } from "../helpers/sanitizehtml";
 
 const ErrorFallback = ({ error }) => {
   const { state } = useContext(AppContext);
@@ -34,7 +35,10 @@ const ErrorFallback = ({ error }) => {
       });
       return;
     }
-    let res = await newGitHubIssue(body, title, csrf);
+    //Clean new issue of potentially malicious content in body
+    //before upload to server
+    let sanitizeBody = sanitizeQuillElements(body)
+    let res = await newGitHubIssue(sanitizeBody, title, csrf);
     if (res && res.payload) {
       setLink(res.payload.data[0].html_url);
       window.snackDispatch({
