@@ -259,6 +259,11 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  1`] = `
 
 <div
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root emotion-0"
+  style={
+    Object {
+      "marginTop": "1.7rem",
+    }
+  }
   width={100}
 >
   <div
@@ -345,19 +350,6 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  1`] = `
                   }
                 />
               </div>
-            </div>
-            <div
-              className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-true makeStyles-flexShrink-3 emotion-7"
-            >
-              <span
-                className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse makeStyles-smallMargin-2 emotion-8"
-                style={
-                  Object {
-                    "height": 30,
-                    "width": "10vw",
-                  }
-                }
-              />
             </div>
           </div>
         </div>
@@ -469,7 +461,7 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  2`] = `
     className="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse emotion-1"
     style={
       Object {
-        "height": "6vh",
+        "height": "2.7rem",
         "width": "100%",
       }
     }
@@ -579,7 +571,7 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  3`] = `
     className="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse emotion-1"
     style={
       Object {
-        "height": "6vh",
+        "height": "2.7rem",
         "width": "100%",
       }
     }

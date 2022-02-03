@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { styled } from '@mui/material/styles';
 import {Avatar, Checkbox, Chip, TextField, Typography} from '@mui/material';
 import "./ViewFeedbackResponses.css";
@@ -64,13 +64,12 @@ const ViewFeedbackResponses = () => {
   const location = useLocation();
   const [query, setQuery] = useState({});
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]);
-  const doneLoading = useRef(false)
   const [requestInfo, setRequestInfo] = useState({});
   const [searchText, setSearchText] = useState("");
   const [responderOptions, setResponderOptions] = useState([]);
   const [selectedResponders, setSelectedResponders] = useState([]);
   const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
-  const retrievedQuestionsAndAnswers = useRef(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
@@ -157,10 +156,10 @@ const ViewFeedbackResponses = () => {
   }, [searchText, selectedResponders]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!retrievedQuestionsAndAnswers.current && filteredQuestionsAndAnswers.length > 0) {
-      retrievedQuestionsAndAnswers.current = true;
+    if (isLoading && filteredQuestionsAndAnswers.length > 0) {
+      setIsLoading(false)
     }
-  }, [filteredQuestionsAndAnswers]);
+  }, [filteredQuestionsAndAnswers, isLoading]);
 
   return (
     <Root className="view-feedback-responses-page">
@@ -187,7 +186,7 @@ const ViewFeedbackResponses = () => {
           multiple
           disableCloseOnSelect
           options={responderOptions}
-          getOptionLabel={(responderId) => selectProfile(state, responderId).name}
+          getOptionLabel={(responderId) => selectProfile(state, responderId)?.name}
           popupIcon={<GroupIcon/>}
           value={selectedResponders}
           onChange={(event, value) => setSelectedResponders(value)}
@@ -200,7 +199,7 @@ const ViewFeedbackResponses = () => {
                 style={{marginRight: 8}}
                 checked={selected}
               />
-              {selectProfile(state, responderId).name}
+              {selectProfile(state, responderId)?.name}
             </React.Fragment>
           )}
           renderInput={(params) => (
@@ -216,8 +215,8 @@ const ViewFeedbackResponses = () => {
               const profile = selectProfile(state, responderId);
               return (
                 <Chip
-                  avatar={<Avatar alt={`${profile.name}'s avatar`} className="large" src={getAvatarURL(profile.workEmail)}/>}
-                  label={profile.name}
+                  avatar={<Avatar alt={`${profile?.name}'s avatar`} className="large" src={getAvatarURL(profile?.workEmail)}/>}
+                  label={profile?.name}
                   {...getTagProps({ index })}
                 />
               )
@@ -226,11 +225,11 @@ const ViewFeedbackResponses = () => {
         />
       </div>
 
-      {!retrievedQuestionsAndAnswers.current && 
+      {isLoading && 
                 Array.from({ length: 10 })
                  .map((_, index) => <SkeletonLoader key={index} type="view_feedback_responses" />)
       }
-      {retrievedQuestionsAndAnswers.current && filteredQuestionsAndAnswers.map((question) => {
+      {!isLoading && filteredQuestionsAndAnswers?.map((question) => {
         return (
           <div className="question-responses-container"
                key={`question-id-${question.id}`}>
@@ -239,7 +238,7 @@ const ViewFeedbackResponses = () => {
               style={{marginBottom: "0.5em", fontWeight: "bold"}}>
               Q{question.questionNumber}: {question.question}
             </Typography>
-            {question.answers.length === 0 && retrievedQuestionsAndAnswers.current && <div className="no-responses-found"><Typography variant="body1" style={{color: "gray"}}>No matching responses found</Typography></div>}
+            {question.answers.length === 0 && <div className="no-responses-found"><Typography variant="body1" style={{color: "gray"}}>No matching responses found</Typography></div>}
             {question.answers.length > 0 && question.answers.map(answer =>
                 <FeedbackResponseCard
                   key={answer.id}

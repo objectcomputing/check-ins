@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { styled } from '@mui/material/styles';
 import { AppContext } from "../context/AppContext";
 import { selectCsrfToken, selectCurrentUserId, selectProfile } from "../context/selectors";
@@ -78,7 +78,7 @@ const ReceivedRequestsPage = () => {
   const csrf = selectCsrfToken(state);
   const [searchText, setSearchText] = useState("");
   const [sortValue, setSortValue] = useState(SortOption.DATE_DESCENDING);
-  const doneLoading = useRef(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [receivedRequests, setReceivedRequests] = useState([]);
   const [filteredReceivedRequests, setFilteredReceivedRequests] = useState([]);
   const [submittedRequests, setSubmittedRequests] = useState([]);
@@ -108,7 +108,7 @@ const ReceivedRequestsPage = () => {
         if (data) {
           setReceivedRequests(data.filter((req) => req.submitDate === undefined));
           setSubmittedRequests(data.filter((req) => req.submitDate && req.submitDate.length === 3));
-          doneLoading.current = true;
+          setIsLoading(false)
         }
       });
     }
@@ -212,7 +212,7 @@ const ReceivedRequestsPage = () => {
 
       </Collapse>
       <Collapse in={receivedRequestsExpanded} timeout="auto" unmountOnExit>
-        {!doneLoading.current &&
+        {isLoading &&
           <div style={{ marginTop: "1em" }} >
             {Array.from({ length: 1 })
               .map((_, index) =>
@@ -221,7 +221,7 @@ const ReceivedRequestsPage = () => {
             }
           </div>
         }
-        {doneLoading.current &&
+        {!isLoading &&
           <div className="received-requests-container">
             {receivedRequests.length === 0 &&
               <div className="no-requests-message"><Typography variant="body1">No received feedback requests</Typography></div>
@@ -247,20 +247,20 @@ const ReceivedRequestsPage = () => {
       </div>
       <Divider />
       <Collapse in={!submittedRequestsExpanded} timeout="auto" unmountOnExit>
-        {!doneLoading.current &&
+        {isLoading &&
           <div style={{ marginTop: "1em" }}>
             {Array.from({ length: 1 })
               .map((_, index) => <SkeletonLoader key={index} type="received_requests" />)
             }
           </div>
         }
-        {doneLoading.current && <div style={{ marginTop: "1em" }} className="no-requests-message">
+        {!isLoading && <div style={{ marginTop: "1em" }} className="no-requests-message">
           <Typography variant="body1">{submittedRequests.length} submitted request{submittedRequests.length === 1 ? "" : "s"} currently hidden</Typography>
         </div>
         }
       </Collapse>
       <Collapse in={submittedRequestsExpanded} timeout="auto" unmountOnExit>
-        {doneLoading.current &&
+        {!isLoading &&
           <div className="submitted-requests-container">
             {submittedRequests.length === 0 &&
               <div className="no-requests-message"><Typography variant="body1">No submitted feedback requests</Typography></div>

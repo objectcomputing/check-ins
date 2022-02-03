@@ -76,7 +76,7 @@ const ViewFeedbackPage = () => {
   const csrf = selectCsrfToken(state);
   const currentUserId =  selectCurrentUserId(state);
   const gotRequests = useRef(false);
-  const doneLoading = useRef(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
 
@@ -151,7 +151,7 @@ const ViewFeedbackPage = () => {
             groups[existingGroup].responses.push(request);
           }
         }
-        doneLoading.current = true
+        setIsLoading(false)
         setFeedbackRequests(groups);
       }
     });
@@ -262,7 +262,7 @@ const ViewFeedbackPage = () => {
         </div>
       </div>
       <div className="feedback-requests-list-container">
-        {doneLoading.current ? getFilteredFeedbackRequests(): Array.from({length: 10})
+        {!isLoading ? getFilteredFeedbackRequests(): Array.from({length: 10})
             .map((_, index) => <SkeletonLoader key={index} type="feedback_requests" />)}
       </div>
     </Root>

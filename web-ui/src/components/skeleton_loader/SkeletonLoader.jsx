@@ -3,7 +3,6 @@ import { styled } from "@mui/material/styles";
 import Skeleton from "@mui/material/Skeleton";
 import { Card, CardHeader, CardContent, Grid, Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Style } from "@mui/icons-material";
 
 const PREFIX = "SkeletonLoader";
 const classes = {
@@ -76,7 +75,7 @@ export default function SkeletonLoader({ type }) {
     );
   } else if (type === "feedback_requests") {
     return (
-      <StyledCard width={100}>
+      <StyledCard width={100} style={{marginTop: "1.7rem"}}>
         <CardContent className={additionalClasses.noTopBottomPadding}>
           <Grid container spacing={0}>
             <Grid item xs={12}>
@@ -134,14 +133,6 @@ export default function SkeletonLoader({ type }) {
                       />
                     </Box>
                   </Box>
-                  <Grid item xs className={additionalClasses.flexShrink}>
-                    <Skeleton
-                      className={additionalClasses.smallMargin}
-                      height={30}
-                      variant="text"
-                      width={"10vw"}
-                    />
-                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
@@ -159,7 +150,7 @@ export default function SkeletonLoader({ type }) {
       >
         <Skeleton
           variant="rectangular"
-          height={"6vh"}
+          height={"2.7rem"}
           width={"100%"}
         ></Skeleton>
       </Box>
