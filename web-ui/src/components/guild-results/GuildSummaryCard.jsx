@@ -1,6 +1,6 @@
 import React, { useContext, useState, useCallback } from "react";
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_GUILDS, UPDATE_TOAST } from "../../context/actions";
 import EditGuildModal from "./EditGuildModal";
@@ -23,11 +23,11 @@ import PropTypes from "prop-types";
 import { deleteGuild, updateGuild } from "../../api/guild.js";
 import SplitButton from "../split-button/SplitButton";
 
-const PREFIX = 'GuildSummaryCard';
+const PREFIX = "GuildSummaryCard";
 const classes = {
   card: `${PREFIX}-card`,
   header: `${PREFIX}-header`,
-  title: `${PREFIX}-title`
+  title: `${PREFIX}-title`,
 };
 const StyledCard = styled(Card)(() => ({
   [`&.${classes.card}`]: {
@@ -43,7 +43,7 @@ const StyledCard = styled(Card)(() => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-  }
+  },
 }));
 
 const propTypes = {
@@ -152,24 +152,36 @@ const GuildSummaryCard = ({ guild, index }) => {
           <React.Fragment>
             <strong>Guild Leads: </strong>
             {leads.map((lead, index) => {
-              return index !== leads.length - 1 
-              ? <Link key ={lead?.memberId} to={`/profile/${lead?.memberId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.87)" }}>
-                {lead?.name},&nbsp;
+              return (
+                <Link
+                  key={lead.memberId}
+                  to={`/profile/${lead?.memberId}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "rgba(0, 0, 0, 0.87)",
+                  }}
+                >
+                  {index !== leads.length - 1 ? `${lead?.name}, ` : lead?.name}
                 </Link>
-                : <Link key ={lead?.memberId} to={`/profile/${lead?.memberId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.87)" }}>
-                {lead?.name}
-                </Link>
+              );
             })}
             <br />
             <strong>Guild Members: </strong>
             {nonLeads.map((member, index) => {
-              return index !== nonLeads.length - 1
-                ? <Link key ={member?.memberId} to={`/profile/${member?.memberId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.87)" }}>
-                {member?.name},&nbsp;
+              return (
+                <Link
+                  key={member.memberId}
+                  to={`/profile/${member?.memberId}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "rgba(0, 0, 0, 0.87)",
+                  }}
+                >
+                  {index !== nonLeads.length - 1
+                    ? `${member?.name}, `
+                    : member?.name}
                 </Link>
-                : <Link key ={member?.memberId} to={`/profile/${member?.memberId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.87)" }}>
-                {member?.name}
-                </Link>
+              );
             })}
           </React.Fragment>
         )}
@@ -194,11 +206,7 @@ const GuildSummaryCard = ({ guild, index }) => {
                 <Button onClick={handleCloseDeleteConfirmation} color="primary">
                   Cancel
                 </Button>
-                <Button
-                  onClick={deleteAGuild}
-                  color="primary"
-                  autoFocus
-                >
+                <Button onClick={deleteAGuild} color="primary" autoFocus>
                   Yes
                 </Button>
               </DialogActions>
