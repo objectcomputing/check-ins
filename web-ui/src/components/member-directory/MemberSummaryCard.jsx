@@ -13,7 +13,6 @@ import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import "./MemberSummaryCard.css";
 
 import { Box, CardContent, Container, Tooltip, Typography } from "@mui/material";
-
 const PREFIX = 'MemberSummaryCard';
 const classes = {
   header: `${PREFIX}-header`
@@ -94,10 +93,18 @@ const MemberSummaryCard = ({ member }) => {
               <br />
               Location: {location}
               <br />
-              Supervisor: {supervisorProfile?.name}
+              Supervisor: {supervisorid && 
+              <Link to={`/profile/${supervisorid}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.6)" }}>
+              {supervisorProfile?.name}
+              </Link>}
               <br />
-              PDL: {pdlProfile?.name}
-              <br />
+              PDL: {pdlId && 
+              <Link to={`/profile/${pdlId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.6)" }}>
+              {pdlProfile?.name}
+              </Link>
+          
+              }
+          <br />
             </Typography>
           </Container>
         </CardContent>

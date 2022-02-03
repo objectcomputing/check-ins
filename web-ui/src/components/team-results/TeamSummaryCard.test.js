@@ -1,6 +1,7 @@
 import React from "react";
 import TeamSummaryCard from "./TeamSummaryCard";
 import { AppContextProvider } from "../../context/AppContext";
+import { BrowserRouter } from "react-router-dom";
 
 const teams = [
   {
@@ -43,9 +44,11 @@ adminState.state.userProfile.role = ["MEMBER", "ADMIN"];
 it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
+      <BrowserRouter>
       <TeamSummaryCard
         team={teams[0]}
       />
+      </BrowserRouter>
     </AppContextProvider>
   );
 });
@@ -53,9 +56,12 @@ it("renders correctly", () => {
 it("renders correctly for ADMIN", () => {
   snapshot(
     <AppContextProvider value={adminState}>
+      <BrowserRouter>
       <TeamSummaryCard
         team={teams[0]}
       />
+      </BrowserRouter>
+      
     </AppContextProvider>
   );
 });
@@ -63,9 +69,12 @@ it("renders correctly for ADMIN", () => {
 it("renders correctly for team lead", () => {
   snapshot(
       <AppContextProvider value={initialState}>
+        <BrowserRouter>
         <TeamSummaryCard
             team={teams[1]}
         />
+        </BrowserRouter>
+       
       </AppContextProvider>
   );
 });
