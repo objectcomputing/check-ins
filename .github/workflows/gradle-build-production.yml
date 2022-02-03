@@ -40,6 +40,8 @@ jobs:
         run: ./gradlew assemble
         env:
           REACT_APP_API_URL: https://checkins.objectcomputing.com
+      - name: Publish artifacts
+        run: ./gradlew publish
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@master
         with:
