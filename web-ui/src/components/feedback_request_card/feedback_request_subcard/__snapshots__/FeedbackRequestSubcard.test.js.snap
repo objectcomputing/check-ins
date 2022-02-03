@@ -42,17 +42,17 @@ exports[`renders correctly 1`] = `
   -webkit-flex-direction: row;
   -ms-flex-direction: row;
   flex-direction: row;
-  margin-top: -48px;
-  width: calc(100% + 48px);
-  margin-left: -48px;
+  margin-top: -64px;
+  width: calc(100% + 64px);
+  margin-left: -64px;
 }
 
 .emotion-2>.MuiGrid-item {
-  padding-top: 48px;
+  padding-top: 64px;
 }
 
 .emotion-2>.MuiGrid-item {
-  padding-left: 48px;
+  padding-left: 64px;
 }
 
 .emotion-3 {
@@ -144,14 +144,27 @@ exports[`renders correctly 1`] = `
   -webkit-flex-direction: row;
   -ms-flex-direction: row;
   flex-direction: row;
-  -webkit-flex-basis: 0;
-  -ms-flex-preferred-size: 0;
-  flex-basis: 0;
-  -webkit-box-flex: 1;
-  -webkit-flex-grow: 1;
-  -ms-flex-positive: 1;
-  flex-grow: 1;
-  max-width: 100%;
+  -webkit-flex-basis: 66.666667%;
+  -ms-flex-preferred-size: 66.666667%;
+  flex-basis: 66.666667%;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  max-width: 66.666667%;
+}
+
+@media (min-width:1200px) {
+  .emotion-8 {
+    -webkit-flex-basis: 0;
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+  }
 }
 
 .emotion-9 {
@@ -169,14 +182,27 @@ exports[`renders correctly 1`] = `
   -webkit-flex-direction: row;
   -ms-flex-direction: row;
   flex-direction: row;
-  -webkit-flex-basis: 25%;
-  -ms-flex-preferred-size: 25%;
-  flex-basis: 25%;
+  -webkit-flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+  flex-basis: 100%;
   -webkit-box-flex: 0;
   -webkit-flex-grow: 0;
   -ms-flex-positive: 0;
   flex-grow: 0;
-  max-width: 25%;
+  max-width: 100%;
+}
+
+@media (min-width:1200px) {
+  .emotion-11 {
+    -webkit-flex-basis: 0;
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+  }
 }
 
 .emotion-13 {
@@ -188,20 +214,33 @@ exports[`renders correctly 1`] = `
   letter-spacing: 0.01071em;
 }
 
-.emotion-16 {
+.emotion-14 {
   box-sizing: border-box;
   margin: 0;
   -webkit-flex-direction: row;
   -ms-flex-direction: row;
   flex-direction: row;
-  -webkit-flex-basis: 16.666667%;
-  -ms-flex-preferred-size: 16.666667%;
-  flex-basis: 16.666667%;
+  -webkit-flex-basis: 50%;
+  -ms-flex-preferred-size: 50%;
+  flex-basis: 50%;
   -webkit-box-flex: 0;
   -webkit-flex-grow: 0;
   -ms-flex-positive: 0;
   flex-grow: 0;
-  max-width: 16.666667%;
+  max-width: 50%;
+}
+
+@media (min-width:900px) {
+  .emotion-14 {
+    -webkit-flex-basis: 0;
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+  }
 }
 
 <div
@@ -211,7 +250,7 @@ exports[`renders correctly 1`] = `
     className="MuiDivider-root MuiDivider-fullWidth person-divider emotion-1"
   />
   <div
-    className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-6 person-row emotion-2"
+    className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-8 person-row emotion-2"
     style={
       Object {
         "paddingLeft": "16px",
@@ -227,6 +266,7 @@ exports[`renders correctly 1`] = `
       >
         <div
           className="MuiGrid-root MuiGrid-item emotion-5"
+          s={2}
         >
           <div
             className="MuiAvatar-root MuiAvatar-circular emotion-6"
@@ -243,7 +283,7 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-true small-margin emotion-8"
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-8 MuiGrid-grid-lg-true small-margin emotion-8"
         >
           <p
             className="MuiTypography-root MuiTypography-body1 person-name emotion-9"
@@ -253,7 +293,7 @@ exports[`renders correctly 1`] = `
           />
         </div>
         <div
-          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3 emotion-11"
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-lg-true makeStyles-marginMobile-1 emotion-11"
         >
           <p
             className="MuiTypography-root MuiTypography-body1 FeedbackRequestSubcard-darkGrayTypography emotion-9"
@@ -268,7 +308,7 @@ exports[`renders correctly 1`] = `
           </p>
         </div>
         <div
-          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3 emotion-11"
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-6 MuiGrid-grid-md-true emotion-14"
         >
           <p
             className="MuiTypography-root MuiTypography-body1 FeedbackRequestSubcard-greenTypography emotion-9"
@@ -278,7 +318,7 @@ exports[`renders correctly 1`] = `
           </p>
         </div>
         <div
-          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-2 align-end emotion-16"
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-6 MuiGrid-grid-md-true align-end emotion-14"
         >
           <a
             className="response-link"
