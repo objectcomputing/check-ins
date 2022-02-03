@@ -1,8 +1,10 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState} from "react";
 import { styled } from '@mui/material/styles';
 import MemberSummaryCard from "../components/member-directory/MemberSummaryCard";
 import { AppContext } from "../context/AppContext";
 import {
+  selectMemberProfilesLoading,
+  selectLoading,
   selectNormalizedMembers,
   selectNormalizedMembersAdmin,
 } from "../context/selectors";
@@ -36,8 +38,7 @@ const Root = styled('div')({
 
 const PeoplePage = () => {
   const { state } = useContext(AppContext);
-  //set ref initially to false to tell renderer to load skeleton keys
-  const doneLoading = useRef(false);
+  const loading= selectLoading(state)
   const { userProfile } = state;
 
   const [searchText, setSearchText] = useState("");
@@ -49,17 +50,8 @@ const PeoplePage = () => {
     ? selectNormalizedMembersAdmin(state, searchText)
     : selectNormalizedMembers(state, searchText);
 
-//checks to see if the selector has returned but there are no results
-  if (userProfile?.role && normalizedMembers.length === 0) {
-      doneLoading.current=true;
-  }
 
   const createMemberCards = normalizedMembers.map((member, index) => {
-    //if there are more than 0 cards, render skeleton keys until card mapping is done
-    doneLoading.current=false;
-    if (normalizedMembers.length-1===index) {
-      doneLoading.current=true;
-    }
     return (
       <MemberSummaryCard
         key={`${member.name}-${member.id}`}
@@ -80,14 +72,13 @@ const PeoplePage = () => {
             placeholder="Member Name"
             value={searchText}
             onChange={(e) => {
-              doneLoading.current=false;
               setSearchText(e.target.value);
             }}
           />
         </Grid>
         <Grid item className={classes.members}>
-          {!doneLoading?.current ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />):
-           normalizedMembers.length && doneLoading?.current ? createMemberCards : null}
+          {loading.memberProfiles ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />):
+          !loading.memberProfiles ? createMemberCards : null}
         </Grid>
       </Grid>
     </Root>

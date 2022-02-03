@@ -12,6 +12,21 @@ export const selectRoles = (state) => state.roles;
 export const selectUserRoles = (state) => state.userRoles;
 export const selectTeams = (state) => state.teams;
 export const selectGuilds = (state) => state.guilds;
+export const selectLoading = (state) => state.loading;
+
+export const selectTeamsLoading = createSelector (
+  selectLoading,
+  (loading) => 
+  loading.teams
+  
+)
+
+export const selectMemberProfilesLoading = createSelector (
+  selectLoading,
+  (loading) => 
+  loading.memberProfiles
+  
+)
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,

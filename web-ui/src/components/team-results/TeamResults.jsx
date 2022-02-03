@@ -1,8 +1,8 @@
-import React, { useContext, useState,useRef } from "react";
+import React, { useContext, useState} from "react";
 import { styled } from '@mui/material/styles';
 import TeamSummaryCard from "./TeamSummaryCard";
 import { AppContext } from "../../context/AppContext";
-import { selectNormalizedTeams } from "../../context/selectors";
+import { selectNormalizedTeams, selectTeamsLoading, selectLoading} from "../../context/selectors";
 import TeamsActions from "./TeamsActions";
 import PropTypes from "prop-types";
 import { TextField } from "@mui/material";
@@ -34,20 +34,11 @@ const displayName = "TeamResults";
 
 const TeamResults = () => {
   const { state } = useContext(AppContext);
-  const doneLoading = useRef(false)
-
+  const loading = selectLoading(state)
   const [searchText, setSearchText] = useState("");
   const teams = selectNormalizedTeams(state, searchText);
 
-  if (state?.userProfile?.role && teams.length === 0) {
-    doneLoading.current=true;
-}
-
 const teamCards = teams.map((team, index) => {
-  doneLoading.current=false;
-  if (teams.length-1===index) {
-    doneLoading.current=true;
-  }
   return (
     <TeamSummaryCard
     key={`team-summary-${team.id}`}
@@ -75,8 +66,8 @@ const teamCards = teams.map((team, index) => {
       </div>
       <div className="teams">
         {
-          !doneLoading?.current ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="team" />):
-          teams?.length && doneLoading?.current ? teamCards : null
+          loading.teams ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="team" />):
+          teams?.length && !loading.teams ? teamCards : null
         }
       </div>
     </Root>

@@ -12,6 +12,8 @@ import {
   UPDATE_TERMINATED_MEMBERS,
   UPDATE_SKILLS,
   UPDATE_TEAMS,
+  UPDATE_PEOPLE_LOADING,
+  UPDATE_TEAMS_LOADING,
 } from "./actions";
 import {
   getCurrentUser,
@@ -87,11 +89,13 @@ const AppContextProvider = (props) => {
           ? res.payload.data
           : null;
       if (data) {
-        dispatch({ type: UPDATE_TEAMS, payload: data });
+        dispatch({type: UPDATE_TEAMS, payload: data });
+        dispatch({type: UPDATE_TEAMS_LOADING})
       }
     }
     if (csrf) {
-      getTeams();
+      dispatch({type: UPDATE_TEAMS_LOADING})
+      getTeams()
     }
   }, [csrf, dispatch]);
 
@@ -136,6 +140,7 @@ const AppContextProvider = (props) => {
 
       if (profiles) {
         dispatch({ type: UPDATE_MEMBER_PROFILES, payload: profiles });
+        dispatch({type: UPDATE_PEOPLE_LOADING, payload: false})
       }
     }
     async function getTerminatedMembers() {
@@ -149,10 +154,10 @@ const AppContextProvider = (props) => {
         dispatch({ type: UPDATE_TERMINATED_MEMBERS, payload: profiles });
       }
     }
-
+    dispatch({type: UPDATE_PEOPLE_LOADING, payload:true})
     if (csrf && userProfile) {
       getMemberProfiles();
-      if (userProfile.role?.includes("ADMIN")) {
+      if (userProfile.role?.includes("ADMIN")) { 
         getTerminatedMembers();
       }
     }

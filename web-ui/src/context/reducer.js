@@ -26,12 +26,18 @@ import {
   UPDATE_TEAM_MEMBERS,
   UPDATE_TOAST,
   UPDATE_USER_BIO,
+  UPDATE_PEOPLE_LOADING,
+  UPDATE_TEAMS_LOADING
 } from "./actions";
 
 export const initialState = {
   checkins: [],
   csrf: undefined,
   index: 0,
+  loading : {
+    teams: false,
+    memberProfiles: false,
+  },
   memberProfiles: [],
   terminatedMembers: [],
   memberSkills: [],
@@ -120,6 +126,12 @@ export const reducer = (state, action) => {
       //sort by name
       state.teams.sort((a, b) => a.name.localeCompare(b.name));
       break;
+    case UPDATE_TEAMS_LOADING:
+        state.loading.teams = !state.loading.teams
+        break;
+    case UPDATE_PEOPLE_LOADING:
+        state.loading.memberProfiles = action.payload
+        break;
     case UPDATE_MEMBER_PROFILES:
       action.payload.forEach((member) => {
         member.birthDay = Array.isArray(member.birthDay)
