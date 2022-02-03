@@ -16,6 +16,8 @@ jobs:
       url: https://checkins-develop-tuvcfzotpq-uc.a.run.app/
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up Node 14
         uses: actions/setup-node@v2-beta
         with:
@@ -24,6 +26,20 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Cache SonarQube packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Gradle packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
@@ -32,6 +48,13 @@ jobs:
           REACT_APP_API_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
       - name: Gradle runs tests
         run: ./gradlew check
+      - name: Do SonarQube checks
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./gradlew sonarqube --info
       # Setup gcloud CLI
       - uses: google-github-actions/setup-gcloud@master
         with:
