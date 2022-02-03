@@ -153,8 +153,6 @@ const MemberProfilePage = () => {
                       <h4>Email: {selectedMember.workEmail || ""}</h4>
                       <h4>Location: {selectedMember.location || ""}</h4>
                       <h4>Bio: {selectedMember.bioText || ""}</h4>
-                      {console.log(supervisorInfo)}
-                      {console.log(pdlInfo)}
                       <h4>{(supervisorInfo && "Supervisor: " + supervisorInfo.firstName + " " + supervisorInfo.lastName) || ("")}</h4>
                       <h4>{(pdlInfo && "PDL: " + pdlInfo.firstName + " " + pdlInfo.lastName) || ("")}</h4>
                     </Typography>
