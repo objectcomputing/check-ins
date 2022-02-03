@@ -127,10 +127,10 @@ export const reducer = (state, action) => {
       state.teams.sort((a, b) => a.name.localeCompare(b.name));
       break;
     case UPDATE_TEAMS_LOADING:
-        state.loading.teams = !state.loading.teams
+        state.loading = {...state.loading, teams: !state.loading.teams}
         break;
     case UPDATE_PEOPLE_LOADING:
-        state.loading.memberProfiles = action.payload
+        state.loading = {...state.loading, memberProfiles: action.payload}
         break;
     case UPDATE_MEMBER_PROFILES:
       action.payload.forEach((member) => {

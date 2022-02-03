@@ -4,6 +4,10 @@ import { AppContextProvider } from "../../context/AppContext";
 
 const initialState = {
   state: {
+    loading: {
+      teams: true,
+      memberProfiles: true,
+    },
     userProfile: {
       name: "holmes",
       memberProfile: {
@@ -42,6 +46,10 @@ it("renders correctly", () => {
 it("renders correctly when no teams are loaded", () => {
   const stateWithoutTeams = {
     state: {
+      loading: {
+        teams: true,
+        memberProfiles: true,
+      },
       userProfile: {
         name: "holmes",
         memberProfile: {

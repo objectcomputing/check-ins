@@ -4,7 +4,6 @@ import MemberSummaryCard from "../components/member-directory/MemberSummaryCard"
 import { AppContext } from "../context/AppContext";
 import {
   selectMemberProfilesLoading,
-  selectLoading,
   selectNormalizedMembers,
   selectNormalizedMembersAdmin,
 } from "../context/selectors";
@@ -38,7 +37,7 @@ const Root = styled('div')({
 
 const PeoplePage = () => {
   const { state } = useContext(AppContext);
-  const loading= selectLoading(state)
+  const loading= selectMemberProfilesLoading(state)
   const { userProfile } = state;
 
   const [searchText, setSearchText] = useState("");
@@ -77,8 +76,8 @@ const PeoplePage = () => {
           />
         </Grid>
         <Grid item className={classes.members}>
-          {loading.memberProfiles ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />):
-          !loading.memberProfiles ? createMemberCards : null}
+          {loading ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />):
+          !loading ? createMemberCards : null}
         </Grid>
       </Grid>
     </Root>

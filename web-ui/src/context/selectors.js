@@ -16,8 +16,10 @@ export const selectLoading = (state) => state.loading;
 
 export const selectTeamsLoading = createSelector (
   selectLoading,
-  (loading) => 
-  loading.teams
+  loading =>  {
+    return loading.teams
+  }
+
   
 )
 

@@ -2,7 +2,7 @@ import React, { useContext, useState} from "react";
 import { styled } from '@mui/material/styles';
 import TeamSummaryCard from "./TeamSummaryCard";
 import { AppContext } from "../../context/AppContext";
-import { selectNormalizedTeams, selectTeamsLoading, selectLoading} from "../../context/selectors";
+import { selectNormalizedTeams, selectTeamsLoading} from "../../context/selectors";
 import TeamsActions from "./TeamsActions";
 import PropTypes from "prop-types";
 import { TextField } from "@mui/material";
@@ -34,7 +34,7 @@ const displayName = "TeamResults";
 
 const TeamResults = () => {
   const { state } = useContext(AppContext);
-  const loading = selectLoading(state)
+  const loading = selectTeamsLoading(state)
   const [searchText, setSearchText] = useState("");
   const teams = selectNormalizedTeams(state, searchText);
 
@@ -66,8 +66,8 @@ const teamCards = teams.map((team, index) => {
       </div>
       <div className="teams">
         {
-          loading.teams ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="team" />):
-          teams?.length && !loading.teams ? teamCards : null
+          loading ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="team" />):
+          teams?.length && !loading ? teamCards : null
         }
       </div>
     </Root>
