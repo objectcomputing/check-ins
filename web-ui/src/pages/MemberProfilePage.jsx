@@ -9,6 +9,10 @@ import { getGuildsForMember } from "../api/guild";
 import { getAvatarURL } from "../api/api.js";
 import ProfilePage from "./ProfilePage";
 import { levelList } from "../context/util";
+import {
+  selectOrderedPdls,
+  selectOrderedMemberFirstName,
+} from "../context/selectors";
 
 import "./MemberProfilePage.css";
 
@@ -29,6 +33,11 @@ const MemberProfilePage = () => {
   const { csrf, skills, userProfile } = state;
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
+  const sortedPdls = selectOrderedPdls(state);
+  const sortedMembers = selectOrderedMemberFirstName(state);
+  let pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId)
+  let supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid)
+
 
   useEffect(() => {
     // in the case of a terminated member, member details will still display
@@ -46,7 +55,6 @@ const MemberProfilePage = () => {
   const [selectedMemberSkills, setSelectedMemberSkills] = useState([]);
   const [teams, setTeams] = useState([]);
   const [guilds, setGuilds] = useState([]);
-
   const isCurrentUser = userProfile?.memberProfile?.id === memberId;
 
   useEffect(() => {
@@ -145,6 +153,8 @@ const MemberProfilePage = () => {
                       <h4>Email: {selectedMember.workEmail || ""}</h4>
                       <h4>Location: {selectedMember.location || ""}</h4>
                       <h4>Bio: {selectedMember.bioText || ""}</h4>
+                      <h4>{(supervisorInfo && "Supervisor: " + supervisorInfo.firstName + " " + supervisorInfo.lastName) || ("")}</h4>
+                      <h4>{(pdlInfo && "PDL: " + pdlInfo.firstName + " " + pdlInfo.lastName) || ("")}</h4>
                     </Typography>
                   </Container>
                 </CardContent>
