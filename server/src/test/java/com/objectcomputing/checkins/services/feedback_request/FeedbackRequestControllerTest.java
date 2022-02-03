@@ -54,6 +54,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     @Property(name = "check-ins.web-address") String submitURL;
 
+    @Property(name = FeedbackRequestServicesImpl.WEB_UI_URL) String emailUrl;
+
     @BeforeEach
     void resetMocks() {
         Mockito.reset(emailSender);
@@ -61,6 +63,16 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         createAndAssignRoles();
     }
 
+
+    private String createEmailContent(FeedbackRequest storedRequest, UUID requestId, MemberProfile creator, MemberProfile requestee){
+        String newContent = "<h1>You have received a feedback request.</h1>" +
+                "<p><b>" + creator.getFirstName() + " " + creator.getLastName() + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
+        if (storedRequest.getDueDate() != null) {
+            newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " +storedRequest.getDueDate().getYear() + ".";
+        }
+        newContent+="<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" +requestId + " to complete this request.</p>";
+        return newContent;
+    }
     private FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
         FeedbackTemplate template = createFeedbackTemplate(creator.getId());
         getFeedbackTemplateRepository().save(template);
@@ -215,7 +227,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
-        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to your unique link at " + submitURL + "/feedback/submit?request=" + response.getBody().get().getId()+ " to complete this request.", recipient.getWorkEmail());
+        String correctContent = createEmailContent(feedbackRequest, response.getBody().get().getId(), pdlMemberProfile, employeeMemberProfile);
+        verify(emailSender).sendEmail(notificationSubject, correctContent, recipient.getWorkEmail());
     }
 
     @Test
