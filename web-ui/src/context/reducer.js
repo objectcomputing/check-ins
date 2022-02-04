@@ -209,6 +209,7 @@ export const reducer = (state, action) => {
       state.guilds.sort((a, b) => a.name.localeCompare(b.name));
       state.guilds = [...state.guilds];
       break;
+      
     default:
   }
   return { ...state };

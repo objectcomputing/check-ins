@@ -117,7 +117,6 @@ const FeedbackRequestCard = ({
   const withinDateRange = useCallback(
     (requestDate) => {
       let oldestDate = new Date();
-      console.log({ oldestDate, requestDate });
       switch (dateRange) {
         case DateRange.THREE_MONTHS:
           oldestDate.setMonth(oldestDate.getMonth() - 3);
@@ -285,7 +284,6 @@ const FeedbackRequestCard = ({
           <CardContent style={{ padding: 0 }}>
             {sortedResponses && sortedResponses.length
               ? sortedResponses.map((response) => {
-                  console.log({ response });
                   return (
                     <FeedbackRequestSubcard
                       key={response.id}

@@ -11,6 +11,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     environment:
       name: Production
       url: https://checkins.objectcomputing.com/
@@ -34,14 +37,18 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew assemble
+        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+        with:
+          arguments: assemble
         env:
           REACT_APP_API_URL: https://checkins.objectcomputing.com
-      - name: Publish artifacts
-        run: ./gradlew publish
+      - name: Publish package
+        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+        with:
+          arguments: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@master
         with:
