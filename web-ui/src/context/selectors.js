@@ -19,10 +19,7 @@ export const selectTeamsLoading = createSelector (
   loading =>  {
     return loading.teams
   }
-
-  
 )
-
 export const selectMemberProfilesLoading = createSelector (
   selectLoading,
   (loading) => 

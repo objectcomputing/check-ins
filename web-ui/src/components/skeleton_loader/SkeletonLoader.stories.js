@@ -25,3 +25,24 @@ export const PeopleLoader = Template.bind({});
 PeopleLoader.args = {
     type: "people",
 }
+
+export const FeedbackRequestLoader = Template.bind({});
+FeedbackRequestLoader.args = {
+    type: "feedback_requests",
+}
+
+export const FeedbackRequestLoader = Template.bind({});
+FeedbackRequestLoader.args = {
+    type: "received_requests",
+}
+export const FeedbackRequestLoader = Template.bind({});
+FeedbackRequestLoader.args = {
+    type: "received_requests",
+}
+
+export const FeedbackRequestLoader = Template.bind({});
+FeedbackRequestLoader.args = {
+    type: "view_feedback_responses",
+}
+
+
