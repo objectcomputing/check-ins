@@ -7,7 +7,7 @@ import {
 } from "../../context/selectors";
 
 import { Modal, TextField } from "@mui/material";
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete from "@mui/material/Autocomplete";
 import DatePicker from "@mui/lab/DatePicker";
 import { format } from "date-fns";
 import { Button } from "@mui/material";
@@ -17,27 +17,27 @@ import "./MemberModal.css";
 import { useCallback } from "react";
 
 const emptyMember = {
-  employeeId:'',
-  firstName: '',
-  middleName: '',
-  lastName: '',
-  suffix:'',
-  workEmail:'',
-  title:'',
-  location:'',
-  birthDay:null,
-  pdlId:'',
-  supervisorid:'',
+  employeeId: "",
+  firstName: "",
+  middleName: "",
+  lastName: "",
+  suffix: "",
+  workEmail: "",
+  title: "",
+  location: "",
+  birthDay: null,
+  pdlId: "",
+  supervisorid: "",
   startDate: new Date(),
-  terminationDate:null
-}
+  terminationDate: null,
+};
 
 const MemberModal = ({ member, open, onSave, onClose }) => {
   const { state, dispatch } = useContext(AppContext);
   const memberProfiles = selectCurrentMembers(state);
   const [editedMember, setMember] = useState(member);
   const sortedPdls = selectOrderedPdls(state);
-  const isNewMember = useRef(JSON.stringify(member)==='{}'? true : false)
+  const isNewMember = useRef(JSON.stringify(member) === "{}" ? true : false);
   const sortedMembers = selectOrderedMemberFirstName(state);
   const onSupervisorChange = (event, newValue) => {
     setMember({
@@ -50,7 +50,9 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
 
   const terminationDate = editedMember?.terminationDate || null;
 
-  const startDate = editedMember?.startDate ? editedMember?.startDate : setMember({...editedMember, startDate: new Date()})  ;
+  const startDate = editedMember?.startDate
+    ? editedMember?.startDate
+    : setMember({ ...editedMember, startDate: new Date() });
 
   const onPdlChange = (event, newValue) => {
     setMember({
@@ -59,31 +61,118 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
     });
   };
 
-  const validateRequiredInputs = useCallback(() => {
-      return (editedMember.firstName?.length > 0 && editedMember.lastName?.length > 0
-         && editedMember.workEmail?.length > 0 && editedMember.title?.length > 0 && editedMember.location?.length >0 && editedMember.employeeId?.length > 0 && startDate )
-  }, [editedMember, startDate])
-
-  const submitMemberClick = useCallback(async () => {
-    let required = validateRequiredInputs()
-    if (required) {
-      console.log(editedMember)
-      onSave(editedMember).then(() => {
-        if (isNewMember.current) {
-          setMember({emptyMember})
-          isNewMember.current = !isNewMember.current
-        }
-      })
-    } else {
+  const validateInputs = useCallback(() => {
+    let regName = /^[a-zA-Z]+$/;
+    if (
+      !regName.test(
+        editedMember.firstName ||
+          !regName.test(editedMember.lastName) ||
+          !regName.test(editedMember.middleName)
+      )
+    ) {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast: "One or more required fields are empty. Check starred input fields",
+          toast:
+            "Please enter a valid name without numbers or special characters",
         },
       });
+      return false;
     }
-  }, [validateRequiredInputs, onSave, dispatch, editedMember])
+    let regEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regEmail.test(editedMember.workEmail)) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Please enter a valid email",
+        },
+      });
+      return false;
+    }
+    let todayYear = new Date().getFullYear();
+    if (
+      todayYear - editedMember.birthDay?.getFullYear() < 14 ||
+      todayYear - editedMember.birthDay?.getFullYear() > 125
+    ) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Please enter a valid birthday",
+        },
+      });
+      return false;
+    }
+    if (
+      todayYear - editedMember.startDate?.getFullYear() > 80 ||
+      editedMember.startDate.getTime() > new Date().getTime()
+    ) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Please enter a valid start date",
+        },
+      });
+      return false;
+    }
+    if (
+      editedMember.startDate?.getTime() >
+      editedMember.terminationDate?.getTime()
+    ) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Please enter a start date before the termination date",
+        },
+      });
+      return false;
+    }
+    return true;
+  }, [editedMember, dispatch]);
+
+  const validateRequiredInputsPresent = useCallback(() => {
+    return (
+      editedMember.firstName?.length > 0 &&
+      editedMember.lastName?.length > 0 &&
+      editedMember.workEmail?.length > 0 &&
+      editedMember.title?.length > 0 &&
+      editedMember.location?.length > 0 &&
+      editedMember.employeeId?.length > 0 &&
+      startDate
+    );
+  }, [editedMember, startDate]);
+
+  const submitMemberClick = useCallback(async () => {
+    let required = validateRequiredInputsPresent();
+    let inputsFeasible = validateInputs();
+    if (!required) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast:
+            "One or more required fields are empty. Check starred input fields",
+        },
+      });
+    } else if (required && inputsFeasible) {
+      onSave(editedMember).then(() => {
+        if (isNewMember.current) {
+          setMember({ emptyMember });
+          isNewMember.current = !isNewMember.current;
+        }
+      });
+    }
+  }, [
+    validateRequiredInputsPresent,
+    onSave,
+    dispatch,
+    validateInputs,
+    editedMember,
+  ]);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -164,7 +253,9 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
           }
         />
         <DatePicker
-          renderInput={props => <TextField className="halfWidth" {...props}/>}
+          renderInput={(props) => (
+            <TextField className="halfWidth" {...props} />
+          )}
           margin="normal"
           id="bday-datepicker-dialog"
           required
@@ -230,7 +321,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
           )}
         />
         <DatePicker
-          renderInput={props => <TextField {...props}/>}
+          renderInput={(props) => <TextField {...props} />}
           margin="normal"
           id="start-datepicker-dialog"
           required
@@ -245,7 +336,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
           }}
         />
         <DatePicker
-          renderInput={props => <TextField {...props}/>}
+          renderInput={(props) => <TextField {...props} />}
           margin="normal"
           id="termination-datepicker-dialog"
           label="Termination Date"
@@ -264,10 +355,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
           <Button onClick={onClose} color="secondary">
             Cancel
           </Button>
-          <Button
-          onClick={submitMemberClick}
-            color="primary"
-          >
+          <Button onClick={submitMemberClick} color="primary">
             Save Member
           </Button>
         </div>
