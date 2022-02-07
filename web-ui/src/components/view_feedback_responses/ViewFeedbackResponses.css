@@ -29,6 +29,11 @@
     margin-bottom: 16px;
 }
 
+.reset-button {
+align-self:center;
+margin-left: 3vw;
+}
+
 @media screen and (max-width: 800px) {
     .view-feedback-responses-page {
         margin-left: 1em;
