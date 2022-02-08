@@ -8,7 +8,8 @@ import com.objectcomputing.checkins.services.guild.GuildUpdateDTO;
 import java.util.UUID;
 
 public interface GuildFixture extends MemberProfileFixture, RepositoryFixture{
-    final String COMPASS_ADDRESS = "check-ins.compass_address";
+
+    String COMPASS_ADDRESS = "https://www.compass.objectcomputing.com/";
 
     default Guild createDefaultGuild() {
         return getGuildRepository().save(new Guild(UUID.randomUUID(), "Ninja", "Warriors", COMPASS_ADDRESS+"ninja_warriors/"));

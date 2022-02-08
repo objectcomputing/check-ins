@@ -35,7 +35,8 @@ class GuildTest {
         final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(id, name, description );
+        final String link = "https://www.compass.objectcomputing.com/guilds/name";
+        Guild guild = new Guild(id, name, description, link);
         assertEquals(guild.getId(), id);
         assertEquals(guild.getName(), name);
         assertEquals(guild.getDescription(), description);
@@ -50,7 +51,7 @@ class GuildTest {
         final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(id, name, description);
+        Guild guild = new Guild(id, name, description, null);
 
         guild.setName("");
         guild.setDescription("");
@@ -67,8 +68,9 @@ class GuildTest {
         final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild g = new Guild(id, name, description);
-        Guild g2 = new Guild(id, name, description);
+        final String link = "https://www.compass.objectcomputing.com/guilds/name";
+        Guild g = new Guild(id, name, description, link);
+        Guild g2 = new Guild(id, name, description, link);
 
         assertEquals(g, g2);
 
@@ -83,7 +85,8 @@ class GuildTest {
         final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild g = new Guild(id, name, description);
+        final String link = "https://www.compass.objectcomputing.com/guilds/name";
+        Guild g = new Guild(id, name, description, link);
 
         map.put(g, true);
 
@@ -95,7 +98,8 @@ class GuildTest {
         final UUID id = UUID.randomUUID();
         final String name = "name------name";
         final String description = "description------description";
-        Guild g = new Guild(id, name, description);
+        final String link = "https://www.compass.objectcomputing.com/guilds/name";
+        Guild g = new Guild(id, name, description,link);
 
         assertTrue(g.toString().contains(name));
         assertTrue(g.toString().contains(id.toString()));

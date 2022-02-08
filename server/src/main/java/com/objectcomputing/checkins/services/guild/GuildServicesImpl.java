@@ -15,6 +15,7 @@ import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -34,9 +35,7 @@ public class GuildServicesImpl implements GuildServices {
     private EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
-    private final String compassAddress;
     public static final String WEB_ADDRESS = "check-ins.web-address";
-    public static final String COMPASS_ADDRESS = "check-ins.compass_address";
 
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo,
@@ -44,8 +43,7 @@ public class GuildServicesImpl implements GuildServices {
                              MemberProfileServices memberProfileServices,
                              GuildMemberServices guildMemberServices,
                              EmailSender emailSender, Environment environment,
-                             @Property(name = WEB_ADDRESS) String webAddress,
-                             @Property(name= COMPASS_ADDRESS) String compassAddress
+                             @Property(name = WEB_ADDRESS) String webAddress
     ) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
@@ -54,7 +52,6 @@ public class GuildServicesImpl implements GuildServices {
         this.guildMemberServices = guildMemberServices;
         this.emailSender = emailSender;
         this.webAddress = webAddress;
-        this.compassAddress = compassAddress;
         this.environment = environment;
     }
 
@@ -63,12 +60,12 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     public boolean validateLink (String link ) {
-        String regex = "(https://)?(www.)?compass.objectcomputing.com/S*";
+        String regex = "(https://)?(www.)?compass\\.objectcomputing\\.com/S*";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(link);
-        boolean matchFound = matcher.matches();
+        boolean matchFound = matcher.lookingAt();
         if (!matchFound) {
-            throw new BadArgException("Link is invalid or doesn't go to the correct domain ");
+            throw new BadArgException("Link is invalid");
         }
         return true;
     }
@@ -77,6 +74,10 @@ public class GuildServicesImpl implements GuildServices {
         Guild newGuildEntity = null;
         List<GuildMemberResponseDTO> newMembers = new ArrayList<>();
         if (guildDTO != null) {
+            String link = guildDTO.getLink();
+            if (link!= null) {
+                validateLink(link);
+            }
             if (!guildsRepo.search(guildDTO.getName(), null).isEmpty()) {
                 throw new BadArgException(String.format("Guild with name %s already exists", guildDTO.getName()));
             } else {
@@ -125,6 +126,10 @@ public class GuildServicesImpl implements GuildServices {
                     if (guildDTO.getGuildMembers() == null ||
                             guildDTO.getGuildMembers().stream().noneMatch(GuildUpdateDTO.GuildMemberUpdateDTO::getLead)) {
                         throw new BadArgException("Guild must include at least one guild lead");
+                    }
+                    String link = guildDTO.getLink();
+                    if (link != null) {
+                        validateLink(link);
                     }
 
                     // track membership changes for email notification
@@ -242,7 +247,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(null, dto.getName(), dto.getDescription());
+        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink());
     }
 
     private GuildMemberResponseDTO fromMemberEntity(GuildMember guildMember, MemberProfile memberProfile) {

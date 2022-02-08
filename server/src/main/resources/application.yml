@@ -83,8 +83,6 @@ check-ins:
         subject: "Feedback request"
         content: "You have received a feedback request. Please go to the "
   web-address: ${ WEB_ADDRESS }
-  compass-address: ${ COMPASS_ADDRESS }
-
 ---
 flyway:
   enabled: enabled
