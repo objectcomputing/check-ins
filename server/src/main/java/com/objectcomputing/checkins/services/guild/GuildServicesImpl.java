@@ -17,6 +17,8 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
@@ -32,7 +34,9 @@ public class GuildServicesImpl implements GuildServices {
     private EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
+    private final String compassAddress;
     public static final String WEB_ADDRESS = "check-ins.web-address";
+    public static final String COMPASS_ADDRESS = "check-ins.compass_address";
 
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo,
@@ -40,7 +44,8 @@ public class GuildServicesImpl implements GuildServices {
                              MemberProfileServices memberProfileServices,
                              GuildMemberServices guildMemberServices,
                              EmailSender emailSender, Environment environment,
-                             @Property(name = WEB_ADDRESS) String webAddress
+                             @Property(name = WEB_ADDRESS) String webAddress,
+                             @Property(name= COMPASS_ADDRESS) String compassAddress
     ) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
@@ -49,11 +54,23 @@ public class GuildServicesImpl implements GuildServices {
         this.guildMemberServices = guildMemberServices;
         this.emailSender = emailSender;
         this.webAddress = webAddress;
+        this.compassAddress = compassAddress;
         this.environment = environment;
     }
 
     public void setEmailSender (EmailSender emailSender){
         this.emailSender = emailSender;
+    }
+
+    public boolean validateLink (String link ) {
+        String regex = "(https://)?(www.)?compass.objectcomputing.com/S*";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(link);
+        boolean matchFound = matcher.matches();
+        if (!matchFound) {
+            throw new BadArgException("Link is invalid or doesn't go to the correct domain ");
+        }
+        return true;
     }
 
     public GuildResponseDTO save(GuildCreateDTO guildDTO) {
@@ -193,7 +210,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(dto.getId(), dto.getName(), dto.getDescription());
+        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink());
     }
 
     private GuildMember fromMemberDTO(GuildCreateDTO.GuildMemberCreateDTO memberDTO, UUID guildId) {
@@ -216,7 +233,7 @@ public class GuildServicesImpl implements GuildServices {
         if (entity == null) {
             return null;
         }
-        GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription());
+        GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(), entity.getLink());
         dto.setGuildMembers(memberEntities);
         return dto;
     }

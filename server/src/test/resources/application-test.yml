@@ -41,6 +41,7 @@ flyway:
 ---
 check-ins:
   web-address: "https://checkins.objectcomputing.com"
+  compass-address: "https://compass.objectcomputing.com/guilds/"
 ---
 aes:
   key: BOGUS_TEST_KEY

@@ -25,7 +25,7 @@ class GuildTest {
     void testGuildInstantiation() {
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(name, description);
+        Guild guild = new Guild(name, description, null);
         assertEquals(guild.getName(), name);
         assertEquals(guild.getDescription(), description);
     }
@@ -35,7 +35,7 @@ class GuildTest {
         final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(id, name, description);
+        Guild guild = new Guild(id, name, description );
         assertEquals(guild.getId(), id);
         assertEquals(guild.getName(), name);
         assertEquals(guild.getDescription(), description);

@@ -11,6 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,6 +36,12 @@ public class Guild {
     @Schema(description = "name of the guild")
     private String name;
 
+
+    @Nullable
+    @Column(name="link", unique=true)
+    @Schema(description="link to OCI compass page of guild")
+    private String link;
+
     @NotBlank
     @Column(name = "description")
     @ColumnTransformer(
@@ -42,14 +51,17 @@ public class Guild {
     @Schema(description = "description of the guild")
     private String description;
 
-    public Guild(String name, String description) {
-        this(null, name, description);
+
+
+    public Guild(String name, String description, String link) {
+        this(null, name, description, link);
     }
 
-    public Guild(UUID id, String name, String description) {
+    public Guild(UUID id, String name, String description, String link) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.link = link;
     }
 
     public UUID getId() {
@@ -76,6 +88,14 @@ public class Guild {
         this.description = description;
     }
 
+    public String getLink() {
+        return this.link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -83,12 +103,14 @@ public class Guild {
         Guild guild = (Guild) o;
         return Objects.equals(id, guild.id) &&
                 Objects.equals(name, guild.name) &&
-                Objects.equals(description, guild.description);
+                Objects.equals(description, guild.description) &&
+                Objects.equals(link, this.link);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description);
+        return Objects.hash(id, name, description, link);
     }
 
     @Override
@@ -96,7 +118,8 @@ public class Guild {
         return "Guild{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", description='" + description +
+                ", description='" + description + '\'' +
+                ", link='" + link +
                 '}';
     }
 }

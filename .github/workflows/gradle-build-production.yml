@@ -98,6 +98,7 @@ jobs:
             --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
             --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
             --set-env-vars "WEB_ADDRESS=https://checkins.objectcomputing.com" \
+            --set-env-vars "COMPASS_ADDRESS=https://compass.objectcomputing.com/guilds" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins" \
             --platform "managed" \
