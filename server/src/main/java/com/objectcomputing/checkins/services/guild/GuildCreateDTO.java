@@ -76,6 +76,7 @@ public class GuildCreateDTO {
         this.description = description;
     }
 
+    @Nullable
     public String getLink() {
         return this.link;
     }

@@ -53,11 +53,11 @@ public class Guild {
 
 
 
-    public Guild(String name, String description, String link) {
+    public Guild(String name, String description, @Nullable String link) {
         this(null, name, description, link);
     }
 
-    public Guild(UUID id, String name, String description, String link) {
+    public Guild(UUID id, String name, String description, @Nullable String link) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -88,6 +88,7 @@ public class Guild {
         this.description = description;
     }
 
+    @Nullable
     public String getLink() {
         return this.link;
     }
