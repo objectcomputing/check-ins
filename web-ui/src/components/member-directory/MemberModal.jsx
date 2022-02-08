@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import {
   selectOrderedPdls,
@@ -37,7 +37,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
   const memberProfiles = selectCurrentMembers(state);
   const [editedMember, setMember] = useState(member);
   const sortedPdls = selectOrderedPdls(state);
-  const isNewMember = useRef(JSON.stringify(member) === "{}" ? true : false);
+  const [isNewMember, setIsNewMember] = useState(Object.keys(member).length===0 ? true : false);
   const sortedMembers = selectOrderedMemberFirstName(state);
   const onSupervisorChange = (event, newValue) => {
     setMember({
@@ -62,25 +62,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
   };
 
   const validateInputs = useCallback(() => {
-    let regName = /^[a-zA-Z]+$/;
-    if (
-      !regName.test(
-        editedMember.firstName ||
-          !regName.test(editedMember.lastName) ||
-          !regName.test(editedMember.middleName)
-      )
-    ) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast:
-            "Please enter a valid name without numbers or special characters",
-        },
-      });
-      return false;
-    }
-    let regEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ // eslint-disable-line
     if (!regEmail.test(editedMember.workEmail)) {
       dispatch({
         type: UPDATE_TOAST,
@@ -107,7 +89,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
     }
     if (
       todayYear - editedMember.startDate?.getFullYear() > 80 ||
-      editedMember.startDate.getTime() > new Date().getTime()
+      editedMember.startDate?.getFullYear() - todayYear > 1
     ) {
       dispatch({
         type: UPDATE_TOAST,
@@ -126,7 +108,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast: "Please enter a start date before the termination date",
+          toast: "Please enter a termination date that is after the start date",
         },
       });
       return false;
@@ -148,7 +130,9 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
 
   const submitMemberClick = useCallback(async () => {
     let required = validateRequiredInputsPresent();
+
     let inputsFeasible = validateInputs();
+    console.log(inputsFeasible)
     if (!required) {
       dispatch({
         type: UPDATE_TOAST,
@@ -162,7 +146,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
       onSave(editedMember).then(() => {
         if (isNewMember.current) {
           setMember({ emptyMember });
-          isNewMember.current = !isNewMember.current;
+          setIsNewMember(true)
         }
       });
     }
@@ -172,6 +156,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
     dispatch,
     validateInputs,
     editedMember,
+    isNewMember
   ]);
 
   return (
