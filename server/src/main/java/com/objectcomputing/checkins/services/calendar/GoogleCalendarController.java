@@ -47,7 +47,7 @@ public class GoogleCalendarController {
      *
      *
      */
-    @Post()
+    @Post("/")
     public Single<HttpResponse> save() {
         return Single.fromCallable(() -> googleCalendarServices.save())
         .observeOn(Schedulers.from(eventLoopGroup))
