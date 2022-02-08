@@ -2,7 +2,8 @@ name: Gradle Build & Deploy - Develop
 on:
   push:
     branches:
-       - 'feature-1549/google_calendar_integration'
+      - 'develop'
+      - 'feature-1549/google_calendar_integration'
      
 
 env:
