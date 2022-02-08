@@ -70,7 +70,6 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
 
         EventAttendee[] attendees = new EventAttendee[] {
                 new EventAttendee().setEmail("smithj@objectcomputing.com"),
-                new EventAttendee().setEmail("julia.smithe5741@gmail.com"),
         };
         event.setAttendees(Arrays.asList(attendees));
 
