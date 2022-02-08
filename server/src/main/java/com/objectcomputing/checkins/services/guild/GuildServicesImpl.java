@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.net.URL;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
@@ -60,14 +61,12 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     public boolean validateLink (String link ) {
-        String regex = "(https://)?(www.)?compass\\.objectcomputing\\.com/S*";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(link);
-        boolean matchFound = matcher.lookingAt();
-        if (!matchFound) {
-            throw new BadArgException("Link is invalid");
+        try {
+            new URL(link).toURI();
+            return true;
+        }  catch (Exception e) {
+            return false;
         }
-        return true;
     }
 
     public GuildResponseDTO save(GuildCreateDTO guildDTO) {

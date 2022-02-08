@@ -24,7 +24,7 @@ public class GuildCreateDTO {
     private List<GuildMemberCreateDTO> guildMembers;
 
     @Nullable
-    @Schema(description="link to OCI compass page of guild")
+    @Schema(description="link to the homepage of the guild")
     private String link;
     
 

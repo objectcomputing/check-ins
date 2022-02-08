@@ -28,7 +28,7 @@ public class GuildUpdateDTO {
     private String description;
 
     @Nullable
-    @Schema(description="link to OCI compass page of guild")
+    @Schema(description="link to the homepage of the guild")
     private String link;
 
     @Schema(description = "members of this guild")

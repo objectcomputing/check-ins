@@ -11,8 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-
-import edu.umd.cs.findbugs.annotations.Nullable;
+import io.micronaut.core.annotation.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -39,7 +38,11 @@ public class Guild {
 
     @Nullable
     @Column(name="link", unique=true)
-    @Schema(description="link to OCI compass page of guild")
+    @ColumnTransformer(
+        read = "pgp_sym_decrypt(name::bytea,'${aes.key}')",
+        write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Schema(description="link to the homepage of the guild")
     private String link;
 
     @NotBlank

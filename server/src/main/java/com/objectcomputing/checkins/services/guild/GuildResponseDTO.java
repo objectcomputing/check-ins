@@ -25,7 +25,7 @@ public class GuildResponseDTO {
     private String description;
 
     @Nullable
-    @Schema(description="link to OCI compass page of guild")
+    @Schema(description="link to the homepage of the guild")
     private String link;
 
 
