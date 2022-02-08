@@ -1,14 +1,14 @@
-name: Gradle Build & Deploy - Develop
+name: Gradle Build & Deploy - Calendar Test
 on:
   push:
     branches:
-      - 'develop'
+      - 'feature-1549/google_calendar_integration'
      
 
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
-  SERVICE_NAME: checkins-develop
+  SERVICE_NAME: checkins-calendar-test
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,8 +17,6 @@ jobs:
       url: https://checkins-develop-tuvcfzotpq-uc.a.run.app/
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up Node 14
         uses: actions/setup-node@v2-beta
         with:
@@ -27,38 +25,14 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Cache SonarQube packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-        with:
-          arguments: assemble
+        run: ./gradlew assemble
         env:
           REACT_APP_API_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
       - name: Gradle runs tests
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-        with:
-          arguments: check
-      - name: Do SonarQube checks
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-        with:
-          arguments: sonarqube --info
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew check
       # Setup gcloud CLI
       - uses: google-github-actions/setup-gcloud@master
         with:
@@ -91,7 +65,6 @@ jobs:
             --set-env-vars "AES_KEY=${{ secrets.AES_KEY }}" \
             --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
             --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
-            --set-env-vars "OAUTH_CALLBACK_URI"=${{ secrets.OAUTH_CALLBACK_URI }} \
             --set-env-vars "DIRECTORY_ID=${{ secrets.DIRECTORY_ID }}" \
             --set-env-vars "TYPE=${{ secrets.SA_KEY_TYPE }}" \
             --set-env-vars "PROJECT_ID=${{ secrets.RUN_PROJECT }}" \
