@@ -27,7 +27,7 @@ micronaut:
 
   security:
     enabled: true
-    authentication: idtoken
+    authentication: cookie
     oauth2:
       callback-uri: ${ OAUTH_CALLBACK_URI }
       clients:
