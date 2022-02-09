@@ -15,6 +15,8 @@ import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
@@ -63,10 +65,10 @@ public class GuildServicesImpl implements GuildServices {
     public boolean validateLink (String link ) {
         try {
             new URL(link).toURI();
-            return true;
         }  catch (Exception e) {
-            return false;
+            throw new BadArgException("Link is invalid");
         }
+        return true;
     }
 
     public GuildResponseDTO save(GuildCreateDTO guildDTO) {
@@ -74,7 +76,7 @@ public class GuildServicesImpl implements GuildServices {
         List<GuildMemberResponseDTO> newMembers = new ArrayList<>();
         if (guildDTO != null) {
             String link = guildDTO.getLink();
-            if (link!= null) {
+            if (link != null) {
                 validateLink(link);
             }
             if (!guildsRepo.search(guildDTO.getName(), null).isEmpty()) {

@@ -39,7 +39,7 @@ public class Guild {
     @Nullable
     @Column(name="link", unique=true)
     @ColumnTransformer(
-        read = "pgp_sym_decrypt(name::bytea,'${aes.key}')",
+        read = "pgp_sym_decrypt(link::bytea,'${aes.key}')",
         write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description="link to the homepage of the guild")

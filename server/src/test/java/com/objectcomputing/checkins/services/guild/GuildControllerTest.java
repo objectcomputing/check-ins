@@ -156,6 +156,27 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     }
 
     @Test
+    void testCreateGuildFakeLink() {
+        GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
+        guildCreateDTO.setName("name");
+        guildCreateDTO.setDescription("description");
+        guildCreateDTO.setLink("wwwu.fakelink.com");
+        guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
+
+        final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Link is invalid", errors.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(request.getPath(), href.asText());
+
+    }
+    @Test
     void testCreateGuildNoLeads() {
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
         guildCreateDTO.setName("name");
