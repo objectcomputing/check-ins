@@ -1,11 +1,18 @@
 package com.objectcomputing.checkins.util.googleapiaccess;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.store.DataStoreFactory;
+import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.admin.directory.Directory;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
@@ -13,13 +20,20 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import com.google.api.services.calendar.Calendar;
+import com.google.auth.oauth2.AccessToken;
+import com.google.auth.oauth2.GoogleCredentials;
+import javax.inject.Singleton;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 import javax.inject.Singleton;
-import java.io.IOException;
+
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Requires(notEnv = Environment.TEST)
 @Singleton
@@ -49,7 +63,6 @@ public class GoogleAccessor {
 
         String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForDriveApi", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
-
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(authenticator.setupCredentials(scope));
         return new Drive
                 .Builder(httpTransport, JSON_FACTORY, requestInitializer)
@@ -64,10 +77,8 @@ public class GoogleAccessor {
      * @throws IOException
      */
     public Calendar accessGoogleCalendar() throws IOException {
-
         String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
-
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(authenticator.setupCredentials(scope));
         return new Calendar.Builder(httpTransport, JSON_FACTORY, requestInitializer).setApplicationName(applicationName).build();
     }

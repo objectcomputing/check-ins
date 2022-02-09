@@ -45,7 +45,7 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
     }
 
     @Override
-    public Boolean save() {
+    public String save() {
         Calendar calendarService = googleApiAccess.getCalendar();
         validate(calendarService == null, "Unable to access Google Calendars");
         Event event = new Event()
@@ -85,12 +85,11 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
         String calendarId = "primary";
         try {
             event = calendarService.events().insert(calendarId, event).execute();
-            System.out.printf("Event created: %s\n", event.getHtmlLink());
+            return event.toString();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return false;
+            return e.toString();
         }
-        return true;
     }
 }

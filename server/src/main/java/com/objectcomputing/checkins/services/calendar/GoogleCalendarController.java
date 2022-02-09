@@ -19,7 +19,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.core.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
+
+import com.google.api.services.calendar.model.Event;
+
 import java.io.File;
+import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -47,11 +51,15 @@ public class GoogleCalendarController {
      *
      *
      */
+
     @Post("/")
-    public Single<HttpResponse> save() {
+    public Single<HttpResponse<String>> save() {
         return Single.fromCallable(() -> googleCalendarServices.save())
         .observeOn(Schedulers.from(eventLoopGroup))
-        .map(successFlag -> (HttpResponse) HttpResponse.ok())
+        .map(savedEvent -> (HttpResponse<String>) HttpResponse
+        .ok()
+        .headers(headers -> headers.location(URI.create("/event")))
+        .body(savedEvent))
         .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
