@@ -79,7 +79,7 @@ check-ins:
         scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
         scopeForCalendarApi:
           - "https://www.googleapis.com/auth/admin/calendar.events"
-          - "https://www.googleapis.com/auth/calendar.readonly"
+          - "https://www.googleapis.com/auth/calendar"
     feedback:
       max-suggestions: 6
       notifications:

@@ -69,7 +69,7 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
         event.setRecurrence(Arrays.asList(recurrence));
 
         EventAttendee[] attendees = new EventAttendee[] {
-                new EventAttendee().setEmail("smithj@objectcomputing.com"),
+                new EventAttendee().setEmail(currentUserServices.getCurrentUser().getWorkEmail()),
         };
         event.setAttendees(Arrays.asList(attendees));
 
