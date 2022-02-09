@@ -36,6 +36,7 @@ micronaut:
           client-secret: ${ OAUTH_CLIENT_SECRET }
           openid:
             issuer: 'https://accounts.google.com'
+          scopes: openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events
     endpoints:
       logout:
         get-allowed: true
