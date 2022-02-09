@@ -132,7 +132,6 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
     let required = validateRequiredInputsPresent();
 
     let inputsFeasible = validateInputs();
-    console.log(inputsFeasible)
     if (!required) {
       dispatch({
         type: UPDATE_TOAST,
