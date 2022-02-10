@@ -34,11 +34,11 @@ micronaut:
         google:
           client-id: ${ OAUTH_CLIENT_ID }
           client-secret: ${ OAUTH_CLIENT_SECRET }
+          additional-claims:
+            access-token: true
+            refresh-token: true
           openid:
             issuer: 'https://accounts.google.com'
-            additional-claims:
-              access-token: true
-              refresh-token: true 
           scopes: openid profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events
     endpoints:
       logout:
