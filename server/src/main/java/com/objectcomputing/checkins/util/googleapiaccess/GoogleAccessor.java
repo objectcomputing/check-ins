@@ -76,4 +76,24 @@ public class GoogleAccessor {
                 .setApplicationName(applicationName)
                 .build();
     }
+
+       /**
+     * Create and return the google chatbot access object
+     *
+     * @return a google chat access object
+     * @throws IOException
+     */
+    public HangoutsChat accessGoogleChat() throws IOException {
+
+        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForChatApi", String.class).orElse("");
+        List<String> scope = Arrays.asList(apiScope.split(","));
+
+        HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(
+                authenticator.setupCredentials(scope));
+
+        return new HangoutsChat
+                .Builder(httpTransport, JSON_FACTORY, requestInitializer)
+                .setApplicationName(applicationName)
+                .build();
+    }
 }

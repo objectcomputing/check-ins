@@ -30,6 +30,9 @@ public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEv
 
     private Directory directory;
 
+
+    private HangoutsChat hangoutsChat;
+
     public Drive getDrive() {
         return drive;
     }
@@ -38,12 +41,18 @@ public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEv
         return directory;
     }
 
+    public HangoutsChat getHangOutsChat() {
+        return hangoutsChat;
+    }
+
+
     @Async
     @Override
     public void onApplicationEvent(ServerStartupEvent event) {
         try {
             this.drive = googleAccessor.accessGoogleDrive();
             this.directory = googleAccessor.accessGoogleDirectory();
+            this.hangoutsChat = googleAccessor.accessGoogleChat();
         } catch (IOException e) {
             LOG.error("An error occurred while initializing Google Drive access.", e);
         }
