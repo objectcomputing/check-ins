@@ -1,10 +1,16 @@
 package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.auth.oauth.OAuthParameters;
+import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.BasicAuthentication;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpExecuteInterceptor;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -15,6 +21,7 @@ import com.google.api.services.admin.directory.Directory;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.OAuth2Credentials;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
@@ -22,6 +29,8 @@ import io.micronaut.context.env.Environment;
 import com.google.api.services.calendar.Calendar;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
+import io.micronaut.security.authentication.Authentication;
+
 import javax.inject.Singleton;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -44,15 +53,31 @@ public class GoogleAccessor {
     private final String applicationName;
     private final GoogleAuthenticator authenticator;
     private final Environment environment;
+    private final GoogleServiceConfiguration gServiceConfig;
 
     public GoogleAccessor(@Property(name = "check-ins.application.name") String applicationName,
                           GoogleAuthenticator authenticator,
-                          Environment environment) throws GeneralSecurityException, IOException {
+                          Environment environment,
+                          GoogleServiceConfiguration gServiceConfig) throws GeneralSecurityException, IOException {
         this.applicationName = applicationName;
         this.authenticator = authenticator;
         this.environment = environment;
+        this.gServiceConfig =gServiceConfig;
     }
 
+    public Credential getCalendarCredential () throws IOException {
+
+        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
+        List<String> scope = Collections.singletonList(apiScope);
+        HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(authenticator.setupCredentials(scope));
+        return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())
+                .setTransport(httpTransport)
+                .setJsonFactory(JSON_FACTORY)
+                .setRequestInitializer(requestInitializer)
+                .setTokenServerUrl(new GenericUrl(gServiceConfig.getToken_uri()))
+                .setClientAuthentication(new BasicAuthentication(gServiceConfig.getOauth_client_id(), gServiceConfig.getOauth_client_secret()))
+                .build();
+        }
     /**
      * Create and return the google drive access object
      *
@@ -80,7 +105,8 @@ public class GoogleAccessor {
         String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(authenticator.setupCredentials(scope));
-        return new Calendar.Builder(httpTransport, JSON_FACTORY, requestInitializer).setApplicationName(applicationName).build();
+
+        return new Calendar.Builder(httpTransport, JSON_FACTORY, getCalendarCredential()).setApplicationName(applicationName).build();
     }
 
 

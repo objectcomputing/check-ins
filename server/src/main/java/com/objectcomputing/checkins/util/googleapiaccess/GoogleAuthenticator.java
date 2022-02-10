@@ -47,7 +47,6 @@ public class GoogleAuthenticator {
             credentials = GoogleCredentials.getApplicationDefault();
             throw new FileNotFoundException("Credentials not found while using Google default credentials");
         }
-
         return scopes.isEmpty() ? credentials : credentials.createScoped(scopes);
     }
 
