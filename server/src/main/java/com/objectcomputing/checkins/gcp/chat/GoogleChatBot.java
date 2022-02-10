@@ -14,10 +14,10 @@ import com.google.pubsub.v1.PubsubMessage;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import io.micronaut.gcp.pubsub.annotation.PubSubListener;
 import io.micronaut.gcp.pubsub.annotation.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.micronaut.gcp.pubsub.annotation.PubSubListener;
 
 import java.util.ArrayList;
 import java.util.List;
