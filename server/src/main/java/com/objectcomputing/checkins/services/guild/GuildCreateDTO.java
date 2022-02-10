@@ -23,9 +23,15 @@ public class GuildCreateDTO {
     @Schema(description = "members of this guild")
     private List<GuildMemberCreateDTO> guildMembers;
 
-    public GuildCreateDTO(String name, @Nullable String description) {
+    @Nullable
+    @Schema(description="link to the homepage of the guild")
+    private String link;
+    
+
+    public GuildCreateDTO(String name, @Nullable String description, @Nullable String link) {
         this.name = name;
         this.description = description;
+        this.link =link;
     }
 
     public GuildCreateDTO() {
@@ -37,7 +43,7 @@ public class GuildCreateDTO {
         if (o == null || getClass() != o.getClass()) return false;
         com.objectcomputing.checkins.services.guild.GuildCreateDTO that = (com.objectcomputing.checkins.services.guild.GuildCreateDTO) o;
         return Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description);
+                Objects.equals(description, that.description) && Objects.equals(link, that.link);
     }
 
     @Override
@@ -68,6 +74,15 @@ public class GuildCreateDTO {
 
     public void setDescription(@Nullable String description) {
         this.description = description;
+    }
+
+    @Nullable
+    public String getLink() {
+        return this.link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     @Introspected

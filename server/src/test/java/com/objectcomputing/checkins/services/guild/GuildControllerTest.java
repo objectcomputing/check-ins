@@ -134,12 +134,13 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString());
     }
-
+    
     @Test
     void testCreateAGuild() {
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
         guildCreateDTO.setName("name");
         guildCreateDTO.setDescription("description");
+        guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -155,10 +156,32 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     }
 
     @Test
+    void testCreateGuildFakeLink() {
+        GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
+        guildCreateDTO.setName("name");
+        guildCreateDTO.setDescription("description");
+        guildCreateDTO.setLink("wwwu.fakelink.com");
+        guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
+
+        final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Link is invalid", errors.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(request.getPath(), href.asText());
+
+    }
+    @Test
     void testCreateGuildNoLeads() {
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
         guildCreateDTO.setName("name");
         guildCreateDTO.setDescription("description");
+        guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(new ArrayList<>());
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -213,6 +236,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
         guildCreateDTO.setDescription("test");
         guildCreateDTO.setName(guildEntity.getName());
+        guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(new ArrayList<>());
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
 
@@ -375,7 +399,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testUpdateGuildNullName() {
         Guild guildEntity = createDefaultGuild();
 
-        GuildUpdateDTO requestBody = new GuildUpdateDTO(guildEntity.getId(), null, null);
+        GuildUpdateDTO requestBody = new GuildUpdateDTO(guildEntity.getId(), null, null,null);
         requestBody.setGuildMembers(new ArrayList<>());
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("", requestBody)
@@ -410,7 +434,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testUpdateGuildNotExist() {
         Guild guildEntity = createDefaultGuild();
         UUID requestId = UUID.randomUUID();
-        GuildUpdateDTO requestBody = new GuildUpdateDTO(requestId.toString(), guildEntity.getName(), guildEntity.getDescription());
+        GuildUpdateDTO requestBody = new GuildUpdateDTO(requestId.toString(), guildEntity.getName(), guildEntity.getDescription(), guildEntity.getLink());
         requestBody.setGuildMembers(new ArrayList<>());
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();

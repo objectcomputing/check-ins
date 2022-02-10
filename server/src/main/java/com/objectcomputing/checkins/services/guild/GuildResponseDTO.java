@@ -24,16 +24,22 @@ public class GuildResponseDTO {
     @Schema(description = "description of the guild")
     private String description;
 
+    @Nullable
+    @Schema(description="link to the homepage of the guild")
+    private String link;
+
+
     List<GuildMemberResponseDTO> guildMembers;
 
-    public GuildResponseDTO(UUID id, String name, @Nullable String description) {
+    public GuildResponseDTO(UUID id, String name, @Nullable String description, @Nullable String link) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.link = link;
     }
 
-    public GuildResponseDTO(String id, String name, @Nullable String description) {
-        this(UUID.fromString(id), name, description);
+    public GuildResponseDTO(String id, String name, @Nullable String description, @Nullable String link) {
+        this(UUID.fromString(id), name, description, link);
     }
 
     public GuildResponseDTO() {
@@ -46,6 +52,7 @@ public class GuildResponseDTO {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", link='" + link  +
                 '}';
     }
 
@@ -56,12 +63,13 @@ public class GuildResponseDTO {
         GuildResponseDTO that = (GuildResponseDTO) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description);
+                Objects.equals(description, that.description) &&
+                Objects.equals(link, that.link);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description);
+        return Objects.hash(id, name, description,link );
     }
 
     public List<GuildMemberResponseDTO> getGuildMembers() {
@@ -89,6 +97,15 @@ public class GuildResponseDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Nullable
+    public String getLink() {
+        return this.link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     @Nullable

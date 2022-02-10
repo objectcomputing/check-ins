@@ -27,18 +27,23 @@ public class GuildUpdateDTO {
     @Schema(description = "description of the guild")
     private String description;
 
+    @Nullable
+    @Schema(description="link to the homepage of the guild")
+    private String link;
+
     @Schema(description = "members of this guild")
     private List<GuildMemberUpdateDTO> guildMembers;
 
 
-    public GuildUpdateDTO(UUID id, String name, @Nullable String description) {
+    public GuildUpdateDTO(UUID id, String name, @Nullable String description, @Nullable String link) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.link = link;
     }
 
-    public GuildUpdateDTO(String id, String name, String description) {
-        this(nullSafeUUIDFromString(id), name, description);
+    public GuildUpdateDTO(String id, String name, String description, @Nullable String link) {
+        this(nullSafeUUIDFromString(id), name, description, link);
     }
 
     public GuildUpdateDTO() {
@@ -51,6 +56,7 @@ public class GuildUpdateDTO {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", link='" + link+ '\'' +
                 '}';
     }
 
@@ -61,12 +67,13 @@ public class GuildUpdateDTO {
         com.objectcomputing.checkins.services.guild.GuildUpdateDTO updateDTO = (com.objectcomputing.checkins.services.guild.GuildUpdateDTO) o;
         return Objects.equals(id, updateDTO.id) &&
                 Objects.equals(name, updateDTO.name) &&
-                Objects.equals(description, updateDTO.description);
+                Objects.equals(description, updateDTO.description) &&
+                Objects.equals(link, updateDTO.link);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description);
+        return Objects.hash(id, name, description,link);
     }
 
     public List<GuildMemberUpdateDTO> getGuildMembers() {
@@ -91,6 +98,15 @@ public class GuildUpdateDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Nullable
+    public String getLink() {
+        return this.link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     @Nullable
