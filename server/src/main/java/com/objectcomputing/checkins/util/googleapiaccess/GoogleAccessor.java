@@ -2,9 +2,7 @@ package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.auth.oauth.OAuthParameters;
-import com.google.api.client.auth.oauth2.BearerToken;
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.auth.oauth2.*;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -62,11 +60,30 @@ public class GoogleAccessor {
         this.gServiceConfig =gServiceConfig;
     }
 
+    private TokenResponse getUserToken(GoogleCredentials credential) throws IOException {
+
+        final TokenResponse response = new RefreshTokenRequest(httpTransport, JSON_FACTORY, new GenericUrl(gServiceConfig.getToken_uri()), credential.refreshAccessToken().getTokenValue())
+                .setClientAuthentication(new ClientParametersAuthentication(gServiceConfig.getOauth_client_id(), gServiceConfig.getOauth_client_secret()))
+                .execute();
+        return response;
+
+//        final TokenRequest request = new RefreshTokenRequest(
+//                this.httpTransport, JSON_FACTORY,
+//                new GenericUrl(credential.),
+//                credential.getRefreshToken())
+//                .setClientAuthentication(credential.getClientAuthentication())
+//                .setRequestInitializer(credential);
+//        final TokenResponse response = request.execute();
+//        return (String) response.get("id_token");
+    }
+
     public Credential getCalendarCredential () throws IOException {
+
 
         String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
         GoogleCredentials googleCredentials = authenticator.setupCredentials(scope);
+        TokenResponse response = getUserToken(googleCredentials);
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(googleCredentials);
 
         return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())
@@ -77,7 +94,10 @@ public class GoogleAccessor {
                 //revisit set client authentication??
 //                .setClientAuthentication(new GoogleAuthentication(gServiceConfig.getOauth_client_id(), gServiceConfig.getOauth_client_secret()))
                 .build()
+                .setFromTokenResponse(response)
                 .setAccessToken(googleCredentials.getAccessToken().toString());
+
+
 
 
         }
@@ -108,7 +128,6 @@ public class GoogleAccessor {
         String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(authenticator.setupCredentials(scope));
-
         return new Calendar.Builder(httpTransport, JSON_FACTORY, getCalendarCredential()).setApplicationName(applicationName).build();
     }
 
