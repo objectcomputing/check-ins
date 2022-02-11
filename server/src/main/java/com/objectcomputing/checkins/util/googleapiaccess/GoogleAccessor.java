@@ -8,10 +8,7 @@ import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.BasicAuthentication;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpExecuteInterceptor;
-import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -69,14 +66,20 @@ public class GoogleAccessor {
 
         String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
-        HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(authenticator.setupCredentials(scope));
+        GoogleCredentials googleCredentials = authenticator.setupCredentials(scope);
+        HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(googleCredentials);
+
         return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())
                 .setTransport(httpTransport)
                 .setJsonFactory(JSON_FACTORY)
                 .setRequestInitializer(requestInitializer)
                 .setTokenServerUrl(new GenericUrl(gServiceConfig.getToken_uri()))
-                .setClientAuthentication(new BasicAuthentication(gServiceConfig.getOauth_client_id(), gServiceConfig.getOauth_client_secret()))
-                .build();
+                //revisit set client authentication??
+//                .setClientAuthentication(new GoogleAuthentication(gServiceConfig.getOauth_client_id(), gServiceConfig.getOauth_client_secret()))
+                .build()
+                .setAccessToken(googleCredentials.getAccessToken().toString());
+
+
         }
     /**
      * Create and return the google drive access object
