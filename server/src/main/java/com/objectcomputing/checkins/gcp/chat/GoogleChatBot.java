@@ -10,6 +10,7 @@ import com.google.api.services.chat.v1.model.Message;
 import com.google.api.services.chat.v1.model.Thread;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.protobuf.DescriptorProtos;
 import com.google.pubsub.v1.PubsubMessage;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -47,6 +48,7 @@ public class GoogleChatBot {
     }
 
     public void sendChat(String content, String ...recipients) {
+       
         try {
             List<GoogleChatBotEntry> toBeSent = new ArrayList<>();
                 for (String recipient : recipients) {
