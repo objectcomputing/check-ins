@@ -46,6 +46,8 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
                 Tuple newTuple = new Tuple(elementQuestion, answer, feedbackRequest);
                 returnerList.add(newTuple);
             }
+        } else {
+            
         }
         return returnerList;
     }

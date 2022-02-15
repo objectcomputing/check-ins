@@ -23,6 +23,9 @@ import {
   updateSingleAnswer,
   updateFeedbackRequest
 } from "../../api/feedback";
+import {
+getQuestionAndAnswer
+} from "../../api/feedbackanswer"
 import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
@@ -318,28 +321,43 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }
 
   useEffect(() => {
-    async function getQuestions(requestId, cookie) {
-      if (!requestId) return;
-      const res = await getQuestionsByRequestId(requestId, cookie);
-      setTemplateTitle(res?.title);
-      let questionsList = res?.questions ? res.questions : [];
-      return questionsList;
-    }
 
-    async function getAnswers(questionsList) {
-      if (!questionsList) {
+  async function getAllQuestionsAndAnswers(requestId, cookie) {
+    if (!requestId) {
         return;
-      }
-      const res = getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
-      return res;
     }
+    const res = await getQuestionAndAnswer(requestId, cookie)
+    console.log("Res")
+    console.log(res)
+    return res;
+  }
+
+//     async function getQuestions(requestId, cookie) {
+//       if (!requestId) return;
+//       const res = await getQuestionsByRequestId(requestId, cookie);
+//       setTemplateTitle(res?.title);
+//       let questionsList = res?.questions ? res.questions : [];
+//       return questionsList;
+//     }
+//
+//     async function getAnswers(questionsList) {
+//       if (!questionsList) {
+//         return;
+//       }
+//       const res = getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
+//       return res;
+//     }
 
     if (csrf) {
-      getQuestions(requestId, csrf).then((questionsList) => {
-        getAnswers(questionsList).then((answers) => {
-          setQuestionAnswerPairs(answers)
-        })
-      });
+    getAllQuestionsAndAnswers(requestId, csrf).then((res) =>{
+        console.log("res")
+        console.log(res)
+    })
+//       getQuestions(requestId, csrf).then((questionsList) => {
+//         getAnswers(questionsList).then((answers) => {
+//           setQuestionAnswerPairs(answers)
+//         })
+//       });
     }
   }, [requestId, csrf]);
 
