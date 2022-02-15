@@ -327,8 +327,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
         return;
     }
     const res = await getQuestionAndAnswer(requestId, cookie)
-    console.log("Res")
-    console.log(res)
     return res;
   }
 
@@ -350,8 +348,9 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
 
     if (csrf) {
     getAllQuestionsAndAnswers(requestId, csrf).then((res) =>{
-        console.log("res")
-        console.log(res)
+     if (res && res.payload && res.payload.data && !res.error) {
+        setQuestionAnswerPairs(res.payload.data)
+       }
     })
 //       getQuestions(requestId, csrf).then((questionsList) => {
 //         getAnswers(questionsList).then((answers) => {

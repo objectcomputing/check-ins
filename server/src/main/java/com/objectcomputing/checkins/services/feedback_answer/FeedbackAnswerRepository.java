@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
+import com.objectcomputing.checkins.services.employee_hours.EmployeeHours;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
@@ -15,6 +16,9 @@ public interface FeedbackAnswerRepository extends CrudRepository<FeedbackAnswer,
 
     @Override
     <S extends FeedbackAnswer> S save(@NotNull @Valid S entity);
+
+    @Override
+    <S extends FeedbackAnswer> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
 
     @Override
     <S extends FeedbackAnswer> S update(@NotNull @Valid S entity);
