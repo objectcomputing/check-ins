@@ -36,7 +36,7 @@ import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Named("oauth")
+@Named("calendar-setup")
 @Singleton
 class OauthAuthenticationMapper implements OauthUserDetailsMapper {
 
