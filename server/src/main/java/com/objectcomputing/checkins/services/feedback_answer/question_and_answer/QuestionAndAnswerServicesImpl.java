@@ -38,16 +38,25 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         if (!getIsPermitted(feedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
-        List<FeedbackAnswer> answerList = feedbackAnswerServices.findByValues(null, requestId);
-        List<Tuple> returnerList = new ArrayList<>();
-        if (!answerList.isEmpty()) {
-            for (FeedbackAnswer answer : answerList) {
-                TemplateQuestion elementQuestion = templateQuestionServices.getById(answer.getQuestionId());
-                Tuple newTuple = new Tuple(elementQuestion, answer, feedbackRequest);
-                returnerList.add(newTuple);
+        List<TemplateQuestion> templateQuestions = templateQuestionServices.findByFields(feedbackRequest.getTemplateId());
+        if (!templateQuestions.isEmpty()) {
+            List<FeedbackAnswer> answerList = feedbackAnswerServices.findByValues(null, requestId);
+            if (answerList.isEmpty()) {
+                answerList = new ArrayList<FeedbackAnswer>(templateQuestions.size());
+                for (FeedbackAnswer newAnswer: answerList) {
+                    
+                }
             }
-        } else {
-            
+            List<Tuple> returnerList = new ArrayList<>();
+            if (answerList.isEmpty()) {
+                for (FeedbackAnswer answer : answerList) {
+                    TemplateQuestion elementQuestion = templateQuestionServices.getById(answer.getQuestionId());
+                    Tuple newTuple = new Tuple(elementQuestion, answer, feedbackRequest);
+                    returnerList.add(newTuple);
+                }
+            } else {
+
+            }
         }
         return returnerList;
     }
