@@ -19,6 +19,7 @@ import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.core.exceptions.ExceptionHandler;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
+import io.micronaut.security.oauth2.configuration.OauthClientConfigurationProperties;
 import io.micronaut.security.oauth2.endpoint.authorization.state.State;
 import io.micronaut.security.oauth2.endpoint.token.response.OauthUserDetailsMapper;
 import io.micronaut.security.oauth2.endpoint.token.response.OpenIdClaims;
@@ -44,18 +45,20 @@ class OauthAuthenticationMapper implements OauthUserDetailsMapper {
     private final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     private final String applicationName;
     private final Environment environment;
-    private final MemberProfileRepository memberProfileRepository;
     private final CurrentUserServices currentUserServices;
     private final RoleRepository roleRepository;
+    private OauthClientConfigurationProperties props;
     private Calendar calendar;
 
     public OauthAuthenticationMapper(@Property(name = "check-ins.application.name") String applicationName,
-                                     Environment environment, MemberProfileRepository memberProfileRepository,
-                                     RoleRepository roleRepository, CurrentUserServices currentUserServices) throws GeneralSecurityException, IOException {
+                                     Environment environment,
+                                     RoleRepository roleRepository, CurrentUserServices currentUserServices,
+                                     OauthClientConfigurationProperties props
+                                     ) throws GeneralSecurityException, IOException {
         this.applicationName = applicationName;
         this.environment = environment;
-        this.memberProfileRepository = memberProfileRepository;
         this.roleRepository = roleRepository;
+        this.props = props;
         this.currentUserServices = currentUserServices;
     }
 
