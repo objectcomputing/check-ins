@@ -20,7 +20,8 @@ public class CsrfModelProcessor{
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
     @Get("/cookie")
-    public HttpResponse <?> getCsrfToken()  {
+    public HttpResponse <?>
+    getCsrfToken()  {
         SecureRandom random = new SecureRandom();
         byte[] randomBytes = new byte[24];
         random.nextBytes(randomBytes);

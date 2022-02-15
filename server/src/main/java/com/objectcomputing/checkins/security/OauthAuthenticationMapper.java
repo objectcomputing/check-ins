@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 
 @Named("google")
 @Singleton
-class OauthAuthenticationMapper implements OauthUserDetailsMapper {
+public class OauthAuthenticationMapper implements OauthUserDetailsMapper {
 
     private final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -59,6 +59,9 @@ class OauthAuthenticationMapper implements OauthUserDetailsMapper {
         this.currentUserServices = currentUserServices;
     }
 
+    public Calendar getCalendar() {
+        return this.calendar;
+    }
 
     @Override
     public Publisher<UserDetails> createUserDetails(TokenResponse tokenResponse) {
@@ -86,6 +89,7 @@ class OauthAuthenticationMapper implements OauthUserDetailsMapper {
         List<String> scope = Collections.singletonList(apiScope);
 
         GoogleCredential credential = new GoogleCredential().setAccessToken(tokenResponse.getAccessToken()).setRefreshToken(tokenResponse.getRefreshToken()).createScoped(scope);
+
         calendar = new Calendar
                 .Builder(httpTransport, JSON_FACTORY, credential)
                 .setApplicationName(applicationName)

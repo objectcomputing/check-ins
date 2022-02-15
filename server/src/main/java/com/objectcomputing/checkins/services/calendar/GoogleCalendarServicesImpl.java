@@ -12,6 +12,7 @@ import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
+import com.objectcomputing.checkins.security.OauthAuthenticationMapper;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
@@ -21,6 +22,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
 
     private final GoogleApiAccess googleApiAccess;
+    private final OauthAuthenticationMapper oauthMapper;
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
     private final GoogleServiceConfiguration googleServiceConfiguration;
@@ -30,10 +32,11 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
     // Change the scope to CalendarScopes.CALENDAR and delete any stored
     // credentials.
     public GoogleCalendarServicesImpl(GoogleApiAccess googleApiAccess,
-            MemberProfileServices memberProfileServices,
-            CurrentUserServices currentUserServices,
-            GoogleServiceConfiguration googleServiceConfiguration) {
+                                      OauthAuthenticationMapper oauthMapper, MemberProfileServices memberProfileServices,
+                                      CurrentUserServices currentUserServices,
+                                      GoogleServiceConfiguration googleServiceConfiguration) {
         this.googleApiAccess = googleApiAccess;
+        this.oauthMapper = oauthMapper;
         this.memberProfileServices = memberProfileServices;
         this.currentUserServices = currentUserServices;
         this.googleServiceConfiguration = googleServiceConfiguration;
@@ -46,7 +49,7 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
 
     @Override
     public String save() {
-        Calendar calendarService = googleApiAccess.getCalendar();
+        Calendar calendarService = oauthMapper.getCalendar();
         validate(calendarService == null, "Unable to access Google Calendars");
         Event event = new Event()
                 .setSummary("Check-Ins 2022")
