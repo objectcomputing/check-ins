@@ -37,7 +37,7 @@ import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Named("calendar-setup")
+@Named("google")
 @Singleton
 class OauthAuthenticationMapper implements OauthUserDetailsMapper {
 
@@ -47,18 +47,15 @@ class OauthAuthenticationMapper implements OauthUserDetailsMapper {
     private final Environment environment;
     private final CurrentUserServices currentUserServices;
     private final RoleRepository roleRepository;
-    private OauthClientConfigurationProperties props;
     private Calendar calendar;
 
     public OauthAuthenticationMapper(@Property(name = "check-ins.application.name") String applicationName,
                                      Environment environment,
-                                     RoleRepository roleRepository, CurrentUserServices currentUserServices,
-                                     OauthClientConfigurationProperties props
+                                     RoleRepository roleRepository, CurrentUserServices currentUserServices
                                      ) throws GeneralSecurityException, IOException {
         this.applicationName = applicationName;
         this.environment = environment;
         this.roleRepository = roleRepository;
-        this.props = props;
         this.currentUserServices = currentUserServices;
     }
 
