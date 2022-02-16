@@ -155,7 +155,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([])
-  const [templateTitle, setTemplateTitle] = useState(null)
+  const [templateTitle] = useState(null)
 
   const updateAnswer = useCallback(
     (index) => updateFeedbackAnswer(questionAnswerPairs[index]?.answer, csrf),
