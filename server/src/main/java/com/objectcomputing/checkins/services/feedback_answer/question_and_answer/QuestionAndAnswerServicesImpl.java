@@ -61,13 +61,12 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
             }
 
         } else {
-            for (FeedbackAnswer answer: answerList) {
-                TemplateQuestion elementQuestion = templateQuestions.stream().filter(o -> o.getId().equals(answer.getQuestionId())).findFirst().orElse(null);
-                Tuple newTuple = new Tuple(elementQuestion, answer, feedbackRequest);
+            for (TemplateQuestion question: templateQuestions) {
+                FeedbackAnswer foundAnswer = answerList.stream().filter(o -> o.getQuestionId().equals(question.getId())).findFirst().orElse(null);
+                Tuple newTuple = new Tuple(question, foundAnswer, feedbackRequest);
                 returnerList.add(newTuple);
             }
         }
-        LOG.debug(String.valueOf(returnerList));
         return returnerList;
     }
 

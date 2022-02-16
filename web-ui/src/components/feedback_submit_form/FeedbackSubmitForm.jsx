@@ -17,9 +17,7 @@ import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 import {
-  getAllAnswersFromRequestAndQuestionId,
   updateAllAnswers,
-  getQuestionsByRequestId,
   updateSingleAnswer,
   updateFeedbackRequest
 } from "../../api/feedback";
@@ -330,35 +328,22 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     return res;
   }
 
-//     async function getQuestions(requestId, cookie) {
-//       if (!requestId) return;
-//       const res = await getQuestionsByRequestId(requestId, cookie);
-//       setTemplateTitle(res?.title);
-//       let questionsList = res?.questions ? res.questions : [];
-//       return questionsList;
-//     }
-//
-//     async function getAnswers(questionsList) {
-//       if (!questionsList) {
-//         return;
-//       }
-//       const res = getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
-//       return res;
-//     }
-
     if (csrf) {
     getAllQuestionsAndAnswers(requestId, csrf).then((res) =>{
      if (res && res.payload && res.payload.data && !res.error) {
         setQuestionAnswerPairs(res.payload.data)
-       }
+      } else{
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: res.error,
+          },
+        });
+      }
     })
-//       getQuestions(requestId, csrf).then((questionsList) => {
-//         getAnswers(questionsList).then((answers) => {
-//           setQuestionAnswerPairs(answers)
-//         })
-//       });
     }
-  }, [requestId, csrf]);
+  }, [requestId, csrf, dispatch]);
 
   const isReview = templateTitle === "Annual Review";
 
