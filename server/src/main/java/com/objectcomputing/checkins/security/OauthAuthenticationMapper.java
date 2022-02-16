@@ -63,6 +63,10 @@ public class OauthAuthenticationMapper implements OauthUserDetailsMapper {
         return this.calendar;
     }
 
+    protected void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
     @Override
     public Publisher<UserDetails> createUserDetails(TokenResponse tokenResponse) {
         Map<String, Object> oauthProperties = new HashMap<>();

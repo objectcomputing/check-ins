@@ -31,6 +31,8 @@ public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEv
 
     private Directory directory;
 
+    private Calendar calendar;
+
 
     public Drive getDrive() {
         return drive;
@@ -40,6 +42,10 @@ public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEv
         return directory;
     }
 
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
 
     @Async
     @Override
@@ -47,6 +53,7 @@ public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEv
         try {
             this.drive = googleAccessor.accessGoogleDrive();
             this.directory = googleAccessor.accessGoogleDirectory();
+            this.calendar = googleAccessor.accessGoogleCalendar();
         } catch (IOException e) {
             LOG.error("An error occurred while initializing Google Drive access.", e);
         }

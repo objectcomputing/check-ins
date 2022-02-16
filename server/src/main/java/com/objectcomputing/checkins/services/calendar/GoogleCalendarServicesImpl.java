@@ -17,9 +17,14 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.objectcomputing.checkins.exceptions.BadArgException;
 @Singleton
 public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
+
+    private final Logger LOG = LoggerFactory.getLogger(GoogleCalendarServicesImpl.class);
 
     private final GoogleApiAccess googleApiAccess;
     private final OauthAuthenticationMapper oauthMapper;
@@ -49,8 +54,10 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
 
     @Override
     public String save() {
-        Calendar calendarService = oauthMapper.getCalendar();
-        validate(calendarService == null, "Unable to access Google Calendars");
+        Calendar calendarService = googleApiAccess.getCalendar();
+        LOG.info(calendarService.toString());
+
+        validate(calendarService == null, "Unable to access Google Calendars " + calendarService.toString());
         Event event = new Event()
                 .setSummary("Check-Ins 2022")
                 .setLocation("800 Howard St., San Francisco, CA 94103")
