@@ -9,6 +9,7 @@ import io.micronaut.http.hateoas.Link;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import io.netty.channel.EventLoopGroup;
@@ -53,8 +54,8 @@ public class GoogleCalendarController {
      */
 
     @Post("/")
-    public Single<HttpResponse<String>> save() {
-        return Single.fromCallable(() -> googleCalendarServices.save())
+    public Single<HttpResponse<String>> save(Authentication authentication) {
+        return Single.fromCallable(() -> googleCalendarServices.save(authentication))
         .observeOn(Schedulers.from(eventLoopGroup))
         .map(savedEvent -> (HttpResponse<String>) HttpResponse
         .ok()

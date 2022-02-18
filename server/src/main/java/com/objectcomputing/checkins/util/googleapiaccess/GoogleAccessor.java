@@ -36,16 +36,13 @@ public class GoogleAccessor {
     private final String applicationName;
     private final GoogleAuthenticator authenticator;
     private final Environment environment;
-    private final Authentication authentication;
 
     public GoogleAccessor(@Property(name = "check-ins.application.name") String applicationName,
                           GoogleAuthenticator authenticator,
-                          Environment environment,
-                          Authentication authentication) throws GeneralSecurityException, IOException {
+                          Environment environment) throws GeneralSecurityException, IOException {
         this.applicationName = applicationName;
         this.authenticator = authenticator;
         this.environment = environment;
-        this.authentication = authentication;
     }
 
     /** 
@@ -54,7 +51,7 @@ public class GoogleAccessor {
     * @return a google calendar access object
     * @throws IOException
     */
-    public Calendar accessGoogleCalendar() throws IOException {
+    public Calendar accessGoogleCalendar(Authentication authentication) throws IOException {
         String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
         String accessToken = (String) authentication.getAttributes().get(OauthUserDetailsMapper.ACCESS_TOKEN_KEY);

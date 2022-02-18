@@ -18,6 +18,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleAccessor;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 
+import io.micronaut.security.authentication.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +55,8 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
     }
 
     @Override
-    public String save() throws IOException {
-        Calendar calendarService = googleAccessor.accessGoogleCalendar();
+    public String save(Authentication authentication) throws IOException {
+        Calendar calendarService = googleAccessor.accessGoogleCalendar(authentication);
         LOG.info(calendarService.toString());
 
         validate(calendarService == null, "Unable to access Google Calendars " + calendarService.toString());
