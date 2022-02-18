@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.feedback_template;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_questions.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;

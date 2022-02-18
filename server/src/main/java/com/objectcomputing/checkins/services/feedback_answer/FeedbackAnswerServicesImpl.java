@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_questions.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import java.util.List;

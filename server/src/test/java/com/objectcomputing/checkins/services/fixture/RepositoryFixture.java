@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepo
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.demographics.DemographicsRepository;
 import com.objectcomputing.checkins.services.feedback.FeedbackRepository;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionRepository;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_questions.TemplateQuestionRepository;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;

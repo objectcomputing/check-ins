@@ -1,15 +1,18 @@
-package com.objectcomputing.checkins.services.feedback_template.template_question;
+package com.objectcomputing.checkins.services.feedback_template.template_question.template_questions;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_question_values.TemplateQuestionValue;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_question_values.TemplateQuestionValueServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,17 +23,20 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     private final TemplateQuestionRepository templateQuestionRepository;
     private final CurrentUserServices currentUserServices;
     private final FeedbackTemplateRepository feedbackTemplateRepo;
+    private final TemplateQuestionValueServices templateQuestionValueServices;
 
     public TemplateQuestionServicesImpl(TemplateQuestionRepository templateQuestionRepository,
                                         CurrentUserServices currentUserServices,
-                                        FeedbackTemplateRepository feedbackTemplateRepo) {
+                                        FeedbackTemplateRepository feedbackTemplateRepo,
+                                        TemplateQuestionValueServices templateQuestionValueServices) {
         this.templateQuestionRepository = templateQuestionRepository;
         this.currentUserServices = currentUserServices;
         this.feedbackTemplateRepo = feedbackTemplateRepo;
+        this.templateQuestionValueServices = templateQuestionValueServices;
     }
 
     @Override
-    public TemplateQuestion save(TemplateQuestion templateQuestion) {
+    public Pair<TemplateQuestion, List<TemplateQuestionValue>> save(TemplateQuestion templateQuestion, List<TemplateQuestionValue> questionOptions) {
         if (templateQuestion == null) {
             throw new BadArgException("Attempted to save null template question");
         } else if (templateQuestion.getId() != null) {
@@ -54,19 +60,31 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        return templateQuestionRepository.save(templateQuestion);
+        TemplateQuestion savedQuestion = templateQuestionRepository.save(templateQuestion);
+        List<TemplateQuestionValue> questionValueList=null;
+        if (savedQuestion.getId() != null) {
+            for (TemplateQuestionValue questionValue: questionOptions) {
+                questionValue.setQuestionId(savedQuestion.getId());
+                TemplateQuestionValue returnedQuestionValue = templateQuestionValueServices.save(questionValue);
+                questionValueList.add(returnedQuestionValue);
+
+            }
+
+        }
+        return new MutablePair<>(savedQuestion, questionValueList);
+
     }
 
     @Override
-    public TemplateQuestion update(TemplateQuestion templateQuestion) {
+    public TemplateQuestion update(TemplateQuestion templateQuestion, List<TemplateQuestionValue> questionOptions) {
         if (templateQuestion == null) {
             throw new BadArgException("Attempted to save null template question");
         } else if (templateQuestion.getId() == null) {
             throw new BadArgException("Attempted to save question with null ID");
         }
 
-        TemplateQuestion oldTemplateQuestion = getById(templateQuestion.getId());
-        templateQuestion.setTemplateId(oldTemplateQuestion.getTemplateId());
+        Pair<TemplateQuestion, List<TemplateQuestionValue>> oldTemplateQuestion = getById(templateQuestion.getId());
+        templateQuestion.setTemplateId(oldTemplateQuestion.getLeft().getTemplateId());
         Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.getTemplateId());
 
         if (feedbackTemplate.isEmpty()) {
@@ -83,7 +101,15 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        return templateQuestionRepository.update(templateQuestion);
+        TemplateQuestion updatedQuestion =  templateQuestionRepository.update(templateQuestion);
+        if (updatedQuestion != null) {
+            for (TemplateQuestionValue questionValue: questionOptions) {
+                questionValue.setQuestionId(updatedQuestion.getId());
+                templateQuestionValueServices.update(questionValue);
+            }
+
+        }
+        return updatedQuestion;
     }
 
     @Override
@@ -102,13 +128,19 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
+        //Delete all options/values associated with the question
+        List<TemplateQuestionValue> templateQuestionValues = templateQuestionValueServices.findByFields(id);
+        for (TemplateQuestionValue questionValue: templateQuestionValues) {
+            templateQuestionValueServices.delete(questionValue.getId());
+        }
         // Delete the question
         templateQuestionRepository.deleteById(id);
+
         return true;
     }
 
     @Override
-    public TemplateQuestion getById(UUID id) {
+    public Pair<TemplateQuestion, List<TemplateQuestionValue>> getById(UUID id){
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
         if (!getIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
@@ -118,18 +150,27 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             throw new NotFoundException("No feedback question with ID " + id);
         }
 
-        return templateQuestion.get();
+        TemplateQuestion receivedQuestion = templateQuestion.get();
+        List<TemplateQuestionValue> templateQuestionValues = templateQuestionValueServices.findByFields(receivedQuestion.getId());
+        return new MutablePair<TemplateQuestion, List<TemplateQuestionValue>>(receivedQuestion, templateQuestionValues);
     }
 
     @Override
-    public List<TemplateQuestion> findByFields(UUID templateId) {
+    public List<Pair<TemplateQuestion, List<TemplateQuestionValue>>> findByFields(UUID templateId) {
         if (templateId == null) {
             throw new BadArgException("Cannot find template questions for null template ID");
         } else if (!getIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
+        List<TemplateQuestion> templateQuestions = templateQuestionRepository.findByTemplateId(Util.nullSafeUUIDToString(templateId));
+        List<Pair<TemplateQuestion, List<TemplateQuestionValue>>> returnerList = null;
+        for (TemplateQuestion question: templateQuestions ) {
+            List<TemplateQuestionValue> templateQuestionValues = templateQuestionValueServices.findByFields(question.getId());
+            Pair<TemplateQuestion,List<TemplateQuestionValue>> newPair = new MutablePair<>(question, templateQuestionValues);
+            returnerList.add(newPair);
+        }
 
-        return new ArrayList<>(templateQuestionRepository.findByTemplateId(Util.nullSafeUUIDToString(templateId)));
+        return returnerList;
     }
 
     // only admins or the creator of the template can add questions to it

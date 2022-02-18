@@ -1,5 +1,8 @@
-package com.objectcomputing.checkins.services.feedback_template.template_question;
+package com.objectcomputing.checkins.services.feedback_template.template_question.template_questions;
 
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_question_values.TemplateQuestionValue;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_question_values.TemplateQuestionValueCreateDTO;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_question_values.TemplateQuestionValueResponseDTO;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,6 +13,8 @@ import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -45,10 +50,10 @@ public class TemplateQuestionController {
      * @return {@link TemplateQuestionResponseDTO}
      */
     @Post()
-    public Single<HttpResponse<TemplateQuestionResponseDTO>> save(@Body @Valid @NotNull TemplateQuestionCreateDTO requestBody) {
-        return Single.fromCallable(() -> templateQuestionServices.save(fromDTO(requestBody)))
+    public Single<HttpResponse<TemplateQuestionResponseDTO>> save(@Body @Valid @NotNull Pair<TemplateQuestionCreateDTO, List<TemplateQuestionValueCreateDTO>> requestBody) {
+        return Single.fromCallable(() -> templateQuestionServices.save(fromDTOCreate(requestBody)))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(savedFeedbackQuestion -> (HttpResponse<TemplateQuestionResponseDTO>) HttpResponse
+                .map(savedFeedbackQuestion -> (HttpResponse<Pair<TemplateQuestionResponseDTO, List<TemplateQuestionValueResponseDTO>>>) HttpResponse
                         .created(fromEntity(savedFeedbackQuestion))
                         .headers(headers -> headers.location(URI.create("/template_questions/" + savedFeedbackQuestion.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
@@ -117,6 +122,30 @@ public class TemplateQuestionController {
                 }).subscribeOn(Schedulers.from(executorService));
     }
 
+    private Pair<TemplateQuestion, List<TemplateQuestionValue>> fromDTOCreate(Pair<TemplateQuestionCreateDTO, List<TemplateQuestionValueCreateDTO>> dto) {
+        TemplateQuestion question = fromDTO(dto.getKey());
+        List<TemplateQuestionValue> returnedList = null;
+        for (TemplateQuestionValueCreateDTO questionValue: dto.getValue()) {
+            TemplateQuestionValue newQuestionValue = new TemplateQuestionValue(questionValue.getOptionText(), questionValue.getOptionNumber());
+            returnedList.add(newQuestionValue);
+
+        }
+        return new MutablePair<TemplateQuestion, List<TemplateQuestionValue>>(question, returnedList);
+
+    }
+
+    private Pair<TemplateQuestion, List<TemplateQuestionValue>> fromDTOResponse(Pair<TemplateQuestionResponseDTO, List<TemplateQuestionValueResponseDTO>> dto) {
+        TemplateQuestion question = fromDTO(dto.getKey());
+        List<TemplateQuestionValue> returnedList = null;
+        for (TemplateQuestionValueResponseDTO questionValue: dto.getValue()) {
+            TemplateQuestionValue newQuestionValue = new TemplateQuestionValue(questionValue.getId(), questionValue.getOptionText(),questionValue.getQuestionId(), questionValue.getOptionNumber());
+            returnedList.add(newQuestionValue);
+
+        }
+        return new MutablePair<TemplateQuestion, List<TemplateQuestionValue>>(question, returnedList);
+
+    }
+
     /**
      * Converts a {@link TemplateQuestionCreateDTO} into a {@link TemplateQuestion}
      * @param dto {@link TemplateQuestionCreateDTO}
@@ -125,6 +154,16 @@ public class TemplateQuestionController {
     private TemplateQuestion fromDTO(TemplateQuestionCreateDTO dto) {
         return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getQuestionNumber());
     }
+
+    /**
+     * Converts a {@link TemplateQuestionResponseDTO} into a {@link TemplateQuestion}
+     * @param dto {@link TemplateQuestionResponseDTO}
+     * @return {@link TemplateQuestion}
+     */
+    private TemplateQuestion fromDTO(TemplateQuestionResponseDTO dto) {
+        return new TemplateQuestion(dto.getId(),dto.getQuestion(), dto.getTemplateId(), dto.getQuestionNumber());
+    }
+
 
     /**
      * Converts a {@link TemplateQuestionUpdateDTO} into a {@link TemplateQuestion}
@@ -147,6 +186,16 @@ public class TemplateQuestionController {
         dto.setTemplateId(templateQuestion.getTemplateId());
         dto.setQuestionNumber(templateQuestion.getQuestionNumber());
         return dto;
+    }
+
+    private Pair<TemplateQuestionResponseDTO, List<TemplateQuestionValueResponseDTO>> fromEntity(Pair<TemplateQuestion, List<TemplateQuestionValue>> values) {
+        TemplateQuestionResponseDTO dto = fromEntity(values.getKey());
+        for (TemplateQuestionValueResponseDTO questionValue: dto.getValue()) {
+            TemplateQuestionValue newQuestionValue = new TemplateQuestionValue(questionValue.getId(), questionValue.getOptionText(),questionValue.getQuestionId(), questionValue.getOptionNumber());
+            returnedList.add(newQuestionValue);
+
+        }
+        return new MutablePair<TemplateQuestion, List<TemplateQuestionValue>>(question, returnedList);
     }
 
 }

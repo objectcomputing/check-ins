@@ -4,7 +4,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_questions.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;

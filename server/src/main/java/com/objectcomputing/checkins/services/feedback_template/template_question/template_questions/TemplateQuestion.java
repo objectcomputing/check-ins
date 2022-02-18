@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.feedback_template.template_question;
+package com.objectcomputing.checkins.services.feedback_template.template_question.template_questions;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -88,6 +88,9 @@ public class TemplateQuestion {
     }
 
     public TemplateQuestion() {}
+
+    public TemplateQuestion(UUID id, String question, UUID templateId, Integer questionNumber) {
+    }
 
     public UUID getId() {
         return id;

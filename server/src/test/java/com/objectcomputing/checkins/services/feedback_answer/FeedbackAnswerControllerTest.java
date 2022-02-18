@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.feedback_answer;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_questions.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.FeedbackAnswerFixture;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;

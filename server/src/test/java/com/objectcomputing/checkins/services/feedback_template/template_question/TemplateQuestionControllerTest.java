@@ -2,6 +2,10 @@ package com.objectcomputing.checkins.services.feedback_template.template_questio
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_questions.TemplateQuestion;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_questions.TemplateQuestionCreateDTO;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_questions.TemplateQuestionResponseDTO;
+import com.objectcomputing.checkins.services.feedback_template.template_question.template_questions.TemplateQuestionUpdateDTO;
 import com.objectcomputing.checkins.services.fixture.TemplateQuestionFixture;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;

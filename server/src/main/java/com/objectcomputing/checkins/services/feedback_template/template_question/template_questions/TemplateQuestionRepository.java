@@ -1,7 +1,5 @@
-package com.objectcomputing.checkins.services.feedback_template.template_question;
+package com.objectcomputing.checkins.services.feedback_template.template_question.template_questions;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
