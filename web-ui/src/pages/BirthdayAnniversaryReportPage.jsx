@@ -90,6 +90,7 @@ const BirthdayAnniversaryReportPage = () => {
       );
     }
     setHasSearched(true);
+    console.log(anniversaryResults);
   };
 
   function onMonthChange(event, newValue) {
