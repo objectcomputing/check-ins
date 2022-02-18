@@ -15,6 +15,7 @@ import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.security.OauthAuthenticationMapper;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.util.googleapiaccess.GoogleAccessor;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
 
     private final Logger LOG = LoggerFactory.getLogger(GoogleCalendarServicesImpl.class);
 
-    private final GoogleApiAccess googleApiAccess;
+    private final GoogleAccessor googleAccessor;
     private final OauthAuthenticationMapper oauthMapper;
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
@@ -36,11 +37,11 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
     // https://developers.google.com/calendar/quickstart/java
     // Change the scope to CalendarScopes.CALENDAR and delete any stored
     // credentials.
-    public GoogleCalendarServicesImpl(GoogleApiAccess googleApiAccess,
+    public GoogleCalendarServicesImpl(GoogleAccessor googleAccessor,
                                       OauthAuthenticationMapper oauthMapper, MemberProfileServices memberProfileServices,
                                       CurrentUserServices currentUserServices,
                                       GoogleServiceConfiguration googleServiceConfiguration) {
-        this.googleApiAccess = googleApiAccess;
+        this.googleAccessor = googleAccessor;
         this.oauthMapper = oauthMapper;
         this.memberProfileServices = memberProfileServices;
         this.currentUserServices = currentUserServices;
@@ -53,8 +54,8 @@ public class GoogleCalendarServicesImpl implements GoogleCalendarServices {
     }
 
     @Override
-    public String save() {
-        Calendar calendarService = googleApiAccess.getCalendar();
+    public String save() throws IOException {
+        Calendar calendarService = googleAccessor.accessGoogleCalendar();
         LOG.info(calendarService.toString());
 
         validate(calendarService == null, "Unable to access Google Calendars " + calendarService.toString());
