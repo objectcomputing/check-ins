@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.util.googleapiaccess;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -15,6 +16,10 @@ import com.objectcomputing.checkins.security.OauthAuthenticationMapper;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
+import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.oauth2.endpoint.token.response.OauthUserDetailsMapper;
+
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.*;
 import java.security.GeneralSecurityException;
@@ -31,16 +36,16 @@ public class GoogleAccessor {
     private final String applicationName;
     private final GoogleAuthenticator authenticator;
     private final Environment environment;
-    private final OauthAuthenticationMapper oauthAuthenticationMapper;
-
+    private final Authentication authentication;
 
     public GoogleAccessor(@Property(name = "check-ins.application.name") String applicationName,
                           GoogleAuthenticator authenticator,
-                          Environment environment, Calendar calendar, OauthAuthenticationMapper oauthAuthenticationMapper) throws GeneralSecurityException, IOException {
+                          Environment environment,
+                          Authentication authentication) throws GeneralSecurityException, IOException {
         this.applicationName = applicationName;
         this.authenticator = authenticator;
         this.environment = environment;
-        this.oauthAuthenticationMapper = oauthAuthenticationMapper;
+        this.authentication = authentication;
     }
 
     /** 
@@ -49,9 +54,18 @@ public class GoogleAccessor {
     * @return a google calendar access object
     * @throws IOException
     */
-
     public Calendar accessGoogleCalendar() throws IOException {
-        return oauthAuthenticationMapper.getCalendar();
+        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
+        List<String> scope = Collections.singletonList(apiScope);
+        String accessToken = (String) authentication.getAttributes().get(OauthUserDetailsMapper.ACCESS_TOKEN_KEY);
+        String refreshToken = (String) authentication.getAttributes().get(OauthUserDetailsMapper.REFRESH_TOKEN_KEY);
+
+        GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken).setRefreshToken(refreshToken).createScoped(scope);
+
+        return new Calendar
+                .Builder(httpTransport, JSON_FACTORY, credential)
+                .setApplicationName(applicationName)
+                .build();
     }
 
 

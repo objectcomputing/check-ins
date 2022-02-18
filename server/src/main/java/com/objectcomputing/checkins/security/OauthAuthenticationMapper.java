@@ -12,6 +12,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import io.micronaut.context.annotation.Bean;
+import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
 import io.micronaut.core.annotation.Nullable;
@@ -39,6 +41,7 @@ import java.util.stream.Collectors;
 
 @Named("google")
 @Singleton
+@Factory
 public class OauthAuthenticationMapper implements OauthUserDetailsMapper {
 
     private final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -59,6 +62,7 @@ public class OauthAuthenticationMapper implements OauthUserDetailsMapper {
         this.currentUserServices = currentUserServices;
     }
 
+    @Bean
     public Calendar getCalendar() {
         return this.calendar;
     }
@@ -89,7 +93,7 @@ public class OauthAuthenticationMapper implements OauthUserDetailsMapper {
 
     @Override
     public Publisher<AuthenticationResponse> createAuthenticationResponse(TokenResponse tokenResponse, @Nullable State state) {
-        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForDriveApi", String.class).orElse("");
+        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForCalendarApi", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
 
         GoogleCredential credential = new GoogleCredential().setAccessToken(tokenResponse.getAccessToken()).setRefreshToken(tokenResponse.getRefreshToken()).createScoped(scope);
