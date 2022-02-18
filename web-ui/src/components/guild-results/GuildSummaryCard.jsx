@@ -146,7 +146,7 @@ const GuildSummaryCard = ({ guild, index }) => {
         {guild?.link ? 
         <React.Fragment>
           <div>
-          <StyledLink href={guild.link}>Link to Guild Page on Compass</StyledLink>
+          <StyledLink href={guild.link}>Link to Guild Homepage</StyledLink>
           </div>
         </React.Fragment>
           :null}
