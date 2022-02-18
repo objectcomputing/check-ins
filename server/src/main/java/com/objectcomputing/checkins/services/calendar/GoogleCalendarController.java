@@ -32,7 +32,6 @@ import java.util.concurrent.ExecutorService;
 @Validated
 @Controller("/services/calendar")
 @Tag(name = "calendar")
-@Secured(SecurityRule.IS_AUTHENTICATED)
 public class GoogleCalendarController {
 
     private final GoogleCalendarServices googleCalendarServices;
