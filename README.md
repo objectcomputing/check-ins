@@ -1,4 +1,4 @@
-![Gradle Build - Develop](https://github.com/objectcomputing/check-ins/workflows/Gradle%20Build%20-%20Develop/badge.svg)
+[![Gradle Build - Develop](https://github.com/objectcomputing/check-ins/workflows/Gradle%20Build%20-%20Develop/badge.svg)](https://github.com/objectcomputing/check-ins/actions)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 
 <!-- TOC -->
