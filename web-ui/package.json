@@ -62,6 +62,9 @@
     "styled-components": "^5.3.1",
     "universal-cookie": "^4.0.4"
   },
+  "resolutions": {
+    "node-fetch": "2.6.7"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
