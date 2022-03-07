@@ -89,6 +89,58 @@ exports[`renders the component 1`] = `
   max-width: 100%;
 }
 
+@media (min-width:600px) {
+  .emotion-2 {
+    -webkit-flex-basis: 100%;
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+}
+
+@media (min-width:900px) {
+  .emotion-2 {
+    -webkit-flex-basis: 100%;
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+}
+
+@media (min-width:1200px) {
+  .emotion-2 {
+    -webkit-flex-basis: 100%;
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+}
+
+@media (min-width:1536px) {
+  .emotion-2 {
+    -webkit-flex-basis: 100%;
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+}
+
 .emotion-3 {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
@@ -130,7 +182,11 @@ exports[`renders the component 1`] = `
   -webkit-transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,-webkit-transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   z-index: 1;
-  pointer-events: none;
+  pointer-events: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .emotion-4.Mui-focused {
@@ -358,6 +414,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-8:focus::-ms-input-p
 }
 
 .emotion-10 {
+  float: unset;
+  overflow: hidden;
   display: block;
   width: auto;
   padding: 0;
@@ -367,6 +425,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-8:focus::-ms-input-p
   max-width: 100%;
   -webkit-transition: max-width 100ms cubic-bezier(0.0, 0, 0.2, 1) 50ms;
   transition: max-width 100ms cubic-bezier(0.0, 0, 0.2, 1) 50ms;
+  white-space: nowrap;
 }
 
 .emotion-10>span {
@@ -402,12 +461,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-8:focus::-ms-input-p
           >
             <span
               className="notranslate"
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "&#8203;",
-                }
-              }
-            />
+            >
+              ​
+            </span>
             <svg
               aria-hidden={true}
               className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-7"

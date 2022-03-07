@@ -214,7 +214,7 @@ exports[`renders correctly 1`] = `
     className="MuiCardActions-root MuiCardActions-spacing emotion-7"
   >
     <button
-      className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root emotion-8"
+      className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-8"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}

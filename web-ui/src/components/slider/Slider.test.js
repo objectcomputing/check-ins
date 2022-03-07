@@ -37,7 +37,7 @@ it("value change is reported to all handlers correctly", () => {
 
   const slider = wrapper.find(Slider).at(0);
   slider.simulate("change", { target: { value: 5 } });
-  slider.find(".MuiSlider-mark").at(2).simulate("click", { target: { value: 3 } });
+  slider.find("span.MuiSlider-mark").at(2).simulate("click", { target: { value: 3 } });
   setTimeout(() => {
     expect(onChange.mock.calls.length).toBe(2);
     expect(onChangeCommitted.mock.calls.length).toBe(1);
