@@ -12,7 +12,7 @@ it("renders message correctly", () => {
   snapshot(<Feelings message={message} />);
 });
 
-it("renders onSelect correctly", () => {
+it("calls onSelect correctly", () => {
   const onSelect = jest.fn();
   const wrapper = mount(<Feelings onSelect={onSelect} />);
   const find = wrapper.find("#feelings-input-0");
