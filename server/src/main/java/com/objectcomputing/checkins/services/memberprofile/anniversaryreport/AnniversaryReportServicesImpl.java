@@ -5,6 +5,9 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import java.math.RoundingMode;
@@ -12,11 +15,12 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
 public class AnniversaryReportServicesImpl implements AnniversaryServices {
-
+    private static final Logger LOG = LoggerFactory.getLogger(AnniversaryReportServicesImpl.class);
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
 
@@ -32,7 +36,8 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
         }
 
         List<MemberProfile> memberProfileAll = new ArrayList<>();
-        List<MemberProfile> memberProfiles = memberProfileServices.findAll();
+        Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
+        LOG.info(memberProfiles.toString());
         if (months != null) {
             for (String month : months) {
                 List<MemberProfile> memberProfile = new ArrayList<>();
