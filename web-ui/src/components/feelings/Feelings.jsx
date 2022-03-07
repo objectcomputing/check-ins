@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSmile, faMeh, faFrown } from "@fortawesome/free-regular-svg-icons";
+import { faFaceGrinBeam, faSmile, faMeh, faFrown, faFaceSadCry } from "@fortawesome/free-regular-svg-icons";
 
 const propTypes = {
   message: PropTypes.string,
@@ -11,11 +11,11 @@ const displayName = "Feelings";
 
 const Feelings = ({ onSelect, message }) => {
   const inputs = [
-    ["Terrible", faFrown],
-    ["Bad"],
+    ["Terrible", faFaceSadCry],
+    ["Bad", faFrown],
     ["Okay", faMeh],
-    ["Good"],
-    ["Great", faSmile],
+    ["Good", faSmile],
+    ["Great", faFaceGrinBeam],
   ];
   const onChange = (e) => {
     onSelect(e.target.value);
