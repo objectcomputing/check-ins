@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSmile, faMeh, faFrown } from "@fortawesome/free-regular-svg-icons";
 
 const propTypes = {
   message: PropTypes.string,
@@ -9,11 +11,11 @@ const displayName = "Feelings";
 
 const Feelings = ({ onSelect, message }) => {
   const inputs = [
-    ["Terrible", "fa fa-frown-o fa-3x"],
+    ["Terrible", faFrown],
     ["Bad"],
-    ["Okay", "fa fa-meh-o fa-3x"],
+    ["Okay", faMeh],
     ["Good"],
-    ["Great", "fa fa-smile-o fa-3x"],
+    ["Great", faSmile],
   ];
   const onChange = (e) => {
     onSelect(e.target.value);
@@ -33,7 +35,7 @@ const Feelings = ({ onSelect, message }) => {
             }}
           >
             <div>
-              <i className={icon} aria-hidden="true"></i>
+              <FontAwesomeIcon icon={icon} size="3x" />
             </div>
             <input
               id={`feelings-input-${i}`}
