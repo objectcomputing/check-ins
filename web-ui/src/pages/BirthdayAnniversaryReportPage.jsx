@@ -167,7 +167,6 @@ const BirthdayAnniversaryReportPage = () => {
         />
       </div>
       <div>
-        {console.log(searchAnniversaryResults)}
         {
           <div className="search-results">
             <SearchBirthdayAnniversaryResults
