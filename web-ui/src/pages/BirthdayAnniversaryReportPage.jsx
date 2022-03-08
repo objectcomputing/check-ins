@@ -49,12 +49,18 @@ const BirthdayAnniversaryReportPage = () => {
 
   const sortBirthdays = (birthdayData) => {
     return birthdayData.sort(
-      (a, b) =>
-        Number(
-          b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)
-        ) -
-        Number(a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length))
-    );
+           // This will change the date string to a int.
+           // The first 1-2 numbers will be the month and the last 2 numbers will be the day.
+           // For example "11/25" will be 1125 or "5/9" will be 509
+           // This will ensure proper sorting.
+           (a, b) => (Number(b.birthDay.substring(0, b.birthDay.indexOf("/")) * 100)
+                         + Number(b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)))
+                     -
+                     (Number(a.birthDay.substring(0, a.birthDay.indexOf("/")) * 100)
+                         + Number(a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length)))
+
+      );
+
   };
 
   const sortAnniversaries = (anniversaryData) => {
