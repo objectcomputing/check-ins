@@ -74,13 +74,14 @@ const BirthdayAnniversaryReportPage = () => {
       birthdayResults = await getBirthday(months, csrf);
       setSearchBirthdayResults(
         birthdayResults.payload.data.sort(
-          (a, b) =>
-            Number(
-              b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)
-            ) -
-            Number(
-              a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length)
-            )
+           // The month/day string is converted into a int where the 1-2 first numbers are the month
+           // and the last 2 numbers are the day. For Example : "5/25" would be 525 or "11/17" would be 1117
+           // This will allow proper sorting of the dates.
+           (a, b) => (Number(b.birthDay.substring(0, b.birthDay.indexOf("/")) * 100)
+                         + Number(b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)))
+                     -
+                     (Number(a.birthDay.substring(0, a.birthDay.indexOf("/")) * 100)
+                         + Number(a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length)))
         )
       );
       setSearchAnniversaryResults(
