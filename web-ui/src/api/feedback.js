@@ -51,12 +51,6 @@ export const getFeedbackRequestById = async (id, cookie) => {
   });
 };
 
-export const getAllQuestionsAndAnswers = async (requestId, cookie) => {
-return resolve ({
-
-})
-}
-
 export const getAnswerByRequestAndQuestionId = async (requestId, questionId, cookie) => {
   return resolve({
     url: `${questionAndAnswerURL}`,
