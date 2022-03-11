@@ -108,6 +108,10 @@ exports[`renders correctly 1`] = `
   padding: 2.5px 4px;
 }
 
+.emotion-0 .MuiInputBase-hiddenLabel {
+  padding-top: 8px;
+}
+
 .emotion-0 .MuiAutocomplete-input {
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
@@ -159,7 +163,11 @@ exports[`renders correctly 1`] = `
   -webkit-transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,-webkit-transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   z-index: 1;
-  pointer-events: none;
+  pointer-events: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .emotion-2.Mui-focused {
@@ -260,6 +268,7 @@ exports[`renders correctly 1`] = `
   -webkit-text-decoration: none;
   text-decoration: none;
   color: inherit;
+  max-width: 100%;
   font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-size: 0.8125rem;
   display: -webkit-inline-box;
@@ -698,6 +707,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-7:focus::-ms-input-p
 }
 
 .emotion-14 {
+  float: unset;
+  overflow: hidden;
   display: block;
   width: auto;
   padding: 0;
@@ -707,6 +718,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-7:focus::-ms-input-p
   max-width: 100%;
   -webkit-transition: max-width 100ms cubic-bezier(0.0, 0, 0.2, 1) 50ms;
   transition: max-width 100ms cubic-bezier(0.0, 0, 0.2, 1) 50ms;
+  white-space: nowrap;
 }
 
 .emotion-14>span {
@@ -808,13 +820,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-7:focus::-ms-input-p
     className="select-month"
   >
     <div
-      aria-expanded={false}
       aria-owns={null}
       className="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon emotion-0"
       onClick={[Function]}
       onKeyDown={[Function]}
       onMouseDown={[Function]}
-      role="combobox"
     >
       <div
         className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root fullWidth emotion-1"
@@ -870,12 +880,12 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-7:focus::-ms-input-p
           <input
             aria-activedescendant={null}
             aria-autocomplete="list"
-            aria-controls={null}
+            aria-expanded={false}
             aria-invalid={false}
             autoCapitalize="none"
             autoComplete="off"
             autoFocus={false}
-            className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedStart MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused MuiAutocomplete-input MuiAutocomplete-inputFocused emotion-7"
+            className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedStart MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused emotion-7"
             disabled={false}
             id="monthSelect"
             onAnimationStart={[Function]}
@@ -884,7 +894,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-7:focus::-ms-input-p
             onFocus={[Function]}
             onMouseDown={[Function]}
             placeholder="Choose a month"
+            readOnly={false}
             required={false}
+            role="combobox"
             spellCheck="false"
             type="text"
             value=""
@@ -979,7 +991,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-7:focus::-ms-input-p
     className="birthday-anniversary-search halfWidth"
   >
     <button
-      className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root emotion-15"
+      className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-15"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}

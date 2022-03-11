@@ -1,3 +1,6 @@
+[![Gradle Build & Deploy - Develop](https://github.com/objectcomputing/check-ins/actions/workflows/gradle-build-development.yml/badge.svg)](https://github.com/objectcomputing/check-ins/actions/workflows/gradle-build-development.yml)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+
 <!-- TOC -->
 
 - [Check-ins](#check-ins)
@@ -9,8 +12,6 @@
 - [Contributing](#contributing)
 
 <!-- /TOC -->
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=oci-labs_check-ins)](https://sonarcloud.io/dashboard?id=oci-labs_check-ins)
-![Gradle Build - Develop](https://github.com/oci-labs/check-ins/workflows/Gradle%20Build%20-%20Develop/badge.svg)
 
 # Check-ins
 <a id="markdown-check-ins" name="check-ins"></a>

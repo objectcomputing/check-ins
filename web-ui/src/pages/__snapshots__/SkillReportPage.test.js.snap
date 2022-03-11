@@ -108,6 +108,10 @@ exports[`renders correctly 1`] = `
   padding: 2.5px 4px;
 }
 
+.emotion-0 .MuiInputBase-hiddenLabel {
+  padding-top: 8px;
+}
+
 .emotion-0 .MuiAutocomplete-input {
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
@@ -457,6 +461,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
 }
 
 .emotion-9 {
+  float: unset;
+  overflow: hidden;
   display: block;
   width: auto;
   padding: 0;
@@ -466,6 +472,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   max-width: 0.01px;
   -webkit-transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  white-space: nowrap;
 }
 
 .emotion-9>span {
@@ -572,13 +579,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
       Select desired skills...
     </h2>
     <div
-      aria-expanded={false}
       aria-owns={null}
       className="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon emotion-0"
       onClick={[Function]}
       onKeyDown={[Function]}
       onMouseDown={[Function]}
-      role="combobox"
     >
       <div
         className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root fullWidth emotion-1"
@@ -598,12 +603,12 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
           <input
             aria-activedescendant={null}
             aria-autocomplete="list"
-            aria-controls={null}
+            aria-expanded={false}
             aria-invalid={false}
             autoCapitalize="none"
             autoComplete="off"
             autoFocus={false}
-            className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused MuiAutocomplete-input MuiAutocomplete-inputFocused emotion-4"
+            className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused emotion-4"
             disabled={false}
             id="skillSelect"
             onAnimationStart={[Function]}
@@ -612,7 +617,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             onFocus={[Function]}
             onMouseDown={[Function]}
             placeholder="Add a skill..."
+            readOnly={false}
             required={false}
+            role="combobox"
             spellCheck="false"
             type="text"
             value=""
@@ -673,7 +680,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
       className="SkillsSearch-actions fullWidth"
     >
       <button
-        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root emotion-10"
+        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-10"
         disabled={false}
         onBlur={[Function]}
         onClick={[Function]}

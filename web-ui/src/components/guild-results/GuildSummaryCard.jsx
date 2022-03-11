@@ -5,6 +5,7 @@ import { AppContext } from "../../context/AppContext";
 import { UPDATE_GUILDS, UPDATE_TOAST } from "../../context/actions";
 import EditGuildModal from "./EditGuildModal";
 import { Link } from "react-router-dom";
+import { Link as StyledLink } from "@mui/material";
 
 import {
   Button,
@@ -142,6 +143,13 @@ const GuildSummaryCard = ({ guild, index }) => {
         }
       />
       <CardContent>
+        {guild?.link ? 
+        <React.Fragment>
+          <div>
+          <StyledLink href={guild.link}>Link to Guild Homepage</StyledLink>
+          </div>
+        </React.Fragment>
+          :null}
         {guild.guildMembers == null ? (
           <React.Fragment>
             <strong>Guild Leads: </strong>None Assigned

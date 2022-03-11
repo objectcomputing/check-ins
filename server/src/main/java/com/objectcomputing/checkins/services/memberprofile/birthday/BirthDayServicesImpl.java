@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -28,7 +29,7 @@ public class BirthDayServicesImpl implements BirthDayServices{
             throw new PermissionException("You do not have permission to access this resource.");
         }
         List<MemberProfile> memberProfileAll = new ArrayList<>();
-        List<MemberProfile> memberProfiles = memberProfileServices.findAll();
+        Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
         if (months != null) {
             for (String month : months) {
                 List<MemberProfile> memberProfile = new ArrayList<>();

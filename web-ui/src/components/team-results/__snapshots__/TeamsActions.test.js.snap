@@ -111,7 +111,7 @@ exports[`renders correctly 1`] = `
   className="team-actions"
 >
   <button
-    className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root emotion-0"
+    className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-0"
     disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
