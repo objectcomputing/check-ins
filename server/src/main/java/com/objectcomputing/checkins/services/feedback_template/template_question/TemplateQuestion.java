@@ -1,18 +1,19 @@
 package com.objectcomputing.checkins.services.feedback_template.template_question;
 
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
-import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import java.util.Objects;
-import java.util.UUID;
+
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
+import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "template_questions")
@@ -46,6 +47,10 @@ public class TemplateQuestion {
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "order of question in template", required = true)
     private Integer questionNumber;
+
+    @Column(name = "input_type")
+    @TypeDef(type = DataType.STRING)
+    public String inputType;
 
     /**
      * Constructs a new {@link TemplateQuestion} to save
@@ -116,7 +121,12 @@ public class TemplateQuestion {
     public UUID getTemplateId() {
         return templateId;
     }
-
+    public void setInputType(String inputType){
+        this.inputType = inputType;
+    }
+    public String getInputType(){
+        return this.inputType;
+    }
     public void setTemplateId(UUID templateId) {
         this.templateId = templateId;
     }

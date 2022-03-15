@@ -61,7 +61,6 @@ const frequencyMarks = [
     text: "Very Frequently"
   }
 ];
-
 const agreeMarks = [
   {
     value: 0,
@@ -176,7 +175,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     const res = await updateAllAnswers(answers, csrf)
     return res;
   }
-
   const onSubmitHandler =() => {
     updateAllAnswersSubmit().then((res) => {
       for (let i = 0; i < res.length; ++i ) {
@@ -242,9 +240,8 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
 
   const getReviewInput = (questionAnswerPair, isReviewing, index) => {
     let toReturn = null;
-    switch(index) {
-      case 0:
-      case 8:
+    switch(questionAnswerPair.question.inputType) {
+      case "SLIDER":
         // Strongly Disagree - Strongly Agree
         toReturn =
           (<Slider
@@ -257,25 +254,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             onChange={(e, value) => onSliderChange(e, index, agreeMarks, value)}
           />);
         break;
-      case 7:
-      case 12:
-        toReturn =
-          (<TextField
-            multiline
-            rows={5}
-            maxRows={10}
-            className="fullWidth"
-            variant="outlined"
-            InputProps={{
-              readOnly: isReviewing,
-            }}
-            onChange={(e) => onChangeHandler(e, index)}
-            defaultValue={questionAnswerPair?.answer?.answer}
-          />);
-        break;
-      case 9:
-      case 10:
-      case 11:
+      case "RADIO":
         // Yes, No, I don't know...
         toReturn =
           (<RadioGroup row value={questionAnswerPair?.answer?.answer} onChange={(event, value) => onRadioChange(event, index, value)}>
@@ -285,36 +264,27 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
           </RadioGroup>);
         break;
       default:
-        // Very Infrequently - Very Frequently
         toReturn =
-          (<Slider
-            disabled={isReviewing}
-            min={0}
-            max={4}
-            value={getSliderValue(frequencyMarks, questionAnswerPair?.answer?.answer)}
-            step={1}
-            marks={frequencyMarks}
-            onChange={(e, value) => onSliderChange(e, index, frequencyMarks, value)}
-          />);
+              (<TextField
+                multiline
+                rows={5}
+                maxRows={10}
+                className="fullWidth"
+                variant="outlined"
+                InputProps={{
+                  readOnly: isReviewing,
+                }}
+                onChange={(e) => onChangeHandler(e, index)}
+                defaultValue={questionAnswerPair?.answer?.answer}
+              />);
         break;
     }
 
     return toReturn;
   }
 
-  const getInput = (questionAnswerPair, isReviewing, index, isReview) => {
-      return !isReview ? (<TextField
-          className="fullWidth"
-          variant="outlined"
-          multiline
-          rows={10}
-          maxRows={20}
-          InputProps={{
-            readOnly: isReviewing,
-          }}
-          onChange={(e) => onChangeHandler(e, index)}
-          defaultValue={questionAnswerPair?.answer?.answer}
-        />) : getReviewInput(questionAnswerPair, isReviewing, index);
+  const getInput = (questionAnswerPair, isReviewing, index, isReview, inputType) => {
+      return getReviewInput(questionAnswerPair, isReviewing, index, inputType);
   }
 
   useEffect(() => {
@@ -360,10 +330,12 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
         </Alert> : null
       }
       {questionAnswerPairs.map((questionAnswerPair, index) => (
+
         <div className="feedback-submit-question" key={questionAnswerPair.question.id}>
+        <p>{questionAnswerPair.type}</p>
           {getQuestionHeader(index, isReview)}
           <Typography variant="body1"><b>Q{questionAnswerPair.question.questionNumber}:</b> {questionAnswerPair.question.question}</Typography>
-          {getInput(questionAnswerPair, isReviewing, index, isReview)}
+          {getInput(questionAnswerPair, isReviewing)}
         </div>
 
       ))}
