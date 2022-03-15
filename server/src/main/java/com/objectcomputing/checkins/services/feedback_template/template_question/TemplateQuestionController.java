@@ -116,7 +116,6 @@ public class TemplateQuestionController {
      */
     @Get("/{?templateId}")
     public Single<HttpResponse<List<TemplateQuestionResponseDTO>>> findByValues(@Nullable UUID templateId) {
-        System.out.println("This is from the controller");
         return Single.fromCallable(() -> templateQuestionServices.findByFields(templateId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(templateQuestions -> {
