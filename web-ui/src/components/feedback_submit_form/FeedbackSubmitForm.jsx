@@ -228,6 +228,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }
 
   const onChangeHandler = (event, index) => {
+    console.log(index);
     let questionAnswerCopy = [...questionAnswerPairs];
     questionAnswerCopy[index].answer = questionAnswerCopy[index].answer || {};
     questionAnswerCopy[index].answer.answer = event.target.value;
@@ -240,6 +241,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
 
   const getReviewInput = (questionAnswerPair, isReviewing, index) => {
     let toReturn = null;
+    console.log(index);
     switch(questionAnswerPair.question.inputType) {
       case "SLIDER":
         // Strongly Disagree - Strongly Agree
@@ -283,8 +285,8 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     return toReturn;
   }
 
-  const getInput = (questionAnswerPair, isReviewing, index, isReview, inputType) => {
-      return getReviewInput(questionAnswerPair, isReviewing, index, inputType);
+  const getInput = (questionAnswerPair, isReviewing, index, isReview) => {
+      return getReviewInput(questionAnswerPair, isReviewing, index);
   }
 
   useEffect(() => {
@@ -335,7 +337,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
         <p>{questionAnswerPair.type}</p>
           {getQuestionHeader(index, isReview)}
           <Typography variant="body1"><b>Q{questionAnswerPair.question.questionNumber}:</b> {questionAnswerPair.question.question}</Typography>
-          {getInput(questionAnswerPair, isReviewing)}
+          {getInput(questionAnswerPair, isReviewing, index, isReview)}
         </div>
 
       ))}
