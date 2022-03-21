@@ -39,7 +39,8 @@ public interface TemplateQuestionRepository extends CrudRepository<TemplateQuest
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(question as bytea),'${aes.key}') as question, " +
             "template_id, " +
-            "question_number " +
+            "question_number, " +
+            "input_type " +
             "FROM template_questions " +
             "WHERE (question_number = :questionNumber) " +
             "AND (template_id = :templateId)", nativeQuery = true)
