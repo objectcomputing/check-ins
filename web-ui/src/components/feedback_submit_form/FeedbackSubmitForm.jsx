@@ -37,30 +37,6 @@ const classes = {
   coloredButton: `${PREFIX}-coloredButton`
 };
 
-const frequencyMarks = [
-  {
-    value: 0,
-    label: "Very Infrequently",
-    text: "Very Infrequently"
-  },
-  {
-    value: 1,
-    text: "Infrequently"
-  },
-  {
-    value: 2,
-    text: "Neither Frequently nor Infrequently"
-  },
-  {
-    value: 3,
-    text: "Frequently"
-  },
-  {
-    value: 4,
-    label: "Very Frequently",
-    text: "Very Frequently"
-  }
-];
 const agreeMarks = [
   {
     value: 0,
