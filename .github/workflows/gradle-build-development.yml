@@ -2,7 +2,7 @@ name: Gradle Build & Deploy - Develop
 on:
   push:
     branches:
-      - 'develop'
+      - 'bugfix-1546/micronaut-upgrade-priortologin-change'
 
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
