@@ -69,6 +69,7 @@ public class LocalLoginController {
         UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(email, role);
         Flowable<AuthenticationResponse> authenticationResponseFlowable =
                 Flowable.fromPublisher(authenticator.authenticate(request, usernamePasswordCredentials));
+                
         return authenticationResponseFlowable.map(authenticationResponse -> {
             if (authenticationResponse.isAuthenticated() && authenticationResponse.getUserDetails().isPresent()) {
                 UserDetails userDetails = authenticationResponse.getUserDetails().get();
