@@ -1,6 +1,6 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("io.micronaut.application") version "1.5.3"
+    id("io.micronaut.application") version "3.3.0"
     id "idea"
     id "jacoco"
 }
@@ -79,7 +79,7 @@ dependencies {
     implementation "com.mailjet:mailjet-client:4.2.1"
     implementation "io.micronaut:micronaut-http-server-netty"
     implementation "com.google.api-client:google-api-client:1.30.9"
-    implementation "com.google.oauth-client:google-oauth-client-jetty:1.28.0"
+    implementation "com.google.oauth-client:google-oauth-client-jetty:1.33.1"
     implementation "com.google.apis:google-api-services-drive:v3-rev20200326-1.30.9"
     implementation "com.google.apis:google-api-services-gmail:v1-rev20200203-1.30.9"
     implementation "com.google.apis:google-api-services-admin-directory:directory_v1-rev118-1.25.0"

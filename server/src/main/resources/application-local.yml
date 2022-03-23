@@ -6,7 +6,16 @@ micronaut:
         web:
           allowedOrigins:
             - ^http(|s):\/\/localhost:.*$
+  netty:
+    log-level: TRACE
   security:
+    redirect:
+      enabled: true
+      prior-to-login: true
+      login-success: /
+      on-rejection: /oauth/login/google
+      unauthorized:
+        url: /oauth/login/google
     authentication: cookie
     oauth2:
       enabled: false
@@ -15,7 +24,7 @@ micronaut:
         enabled: true
         generator:
           access-token:
-            expiration: 60000
+            expiration: 360
           secret: ihaveChangedThisSecretForANewOne
     intercept-url-map:
       - pattern: /swagger-ui/**
