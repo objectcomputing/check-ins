@@ -1,8 +1,12 @@
 package com.objectcomputing.checkins.security;
 
+import java.util.Collections;
+import java.util.Map;
+
 import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.http.HttpRequest;
@@ -26,9 +30,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.views.View;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
-
-import java.util.Collections;
-import java.util.Map;
 
 @Requires(env = Environments.LOCAL)
 @Controller("/oauth/login/google")
@@ -68,7 +69,6 @@ public class LocalLoginController {
         UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(email, role);
         Flowable<AuthenticationResponse> authenticationResponseFlowable =
                 Flowable.fromPublisher(authenticator.authenticate(request, usernamePasswordCredentials));
-
         return authenticationResponseFlowable.map(authenticationResponse -> {
             if (authenticationResponse.isAuthenticated() && authenticationResponse.getUserDetails().isPresent()) {
                 UserDetails userDetails = authenticationResponse.getUserDetails().get();
