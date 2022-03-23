@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.feedback.suggestions;
+/*package com.objectcomputing.checkins.services.feedback.suggestions;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.*;
@@ -161,3 +161,4 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
 
 
 }
+*/
