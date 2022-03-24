@@ -87,16 +87,4 @@ public class LocalLoginController {
         }).first(HttpResponse.status(HttpStatus.UNAUTHORIZED));
     }
 
-    public static String test(){
-        String unused = "This variable is unused";
-        string unknown = "string is highlighted as it should be String";
-        System.out.println(unknown); // cant resolve method
-        boolean alwaysTrue = true;
-        if(alwaysTrue) { // This is a warning as alwaysTrue is always true.
-            LOG.info(alwaysTrue);
-        }
-
-        return 1; // this is an error
-    }
-
 }
