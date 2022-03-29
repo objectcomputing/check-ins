@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
 
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.logging.RequestLoggingInterceptor;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
@@ -9,6 +10,9 @@ import com.objectcomputing.checkins.services.feedback_template.template_question
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +25,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
     private final CurrentUserServices currentUserServices;
     private final TemplateQuestionServices templateQuestionServices;
     private final FeedbackRequestServices feedbackRequestServices;
+    private final Logger LOG = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
 
     public QuestionAndAnswerServicesImpl(FeedbackAnswerServices feedbackAnswerServices,
                                          CurrentUserServices currentUserServices,
@@ -38,12 +43,27 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         if (!getIsPermitted(feedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
+        List<TemplateQuestion> templateQuestions = templateQuestionServices.findByFields(feedbackRequest.getTemplateId());
         List<FeedbackAnswer> answerList = feedbackAnswerServices.findByValues(null, requestId);
         List<Tuple> returnerList = new ArrayList<>();
-        if (!answerList.isEmpty()) {
-            for (FeedbackAnswer answer : answerList) {
-                TemplateQuestion elementQuestion = templateQuestionServices.getById(answer.getQuestionId());
-                Tuple newTuple = new Tuple(elementQuestion, answer, feedbackRequest);
+
+        if (answerList.isEmpty()) {
+            for (TemplateQuestion question: templateQuestions) {
+                FeedbackAnswer newAnswerObject = new FeedbackAnswer();
+                newAnswerObject.setAnswer(null);
+                newAnswerObject.setQuestionId(question.getId());
+                newAnswerObject.setRequestId(requestId);
+                newAnswerObject.setSentiment(null);
+                FeedbackAnswer savedAnswer = feedbackAnswerServices.save(newAnswerObject);
+                Tuple newTuple = new Tuple(question, savedAnswer, feedbackRequest);
+                returnerList.add(newTuple);
+
+            }
+
+        } else {
+            for (TemplateQuestion question: templateQuestions) {
+                FeedbackAnswer foundAnswer = answerList.stream().filter(o -> o.getQuestionId().equals(question.getId())).findFirst().orElse(null);
+                Tuple newTuple = new Tuple(question, foundAnswer, feedbackRequest);
                 returnerList.add(newTuple);
             }
         }
