@@ -26,6 +26,7 @@ import {
 import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
+import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = "FeedbackSubmitForm";
@@ -151,6 +152,7 @@ const updateFeedbackAnswer = debounce(realUpdateAnswer, 1000);
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
+  const [isLoading, setIsLoading] = useState(false);
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([])
@@ -303,7 +305,8 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }
 
   const getInput = (questionAnswerPair, isReviewing, index, isReview) => {
-      return !isReview ? (<TextField
+      return !isReview ? (
+      <TextField
           className="fullWidth"
           variant="outlined"
           multiline
@@ -335,9 +338,11 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     }
 
     if (csrf) {
+      setIsLoading(true);
       getQuestions(requestId, csrf).then((questionsList) => {
         getAnswers(questionsList).then((answers) => {
           setQuestionAnswerPairs(answers)
+          setIsLoading(false);
         })
       });
     }
@@ -345,7 +350,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
 
   const isReview = templateTitle === "Annual Review";
 
-  return (
+  return isLoading ? <SkeletonLoader type="feedback_requests" /> : (
     <Root className="submit-form">
       <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{requesteeName}</b></Typography>
       <div className="wrapper">
@@ -369,9 +374,10 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       ))}
       <div className="submit-action-buttons">
         {isReviewing ?
-          <React.Fragment>
+        (<React.Fragment>
             <Button
               className={classes.coloredButton}
+              disabled={isLoading ? true : false}
               onClick={() => setIsReviewing(false)}
               variant="contained"
               color="primary">
@@ -379,20 +385,21 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             </Button>
             <Button
               className={classes.button}
+              disabled={isLoading ? true : false}
               onClick={onSubmitHandler}
               variant="contained"
               color="primary">
               Submit
             </Button>
-          </React.Fragment> :
+          </React.Fragment>) :
           <Button
             className={classes.coloredButton}
+            disabled={isLoading ? true : false}
             onClick={() => setIsReviewing(true)}
             variant="contained"
             color="primary">
             Review
-          </Button>
-        }
+          </Button>}
       </div>
     </Root>
   );
