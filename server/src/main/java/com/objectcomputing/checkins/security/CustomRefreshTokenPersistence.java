@@ -19,9 +19,11 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Singleton
 public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
 
     final Logger LOG = LoggerFactory.getLogger(CustomRefreshTokenPersistence.class);
