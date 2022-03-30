@@ -17,12 +17,13 @@ import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 import {
-  getAllAnswersFromRequestAndQuestionId,
   updateAllAnswers,
-  getQuestionsByRequestId,
   updateSingleAnswer,
   updateFeedbackRequest
 } from "../../api/feedback";
+import {
+getQuestionAndAnswer
+} from "../../api/feedbackanswer"
 import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
@@ -321,32 +322,34 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }
 
   useEffect(() => {
-    async function getQuestions(requestId, cookie) {
-      if (!requestId) return;
-      const res = await getQuestionsByRequestId(requestId, cookie);
-      setTemplateTitle(res?.title);
-      let questionsList = res?.questions ? res.questions : [];
-      return questionsList;
-    }
 
-    async function getAnswers(questionsList) {
-      if (!questionsList) {
+    async function getAllQuestionsAndAnswers(requestId, cookie) {
+    if (!requestId) {
         return;
-      }
-      const res = getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
-      return res;
+    }
+    const res = await getQuestionAndAnswer(requestId, cookie)
+    return res;
     }
 
     if (csrf) {
       setIsLoading(true);
-      getQuestions(requestId, csrf).then((questionsList) => {
-        getAnswers(questionsList).then((answers) => {
-          setQuestionAnswerPairs(answers)
-          setIsLoading(false);
-        })
+      getAllQuestionsAndAnswers(requestId, csrf).then((res) =>{
+        if (res && res.payload && res.payload.data && !res.error) {
+          setTemplateTitle(res?.title);
+          setQuestionAnswerPairs(res.payload.data)
+        } else {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: res.error,
+            },
+          });
+        }
+        setIsLoading(false);
       });
     }
-  }, [requestId, csrf]);
+  }, [requestId, csrf, dispatch]);
 
   const isReview = templateTitle === "Annual Review";
 
