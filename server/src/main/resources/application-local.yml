@@ -14,6 +14,10 @@ micronaut:
       jwt:
         enabled: true
         generator:
+          refresh-token:
+            enabled: true
+            path: /oauth/access_token
+            secret: ihaveChangedThisSecretForANewOne
           access-token:
             expiration: 60000
           secret: ihaveChangedThisSecretForANewOne
