@@ -1,6 +1,6 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("io.micronaut.application") version "3.3.0"
+    id("io.micronaut.application") version "1.5.4"
     id "idea"
     id "jacoco"
 }
@@ -33,11 +33,11 @@ dependencies {
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-management")
-    implementation("io.micronaut:micronaut-runtime")
+    implementation("io.micronaut:micronaut-runtime:2.5.13")
     implementation("io.micronaut.cache:micronaut-cache-ehcache")
     implementation("io.micronaut.data:micronaut-data-jdbc")
     implementation("io.micronaut.flyway:micronaut-flyway")
-    implementation("io.micronaut.security:micronaut-security")
+    implementation("io.micronaut.security:micronaut-security:2.5.0")
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
