@@ -50,32 +50,23 @@ public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
     @EventListener
     public void persistToken(RefreshTokenGeneratedEvent event) {
         LOG.info("in the persist");
-        LOG.info(event.getRefreshToken());
         refreshTokenRepo.save(new RefreshToken(event.getUserDetails().getUsername(), event.getRefreshToken()));
-        LOG.info("saved");
     }
 
     @Override
     public Publisher<UserDetails> getUserDetails(String refreshToken) {
         Optional<RefreshToken> optToken = refreshTokenRepo.findByRefreshToken(refreshToken);
-        LOG.info("In get userdetails");
         if (optToken.isEmpty()) {
-            LOG.info("1");
             return null;
         } else {
-            LOG.info("first if");
             RefreshToken token = optToken.get();
             Optional<MemberProfile> optProfile = memberProfileRepo.findByWorkEmail(token.getUserName());
             if (optProfile.isEmpty()) {
-                LOG.info("2");
                 return null;
             } else {
-                LOG.info("Second if");
                 MemberProfile profile = optProfile.get();
 
-                LOG.info("Creating user");
                 UserDetails user = createUserDetails(profile);
-                LOG.info("returning publisher<user>");
                 return Flowable.just(user);
             }
         }
