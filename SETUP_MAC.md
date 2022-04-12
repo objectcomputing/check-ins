@@ -125,7 +125,7 @@ Set a shell instance Java version by doing:
 ```shell
 jenv shell 14.0
 ```
-# Install NMV
+# Install NVM
 In order to install or update NVM, you need to run the following from the command line:
 ```shell
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
