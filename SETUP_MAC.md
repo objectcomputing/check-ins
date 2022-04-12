@@ -10,6 +10,7 @@
 - [Install OpenJDK](#install-openjdk)
 - [Install NVM](#install-nvm)
 - [Install Yarn](#install-yarn)
+- [Install Podman](#install-podman)
 
 <!-- /TOC -->
 # Overview
@@ -142,5 +143,16 @@ export NVM_DIR="$HOME/.nvm"
 brew install yarn
 ```
 
-# Install Docker Desktop
-[Download and Install Docker Desktop](https://www.docker.com/products/docker-desktop)
+# Install Podman
+
+This project uses [Podman](https://podman.io/) for containerization.
+
+To install Podman, run:
+```shell
+brew install podman
+```
+
+To install [podman-compose](https://github.com/containers/podman-compose), run:
+```shell
+pip3 install podman-compose
+```
