@@ -118,6 +118,7 @@ const ViewFeedbackResponses = () => {
     });
     retrieveQuestionsAndAnswers(query.request, csrf).then((res) => {
       if (res) {
+        res.sort((a, b) => a.questionNumber - b.questionNumber);
         setQuestionsAndAnswers(res);
       } else {
         window.snackDispatch({
