@@ -100,6 +100,21 @@ INSERT INTO member_profile
 VALUES
 ('dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Unreal','${aeskey}'),  PGP_SYM_ENCRYPT('Ulysses','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer 2','${aeskey}'), '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing2@objectcomputing.com','${aeskey}'), '010101012', '2021-05-22', PGP_SYM_ENCRYPT('Test user 2','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1950-01-01');
 
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('e84f2ce7-ac1a-4c5f-8336-785b2a0b090c', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'd9a7ab8d-8232-45df-a872-c3d1284d052c', 'INTERMEDIATE', '2022-02-03');
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('7c025d74-2ab4-4866-adc8-e10213e82e65', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'e06611ea-7f37-44b8-b945-dc774f3e0fb7', 'NOVICE', '2022-02-03');
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('8cf1e486-a6f8-4c83-97c2-f99104bb7d1a', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'b78ea591-1ca6-4b08-91bf-f089beaf78bb', 'ADVANCED', '2022-02-03');
+
 INSERT INTO role
     (id, description, role)
 VALUES
