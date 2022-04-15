@@ -2,12 +2,11 @@ package com.objectcomputing.checkins.services.role.role_permissions;
 
 import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
@@ -15,6 +14,7 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -47,6 +47,16 @@ public class RolePermissionController {
         return Single.fromCallable(rolePermissionServices::findAll)
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(rolePermissions -> (HttpResponse<List<RolePermissionResponseDTO>>) HttpResponse.ok(rolePermissions))
+                .subscribeOn(Schedulers.from(ioExecutorService));
+    }
+
+    @Post()
+    @Secured(RoleType.Constants.ADMIN_ROLE)
+    public Single<HttpResponse<RolePermission>> create(@Body @Valid RolePermissionCreateDTO dto,
+                                                       HttpRequest<RolePermissionCreateDTO> request) {
+        return Single.fromCallable(() -> rolePermissionServices.saveByIds(dto.getRoleId(), dto.getPermissionId()))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(rolePermissions -> (HttpResponse<RolePermission>) HttpResponse.created(rolePermissions))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 }
