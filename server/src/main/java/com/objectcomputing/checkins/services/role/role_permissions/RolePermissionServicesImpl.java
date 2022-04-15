@@ -57,6 +57,11 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
         return rolePermissionRepository.save(new RolePermission(roleId, permissionId));
     }
 
+    @Override
+    public void delete(RolePermissionId id) {
+        rolePermissionRepository.deleteById(id);
+    }
+
     public List<RolePermissionResponseDTO> findAll() {
         List<RolePermissionResponseDTO> roleInfo = new ArrayList<>();
         List<RolePermission> records =  rolePermissionRepository.findAll();

@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.role.role_permissions;
 import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.RoleType;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -14,8 +13,9 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -52,11 +52,14 @@ public class RolePermissionController {
 
     @Post()
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Single<HttpResponse<RolePermission>> create(@Body @Valid RolePermissionCreateDTO dto,
-                                                       HttpRequest<RolePermissionCreateDTO> request) {
-        return Single.fromCallable(() -> rolePermissionServices.saveByIds(dto.getRoleId(), dto.getPermissionId()))
-                .observeOn(Schedulers.from(eventLoopGroup))
-                .map(rolePermissions -> (HttpResponse<RolePermission>) HttpResponse.created(rolePermissions))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+    public HttpResponse<RolePermission> create(RolePermissionId id) {
+        RolePermission rolePermission = rolePermissionServices.saveByIds(id.getRoleId(), id.getPermissionId());
+        return HttpResponse.ok(rolePermission);
+    }
+
+    @Delete("/{roleId}/{permissionId}")
+    HttpResponse<?> delete(@NotNull UUID roleId, @NotNull UUID permissionId) {
+        rolePermissionServices.delete(new RolePermissionId(roleId, permissionId));
+        return HttpResponse.ok();
     }
 }
