@@ -58,6 +58,7 @@ public class RolePermissionController {
     }
 
     @Delete("/{roleId}/{permissionId}")
+    @Secured(RoleType.Constants.ADMIN_ROLE)
     HttpResponse<?> delete(@NotNull UUID roleId, @NotNull UUID permissionId) {
         rolePermissionServices.delete(new RolePermissionId(roleId, permissionId));
         return HttpResponse.ok();
