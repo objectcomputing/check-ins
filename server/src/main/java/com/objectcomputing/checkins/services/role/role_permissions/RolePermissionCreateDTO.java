@@ -4,31 +4,32 @@ import io.micronaut.core.annotation.Introspected;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Introspected
 public class RolePermissionCreateDTO {
 
     @NotNull
     @Column(name = "roleid")
-    private String roleId;
+    private UUID roleId;
 
     @NotNull
     @Column(name = "permissionid")
-    private String permissionId;
+    private UUID permissionId;
 
-    public String getRoleId() {
+    public UUID getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(String roleId) {
+    public void setRoleId(UUID roleId) {
         this.roleId = roleId;
     }
 
-    public String getPermissionId() {
+    public UUID getPermissionId() {
         return permissionId;
     }
 
-    public void setPermissionId(String permissionId) {
+    public void setPermissionId(UUID permissionId) {
         this.permissionId = permissionId;
     }
 }

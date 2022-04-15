@@ -37,26 +37,24 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
     }
 
     @Override
-    public RolePermission save(@NotNull RolePermission rolePermission) {
-        final UUID roleId = rolePermission.getRoleId();
-        final UUID permissionId = rolePermission.getPermissionId();
+    public RolePermission saveByIds(UUID roleId, UUID permissionId) {
 
         // Ensure the role exists
         roleRepository.findById(roleId).orElseThrow(() -> {
-            throw new BadArgException(String.format("Role %s not found", roleId));
+            throw new BadArgException(String.format("Attempted to save role permission where role %s does not exist", roleId));
         });
 
         // Ensure the permission exists
         permissionRepository.findById(permissionId).orElseThrow(() -> {
-            throw new BadArgException(String.format("Permission %s not found", permissionId));
+            throw new BadArgException(String.format("Attempted to save role permission where permission %s does not exist", permissionId));
         });
 
         // Ensure this role has not already been granted this permission
         rolePermissionRepository.findByRoleIdAndPermissionId(roleId, permissionId).ifPresent(rp -> {
-            throw new BadArgException(String.format("Role %s already has permission %s", roleId, permissionId));
+            throw new BadArgException(String.format("Attempted to save role permission where role %s already has permission %s", roleId, permissionId));
         });
 
-        return rolePermissionRepository.save(rolePermission);
+        return rolePermissionRepository.save(new RolePermission(roleId, permissionId));
     }
 
     public List<RolePermissionResponseDTO> findAll() {
