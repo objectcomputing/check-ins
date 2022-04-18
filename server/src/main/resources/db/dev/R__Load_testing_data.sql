@@ -368,8 +368,6 @@ INSERT INTO checkins
 VALUES
 ('ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '6884ab96-2275-4af9-89d8-ad84254d8759', '2020-03-20 11:32:29.04' , true);
 
-
-
 INSERT INTO checkins
 (id, teammemberid, pdlid, checkindate, completed)
 VALUES
@@ -414,8 +412,6 @@ INSERT INTO private_notes
 (id, checkinid, createdbyid, description)
 VALUES
 ('73a5e7b5-9292-45c0-a605-5b5c63230892', '553aa528-d5f6-4d15-bfb6-b53738dc7954', '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Julia''s first private note for Ulysses', '${aeskey}'));
-
-
 
 INSERT INTO checkin_notes
 (id, checkinid, createdbyid, description)
