@@ -13,8 +13,6 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 
 import io.micronaut.core.annotation.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -33,8 +31,6 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
     final String unauthorizedErrorMessage ="User is unauthorized to do this operation";
-
-    private static final Logger LOG = LoggerFactory.getLogger(PrivateNoteServicesImpl.class);
 
     public PrivateNoteServicesImpl(CheckInServices checkinServices, CheckInRepository checkinRepo, PrivateNoteRepository privateNoteRepository,
                                    MemberProfileRepository memberRepo, MemberProfileServices memberProfileServices,
@@ -95,19 +91,13 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
                 throw new NotFoundException(String.format("CheckIn %s doesn't exist", privateNoteResult.getCheckinid()));
             }
 
-            LOG.info("Check-in exists, determining if access is granted...");
-
             if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
                 throw new PermissionException("User is unauthorized to do this operation");
             }
 
-            LOG.info("Access granted");
-
             if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
-                LOG.info("Team member is not permitted to read private note");
                 throw new PermissionException("User is unauthorized to do this operation");
             }
-
         }
 
         return privateNoteResult;
