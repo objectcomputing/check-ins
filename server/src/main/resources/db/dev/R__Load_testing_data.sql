@@ -368,6 +368,55 @@ INSERT INTO checkins
 VALUES
 ('ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '6884ab96-2275-4af9-89d8-ad84254d8759', '2020-03-20 11:32:29.04' , true);
 
+
+
+INSERT INTO checkins
+(id, teammemberid, pdlid, checkindate, completed)
+VALUES
+('10184287-1746-4827-93fe-4e13cc0d2a6d', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '2021-02-25 11:32:29.04', true);
+
+INSERT INTO checkins
+(id, teammemberid, pdlid, checkindate, completed)
+VALUES
+('bdea5de0-4358-4b33-9772-0cd953567540', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '2021-03-05 11:32:29.04', true);
+
+INSERT INTO checkins
+(id, teammemberid, pdlid, checkindate, completed)
+VALUES
+('553aa528-d5f6-4d15-bfb6-b53738dc7954', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2022-01-16 11:32:29.04', true);
+
+INSERT INTO checkin_notes
+(id, checkinid, createdbyid, description)
+VALUES
+('226a2ab8-03cc-4f9e-96c8-55cf187df045', '10184287-1746-4827-93fe-4e13cc0d2a6d', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('Geetika''s first note for Ulysses', '${aeskey}'));
+
+INSERT INTO private_notes
+(id, checkinid, createdbyid, description)
+VALUES
+('444f6923-7b8e-4d03-8d33-021e7a72653c', '10184287-1746-4827-93fe-4e13cc0d2a6d', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('Geetika''s first private note for Ulysses', '${aeskey}'));
+
+INSERT INTO checkin_notes
+(id, checkinid, createdbyid, description)
+VALUES
+('c0d76e16-f96a-4598-8006-52b803e8b26d', 'bdea5de0-4358-4b33-9772-0cd953567540', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('Geetika''s second note for Ulysses', '${aeskey}'));
+
+INSERT INTO private_notes
+(id, checkinid, createdbyid, description)
+VALUES
+('cc47b557-ed78-45c4-b577-89c1c9e705bd', 'bdea5de0-4358-4b33-9772-0cd953567540', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('Geetika''s second private note for Ulysses', '${aeskey}'));
+
+INSERT INTO checkin_notes
+(id, checkinid, createdbyid, description)
+VALUES
+('73a5e7b5-9292-45c0-a605-5b5c63230892', '553aa528-d5f6-4d15-bfb6-b53738dc7954', '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Julia''s first note for Ulysses', '${aeskey}'));
+
+INSERT INTO private_notes
+(id, checkinid, createdbyid, description)
+VALUES
+('73a5e7b5-9292-45c0-a605-5b5c63230892', '553aa528-d5f6-4d15-bfb6-b53738dc7954', '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Julia''s first private note for Ulysses', '${aeskey}'));
+
+
+
 INSERT INTO checkin_notes
 (id, checkinid, createdbyid, description)
 VALUES
