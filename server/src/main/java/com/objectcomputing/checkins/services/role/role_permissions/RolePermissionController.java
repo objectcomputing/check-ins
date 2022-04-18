@@ -50,9 +50,9 @@ public class RolePermissionController {
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
-    @Post()
+    @Post
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public HttpResponse<RolePermission> create(RolePermissionId id) {
+    public HttpResponse<RolePermission> saveRolePermission(@NotNull RolePermissionId id) {
         RolePermission rolePermission = rolePermissionServices.saveByIds(id.getRoleId(), id.getPermissionId());
         return HttpResponse.ok(rolePermission);
     }

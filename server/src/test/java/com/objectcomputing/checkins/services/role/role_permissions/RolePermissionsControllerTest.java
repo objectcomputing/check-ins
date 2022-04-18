@@ -80,9 +80,9 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         Role adminRole = createAndAssignAdminRole(admin);
         Permission permission = createACustomPermission(Permissions.CAN_VIEW_PERMISSIONS);
 
-        RolePermission rolePermission = new RolePermission(adminRole.getId(), permission.getId());
+        RolePermissionId rolePermissionId = new RolePermissionId(adminRole.getId(), permission.getId());
 
-        final HttpRequest<RolePermission> request = HttpRequest.POST("", rolePermission)
+        final HttpRequest<RolePermissionId> request = HttpRequest.POST("", rolePermissionId)
                 .basicAuth(admin.getWorkEmail(), adminRole.getRole());
         final HttpResponse<RolePermission> response = client.toBlocking().exchange(request, RolePermission.class);
 

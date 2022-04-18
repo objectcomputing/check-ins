@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface RolePermissionServices {
 
-    RolePermission saveByIds(UUID roleId, UUID permissionId);
+    RolePermission saveByIds(UUID roleid, UUID permissionid);
 
     void delete(@NotNull RolePermissionId id);
 
