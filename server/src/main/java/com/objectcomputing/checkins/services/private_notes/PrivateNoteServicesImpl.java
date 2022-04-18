@@ -13,7 +13,6 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 
 import io.micronaut.core.annotation.Nullable;
-
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -86,7 +85,6 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
         if (!isAdmin) {
             CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
-
             if (checkinRecord == null) {
                 throw new NotFoundException(String.format("CheckIn %s doesn't exist", privateNoteResult.getCheckinid()));
             }
