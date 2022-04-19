@@ -298,9 +298,9 @@ const ViewFeedbackResponses = () => {
               {question.answers.length > 0 &&
                 question.answers.map((answer) => (
                   <FeedbackResponseCard
-                    key={answer.id}
+                    key={answer.id || answer.responder}
                     responderId={answer.responder}
-                    answer={answer.answer}
+                    answer={answer.answer || ""}
                     sentiment={answer.sentiment}
                   />
                 ))}
