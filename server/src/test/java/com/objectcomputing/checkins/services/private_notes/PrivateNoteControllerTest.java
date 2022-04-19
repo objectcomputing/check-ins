@@ -88,6 +88,29 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
+    void testCurrentPdlAbleToReadPreviousPrivateNotes() {
+        // Create a previously established PDL for the user
+        MemberProfile memberProfileOfPreviousPdl = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPreviousPdl);
+
+        // Create a check-in with a private note under the previous PDL
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPreviousPdl);
+        PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfPreviousPdl);
+
+        // Assign the user a new PDL
+        MemberProfile memberProfileOfCurrentPdl = createASecondDefaultMemberProfile();
+        memberProfileOfUser.setPdlId(memberProfileOfCurrentPdl.getId());
+        getMemberProfileRepository().update(memberProfileOfUser);
+
+        // Ensure the new PDL can access the private note from the previous PDL
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfCurrentPdl.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(privateNote, response.body());
+    }
+
+    @Test
     void testAdminAbleToReadPdlsPrivateNotes() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
