@@ -13,7 +13,7 @@ const neutralColor = "#f39c12";
 const positiveColor = "#27ae60";
 
 const propTypes = {
-  sentimentScore: PropTypes.number.isRequired
+  sentimentScore: PropTypes.number
 }
 
 const SentimentIcon = (props) => {
