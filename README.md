@@ -45,6 +45,7 @@ Note: Be sure that the target Google Drive folder has edit access granted to the
 
 #### Installs
 - [Podman](https://podman.io/)
+- [Podman-Compose](https://github.com/containers/podman-compose)
 
 #### Building
 1. Start the database in a Podman container:
