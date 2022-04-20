@@ -117,6 +117,9 @@ export default function Routes() {
             <Header title="Roles"></Header>
             <Roles />
           </Route>
+          <Route path="/admin/permissions">
+            <Header title="Permissions" />
+          </Route>
           <Route path="/admin/users">
             <Header title="Users"></Header>
             <Users />

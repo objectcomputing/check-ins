@@ -93,6 +93,7 @@ const Root = styled('div')(({theme}) => ({
 const adminLinks = [
   // ["/admin/permissions", "Permissions"],
   ["/admin/roles", "Roles"],
+  ["/admin/permissions", "Permissions"],
   ["/admin/users", "Users"],
 ];
 
