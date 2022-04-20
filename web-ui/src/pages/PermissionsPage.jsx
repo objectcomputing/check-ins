@@ -4,13 +4,38 @@ import {
   InputAdornment,
   Table,
   TableBody,
-  TableCell,
+  TableCell, tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
   TextField
 } from "@mui/material";
 import {Search} from "@mui/icons-material";
+
+import "./PermissionsPage.css";
+import {styled} from "@mui/material/styles";
+
+const StyledTableCell = styled(TableCell)(({theme}) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#a5a4a8",
+    color: theme.palette.common.white,
+    fontWeight: "bold",
+    textTransform: "uppercase"
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+
+  }
+}));
+
+const StyledTableRow = styled(TableRow)(({theme}) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover
+  },
+  '&:last-child td, &:last-child th': {
+    border: 0
+  }
+}));
 
 const mockPermissions = [
   {id: 1, permission: "Add Team Members"},
@@ -41,6 +66,7 @@ const PermissionsPage = () => {
   return (
     <div className="permissions-content">
       <TextField
+        className="permissions-search"
         label="Search"
         placeholder="Find a permission"
         value={searchText}
@@ -52,20 +78,20 @@ const PermissionsPage = () => {
         <Table aria-label="Permissions Table">
           <TableHead>
             <TableRow>
-              <TableCell>Permission</TableCell>
-              <TableCell>Member</TableCell>
-              <TableCell>PDL</TableCell>
-              <TableCell>Admin</TableCell>
+              <StyledTableCell>Permission</StyledTableCell>
+              <StyledTableCell align="center">Member</StyledTableCell>
+              <StyledTableCell align="center">PDL</StyledTableCell>
+              <StyledTableCell align="center">Admin</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredPermissions.map(permission =>
-              <TableRow key={permission.id}>
-                <TableCell>{permission.permission}</TableCell>
-                <TableCell><Checkbox/></TableCell>
-                <TableCell><Checkbox/></TableCell>
-                <TableCell><Checkbox/></TableCell>
-              </TableRow>
+              <StyledTableRow key={permission.id}>
+                <StyledTableCell>{permission.permission}</StyledTableCell>
+                <StyledTableCell align="center"><Checkbox/></StyledTableCell>
+                <StyledTableCell align="center"><Checkbox/></StyledTableCell>
+                <StyledTableCell align="center"><Checkbox/></StyledTableCell>
+              </StyledTableRow>
             )}
           </TableBody>
         </Table>
