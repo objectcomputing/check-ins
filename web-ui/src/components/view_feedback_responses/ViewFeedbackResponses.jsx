@@ -158,7 +158,7 @@ const ViewFeedbackResponses = () => {
       if (searchText.trim()) {
         // Filter based on search text
         filteredAnswers = filteredAnswers.filter(({ answer }) =>
-          answer.toLowerCase().includes(searchText.trim().toLowerCase())
+          answer && answer.toLowerCase().includes(searchText.trim().toLowerCase())
         );
       }
       return { ...response, answers: filteredAnswers };
