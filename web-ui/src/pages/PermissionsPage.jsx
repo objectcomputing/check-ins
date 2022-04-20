@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   Checkbox,
   InputAdornment,
@@ -21,11 +21,30 @@ const mockPermissions = [
 
 const PermissionsPage = () => {
 
+  const [searchText, setSearchText] = useState("");
+  const [filteredPermissions, setFilteredPermissions] = useState([]);
+
+  useEffect(() => {
+    setFilteredPermissions(mockPermissions);
+  }, [])
+
+  useEffect(() => {
+    let searchedPermissions = mockPermissions;
+    if (searchText.trim()) {
+      searchedPermissions = mockPermissions.filter((permission) =>
+        permission.permission.toLowerCase().includes(searchText.trim().toLowerCase())
+      );
+    }
+    setFilteredPermissions(searchedPermissions);
+  }, [searchText]);
+
   return (
     <div className="permissions-content">
       <TextField
         label="Search"
         placeholder="Find a permission"
+        value={searchText}
+        onChange={(event) => setSearchText(event.target.value)}
         InputProps={{
           endAdornment: (<InputAdornment style={{color: "gray"}} position="end"><Search/></InputAdornment>)
       }}/>
@@ -40,7 +59,7 @@ const PermissionsPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {mockPermissions.map(permission =>
+            {filteredPermissions.map(permission =>
               <TableRow key={permission.id}>
                 <TableCell>{permission.permission}</TableCell>
                 <TableCell><Checkbox/></TableCell>
