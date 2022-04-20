@@ -6,3 +6,15 @@
     margin-bottom: 1rem;
     width: 30%;
 }
+
+@media screen and (max-width: 600px) {
+    .permissions-content {
+        margin: 0;
+    }
+
+    .permissions-content .permissions-search {
+        width: 70%;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+}
