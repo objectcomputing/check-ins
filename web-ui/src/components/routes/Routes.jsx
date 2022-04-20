@@ -28,6 +28,7 @@ import ViewFeedbackResponses from "../view_feedback_responses/ViewFeedbackRespon
 import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/FeedbackSubmitConfirmation";
 import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
+import PermissionsPage from "../../pages/PermissionsPage";
 
 
 export default function Routes() {
@@ -119,6 +120,7 @@ export default function Routes() {
           </Route>
           <Route path="/admin/permissions">
             <Header title="Permissions" />
+            <PermissionsPage />
           </Route>
           <Route path="/admin/users">
             <Header title="Users"></Header>
