@@ -14,7 +14,7 @@ import {Search} from "@mui/icons-material";
 import {
   getAllRolePermissions,
   addRolePermission,
-  removeRolePermission
+  removeRolePermission, getAllPermissions
 } from "../api/permissions";
 
 import "./PermissionsPage.css";
@@ -50,31 +50,31 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
   }
 }));
 
-const mockPermissions = [
-  {id: 1, permission: "Add Team Members"},
-  {id: 2, permission: "Delete Team Members"},
-  {id: 3, permission: "Review Check-ins"},
-  {id: 4, permission: "Upload Files"}
-];
-
-const mockRoles = [
-  {id: 1, role: "Member"},
-  {id: 2, role: "PDL"},
-  {id: 3, role: "Admin"}
-]
-
 const PermissionsPage = () => {
   const { state } = useContext(AppContext);
-  const { csrf } = state;
+  const { csrf, roles } = state;
 
   const [searchText, setSearchText] = useState("");
+  const [allPermissions, setAllPermissions] = useState([]);
   const [allRolePermissions, setAllRolePermissions] = useState([]);
   const [filteredPermissions, setFilteredPermissions] = useState([]);
 
+  // Get all permissions from server and store in state
   useEffect(() => {
-    setFilteredPermissions(mockPermissions);
-  }, []);
+    const getPermissions = async () => {
+      const res = await getAllPermissions(csrf);
+      return res && res.payload && res.payload.data ? res.payload.data : [];
+    }
 
+    if (csrf) {
+      getPermissions().then((permissions) => {
+        setAllPermissions(permissions);
+        setFilteredPermissions(permissions);
+      })
+    }
+  }, [csrf]);
+
+  // Get all role permissions from server and store in state
   useEffect(() => {
     const getRolePermissions = async () => {
       const res = await getAllRolePermissions(csrf);
@@ -89,20 +89,22 @@ const PermissionsPage = () => {
 
   }, [csrf]);
 
+  // Filter permissions by search text
   useEffect(() => {
-    let searchedPermissions = mockPermissions;
+    let searchedPermissions = allPermissions;
     if (searchText.trim()) {
-      searchedPermissions = mockPermissions.filter((permission) =>
+      searchedPermissions = allPermissions.filter((permission) =>
         permission.permission.toLowerCase().includes(searchText.trim().toLowerCase())
       );
     }
     setFilteredPermissions(searchedPermissions);
-  }, [searchText]);
+  }, [searchText, allPermissions]);
 
   const roleHasPermission = useCallback((role, permission) => {
     return allRolePermissions.find((entry) => entry.roleId === role.id && entry.permissionId === permission.id);
   }, [allRolePermissions]);
 
+  // Event handler for changing a role permission
   const handleCheckboxChange = useCallback(async (checked, role, permission) => {
     let res;
     let toastMessage;
@@ -124,6 +126,12 @@ const PermissionsPage = () => {
     }
   }, [csrf]);
 
+  const formatPermissionText = useCallback((permission) => {
+    let permissionText = permission.replaceAll("_", " ");
+    permissionText = permissionText.toLowerCase();
+    return permissionText.charAt(0).toUpperCase() + permissionText.slice(1);
+  }, []);
+
   return (
     <div className="permissions-content">
       <TextField
@@ -135,12 +143,12 @@ const PermissionsPage = () => {
         InputProps={{
           endAdornment: (<InputAdornment style={{color: "gray"}} position="end"><Search/></InputAdornment>)
       }}/>
-      <TableContainer sx={{maxHeight: 600}}>
+      <TableContainer sx={{maxHeight: 620}}>
         <Table stickyHeader aria-label="Permissions Table">
           <TableHead>
             <TableRow>
               <StyledTableCell style={{width: "50%"}}>Permission</StyledTableCell>
-              {mockRoles.map(role =>
+              {roles.map(role =>
                 <StyledTableCell
                   key={role.id}
                   align="center">
@@ -152,8 +160,8 @@ const PermissionsPage = () => {
           <TableBody>
             {filteredPermissions.map(permission =>
               <StyledTableRow key={permission.id}>
-                <StyledTableCell>{permission.permission}</StyledTableCell>
-                {mockRoles.map((role) => (
+                <StyledTableCell>{formatPermissionText(permission.permission)}</StyledTableCell>
+                {roles.map((role) => (
                   <StyledTableCell key={`${role.id}-${permission.id}`} align="center">
                     <Checkbox
                       checked={roleHasPermission(role, permission)}
@@ -165,7 +173,6 @@ const PermissionsPage = () => {
             )}
           </TableBody>
         </Table>
-
       </TableContainer>
     </div>
   )

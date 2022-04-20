@@ -1,10 +1,19 @@
 import { resolve } from "./api.js";
 
 const permissionsUrl = "/services/permissions";
+const rolePermissionsUrl = "/services/roles/role-permissions";
+
+export const getAllPermissions = async (cookie) => {
+  return resolve({
+    url: permissionsUrl,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  })
+}
 
 export const getAllRolePermissions = async (cookie) => {
   return resolve({
-    url: permissionsUrl,
+    url: rolePermissionsUrl,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });
@@ -13,7 +22,7 @@ export const getAllRolePermissions = async (cookie) => {
 export const addRolePermission = async (roleId, permissionId, cookie) => {
   return resolve({
     method: "post",
-    url: permissionsUrl,
+    url: rolePermissionsUrl,
     data: {
       roleId,
       permissionId
@@ -26,7 +35,7 @@ export const addRolePermission = async (roleId, permissionId, cookie) => {
 export const removeRolePermission = async (roleId, permissionId, cookie) => {
   return resolve({
     method: "delete",
-    url: permissionsUrl,
+    url: rolePermissionsUrl,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });
