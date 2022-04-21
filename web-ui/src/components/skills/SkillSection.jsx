@@ -49,10 +49,10 @@ const classes = {
 };
 
 const Root = styled('span')(() => ({
-  [`& .${classes.skillRow}`]: {
-    fontWeight: "bold",
-    justifyContent: "space-around",
-  }
+  // [`& .${classes.skillRow}`]: {
+  //   fontWeight: "bold",
+  //   justifyContent: "space-around",
+  // }
 }));
 
 const SkillSection = ({ userId }) => {
@@ -151,7 +151,7 @@ const SkillSection = ({ userId }) => {
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: "Skill deleted",
+          toast: "Skill removed from profile",
         },
       });
       dispatch({ type: DELETE_MEMBER_SKILL, payload: id });
@@ -177,7 +177,7 @@ const SkillSection = ({ userId }) => {
   };
   const filter = createFilterOptions();
 
-  const SkillSelector = (props) => (
+  const SkillSelector = () => (
     <Autocomplete
       isOptionEqualToValue={(option, value) =>
         value ? value.id === option.id : false
@@ -322,7 +322,7 @@ const SkillSection = ({ userId }) => {
                 <DialogTitle id="alert-dialog-title">Delete Skill?</DialogTitle>
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to delete the skill?
+                    Are you sure you want to remove this skill from your profile?
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>

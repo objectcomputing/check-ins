@@ -73,3 +73,9 @@
 .slider-div {
   display: flex;
 }
+
+.skill-list-item {
+  display: flex;
+  font-weight: bold;
+  background: pink;
+}

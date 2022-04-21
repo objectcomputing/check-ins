@@ -2,6 +2,17 @@
   display: none;
 }
 
-.skill-slider {
-  color: black;
+.skill-slider-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-self: center;
+}
+
+@media screen and (max-width: 600px) {
+
+  .skill-slider {
+    width: 100px;
+  }
+
 }

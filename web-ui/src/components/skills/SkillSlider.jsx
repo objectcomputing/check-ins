@@ -37,7 +37,6 @@ const SkillSlider = ({
   let [currCheck, setCurrCheck] = useState(!lastUsedDate);
   let [lastUsed, setLastUsed] = useState(lastUsedDate);
   let [skillLevel, setSkillLevel] = useState(startLevel);
-  const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   const datePickerVisibility = (event) => {
     setCurrCheck(!currCheck);
@@ -67,21 +66,17 @@ const SkillSlider = ({
   return (
     <>
       <Root>
-        <Tooltip
-          open={tooltipIsOpen && description ? true : false}
-          onOpen={() => setTooltipIsOpen(true)}
-          onClose={() => setTooltipIsOpen(false)}
-          enterTouchDelay={0}
-          placement="top-start"
-          title={description || ""}
-        >
-          <div className="skill-slider">{name}</div>
-        </Tooltip>
-        <DiscreteSlider
-          inStartPos={skillLevel}
-          onChange={updateLevel}
-          onChangeCommitted={updateSkillLevel}
-        />
+        <div className="skill-slider">{name}</div>
+        <div className="skill-slider-container">
+          <DiscreteSlider
+            inStartPos={skillLevel}
+            onChange={updateLevel}
+            onChangeCommitted={updateSkillLevel}
+          />
+          <IconButton onClick={() => onDelete(id)} size="large">
+            <DeleteIcon />
+          </IconButton>
+        </div>
         {false && (
           <FormControl>
             <FormControlLabel
@@ -93,18 +88,15 @@ const SkillSlider = ({
             />
           </FormControl>
         )}
+        {false && (
+          <TextField
+            className={currCheck ? classes.hidden : undefined}
+            type="date"
+            onChange={(event, value) => updateLastUsed(value)}
+            defaultValue={formatDate(lastUsed)}
+          />
+        )}
       </Root>
-      {false && (
-        <TextField
-          className={currCheck ? classes.hidden : undefined}
-          type="date"
-          onChange={(event, value) => updateLastUsed(value)}
-          defaultValue={formatDate(lastUsed)}
-        />
-      )}
-      <IconButton onClick={(event) => onDelete(id)} size="large">
-        <DeleteIcon />
-      </IconButton>
     </>
   );
 };
