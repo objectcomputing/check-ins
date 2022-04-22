@@ -9,7 +9,7 @@ import {
 import {
   addUserToRole,
   addNewRole,
-  removeUserFromRole,
+  removeUserFromRole, getAllMembersGroupedByRole,
 } from "../../../api/roles";
 
 import RoleUserCards from "./RoleUserCards";
@@ -29,6 +29,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Autocomplete from '@mui/material/Autocomplete';
 
 import "./Roles.css";
+import {selectProfile} from "../../../context/selectors";
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -40,38 +41,34 @@ const Roles = () => {
   // const [editRole, setEditRole] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [selectedMember, setSelectedMember] = useState({});
-  const [roleToMemberMap, setRoleToMemberMap] = useState({});
   const [selectedRole, setSelectedRole] = useState("");
+  const [memberRoles, setMemberRoles] = useState([]);
 
   memberProfiles.sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
-      const memberMap = {};
-      for (const member of memberProfiles) {
-        memberMap[member.id] = member;
-      }
+    const getMemberRoles = async () => {
+      return await getAllMembersGroupedByRole(csrf);
+    }
 
-      const newRoleToMemberMap = {};
-      for (const userRole of userRoles || []) {
-        const role = roles.find((role) => role.id === userRole?.memberRoleId?.roleId);
-        if(role) {
-          let memberList = newRoleToMemberMap[role.role];
-          if (!memberList) {
-            memberList = newRoleToMemberMap[role.role] = [];
-          }
-          if (memberMap[userRole?.memberRoleId?.memberId] !== undefined) {
-            memberList.push({ ...memberMap[userRole?.memberRoleId?.memberId], roleId: role.id });
-          }
-        }
+    getMemberRoles().then(res => {
+      if (res && res.payload && res.payload.data && !res.error) {
+        console.log(res.payload.data);
+        setMemberRoles(res.payload.data);
+      } else {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Failed to retrieve member roles",
+          },
+        });
       }
-      setRoleToMemberMap(newRoleToMemberMap);
-    }, [userRoles, memberProfiles, roles]);
-
-  const uniqueRoles = Object.keys(roleToMemberMap);
+    });
+  }, [csrf]);
 
   const removeFromRole = async (member, role) => {
-    const members = roleToMemberMap[role];
-    const { roleId } = members.find((m) => member.id === m.id);
+    const roleId = role.id;
     let res = await removeUserFromRole(roleId, member.id, csrf);
     let data =
       res.payload && res.payload.status === 200 && !res.error
@@ -170,17 +167,17 @@ const Roles = () => {
           </Button> */}
         </div>
         <div className="roles-bot">
-          {uniqueRoles.map((role) =>
-            role.toLowerCase().includes(searchText.toLowerCase()) ? (
-              <Card className="role" key={role}>
+          {memberRoles.map((roleObj) =>
+            roleObj.role.toLowerCase().includes(searchText.toLowerCase()) ? (
+              <Card className="role" key={roleObj.roleId}>
                 <CardHeader
                   title={
                     <div className="role-header">
                       <Typography variant="h4" component="h3">
-                        {role}
+                        {roleObj.role}
                       </Typography>
                       <Typography variant="h5" component="h5">
-                        {role.description || ""}
+                        {roleObj.description || ""}
                       </Typography>
                     </div>
                   }
@@ -192,7 +189,7 @@ const Roles = () => {
                           color="primary"
                           onClick={() => {
                             setShowAddUser(true);
-                            setSelectedRole(role);
+                            setSelectedRole(roleObj.role);
                           }}
                         >
                           <span>Add User</span>
@@ -209,8 +206,8 @@ const Roles = () => {
                   {
                     <List>
                       <RoleUserCards
-                        role={role}
-                        roleToMemberMap={roleToMemberMap}
+                        role={roleObj.role}
+                        roleMembers={roleObj.memberIds.map((memberId) => selectProfile(state, memberId))}
                         removeFromRole={removeFromRole}
                       />
                     </List>
@@ -221,7 +218,7 @@ const Roles = () => {
                     <div className="role-modal">
                       <Autocomplete
                         options={memberProfiles.filter(
-                          (member) => !roleToMemberMap[role].includes(member.id)
+                          (member) => !roleObj.memberIds.includes(member.id)
                         )}
                         value={selectedMember}
                         onChange={(event, newValue) =>

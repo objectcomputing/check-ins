@@ -11,44 +11,43 @@ import {
   Typography,
 } from "@mui/material";
 
-const RoleUserCards = ({ role, roleToMemberMap, removeFromRole }) => {
-  roleToMemberMap[role].sort((a, b) => a.name.localeCompare(b.name));
-  return roleToMemberMap[role].map(
-    (member) =>
-      member && (
-        <div key={member.id}>
-          <ListItem className="roles-list-item">
-            <ListItemAvatar>
-              <Avatar
-                alt={`${member.name}'s avatar`}
-                className="large"
-                src={getAvatarURL(member.workEmail)}
-              />
-            </ListItemAvatar>
-            <ListItemText
-              primary={
-                <Typography variant="h5" component="h2">
-                  {member.name}
-                </Typography>
-              }
-              secondary={
-                <Typography color="textSecondary" component="h3">
-                  {member.title}
-                </Typography>
-              }
+const RoleUserCards = ({ role, roleMembers, removeFromRole }) => {
+  roleMembers.sort((a, b) => a.name.localeCompare(b.name));
+  return roleMembers.map((member) =>
+    member && (
+      <div key={member.id}>
+        <ListItem className="roles-list-item">
+          <ListItemAvatar>
+            <Avatar
+              alt={`${member.name}'s avatar`}
+              className="large"
+              src={getAvatarURL(member.workEmail)}
             />
-            <div
-              className="icon"
-              onClick={() => {
-                removeFromRole(member, role);
-              }}
-            >
-              <DeleteIcon />
-            </div>
-          </ListItem>
-          <Divider variant="inset" component="li" />
-        </div>
-      )
+          </ListItemAvatar>
+          <ListItemText
+            primary={
+              <Typography variant="h5" component="h2">
+                {member.name}
+              </Typography>
+            }
+            secondary={
+              <Typography color="textSecondary" component="h3">
+                {member.title}
+              </Typography>
+            }
+          />
+          <div
+            className="icon"
+            onClick={() => {
+              removeFromRole(member, role);
+            }}
+          >
+            <DeleteIcon />
+          </div>
+        </ListItem>
+        <Divider variant="inset" component="li" />
+      </div>
+    )
   );
 };
 
