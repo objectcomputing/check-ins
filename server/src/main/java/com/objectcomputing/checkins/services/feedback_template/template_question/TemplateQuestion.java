@@ -49,7 +49,9 @@ public class TemplateQuestion {
     private Integer questionNumber;
 
     @Column(name = "input_type")
+    @NotBlank
     @TypeDef(type = DataType.STRING)
+    @Schema(description = "the type of input used to answer the question", required = true)
     public String inputType;
 
     /**
@@ -58,12 +60,14 @@ public class TemplateQuestion {
      * @param question The content of the question
      * @param templateId The ID of the feedback template this question is part of
      * @param questionNumber The order of the question in the template
+     * @param inputType The type of input used to answer the question
      */
-    public TemplateQuestion(@NotBlank String question, @NotBlank UUID templateId, @NotBlank Integer questionNumber) {
+    public TemplateQuestion(@NotBlank String question, @NotBlank UUID templateId, @NotBlank Integer questionNumber, @NotBlank String inputType) {
         this.id = null;
         this.question = question;
         this.templateId = templateId;
         this.questionNumber = questionNumber;
+        this.inputType = inputType;
     }
 
     /**
@@ -72,11 +76,13 @@ public class TemplateQuestion {
      * @param id The {@link UUID} of the existing {@link TemplateQuestion}
      * @param question The content of the question
      * @param questionNumber The order of the question in the template
+     * @param inputType The type of input used to answer the question
      */
-    public TemplateQuestion(@NotBlank UUID id, @NotBlank String question, @NotBlank Integer questionNumber) {
+    public TemplateQuestion(@NotBlank UUID id, @NotBlank String question, @NotBlank Integer questionNumber, @NotBlank String inputType) {
         this.id = id;
         this.question = question;
         this.questionNumber = questionNumber;
+        this.inputType = inputType;
     }
 
     /**
@@ -84,12 +90,14 @@ public class TemplateQuestion {
      *
      * @param question The content of the question
      * @param questionNumber The order of the question in the template
+     * @param inputType The type of input used to answer the question
      */
-    public TemplateQuestion(@NotBlank String question, @NotBlank Integer questionNumber) {
+    public TemplateQuestion(@NotBlank String question, @NotBlank Integer questionNumber, @NotBlank String inputType) {
         this.id = null;
         this.templateId = null;
         this.question = question;
         this.questionNumber = questionNumber;
+        this.inputType = inputType;
     }
 
     public TemplateQuestion() {}
@@ -121,14 +129,17 @@ public class TemplateQuestion {
     public UUID getTemplateId() {
         return templateId;
     }
+
+    public void setTemplateId(UUID templateId) {
+        this.templateId = templateId;
+    }
+
     public void setInputType(String inputType){
         this.inputType = inputType;
     }
+
     public String getInputType(){
         return this.inputType;
-    }
-    public void setTemplateId(UUID templateId) {
-        this.templateId = templateId;
     }
 
     @Override
@@ -136,12 +147,12 @@ public class TemplateQuestion {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TemplateQuestion that = (TemplateQuestion) o;
-        return Objects.equals(id, that.id) && Objects.equals(question, that.question) && Objects.equals(questionNumber, that.questionNumber) && Objects.equals(templateId, that.templateId);
+        return Objects.equals(id, that.id) && Objects.equals(question, that.question) && Objects.equals(templateId, that.templateId) && Objects.equals(questionNumber, that.questionNumber) && Objects.equals(inputType, that.inputType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, question, questionNumber, templateId);
+        return Objects.hash(id, question, templateId, questionNumber, inputType);
     }
 
     @Override
@@ -149,8 +160,9 @@ public class TemplateQuestion {
         return "TemplateQuestion{" +
                 "id=" + id +
                 ", question='" + question +
-                ", questionNumber=" + questionNumber +
                 ", templateId=" + templateId +
+                ", questionNumber=" + questionNumber +
+                ", inputType='" + inputType +
                 '}';
     }
 }

@@ -131,7 +131,7 @@ public class TemplateQuestionController {
      * @return {@link TemplateQuestion}
      */
     private TemplateQuestion fromDTO(TemplateQuestionCreateDTO dto) {
-        return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getQuestionNumber());
+        return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getQuestionNumber(), dto.getInputType());
     }
 
     /**
@@ -140,7 +140,7 @@ public class TemplateQuestionController {
      * @return {@link TemplateQuestion}
      */
     private TemplateQuestion fromDTO(TemplateQuestionUpdateDTO dto) {
-        return new TemplateQuestion(dto.getId(), dto.getQuestion(), dto.getQuestionNumber());
+        return new TemplateQuestion(dto.getId(), dto.getQuestion(), dto.getQuestionNumber(), dto.getInputType());
     }
 
     /**

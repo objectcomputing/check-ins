@@ -19,7 +19,8 @@ import { UPDATE_TOAST } from "../../context/actions";
 import {
   updateAllAnswers,
   updateSingleAnswer,
-  updateFeedbackRequest
+  updateFeedbackRequest,
+  getQuestionsByRequestId
 } from "../../api/feedback";
 import {
 getQuestionAndAnswer
@@ -38,31 +39,6 @@ const classes = {
   button: `${PREFIX}-button`,
   coloredButton: `${PREFIX}-coloredButton`
 };
-
-const frequencyMarks = [
-  {
-    value: 0,
-    label: "Very Infrequently",
-    text: "Very Infrequently"
-  },
-  {
-    value: 1,
-    text: "Infrequently"
-  },
-  {
-    value: 2,
-    text: "Neither Frequently nor Infrequently"
-  },
-  {
-    value: 3,
-    text: "Frequently"
-  },
-  {
-    value: 4,
-    label: "Very Frequently",
-    text: "Very Frequently"
-  }
-];
 
 const agreeMarks = [
   {
@@ -232,7 +208,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }
 
   const onChangeHandler = (event, index) => {
-    console.log(index);
     let questionAnswerCopy = [...questionAnswerPairs];
     questionAnswerCopy[index].answer = questionAnswerCopy[index].answer || {};
     questionAnswerCopy[index].answer.answer = event.target.value;
@@ -244,8 +219,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     && (<h2>How often has this team member displayed each of the following in the past year...</h2>);
 
   const getReviewInput = (questionAnswerPair, isReviewing, index) => {
-    let toReturn = null;
-    console.log(index);
+    let toReturn;
     switch(questionAnswerPair.question.inputType) {
       case "SLIDER":
         // Strongly Disagree - Strongly Agree
@@ -306,20 +280,12 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }
 
   useEffect(() => {
-    async function getQuestions(requestId, cookie) {
-      if (!requestId) return;
-      const res = await getQuestionsByRequestId(requestId, cookie);
-      setTemplateTitle(res?.title);
-      let questionsList = res?.questions ? res.questions : [];
-      return questionsList;
-    }
-
     async function getAllQuestionsAndAnswers(requestId, cookie) {
-    if (!requestId) {
+      if (!requestId) {
         return;
-    }
-    const res = await getQuestionAndAnswer(requestId, cookie)
-    return res;
+      }
+      const res = await getQuestionAndAnswer(requestId, cookie)
+      return res;
     }
 
     if (csrf) {
@@ -372,7 +338,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
         (<React.Fragment>
             <Button
               className={classes.coloredButton}
-              disabled={isLoading ? true : false}
+              disabled={isLoading}
               onClick={() => setIsReviewing(false)}
               variant="contained"
               color="primary">
@@ -380,7 +346,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             </Button>
             <Button
               className={classes.button}
-              disabled={isLoading ? true : false}
+              disabled={isLoading}
               onClick={onSubmitHandler}
               variant="contained"
               color="primary">
@@ -389,7 +355,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
           </React.Fragment>) :
           <Button
             className={classes.coloredButton}
-            disabled={isLoading ? true : false}
+            disabled={isLoading}
             onClick={() => setIsReviewing(true)}
             variant="contained"
             color="primary">
