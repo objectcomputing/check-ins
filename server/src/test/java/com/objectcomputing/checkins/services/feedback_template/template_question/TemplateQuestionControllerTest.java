@@ -37,6 +37,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
         dto.setQuestion(templateQuestion.getQuestion());
         dto.setTemplateId(templateQuestion.getTemplateId());
         dto.setQuestionNumber(templateQuestion.getQuestionNumber());
+        dto.setInputType(templateQuestion.getInputType());
         return dto;
     }
 
@@ -45,6 +46,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
         dto.setId(templateQuestion.getId());
         dto.setQuestion(templateQuestion.getQuestion());
         dto.setQuestionNumber(templateQuestion.getQuestionNumber());
+        dto.setInputType(templateQuestion.getInputType());
         return dto;
     }
 
@@ -52,6 +54,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
         assertEquals(content.getQuestion(), dto.getQuestion());
         assertEquals(content.getTemplateId(), dto.getTemplateId());
         assertEquals(content.getQuestionNumber(), dto.getQuestionNumber());
+        assertEquals(content.getInputType(), dto.getInputType());
     }
 
     @Test

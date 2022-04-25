@@ -154,6 +154,7 @@ public class TemplateQuestionController {
         dto.setQuestion(templateQuestion.getQuestion());
         dto.setTemplateId(templateQuestion.getTemplateId());
         dto.setQuestionNumber(templateQuestion.getQuestionNumber());
+        dto.setInputType(templateQuestion.getInputType());
         return dto;
     }
 
