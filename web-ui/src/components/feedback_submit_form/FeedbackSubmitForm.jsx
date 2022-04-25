@@ -17,15 +17,17 @@ import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 import {
-  getAllAnswersFromRequestAndQuestionId,
   updateAllAnswers,
-  getQuestionsByRequestId,
   updateSingleAnswer,
   updateFeedbackRequest
 } from "../../api/feedback";
+import {
+getQuestionAndAnswer
+} from "../../api/feedbackanswer"
 import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
+import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = "FeedbackSubmitForm";
@@ -36,6 +38,31 @@ const classes = {
   button: `${PREFIX}-button`,
   coloredButton: `${PREFIX}-coloredButton`
 };
+
+const frequencyMarks = [
+  {
+    value: 0,
+    label: "Very Infrequently",
+    text: "Very Infrequently"
+  },
+  {
+    value: 1,
+    text: "Infrequently"
+  },
+  {
+    value: 2,
+    text: "Neither Frequently nor Infrequently"
+  },
+  {
+    value: 3,
+    text: "Frequently"
+  },
+  {
+    value: 4,
+    label: "Very Frequently",
+    text: "Very Frequently"
+  }
+];
 
 const agreeMarks = [
   {
@@ -126,6 +153,7 @@ const updateFeedbackAnswer = debounce(realUpdateAnswer, 1000);
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
+  const [isLoading, setIsLoading] = useState(false);
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([])
@@ -262,7 +290,19 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }
 
   const getInput = (questionAnswerPair, isReviewing, index, isReview) => {
-      return getReviewInput(questionAnswerPair, isReviewing, index);
+    return !isReview ? (
+      <TextField
+        className="fullWidth"
+        variant="outlined"
+        multiline
+        rows={10}
+        maxRows={20}
+        InputProps={{
+          readOnly: isReviewing,
+        }}
+        onChange={(e) => onChangeHandler(e, index)}
+        defaultValue={questionAnswerPair?.answer?.answer}
+      />) : getReviewInput(questionAnswerPair, isReviewing, index);
   }
 
   useEffect(() => {
@@ -274,26 +314,37 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       return questionsList;
     }
 
-    async function getAnswers(questionsList) {
-      if (!questionsList) {
+    async function getAllQuestionsAndAnswers(requestId, cookie) {
+    if (!requestId) {
         return;
-      }
-      const res = getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
-      return res;
+    }
+    const res = await getQuestionAndAnswer(requestId, cookie)
+    return res;
     }
 
     if (csrf) {
-      getQuestions(requestId, csrf).then((questionsList) => {
-        getAnswers(questionsList).then((answers) => {
-          setQuestionAnswerPairs(answers)
-        })
+      setIsLoading(true);
+      getAllQuestionsAndAnswers(requestId, csrf).then((res) =>{
+        if (res && res.payload && res.payload.data && !res.error) {
+          setTemplateTitle(res?.title);
+          setQuestionAnswerPairs(res.payload.data)
+        } else {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: res.error,
+            },
+          });
+        }
+        setIsLoading(false);
       });
     }
-  }, [requestId, csrf]);
+  }, [requestId, csrf, dispatch]);
 
   const isReview = templateTitle === "Annual Review";
 
-  return (
+  return isLoading ? <SkeletonLoader type="feedback_requests" /> : (
     <Root className="submit-form">
       <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{requesteeName}</b></Typography>
       <div className="wrapper">
@@ -308,7 +359,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
         </Alert> : null
       }
       {questionAnswerPairs.map((questionAnswerPair, index) => (
-
         <div className="feedback-submit-question" key={questionAnswerPair.question.id}>
         <p>{questionAnswerPair.type}</p>
           {getQuestionHeader(index, isReview)}
@@ -319,9 +369,10 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       ))}
       <div className="submit-action-buttons">
         {isReviewing ?
-          <React.Fragment>
+        (<React.Fragment>
             <Button
               className={classes.coloredButton}
+              disabled={isLoading ? true : false}
               onClick={() => setIsReviewing(false)}
               variant="contained"
               color="primary">
@@ -329,20 +380,21 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             </Button>
             <Button
               className={classes.button}
+              disabled={isLoading ? true : false}
               onClick={onSubmitHandler}
               variant="contained"
               color="primary">
               Submit
             </Button>
-          </React.Fragment> :
+          </React.Fragment>) :
           <Button
             className={classes.coloredButton}
+            disabled={isLoading ? true : false}
             onClick={() => setIsReviewing(true)}
             variant="contained"
             color="primary">
             Review
-          </Button>
-        }
+          </Button>}
       </div>
     </Root>
   );
