@@ -19,7 +19,7 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardHeader,
+  CardHeader, InputAdornment,
   List,
   Modal,
   TextField,
@@ -30,6 +30,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 import "./Roles.css";
 import {selectProfile} from "../../../context/selectors";
+import {Search} from "@mui/icons-material";
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -53,7 +54,6 @@ const Roles = () => {
 
     getMemberRoles().then(res => {
       if (res && res.payload && res.payload.data && !res.error) {
-        console.log(res.payload.data);
         setMemberRoles(res.payload.data);
       } else {
         window.snackDispatch({
@@ -67,25 +67,30 @@ const Roles = () => {
     });
   }, [csrf]);
 
-  const removeFromRole = async (member, role) => {
-    const roleId = role.id;
+  const removeFromRole = async (member, roleId, roleName) => {
     let res = await removeUserFromRole(roleId, member.id, csrf);
     let data =
       res.payload && res.payload.status === 200 && !res.error
         ? res.payload
         : null;
     if (data) {
-// TODO: Remove role from map....
       const filtered = userRoles.filter((userRole) => userRole?.memberRoleId?.roleId !== roleId || userRole?.memberRoleId?.memberId !== member.id);
       dispatch({
         type: SET_USER_ROLES,
         payload: filtered,
       });
+
+      // Update the local state
+      const updatedMemberRoles = memberRoles;
+      const roleIndex = updatedMemberRoles.findIndex(memberRole => memberRole.roleId === roleId);
+      updatedMemberRoles[roleIndex].memberIds.splice(updatedMemberRoles[roleIndex].memberIds.indexOf(member.id), 1);
+      setMemberRoles(updatedMemberRoles);
+
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: `${member.name} removed from ${role}s`,
+          toast: `${member.name} removed from ${roleName}s`,
         },
       });
     }
@@ -102,6 +107,13 @@ const Roles = () => {
         type: SET_USER_ROLES,
         payload: [...userRoles, data],
       });
+
+      // Update the local state
+      const updatedMemberRoles = memberRoles;
+      const roleIndex = updatedMemberRoles.findIndex(memberRole => memberRole.roleId === data.memberRoleId.roleId);
+      updatedMemberRoles[roleIndex].memberIds.push(data.memberRoleId.memberId);
+      setMemberRoles(updatedMemberRoles);
+
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -150,7 +162,6 @@ const Roles = () => {
       <div className="roles">
         <div className="roles-top">
           <div className="roles-top-left">
-            <h2>Roles</h2>
             <TextField
               className="role-search"
               label="Search Roles"
@@ -160,6 +171,9 @@ const Roles = () => {
               onChange={(e) => {
                 setSearchText(e.target.value);
               }}
+              InputProps={{endAdornment: (
+                <InputAdornment color="gray" position="end"><Search/></InputAdornment>
+              )}}
             />
           </div>
           {/* <Button color="primary" onClick={() => setShowAddRole(true)}>
@@ -176,12 +190,12 @@ const Roles = () => {
                       <Typography variant="h4" component="h3">
                         {roleObj.role}
                       </Typography>
-                      <Typography variant="h5" component="h5">
+                      <Typography variant="h6" component="h6" color="gray">
                         {roleObj.description || ""}
                       </Typography>
                     </div>
                   }
-                  subheader={
+                  action={
                     <div>
                       <div className="role-buttons">
                         <Button
@@ -206,9 +220,10 @@ const Roles = () => {
                   {
                     <List>
                       <RoleUserCards
-                        role={roleObj.role}
+                        roleId={roleObj.roleId}
+                        roleName={roleObj.role}
                         roleMembers={roleObj.memberIds.map((memberId) => selectProfile(state, memberId))}
-                        removeFromRole={removeFromRole}
+                        onRemove={(member) => removeFromRole(member, roleObj.roleId, roleObj.role)}
                       />
                     </List>
                   }

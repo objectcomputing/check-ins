@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const RoleUserCards = ({ role, roleMembers, removeFromRole }) => {
+const RoleUserCards = ({ roleMembers, onRemove }) => {
   roleMembers.sort((a, b) => a.name.localeCompare(b.name));
   return roleMembers.map((member) =>
     member && (
@@ -38,9 +38,7 @@ const RoleUserCards = ({ role, roleMembers, removeFromRole }) => {
           />
           <div
             className="icon"
-            onClick={() => {
-              removeFromRole(member, role);
-            }}
+            onClick={() => onRemove(member)}
           >
             <DeleteIcon />
           </div>
