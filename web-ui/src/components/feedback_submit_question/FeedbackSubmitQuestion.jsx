@@ -39,13 +39,13 @@ const FeedbackSubmitQuestion = (props) => {
             onChange={(event) => {
               props.handleAnswerChange(event.target.value)
             }}
-            defaultValue={props.answer}
+            value={props.answer}
           />
         );
         break;
       case "RADIO":
         inputField = (
-          <RadioGroup row defaultValue={props.answer} onChange={(event) => {
+          <RadioGroup row value={props.answer} onChange={(event) => {
             props.handleAnswerChange(event.target.value)
           }}>
             <FormControlLabel disabled={props.readOnly} value="Yes" control={<Radio/>} label="Yes"/>
@@ -59,14 +59,14 @@ const FeedbackSubmitQuestion = (props) => {
           <Slider
             disabled={props.readOnly}
             min={0}
-            max={4}
-            defaultValue={agreeMarks.findIndex(mark => mark === props.answer)}
+            max={agreeMarks.length - 1}
+            value={agreeMarks.findIndex(mark => mark === props.answer)}
             step={1}
             marks={agreeMarks.map((mark, index) => {
               return { value: index, label: mark }
             })}
-            onChangeCommitted={(_, value) => {
-              props.handleAnswerChange(agreeMarks[value]);
+            onChange={(_, value) => {
+              props.handleAnswerChange(agreeMarks[value])
             }}
           />
         );

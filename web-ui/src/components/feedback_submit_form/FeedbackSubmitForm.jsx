@@ -103,10 +103,10 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       }
     }
 
-    // Update local state with new answer
+    // Update local state with new answer ID
     if (res && res.payload && res.payload.data && !res.error) {
       let updatedQuestionAnswerPairs = [...questionAnswerPairs];
-      updatedQuestionAnswerPairs[index].answer = {...res.payload.data};
+      updatedQuestionAnswerPairs[index].answer.id = res.payload.data.id;
       setQuestionAnswerPairs(updatedQuestionAnswerPairs);
     }
   }
@@ -114,8 +114,14 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const updateFeedbackAnswerWithDebounce = debounce(updateFeedbackAnswer, 1000);
 
   const handleAnswerChange = useCallback((index, newAnswer) => {
+    // Update local state with answer data until assigned an ID
+    let updatedQuestionAnswerPairs = [...questionAnswerPairs];
+    updatedQuestionAnswerPairs[index].answer = {...newAnswer};
+    setQuestionAnswerPairs(updatedQuestionAnswerPairs);
+
+    // Save or update new answer with debounce
     updateFeedbackAnswerWithDebounce(index, newAnswer);
-  }, [updateFeedbackAnswerWithDebounce]);
+  }, [questionAnswerPairs, updateFeedbackAnswerWithDebounce]);
 
   async function updateRequestSubmit() {
     request.status = "submitted"
