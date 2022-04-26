@@ -89,7 +89,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([]);
-  const [templateTitle, setTemplateTitle] = useState(null);
 
   const updateFeedbackAnswer = async (index, answer) => {
     let res;
@@ -187,7 +186,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       setIsLoading(true);
       getAllQuestionsAndAnswers(requestId, csrf).then((res) =>{
         if (res && res.payload && res.payload.data && !res.error) {
-          setTemplateTitle(res?.title);
           setQuestionAnswerPairs(res.payload.data)
         } else {
           dispatch({
