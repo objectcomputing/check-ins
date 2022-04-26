@@ -307,6 +307,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
         // Update by an admin to another user's question
         question.setQuestion("Do you think opossums are misunderstood creatures?");
         question.setQuestionNumber(2);
+        question.setInputType("RADIO");
         final TemplateQuestionUpdateDTO updateDTO = updateDTO(question);
 
         final HttpRequest<?> request = HttpRequest.PUT("", updateDTO)

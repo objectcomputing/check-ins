@@ -20,7 +20,6 @@ import {
   updateAllAnswers,
   updateSingleAnswer,
   updateFeedbackRequest,
-  getQuestionsByRequestId
 } from "../../api/feedback";
 import {
 getQuestionAndAnswer
@@ -48,14 +47,17 @@ const agreeMarks = [
   },
   {
     value: 1,
+    label: "Disagree",
     text: "Disagree"
   },
   {
     value: 2,
+    label: "Neither Agree nor Disagree",
     text: "Neither Agree nor Disagree"
   },
   {
     value: 3,
+    label: "Agree",
     text: "Agree"
   },
   {
@@ -186,9 +188,8 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             },
           });
         }
-      })
-
-    })
+      });
+    });
   }
 
   const onSliderChange = (event, index, marks, value) => {
@@ -207,7 +208,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     updateAnswer(index);
   }
 
-  const onChangeHandler = (event, index) => {
+  const onTextChange = (event, index) => {
     let questionAnswerCopy = [...questionAnswerPairs];
     questionAnswerCopy[index].answer = questionAnswerCopy[index].answer || {};
     questionAnswerCopy[index].answer.answer = event.target.value;
@@ -218,12 +219,11 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const getQuestionHeader = (index, isReview) => isReview && index === 1
     && (<h2>How often has this team member displayed each of the following in the past year...</h2>);
 
-  const getReviewInput = (questionAnswerPair, isReviewing, index) => {
-    let toReturn;
+  const getInput = (questionAnswerPair, isReviewing, index) => {
+    let inputField;
     switch(questionAnswerPair.question.inputType) {
       case "SLIDER":
-        // Strongly Disagree - Strongly Agree
-        toReturn =
+        inputField =
           (<Slider
             disabled={isReviewing}
             min={0}
@@ -235,8 +235,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
           />);
         break;
       case "RADIO":
-        // Yes, No, I don't know...
-        toReturn =
+        inputField =
           (<RadioGroup row value={questionAnswerPair?.answer?.answer} onChange={(event, value) => onRadioChange(event, index, value)}>
             <FormControlLabel disabled={isReviewing} value="Yes" control={<Radio />} label="Yes" />
             <FormControlLabel disabled={isReviewing} value="No" control={<Radio />} label="No" />
@@ -244,39 +243,23 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
           </RadioGroup>);
         break;
       default:
-        toReturn =
-              (<TextField
-                multiline
-                rows={5}
-                maxRows={10}
-                className="fullWidth"
-                variant="outlined"
-                InputProps={{
-                  readOnly: isReviewing,
-                }}
-                onChange={(e) => onChangeHandler(e, index)}
-                defaultValue={questionAnswerPair?.answer?.answer}
-              />);
+        inputField =
+          (<TextField
+            multiline
+            rows={5}
+            maxRows={10}
+            className="fullWidth"
+            variant="outlined"
+            InputProps={{
+              readOnly: isReviewing,
+            }}
+            onChange={(e) => onTextChange(e, index)}
+            defaultValue={questionAnswerPair?.answer?.answer}
+          />);
         break;
     }
 
-    return toReturn;
-  }
-
-  const getInput = (questionAnswerPair, isReviewing, index, isReview) => {
-    return !isReview ? (
-      <TextField
-        className="fullWidth"
-        variant="outlined"
-        multiline
-        rows={10}
-        maxRows={20}
-        InputProps={{
-          readOnly: isReviewing,
-        }}
-        onChange={(e) => onChangeHandler(e, index)}
-        defaultValue={questionAnswerPair?.answer?.answer}
-      />) : getReviewInput(questionAnswerPair, isReviewing, index);
+    return inputField;
   }
 
   useEffect(() => {
