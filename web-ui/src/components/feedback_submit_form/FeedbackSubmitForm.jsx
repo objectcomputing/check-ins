@@ -125,8 +125,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   async function updateRequestSubmit() {
     request.status = "submitted"
     request.submitDate = dateUtils.format(new Date(), "yyyy-MM-dd")
-    const res = await updateFeedbackRequest(request, csrf);
-    return res;
+    return await updateFeedbackRequest(request, csrf);
   }
 
   async function updateAllAnswersSubmit(){
@@ -134,8 +133,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     for (let i = 0; i < questionAnswerPairs.length; ++i) {
       answers.push(questionAnswerPairs[i].answer || {})
     }
-    const res = await updateAllAnswers(answers, csrf)
-    return res;
+    return await updateAllAnswers(answers, csrf)
   }
 
   const onSubmitHandler =() => {
@@ -178,8 +176,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       if (!requestId) {
         return;
       }
-      const res = await getQuestionAndAnswer(requestId, cookie)
-      return res;
+      return await getQuestionAndAnswer(requestId, cookie)
     }
 
     if (csrf) {
