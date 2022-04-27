@@ -105,7 +105,9 @@
 }
 
 .roles-content .roles .roles-bot {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-right: 1rem;
 }
 
 .roles-content .roles .roles-top {
