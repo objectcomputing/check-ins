@@ -203,7 +203,7 @@ const Roles = () => {
                               {/*<Button className="role-edit" color="primary"><span>Edit Role</span> <EditIcon /></Button> */}
                             </div>
                           </div>
-                          <Divider/>
+                          <Divider component="li"/>
                         </ListSubheader>
                         <RoleUserCards
                           role={role}
