@@ -5,13 +5,13 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  IconButton,
-  Tooltip,
+  IconButton
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
-import DiscreteSlider from "../slider/Slider";
+import DiscreteSlider from "../discrete_slider/DiscreteSlider";
+import Typography from "@mui/material/Typography";
 
 const PREFIX = 'SkillSlider';
 const classes = {
@@ -26,19 +26,17 @@ const Root = styled('span')(() => ({
 
 const SkillSlider = ({
   id,
-  description,
   name,
   startLevel,
   lastUsedDate,
   onDelete,
   onUpdate,
-  key,
 }) => {
   let [currCheck, setCurrCheck] = useState(!lastUsedDate);
   let [lastUsed, setLastUsed] = useState(lastUsedDate);
   let [skillLevel, setSkillLevel] = useState(startLevel);
 
-  const datePickerVisibility = (event) => {
+  const datePickerVisibility = () => {
     setCurrCheck(!currCheck);
   };
 
@@ -66,7 +64,7 @@ const SkillSlider = ({
   return (
     <>
       <Root>
-        <div className="skill-slider">{name}</div>
+        <Typography variant="body1" className="skill-slider">{name}</Typography>
         <div className="skill-slider-container">
           <DiscreteSlider
             inStartPos={skillLevel}

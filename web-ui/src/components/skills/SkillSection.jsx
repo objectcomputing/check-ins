@@ -26,7 +26,6 @@ import {
   Button,
   Card,
   CardActions,
-  CardHeader,
   Dialog,
   DialogActions,
   DialogContent,
@@ -41,6 +40,7 @@ import Autocomplete, {
   createFilterOptions,
 } from '@mui/material/Autocomplete';
 import BuildIcon from "@mui/icons-material/Build";
+import Typography from "@mui/material/Typography";
 
 const PREFIX = 'SkillSection';
 const classes = {
@@ -49,10 +49,10 @@ const classes = {
 };
 
 const Root = styled('span')(() => ({
-  // [`& .${classes.skillRow}`]: {
-  //   fontWeight: "bold",
-  //   justifyContent: "space-around",
-  // }
+  [`& .${classes.skillRow}`]: {
+    fontWeight: "bold",
+    justifyContent: "space-around",
+  }
 }));
 
 const SkillSection = ({ userId }) => {
@@ -183,8 +183,8 @@ const SkillSection = ({ userId }) => {
         value ? value.id === option.id : false
       }
       value={skillToAdd}
-      style={{ width: "18em" }}
       id="skillSearchAutocomplete"
+      className="skill-search-autocomplete"
       selectOnFocus
       clearOnBlur={true}
       handleHomeEndKeys
@@ -279,12 +279,13 @@ const SkillSection = ({ userId }) => {
         </Modal>
       <Root>
         <Card>
-          <CardHeader
-            avatar={<BuildIcon />}
-            title="Skills"
-            titleTypographyProps={{ variant: "h5", component: "h2" }}
-            action={<SkillSelector />}
-          />
+          <div className="skill-card-header">
+            <div className="skill-card-header-title">
+              <BuildIcon style={{ marginRight: "16px" }}/>
+              <Typography variant="h5" component="h2">Skills</Typography>
+            </div>
+            <SkillSelector/>
+          </div>
           <List>
             {mySkills &&
             mySkills.map((memberSkill) => {

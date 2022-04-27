@@ -9,6 +9,13 @@
   justify-self: center;
 }
 
+.discrete-slider {
+  justify-content: center;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 40rem;
+}
+
 @media screen and (max-width: 600px) {
 
   .skill-slider {
