@@ -21,6 +21,9 @@ const classes = {
 const Root = styled('span')(() => ({
   [`& .${classes.hidden}`]: {
     display: "none",
+  },
+  '@media screen and (max-width: 900px)': {
+    width: "100%"
   }
 }));
 
@@ -64,7 +67,7 @@ const SkillSlider = ({
   return (
     <>
       <Root>
-        <Typography variant="body1" className="skill-slider">{name}</Typography>
+        <Typography variant="body1" className="skill-slider-title">{name}</Typography>
         <div className="skill-slider-container">
           <DiscreteSlider
             inStartPos={skillLevel}

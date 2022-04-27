@@ -3,23 +3,19 @@
 }
 
 .skill-slider-container {
+  width: 100%;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-self: center;
+  align-items: flex-start;
 }
 
 .discrete-slider {
-  justify-content: center;
-  margin-left: 10px;
   margin-right: 10px;
   width: 40rem;
 }
 
-@media screen and (max-width: 600px) {
-
-  .skill-slider {
-    width: 100px;
+@media screen and (max-width: 900px) {
+  .discrete-slider {
+    width: 90%;
   }
-
 }

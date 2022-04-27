@@ -7,7 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 const Root = styled('div')(({theme}) => ({
   '& .MuiSlider-markLabel': {
     [theme.breakpoints.down('md')]: {
-      fontSize: "0.25rem",
+      fontSize: "0.525rem",
     },
     [theme.breakpoints.between('sm', 'lg')]: {
       fontSize: "0.525rem",

@@ -50,8 +50,8 @@ const classes = {
 
 const Root = styled('span')(() => ({
   [`& .${classes.skillRow}`]: {
+    justifyContent: "center",
     fontWeight: "bold",
-    justifyContent: "space-around",
   }
 }));
 
