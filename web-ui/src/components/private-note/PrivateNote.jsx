@@ -95,7 +95,7 @@ const PrivateNote = () => {
   }, [csrf, checkinId, currentUserId, pdlId]);
 
   const handleNoteChange = (content, delta, source, editor) => {
-    if (Object.keys(note).length === 0 || !csrf) {
+    if (Object.keys(note).length === 0 || !csrf || currentCheckin?.completed) {
       return;
     }
     
