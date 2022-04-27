@@ -19,11 +19,12 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardHeader,
   List,
+  ListSubheader,
   Modal,
   TextField,
   Typography,
+  Divider
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Autocomplete from '@mui/material/Autocomplete';
@@ -173,46 +174,43 @@ const Roles = () => {
           {uniqueRoles.map((role) =>
             role.toLowerCase().includes(searchText.toLowerCase()) ? (
               <Card className="role" key={role}>
-                <CardHeader
-                  title={
-                    <div className="role-header">
-                      <Typography variant="h4" component="h3">
-                        {role}
-                      </Typography>
-                      <Typography variant="h5" component="h5">
-                        {role.description || ""}
-                      </Typography>
-                    </div>
-                  }
-                  subheader={
-                    <div>
-                      <div className="role-buttons">
-                        <Button
-                          className="role-add"
-                          color="primary"
-                          onClick={() => {
-                            setShowAddUser(true);
-                            setSelectedRole(role);
-                          }}
-                        >
-                          <span>Add User</span>
-                          <PersonAddIcon />
-                        </Button>
-                        {/* <Button className="role-edit" color="primary">
-                        <span>Edit Role</span> <EditIcon />
-                      </Button> */}
-                      </div>
-                    </div>
-                  }
-                />
-                <CardContent className="role-card">
+                <CardContent className="role-card" style={{ padding: 0 }}>
                   {
-                    <List>
-                      <RoleUserCards
-                        role={role}
-                        roleToMemberMap={roleToMemberMap}
-                        removeFromRole={removeFromRole}
-                      />
+                    <List style={{ paddingTop: 0 }}>
+                      <div>
+                        <ListSubheader style={{ padding: 0 }}>
+                          <div className="role-header">
+                            <div className="role-header-title">
+                              <Typography variant="h4" component="h3" color="black">
+                                {role}
+                              </Typography>
+                              <Typography variant="h5" component="h5">
+                                {role.description || ""}
+                              </Typography>
+                            </div>
+                            <div className="role-header-buttons">
+                              <Button
+                                className="role-add"
+                                color="primary"
+                                onClick={() => {
+                                  setShowAddUser(true);
+                                  setSelectedRole(role);
+                                }}
+                              >
+                                <span>Add User</span>
+                                <PersonAddIcon />
+                              </Button>
+                              {/*<Button className="role-edit" color="primary"><span>Edit Role</span> <EditIcon /></Button> */}
+                            </div>
+                          </div>
+                          <Divider/>
+                        </ListSubheader>
+                        <RoleUserCards
+                          role={role}
+                          roleToMemberMap={roleToMemberMap}
+                          removeFromRole={removeFromRole}
+                        />
+                      </div>
                     </List>
                   }
                 </CardContent>
