@@ -13,7 +13,7 @@ exports[`renders slider with title 1`] = `
 
 @media (max-width:899.95px) {
   .emotion-1 .MuiSlider-markLabel {
-    font-size: 0.25rem;
+    font-size: 0.525rem;
   }
 }
 
@@ -250,7 +250,7 @@ exports[`renders slider with title 1`] = `
 }
 
 <div
-  className="skill-slider"
+  className="discrete-slider"
 >
   <p
     className="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom emotion-0"
