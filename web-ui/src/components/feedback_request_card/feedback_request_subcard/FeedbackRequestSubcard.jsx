@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from "react";
+import React, {useContext, useCallback, useState} from "react";
 import { styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import Grid from "@mui/material/Grid";
@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import { sendReminderNotification } from "../../../api/notifications";
-import { deleteFeedbackRequestById } from "../../../api/feedback";
+import { cancelFeedbackRequest } from "../../../api/feedback";
 import IconButton from "@mui/material/IconButton";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import TrashIcon from "@mui/icons-material/Delete";
@@ -24,6 +24,7 @@ const classes = {
   yellowTypography: `${PREFIX}-yellowTypography`,
   greenTypography: `${PREFIX}-greenTypography`,
   darkGrayTypography: `${PREFIX}-darkGrayTypography`,
+  grayTypography: `${PREFIX}-lightGrayTypography`
 };
 
 // TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
@@ -40,6 +41,9 @@ const Root = styled("div")({
   [`& .${classes.darkGrayTypography}`]: {
     color: "#333333",
   },
+  [`& .${classes.grayTypography}`]: {
+    color: "gray"
+  }
 });
 
 const useResponsiveStyles = makeStyles({
@@ -65,10 +69,14 @@ const FeedbackRequestSubcard = ({ request }) => {
   submitDate = submitDate
     ? dateFns.format(new Date(submitDate.join("/")), "LLLL dd, yyyy")
     : null;
+
+  sendDate = dateFns.format(new Date(sendDate.join("/")), "LLLL dd, yyyy");
   dueDate = dueDate
     ? dateFns.format(new Date(dueDate.join("/")), "LLLL dd, yyyy")
-    : null;
-  sendDate = dateFns.format(new Date(sendDate.join("/")), "LLLL dd, yyyy");
+    : null
+
+  const [requestStatus, setRequestStatus] = useState(request?.status);
+  const [requestDueDate, setRequestDueDate] = useState(dueDate);
 
   const recipientId = request?.id;
   const recipientEmail = recipient?.workEmail;
@@ -104,17 +112,17 @@ const FeedbackRequestSubcard = ({ request }) => {
     }
   }, [recipientId, recipientEmail, csrf]);
 
-  const handleDeleteClick = useCallback(() => {
-    const handleDeleteFeedback = async () => {
-      let res = await deleteFeedbackRequestById(recipientId, csrf);
-      let reminderResponse =
-        res && res.payload && res.payload.status === 200 && !res.error;
-      if (reminderResponse) {
+  const handleCancelClick = useCallback((feedbackRequest) => {
+    const cancelRequest = async (feedbackRequest) => {
+      const res = await cancelFeedbackRequest(feedbackRequest, csrf);
+      const cancellationResponse =
+        res && res.payload && res.payload.status === 200 && !res.error ? res.payload.data : null;
+      if (cancellationResponse) {
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
             severity: "success",
-            toast: "Feedback request deleted.",
+            toast: "Feedback request canceled",
           },
         });
       } else {
@@ -127,34 +135,46 @@ const FeedbackRequestSubcard = ({ request }) => {
           },
         });
       }
+      return res;
     };
     if (csrf) {
-      handleDeleteFeedback();
+      cancelRequest(feedbackRequest).then((res) => {
+        setRequestStatus(res.status);
+        setRequestDueDate(res.dueDate);
+      });
     }
-  }, [recipientId, csrf]);
+  }, [csrf]);
 
   const Submitted = () => {
-    if (request.dueDate) {
+    if (requestDueDate) {
       let today = new Date();
-      let due = new Date(request.dueDate);
+      let due = new Date(requestDueDate);
       if (!request.submitDate && today > due) {
         return (
           <Typography className={classes.redTypography}>Overdue</Typography>
         );
       }
     }
+
     if (request.submitDate) {
       return (
         <Typography className={classes.greenTypography}>
           Submitted {submitDate}
         </Typography>
       );
-    } else
+    } else if (requestStatus === "canceled") {
+        return (
+          <Typography className={classes.grayTypography}>
+            Canceled
+          </Typography>
+        );
+    } else {
       return (
         <Typography className={classes.yellowTypography}>
           Not Submitted
         </Typography>
       );
+    }
   };
 
   return (
@@ -193,23 +213,23 @@ const FeedbackRequestSubcard = ({ request }) => {
                 Sent on {sendDate}
               </Typography>
               <Typography variant="body2">
-                {request?.dueDate ? `Due on ${dueDate}` : "No due date"}
+                {requestDueDate ? `Due on ${requestDueDate}` : "No due date"}
               </Typography>
             </Grid>
             <Grid item xs={6} md>
               <Submitted />
             </Grid>
             <Grid item xs={6} md className="align-end">
-              {request && !request.submitDate && (
+              {request && !request.submitDate && requestStatus !== "canceled" && (
                 <>
                   <Tooltip
-                    title={"Delete Request"}
-                    aria-label={"Delete Request"}
+                    title="Cancel Request"
+                    aria-label="Cancel Request"
                   >
                     <IconButton
-                      onClick={handleDeleteClick}
-                      aria-label="Delete Request"
-                      label="Delete Request"
+                      onClick={() => handleCancelClick(request)}
+                      aria-label="Cancel Request"
+                      label="Cancel Request"
                     >
                       <TrashIcon />
                     </IconButton>
