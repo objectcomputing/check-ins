@@ -12,11 +12,13 @@ import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import TrashIcon from "@mui/icons-material/Delete";
 import { AppContext } from "../../../context/AppContext";
 import { selectCsrfToken, selectProfile } from "../../../context/selectors";
-import { Avatar, Tooltip } from "@mui/material";
+import {Avatar, Button, Card, CardActions, CardContent, CardHeader, Modal, Tooltip} from "@mui/material";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
 import { getAvatarURL } from "../../../api/api";
 import { makeStyles } from "@mui/styles";
+
+import "./FeedbackRequestSubcard.css";
 
 const PREFIX = "FeedbackRequestSubcard";
 const classes = {
@@ -77,6 +79,7 @@ const FeedbackRequestSubcard = ({ request }) => {
 
   const [requestStatus, setRequestStatus] = useState(request?.status);
   const [requestDueDate, setRequestDueDate] = useState(dueDate);
+  const [cancelingRequest, setCancelingRequest] = useState(false);
 
   const recipientId = request?.id;
   const recipientEmail = recipient?.workEmail;
@@ -135,12 +138,16 @@ const FeedbackRequestSubcard = ({ request }) => {
           },
         });
       }
-      return res;
+      return cancellationResponse;
     };
+
+    setCancelingRequest(false);
     if (csrf) {
       cancelRequest(feedbackRequest).then((res) => {
-        setRequestStatus(res.status);
-        setRequestDueDate(res.dueDate);
+        if (res) {
+          setRequestStatus(res.status);
+          setRequestDueDate(res.dueDate);
+        }
       });
     }
   }, [csrf]);
@@ -227,7 +234,7 @@ const FeedbackRequestSubcard = ({ request }) => {
                     aria-label="Cancel Request"
                   >
                     <IconButton
-                      onClick={() => handleCancelClick(request)}
+                      onClick={() => setCancelingRequest(true)}
                       aria-label="Cancel Request"
                       label="Cancel Request"
                     >
@@ -257,6 +264,23 @@ const FeedbackRequestSubcard = ({ request }) => {
             </Grid>
           </Grid>
         </Grid>
+        {request && !request.submitDate && requestStatus !== "canceled" && (
+          <Modal open={cancelingRequest} onClose={() => setCancelingRequest(false)}>
+            <Card className="cancel-feedback-request-modal">
+              <CardHeader title={<Typography variant="h5" fontWeight="bold">Cancel Feedback Request</Typography>}/>
+              <CardContent>
+                <Typography variant="body1">
+                  Are you sure you want to cancel the feedback request sent to <b>{recipient?.name}</b> on <b>{sendDate}</b>?
+                  The recipient will not be able to respond to this request once it is canceled.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button color="secondary" onClick={() => setCancelingRequest(false)}>No, Keep Feedback Request</Button>
+                <Button color="primary" onClick={() => handleCancelClick(request)}>Yes, Cancel Feedback Request</Button>
+              </CardActions>
+            </Card>
+          </Modal>
+        )}
       </Grid>
     </Root>
   );
