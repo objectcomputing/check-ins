@@ -594,14 +594,14 @@ VALUES
 ('18ef2032-c264-411e-a8e1-ddda9a714bae', 'Q1 Feedback', 'Get feedback for quarter 1', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2021-06-06', true, true, false);
 
 INSERT INTO template_questions
-(id, question, template_id, question_number)
+(id, question, template_id, question_number, input_type)
 VALUES
-('d6d05f53-682c-4c37-be32-8aab5f89767f', PGP_SYM_ENCRYPT('What are this team member''s top strengths (include examples where possible)?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 1);
+('d6d05f53-682c-4c37-be32-8aab5f89767f', PGP_SYM_ENCRYPT('What are this team member''s top strengths (include examples where possible)?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 1, 'TEXT');
 
 INSERT INTO template_questions
-(id, question, template_id, question_number)
+(id, question, template_id, question_number, input_type)
 VALUES
-('47f997ca-0045-4147-afcb-0c9ed0b44978', PGP_SYM_ENCRYPT('In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
+('47f997ca-0045-4147-afcb-0c9ed0b44978', PGP_SYM_ENCRYPT('In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 2, 'TEXT');
 
 INSERT INTO feedback_templates
 (id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
@@ -609,19 +609,39 @@ VALUES
 ('97b0a312-e5dd-46f4-a600-d8be2ad925bb', 'Survey 1', 'Make a survey with a few questions', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2021-05-05', true, true, false);
 
 INSERT INTO template_questions
-(id, question, template_id, question_number)
+(id, question, template_id, question_number, input_type)
 VALUES
-('89c8b612-fca8-4144-88cd-176ddfca35ad', PGP_SYM_ENCRYPT('What can this team member improve on that would help them increase their effectiveness (include examples where possible)?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 1);
+('89c8b612-fca8-4144-88cd-176ddfca35ad', PGP_SYM_ENCRYPT('What can this team member improve on that would help them increase their effectiveness (include examples where possible)?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 1, 'TEXT');
 
 INSERT INTO template_questions
-(id, question, template_id, question_number)
+(id, question, template_id, question_number, input_type)
 VALUES
-('3571cf89-22b9-4e0e-baff-1a1e45482472', PGP_SYM_ENCRYPT('Try to recall a time when this team member helped you out with something. What was the problem and how did you work together to solve it?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 3);
+('3571cf89-22b9-4e0e-baff-1a1e45482472', PGP_SYM_ENCRYPT('Try to recall a time when this team member helped you out with something. What was the problem and how did you work together to solve it?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 3, 'TEXT');
 
 INSERT INTO template_questions
-(id, question, template_id, question_number)
+(id, question, template_id, question_number, input_type)
 VALUES
-('afa7e2cb-366a-4c16-a205-c0d493b80d85', PGP_SYM_ENCRYPT('In what ways does this team member represent OCI values?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
+('afa7e2cb-366a-4c16-a205-c0d493b80d85', PGP_SYM_ENCRYPT('In what ways does this team member represent OCI values?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2, 'TEXT');
+
+INSERT INTO feedback_templates
+(id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
+VALUES
+('1c8bc142-c447-4889-986e-42ab177da683', 'Multiple Choice Survey', 'This survey contains radio buttons and sliders.', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2022-04-04', true, true, false);
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('22113310-04dd-4931-96f2-37303a2515a4', PGP_SYM_ENCRYPT('Does this team member regularly attend meetings?', '${aeskey}'), '1c8bc142-c447-4889-986e-42ab177da683', 1, 'RADIO');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('11d7b14c-2eee-4f72-a2b6-8c57a094207e', PGP_SYM_ENCRYPT('Would you say that this team member demonstrates high productivity?', '${aeskey}'), '1c8bc142-c447-4889-986e-42ab177da683', 2, 'SLIDER');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('bf328e35-e486-4ec8-b3e8-acc2c09419fa', PGP_SYM_ENCRYPT('Feel free to elaborate on the choices you made above if you choose to do so', '${aeskey}'), '1c8bc142-c447-4889-986e-42ab177da683', 3, 'TEXT');
 
 INSERT INTO feedback_templates
 (id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
@@ -682,6 +702,11 @@ INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
 ('d09031be-fac1-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2020-08-01', '2020-08-05', '2020-08-02', 'submitted');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('a50f2f8a-7eb0-4456-b5ef-382086827ba0', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '2559a257-ae84-4076-9ed4-3820c427beeb', '1c8bc142-c447-4889-986e-42ab177da683', '2022-04-14', null, null, 'sent');
 
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)

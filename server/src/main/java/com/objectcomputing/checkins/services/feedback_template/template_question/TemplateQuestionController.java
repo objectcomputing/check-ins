@@ -1,23 +1,31 @@
 package com.objectcomputing.checkins.services.feedback_template.template_question;
 
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 @Controller("/services/feedback/template_questions")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -123,7 +131,7 @@ public class TemplateQuestionController {
      * @return {@link TemplateQuestion}
      */
     private TemplateQuestion fromDTO(TemplateQuestionCreateDTO dto) {
-        return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getQuestionNumber());
+        return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getQuestionNumber(), dto.getInputType());
     }
 
     /**
@@ -132,7 +140,7 @@ public class TemplateQuestionController {
      * @return {@link TemplateQuestion}
      */
     private TemplateQuestion fromDTO(TemplateQuestionUpdateDTO dto) {
-        return new TemplateQuestion(dto.getId(), dto.getQuestion(), dto.getQuestionNumber());
+        return new TemplateQuestion(dto.getId(), dto.getQuestion(), dto.getQuestionNumber(), dto.getInputType());
     }
 
     /**
@@ -146,6 +154,7 @@ public class TemplateQuestionController {
         dto.setQuestion(templateQuestion.getQuestion());
         dto.setTemplateId(templateQuestion.getTemplateId());
         dto.setQuestionNumber(templateQuestion.getQuestionNumber());
+        dto.setInputType(templateQuestion.getInputType());
         return dto;
     }
 

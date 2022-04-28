@@ -97,6 +97,16 @@ export const getQuestionsByRequestId = async (requestId, cookie) => {
   }
 }
 
+export const saveSingleAnswer = (answer, cookie) => {
+  return resolve({
+    url: answerURL,
+    method: "post",
+    responseType: "json",
+    data: answer,
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
+
 export const updateSingleAnswer = (answer, cookie) => {
   return resolve({
     url: answerURL,
