@@ -1092,6 +1092,29 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
+    void testCreatorCancelsSubmittedFeedbackRequest() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+
+        FeedbackTemplate template = createFeedbackTemplate(pdlMemberProfile.getId());
+        getFeedbackTemplateRepository().save(template);
+        final FeedbackRequest submittedFeedbackRequest = saveSampleFeedbackRequestWithStatus(pdlMemberProfile, employeeMemberProfile, recipient, template.getId(), "submitted");
+
+        submittedFeedbackRequest.setStatus("canceled");
+        submittedFeedbackRequest.setDueDate(null);
+        final FeedbackRequestUpdateDTO dto = updateDTO(submittedFeedbackRequest);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Attempted to cancel a feedback request that was already submitted", responseException.getMessage());
+    }
+
+    @Test
     void testUnauthorizedCancelsFeedbackRequest() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
