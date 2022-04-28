@@ -3,12 +3,11 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import Tooltip from '@mui/material/Tooltip';
-import './Slider.css';
 
 const Root = styled('div')(({theme}) => ({
   '& .MuiSlider-markLabel': {
     [theme.breakpoints.down('md')]: {
-      fontSize: "0.25rem",
+      fontSize: "0.525rem",
     },
     [theme.breakpoints.between('sm', 'lg')]: {
       fontSize: "0.525rem",
@@ -78,10 +77,6 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
     },
   ];
 
-  function valuetext(value) {
-    return `${value}`;
-  }
-
   const marks = inMarks ? inMarks : defaultMarks;
 
   const formatTooltipTitle = (title, children) => {
@@ -122,20 +117,20 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
   const startPos = inStartPos ? Number(inStartPos) : Math.ceil(marks.length/2);
 
   return (
-    <div className="skill-slider">
+    <div className="discrete-slider">
       <Typography id="discrete-slider-restrict" gutterBottom>
         {title}
       </Typography>
       <Root>
         <Slider
           min={0.5}
-          max={marks.length+.5}
+          max={marks.length + 0.5}
           value={startPos}
           valueLabelDisplay="auto"
           components={{
             ValueLabel: ValueLabelComponent
           }}
-          getAriaValueText={valuetext}
+          getAriaValueText={(value) => `${value}`}
           step={null}
           marks={marks}
           onChange={onChange}
