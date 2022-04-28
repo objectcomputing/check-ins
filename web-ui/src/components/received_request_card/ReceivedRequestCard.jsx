@@ -16,7 +16,8 @@ const classes = {
   redTypography: `${PREFIX}-redTypography`,
   yellowTypography: `${PREFIX}-yellowTypography`,
   greenTypography: `${PREFIX}-greenTypography`,
-  darkGrayTypography: `${PREFIX}-darkGrayTypography`
+  darkGrayTypography: `${PREFIX}-darkGrayTypography`,
+  grayTypography: `${PREFIX}-grayTypography`
 };
 
 const StyledCard = styled(Card)({
@@ -31,7 +32,10 @@ const StyledCard = styled(Card)({
   },
   [`& .${classes.darkGrayTypography}`]: {
     color: "#333333",
-  }
+  },
+  [`& .${classes.grayTypography}`]: {
+    color: "gray",
+  },
 });
 
 const propTypes = {
@@ -65,6 +69,12 @@ const ReceivedRequestCard = ({ request }) => {
       return (
         <Typography className={classes.greenTypography}>
           Submitted {submitDate}
+        </Typography>
+      );
+    } else if (request.status === "canceled") {
+      return (
+        <Typography className={classes.grayTypography}>
+          Canceled
         </Typography>
       );
     } else
@@ -128,7 +138,7 @@ const ReceivedRequestCard = ({ request }) => {
             <Submitted />
           </div>
           <div className="submission-link-container">
-            {request && !request.submitDate && request.id ? (
+            {request && !request.submitDate && request.id && request.status !== "canceled" ? (
               <Link
                 to={`/feedback/submit?request=${request.id}`}
                 style={{ textDecoration: "none" }}

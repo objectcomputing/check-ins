@@ -39,8 +39,8 @@ const FeedbackSubmitPage = () => {
   const [feedbackRequest, setFeedbackRequest] = useState(null);
   const [requestee, setRequestee] = useState(null);
   const [requestSubmitted, setRequestSubmitted] = useState(false);
+  const [requestCanceled, setRequestCanceled] = useState(false);
   const feedbackRequestFetched = useRef(false);
-
   
   useEffect(() => {
     if (!requestQuery) {
@@ -84,6 +84,8 @@ const FeedbackSubmitPage = () => {
             });
           } else if (request.status.toLowerCase() === "submitted" || request.submitDate) {
             setRequestSubmitted(true);
+          } else if (request.status.toLowerCase() === "canceled") {
+            setRequestCanceled(true);
           } else {
               setFeedbackRequest(request);
           }
@@ -114,14 +116,17 @@ const FeedbackSubmitPage = () => {
 
   return (
     <Root className="feedback-submit-page">
-      {requestSubmitted ?
-        <Typography className={classes.announcement} variant="h3">You have already submitted this feedback form. Thank you!</Typography> :
-        <>
-          {feedbackRequestFetched.current && (showTips ?
-            <FeedbackSubmissionTips onNextClick={() => setShowTips(false)}/> :
-            <FeedbackSubmitForm requesteeName={requestee?.name} requestId={requestQuery} request={feedbackRequest}/>
-          )}
-        </>
+      {requestCanceled ?
+        <Typography className={classes.announcement} variant="h3">This feedback request has been canceled.</Typography> :
+        (requestSubmitted ?
+          <Typography className={classes.announcement} variant="h3">You have already submitted this feedback form. Thank you!</Typography> :
+          <>
+            {feedbackRequestFetched.current && (showTips ?
+              <FeedbackSubmissionTips onNextClick={() => setShowTips(false)}/> :
+              <FeedbackSubmitForm requesteeName={requestee?.name} requestId={requestQuery} request={feedbackRequest}/>
+            )}
+          </>
+        )
       }
     </Root>
   );
