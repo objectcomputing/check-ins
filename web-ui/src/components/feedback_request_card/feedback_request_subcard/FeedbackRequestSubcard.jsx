@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from "react";
+import React, {useContext, useCallback, useState} from "react";
 import { styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import Grid from "@mui/material/Grid";
@@ -12,11 +12,15 @@ import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import TrashIcon from "@mui/icons-material/Delete";
 import { AppContext } from "../../../context/AppContext";
 import { selectCsrfToken, selectProfile } from "../../../context/selectors";
-import { Avatar, Tooltip } from "@mui/material";
+import {Avatar, Button, Card, CardActions, CardContent, CardHeader, Modal, Menu, Tooltip} from "@mui/material";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
 import { getAvatarURL } from "../../../api/api";
 import { makeStyles } from "@mui/styles";
+import MoreIcon from "@mui/icons-material/MoreVert";
+import MenuItem from "@mui/material/MenuItem";
+
+import "./FeedbackRequestSubcard.css";
 
 const PREFIX = "FeedbackRequestSubcard";
 const classes = {
@@ -69,6 +73,9 @@ const FeedbackRequestSubcard = ({ request }) => {
     ? dateFns.format(new Date(dueDate.join("/")), "LLLL dd, yyyy")
     : null;
   sendDate = dateFns.format(new Date(sendDate.join("/")), "LLLL dd, yyyy");
+
+  const [expandMenuAnchor, setExpandMenuAnchor] = useState(null);
+  const [enableEditsDialog, setEnableEditsDialog] = useState(false);
 
   const recipientId = request?.id;
   const recipientEmail = recipient?.workEmail;
@@ -132,6 +139,10 @@ const FeedbackRequestSubcard = ({ request }) => {
       handleDeleteFeedback();
     }
   }, [recipientId, csrf]);
+  
+  const handleEnableEditsClick = useCallback(() => {
+    setEnableEditsDialog(false);
+  }, []);
 
   const Submitted = () => {
     if (request.dueDate) {
@@ -227,16 +238,54 @@ const FeedbackRequestSubcard = ({ request }) => {
                 </>
               )}
               {request && request.submitDate && request.id ? (
-                <Link
-                  to={`/feedback/view/responses/?request=${request.id}`}
-                  className="response-link"
-                >
-                  View response
-                </Link>
+                <>
+                  <Link
+                    to={`/feedback/view/responses/?request=${request.id}`}
+                    className="response-link"
+                  >
+                    <Button>View Response</Button>
+                  </Link>
+                  <IconButton onClick={(event) => setExpandMenuAnchor(event.currentTarget)}>
+                    <MoreIcon/>
+                  </IconButton>
+                  <Menu
+                    anchorEl={expandMenuAnchor}
+                    open={!!expandMenuAnchor}
+                    onClose={() => setExpandMenuAnchor(false)}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "center"
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "center"
+                    }}
+                  >
+                    <MenuItem onClick={() => {
+                      setExpandMenuAnchor(null);
+                      setEnableEditsDialog(true);
+                    }}>Enable Edits</MenuItem>
+                  </Menu>
+                </>
               ) : null}
             </Grid>
           </Grid>
         </Grid>
+        <Modal open={enableEditsDialog} onClose={() => setEnableEditsDialog(false)}>
+          <Card className="feedback-request-enable-edits-modal">
+            <CardHeader title={<Typography variant="h5" fontWeight="bold">Enable Feedback Edits</Typography>}/>
+            <CardContent>
+              <Typography variant="body1">
+                Are you sure you want to enable <b>{recipient?.name}</b> to make changes to this feedback submission?
+                This will not delete their current answers, but it will require them to resubmit once they have completed their edits.
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button style={{ color: "gray" }} onClick={() => setEnableEditsDialog(false)}>Cancel</Button>
+              <Button color="primary" onClick={handleEnableEditsClick}>Enable Edits</Button>
+            </CardActions>
+          </Card>
+        </Modal>
       </Grid>
     </Root>
   );
