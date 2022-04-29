@@ -6,13 +6,13 @@ import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import { sendReminderNotification } from "../../../api/notifications";
-import { deleteFeedbackRequestById } from "../../../api/feedback";
+import {deleteFeedbackRequestById, updateFeedbackRequest} from "../../../api/feedback";
 import IconButton from "@mui/material/IconButton";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import TrashIcon from "@mui/icons-material/Delete";
 import { AppContext } from "../../../context/AppContext";
 import { selectCsrfToken, selectProfile } from "../../../context/selectors";
-import {Avatar, Button, Card, CardActions, CardContent, CardHeader, Modal, Menu, Tooltip} from "@mui/material";
+import {Avatar, Button, Card, CardActions, CardContent, CardHeader, Modal, Menu, Tooltip, Alert} from "@mui/material";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
 import { getAvatarURL } from "../../../api/api";
@@ -142,7 +142,41 @@ const FeedbackRequestSubcard = ({ request }) => {
   
   const handleEnableEditsClick = useCallback(() => {
     setEnableEditsDialog(false);
-  }, []);
+
+    const enableFeedbackEdits = async () => {
+      const requestWithEditsEnabled = {
+        ...request,
+        status: "sent",
+        submitDate: null
+      }
+
+      const res = await updateFeedbackRequest(requestWithEditsEnabled, csrf);
+      return res && res.payload && res.payload.data && !res.error ? res.payload.data : null;
+    }
+
+    if (csrf) {
+      enableFeedbackEdits().then((res) => {
+        if (res) {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "success",
+              toast: `Enabled edits for ${recipient?.name}'s feedback`
+            }
+          });
+        } else {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "Could not enable edits for this feedback request"
+            }
+          });
+        }
+      });
+    }
+
+  }, [csrf, recipient, request]);
 
   const Submitted = () => {
     if (request.dueDate) {
@@ -242,6 +276,7 @@ const FeedbackRequestSubcard = ({ request }) => {
                   <Link
                     to={`/feedback/view/responses/?request=${request.id}`}
                     className="response-link"
+                    style={{ background: "transparent" }}
                   >
                     <Button>View Response</Button>
                   </Link>
@@ -266,26 +301,29 @@ const FeedbackRequestSubcard = ({ request }) => {
                       setEnableEditsDialog(true);
                     }}>Enable Edits</MenuItem>
                   </Menu>
+                  <Modal open={enableEditsDialog} onClose={() => setEnableEditsDialog(false)}>
+                    <Card className="feedback-request-enable-edits-modal">
+                      <CardHeader title={<Typography variant="h5" fontWeight="bold">Enable Feedback Edits</Typography>}/>
+                      <CardContent>
+                        <Typography variant="body1">
+                          Are you sure you want <b>{recipient?.name}</b> to be able to make changes to this feedback submission?
+                          This will allow them to edit their original responses and resubmit them.
+                        </Typography>
+                        <Alert style={{marginTop: "1rem"}} severity="warning">
+                          {recipient?.name}'s feedback for this request will be inaccessible until they submit their answers again.
+                        </Alert>
+                      </CardContent>
+                      <CardActions>
+                        <Button style={{ color: "gray" }} onClick={() => setEnableEditsDialog(false)}>Cancel</Button>
+                        <Button color="primary" onClick={handleEnableEditsClick}>Enable Edits</Button>
+                      </CardActions>
+                    </Card>
+                  </Modal>
                 </>
               ) : null}
             </Grid>
           </Grid>
         </Grid>
-        <Modal open={enableEditsDialog} onClose={() => setEnableEditsDialog(false)}>
-          <Card className="feedback-request-enable-edits-modal">
-            <CardHeader title={<Typography variant="h5" fontWeight="bold">Enable Feedback Edits</Typography>}/>
-            <CardContent>
-              <Typography variant="body1">
-                Are you sure you want to enable <b>{recipient?.name}</b> to make changes to this feedback submission?
-                This will not delete their current answers, but it will require them to resubmit once they have completed their edits.
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button style={{ color: "gray" }} onClick={() => setEnableEditsDialog(false)}>Cancel</Button>
-              <Button color="primary" onClick={handleEnableEditsClick}>Enable Edits</Button>
-            </CardActions>
-          </Card>
-        </Modal>
       </Grid>
     </Root>
   );
