@@ -16,7 +16,6 @@ import java.util.*;
 @Singleton
 public class SkillsReportServicesImpl implements SkillsReportServices {
     private final MemberSkillRepository memberSkillRepo;
-    private final MemberProfileRepository memberProfileRepo;
     private final MemberProfileServices memberProfileServices;
     private final SkillRepository skillRepo;
 
@@ -25,7 +24,6 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
                                     MemberProfileServices memberProfileServices,
                                     SkillRepository skillRepo) {
         this.memberSkillRepo = memberSkillRepo;
-        this.memberProfileRepo = memberProfileRepo;
         this.memberProfileServices = memberProfileServices;
         this.skillRepo = skillRepo;
     }
@@ -46,9 +44,9 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
 
             if (members != null) {
                 for (UUID member : members) {
-                    if (!memberProfileRepo.existsById(member)) {
-                        throw new BadArgException(String.format("Invalid member profile ID %s", member));
-                    }
+                    memberProfileServices.getById(member).orElseThrow(() -> {
+                        throw new BadArgException("Invalid member profile ID %s", member);
+                    });
                 }
             }
 
@@ -116,7 +114,9 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
                 final TeamMemberSkillDTO dto = new TeamMemberSkillDTO();
                 dto.setId(memberId);
 
-                final MemberProfile memProfile = memberProfileServices.getById(memberId);
+                final MemberProfile memProfile = memberProfileServices.getById(memberId).orElseThrow(() -> {
+                    throw new BadArgException("Member %s does not exist", memberId);
+                });
                 final String memberName = MemberProfileUtils.getFullName(memProfile);
                 dto.setName(memberName);
 

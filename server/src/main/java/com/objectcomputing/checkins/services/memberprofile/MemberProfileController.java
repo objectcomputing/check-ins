@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -62,9 +63,14 @@ public class MemberProfileController {
 
         return Single.fromCallable(() -> memberProfileServices.getById(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(memberProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
-                        .ok(fromEntity(memberProfile))
-                        .headers(headers -> headers.location(location(memberProfile.getId()))))
+                .map(memberProfile -> {
+                    MemberProfile member = memberProfile.orElseThrow(() -> {
+                       throw new NotFoundException("Member profile with ID %s does not exist", id);
+                    });
+                    return (HttpResponse<MemberProfileResponseDTO>) HttpResponse
+                            .ok(fromEntity(member))
+                            .headers(headers -> headers.location(location(member.getId())));
+                })
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 

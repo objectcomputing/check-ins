@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.validate.crud;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.action_item.ActionItem;
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -161,7 +162,9 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
             permissionsValidation.validatePermissions(!checkInServices.accessGranted(checkinid, currentUser.getId()),
                     "Uawe");
         } else if (createdbyid != null) {
-            MemberProfile memberRecord = memberServices.getById(createdbyid);
+            MemberProfile memberRecord = memberServices.getById(createdbyid).orElseThrow(() -> {
+                throw new BadArgException("Member %s does not exist", createdbyid);
+            });
             permissionsValidation.validatePermissions(!currentUser.getId().equals(memberRecord.getId()) &&
                     !isAdmin, "User is unauthorized to do this operation");
         } else {

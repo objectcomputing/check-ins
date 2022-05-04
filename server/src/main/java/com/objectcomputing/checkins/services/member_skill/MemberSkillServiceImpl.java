@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.member_skill;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
 import javax.inject.Singleton;
@@ -15,14 +15,14 @@ import java.util.UUID;
 public class MemberSkillServiceImpl implements MemberSkillServices {
 
     private final MemberSkillRepository memberSkillRepository;
-    private final MemberProfileRepository memberProfileRepository;
+    private final MemberProfileServices memberProfileServices;
     private final SkillRepository skillRepository;
 
     public MemberSkillServiceImpl(MemberSkillRepository memberSkillRepository,
-                                  MemberProfileRepository memberProfileRepository,
+                                  MemberProfileServices memberProfileServices,
                                   SkillRepository skillRepository) {
         this.memberSkillRepository = memberSkillRepository;
-        this.memberProfileRepository = memberProfileRepository;
+        this.memberProfileServices = memberProfileServices;
         this.skillRepository = skillRepository;
     }
 
@@ -35,8 +35,8 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
                 throw new BadArgException(String.format("Invalid member skill %s", memberSkill));
             } else if (memberSkill.getId() != null) {
                 throw new BadArgException(String.format("Found unexpected id %s for member skill", memberSkill.getId()));
-            } else if (memberProfileRepository.findById(memberId).isEmpty()) {
-                throw new BadArgException(String.format("Member Profile %s doesn't exist", memberId));
+            } else if (memberProfileServices.getById(memberId).isEmpty()) {
+                throw new BadArgException("Member Profile %s doesn't exist", memberId);
             } else if (skillRepository.findById(skillId).isEmpty()) {
                 throw new BadArgException(String.format("Skill %s doesn't exist", skillId));
             } else if (memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(),
@@ -70,7 +70,7 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
 
     public MemberSkill update(@NotNull MemberSkill memberSkill) {
 
-        MemberSkill newSkill = null;
+        MemberSkill newSkill;
 
         if (memberSkill.getId() != null && memberSkillRepository.findById(memberSkill.getId()).isPresent()) {
             newSkill = memberSkillRepository.update(memberSkill);

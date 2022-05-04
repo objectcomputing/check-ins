@@ -88,7 +88,9 @@ public class GuildServicesImpl implements GuildServices {
                 }
                 newGuildEntity = guildsRepo.save(fromDTO(guildDTO));
                 for (GuildCreateDTO.GuildMemberCreateDTO memberDTO : guildDTO.getGuildMembers()) {
-                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberId());
+                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberId()).orElseThrow(() -> {
+                        throw new NotFoundException("Guild member %s does not exist", memberDTO.getMemberId());
+                    });
                     newMembers.add(fromMemberEntity(guildMemberRepo.save(fromMemberDTO(memberDTO, newGuildEntity.getId())), existingMember));
                 }
             }
@@ -105,11 +107,15 @@ public class GuildServicesImpl implements GuildServices {
                 .findByGuildId(guildId)
                 .stream()
                 .filter(guildMember -> {
-                    LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
+                    LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).orElseThrow(() -> {
+                        throw new BadArgException("Guild member %s does not exist", guildMember.getMemberId());
+                    }).getTerminationDate();
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(guildMember ->
-                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()))).collect(Collectors.toList());
+                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()).orElseThrow(() -> {
+                            throw new BadArgException("Guild member %s does not exist", guildMember.getMemberId());
+                        }))).collect(Collectors.toList());
 
         return fromEntity(foundGuild, guildMembers);
     }
@@ -140,7 +146,9 @@ public class GuildServicesImpl implements GuildServices {
                     Set<String> emailsOfGuildLeads = guildMemberServices.findByFields(guildDTO.getId(), null, true)
                             .stream()
                             .filter(lead -> !lead.getMemberId().equals(currentUser.getId()))
-                            .map(lead -> memberProfileServices.getById(lead.getMemberId()).getWorkEmail())
+                            .map(lead -> memberProfileServices.getById(lead.getMemberId()).orElseThrow(() -> {
+                                throw new BadArgException("Guild lead member %s does not exist", lead.getMemberId());
+                            }).getWorkEmail())
                             .collect(Collectors.toSet());
 
                     Guild newGuildEntity  = guildsRepo.update(fromDTO(guildDTO));
@@ -149,7 +157,9 @@ public class GuildServicesImpl implements GuildServices {
                     //add new members to the guild
                     guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
                         Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
-                        MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
+                        MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId()).orElseThrow(() -> {
+                            throw new BadArgException("Guild member %s does not exist", updatedMember.getMemberId());
+                        });
                         if(!first.isPresent()) {
                             newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                             addedMembers.add(existingMember);
@@ -162,7 +172,9 @@ public class GuildServicesImpl implements GuildServices {
                     existingGuildMembers.stream().forEach((existingMember) -> {
                         if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
                             guildMemberServices.delete(existingMember.getId());
-                            removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()));
+                            removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()).orElseThrow(() -> {
+                                throw new BadArgException("Guild member %s does not exist", existingMember.getMemberId());
+                            }));
                         }
                     });
                     updated = fromEntity(newGuildEntity, newMembers);
@@ -188,12 +200,16 @@ public class GuildServicesImpl implements GuildServices {
         //TODO: revisit this in a way that will allow joins.
         for (GuildResponseDTO foundGuild : foundGuilds) {
             Set<GuildMember> foundMembers = guildMemberRepo.findByGuildId(foundGuild.getId()).stream().filter(guildMember -> {
-                LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
+                LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Guild member %s does not exist", guildMember.getMemberId());
+                }).getTerminationDate();
                 return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
             }).collect(Collectors.toSet());
 
             for (GuildMember foundMember : foundMembers) {
-                foundGuild.getGuildMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
+                foundGuild.getGuildMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Guild member %s does not exist", foundMember.getMemberId());
+                })));
             }
         }
         return foundGuilds;

@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -14,12 +15,12 @@ import java.util.UUID;
 public class PulseResponseServicesImpl implements PulseResponseService {
 
     private final PulseResponseRepository pulseResponseRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileServices memberProfileServices;
 
     public PulseResponseServicesImpl(PulseResponseRepository pulseResponseRepo,
-                                     MemberProfileRepository memberRepo) {
+                                     MemberProfileServices memberProfileServices) {
         this.pulseResponseRepo = pulseResponseRepo;
-        this.memberRepo = memberRepo;
+        this.memberProfileServices = memberProfileServices;
     }
     
     @Override
@@ -31,7 +32,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             LocalDate pulseUpDate = pulseResponse.getUpdatedDate();
             if(pulseResponse.getId()!=null){
             throw new BadArgException(String.format("Found unexpected id for pulseresponse %s", pulseResponse.getId()));
-        } else if(!memberRepo.findById(memberId).isPresent()){
+        } else if(memberProfileServices.getById(memberId).isEmpty()){
             throw new BadArgException(String.format("Member %s doesn't exists", memberId));
         } else if(pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
             throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s",memberId));
@@ -59,7 +60,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         LocalDate pulseUpDate = pulseResponse.getUpdatedDate();
         if(id==null||!pulseResponseRepo.findById(id).isPresent()){
             throw new BadArgException(String.format("Unable to find pulseresponse record with id %s", pulseResponse.getId()));
-        }else if(!memberRepo.findById(memberId).isPresent()){
+        } else if(memberProfileServices.getById(memberId).isEmpty()){
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if(memberId==null) {
             throw new BadArgException(String.format("Invalid pulseresponse %s", pulseResponse));

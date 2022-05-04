@@ -49,12 +49,8 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public MemberProfile getById(@NotNull UUID id) {
-        Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
-        if (memberProfile.isEmpty()) {
-            throw new NotFoundException("No member profile for id " + id);
-        }
-        return memberProfile.get();
+    public Optional<MemberProfile> getById(@NotNull UUID id) {
+        return memberProfileRepository.findById(id);
     }
 
     @Override
@@ -126,6 +122,11 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }
         return searchResult.get(0);
+    }
+
+    @Override
+    public Optional<MemberProfile> findByWorkEmail(@NotNull String workEmail) {
+        return memberProfileRepository.findByWorkEmail(workEmail);
     }
 
     @Override

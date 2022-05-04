@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.guild.Guild;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import io.micronaut.context.annotation.Property;
@@ -26,7 +27,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     private final GuildRepository guildRepo;
     private final GuildMemberRepository guildMemberRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
     private final GuildMemberHistoryRepository guildMemberHistoryRepository;
     private EmailSender emailSender;
@@ -35,7 +36,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     public GuildMemberServicesImpl(GuildRepository guildRepo,
                                    GuildMemberRepository guildMemberRepo,
-                                   MemberProfileRepository memberRepo,
+                                   MemberProfileServices memberProfileServices,
                                    CurrentUserServices currentUserServices,
                                    GuildMemberHistoryRepository guildMemberHistoryRepository,
                                    EmailSender emailSender,
@@ -43,7 +44,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     ) {
         this.guildRepo = guildRepo;
         this.guildMemberRepo = guildMemberRepo;
-        this.memberRepo = memberRepo;
+        this.memberProfileServices = memberProfileServices;
         this.currentUserServices = currentUserServices;
         this.guildMemberHistoryRepository=guildMemberHistoryRepository;
         this.emailSender = emailSender;
@@ -64,13 +65,13 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         boolean isLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
 
         if (guild.isEmpty()) {
-            throw new BadArgException(String.format("Guild %s doesn't exist", guildId));
+            throw new BadArgException("Guild %s doesn't exist", guildId);
         } else if (guildMember.getId() != null) {
-            throw new BadArgException(String.format("Found unexpected id %s for Guild member", guildMember.getId()));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
+            throw new BadArgException("Found unexpected id %s for Guild member", guildMember.getId());
+        } else if (memberProfileServices.getById(memberId).isEmpty()) {
+            throw new BadArgException("Member %s doesn't exist", memberId);
         } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isPresent()) {
-            throw new BadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
+            throw new BadArgException("Member %s already exists in guild %s", memberId, guildId);
         }
         // only allow admins to create guild leads
         else if (!currentUserServices.isAdmin() && guildMember.isLead()) {
@@ -113,8 +114,8 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
         if (id == null || guildMemberRepo.findById(id).isEmpty()) {
             throw new BadArgException(String.format("Unable to locate guildMember to update with id %s", id));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
+        } else if (memberProfileServices.getById(memberId).isEmpty()) {
+            throw new BadArgException("Member %s doesn't exist", memberId);
         } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of guild %s", memberId, guildId));
         } else if (!isAdmin && guildLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
@@ -180,15 +181,19 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         }
         Set<String> guildLeadEmails = new HashSet<>();
         guildLeads.forEach(o -> {
-            memberRepo.findById(o.getMemberId()).ifPresent(memberProfile -> guildLeadEmails.add(memberProfile.getWorkEmail()));
+            MemberProfile guildLead = memberProfileServices.getById(o.getMemberId()).orElseThrow(() -> {
+                throw new BadArgException("Guild lead with ID %s does not exist", o.getMemberId());
+            });
+            guildLeadEmails.add(guildLead.getWorkEmail());
         });
         return guildLeadEmails;
     }
 
 
     private String constructEmailContent (GuildMember guildMember, Boolean isAdded){
-        MemberProfile memberProfile = memberRepo.findById(guildMember.getMemberId())
-                .orElseThrow(() -> new NotFoundException("No member profile found for guild member with memberid " + guildMember.getMemberId()));
+        MemberProfile memberProfile = memberProfileServices.getById(guildMember.getMemberId()).orElseThrow(() -> {
+            throw new NotFoundException(String.format("No member profile found for guild member with memberid %s", guildMember.getMemberId()));
+        });
         Guild guild = guildRepo.findById(guildMember.getGuildId())
                 .orElseThrow(() -> new NotFoundException("No guild found for guild id " + guildMember.getGuildId()));
 

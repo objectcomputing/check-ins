@@ -5,6 +5,7 @@ import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
@@ -157,7 +158,9 @@ public class FileServicesImpl implements FileServices {
         }
 
         // create folder for each team member
-        final String directoryName = MemberProfileUtils.getFullName(memberProfileServices.getById(checkIn.getTeamMemberId()));
+        final String directoryName = MemberProfileUtils.getFullName(memberProfileServices.getById(checkIn.getTeamMemberId()).orElseThrow(() -> {
+            throw new BadArgException("Cannot create directory for nonexistent member %s", checkIn.getTeamMemberId());
+        }));
 
         try {
             Drive drive = googleApiAccess.getDrive();

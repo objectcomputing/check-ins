@@ -93,8 +93,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
-        MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
-        MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+        MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId()).orElseThrow(() -> {
+            throw new BadArgException("The creator of the feedback request does not exist");
+        });
+        MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId()).orElseThrow(() -> {
+            throw new BadArgException("The requestee of the feedback request does not exist");
+        });
         String newContent = "<h1>You have received a feedback request.</h1>" + 
         "<p><b>" + creator.getFirstName() + " " + creator.getLastName() + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
         if (storedRequest.getDueDate() != null) {
@@ -102,7 +106,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
         newContent+="<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
-        emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).orElseThrow(() -> {
+            throw new BadArgException("Email recipient %s does not exist", storedRequest.getRecipientId());
+        }).getWorkEmail());
         return storedRequest;
     }
 
@@ -204,7 +210,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean createIsPermitted(UUID requesteeId) {
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
+        final UUID requesteePDL = memberProfileServices.getById(requesteeId).orElseThrow(() -> {
+            throw new BadArgException("Requestee with member ID %s does not exist", requesteeId);
+        }).getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
         return isAdmin || currentUserId.equals(requesteePDL);

@@ -60,7 +60,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
         validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
-        validate(memberProfileServices.getById(createById) == null, "Member %s doesn't exist", createById);
+        validate(memberProfileServices.getById(createById).isEmpty(), "Member who created the Checkin note does not exist");
         if (!isAdmin && isCompleted) {
             validate(true, "User is unauthorized to do this operation");
         }
@@ -108,7 +108,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         }
         validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(id == null || checkinNoteRepository.findById(id).isEmpty(), "Unable to locate checkin note to update with id %s", checkinNote.getId());
-        validate(memberProfileServices.getById(createById) == null, "Member %s doesn't exist", createById);
+        validate(memberProfileServices.getById(createById).isEmpty(), "Member who created the Checkin note does not exist");
 
         if (!isAdmin && isCompleted) {
             LOG.debug("User isn't admin and checkin is completed.");
@@ -126,7 +126,9 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         if (checkinid != null) {
             validate(!checkinServices.accessGranted(checkinid, currentUser.getId()), "User is unauthorized to do this operation");
         } else if (createbyid != null) {
-            MemberProfile memberRecord = memberProfileServices.getById(createbyid);
+            MemberProfile memberRecord = memberProfileServices.getById(createbyid).orElseThrow(() -> {
+                throw new BadArgException("Member who created the Checkin note does not exist");
+            });
             validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
         } else {
             validate(!isAdmin, "User is unauthorized to do this operation");
