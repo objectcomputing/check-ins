@@ -8,6 +8,7 @@ import com.google.api.client.testing.json.MockJsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 import com.google.common.io.ByteStreams;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
@@ -639,7 +640,9 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testCheckIn.isCompleted()).thenReturn(false);
-        when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(memberProfileServices.getById(any(UUID.class)).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(testMemberProfile);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
@@ -699,7 +702,9 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testCheckIn.isCompleted()).thenReturn(false);
-        when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(memberProfileServices.getById(any(UUID.class)).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(testMemberProfile);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
@@ -755,7 +760,9 @@ public class FileServicesImplTest {
 
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
-        when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(memberProfileServices.getById(any(UUID.class)).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(testMemberProfile);
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
 
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
@@ -863,7 +870,9 @@ public class FileServicesImplTest {
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
-        when(memberProfileServices.getById(testMemberId)).thenReturn(testMemberProfile);
+        when(memberProfileServices.getById(testMemberId).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(testMemberProfile);
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn("test.name");
         when(mockGoogleApiAccess.getDrive()).thenReturn(null);
 
@@ -888,7 +897,9 @@ public class FileServicesImplTest {
 
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
-        when(memberProfileServices.getById(testMemberId)).thenReturn(testMemberProfile);
+        when(memberProfileServices.getById(testMemberId).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(testMemberProfile);
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn("test.name");
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
@@ -920,7 +931,9 @@ public class FileServicesImplTest {
 
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
-        when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(memberProfileServices.getById(any(UUID.class)).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(testMemberProfile);
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
 
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
