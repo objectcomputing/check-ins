@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +28,15 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     private final CheckInRepository checkinRepo;
     private final CheckInServices checkinServices;
     private final CheckinNoteRepository checkinNoteRepository;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
 
     public CheckinNoteServicesImpl(CheckInRepository checkinRepo, CheckInServices checkinServices, CheckinNoteRepository checkinNoteRepository,
-                                   MemberProfileRepository memberRepo, CurrentUserServices currentUserServices) {
+                                   MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
         this.checkinRepo = checkinRepo;
         this.checkinServices = checkinServices;
         this.checkinNoteRepository = checkinNoteRepository;
-        this.memberRepo = memberRepo;
+        this.memberProfileServices = memberProfileServices;
         this.currentUserServices = currentUserServices;
     }
 
@@ -60,7 +60,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
         validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
-        validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+        validate(memberProfileServices.getById(createById) == null, "Member %s doesn't exist", createById);
         if (!isAdmin && isCompleted) {
             validate(true, "User is unauthorized to do this operation");
         }
@@ -108,7 +108,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         }
         validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(id == null || checkinNoteRepository.findById(id).isEmpty(), "Unable to locate checkin note to update with id %s", checkinNote.getId());
-        validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+        validate(memberProfileServices.getById(createById) == null, "Member %s doesn't exist", createById);
 
         if (!isAdmin && isCompleted) {
             LOG.debug("User isn't admin and checkin is completed.");
@@ -126,7 +126,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         if (checkinid != null) {
             validate(!checkinServices.accessGranted(checkinid, currentUser.getId()), "User is unauthorized to do this operation");
         } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
+            MemberProfile memberRecord = memberProfileServices.getById(createbyid);
             validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
         } else {
             validate(!isAdmin, "User is unauthorized to do this operation");
