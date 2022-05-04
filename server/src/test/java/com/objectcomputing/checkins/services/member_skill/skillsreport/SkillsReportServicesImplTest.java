@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -152,10 +153,18 @@ public class SkillsReportServicesImplTest {
         MemberProfile ross = new MemberProfile("Ross", null, "Geller", null,
                 null, null, null, null, null, null, null,
                 null, null,null, null, null);
-        when(memberProfileServices.getById(memberId1)).thenReturn(joey);
-        when(memberProfileServices.getById(memberId2)).thenReturn(chandler);
-        when(memberProfileServices.getById(memberId3)).thenReturn(null);
-        when(memberProfileServices.getById(memberId4)).thenReturn(ross);
+        when(memberProfileServices.getById(memberId1).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(joey);
+        when(memberProfileServices.getById(memberId2).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(chandler);
+        when(memberProfileServices.getById(memberId3).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(null);
+        when(memberProfileServices.getById(memberId4).orElseThrow(() -> {
+            throw new NotFoundException("Member does not exist");
+        })).thenReturn(ross);
 
         when(skillRepository.existsById(skillId1)).thenReturn(true);
         when(skillRepository.existsById(skillId2)).thenReturn(true);
