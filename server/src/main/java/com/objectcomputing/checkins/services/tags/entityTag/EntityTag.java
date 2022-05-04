@@ -65,7 +65,7 @@ public class EntityTag {
                 case "team":
                     return EntityType.TEAM;
                 default:
-                    throw new BadArgException(String.format("Invalid type %s", type));
+                    throw new BadArgException("Invalid type %s", type);
             }
         }
     }

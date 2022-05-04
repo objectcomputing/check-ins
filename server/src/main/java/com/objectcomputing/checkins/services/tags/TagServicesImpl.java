@@ -32,9 +32,9 @@ public class TagServicesImpl implements TagServices {
         Tag tagToReturn = null;
         if (tag != null) {
             if (tag.getId() != null) {
-                    throw new BadArgException(String.format("Found unexpected id %s for tag", tag.getId()));
+                    throw new BadArgException("Found unexpected id %s for tag", tag.getId());
             } else if (!tagRepository.findByNameIlike(tag.getName()).isEmpty()) {
-                    throw new AlreadyExistsException(String.format("A tag named %s already exists.", tag.getName()));
+                    throw new AlreadyExistsException("A tag named %s already exists.", tag.getName());
             }
 
                 tagToReturn = tagRepository.save(tag);
@@ -61,7 +61,7 @@ public class TagServicesImpl implements TagServices {
         if (tag.getId() != null && tagRepository.findById(tag.getId()).isPresent()) {
             newTag = tagRepository.update(tag);
         } else {
-            throw new BadArgException(String.format("tag %s does not exist, cannot update", tag.getId()));
+            throw new BadArgException("tag %s does not exist, cannot update", tag.getId());
         }
 
         return newTag;

@@ -72,8 +72,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
 
         if (emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
-            throw new AlreadyExistsException(String.format("Email %s already exists in database",
-                    memberProfile.getWorkEmail()));
+            throw new AlreadyExistsException("Email %s already exists in database", memberProfile.getWorkEmail());
         }
 
         if (memberProfile.getId() == null) {
@@ -94,13 +93,13 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");
         } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
+            throw new BadArgException("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile));
         } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
+            throw new BadArgException("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile));
         } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
+            throw new BadArgException("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile));
         } else if (!userRoles.isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile)));
+            throw new BadArgException("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile));
         }
 
         // Update PDL ID for all associated members before termination

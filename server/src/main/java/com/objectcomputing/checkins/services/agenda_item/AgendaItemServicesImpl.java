@@ -156,7 +156,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
     private void validate(boolean isError, String message, Object... args) {
         if (isError) {
-            throw new BadArgException(String.format(message, args));
+            throw new BadArgException(message, args);
         }
     }
 }

@@ -31,13 +31,13 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             LocalDate pulseSubDate = pulseResponse.getSubmissionDate();
             LocalDate pulseUpDate = pulseResponse.getUpdatedDate();
             if(pulseResponse.getId()!=null){
-            throw new BadArgException(String.format("Found unexpected id for pulseresponse %s", pulseResponse.getId()));
+            throw new BadArgException("Found unexpected id for pulseresponse %s", pulseResponse.getId());
         } else if(memberProfileServices.getById(memberId).isEmpty()){
-            throw new BadArgException(String.format("Member %s doesn't exists", memberId));
+            throw new BadArgException("Member %s doesn't exists", memberId);
         } else if(pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
-            throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s",memberId));
+            throw new BadArgException("Invalid date for pulseresponse submission date %s", memberId);
         } else if(pulseUpDate.isBefore(LocalDate.EPOCH) || pulseUpDate.isAfter(LocalDate.MAX)) {
-            throw new BadArgException(String.format("Invalid date for pulseresponse updated date %s",memberId));
+            throw new BadArgException("Invalid date for pulseresponse updated date %s", memberId);
         }
         pulseResponseRet = pulseResponseRepo.save(pulseResponse);
         }
@@ -59,15 +59,15 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         LocalDate pulseSubDate = pulseResponse.getSubmissionDate();
         LocalDate pulseUpDate = pulseResponse.getUpdatedDate();
         if(id==null||!pulseResponseRepo.findById(id).isPresent()){
-            throw new BadArgException(String.format("Unable to find pulseresponse record with id %s", pulseResponse.getId()));
+            throw new BadArgException("Unable to find pulseresponse record with id %s", pulseResponse.getId());
         } else if(memberProfileServices.getById(memberId).isEmpty()){
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
+            throw new BadArgException("Member %s doesn't exist", memberId);
         } else if(memberId==null) {
-            throw new BadArgException(String.format("Invalid pulseresponse %s", pulseResponse));
+            throw new BadArgException("Invalid pulseresponse %s", pulseResponse);
         } else if(pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
-            throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s",memberId));
+            throw new BadArgException("Invalid date for pulseresponse submission date %s", memberId);
         } else if(pulseUpDate.isBefore(LocalDate.EPOCH) || pulseUpDate.isAfter(LocalDate.MAX)) {
-            throw new BadArgException(String.format("Invalid date for pulseresponse %s",memberId));
+            throw new BadArgException("Invalid date for pulseresponse %s", memberId);
         }
 
         pulseResponseRet = pulseResponseRepo.update(pulseResponse);

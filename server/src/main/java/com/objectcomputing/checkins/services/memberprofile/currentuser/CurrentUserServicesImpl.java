@@ -65,7 +65,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     private MemberProfile saveNewUser(String firstName, String lastName, String workEmail) {
         MemberProfile emailProfile = memberProfileServices.findByWorkEmail(workEmail).orElse(null);
         if (emailProfile != null) {
-            throw new AlreadyExistsException(String.format("Email %s already exists in database", workEmail));
+            throw new AlreadyExistsException("Email %s already exists in database", workEmail);
         }
 
         MemberProfile createdMember = memberProfileServices.saveProfile(new MemberProfile(firstName, null, lastName, null, "", null,

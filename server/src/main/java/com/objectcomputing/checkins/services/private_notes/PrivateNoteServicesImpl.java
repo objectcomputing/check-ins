@@ -77,13 +77,13 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
 
         if (privateNoteResult == null) {
-            throw new NotFoundException(String.format("Invalid private note id %s", id));
+            throw new NotFoundException("Invalid private note id %s", id);
         }
 
         if (!isAdmin) {
             CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
             if (checkinRecord == null) {
-                throw new NotFoundException(String.format("CheckIn %s doesn't exist", privateNoteResult.getCheckinid()));
+                throw new NotFoundException("CheckIn %s doesn't exist", privateNoteResult.getCheckinid());
             }
 
             if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
@@ -153,7 +153,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     private void validate(boolean isError, String message, Object... args) {
         if (isError) {
-            throw new BadArgException(String.format(message, args));
+            throw new BadArgException(message, args);
         }
     }
 }

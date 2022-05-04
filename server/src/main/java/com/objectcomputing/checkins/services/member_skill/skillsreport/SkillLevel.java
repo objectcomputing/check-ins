@@ -41,7 +41,7 @@ public enum SkillLevel {
             case EXPERT_LEVEL:
                 return SkillLevel.EXPERT;
             default:
-                throw new BadArgException(String.format("Invalid skill level %s", level));
+                throw new BadArgException("Invalid skill level %s", level);
         }
     }
 

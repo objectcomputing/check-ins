@@ -51,7 +51,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
 
         if (checkinRecord == null) {
-            throw new NotFoundException(String.format("CheckIn %s doesn't exist", checkinId));
+            throw new NotFoundException("CheckIn %s doesn't exist", checkinId);
         }
 
         if (!checkinServices.accessGranted(checkinId, currentUser.getId())) {
@@ -78,7 +78,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         if (!isAdmin) {
             CheckIn checkinRecord = checkinRepo.findById(checkInNoteResult.getCheckinid()).orElse(null);
             if (checkinRecord == null) {
-                throw new NotFoundException(String.format("CheckIn %s doesn't exist", checkInNoteResult.getCheckinid()));
+                throw new NotFoundException("CheckIn %s doesn't exist", checkInNoteResult.getCheckinid());
             }
 
             if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
@@ -139,7 +139,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
     private void validate(boolean isError, String message, Object... args) {
         if (isError) {
-            throw new BadArgException(String.format(message, args));
+            throw new BadArgException(message, args);
         }
     }
 }

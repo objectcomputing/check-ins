@@ -39,11 +39,11 @@ public class SurveyServicesImpl implements SurveyService {
             final UUID memberId = surveyResponse.getCreatedBy();
             LocalDate surSubDate = surveyResponse.getCreatedOn();
             if(surveyResponse.getId()!=null){
-                throw new BadArgException(String.format("Found unexpected id for survey %s", surveyResponse.getId()));
+                throw new BadArgException("Found unexpected id for survey %s", surveyResponse.getId());
             } else if(memberProfileServices.getById(memberId).isEmpty()){
-                throw new BadArgException(String.format("Member %s doesn't exists", memberId));
+                throw new BadArgException("Member %s doesn't exists", memberId);
             } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for survey submission date %s",memberId));
+                throw new BadArgException("Invalid date for survey submission date %s",memberId);
             }
             surveyResponseRet = surveyResponseRepo.save(surveyResponse);
         }
@@ -66,13 +66,13 @@ public class SurveyServicesImpl implements SurveyService {
             final UUID memberId = surveyResponse.getCreatedBy();
             LocalDate surSubDate = surveyResponse.getCreatedOn();
             if(id==null||!surveyResponseRepo.findById(id).isPresent()){
-                throw new BadArgException(String.format("Unable to find survey record with id %s", surveyResponse.getId()));
+                throw new BadArgException("Unable to find survey record with id %s", surveyResponse.getId());
             }else if(memberProfileServices.getById(memberId).isEmpty()){
-                throw new BadArgException(String.format("Member %s doesn't exist", memberId));
+                throw new BadArgException("Member %s doesn't exist", memberId);
             } else if(memberId==null) {
-                throw new BadArgException(String.format("Invalid survey %s", surveyResponse));
+                throw new BadArgException("Invalid survey %s", surveyResponse);
             } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for survey submission date %s",memberId));
+                throw new BadArgException("Invalid date for survey submission date %s",memberId);
             }
 
             surveyResponseRet = surveyResponseRepo.update(surveyResponse);

@@ -107,17 +107,17 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         Optional<Guild> guild = guildRepo.findById(guildId);
 
         if (guild.isEmpty()) {
-            throw new BadArgException(String.format("Guild %s doesn't exist", guildId));
+            throw new BadArgException("Guild %s doesn't exist", guildId);
         }
 
         Set<GuildMember> guildLeads = this.findByFields(guildId, null, true);
 
         if (id == null || guildMemberRepo.findById(id).isEmpty()) {
-            throw new BadArgException(String.format("Unable to locate guildMember to update with id %s", id));
+            throw new BadArgException("Unable to locate guildMember to update with id %s", id);
         } else if (memberProfileServices.getById(memberId).isEmpty()) {
             throw new BadArgException("Member %s doesn't exist", memberId);
         } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isEmpty()) {
-            throw new BadArgException(String.format("Member %s is not part of guild %s", memberId, guildId));
+            throw new BadArgException("Member %s is not part of guild %s", memberId, guildId);
         } else if (!isAdmin && guildLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
@@ -147,7 +147,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         GuildMember guildMember = guildMemberRepo.findById(id).orElse(null);
 
-        if (guildMember == null) throw new NotFoundException(String.format("Unable to locate guildMember with id %s", id));
+        if (guildMember == null) throw new NotFoundException("Unable to locate guildMember with id %s", id);
 
         Set<GuildMember> guildLeads = this.findByFields(guildMember.getGuildId(), null, true);
         boolean currentUserIsLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
@@ -192,7 +192,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     private String constructEmailContent (GuildMember guildMember, Boolean isAdded){
         MemberProfile memberProfile = memberProfileServices.getById(guildMember.getMemberId()).orElseThrow(() -> {
-            throw new NotFoundException(String.format("No member profile found for guild member with memberid %s", guildMember.getMemberId()));
+            throw new NotFoundException("No member profile found for guild member with memberid %s", guildMember.getMemberId());
         });
         Guild guild = guildRepo.findById(guildMember.getGuildId())
                 .orElseThrow(() -> new NotFoundException("No guild found for guild id " + guildMember.getGuildId()));

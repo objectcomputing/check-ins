@@ -80,7 +80,7 @@ public class GuildServicesImpl implements GuildServices {
                 validateLink(link);
             }
             if (!guildsRepo.search(guildDTO.getName(), null).isEmpty()) {
-                throw new BadArgException(String.format("Guild with name %s already exists", guildDTO.getName()));
+                throw new BadArgException("Guild with name %s already exists", guildDTO.getName());
             } else {
                 if (guildDTO.getGuildMembers() == null ||
                         guildDTO.getGuildMembers().stream().noneMatch(GuildCreateDTO.GuildMemberCreateDTO::getLead)) {
@@ -184,7 +184,7 @@ public class GuildServicesImpl implements GuildServices {
                     }
 
                 } else {
-                    throw new BadArgException(String.format("Guild ID %s does not exist, can't update.", guildDTO.getId()));
+                    throw new BadArgException("Guild ID %s does not exist, can't update.", guildDTO.getId());
                 }
             }
 

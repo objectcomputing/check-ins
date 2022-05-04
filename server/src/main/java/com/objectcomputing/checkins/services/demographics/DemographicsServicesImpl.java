@@ -92,11 +92,11 @@ public class DemographicsServicesImpl implements DemographicsServices{
         Demographics demographicsRet;
 
         if (demographics.getMemberId() == null) {
-            throw new BadArgException(String.format("Invalid member id %s", demographics.getId()));
+            throw new BadArgException("Invalid member id %s", demographics.getId());
         } else if (memberProfileServices.getById(demographics.getMemberId()) == null) {
-            throw new BadArgException(String.format("Member Profile %s doesn't exist", demographics.getMemberId()));
+            throw new BadArgException("Member Profile %s doesn't exist", demographics.getMemberId());
         } else if (demographics.getId() != null) {
-            throw new AlreadyExistsException(String.format("Demographics %s already exists", demographics.getId()));
+            throw new AlreadyExistsException("Demographics %s already exists", demographics.getId());
         }
 
         demographicsRet = demographicsRepository.save(demographics);
@@ -121,7 +121,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
         }
 
         if (demographicsRepository.findById(id).isEmpty()) {
-            throw new NotFoundException(String.format("Demographic id %s was not found", id));
+            throw new NotFoundException("Demographic id %s was not found", id);
         }
 
         demographicsRepository.deleteById(id);

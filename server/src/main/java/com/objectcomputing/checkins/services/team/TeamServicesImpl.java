@@ -39,7 +39,7 @@ public class TeamServicesImpl implements TeamServices {
         List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
         if (teamDTO != null) {
             if (!teamsRepo.search(teamDTO.getName(), null).isEmpty()) {
-                throw new BadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
+                throw new BadArgException("Team with name %s already exists", teamDTO.getName());
             } else {
                 if (teamDTO.getTeamMembers() == null ||
                         teamDTO.getTeamMembers().stream().noneMatch(TeamCreateDTO.TeamMemberCreateDTO::getLead)) {
@@ -121,7 +121,7 @@ public class TeamServicesImpl implements TeamServices {
 
                     updated = fromEntity(newTeamEntity, newMembers);
                 } else {
-                    throw new BadArgException(String.format("Team ID %s does not exist, can't update.", teamDTO.getId()));
+                    throw new BadArgException("Team ID %s does not exist, can't update.", teamDTO.getId());
                 }
             }
             return updated;

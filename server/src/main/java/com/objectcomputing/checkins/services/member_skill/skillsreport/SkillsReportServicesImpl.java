@@ -38,7 +38,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
 
             for (SkillLevelDTO skill : skills) {
                 if (!skillRepo.existsById(skill.getId())) {
-                    throw new BadArgException(String.format("Invalid skill ID %s", skill.getId()));
+                    throw new BadArgException("Invalid skill ID %s", skill.getId());
                 }
             }
 
