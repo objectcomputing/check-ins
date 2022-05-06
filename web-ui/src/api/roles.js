@@ -10,17 +10,9 @@ export const getAllRoles = async (cookie) => {
   });
 };
 
-export const getAllUserRoles = async (cookie) => {
-  return resolve({
-    url: roleURL + '/members',
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
-  });
-};
-
 export const getAllMembersGroupedByRole = async (cookie) => {
   return resolve({
-    url: `${roleURL}/members/groupedByRole`,
+    url: `${roleURL}/members`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });

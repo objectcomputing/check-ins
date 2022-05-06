@@ -24,12 +24,7 @@ public class MemberRoleController {
     }
 
     @Get
-    HttpResponse<List<MemberRole>> getAllAssignedRoles() {
-        return HttpResponse.ok(memberRoleServices.findAll());
-    }
-
-    @Get("/groupedByRole")
-    HttpResponse<List<MemberRoleDTO>> getMembersGroupedByRole() {
+    HttpResponse<List<MemberRoleDTO>> getAllMembersGroupedByRole() {
         List<MemberRoleDTO> membersGroupedByRole = memberRoleServices.getAllMembersGroupedByRole();
         return HttpResponse.ok(membersGroupedByRole);
     }

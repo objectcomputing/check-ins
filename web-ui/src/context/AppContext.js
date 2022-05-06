@@ -20,7 +20,7 @@ import {
   getAllMembers,
   getAllTerminatedMembers,
 } from "../api/member";
-import { getAllRoles, getAllUserRoles } from "../api/roles";
+import { getAllRoles, getAllMembersGroupedByRole } from "../api/roles";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
 import { getAllGuilds } from "../api/guild";
@@ -219,7 +219,7 @@ const AppContextProvider = (props) => {
  useEffect(() => {
    const getUserRoles = async () => {
      // make call to the API
-     let res = await getAllUserRoles(csrf);
+     let res = await getAllMembersGroupedByRole(csrf);
      return (
        res.payload &&
        res.payload.data &&
