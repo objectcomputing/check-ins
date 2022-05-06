@@ -1,12 +1,12 @@
 import React from 'react';
-import Slider from './Slider';
+import DiscreteSlider from './DiscreteSlider';
 
 export default {
-  title: 'Check Ins/Slider',
-  component: Slider
+  title: 'Check Ins/DiscreteSlider',
+  component: DiscreteSlider
 }
 const Template = (args) => 
-    <Slider {...args} />;
+    <DiscreteSlider {...args} />;
 
 export const DefaultSlider = Template.bind({});
 DefaultSlider.args = {

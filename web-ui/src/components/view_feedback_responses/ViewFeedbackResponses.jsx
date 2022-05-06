@@ -118,6 +118,7 @@ const ViewFeedbackResponses = () => {
     });
     retrieveQuestionsAndAnswers(query.request, csrf).then((res) => {
       if (res) {
+        res.sort((a, b) => a.questionNumber - b.questionNumber);
         setQuestionsAndAnswers(res);
       } else {
         window.snackDispatch({
@@ -158,7 +159,7 @@ const ViewFeedbackResponses = () => {
       if (searchText.trim()) {
         // Filter based on search text
         filteredAnswers = filteredAnswers.filter(({ answer }) =>
-          answer.toLowerCase().includes(searchText.trim().toLowerCase())
+          answer && answer.toLowerCase().includes(searchText.trim().toLowerCase())
         );
       }
       return { ...response, answers: filteredAnswers };
@@ -297,9 +298,9 @@ const ViewFeedbackResponses = () => {
               {question.answers.length > 0 &&
                 question.answers.map((answer) => (
                   <FeedbackResponseCard
-                    key={answer.id}
+                    key={answer.id || answer.responder}
                     responderId={answer.responder}
-                    answer={answer.answer}
+                    answer={answer.answer || ""}
                     sentiment={answer.sentiment}
                   />
                 ))}

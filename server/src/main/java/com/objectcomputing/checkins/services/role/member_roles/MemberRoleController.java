@@ -30,7 +30,7 @@ public class MemberRoleController {
     }
 
     @Delete("/{roleId}/{memberId}")
-    HttpResponse<?> deleteMember(@NotNull UUID roleId, @NotNull UUID memberId){
+    HttpResponse<?> deleteMemberRole(@NotNull UUID roleId, @NotNull UUID memberId){
         memberRoleServices.delete(new MemberRoleId(memberId, roleId));
         return HttpResponse.ok();
     }
