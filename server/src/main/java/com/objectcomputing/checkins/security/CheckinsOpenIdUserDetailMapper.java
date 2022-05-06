@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.security;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
@@ -29,15 +29,15 @@ import java.util.stream.Collectors;
 public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
 
     private static final Logger LOG = LoggerFactory.getLogger(CheckinsOpenIdUserDetailMapper.class);
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final RoleRepository roleRepository;
     private final TokenConfiguration tokenConfiguration;
 
-    public CheckinsOpenIdUserDetailMapper(MemberProfileServices memberProfileServices,
+    public CheckinsOpenIdUserDetailMapper(MemberProfileRetrievalServices memberProfileRetrievalServices,
                                           RoleRepository roleRepository,
                                           TokenConfiguration tokenConfiguration) {
         LOG.info("Creating an instance of CheckinsOpenIdUserDetailMapper using the constructor");
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.roleRepository = roleRepository;
         this.tokenConfiguration = tokenConfiguration;
     }
@@ -80,7 +80,7 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
      */
     protected List<String> getRoles(OpenIdClaims openIdClaims) {
         List<String> roles = new ArrayList<>();
-        memberProfileServices.findByWorkEmail(openIdClaims.getEmail())
+        memberProfileRetrievalServices.findByWorkEmail(openIdClaims.getEmail())
                 .ifPresent((memberProfile) -> {
                         LOG.info("MemberProfile of the user: {}", memberProfile);
                         roles.addAll(roleRepository.findUserRoles(memberProfile.getId())

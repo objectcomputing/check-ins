@@ -268,7 +268,7 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
         final JsonNode body = exception.getResponse().getBody(JsonNode.class).orElse(null);
         final String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals("Either the sender id or the receiver id is invalid", error);
+        assertEquals("The receiver id is invalid", error);
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     }
 

@@ -19,16 +19,16 @@ import java.util.Optional;
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
 
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRepository memberProfileRepository;
     private final SecurityService securityService;
     private final RoleServices roleServices;
     private final MemberRoleServices memberRoleServices;
 
-    public CurrentUserServicesImpl(MemberProfileServices memberProfileServices,
+    public CurrentUserServicesImpl(MemberProfileRepository memberProfileRepository,
                                    RoleServices roleServices,
                                    SecurityService securityService,
                                    MemberRoleServices memberRoleServices) {
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRepository = memberProfileRepository;
         this.roleServices = roleServices;
         this.securityService = securityService;
         this.memberRoleServices = memberRoleServices;
@@ -36,7 +36,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
 
     @Override
     public MemberProfile findOrSaveUser(@NotNull String firstName, @NotNull String lastName, @NotNull String workEmail) {
-        Optional<MemberProfile> userProfile = memberProfileServices.findByWorkEmail(workEmail);
+        Optional<MemberProfile> userProfile = memberProfileRepository.findByWorkEmail(workEmail);
         return userProfile.orElseGet(() -> saveNewUser(firstName, lastName, workEmail));
     }
 
@@ -55,7 +55,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
             Optional<Authentication> auth = securityService.getAuthentication();
             if (auth.isPresent() && auth.get().getAttributes().get("email") != null) {
                 String workEmail = auth.get().getAttributes().get("email").toString();
-                return memberProfileServices.findByWorkEmail(workEmail).orElse(null);
+                return memberProfileRepository.findByWorkEmail(workEmail).orElse(null);
             }
         }
 
@@ -63,12 +63,12 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     }
 
     private MemberProfile saveNewUser(String firstName, String lastName, String workEmail) {
-        MemberProfile emailProfile = memberProfileServices.findByWorkEmail(workEmail).orElse(null);
+        MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(workEmail).orElse(null);
         if (emailProfile != null) {
             throw new AlreadyExistsException("Email %s already exists in database", workEmail);
         }
 
-        MemberProfile createdMember = memberProfileServices.saveProfile(new MemberProfile(firstName, null, lastName, null, "", null,
+        MemberProfile createdMember = memberProfileRepository.save(new MemberProfile(firstName, null, lastName, null, "", null,
                 "", workEmail, "", null, "", null, null, null, null, null));
 
         Optional<Role> role = roleServices.findByRole("MEMBER");

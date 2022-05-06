@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.survey;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
@@ -16,16 +16,16 @@ import java.util.UUID;
 public class SurveyServicesImpl implements SurveyService {
 
     private final SurveyRepository surveyResponseRepo;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final PermissionsValidation permissionsValidation;
     private final CurrentUserServices currentUserServices;
 
     public SurveyServicesImpl(SurveyRepository surveyResponseRepo,
-                              MemberProfileServices memberProfileServices,
+                              MemberProfileRetrievalServices memberProfileRetrievalServices,
                               PermissionsValidation permissionsValidation,
                               CurrentUserServices currentUserServices) {
         this.surveyResponseRepo = surveyResponseRepo;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.permissionsValidation = permissionsValidation;
         this.currentUserServices = currentUserServices;
     }
@@ -40,7 +40,7 @@ public class SurveyServicesImpl implements SurveyService {
             LocalDate surSubDate = surveyResponse.getCreatedOn();
             if(surveyResponse.getId()!=null){
                 throw new BadArgException("Found unexpected id for survey %s", surveyResponse.getId());
-            } else if(memberProfileServices.getById(memberId).isEmpty()){
+            } else if(memberProfileRetrievalServices.getById(memberId).isEmpty()){
                 throw new BadArgException("Member %s doesn't exists", memberId);
             } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
                 throw new BadArgException("Invalid date for survey submission date %s",memberId);
@@ -67,7 +67,7 @@ public class SurveyServicesImpl implements SurveyService {
             LocalDate surSubDate = surveyResponse.getCreatedOn();
             if(id==null||!surveyResponseRepo.findById(id).isPresent()){
                 throw new BadArgException("Unable to find survey record with id %s", surveyResponse.getId());
-            }else if(memberProfileServices.getById(memberId).isEmpty()){
+            }else if(memberProfileRetrievalServices.getById(memberId).isEmpty()){
                 throw new BadArgException("Member %s doesn't exist", memberId);
             } else if(memberId==null) {
                 throw new BadArgException("Invalid survey %s", surveyResponse);

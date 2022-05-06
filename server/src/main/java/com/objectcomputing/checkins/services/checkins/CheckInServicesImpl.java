@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.checkins;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -26,16 +26,16 @@ public class CheckInServicesImpl implements CheckInServices {
     public static final Logger LOG = LoggerFactory.getLogger(CheckInServicesImpl.class);
 
     private final CheckInRepository checkinRepo;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final RoleServices roleServices;
 
     public CheckInServicesImpl(CheckInRepository checkinRepo,
-                               MemberProfileServices memberProfileServices ,
+                               MemberProfileRetrievalServices memberProfileRetrievalServices,
                                CurrentUserServices currentUserServices,
                                RoleServices roleServices) {
         this.checkinRepo = checkinRepo;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
     }
@@ -44,7 +44,7 @@ public class CheckInServicesImpl implements CheckInServices {
     public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
         Boolean grantAccess = false;
 
-        MemberProfile memberTryingToGainAccess = memberProfileServices.getById(memberId).orElseThrow(() -> {
+        MemberProfile memberTryingToGainAccess = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
             throw new BadArgException("Member %s does not exist", memberId);
         });
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> {
@@ -61,7 +61,7 @@ public class CheckInServicesImpl implements CheckInServices {
         if(isAdmin){
             grantAccess = true;
         } else {
-            MemberProfile teamMemberOnCheckin = memberProfileServices.getById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
+            MemberProfile teamMemberOnCheckin = memberProfileRetrievalServices.getById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
                 throw new NotFoundException("Team member %s does not exist", checkinRecord.getTeamMemberId());
             });
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
@@ -89,7 +89,7 @@ public class CheckInServicesImpl implements CheckInServices {
         final UUID memberId = checkIn.getTeamMemberId();
         final UUID pdlId = checkIn.getPdlId();
         LocalDateTime chkInDate = checkIn.getCheckInDate();
-        MemberProfile memberProfileOfTeamMember = memberProfileServices.getById(memberId).orElseThrow(() -> {
+        MemberProfile memberProfileOfTeamMember = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
             throw new BadArgException("Team member %s does not exist", memberId);
         });
 
@@ -129,7 +129,7 @@ public class CheckInServicesImpl implements CheckInServices {
         LocalDateTime chkInDate = checkIn.getCheckInDate();
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        MemberProfile memberProfileOfTeamMember = memberProfileServices.getById(memberId).orElseThrow(() -> {
+        MemberProfile memberProfileOfTeamMember = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
             throw new BadArgException("Team member %s does not exist", memberId);
         });
         boolean isAdmin = currentUserServices.isAdmin();
@@ -160,7 +160,7 @@ public class CheckInServicesImpl implements CheckInServices {
         checkinRepo.findAll().forEach(checkIn::add);
 
         if (teamMemberId != null) {
-            MemberProfile memberToSearch = memberProfileServices.getById(teamMemberId).orElseThrow(() -> {
+            MemberProfile memberToSearch = memberProfileRetrievalServices.getById(teamMemberId).orElseThrow(() -> {
                 throw new BadArgException("Team member %s does not exist", teamMemberId);
             });
             if (memberToSearch != null) {

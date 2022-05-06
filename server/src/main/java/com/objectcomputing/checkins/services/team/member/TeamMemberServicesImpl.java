@@ -4,7 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamRepository;
@@ -22,18 +22,18 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
     private final TeamRepository teamRepo;
     private final TeamMemberRepository teamMemberRepo;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final MemberHistoryRepository memberHistoryRepository;
 
     public TeamMemberServicesImpl(TeamRepository teamRepo,
                                   TeamMemberRepository teamMemberRepo,
-                                  MemberProfileServices memberProfileServices,
+                                  MemberProfileRetrievalServices memberProfileRetrievalServices,
                                   CurrentUserServices currentUserServices,
                                   MemberHistoryRepository memberHistoryRepository) {
         this.teamRepo = teamRepo;
         this.teamMemberRepo = teamMemberRepo;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.memberHistoryRepository = memberHistoryRepository;
     }
@@ -58,7 +58,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         if (teamMember.getId() != null) {
             throw new BadArgException("Found unexpected id %s for team member", teamMember.getId());
-        } else if (memberProfileServices.getById(memberId).isEmpty()) {
+        } else if (memberProfileRetrievalServices.getById(memberId).isEmpty()) {
             throw new BadArgException("Member %s doesn't exist", memberId);
         } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isPresent()) {
             throw new BadArgException("Member %s already exists in team %s", memberId, teamId);
@@ -93,7 +93,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         if (id == null || teamMemberRepo.findById(id).isEmpty()) {
             throw new BadArgException("Unable to locate teamMember to update with id %s", id);
-        } else if (memberProfileServices.getById(memberId).isEmpty()) {
+        } else if (memberProfileRetrievalServices.getById(memberId).isEmpty()) {
             throw new BadArgException("Member %s doesn't exist", memberId);
         } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isEmpty()) {
             throw new BadArgException("Member %s is not part of team %s", memberId, teamId);

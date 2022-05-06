@@ -1,8 +1,7 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -15,12 +14,12 @@ import java.util.UUID;
 public class PulseResponseServicesImpl implements PulseResponseService {
 
     private final PulseResponseRepository pulseResponseRepo;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     public PulseResponseServicesImpl(PulseResponseRepository pulseResponseRepo,
-                                     MemberProfileServices memberProfileServices) {
+                                     MemberProfileRetrievalServices memberProfileRetrievalServices) {
         this.pulseResponseRepo = pulseResponseRepo;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
     }
     
     @Override
@@ -32,7 +31,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             LocalDate pulseUpDate = pulseResponse.getUpdatedDate();
             if(pulseResponse.getId()!=null){
             throw new BadArgException("Found unexpected id for pulseresponse %s", pulseResponse.getId());
-        } else if(memberProfileServices.getById(memberId).isEmpty()){
+        } else if(memberProfileRetrievalServices.getById(memberId).isEmpty()){
             throw new BadArgException("Member %s doesn't exists", memberId);
         } else if(pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
             throw new BadArgException("Invalid date for pulseresponse submission date %s", memberId);
@@ -60,7 +59,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         LocalDate pulseUpDate = pulseResponse.getUpdatedDate();
         if(id==null||!pulseResponseRepo.findById(id).isPresent()){
             throw new BadArgException("Unable to find pulseresponse record with id %s", pulseResponse.getId());
-        } else if(memberProfileServices.getById(memberId).isEmpty()){
+        } else if(memberProfileRetrievalServices.getById(memberId).isEmpty()){
             throw new BadArgException("Member %s doesn't exist", memberId);
         } else if(memberId==null) {
             throw new BadArgException("Invalid pulseresponse %s", pulseResponse);

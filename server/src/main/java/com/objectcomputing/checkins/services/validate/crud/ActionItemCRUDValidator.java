@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
 
     private final CheckInServices checkInServices;
-    private final MemberProfileServices memberServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final ArgumentsValidation argumentsValidation;
     private final PermissionsValidation permissionsValidation;
     private final ActionItemRepository actionItemRepo;
@@ -29,11 +29,11 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
 
 
     @Inject
-    public ActionItemCRUDValidator(CheckInServices checkInServices, MemberProfileServices memberServices,
+    public ActionItemCRUDValidator(CheckInServices checkInServices, MemberProfileRetrievalServices memberProfileRetrievalServices,
                                    ArgumentsValidation argumentsValidation, PermissionsValidation permissionsValidation,
                                    ActionItemRepository actionItemRepo, CurrentUserServices currentUserServices) {
         this.checkInServices = checkInServices;
-        this.memberServices = memberServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.argumentsValidation = argumentsValidation;
         this.permissionsValidation = permissionsValidation;
         this.actionItemRepo = actionItemRepo;
@@ -48,7 +48,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
                 "Found unexpected id %s for action item", actionItem.getId());
         argumentsValidation.validateArguments(checkInServices.read(checkinId) == null,
                 "CheckIn %s doesn't exist", checkinId);
-        argumentsValidation.validateArguments(memberServices.getById(createdById) == null,
+        argumentsValidation.validateArguments(memberProfileRetrievalServices.getById(createdById).isEmpty(),
                 "Member %s doesn't exist", createdById);
     }
 
@@ -59,7 +59,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
 
         argumentsValidation.validateArguments(checkInServices.read(checkinId) == null,
                 "CheckIn %s doesn't exist", checkinId);
-        argumentsValidation.validateArguments(memberServices.getById(createdById) == null,
+        argumentsValidation.validateArguments(memberProfileRetrievalServices.getById(createdById).isEmpty(),
                 "Member %s doesn't exist", createdById);
     }
 
@@ -76,7 +76,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
                     "Unable to locate action item to update with id %s", actionItem.getId());
             argumentsValidation.validateArguments(checkInServices.read(checkinId) == null,
                     "CheckIn %s doesn't exist", checkinId);
-            argumentsValidation.validateArguments(memberServices.getById(createdById) == null,
+            argumentsValidation.validateArguments(memberProfileRetrievalServices.getById(createdById).isEmpty(),
                     "Member %s doesn't exist", createdById);
         }
     }
@@ -92,7 +92,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
                 "Unable to locate action item to delete with id %s", actionItem.getId());
         argumentsValidation.validateArguments(checkInServices.read(checkinId) == null,
                 "CheckIn %s doesn't exist", checkinId);
-        argumentsValidation.validateArguments(memberServices.getById(createdById) == null,
+        argumentsValidation.validateArguments(memberProfileRetrievalServices.getById(createdById).isEmpty(),
                 "Member %s doesn't exist", createdById);
     }
 
@@ -162,7 +162,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
             permissionsValidation.validatePermissions(!checkInServices.accessGranted(checkinid, currentUser.getId()),
                     "Uawe");
         } else if (createdbyid != null) {
-            MemberProfile memberRecord = memberServices.getById(createdbyid).orElseThrow(() -> {
+            MemberProfile memberRecord = memberProfileRetrievalServices.getById(createdbyid).orElseThrow(() -> {
                 throw new BadArgException("Member %s does not exist", createdbyid);
             });
             permissionsValidation.validatePermissions(!currentUser.getId().equals(memberRecord.getId()) &&

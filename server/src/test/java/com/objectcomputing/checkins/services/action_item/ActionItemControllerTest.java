@@ -187,7 +187,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("No member profile for id " + memberId, error);
+        assertEquals(String.format("Member %s doesn't exist", memberId), error);
 
     }
 
@@ -744,7 +744,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("No member profile for id " + memberId, error);
+        assertEquals(String.format("Member %s doesn't exist", memberId), error);
 
     }
 

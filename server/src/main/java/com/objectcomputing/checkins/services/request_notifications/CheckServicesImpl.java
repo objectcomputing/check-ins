@@ -18,17 +18,14 @@ public class CheckServicesImpl implements CheckServices {
     private EmailSender emailSender;
     private String notificationSubject;
     private String notificationContent;
-    private final MemberProfileServices memberProfileServices;
 
     public CheckServicesImpl(FeedbackRequestRepository feedbackReqRepository, EmailSender emailSender,
                              @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                             @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
-                             MemberProfileServices memberProfileServices) {
+                             @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.emailSender = emailSender;
         this.notificationContent = notificationContent;
         this.notificationSubject = notificationSubject;
-        this.memberProfileServices = memberProfileServices;
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.feedback_template;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
@@ -16,23 +16,22 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
     private final FeedbackTemplateRepository feedbackTemplateRepository;
     private final CurrentUserServices currentUserServices;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     public FeedbackTemplateServicesImpl(FeedbackTemplateRepository feedbackTemplateRepository,
-                                        MemberProfileServices memberProfileServices,
-                                        CurrentUserServices currentUserServices) {
+                                        CurrentUserServices currentUserServices,
+                                        MemberProfileRetrievalServices memberProfileRetrievalServices) {
         this.feedbackTemplateRepository = feedbackTemplateRepository;
         this.currentUserServices = currentUserServices;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
     }
 
     @Override
     public FeedbackTemplate save(FeedbackTemplate feedbackTemplate) {
-        try {
-            memberProfileServices.getById(feedbackTemplate.getCreatorId());
-        } catch (NotFoundException e) {
+
+        memberProfileRetrievalServices.getById(feedbackTemplate.getCreatorId()).orElseThrow(() -> {
             throw new BadArgException("Creator ID is invalid");
-        }
+        });
 
         return feedbackTemplateRepository.save(feedbackTemplate);
     }

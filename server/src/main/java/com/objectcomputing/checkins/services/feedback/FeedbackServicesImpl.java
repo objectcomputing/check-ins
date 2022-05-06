@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.feedback;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 
@@ -17,24 +17,24 @@ public class FeedbackServicesImpl implements FeedbackServices {
 
     private final FeedbackRepository feedbackRepository;
     private final CurrentUserServices currentUserServices;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     public FeedbackServicesImpl(FeedbackRepository feedbackRepository,
                                 CurrentUserServices currentUserServices,
-                                MemberProfileServices memberProfileServices) {
+                                MemberProfileRetrievalServices memberProfileRetrievalServices) {
         this.feedbackRepository = feedbackRepository;
         this.currentUserServices = currentUserServices;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
     }
 
     @Override
     public Feedback save(@NotNull Feedback feedback) {
-        try {
-            memberProfileServices.getById(feedback.getSentBy());
-            memberProfileServices.getById(feedback.getSentTo());
-        } catch (NotFoundException e) {
-            throw new BadArgException("Either the sender id or the receiver id is invalid");
-        }
+        memberProfileRetrievalServices.getById(feedback.getSentBy()).orElseThrow(() -> {
+            throw new BadArgException("The sender id is invalid");
+        });
+        memberProfileRetrievalServices.getById(feedback.getSentTo()).orElseThrow(() -> {
+            throw new BadArgException("The receiver id is invalid");
+        });
 
         if (feedback.getId() == null) {
             return feedbackRepository.save(feedback);
@@ -54,12 +54,13 @@ public class FeedbackServicesImpl implements FeedbackServices {
             updatedFeedback = getById(feedback.getId());
         }
         if (updatedFeedback != null) {
-            try {
-                memberProfileServices.getById(updatedFeedback.getSentBy());
-                memberProfileServices.getById(updatedFeedback.getSentTo());
-            } catch (NotFoundException e) {
-                throw new BadArgException("Either the sender id or the receiver id is invalid");
-            }
+
+            memberProfileRetrievalServices.getById(updatedFeedback.getSentBy()).orElseThrow(() -> {
+                throw new BadArgException("The sender id is invalid");
+            });
+            memberProfileRetrievalServices.getById(updatedFeedback.getSentTo()).orElseThrow(() -> {
+                throw new BadArgException("The receiver id is invalid");
+            });
 
             if (!isPermitted(currentUserServices.getCurrentUser().getId())) {
                 throw new PermissionException("You are not authorized to do this operation");

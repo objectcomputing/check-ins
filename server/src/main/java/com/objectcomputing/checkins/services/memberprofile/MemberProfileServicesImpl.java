@@ -33,24 +33,27 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     private final CheckInServices checkInServices;
     private final MemberSkillServices memberSkillServices;
     private final TeamMemberServices teamMemberServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository,
                                      CurrentUserServices currentUserServices,
                                      RoleServices roleServices,
                                      CheckInServices checkInServices,
                                      MemberSkillServices memberSkillServices,
-                                     TeamMemberServices teamMemberServices) {
+                                     TeamMemberServices teamMemberServices,
+                                     MemberProfileRetrievalServices memberProfileRetrievalServices) {
         this.memberProfileRepository = memberProfileRepository;
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
         this.checkInServices = checkInServices;
         this.memberSkillServices = memberSkillServices;
         this.teamMemberServices = teamMemberServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
     }
 
     @Override
     public Optional<MemberProfile> getById(@NotNull UUID id) {
-        return memberProfileRepository.findById(id);
+        return memberProfileRetrievalServices.getById(id);
     }
 
     @Override
@@ -125,7 +128,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public Optional<MemberProfile> findByWorkEmail(@NotNull String workEmail) {
-        return memberProfileRepository.findByWorkEmail(workEmail);
+        return memberProfileRetrievalServices.findByWorkEmail(workEmail);
     }
 
     @Override
