@@ -43,29 +43,8 @@ const Roles = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedMember, setSelectedMember] = useState({});
   const [selectedRole, setSelectedRole] = useState("");
-  const [memberRoles, setMemberRoles] = useState([]);
 
   memberProfiles.sort((a, b) => a.name.localeCompare(b.name));
-
-  useEffect(() => {
-    const getMemberRoles = async () => {
-      return await getAllMembersGroupedByRole(csrf);
-    }
-
-    getMemberRoles().then(res => {
-      if (res && res.payload && res.payload.data && !res.error) {
-        setMemberRoles(res.payload.data);
-      } else {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "error",
-            toast: "Failed to retrieve member roles",
-          },
-        });
-      }
-    });
-  }, [csrf]);
 
   const removeFromRole = async (member, roleId, roleName) => {
     let res = await removeUserFromRole(roleId, member.id, csrf);
@@ -74,17 +53,15 @@ const Roles = () => {
         ? res.payload
         : null;
     if (data) {
-      const filtered = userRoles.filter((userRole) => userRole?.memberRoleId?.roleId !== roleId || userRole?.memberRoleId?.memberId !== member.id);
-      dispatch({
-        type: SET_USER_ROLES,
-        payload: filtered,
-      });
-
-      // Update the local state
-      const updatedMemberRoles = memberRoles;
+      const updatedMemberRoles = [...userRoles];
       const roleIndex = updatedMemberRoles.findIndex(memberRole => memberRole.roleId === roleId);
       updatedMemberRoles[roleIndex].memberIds.splice(updatedMemberRoles[roleIndex].memberIds.indexOf(member.id), 1);
-      setMemberRoles(updatedMemberRoles);
+
+      // Update the global state
+      dispatch({
+        type: SET_USER_ROLES,
+        payload: updatedMemberRoles,
+      });
 
       window.snackDispatch({
         type: UPDATE_TOAST,
@@ -103,16 +80,16 @@ const Roles = () => {
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
     if (data) {
       setShowAddUser(false);
-      dispatch({
-        type: SET_USER_ROLES,
-        payload: [...userRoles, data],
-      });
 
-      // Update the local state
-      const updatedMemberRoles = memberRoles;
+      const updatedMemberRoles = [...userRoles];
       const roleIndex = updatedMemberRoles.findIndex(memberRole => memberRole.roleId === data.memberRoleId.roleId);
       updatedMemberRoles[roleIndex].memberIds.push(data.memberRoleId.memberId);
-      setMemberRoles(updatedMemberRoles);
+
+      // Update the global state
+      dispatch({
+        type: SET_USER_ROLES,
+        payload: updatedMemberRoles,
+      });
 
       window.snackDispatch({
         type: UPDATE_TOAST,
@@ -181,7 +158,7 @@ const Roles = () => {
           </Button> */}
         </div>
         <div className="roles-bot">
-          {memberRoles.map((roleObj) =>
+          {userRoles.map((roleObj) =>
             roleObj.role.toLowerCase().includes(searchText.toLowerCase()) ? (
               <Card className="role" key={roleObj.roleId}>
                 <CardHeader
