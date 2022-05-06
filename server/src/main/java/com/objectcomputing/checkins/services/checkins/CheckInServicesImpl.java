@@ -62,7 +62,7 @@ public class CheckInServicesImpl implements CheckInServices {
             grantAccess = true;
         } else {
             MemberProfile teamMemberOnCheckin = memberProfileRetrievalServices.getById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
-                throw new NotFoundException("Team member %s does not exist", checkinRecord.getTeamMemberId());
+                throw new NotFoundException("Member %s does not exist", checkinRecord.getTeamMemberId());
             });
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
 
@@ -90,7 +90,7 @@ public class CheckInServicesImpl implements CheckInServices {
         final UUID pdlId = checkIn.getPdlId();
         LocalDateTime chkInDate = checkIn.getCheckInDate();
         MemberProfile memberProfileOfTeamMember = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
-            throw new BadArgException("Team member %s does not exist", memberId);
+            throw new BadArgException("Member %s does not exist", memberId);
         });
 
         validate(checkIn.getId() != null, "Found unexpected id for checkin %s", checkIn.getId());
@@ -130,7 +130,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         MemberProfile memberProfileOfTeamMember = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
-            throw new BadArgException("Team member %s does not exist", memberId);
+            throw new BadArgException("Member %s does not exist", memberId);
         });
         boolean isAdmin = currentUserServices.isAdmin();
 
@@ -161,7 +161,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
         if (teamMemberId != null) {
             MemberProfile memberToSearch = memberProfileRetrievalServices.getById(teamMemberId).orElseThrow(() -> {
-                throw new BadArgException("Team member %s does not exist", teamMemberId);
+                throw new BadArgException("Member %s does not exist", teamMemberId);
             });
             if (memberToSearch != null) {
                 // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
