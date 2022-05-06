@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 
 import { AppContext } from "../../../context/AppContext";
 import {
@@ -9,7 +9,7 @@ import {
 import {
   addUserToRole,
   addNewRole,
-  removeUserFromRole, getAllMembersGroupedByRole,
+  removeUserFromRole,
 } from "../../../api/roles";
 
 import RoleUserCards from "./RoleUserCards";
