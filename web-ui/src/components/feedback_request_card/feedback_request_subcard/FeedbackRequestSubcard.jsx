@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Link } from "react-router-dom";
+import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import { sendReminderNotification } from "../../../api/notifications";
 import { deleteFeedbackRequestById } from "../../../api/feedback";
@@ -227,12 +227,12 @@ const FeedbackRequestSubcard = ({ request }) => {
                 </>
               )}
               {request && request.submitDate && request.id ? (
-                <Link
-                  to={`/feedback/view/responses/?request=${request.id}`}
+                <Button
+                  href={`/feedback/view/responses/?request=${request.id}`}
                   className="response-link"
                 >
                   View response
-                </Link>
+                </Button>
               ) : null}
             </Grid>
           </Grid>
