@@ -145,18 +145,20 @@ public class SkillsReportServicesImplTest {
         when(memberSkillRepository.findBySkillid(skillId2)).thenReturn(skillList2);
         when(memberSkillRepository.findBySkillid(skillId3)).thenReturn(skillList3);
         when(memberSkillRepository.findBySkillid(skillId4)).thenReturn(skillList4);
-        MemberProfile joey = new MemberProfile("Joey", null, "Tribbiani", null,
+
+        final MemberProfile joey = new MemberProfile("Joey", null, "Tribbiani", null,
                 null, null, null, null, null, null, null,
                 null, null, null, null, null);
-        MemberProfile chandler = new MemberProfile("Chandler", null, "Bing", null,
+        final MemberProfile chandler = new MemberProfile("Chandler", null, "Bing", null,
                 null, null, null, null, null, null, null,
                 null, null,null, null, null);
-        MemberProfile ross = new MemberProfile("Ross", null, "Geller", null,
+        final MemberProfile ross = new MemberProfile("Ross", null, "Geller", null,
                 null, null, null, null, null, null, null,
                 null, null,null, null, null);
+
         when(memberProfileRetrievalServices.getById(memberId1)).thenReturn(Optional.of(joey));
         when(memberProfileRetrievalServices.getById(memberId2)).thenReturn(Optional.of(chandler));
-        when(memberProfileRetrievalServices.getById(memberId3)).thenReturn(null);
+        when(memberProfileRetrievalServices.getById(memberId3)).thenReturn(Optional.empty());
         when(memberProfileRetrievalServices.getById(memberId4)).thenReturn(Optional.of(ross));
 
         when(skillRepository.existsById(skillId1)).thenReturn(true);
