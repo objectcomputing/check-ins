@@ -42,9 +42,9 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
 
             if (members != null) {
                 for (UUID member : members) {
-                    memberProfileRetrievalServices.getById(member).orElseThrow(() -> {
+                    if (!memberProfileRetrievalServices.existsById(member)) {
                         throw new BadArgException("Invalid member profile ID %s", member);
-                    });
+                    }
                 }
             }
 

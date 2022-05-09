@@ -24,4 +24,9 @@ public class MemberProfileRetrievalServicesImpl implements MemberProfileRetrieva
     public Optional<MemberProfile> findByWorkEmail(String workEmail) {
         return memberProfileRepository.findByWorkEmail(workEmail);
     }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return memberProfileRepository.existsById(id);
+    }
 }

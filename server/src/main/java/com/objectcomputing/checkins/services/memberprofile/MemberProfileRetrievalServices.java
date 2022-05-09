@@ -13,4 +13,5 @@ public interface MemberProfileRetrievalServices {
 
     Optional<MemberProfile> findByWorkEmail(@NotNull String workEmail);
 
+    boolean existsById(UUID id);
 }
