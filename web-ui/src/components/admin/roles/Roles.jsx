@@ -158,7 +158,7 @@ const Roles = () => {
           </Button> */}
         </div>
         <div className="roles-bot">
-          {userRoles.map((roleObj) =>
+          {userRoles?.map((roleObj) =>
             roleObj.role.toLowerCase().includes(searchText.toLowerCase()) ? (
               <Card className="role" key={roleObj.roleId}>
                 <CardHeader
