@@ -121,9 +121,11 @@
 .roles-content .roles .roles-top-search-fields {
   display: flex;
   flex-direction: row;
+  align-items: flex-start;
   width: 100%;
 }
 
-.roles-content .roles .roles-top-search-fields .role-search {
+.roles-content .roles .roles-top-search-fields .role-select {
   margin-right: 2rem;
+  margin-top: 12px;
 }

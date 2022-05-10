@@ -25,7 +25,15 @@ import {
   TextField,
   Typography,
   Autocomplete,
-  InputAdornment
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+  FormHelperText
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SearchIcon from "@mui/icons-material/Search";
@@ -40,8 +48,8 @@ const Roles = () => {
   const [showAddRole, setShowAddRole] = useState(false);
   const [newRole, setNewRole] = useState("");
   // const [editRole, setEditRole] = useState(false);
-  const [searchText, setSearchText] = useState("");
   const [memberSearchText, setMemberSearchText] = useState("");
+  const [selectedRoles, setSelectedRoles] = useState([]);
   const [selectedMember, setSelectedMember] = useState({});
   const [roleToMemberMap, setRoleToMemberMap] = useState({});
   const [selectedRole, setSelectedRole] = useState("");
@@ -157,15 +165,28 @@ const Roles = () => {
         <div className="roles-top">
           <div className="roles-top-left">
             <div className="roles-top-search-fields">
-              <TextField
-                className="role-search"
-                label="Search Roles"
-                placeholder="Role"
-                value={searchText}
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                }}
-              />
+              <FormControl size="small" className="role-select">
+                <InputLabel id="roles-select-label">Roles</InputLabel>
+                <Select
+                  labelId="roles-select-label"
+                  multiple
+                  value={selectedRoles}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setSelectedRoles(typeof value === "string" ? value.split(",") : value)
+                  }}
+                  input={<OutlinedInput label="Roles"/>}
+                  renderValue={(selected) => selected.join(", ")}
+                >
+                  {uniqueRoles.map((roleName) => (
+                    <MenuItem value={roleName}>
+                      <Checkbox checked={selectedRoles.indexOf(roleName) > -1}/>
+                      <ListItemText primary={roleName}/>
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{`Showing ${selectedRoles.length}/${uniqueRoles.length} roles`}</FormHelperText>
+              </FormControl>
               <TextField
                 className="member-role-search"
                 label="Search members"
@@ -186,7 +207,7 @@ const Roles = () => {
         </div>
         <div className="roles-bot">
           {uniqueRoles.map((role) =>
-            role.toLowerCase().includes(searchText.toLowerCase()) ? (
+            selectedRoles.includes(role) ? (
               <Card className="role" key={role}>
                 <CardHeader
                   title={
