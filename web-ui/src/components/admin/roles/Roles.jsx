@@ -76,6 +76,7 @@ const Roles = () => {
         }
       }
       setRoleToMemberMap(newRoleToMemberMap);
+      setSelectedRoles(Object.keys(newRoleToMemberMap));
     }, [userRoles, memberProfiles, roles]);
 
   const uniqueRoles = Object.keys(roleToMemberMap);
