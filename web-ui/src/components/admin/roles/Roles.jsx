@@ -24,9 +24,11 @@ import {
   Modal,
   TextField,
   Typography,
+  Autocomplete,
+  InputAdornment
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import Autocomplete from '@mui/material/Autocomplete';
+import SearchIcon from "@mui/icons-material/Search";
 
 import "./Roles.css";
 
@@ -153,17 +155,25 @@ const Roles = () => {
       <div className="roles">
         <div className="roles-top">
           <div className="roles-top-left">
-            <h2>Roles</h2>
-            <TextField
-              className="role-search"
-              label="Search Roles"
-              placeholder="Role"
-              fullWidth={true}
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value);
-              }}
-            />
+            <div className="roles-top-search-fields">
+              <TextField
+                className="role-search"
+                label="Search Roles"
+                placeholder="Role"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                }}
+              />
+              <TextField
+                className="member-role-search"
+                label="Search members"
+                placeholder="Name"
+                InputProps={{endAdornment: (
+                    <InputAdornment color="gray" position="end"><SearchIcon/></InputAdornment>
+                  )}}
+              />
+            </div>
           </div>
           {/* <Button color="primary" onClick={() => setShowAddRole(true)}>
             Add New Role
