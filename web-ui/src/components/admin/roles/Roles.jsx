@@ -41,6 +41,7 @@ const Roles = () => {
   const [newRole, setNewRole] = useState("");
   // const [editRole, setEditRole] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [memberSearchText, setMemberSearchText] = useState("");
   const [selectedMember, setSelectedMember] = useState({});
   const [roleToMemberMap, setRoleToMemberMap] = useState({});
   const [selectedRole, setSelectedRole] = useState("");
@@ -168,10 +169,14 @@ const Roles = () => {
               <TextField
                 className="member-role-search"
                 label="Search members"
-                placeholder="Name"
-                InputProps={{endAdornment: (
-                    <InputAdornment color="gray" position="end"><SearchIcon/></InputAdornment>
-                  )}}
+                placeholder="Member Name"
+                value={memberSearchText}
+                onChange={(e) => {
+                  setMemberSearchText(e.target.value);
+                }}
+                InputProps={{
+                  endAdornment: <InputAdornment color="gray" position="end"><SearchIcon/></InputAdornment>
+                }}
               />
             </div>
           </div>
@@ -222,6 +227,7 @@ const Roles = () => {
                         role={role}
                         roleToMemberMap={roleToMemberMap}
                         removeFromRole={removeFromRole}
+                        memberQuery={memberSearchText}
                       />
                     </List>
                   }
