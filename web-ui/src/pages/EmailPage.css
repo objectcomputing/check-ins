@@ -24,3 +24,16 @@
     resize: vertical;
     min-height: 70px;
 }
+
+.email-page .current-step-content-card .send-test-email-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-top: 1rem;
+}
+
+.email-page .current-step-content-card .send-test-email-button {
+    height: 56px;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
