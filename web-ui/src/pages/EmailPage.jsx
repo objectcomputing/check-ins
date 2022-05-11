@@ -1,9 +1,10 @@
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {
+  Alert,
   Button,
-  Card,
+  Card, CardActions,
   CardContent,
-  CardHeader,
+  CardHeader, Modal,
   Step,
   StepLabel,
   Stepper,
@@ -18,20 +19,31 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import SendIcon from "@mui/icons-material/Send";
 
 import "./EmailPage.css";
+import {AppContext} from "../context/AppContext";
 
 const Root = styled("div")({
   margin: "2rem"
 });
 
 const EmailPage = () => {
-
-  const [file, setFile] = useState(null);
+  const { state } = useContext(AppContext);
+  const { memberProfiles } = state;
+  const [emailFile, setEmailFile] = useState(null);
   const [fileContents, setFileContents] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
+  const [testEmailSent, setTestEmailSent] = useState(false);
+  const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+  const [activeMembers, setActiveMembers] = useState([]);
   const steps = ["Upload File", "Preview Email", "Send Email"];
+
+  useEffect(() => {
+    const unterminatedMembers = memberProfiles.filter(member => member.terminationDate === null);
+    setActiveMembers(unterminatedMembers);
+  }, [memberProfiles]);
 
   const sendTestEmail = (emailAddress) => {
     console.log(`Sending email to ${emailAddress}`);
+    setTestEmailSent(true);
   }
 
   const sendEmailToAllMembers = () => {
@@ -46,7 +58,7 @@ const EmailPage = () => {
         fileReader.onload = (e) => {
           setFileContents(e.target.result.toString());
         }
-        setFile(event.target.files[0]);
+        setEmailFile(event.target.files[0]);
         fileReader.readAsText(event.target.files[0]);
       }
     }
@@ -64,7 +76,7 @@ const EmailPage = () => {
           />
         </Button>
         <div className="file-preview-container">
-          <Typography variant="body1" fontWeight={file ? "bold" : "normal"}>{file ? file.name : "No file uploaded"}</Typography>
+          <Typography variant="body1" fontWeight={emailFile ? "bold" : "normal"}>{emailFile ? emailFile.name : "No emailFile uploaded"}</Typography>
           {fileContents &&
             <TextareaAutosize
               className="file-preview"
@@ -164,13 +176,37 @@ const EmailPage = () => {
           variant="contained"
           color={currentStep === steps.length - 1 ? "success" : "primary"}
           endIcon={currentStep === steps.length - 1 ? <SendIcon/> : <RightArrowIcon/>}
+          disabled={currentStep === steps.length - 1 && !emailFile}
           onClick={() => currentStep < steps.length - 1
             ? setCurrentStep(currentStep + 1)
-            : sendEmailToAllMembers()
+            : setConfirmationDialogOpen(true)
           }>
           {currentStep === steps.length - 1 ? "Send" : "Next"}
         </Button>
       </div>
+      <Modal open={confirmationDialogOpen}>
+        <Card className="send-email-to-all-confirmation-dialog">
+          <CardHeader title={<Typography variant="h5" fontWeight="bold">Send Email</Typography>}/>
+          <CardContent>
+            <Typography variant="body1">
+              You are about to send the email <b>{emailFile?.name}</b> to everyone in Check-Ins ({activeMembers.length} members). Are you sure?
+            </Typography>
+            {!testEmailSent &&
+              <Alert severity="warning" style={{marginTop: "1rem"}}>
+                Caution: You have not sent a test email to check the email formatting.
+              </Alert>
+            }
+          </CardContent>
+          <CardActions>
+            <Button style={{ color: "gray" }} onClick={() => setConfirmationDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button color="primary" onClick={emailFile && sendEmailToAllMembers} disabled={!emailFile}>
+              Send
+            </Button>
+          </CardActions>
+        </Card>
+      </Modal>
     </Root>
   );
 };
