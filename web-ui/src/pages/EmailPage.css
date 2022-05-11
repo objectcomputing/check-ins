@@ -29,7 +29,11 @@
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    margin-top: 1rem;
+    margin-top: 2rem;
+}
+
+.email-page .current-step-content-card .send-test-email-input {
+    width: 400px;
 }
 
 .email-page .current-step-content-card .send-test-email-button {

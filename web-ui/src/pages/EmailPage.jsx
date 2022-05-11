@@ -28,10 +28,14 @@ const EmailPage = () => {
   const [file, setFile] = useState(null);
   const [fileContents, setFileContents] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Upload File", "Preview Email", "Send Test Email", "Send Email"];
+  const steps = ["Upload File", "Preview Email", "Send Email"];
 
-  const sendEmail = (emailAddress) => {
+  const sendTestEmail = (emailAddress) => {
     console.log(`Sending email to ${emailAddress}`);
+  }
+
+  const sendEmailToAllMembers = () => {
+    console.log("Sending email to everyone");
   }
 
   const UploadFileStep = () => {
@@ -81,24 +85,25 @@ const EmailPage = () => {
     );
   }
 
-  const SendTestEmailStep = () => {
+  const SendEmailStep = () => {
     const [testEmail, setTestEmail] = useState("");
     const [emailError, setEmailError] = useState(false)
 
     const handleSendButtonClick = () => {
-      let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ // eslint-disable-line
+      let regEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/
       if (!regEmail.test(testEmail)) {
         setEmailError(true);
       } else {
-        sendEmail(testEmail);
+        sendTestEmail(testEmail);
       }
     }
 
     return (
       <>
-        <Typography variant="body1">To see what this email will look like in an inbox, you can send it to an email address you have access to.</Typography>
+        <Typography variant="body1">To test this email and see how it will appear in an inbox, you can send it to an email address you have access to. If you are satisfied with the email, click the send button at the bottom of the page to send to everyone.</Typography>
         <div className="send-test-email-container">
           <TextField
+            className="send-test-email-input"
             label="Email address"
             placeholder="example@objectcomputing.com"
             variant="outlined"
@@ -121,16 +126,10 @@ const EmailPage = () => {
             disabled={testEmail.trim().length === 0 || emailError}
             onClick={handleSendButtonClick}
           >
-            Send
+            Send Test Email
           </Button>
         </div>
       </>
-    );
-  }
-
-  const SendEmailStep = () => {
-    return (
-      <></>
     );
   }
 
@@ -148,8 +147,7 @@ const EmailPage = () => {
         <CardContent>
           {currentStep === 0 && <UploadFileStep/>}
           {currentStep === 1 && <PreviewEmailStep/>}
-          {currentStep === 2 && <SendTestEmailStep/>}
-          {currentStep === 3 && <SendEmailStep/>}
+          {currentStep === 2 && <SendEmailStep/>}
         </CardContent>
       </Card>
       <div className="stepper-button-container">
@@ -166,7 +164,10 @@ const EmailPage = () => {
           variant="contained"
           color={currentStep === steps.length - 1 ? "success" : "primary"}
           endIcon={currentStep === steps.length - 1 ? <SendIcon/> : <RightArrowIcon/>}
-          onClick={() => currentStep < steps.length - 1 ? setCurrentStep(currentStep + 1) : null}>
+          onClick={() => currentStep < steps.length - 1
+            ? setCurrentStep(currentStep + 1)
+            : sendEmailToAllMembers()
+          }>
           {currentStep === steps.length - 1 ? "Send" : "Next"}
         </Button>
       </div>
