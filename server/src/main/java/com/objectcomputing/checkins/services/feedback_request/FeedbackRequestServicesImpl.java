@@ -100,7 +100,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (storedRequest.getDueDate() != null) {
             newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " +storedRequest.getDueDate().getYear() + ".";
         }
-        newContent+="<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
+        newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
         emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         return storedRequest;
@@ -115,7 +115,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
          */
 
         final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         FeedbackRequest originalFeedback = null;
 
         if (feedbackRequest.getId() != null) {
@@ -147,10 +146,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
 
-        originalFeedback.setDueDate(feedbackRequest.getDueDate());
-        originalFeedback.setStatus(feedbackRequest.getStatus());
-        originalFeedback.setSubmitDate(feedbackRequest.getSubmitDate());
-        FeedbackRequest storedRequest = feedbackReqRepository.update(originalFeedback);
+        FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
 
         // Send email if the feedback request has been reopened for edits
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {

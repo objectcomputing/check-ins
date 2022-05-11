@@ -70,9 +70,20 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         if (storedRequest.getDueDate() != null) {
             newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " +storedRequest.getDueDate().getYear() + ".";
         }
-        newContent+="<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" +requestId + " to complete this request.</p>";
+        newContent += "<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
         return newContent;
     }
+
+    private String updateEmailContent(UUID requestId, MemberProfile creator, MemberProfile requestee) {
+        String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
+                "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
+                "</b> has reopened the feedback request on <b>" +
+                requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
+                "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
+        newContent += "<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
+        return newContent;
+    }
+
     private FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
         FeedbackTemplate template = createFeedbackTemplate(creator.getId());
         getFeedbackTemplateRepository().save(template);
@@ -1035,6 +1046,34 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get());
+    }
+
+    @Test
+    void testFeedbackRequestEnableEditsSendsEmail() {
+        MemberProfile pdl = createADefaultMemberProfile();
+        assignPdlRole(pdl);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdl);
+        MemberProfile recipient = createADefaultRecipient();
+
+        // Save feedback request that has already been submitted
+        final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
+        feedbackReq.setSubmitDate(LocalDate.now());
+        feedbackReq.setStatus("submitted");
+        getFeedbackRequestRepository().save(feedbackReq);
+
+        // The PDL attempts to enable edits on the request
+        feedbackReq.setSubmitDate(null);
+        feedbackReq.setStatus("sent");
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(pdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        // Verify appropriate email was sent
+        assertTrue(response.getBody().isPresent());
+        String correctContent = updateEmailContent(response.getBody().get().getId(), pdl, requestee);
+        verify(emailSender).sendEmail(notificationSubject, correctContent, recipient.getWorkEmail());
     }
 
     @Test
