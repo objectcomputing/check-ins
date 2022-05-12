@@ -88,4 +88,10 @@ public class MailJetSender implements EmailSender {
         }
         return true;
     }
+
+    @Override
+    public boolean sendAndSaveEmail(String subject, String content, String... recipients) {
+        boolean status = sendEmailReceivesStatus(subject, content, recipients);
+        return status;
+    }
 }
