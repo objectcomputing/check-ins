@@ -25,6 +25,15 @@
     min-height: 70px;
 }
 
+.email-page .current-step-content-card .missing-preview-message {
+    background-color: #eaeaea;
+    border: 1px dashed gray;
+    color: gray;
+    border-radius: 4px;
+    text-align: center;
+    padding: 3rem;
+}
+
 .email-page .current-step-content-card .send-test-email-container {
     display: flex;
     flex-direction: row;

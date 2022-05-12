@@ -17,9 +17,11 @@ import LeftArrowIcon from "@mui/icons-material/KeyboardArrowLeft";
 import RightArrowIcon from "@mui/icons-material/KeyboardArrowRight";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import SendIcon from "@mui/icons-material/Send";
+import {AppContext} from "../context/AppContext";
+import mjml2html from "mjml-browser";
+import ReactHtmlParser from "react-html-parser";
 
 import "./EmailPage.css";
-import {AppContext} from "../context/AppContext";
 
 const Root = styled("div")({
   margin: "2rem"
@@ -92,8 +94,20 @@ const EmailPage = () => {
   }
 
   const PreviewEmailStep = () => {
+
+    const { html } = mjml2html(fileContents);
+    const emailPreview = ReactHtmlParser(html);
+
     return (
-      <></>
+      <>
+        {emailFile
+          ? emailPreview
+          :
+          <div className="missing-preview-message">
+            <Typography variant="h6">Preview not available</Typography>
+          </div>
+        }
+      </>
     );
   }
 
