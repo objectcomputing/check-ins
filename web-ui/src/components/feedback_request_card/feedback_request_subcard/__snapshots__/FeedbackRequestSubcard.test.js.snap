@@ -17,6 +17,10 @@ exports[`renders correctly 1`] = `
   color: #333333;
 }
 
+.emotion-0 .FeedbackRequestSubcard-lightGrayTypography {
+  color: gray;
+}
+
 .emotion-1 {
   margin: 0;
   -webkit-flex-shrink: 0;

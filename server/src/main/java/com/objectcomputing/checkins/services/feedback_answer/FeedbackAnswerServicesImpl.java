@@ -42,6 +42,8 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
         if (!createIsPermitted(relatedFeedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
+        } else if (relatedFeedbackRequest.getStatus().equals("canceled")) {
+            throw new BadArgException("Attempted to save an answer for a canceled feedback request");
         }
         if (feedbackAnswer.getId() != null) {
             return update(feedbackAnswer);
