@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -16,6 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Introspected
 @Table(name = "feedback_requests")
 public class FeedbackRequest {
 

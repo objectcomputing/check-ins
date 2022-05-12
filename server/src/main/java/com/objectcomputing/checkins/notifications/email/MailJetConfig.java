@@ -11,7 +11,13 @@ public class MailJetConfig {
 
     @Bean
     MailjetClient getClient() {
-        return new MailjetClient(System.getenv("MJ_APIKEY_PUBLIC"), System.getenv("MJ_APIKEY_PRIVATE"), new ClientOptions("v3.1"));
+        return new MailjetClient(
+                ClientOptions
+                        .builder()
+                        .apiKey(System.getenv("MJ_APIKEY_PUBLIC"))
+                        .apiSecretKey(System.getenv("MJ_APIKEY_PRIVATE"))
+                        .build()
+        );
     }
 
     @Bean

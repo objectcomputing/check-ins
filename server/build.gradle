@@ -1,8 +1,13 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("io.micronaut.application") version "3.3.0"
+    id("io.micronaut.application") version "2.0.3"
     id "idea"
     id "jacoco"
+    id("org.openrewrite.rewrite") version "5.20.0"
+}
+
+rewrite {
+    activeRecipe("org.openrewrite.java.micronaut.Micronaut2to3Migration")
 }
 
 version "0.5.7"
@@ -33,7 +38,7 @@ dependencies {
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-management")
-    implementation("io.micronaut:micronaut-runtime:2.5.13")
+    implementation('io.micronaut:micronaut-runtime:3.4.3')
     implementation("io.micronaut.cache:micronaut-cache-ehcache")
     implementation("io.micronaut.data:micronaut-data-jdbc")
     implementation("io.micronaut.flyway:micronaut-flyway")
@@ -89,6 +94,10 @@ dependencies {
     //}
     //implementation  'org.postgresql:postgresql:42.2.12'
     implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
+
+    implementation("io.micronaut.reactor:micronaut-reactor")
+    implementation('io.projectreactor.addons:reactor-adapter:3.4.8')
+    testImplementation 'io.projectreactor:reactor-test:3.4.18'
     //implementation "io.micronaut.sql:micronaut-jdbc-hikari"
     //implementation 'io.micronaut.flyway:micronaut-flyway'
     //implementation("io.swagger.core.v3:swagger-annotations")
@@ -126,6 +135,8 @@ dependencies {
     //testImplementation("org.testcontainers:postgresql")
 
     publicResources project(':web-ui')
+
+    rewrite('org.openrewrite.recipe:rewrite-micronaut:1.10.0')
 }
 
 jacocoTestReport {

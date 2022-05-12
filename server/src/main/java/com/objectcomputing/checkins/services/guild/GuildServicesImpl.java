@@ -13,7 +13,7 @@ import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

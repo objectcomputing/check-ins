@@ -17,7 +17,7 @@ import java.util.UUID;
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, UUID> {
 
 
-  @Query(value = "SELECT id, refresh_token, user_name " +
+  @Query(value = "SELECT id, refresh_token, user_name, revoked, date_created " +
           "FROM \"refresh_token\" rt " +
           "WHERE rt.refresh_token = :refreshToken", nativeQuery = true)
   Optional<RefreshToken> findByRefreshToken(String refreshToken);

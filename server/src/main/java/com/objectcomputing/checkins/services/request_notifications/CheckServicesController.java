@@ -6,11 +6,12 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.scheduling.TaskExecutors;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
+import jakarta.annotation.security.PermitAll;
 
-import javax.annotation.security.PermitAll;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/feedback/daily-request-check")
@@ -28,11 +29,11 @@ public class CheckServicesController {
     }
 
     @Get
-    public Single<? extends HttpResponse<?>> GetTodaysRequests() {
-        return Single.fromCallable(() -> checkServices.GetTodaysRequests())
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<? extends HttpResponse<?>> GetTodaysRequests() {
+        return Mono.fromCallable(checkServices::GetTodaysRequests)
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(success -> (HttpResponse<?>) HttpResponse.ok())
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 

@@ -2,8 +2,8 @@ package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.LinkedHashSet;
