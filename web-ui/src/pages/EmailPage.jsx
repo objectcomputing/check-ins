@@ -74,11 +74,9 @@ const UploadFileStep = ({ emailFile, emailContents, onEmailFileChange, onEmailCo
   );
 }
 
-const PreviewEmailStep = ({ emailFile, emailContents, onSubjectChange }) => {
+const PreviewEmailStep = ({ emailContents, emailSubjectError, emailSubject, onSubjectChange }) => {
 
-  const [subjectText, setSubjectText] = useState("");
-
-  if (!emailFile || !emailContents) {
+  if (!emailContents) {
     return (
       <div className="missing-preview-message">
         <Typography variant="h6">Preview not available</Typography>
@@ -95,14 +93,15 @@ const PreviewEmailStep = ({ emailFile, emailContents, onSubjectChange }) => {
         <Typography
           variant="body1"
           fontWeight="bold"
-          style={{marginRight: "1rem"}}>
+          style={{marginRight: "1rem", marginTop: "6px"}}>
           Subject:
         </Typography>
         <TextField
           fullWidth
-          value={subjectText}
+          error={emailSubjectError}
+          helperText={emailSubjectError ? "Email is missing subject" : ""}
+          value={emailSubject}
           onChange={(event) => {
-            setSubjectText(event.target.value);
             onSubjectChange(event.target.value);
           }}
         />
@@ -165,7 +164,8 @@ const EmailPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [emailFile, setEmailFile] = useState(null);
   const [emailContents, setEmailContents] = useState("");
-  const [emailSubject, setEmailSubject] = useState("Test Subject");
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailSubjectError, setEmailSubjectError] = useState(false);
   const [testEmail, setTestEmail] = useState("");
   const [testEmailSent, setTestEmailSent] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
@@ -196,8 +196,27 @@ const EmailPage = () => {
         severity: "success",
         toast: `Sent email to ${activeMembers.length} members`
       }
-    })
+    });
+  }
 
+  const handleNextClick = () => {
+    switch (currentStep) {
+      case 0:
+        setCurrentStep(currentStep + 1);
+        break;
+      case 1:
+        if (emailSubject.trim().length > 0) {
+          setCurrentStep(currentStep + 1);
+        } else {
+          setEmailSubjectError(true);
+        }
+        break;
+      case 2:
+        setConfirmationDialogOpen(true);
+        break;
+      default:
+        console.warn(`Invalid step in stepper: ${currentStep}`);
+    }
   }
 
   return (
@@ -222,9 +241,13 @@ const EmailPage = () => {
           )}
           {currentStep === 1 && (
             <PreviewEmailStep
-              emailFile={emailFile}
               emailContents={emailContents}
-              onSubjectChange={(subject) => setEmailSubject(subject)}
+              emailSubjectError={emailSubjectError}
+              emailSubject={emailSubject}
+              onSubjectChange={(subject) => {
+                setEmailSubject(subject);
+                setEmailSubjectError(false);
+              }}
             />
           )}
           {currentStep === 2 && (
@@ -250,10 +273,7 @@ const EmailPage = () => {
           color={currentStep === steps.length - 1 ? "success" : "primary"}
           endIcon={currentStep === steps.length - 1 ? <SendIcon/> : <RightArrowIcon/>}
           disabled={currentStep === steps.length - 1 && !emailFile}
-          onClick={() => currentStep < steps.length - 1
-            ? setCurrentStep(currentStep + 1)
-            : setConfirmationDialogOpen(true)
-          }>
+          onClick={handleNextClick}>
           {currentStep === steps.length - 1 ? "Send" : "Next"}
         </Button>
       </div>
