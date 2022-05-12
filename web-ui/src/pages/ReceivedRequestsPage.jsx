@@ -168,10 +168,6 @@ const ReceivedRequestsPage = () => {
 
   }, [state, receivedRequests, submittedRequests, searchText, sortValue]);
 
-  useEffect(() => {
-    console.log(receivedRequests);
-  }, [receivedRequests]);
-
   return (
     <Root className="received-requests-page">
       <div className="received-requests-header-container">
