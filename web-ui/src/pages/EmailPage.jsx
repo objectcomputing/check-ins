@@ -22,9 +22,11 @@ import SendIcon from "@mui/icons-material/Send";
 import {AppContext} from "../context/AppContext";
 import mjml2html from "mjml-browser";
 import ReactHtmlParser from "react-html-parser";
+import {UPDATE_TOAST} from "../context/actions";
+import {sendEmail} from "../api/notifications";
 
 import "./EmailPage.css";
-import {UPDATE_TOAST} from "../context/actions";
+
 
 const Root = styled("div")({
   margin: "2rem"
@@ -160,7 +162,7 @@ const SendEmailStep = ({ testEmail, onTestEmailChange, onSendTestEmail }) => {
 
 const EmailPage = () => {
   const { state } = useContext(AppContext);
-  const { memberProfiles } = state;
+  const { memberProfiles, csrf } = state;
   const [currentStep, setCurrentStep] = useState(0);
   const [emailFile, setEmailFile] = useState(null);
   const [emailContents, setEmailContents] = useState("");
@@ -178,13 +180,28 @@ const EmailPage = () => {
   }, [memberProfiles]);
 
   const sendTestEmail = () => {
-    setTestEmailSent(true);
-    window.snackDispatch({
-      type: UPDATE_TOAST,
-      payload: {
-        severity: "success",
-        toast: `Sent a test email to ${testEmail}`
+
+    if (!emailSubject.trim() || !emailContents || !csrf) {
+      return;
+    }
+
+    sendEmail(emailSubject, emailContents, testEmail, csrf).then(res => {
+      let toastMessage, toastStatus;
+      if (res && res.payload && res.payload.status === 200 && !res.error) {
+        setTestEmailSent(true);
+        toastStatus = "success";
+        toastMessage = `Sent a test email to ${testEmail}`;
+      } else {
+        toastStatus = "error";
+        toastMessage = `Failed to send test email to ${testEmail}`;
       }
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: toastStatus,
+          toast: toastMessage
+        }
+      });
     });
   }
 
