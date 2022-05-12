@@ -100,6 +100,26 @@ INSERT INTO member_profile
 VALUES
 ('dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Unreal','${aeskey}'),  PGP_SYM_ENCRYPT('Ulysses','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer 2','${aeskey}'), '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing2@objectcomputing.com','${aeskey}'), '010101012', '2021-05-22', PGP_SYM_ENCRYPT('Test user 2','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1950-01-01');
 
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('a90be358-aa3d-49c8-945a-879a93646e45', PGP_SYM_ENCRYPT('Kazuhira','${aeskey}'),  PGP_SYM_ENCRYPT('Miller','${aeskey}'), PGP_SYM_ENCRYPT('Unit Coordinator','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('millerkaz@objectcomputing.com','${aeskey}'), '012345678', '2022-03-29', PGP_SYM_ENCRYPT('Bff with Big Boss','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
+
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', PGP_SYM_ENCRYPT('Big','${aeskey}'),  PGP_SYM_ENCRYPT('Boss','${aeskey}'), PGP_SYM_ENCRYPT('Sneaky Snake','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('bossb@objectcomputing.com','${aeskey}'), '351242153', '2022-03-29', PGP_SYM_ENCRYPT('The Legendary Big Boss','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
+
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Shalashaska','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
+
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('8d75c07e-6adc-437a-8659-7dd953ce6600', PGP_SYM_ENCRYPT('Huey','${aeskey}'),  PGP_SYM_ENCRYPT('Emmerich','${aeskey}'), PGP_SYM_ENCRYPT('Head of R&D','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('emmerichh@objectcomputing.com','${aeskey}'), '657483498', '2022-03-29', PGP_SYM_ENCRYPT('Waiting for love to bloom on the battlefield','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
+
 INSERT INTO role
     (id, description, role)
 VALUES
@@ -737,6 +757,37 @@ INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
 ('ab2da7fc-fac2-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3' ,'18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-08-01', '2021-08-05', null, 'pending');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('74623897-5279-4dbe-94d4-5a247d9f00b1', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'pending');
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('4cbd9576-e580-4da7-8488-d1f75477f5fb', PGP_SYM_ENCRYPT('Brilliant feedback', '${aeskey}'), 'd6d05f53-682c-4c37-be32-8aab5f89767f', '74623897-5279-4dbe-94d4-5a247d9f00b1', 0.8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('01565a0e-b8ea-486f-af2e-821a74519953', PGP_SYM_ENCRYPT('Excellent feedback', '${aeskey}'), '47f997ca-0045-4147-afcb-0c9ed0b44978', '74623897-5279-4dbe-94d4-5a247d9f00b1', 0.7);
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('0d0d872d-4f05-4af8-9804-d0a99e450c37', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'pending');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('1aff4993-2324-41cc-8b21-2ab5715ca70b', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'pending');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('7ca4d402-0bb9-4989-9087-8a52a63ee5d0', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'pending');
+
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)

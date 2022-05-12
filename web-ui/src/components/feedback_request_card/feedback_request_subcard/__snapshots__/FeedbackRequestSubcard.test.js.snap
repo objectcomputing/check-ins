@@ -17,6 +17,10 @@ exports[`renders correctly 1`] = `
   color: #333333;
 }
 
+.emotion-0 .FeedbackRequestSubcard-lightGrayTypography {
+  color: gray;
+}
+
 .emotion-1 {
   margin: 0;
   -webkit-flex-shrink: 0;
@@ -663,35 +667,23 @@ exports[`renders correctly 1`] = `
           className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-6 MuiGrid-grid-md-true align-end emotion-14"
         >
           <a
-            className="response-link"
+            className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root response-link emotion-17"
             href="/feedback/view/responses/?request=c15961e4-6e9b-42cd-8140-ece9efe2445c"
-            onClick={[Function]}
-            style={
-              Object {
-                "background": "transparent",
-              }
-            }
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={0}
           >
-            <button
-              className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-17"
-              disabled={false}
-              onBlur={[Function]}
-              onContextMenu={[Function]}
-              onDragLeave={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseUp={[Function]}
-              onTouchEnd={[Function]}
-              onTouchMove={[Function]}
-              onTouchStart={[Function]}
-              tabIndex={0}
-              type="button"
-            >
-              View Response
-            </button>
+            View Response
           </a>
           <button
             className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium emotion-18"
