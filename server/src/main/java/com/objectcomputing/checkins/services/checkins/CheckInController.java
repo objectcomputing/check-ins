@@ -9,12 +9,13 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -49,11 +50,11 @@ public class CheckInController {
      * @return
      */
     @Get("/{?teamMemberId,pdlId,completed}")
-    public Single<HttpResponse<Set<CheckIn>>> findCheckIns(@Nullable UUID teamMemberId, @Nullable UUID pdlId, @Nullable Boolean completed) {
-        return Single.fromCallable(() -> checkInServices.findByFields(teamMemberId, pdlId, completed))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<Set<CheckIn>>> findCheckIns(@Nullable UUID teamMemberId, @Nullable UUID pdlId, @Nullable Boolean completed) {
+        return Mono.fromCallable(() -> checkInServices.findByFields(teamMemberId, pdlId, completed))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdCheckIn -> (HttpResponse<Set<CheckIn>>) HttpResponse.ok(createdCheckIn))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -64,15 +65,15 @@ public class CheckInController {
      */
 
     @Post("/")
-    public Single<HttpResponse<CheckIn>> createCheckIn(@Body @Valid CheckInCreateDTO checkIn,
+    public Mono<HttpResponse<CheckIn>> createCheckIn(@Body @Valid CheckInCreateDTO checkIn,
                                                        HttpRequest<CheckInCreateDTO> request) {
-        return Single.fromCallable(() -> checkInServices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted())))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> checkInServices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted())))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdCheckIn -> {
                     return (HttpResponse<CheckIn>) HttpResponse
                             .created(createdCheckIn)
                             .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdCheckIn.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -82,15 +83,15 @@ public class CheckInController {
      * @return {@link HttpResponse<CheckIn>}
      */
     @Put("/")
-    public Single<HttpResponse<CheckIn>> update(@Body @Valid @NotNull CheckIn checkIn,
+    public Mono<HttpResponse<CheckIn>> update(@Body @Valid @NotNull CheckIn checkIn,
                                                 HttpRequest<CheckIn> request) {
-        return Single.fromCallable(() -> checkInServices.update(checkIn))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> checkInServices.update(checkIn))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedCheckIn -> (HttpResponse<CheckIn>) HttpResponse
                         .ok()
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedCheckIn.getId()))))
                         .body(updatedCheckIn))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 
@@ -99,18 +100,12 @@ public class CheckInController {
      * @return
      */
     @Get("/{id}")
-    public Single<HttpResponse<CheckIn>> readCheckIn(@NotNull UUID id) {
-        return Single.fromCallable(() -> {
-            CheckIn result = checkInServices.read(id);
-            if (result == null) {
-                throw new NotFoundException("No checkin for UUID");
-            }
-            return result;
-        })
-                .observeOn(Schedulers.from(eventLoopGroup))
-                .map(checkIn -> {
-                    return (HttpResponse<CheckIn>) HttpResponse.ok(checkIn);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+    public Mono<HttpResponse<CheckIn>> readCheckIn(@NotNull UUID id) {
+        return Mono.fromCallable(() -> checkInServices.read(id))
+                .switchIfEmpty(Mono.error(new NotFoundException("No checkin for UUID")))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(checkIn -> (HttpResponse<CheckIn>) HttpResponse.ok(checkIn))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 }

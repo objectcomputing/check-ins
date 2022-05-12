@@ -11,7 +11,7 @@ import com.objectcomputing.checkins.services.role.member_roles.MemberRoleService
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 

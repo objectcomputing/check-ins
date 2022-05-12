@@ -20,7 +20,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
@@ -151,11 +151,11 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("skill.name: must not be blank", error);
+        assertEquals("skill.name: must not be blank", error.asText());
 
     }
 
@@ -172,11 +172,11 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("skill.name: must not be blank", error);
+        assertEquals("skill.name: must not be blank", error.asText());
 
     }
 
@@ -190,11 +190,11 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("skill.skillsToCombine: must not be null", error);
+        assertEquals("skill.skillsToCombine: must not be null", error.asText());
 
     }
 

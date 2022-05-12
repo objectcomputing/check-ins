@@ -11,13 +11,14 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -42,10 +43,10 @@ public class FeedbackSuggestionsController {
     }
 
     @Get("/{id}")
-    public Single<HttpResponse<List<FeedbackSuggestionDTO>>> getSuggestionsByProfileId(UUID id) {
-        return Single.fromCallable(() -> suggestionsService.getSuggestionsByProfileId(id))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<List<FeedbackSuggestionDTO>>> getSuggestionsByProfileId(UUID id) {
+        return Mono.fromCallable(() -> suggestionsService.getSuggestionsByProfileId(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(feedbacks -> (HttpResponse<List<FeedbackSuggestionDTO>>) HttpResponse.ok(feedbacks))
-            .subscribeOn(Schedulers.from(executorService));
+            .subscribeOn(Schedulers.fromExecutor(executorService));
     }
 }

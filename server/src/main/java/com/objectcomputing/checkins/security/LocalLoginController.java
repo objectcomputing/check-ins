@@ -5,29 +5,23 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.ApplicationEventPublisher;
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.*;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.authentication.AuthenticationResponse;
-import io.micronaut.security.authentication.Authenticator;
-import io.micronaut.security.authentication.UserDetails;
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
+import io.micronaut.security.authentication.*;
 import io.micronaut.security.event.LoginFailedEvent;
 import io.micronaut.security.event.LoginSuccessfulEvent;
 import io.micronaut.security.handlers.LoginHandler;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.views.View;
-import io.reactivex.Flowable;
-import io.reactivex.Single;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Requires(env = Environments.LOCAL)
@@ -64,26 +58,30 @@ public class LocalLoginController {
 
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
     @Post
-    public Single<MutableHttpResponse<?>> auth(HttpRequest<?> request, String email, String role) {
+    public Mono<MutableHttpResponse<?>> auth(HttpRequest<?> request, String email, String role) {
         UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(email, role);
-        Flowable<AuthenticationResponse> authenticationResponseFlowable =
-                Flowable.fromPublisher(authenticator.authenticate(request, usernamePasswordCredentials));
-
-        return authenticationResponseFlowable.map(authenticationResponse -> {
-            if (authenticationResponse.isAuthenticated() && authenticationResponse.getUserDetails().isPresent()) {
-                UserDetails userDetails = authenticationResponse.getUserDetails().get();
+        Flux<AuthenticationResponse> authenticationResponseFlux =
+                Flux.from(authenticator.authenticate(request, usernamePasswordCredentials));
+        return authenticationResponseFlux.map(authenticationResponse -> {
+            if (authenticationResponse.isAuthenticated() && authenticationResponse.getAuthentication().isPresent()) {
+                Authentication authentication = authenticationResponse.getAuthentication().get();
                 // Get member profile by work email
                 MemberProfile memberProfile = currentUserServices.findOrSaveUser("", "", email);
                 String firstName = memberProfile.getFirstName() != null ? memberProfile.getFirstName() : "";
                 String lastName = memberProfile.getLastName() != null ? memberProfile.getLastName() : "";
-                userDetails.setAttributes(Map.of("email", memberProfile.getWorkEmail(),
-                        "name", firstName + ' ' + lastName, "picture", ""));
-                eventPublisher.publishEvent(new LoginSuccessfulEvent(userDetails));
-                return loginHandler.loginSuccess(userDetails, request);
+
+                Map<String, Object> newAttributes = new HashMap<>(authentication.getAttributes());
+                newAttributes.put("email", memberProfile.getWorkEmail());
+                newAttributes.put("name", firstName + ' ' + lastName);
+                newAttributes.put("picture", "");
+                Authentication updatedAuth = Authentication.build(authentication.getName(), authentication.getRoles(), newAttributes);
+
+                eventPublisher.publishEvent(new LoginSuccessfulEvent(updatedAuth));
+                return loginHandler.loginSuccess(updatedAuth, request);
             } else {
                 eventPublisher.publishEvent(new LoginFailedEvent(authenticationResponse));
                 return loginHandler.loginFailed(authenticationResponse, request);
             }
-        }).first(HttpResponse.status(HttpStatus.UNAUTHORIZED));
+        }).single(HttpResponse.status(HttpStatus.UNAUTHORIZED));
     }
 }

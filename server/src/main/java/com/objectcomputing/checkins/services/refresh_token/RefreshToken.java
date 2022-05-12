@@ -1,11 +1,13 @@
 package com.objectcomputing.checkins.services.refresh_token;
 
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.DateCreated;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -17,6 +19,7 @@ public class RefreshToken {
   public RefreshToken(String username, String refreshToken){
     this.userName = username;
     this.refreshToken = refreshToken;
+    this.revoked = false;
   }
 
   @Id
@@ -29,6 +32,11 @@ public class RefreshToken {
 
   @Column(name = "user_name")
   private String userName;
+
+  private Boolean revoked;
+
+  @DateCreated
+  private Instant dateCreated;
 
   public String getRefreshToken() {
     return refreshToken;
@@ -46,4 +54,20 @@ public class RefreshToken {
 
   public UUID getId(){return this.id;}
   public void setId(UUID id){this.id = id;}
+
+  public Boolean getRevoked() {
+    return revoked;
+  }
+
+  public void setRevoked(Boolean revoked) {
+    this.revoked = revoked;
+  }
+
+  public Instant getDateCreated() {
+    return dateCreated;
+  }
+
+  public void setDateCreated(Instant dateCreated) {
+    this.dateCreated = dateCreated;
+  }
 }

@@ -4,7 +4,7 @@ import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
-
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +16,8 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name ="questions")
+@Introspected
+@Table(name = "questions")
 public class Question {
 
     public Question(@NotBlank String text, @Nullable UUID categoryId) {

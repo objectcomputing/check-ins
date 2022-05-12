@@ -4,8 +4,6 @@ import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
-import com.mailjet.client.errors.MailjetServerException;
-import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
@@ -13,7 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Requires(property = MailJetSender.FROM_ADDRESS)
 @Requires(property = MailJetSender.FROM_NAME)
@@ -66,12 +64,8 @@ public class MailJetSender implements EmailSender {
             LOG.info("Mailjet response data: " + response.getData());
             System.out.println(response.getStatus());
             System.out.println(response.getData());
-        } catch(MailjetServerException e) {
-            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
         } catch(MailjetException e) {
             LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
-        } catch(MailjetSocketTimeoutException e) {
-            LOG.error("An unexpected timeout occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
         }
     }
 

@@ -12,11 +12,12 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
@@ -47,12 +48,12 @@ public class CombineSkillController {
      */
 
     @Post()
-    public Single<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<CombineSkillsDTO> request) {
-        return Single.fromCallable(() -> combineSkillServices.combine(skill))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<CombineSkillsDTO> request) {
+        return Mono.fromCallable(() -> combineSkillServices.combine(skill))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdSkill -> (HttpResponse<Skill>) HttpResponse.created(createdSkill)
                 .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId())))))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
 }

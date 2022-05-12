@@ -1,15 +1,15 @@
 package com.objectcomputing.checkins.security.permissions;
 
-import io.micronaut.security.authentication.UserDetails;
+import io.micronaut.security.authentication.ServerAuthentication;
 
 import java.util.Collection;
 import java.util.Map;
 
-public class ExtendedUserDetails extends UserDetails {
+public class ExtendedAuthentication extends ServerAuthentication {
 
     private Collection<String> permissions;
 
-    public ExtendedUserDetails(String username, Collection<String> roles, Map<String, Object> attributes) {
+    public ExtendedAuthentication(String username, Collection<String> roles, Map<String, Object> attributes) {
         super(username, roles, attributes);
         this.permissions = (Collection<String>) attributes.get("permissions");
     }

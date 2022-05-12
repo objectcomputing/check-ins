@@ -5,12 +5,15 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -28,14 +31,12 @@ import java.util.stream.Collectors;
 public class DemographicsController {
 
     private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
+    private final Scheduler scheduler;
     private final DemographicsServices demographicsServices;
 
-    public DemographicsController(EventLoopGroup eventLoopGroup,
-                                  ExecutorService ioExecutorService,
-                                  DemographicsServices demographicsServices) {
+    public DemographicsController(@Named(TaskExecutors.IO) ExecutorService executorService, EventLoopGroup eventLoopGroup, DemographicsServices demographicsServices) {
+        this.scheduler = Schedulers.fromExecutorService(executorService);
         this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
         this.demographicsServices = demographicsServices;
     }
 
@@ -46,14 +47,14 @@ public class DemographicsController {
      * @return {@link DemographicsResponseDTO} Returned demographic
      */
     @Get("/{id}")
-    public Single<HttpResponse<DemographicsResponseDTO>> getById(UUID id) {
+    public Mono<HttpResponse<DemographicsResponseDTO>> getById(UUID id) {
 
-        return Single.fromCallable(() -> demographicsServices.getById(id))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> demographicsServices.getById(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(demographic -> (HttpResponse<DemographicsResponseDTO>) HttpResponse
                         .ok(fromEntity(demographic))
                         .headers(headers -> headers.location(location(demographic.getId()))))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -70,7 +71,7 @@ public class DemographicsController {
      * @return {@link List <DemographicsResponseDTO>} List of demographics that match the input parameters
      */
     @Get("/{?memberId,gender,degreeLevel,industryTenure,personOfColor,veteran,militaryTenure,militaryBranch}")
-    public Single<HttpResponse<List<DemographicsResponseDTO>>> findByValue(@Nullable UUID memberId,
+    public Mono<HttpResponse<List<DemographicsResponseDTO>>> findByValue(@Nullable UUID memberId,
                                                                             @Nullable String gender,
                                                                             @Nullable String degreeLevel,
                                                                             @Nullable Integer industryTenure,
@@ -78,15 +79,15 @@ public class DemographicsController {
                                                                             @Nullable Boolean veteran,
                                                                             @Nullable Integer militaryTenure,
                                                                             @Nullable String militaryBranch) {
-        return Single.fromCallable(() -> demographicsServices.findByValues(memberId, gender, degreeLevel, industryTenure, personOfColor, veteran, militaryTenure, militaryBranch))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> demographicsServices.findByValues(memberId, gender, degreeLevel, industryTenure, personOfColor, veteran, militaryTenure, militaryBranch))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(demographics -> {
                     List<DemographicsResponseDTO> dtoList = demographics.stream()
                             .map(this::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<DemographicsResponseDTO>>) HttpResponse
                             .ok(dtoList);
 
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(scheduler);
     }
 
     /**
@@ -96,11 +97,11 @@ public class DemographicsController {
      * @return {@link DemographicsResponseDTO} The created demographics
      */
     @Post()
-    public Single<HttpResponse<DemographicsResponseDTO>> save(@Body @Valid DemographicsCreateDTO demographics,
+    public Mono<HttpResponse<DemographicsResponseDTO>> save(@Body @Valid DemographicsCreateDTO demographics,
                                                               HttpRequest<DemographicsCreateDTO> request) {
 
-        return Single.fromCallable(() -> demographicsServices.saveDemographics(fromDTO(demographics)))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> demographicsServices.saveDemographics(fromDTO(demographics)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedDemographics -> {
                         DemographicsResponseDTO savedDemographicsResponse = fromEntity(savedDemographics);
                         return (HttpResponse<DemographicsResponseDTO>) HttpResponse
@@ -108,7 +109,7 @@ public class DemographicsController {
                                 .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), savedDemographicsResponse.getId()))))
                                 .body(savedDemographicsResponse);
                 })
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -118,11 +119,11 @@ public class DemographicsController {
      * @return {@link DemographicsResponseDTO} The updated demographics
      */
     @Put()
-    public Single<HttpResponse<DemographicsResponseDTO>> update(@Body @Valid DemographicsUpdateDTO demographics,
+    public Mono<HttpResponse<DemographicsResponseDTO>> update(@Body @Valid DemographicsUpdateDTO demographics,
                                                                 HttpRequest<DemographicsUpdateDTO> request) {
 
-        return Single.fromCallable(() -> demographicsServices.updateDemographics(fromDTO(demographics)))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> demographicsServices.updateDemographics(fromDTO(demographics)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedDemographics -> {
                     DemographicsResponseDTO updatedDemographics = fromEntity(savedDemographics);
                     return (HttpResponse<DemographicsResponseDTO>) HttpResponse
@@ -130,7 +131,7 @@ public class DemographicsController {
                             .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedDemographics.getId()))))
                             .body(updatedDemographics);
                 })
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -140,11 +141,11 @@ public class DemographicsController {
      * @return
      */
     @Delete("/{id}")
-    public Single<HttpResponse> delete(@NotNull UUID id) {
-        return Single.fromCallable(() -> demographicsServices.deleteDemographics(id))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse> delete(@NotNull UUID id) {
+        return Mono.fromCallable(() -> demographicsServices.deleteDemographics(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(successFlag -> (HttpResponse) HttpResponse.ok())
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     protected URI location(UUID id) {

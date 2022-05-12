@@ -16,7 +16,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -304,16 +304,17 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
                 () -> client.toBlocking().exchange(request, Map.class));
 
         final JsonNode body = exception.getResponse().getBody(JsonNode.class).orElse(null);
-        final JsonNode errors = Objects.requireNonNull(body).get("message");
+        final JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         final JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals("Required Body [requestBody] not specified", errors.asText());
+        assertEquals("Required Body [requestBody] not specified", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     }
 
     @Test
     public void testPutSucceed() {
+        // TODO: fix
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         final MemberProfile bob = getMemberProfileRepository().save(mkMemberProfile("Bob"));
         final Feedback feedback = createFeedback("Alice's feedback", bob, alice, true);

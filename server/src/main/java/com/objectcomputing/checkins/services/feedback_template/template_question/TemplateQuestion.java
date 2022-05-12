@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_template.template_question;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Introspected
 @Table(name = "template_questions")
 public class TemplateQuestion {
 
