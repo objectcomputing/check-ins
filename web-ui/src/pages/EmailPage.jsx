@@ -2,9 +2,11 @@ import React, {useContext, useEffect, useState} from "react";
 import {
   Alert,
   Button,
-  Card, CardActions,
+  Card,
+  CardActions,
   CardContent,
-  CardHeader, Modal,
+  CardHeader,
+  Modal,
   Step,
   StepLabel,
   Stepper,
@@ -22,17 +24,149 @@ import mjml2html from "mjml-browser";
 import ReactHtmlParser from "react-html-parser";
 
 import "./EmailPage.css";
+import {UPDATE_TOAST} from "../context/actions";
 
 const Root = styled("div")({
   margin: "2rem"
 });
 
+const UploadFileStep = ({ emailFile, emailContents, onEmailFileChange, onEmailContentsChange }) => {
+
+  const handleFileUpload = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      const fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        const content = e.target.result.toString();
+        onEmailContentsChange(content);
+      }
+
+      const file = event.target.files[0];
+      onEmailFileChange(file);
+      fileReader.readAsText(file);
+    }
+  }
+
+  return (
+    <>
+      <Typography variant="body1">Select a MJML file to render the email. The file must have a .mjml extension.</Typography>
+      <Button variant="contained" component="label" startIcon={<UploadFileIcon/>} disableElevation>
+        Choose File
+        <input
+          type="file"
+          accept=".mjml"
+          hidden
+          onChange={handleFileUpload}
+        />
+      </Button>
+      <div className="file-preview-container">
+        <Typography variant="body1" fontWeight={emailFile ? "bold" : "normal"}>{emailFile ? emailFile.name : "No file uploaded"}</Typography>
+        {emailContents &&
+          <TextareaAutosize
+            className="file-preview"
+            style={{overflow: "auto"}}
+            value={emailContents}
+            minRows={3}
+            maxRows={emailContents.split("\n").length}
+            readOnly/>
+        }
+      </div>
+    </>
+  );
+}
+
+const PreviewEmailStep = ({ emailFile, emailContents, onSubjectChange }) => {
+
+  const [subjectText, setSubjectText] = useState("");
+
+  if (!emailFile || !emailContents) {
+    return (
+      <div className="missing-preview-message">
+        <Typography variant="h6">Preview not available</Typography>
+      </div>
+    );
+  }
+
+  const { html } = mjml2html(emailContents);
+  const emailPreview = ReactHtmlParser(html);
+
+  return (
+    <>
+      <div className="email-subject-container">
+        <Typography
+          variant="body1"
+          fontWeight="bold"
+          style={{marginRight: "1rem"}}>
+          Subject:
+        </Typography>
+        <TextField
+          fullWidth
+          value={subjectText}
+          onChange={(event) => {
+            setSubjectText(event.target.value);
+            onSubjectChange(event.target.value);
+          }}
+        />
+      </div>
+      {emailPreview}
+    </>
+  );
+}
+
+const SendEmailStep = ({ testEmail, onTestEmailChange, onSendTestEmail }) => {
+  const [emailError, setEmailError] = useState(false)
+
+  const handleSendButtonClick = () => {
+    let regEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/
+    if (!regEmail.test(testEmail)) {
+      setEmailError(true);
+    } else {
+      onSendTestEmail(testEmail);
+    }
+  }
+
+  return (
+    <>
+      <Typography variant="body1">To test this email and see how it will appear in an inbox, you can send it to an email address you have access to. If you are satisfied with the email, click the send button at the bottom of the page to send to everyone.</Typography>
+      <div className="send-test-email-container">
+        <TextField
+          className="send-test-email-input"
+          label="Email address"
+          placeholder="example@objectcomputing.com"
+          variant="outlined"
+          value={testEmail}
+          error={emailError}
+          helperText={emailError ? "Invalid email address" : ""}
+          onChange={(event) => {
+            onTestEmailChange(event.target.value);
+            setEmailError(false);
+          }}
+          InputProps={{
+            style: {borderTopRightRadius: 0, borderBottomRightRadius: 0}
+          }}
+        />
+        <Button
+          className="send-test-email-button"
+          variant="contained"
+          disableElevation
+          endIcon={<SendIcon/>}
+          disabled={testEmail.trim().length === 0 || emailError}
+          onClick={handleSendButtonClick}
+        >
+          Send Test Email
+        </Button>
+      </div>
+    </>
+  );
+}
+
 const EmailPage = () => {
   const { state } = useContext(AppContext);
   const { memberProfiles } = state;
-  const [emailFile, setEmailFile] = useState(null);
-  const [fileContents, setFileContents] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
+  const [emailFile, setEmailFile] = useState(null);
+  const [emailContents, setEmailContents] = useState("");
+  const [emailSubject, setEmailSubject] = useState("Test Subject");
+  const [testEmail, setTestEmail] = useState("");
   const [testEmailSent, setTestEmailSent] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [activeMembers, setActiveMembers] = useState([]);
@@ -43,120 +177,27 @@ const EmailPage = () => {
     setActiveMembers(unterminatedMembers);
   }, [memberProfiles]);
 
-  const sendTestEmail = (emailAddress) => {
-    console.log(`Sending email to ${emailAddress}`);
+  const sendTestEmail = () => {
     setTestEmailSent(true);
+    window.snackDispatch({
+      type: UPDATE_TOAST,
+      payload: {
+        severity: "success",
+        toast: `Sent a test email to ${testEmail}`
+      }
+    });
   }
 
   const sendEmailToAllMembers = () => {
-    console.log("Sending email to everyone");
-  }
-
-  const UploadFileStep = () => {
-
-    const handleFileUpload = (event) => {
-      if (event.target.files && event.target.files[0]) {
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
-          setFileContents(e.target.result.toString());
-        }
-        setEmailFile(event.target.files[0]);
-        fileReader.readAsText(event.target.files[0]);
+    setConfirmationDialogOpen(false);
+    window.snackDispatch({
+      type: UPDATE_TOAST,
+      payload: {
+        severity: "success",
+        toast: `Sent email to ${activeMembers.length} members`
       }
-    }
+    })
 
-    return (
-      <>
-        <Typography variant="body1">Select a MJML file to render the email. The file must have a .mjml extension.</Typography>
-        <Button variant="contained" component="label" startIcon={<UploadFileIcon/>} disableElevation>
-          Choose File
-          <input
-            type="file"
-            accept=".mjml"
-            hidden
-            onChange={handleFileUpload}
-          />
-        </Button>
-        <div className="file-preview-container">
-          <Typography variant="body1" fontWeight={emailFile ? "bold" : "normal"}>{emailFile ? emailFile.name : "No emailFile uploaded"}</Typography>
-          {fileContents &&
-            <TextareaAutosize
-              className="file-preview"
-              style={{overflow: "auto"}}
-              value={fileContents}
-              minRows={3}
-              maxRows={fileContents.split("\n").length}
-              readOnly/>
-          }
-        </div>
-      </>
-    );
-  }
-
-  const PreviewEmailStep = () => {
-
-    const { html } = mjml2html(fileContents);
-    const emailPreview = ReactHtmlParser(html);
-
-    return (
-      <>
-        {emailFile
-          ? emailPreview
-          :
-          <div className="missing-preview-message">
-            <Typography variant="h6">Preview not available</Typography>
-          </div>
-        }
-      </>
-    );
-  }
-
-  const SendEmailStep = () => {
-    const [testEmail, setTestEmail] = useState("");
-    const [emailError, setEmailError] = useState(false)
-
-    const handleSendButtonClick = () => {
-      let regEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/
-      if (!regEmail.test(testEmail)) {
-        setEmailError(true);
-      } else {
-        sendTestEmail(testEmail);
-      }
-    }
-
-    return (
-      <>
-        <Typography variant="body1">To test this email and see how it will appear in an inbox, you can send it to an email address you have access to. If you are satisfied with the email, click the send button at the bottom of the page to send to everyone.</Typography>
-        <div className="send-test-email-container">
-          <TextField
-            className="send-test-email-input"
-            label="Email address"
-            placeholder="example@objectcomputing.com"
-            variant="outlined"
-            value={testEmail}
-            error={emailError}
-            helperText={emailError ? "Invalid email address" : ""}
-            onChange={(event) => {
-              setTestEmail(event.target.value);
-              setEmailError(false);
-            }}
-            InputProps={{
-              style: {borderTopRightRadius: 0, borderBottomRightRadius: 0}
-            }}
-          />
-          <Button
-            className="send-test-email-button"
-            variant="contained"
-            disableElevation
-            endIcon={<SendIcon/>}
-            disabled={testEmail.trim().length === 0 || emailError}
-            onClick={handleSendButtonClick}
-          >
-            Send Test Email
-          </Button>
-        </div>
-      </>
-    );
   }
 
   return (
@@ -171,9 +212,27 @@ const EmailPage = () => {
       <Card className="current-step-content-card">
         <CardHeader title={steps[currentStep]}/>
         <CardContent>
-          {currentStep === 0 && <UploadFileStep/>}
-          {currentStep === 1 && <PreviewEmailStep/>}
-          {currentStep === 2 && <SendEmailStep/>}
+          {currentStep === 0 && (
+            <UploadFileStep
+              emailFile={emailFile}
+              emailContents={emailContents}
+              onEmailFileChange={(file) => setEmailFile(file)}
+              onEmailContentsChange={(content) => setEmailContents(content)}
+            />
+          )}
+          {currentStep === 1 && (
+            <PreviewEmailStep
+              emailFile={emailFile}
+              emailContents={emailContents}
+              onSubjectChange={(subject) => setEmailSubject(subject)}
+            />
+          )}
+          {currentStep === 2 && (
+            <SendEmailStep
+              testEmail={testEmail}
+              onTestEmailChange={(address) => setTestEmail(address)}
+              onSendTestEmail={sendTestEmail}/>
+          )}
         </CardContent>
       </Card>
       <div className="stepper-button-container">
