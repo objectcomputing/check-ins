@@ -994,7 +994,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdl);
         MemberProfile recipient = createADefaultRecipient();
 
-        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdl, requestee, recipient);
+        // Save feedback request that has not been submitted yet
+        final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
+        feedbackReq.setSubmitDate(null);
+        getFeedbackRequestRepository().save(feedbackReq);
+
+        // The PDL attempts to submit the feedback request
         feedbackReq.setSubmitDate(LocalDate.now());
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
@@ -1004,6 +1009,31 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 client.toBlocking().exchange(request, Map.class));
 
         assertUnauthorized(responseException);
+    }
+
+    @Test
+    void testUpdateSubmitDateWhenPdlEnablesEdits() {
+        MemberProfile pdl = createADefaultMemberProfile();
+        assignPdlRole(pdl);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdl);
+        MemberProfile recipient = createADefaultRecipient();
+
+        // Save feedback request that has already been submitted
+        final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
+        feedbackReq.setSubmitDate(LocalDate.now());
+        getFeedbackRequestRepository().save(feedbackReq);
+
+        // The PDL attempts to enable edits on the request
+        feedbackReq.setSubmitDate(null);
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(pdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get());
     }
 
     @Test

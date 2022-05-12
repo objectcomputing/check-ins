@@ -3,20 +3,21 @@ import { styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import { sendReminderNotification } from "../../../api/notifications";
-import { cancelFeedbackRequest } from "../../../api/feedback";
+import {cancelFeedbackRequest, updateFeedbackRequest} from "../../../api/feedback";
 import IconButton from "@mui/material/IconButton";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import TrashIcon from "@mui/icons-material/Delete";
 import { AppContext } from "../../../context/AppContext";
 import { selectCsrfToken, selectProfile } from "../../../context/selectors";
-import {Avatar, Button, Card, CardActions, CardContent, CardHeader, Modal, Tooltip} from "@mui/material";
+import {Avatar, Button, Card, CardActions, CardContent, CardHeader, Modal, Menu, Tooltip, Alert} from "@mui/material";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
 import { getAvatarURL } from "../../../api/api";
 import { makeStyles } from "@mui/styles";
+import MoreIcon from "@mui/icons-material/MoreVert";
+import MenuItem from "@mui/material/MenuItem";
 
 import "./FeedbackRequestSubcard.css";
 
@@ -80,6 +81,8 @@ const FeedbackRequestSubcard = ({ request }) => {
   const [requestStatus, setRequestStatus] = useState(request?.status);
   const [requestDueDate, setRequestDueDate] = useState(dueDate);
   const [cancelingRequest, setCancelingRequest] = useState(false);
+  const [expandMenuAnchor, setExpandMenuAnchor] = useState(null);
+  const [enableEditsDialog, setEnableEditsDialog] = useState(false);
 
   const recipientId = request?.id;
   const recipientEmail = recipient?.workEmail;
@@ -151,6 +154,43 @@ const FeedbackRequestSubcard = ({ request }) => {
       });
     }
   }, [csrf]);
+
+  const handleEnableEditsClick = useCallback(() => {
+    setEnableEditsDialog(false);
+
+    const enableFeedbackEdits = async () => {
+      const requestWithEditsEnabled = {
+        ...request,
+        status: "sent",
+        submitDate: null
+      }
+
+      const res = await updateFeedbackRequest(requestWithEditsEnabled, csrf);
+      return res && res.payload && res.payload.data && !res.error ? res.payload.data : null;
+    }
+
+    if (csrf) {
+      enableFeedbackEdits().then((res) => {
+        if (res) {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "success",
+              toast: `Enabled edits for ${recipient?.name}'s feedback`
+            }
+          });
+        } else {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "Could not enable edits for this feedback request"
+            }
+          });
+        }
+      });
+    }
+  }, [csrf, recipient, request]);
 
   const Submitted = () => {
     if (requestDueDate) {
@@ -254,12 +294,53 @@ const FeedbackRequestSubcard = ({ request }) => {
                 </>
               )}
               {request && request.submitDate && request.id ? (
-                <Button
-                  href={`/feedback/view/responses/?request=${request.id}`}
-                  className="response-link"
-                >
-                  View response
-                </Button>
+                <>
+                  <Button
+                    href={`/feedback/view/responses/?request=${request.id}`}
+                    className="response-link"
+                  >
+                    View response
+                  </Button>
+                  <IconButton onClick={(event) => setExpandMenuAnchor(event.currentTarget)}>
+                    <MoreIcon/>
+                  </IconButton>
+                  <Menu
+                    anchorEl={expandMenuAnchor}
+                    open={!!expandMenuAnchor}
+                    onClose={() => setExpandMenuAnchor(false)}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "center"
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "center"
+                    }}
+                  >
+                    <MenuItem onClick={() => {
+                      setExpandMenuAnchor(null);
+                      setEnableEditsDialog(true);
+                    }}>Enable Edits</MenuItem>
+                  </Menu>
+                  <Modal open={enableEditsDialog} onClose={() => setEnableEditsDialog(false)}>
+                    <Card className="feedback-request-enable-edits-modal">
+                      <CardHeader title={<Typography variant="h5" fontWeight="bold">Enable Feedback Edits</Typography>}/>
+                      <CardContent>
+                        <Typography variant="body1">
+                          Are you sure you want <b>{recipient?.name}</b> to be able to make changes to this feedback submission?
+                          This will allow them to edit their original responses and resubmit them.
+                        </Typography>
+                        <Alert style={{marginTop: "1rem"}} severity="warning">
+                          {recipient?.name}'s feedback for this request will be inaccessible until they submit their answers again.
+                        </Alert>
+                      </CardContent>
+                      <CardActions>
+                        <Button style={{ color: "gray" }} onClick={() => setEnableEditsDialog(false)}>Cancel</Button>
+                        <Button color="primary" onClick={handleEnableEditsClick}>Enable Edits</Button>
+                      </CardActions>
+                    </Card>
+                  </Modal>
+                </>
               ) : null}
             </Grid>
           </Grid>
