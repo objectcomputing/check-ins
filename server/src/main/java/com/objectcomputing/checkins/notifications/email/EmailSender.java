@@ -5,5 +5,5 @@ public interface EmailSender {
 
     boolean sendEmailReceivesStatus(String subject, String content, String... recipients);
 
-    boolean sendAndSaveEmail(String subject, String content, String... recipients);
+    Email sendAndSaveEmail(String subject, String content, String... recipients);
 }

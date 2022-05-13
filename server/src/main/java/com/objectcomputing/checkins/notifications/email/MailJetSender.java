@@ -7,6 +7,10 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetServerException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
+import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
@@ -14,6 +18,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.inject.Singleton;
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.UUID;
 
 @Requires(property = MailJetSender.FROM_ADDRESS)
 @Requires(property = MailJetSender.FROM_NAME)
@@ -22,6 +29,9 @@ public class MailJetSender implements EmailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
+    private final EmailRepository emailRepository;
+    private final CurrentUserServices currentUserServices;
+    private final MemberProfileRepository memberProfileRepository;
 
     public static final String FROM_ADDRESS = "mail-jet.from_address";
     public static final String FROM_NAME = "mail-jet.from_name";
@@ -30,9 +40,15 @@ public class MailJetSender implements EmailSender {
     private final String fromName;
 
     public MailJetSender(MailjetClient client,
+                         EmailRepository emailRepository,
+                         CurrentUserServices currentUserServices,
+                         MemberProfileRepository memberProfileRepository,
                          @Property(name = FROM_ADDRESS) String fromAddress,
                          @Property(name = FROM_NAME) String fromName) {
         this.client = client;
+        this.emailRepository = emailRepository;
+        this.currentUserServices = currentUserServices;
+        this.memberProfileRepository = memberProfileRepository;
         this.fromAddress = fromAddress;
         this.fromName = fromName;
     }
@@ -90,8 +106,27 @@ public class MailJetSender implements EmailSender {
     }
 
     @Override
-    public boolean sendAndSaveEmail(String subject, String content, String... recipients) {
+    public Email sendAndSaveEmail(String subject, String content, String... recipients) {
+
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
         boolean status = sendEmailReceivesStatus(subject, content, recipients);
-        return status;
+
+        UUID senderId = currentUserServices.getCurrentUser().getId();
+
+        if (status) {
+            for (String recipientEmail : recipients) {
+                Optional<MemberProfile> recipient = memberProfileRepository.findByWorkEmail(recipientEmail);
+                if (recipient.isPresent()) {
+                    UUID recipientId = recipient.get().getId();
+                    Email email = new Email(subject, content, senderId, recipientId, LocalDate.now());
+                    emailRepository.save(email);
+                }
+            }
+        }
+
+        return null;
     }
 }
