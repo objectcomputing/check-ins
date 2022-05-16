@@ -86,10 +86,10 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
                 .basicAuth(admin.getWorkEmail(), adminRole.getRole());
         final HttpResponse<RolePermission> response = client.toBlocking().exchange(request, RolePermission.class);
 
-        assertTrue(response.getBody().isPresent());
-        assertEquals(adminRole.getId(), response.getBody().get().getRoleId());
-        assertEquals(permission.getId(), response.getBody().get().getPermissionId());
         assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(adminRole.getId(), response.getBody().get().getRolePermissionId().getRoleId());
+        assertEquals(permission.getId(), response.getBody().get().getRolePermissionId().getPermissionId());
     }
 
     @Test
@@ -115,9 +115,9 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         UUID nonexistentRoleId = UUID.randomUUID();
         Permission permission = createACustomPermission(Permissions.CAN_VIEW_PERMISSIONS);
 
-        RolePermission rolePermission = new RolePermission(nonexistentRoleId, permission.getId());
+        RolePermissionId rolePermissionId = new RolePermissionId(nonexistentRoleId, permission.getId());
 
-        final HttpRequest<RolePermission> request = HttpRequest.POST("", rolePermission)
+        final HttpRequest<RolePermissionId> request = HttpRequest.POST("", rolePermissionId)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
@@ -132,9 +132,9 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         Role adminRole = createAndAssignAdminRole(admin);
         UUID nonexistentPermissionId = UUID.randomUUID();
 
-        RolePermission rolePermission = new RolePermission(adminRole.getId(), nonexistentPermissionId);
+        RolePermissionId rolePermissionId = new RolePermissionId(adminRole.getId(), nonexistentPermissionId);
 
-        final HttpRequest<RolePermission> request = HttpRequest.POST("", rolePermission)
+        final HttpRequest<RolePermissionId> request = HttpRequest.POST("", rolePermissionId)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
@@ -153,9 +153,9 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         setRolePermission(adminRole.getId(), permission.getId());
 
         // Attempt to save the same permission for the admin role
-        RolePermission rolePermission = new RolePermission(adminRole.getId(), permission.getId());
+        RolePermissionId rolePermissionId = new RolePermissionId(adminRole.getId(), permission.getId());
 
-        final HttpRequest<RolePermission> request = HttpRequest.POST("", rolePermission)
+        final HttpRequest<RolePermissionId> request = HttpRequest.POST("", rolePermissionId)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
