@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
 import io.micronaut.data.annotation.MappedEntity;
 
 import javax.persistence.EmbeddedId;
@@ -24,14 +23,6 @@ public class RolePermission {
 
     public RolePermissionId getRolePermissionId() {
         return rolePermissionId;
-    }
-
-    public UUID getRoleId() {
-        return rolePermissionId.getRoleId();
-    }
-
-    public UUID getPermissionId() {
-        return rolePermissionId.getPermissionId();
     }
 
 }

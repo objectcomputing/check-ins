@@ -70,8 +70,8 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
         for(Role role : roles) {
             List<Permission> permissionsAssociatedWithRole = new ArrayList<>();
             for(RolePermission rolePermission : records) {
-                if(role.getId().equals(rolePermission.getRoleId())) {
-                    Optional<Permission> permission = permissions.stream().filter(s-> s.getId().equals(rolePermission.getPermissionId())).findFirst();
+                if(role.getId().equals(rolePermission.getRolePermissionId().getRoleId())) {
+                    Optional<Permission> permission = permissions.stream().filter(s-> s.getId().equals(rolePermission.getRolePermissionId().getPermissionId())).findFirst();
                     permission.ifPresent(permissionsAssociatedWithRole::add);
                 }
             }

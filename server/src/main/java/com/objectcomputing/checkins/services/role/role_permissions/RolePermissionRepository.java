@@ -17,8 +17,8 @@ public interface RolePermissionRepository extends CrudRepository<RolePermission,
     @Query("INSERT INTO role_permissions " +
             "    (roleid, permissionid) " +
             "VALUES " +
-            "    (:roleid, :permissionid)")
-    RolePermission saveByIds(UUID roleid, UUID permissionid);
+            "    (:roleId, :permissionId)")
+    RolePermission saveByIds(UUID roleId, UUID permissionId);
 
     Optional<RolePermission> findByRoleIdAndPermissionId(@NotNull UUID roleId, @NotNull UUID permissionId);
 

@@ -43,7 +43,6 @@ public class RolePermissionController {
     @RequiredPermission(Permissions.CAN_VIEW_ROLE_PERMISSIONS)
     @Get
     public Single<HttpResponse<List<RolePermissionResponseDTO>>> getAllRolePermissions() {
-
         return Single.fromCallable(rolePermissionServices::findAll)
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(rolePermissions -> (HttpResponse<List<RolePermissionResponseDTO>>) HttpResponse.ok(rolePermissions))
@@ -52,9 +51,9 @@ public class RolePermissionController {
 
     @Post
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public HttpResponse<RolePermission> saveRolePermission(@NotNull RolePermissionId id) {
-        RolePermission rolePermission = rolePermissionServices.saveByIds(id.getRoleId(), id.getPermissionId());
-        return HttpResponse.ok(rolePermission);
+    public HttpResponse<RolePermission> saveRolePermission(@NotNull UUID roleId, @NotNull UUID permissionId) {
+        RolePermission rolePermission = rolePermissionServices.saveByIds(roleId, permissionId);
+        return HttpResponse.created(rolePermission);
     }
 
     @Delete("/{roleId}/{permissionId}")
