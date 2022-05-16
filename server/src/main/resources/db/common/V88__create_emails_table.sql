@@ -6,5 +6,6 @@ CREATE TABLE emails(
     contents varchar,
     sentby varchar REFERENCES member_profile(id),
     recipient varchar REFERENCES member_profile(id),
-    senddate date
+    senddate timestamp,
+    transmissiondate timestamp
 );

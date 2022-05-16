@@ -1,7 +1,9 @@
 package com.objectcomputing.checkins.notifications.email;
 
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -10,12 +12,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "email")
+@Table(name = "emails")
 public class Email {
 
     @Id
@@ -27,12 +29,20 @@ public class Email {
 
     @NotNull
     @Column(name = "subject")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(subject::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?, '${aes.key}') "
+    )
     @TypeDef(type = DataType.STRING)
     @Schema(description = "subject of the email", required = true)
     private String subject;
 
     @NotNull
     @Column(name = "contents")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(contents::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?, '${aes.key}') "
+    )
     @TypeDef(type = DataType.STRING)
     @Schema(description = "the contents of the email", required = true)
     private String contents;
@@ -51,16 +61,40 @@ public class Email {
 
     @NotNull
     @Column(name = "senddate")
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "the date the email was sent", required = true)
-    private LocalDate sendDate;
+    @TypeDef(type = DataType.TIMESTAMP)
+    @Schema(description = "the time the email was sent", required = true)
+    private LocalDateTime sendDate;
 
-    public Email(String subject, String contents, UUID sentBy, UUID recipient, LocalDate sendDate) {
+    @NotNull
+    @Column(name = "transmissiondate")
+    @TypeDef(type = DataType.TIMESTAMP)
+    @Schema(description = "the time the email was transmitted", required = true)
+    private LocalDateTime transmissionDate;
+
+    public Email(String subject,
+                 String contents,
+                 UUID sentBy,
+                 UUID recipient,
+                 LocalDateTime sendDate,
+                 LocalDateTime transmissionDate) {
         this.subject = subject;
         this.contents = contents;
         this.sentBy = sentBy;
         this.recipient = recipient;
         this.sendDate = sendDate;
+        this.transmissionDate = transmissionDate;
+    }
+
+    public Email(String subject,
+                 String contents,
+                 UUID sentBy,
+                 UUID recipient) {
+        this.subject = subject;
+        this.contents = contents;
+        this.sentBy = sentBy;
+        this.recipient = recipient;
+        this.sendDate = LocalDateTime.now();
+        this.transmissionDate = LocalDateTime.now();
     }
 
     public Email() {}
@@ -105,12 +139,20 @@ public class Email {
         this.recipient = recipient;
     }
 
-    public LocalDate getSendDate() {
+    public LocalDateTime getSendDate() {
         return sendDate;
     }
 
-    public void setSendDate(LocalDate sendDate) {
+    public void setSendDate(LocalDateTime sendDate) {
         this.sendDate = sendDate;
+    }
+
+    public LocalDateTime getTransmissionDate() {
+        return transmissionDate;
+    }
+
+    public void setTransmissionDate(LocalDateTime transmissionDate) {
+        this.transmissionDate = transmissionDate;
     }
 
     @Override

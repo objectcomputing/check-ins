@@ -113,6 +113,10 @@ const PreviewEmailStep = ({ emailContents, emailSubjectError, emailSubject, onSu
   );
 }
 
+const SelectRecipientsStep = ({ onRecipientsChange }) => {
+  
+}
+
 const SendEmailStep = ({ testEmail, onTestEmailChange, onSendTestEmail }) => {
   const [emailError, setEmailError] = useState(false)
 
@@ -217,6 +221,7 @@ const EmailPage = () => {
   }
 
   const handleNextClick = () => {
+    window.scrollTo(0, 0);
     switch (currentStep) {
       case 0:
         setCurrentStep(currentStep + 1);

@@ -19,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.inject.Singleton;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -106,12 +109,15 @@ public class MailJetSender implements EmailSender {
     }
 
     @Override
-    public Email sendAndSaveEmail(String subject, String content, String... recipients) {
+    public List<Email> sendAndSaveEmail(String subject, String content, String... recipients) {
+
+        List<Email> sentEmails = new ArrayList<>();
 
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
+        LocalDateTime sendDate = LocalDateTime.now();
         boolean status = sendEmailReceivesStatus(subject, content, recipients);
 
         UUID senderId = currentUserServices.getCurrentUser().getId();
@@ -120,13 +126,20 @@ public class MailJetSender implements EmailSender {
             for (String recipientEmail : recipients) {
                 Optional<MemberProfile> recipient = memberProfileRepository.findByWorkEmail(recipientEmail);
                 if (recipient.isPresent()) {
-                    UUID recipientId = recipient.get().getId();
-                    Email email = new Email(subject, content, senderId, recipientId, LocalDate.now());
-                    emailRepository.save(email);
+                    // Only send emails to unterminated members
+                    LocalDate terminationDate = recipient.get().getTerminationDate();
+                    if (terminationDate == null || terminationDate.isAfter(LocalDate.now())) {
+                        UUID recipientId = recipient.get().getId();
+                        Email email = new Email(subject, content, senderId, recipientId, sendDate, LocalDateTime.now());
+                        Email savedEmail = emailRepository.save(email);
+                        sentEmails.add(savedEmail);
+                    } else {
+                        LOG.warn(String.format("Prevented sending email to terminated member: %s", recipientEmail));
+                    }
                 }
             }
         }
 
-        return null;
+        return sentEmails;
     }
 }

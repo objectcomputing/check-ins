@@ -11,6 +11,8 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
 import javax.inject.Named;
+import java.net.URI;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/email")
@@ -30,10 +32,10 @@ public class MailJetNewsletterController {
     }
 
     @Post
-    public Single<? extends HttpResponse<?>> sendEmail(String subject, String content, String... recipients) {
+    public Single<HttpResponse<List<Email>>> sendEmail(String subject, String content, String... recipients) {
         return Single.fromCallable(() -> emailSender.sendAndSaveEmail(subject, content, recipients))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(success -> (HttpResponse<?>) HttpResponse.ok())
+                .map(emails -> (HttpResponse<List<Email>>) HttpResponse.created(emails))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
