@@ -11,6 +11,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -86,6 +87,23 @@ public class MailJetSenderTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testSendAndSaveEmailUnauthorized() {
+        MemberProfile member = createAnUnrelatedUser();
+
+        MemberProfile recipient1 = createASecondDefaultMemberProfile();
+        MemberProfile recipient2 = createAThirdDefaultMemberProfile();
+
+        Map<String, Object> email = new HashMap<>();
+        email.put("subject", "Email Subject");
+        email.put("content", "Email content");
+        email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
+
+        final HttpRequest<?> request = HttpRequest.POST("", email)
+                .basicAuth(member.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Argument.listOf(Email.class)));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("You are not authorized to do this operation", responseException.getMessage());
     }
 
 }
