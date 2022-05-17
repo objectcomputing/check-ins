@@ -11,7 +11,6 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
 import javax.inject.Named;
-import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 

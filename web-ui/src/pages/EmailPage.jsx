@@ -241,7 +241,9 @@ const EmailPage = () => {
       return;
     }
 
-    sendEmail(emailSubject, emailContents, recipients, csrf).then(res => {
+    const recipientEmails = recipients.map((member) => member.workEmail);
+
+    sendEmail(emailSubject, emailContents, recipientEmails, csrf).then(res => {
       let toastMessage, toastStatus;
       if (res && res.payload && res.payload.status === 200 && !res.error) {
         setEmailSent(true);
@@ -399,7 +401,7 @@ const EmailPage = () => {
             <div className="recipient-group-container">
               <AvatarGroup max={16}>
                 {recipients.map((member) => (
-                  <Tooltip title={member.name} arrow>
+                  <Tooltip key={member.id} title={member.name} arrow>
                     <Avatar src={getAvatarURL(member.workEmail)}/>
                   </Tooltip>
                 ))}
