@@ -23,20 +23,19 @@ const intersection = (a, b) => a.filter((value) => b.indexOf(value) !== -1);
 const union = (a, b) => [...a, ...not(b, a)];
 
 const propTypes = {
-  initialLeft: PropTypes.arrayOf(PropTypes.object).isRequired,
-  initialRight: PropTypes.arrayOf(PropTypes.object).isRequired,
+  leftList: PropTypes.arrayOf(PropTypes.object).isRequired,
+  rightList: PropTypes.arrayOf(PropTypes.object).isRequired,
   leftLabel: PropTypes.string,
-  rightLabel: PropTypes.string
+  rightLabel: PropTypes.string,
+  onListsChanged: PropTypes.func
 };
 
-const TransferList = ({ initialLeft, initialRight, leftLabel, rightLabel }) => {
+const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChanged }) => {
 
   const [checked, setChecked] = useState([]);
-  const [left, setLeft] = useState(initialLeft || []);
-  const [right, setRight] = useState(initialRight || []);
 
-  const leftChecked = intersection(checked, left);
-  const rightChecked = intersection(checked, right);
+  const leftChecked = intersection(checked, leftList);
+  const rightChecked = intersection(checked, rightList);
 
   const handleToggle = (value) => {
     const currentIndex = checked.indexOf(value);
@@ -62,14 +61,18 @@ const TransferList = ({ initialLeft, initialRight, leftLabel, rightLabel }) => {
   }
 
   const handleCheckedRight = () => {
-    setRight(right.concat(leftChecked));
-    setLeft(not(left, leftChecked));
+    onListsChanged({
+      left: not(leftList, leftChecked),
+      right: rightList.concat(leftChecked)
+    });
     setChecked(not(checked, leftChecked));
   }
 
   const handleCheckedLeft = () => {
-    setLeft(left.concat(rightChecked));
-    setRight(not(right, rightChecked));
+    onListsChanged({
+      left: leftList.concat(rightChecked),
+      right: not(rightList, rightChecked)
+    });
     setChecked(not(checked, rightChecked));
   }
 
@@ -90,9 +93,6 @@ const TransferList = ({ initialLeft, initialRight, leftLabel, rightLabel }) => {
         titleTypographyProps={{
           fontWeight: "bold",
           fontSize: "18px"
-        }}
-        style={{
-
         }}
       />
       <Divider/>
@@ -142,7 +142,7 @@ const TransferList = ({ initialLeft, initialRight, leftLabel, rightLabel }) => {
 
   return (
     <Grid className="transfer-list-container" container spacing={2} justifyContent="center" alignItems="center">
-      <Grid item>{customList(leftLabel || "Choices", left, "No members to select")}</Grid>
+      <Grid item>{customList(leftLabel || "Choices", leftList, "No members to select")}</Grid>
       <Grid item>
         <Grid container direction="column" alignItems="center">
           <Button
@@ -167,7 +167,7 @@ const TransferList = ({ initialLeft, initialRight, leftLabel, rightLabel }) => {
           </Button>
         </Grid>
       </Grid>
-      <Grid item>{customList(rightLabel || "Chosen", right, "No recipients")}</Grid>
+      <Grid item>{customList(rightLabel || "Chosen", rightList, "No recipients")}</Grid>
     </Grid>
   );
 }

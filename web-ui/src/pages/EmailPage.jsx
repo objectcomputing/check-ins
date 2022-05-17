@@ -115,13 +115,14 @@ const PreviewEmailStep = ({ emailContents, emailSubjectError, emailSubject, onSu
   );
 }
 
-const SelectRecipientsStep = ({ activeMembers, onRecipientsChange }) => {
+const SelectRecipientsStep = ({ recipientOptions, recipients, onRecipientsChange }) => {
   return (
     <TransferList
-      initialLeft={[]}
-      initialRight={activeMembers}
+      leftList={recipientOptions}
+      rightList={recipients}
       leftLabel="Select Recipients"
       rightLabel="Recipients"
+      onListsChanged={(lists) => onRecipientsChange(lists)}
     />
   );
 }
@@ -181,6 +182,7 @@ const EmailPage = () => {
   const [emailContents, setEmailContents] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   const [emailSubjectError, setEmailSubjectError] = useState(false);
+  const [recipientOptions, setRecipientOptions] = useState([]);
   const [recipients, setRecipients] = useState([]);
   const [testEmail, setTestEmail] = useState("");
   const [testEmailSent, setTestEmailSent] = useState(false);
@@ -192,6 +194,10 @@ const EmailPage = () => {
     const unterminatedMembers = memberProfiles.filter(member => member.terminationDate === null);
     setActiveMembers(unterminatedMembers);
   }, [memberProfiles]);
+
+  useEffect(() => {
+    setRecipientOptions(activeMembers);
+  }, [activeMembers]);
 
   const sendTestEmail = () => {
 
@@ -221,13 +227,30 @@ const EmailPage = () => {
 
   const sendEmailToAllMembers = () => {
     setConfirmationDialogOpen(false);
-    window.snackDispatch({
-      type: UPDATE_TOAST,
-      payload: {
-        severity: "success",
-        toast: `Sent email to ${activeMembers.length} members`
+
+    if (!emailSubject.trim() || !emailContents || !csrf) {
+      return;
+    }
+
+    sendEmail(emailSubject, emailContents, recipients, csrf).then(res => {
+      let toastMessage, toastStatus;
+      if (res && res.payload && res.payload.status === 200 && !res.error) {
+        toastStatus = "success";
+        toastMessage = `Sent email to ${activeMembers.length} member${activeMembers.length === 1 ? "" : "s"}`;
+      } else {
+        toastStatus = "error";
+        toastMessage = "Failed to send email";
       }
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: toastStatus,
+          toast: toastMessage
+        }
+      });
     });
+
+
   }
 
   const handleNextClick = () => {
@@ -244,6 +267,19 @@ const EmailPage = () => {
         }
         break;
       case 2:
+        if (recipients.length > 0) {
+          setCurrentStep(currentStep + 1);
+        } else {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "You must select at least one recipient"
+            }
+          });
+        }
+        break;
+      case 3:
         setConfirmationDialogOpen(true);
         break;
       default:
@@ -284,8 +320,12 @@ const EmailPage = () => {
           )}
           {currentStep === 2 && (
             <SelectRecipientsStep
-              activeMembers={activeMembers}
-              onRecipientsChange={(selected) => setRecipients(selected)}
+              recipientOptions={recipientOptions}
+              recipients={recipients}
+              onRecipientsChange={({ left, right }) => {
+                setRecipientOptions(left);
+                setRecipients(right);
+              }}
             />
           )}
           {currentStep === 3 && (
@@ -320,7 +360,7 @@ const EmailPage = () => {
           <CardHeader title={<Typography variant="h5" fontWeight="bold">Send Email</Typography>}/>
           <CardContent>
             <Typography variant="body1">
-              You are about to send the email <b>{emailFile?.name}</b> to everyone in Check-Ins ({activeMembers.length} members). Are you sure?
+              You are about to send the email <b>{emailFile?.name}</b> to {recipients.length} member{recipients.length === 1 ? "" : "s"} in Check-Ins. Are you sure?
             </Typography>
             {!testEmailSent &&
               <Alert severity="warning" style={{marginTop: "1rem"}}>
