@@ -318,8 +318,8 @@ const EmailPage = () => {
   return (
     <Root className="email-page">
       <Stepper activeStep={currentStep}>
-        {steps.map((step) => (
-          <Step key={step} completed={stepCompleted(step)}>
+        {steps.map((step, index) => (
+          <Step key={step} completed={stepCompleted(index)}>
             <StepLabel>{step}</StepLabel>
           </Step>
         ))}

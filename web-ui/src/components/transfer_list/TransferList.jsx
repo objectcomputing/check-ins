@@ -103,10 +103,8 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
         dense
         role="list"
         sx={{
-          width: 600,
           height: 400,
-          overflow: "auto",
-          bgcolor: "transparent"
+          overflow: "auto"
         }}
       >
         {items.length === 0 &&
@@ -145,7 +143,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
   );
 
   return (
-    <Grid className="transfer-list-container" container spacing={2} justifyContent="center" alignItems="center">
+    <div className="transfer-list-container">
       <Grid item>{customList(leftLabel || "Choices", leftList, "No members to select")}</Grid>
       <Grid item>
         <Grid container direction="column" alignItems="center">
@@ -172,7 +170,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
         </Grid>
       </Grid>
       <Grid item>{customList(rightLabel || "Chosen", rightList, "No recipients")}</Grid>
-    </Grid>
+    </div>
   );
 }
 
