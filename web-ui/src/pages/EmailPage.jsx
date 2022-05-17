@@ -26,6 +26,7 @@ import {UPDATE_TOAST} from "../context/actions";
 import {sendEmail} from "../api/notifications";
 
 import "./EmailPage.css";
+import TransferList from "../components/transfer_list/TransferList";
 
 
 const Root = styled("div")({
@@ -100,6 +101,7 @@ const PreviewEmailStep = ({ emailContents, emailSubjectError, emailSubject, onSu
         </Typography>
         <TextField
           fullWidth
+          placeholder="Write a subject for the email"
           error={emailSubjectError}
           helperText={emailSubjectError ? "Email is missing subject" : ""}
           value={emailSubject}
@@ -113,8 +115,15 @@ const PreviewEmailStep = ({ emailContents, emailSubjectError, emailSubject, onSu
   );
 }
 
-const SelectRecipientsStep = ({ onRecipientsChange }) => {
-  
+const SelectRecipientsStep = ({ activeMembers, onRecipientsChange }) => {
+  return (
+    <TransferList
+      initialLeft={[]}
+      initialRight={activeMembers}
+      leftLabel="Select Recipients"
+      rightLabel="Recipients"
+    />
+  );
 }
 
 const SendEmailStep = ({ testEmail, onTestEmailChange, onSendTestEmail }) => {
@@ -172,11 +181,12 @@ const EmailPage = () => {
   const [emailContents, setEmailContents] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   const [emailSubjectError, setEmailSubjectError] = useState(false);
+  const [recipients, setRecipients] = useState([]);
   const [testEmail, setTestEmail] = useState("");
   const [testEmailSent, setTestEmailSent] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [activeMembers, setActiveMembers] = useState([]);
-  const steps = ["Upload File", "Preview Email", "Send Email"];
+  const steps = ["Upload File", "Preview Email", "Select Recipients", "Send Email"];
 
   useEffect(() => {
     const unterminatedMembers = memberProfiles.filter(member => member.terminationDate === null);
@@ -273,6 +283,12 @@ const EmailPage = () => {
             />
           )}
           {currentStep === 2 && (
+            <SelectRecipientsStep
+              activeMembers={activeMembers}
+              onRecipientsChange={(selected) => setRecipients(selected)}
+            />
+          )}
+          {currentStep === 3 && (
             <SendEmailStep
               testEmail={testEmail}
               onTestEmailChange={(address) => setTestEmail(address)}

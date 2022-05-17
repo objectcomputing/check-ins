@@ -94,7 +94,7 @@ const adminLinks = [
   // ["/admin/permissions", "Permissions"],
   ["/admin/roles", "Roles"],
   ["/admin/users", "Users"],
-  ["/admin/email", "Email"],
+  ["/admin/email", "Send Email"],
 ];
 
 const directoryLinks = [
