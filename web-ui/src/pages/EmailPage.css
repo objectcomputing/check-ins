@@ -66,3 +66,10 @@
     max-width: 700px;
     padding:0.5rem;
 }
+
+.send-email-to-all-confirmation-dialog .recipient-group-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+}

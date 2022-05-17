@@ -87,7 +87,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
           action={
             <Checkbox
               onClick={() => handleToggleAll(items)}
-              checked={!disabled && numberOfChecked(items) === items.length && items.length !== 0}
+              checked={numberOfChecked(items) === items.length && items.length !== 0}
               indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
               disabled={items.length === 0 || disabled}
               style={{marginRight: "8px", marginTop: "-8px"}}
@@ -122,7 +122,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
               disablePadding
               secondaryAction={
                 <Checkbox
-                  checked={!disabled && checked.indexOf(member) !== -1}
+                  checked={checked.indexOf(member) !== -1}
                   tabIndex={-1}
                   disableRipple
                   disabled={disabled}

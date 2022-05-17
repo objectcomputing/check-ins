@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {
-  Alert,
+  Alert, Avatar, AvatarGroup,
   Button,
   Card,
   CardActions,
@@ -11,7 +11,7 @@ import {
   StepLabel,
   Stepper,
   TextareaAutosize,
-  TextField,
+  TextField, Tooltip,
   Typography,
 } from "@mui/material";
 import {styled} from "@mui/material/styles";
@@ -27,6 +27,7 @@ import {sendEmail} from "../api/notifications";
 
 import "./EmailPage.css";
 import TransferList from "../components/transfer_list/TransferList";
+import {getAvatarURL} from "../api/api";
 
 
 const Root = styled("div")({
@@ -233,7 +234,7 @@ const EmailPage = () => {
     });
   }
 
-  const sendEmailToAllMembers = () => {
+  const sendEmailToAllRecipients = () => {
     setConfirmationDialogOpen(false);
 
     if (!emailSubject.trim() || !emailContents || !csrf) {
@@ -241,9 +242,9 @@ const EmailPage = () => {
     }
 
     sendEmail(emailSubject, emailContents, recipients, csrf).then(res => {
-      setEmailSent(true);
       let toastMessage, toastStatus;
       if (res && res.payload && res.payload.status === 200 && !res.error) {
+        setEmailSent(true);
         toastStatus = "success";
         toastMessage = `Sent email to ${activeMembers.length} member${activeMembers.length === 1 ? "" : "s"}`;
       } else {
@@ -267,7 +268,7 @@ const EmailPage = () => {
         setCurrentStep(currentStep + 1);
         break;
       case 1:
-        if (emailSubject.trim().length > 0) {
+        if (emailSubject.trim().length > 0 || !emailFile) {
           setCurrentStep(currentStep + 1);
         } else {
           setEmailSubjectError(true);
@@ -305,7 +306,7 @@ const EmailPage = () => {
       case 1:
         return !!emailFile && currentStep > 1;
       case 2:
-        return !!emailFile && recipients.length > 0 && currentStep > 2;
+        return recipients.length > 0 && currentStep > 2;
       case 3:
         return emailSent;
       default:
@@ -395,6 +396,15 @@ const EmailPage = () => {
             <Typography variant="body1">
               You are about to send the email <b>{emailFile?.name}</b> to {recipients.length} member{recipients.length === 1 ? "" : "s"} in Check-Ins. Are you sure?
             </Typography>
+            <div className="recipient-group-container">
+              <AvatarGroup max={16}>
+                {recipients.map((member) => (
+                  <Tooltip title={member.name} arrow>
+                    <Avatar src={getAvatarURL(member.workEmail)}/>
+                  </Tooltip>
+                ))}
+              </AvatarGroup>
+            </div>
             {!testEmailSent &&
               <Alert severity="warning" style={{marginTop: "1rem"}}>
                 Caution: You have not sent a test email to check the email formatting.
@@ -405,7 +415,7 @@ const EmailPage = () => {
             <Button style={{ color: "gray" }} onClick={() => setConfirmationDialogOpen(false)}>
               Cancel
             </Button>
-            <Button color="primary" onClick={emailFile && sendEmailToAllMembers} disabled={!emailFile}>
+            <Button color="primary" onClick={emailFile && sendEmailToAllRecipients} disabled={!emailFile}>
               Send
             </Button>
           </CardActions>
