@@ -79,68 +79,71 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
     setChecked(not(checked, rightChecked));
   }
 
-  const customList = (title, items, emptyMessage) => (
-    <Card className="transfer-list" variant="outlined">
-      <CardHeader
-        action={
-          <Checkbox
-            onClick={() => handleToggleAll(items)}
-            checked={!disabled && numberOfChecked(items) === items.length && items.length !== 0}
-            indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
-            disabled={items.length === 0 || disabled}
-            style={{ marginRight: "8px", marginTop: "-8px" }}
-          />
-        }
-        title={title}
-        subheader={`${numberOfChecked(items)}/${items.length} selected`}
-        titleTypographyProps={{
-          fontWeight: "bold",
-          fontSize: "18px"
-        }}
-      />
-      <Divider/>
-      <List
-        dense
-        role="list"
-        sx={{
-          height: 400,
-          overflow: "auto"
-        }}
-      >
-        {items.length === 0 &&
-          <div className="empty-list-message-container">
-            <Typography className="empty-list-message">{emptyMessage}</Typography>
-          </div>
-        }
-        {items.map((member) => (
-          <ListItem
-            key={member.id}
-            role="listitem"
-            onClick={() => handleToggle(member)}
-            disablePadding
-            secondaryAction={
-              <Checkbox
-                checked={!disabled && checked.indexOf(member) !== -1}
-                tabIndex={-1}
-                disableRipple
-                disabled={disabled}
-              />
-            }
-          >
-            <ListItemButton disableTouchRipple={disabled}>
-              <ListItemAvatar>
-                <Avatar src={getAvatarURL(member?.workEmail)}/>
-              </ListItemAvatar>
-              <ListItemText
-                primary={<Typography fontWeight="bold">{member?.name}</Typography>}
-                secondary={<Typography color="textSecondary" component="h6">{member?.title}</Typography>}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Card>
-  );
+  const customList = (title, items, emptyMessage) => {
+    items = items.sort((a, b) => a.name.localeCompare(b.name));
+    return (
+      <Card className="transfer-list" variant="outlined">
+        <CardHeader
+          action={
+            <Checkbox
+              onClick={() => handleToggleAll(items)}
+              checked={!disabled && numberOfChecked(items) === items.length && items.length !== 0}
+              indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
+              disabled={items.length === 0 || disabled}
+              style={{marginRight: "8px", marginTop: "-8px"}}
+            />
+          }
+          title={title}
+          subheader={`${numberOfChecked(items)}/${items.length} selected`}
+          titleTypographyProps={{
+            fontWeight: "bold",
+            fontSize: "18px"
+          }}
+        />
+        <Divider/>
+        <List
+          dense
+          role="list"
+          sx={{
+            height: 400,
+            overflow: "auto"
+          }}
+        >
+          {items.length === 0 &&
+            <div className="empty-list-message-container">
+              <Typography className="empty-list-message">{emptyMessage}</Typography>
+            </div>
+          }
+          {items.map((member) => (
+            <ListItem
+              key={member.id}
+              role="listitem"
+              onClick={() => handleToggle(member)}
+              disablePadding
+              secondaryAction={
+                <Checkbox
+                  checked={!disabled && checked.indexOf(member) !== -1}
+                  tabIndex={-1}
+                  disableRipple
+                  disabled={disabled}
+                />
+              }
+            >
+              <ListItemButton disableTouchRipple={disabled}>
+                <ListItemAvatar>
+                  <Avatar src={getAvatarURL(member?.workEmail)}/>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={<Typography fontWeight="bold">{member?.name}</Typography>}
+                  secondary={<Typography color="textSecondary" component="h6">{member?.title}</Typography>}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Card>
+    )
+  };
 
   return (
     <div className="transfer-list-container">
