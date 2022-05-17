@@ -120,6 +120,32 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     }
 
     @Test
+    void testPostAnswerByRecipientForCanceledRequest() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        assignPdlRole(sender);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
+
+        MemberProfile templateCreator = createADefaultSupervisor();
+        FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
+        getFeedbackTemplateRepository().save(template);
+
+        TemplateQuestion question = saveTemplateQuestion(template, 1);
+        FeedbackRequest canceledRequest = saveSampleFeedbackRequestWithStatus(sender, requestee, recipient, template.getId(), "canceled");
+
+        FeedbackAnswer feedbackAnswer = createSampleFeedbackAnswer(question.getId(), canceledRequest.getId());
+        FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);
+
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Attempted to save an answer for a canceled feedback request", responseException.getMessage());
+    }
+
+    @Test
     void testPostBySenderUnauthorized() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
