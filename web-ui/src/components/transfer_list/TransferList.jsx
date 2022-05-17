@@ -27,10 +27,11 @@ const propTypes = {
   rightList: PropTypes.arrayOf(PropTypes.object).isRequired,
   leftLabel: PropTypes.string,
   rightLabel: PropTypes.string,
-  onListsChanged: PropTypes.func
+  onListsChanged: PropTypes.func,
+  disabled: PropTypes.bool
 };
 
-const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChanged }) => {
+const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChanged, disabled }) => {
 
   const [checked, setChecked] = useState([]);
 
@@ -38,6 +39,8 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
   const rightChecked = intersection(checked, rightList);
 
   const handleToggle = (value) => {
+    if (disabled) return;
+
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
@@ -82,9 +85,9 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
         action={
           <Checkbox
             onClick={() => handleToggleAll(items)}
-            checked={numberOfChecked(items) === items.length && items.length !== 0}
+            checked={!disabled && numberOfChecked(items) === items.length && items.length !== 0}
             indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
-            disabled={items.length === 0}
+            disabled={items.length === 0 || disabled}
             style={{ marginRight: "8px", marginTop: "-8px" }}
           />
         }
@@ -119,13 +122,14 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
             disablePadding
             secondaryAction={
               <Checkbox
-                checked={checked.indexOf(member) !== -1}
+                checked={!disabled && checked.indexOf(member) !== -1}
                 tabIndex={-1}
                 disableRipple
+                disabled={disabled}
               />
             }
           >
-            <ListItemButton>
+            <ListItemButton disableTouchRipple={disabled}>
               <ListItemAvatar>
                 <Avatar src={getAvatarURL(member?.workEmail)}/>
               </ListItemAvatar>
@@ -150,7 +154,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
             variant="outlined"
             size="small"
             onClick={handleCheckedRight}
-            disabled={leftChecked.length === 0}
+            disabled={leftChecked.length === 0 || disabled}
             aria-label="move selected right"
           >
             <RightArrowIcon/>
@@ -160,7 +164,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
             variant="outlined"
             size="small"
             onClick={handleCheckedLeft}
-            disabled={rightChecked.length === 0}
+            disabled={rightChecked.length === 0 || disabled}
             aria-label="move selected left"
           >
             <LeftArrowIcon/>

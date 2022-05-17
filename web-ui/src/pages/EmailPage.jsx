@@ -33,7 +33,7 @@ const Root = styled("div")({
   margin: "2rem"
 });
 
-const UploadFileStep = ({ emailFile, emailContents, onEmailFileChange, onEmailContentsChange }) => {
+const UploadFileStep = ({ emailFile, emailContents, onEmailFileChange, onEmailContentsChange, emailSent }) => {
 
   const handleFileUpload = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -52,7 +52,7 @@ const UploadFileStep = ({ emailFile, emailContents, onEmailFileChange, onEmailCo
   return (
     <>
       <Typography variant="body1">Select a MJML file to render the email. The file must have a .mjml extension.</Typography>
-      <Button variant="contained" component="label" startIcon={<UploadFileIcon/>} disableElevation>
+      <Button variant="contained" component="label" startIcon={<UploadFileIcon/>} disableElevation disabled={emailSent}>
         Choose File
         <input
           type="file"
@@ -115,7 +115,7 @@ const PreviewEmailStep = ({ emailContents, emailSubjectError, emailSubject, onSu
   );
 }
 
-const SelectRecipientsStep = ({ recipientOptions, recipients, onRecipientsChange }) => {
+const SelectRecipientsStep = ({ recipientOptions, recipients, onRecipientsChange, emailSent }) => {
   return (
     <TransferList
       leftList={recipientOptions}
@@ -123,11 +123,12 @@ const SelectRecipientsStep = ({ recipientOptions, recipients, onRecipientsChange
       leftLabel="Select Recipients"
       rightLabel="Recipients"
       onListsChanged={(lists) => onRecipientsChange(lists)}
+      disabled={emailSent}
     />
   );
 }
 
-const SendEmailStep = ({ testEmail, onTestEmailChange, onSendTestEmail }) => {
+const SendEmailStep = ({ testEmail, onTestEmailChange, onSendTestEmail, emailFile, emailSent }) => {
   const [emailError, setEmailError] = useState(false)
 
   const handleSendButtonClick = () => {
@@ -137,6 +138,12 @@ const SendEmailStep = ({ testEmail, onTestEmailChange, onSendTestEmail }) => {
     } else {
       onSendTestEmail(testEmail);
     }
+  }
+
+  if (emailSent) {
+    return (
+      <Typography>The email <b>{emailFile}</b> has been sent.</Typography>
+    )
   }
 
   return (
@@ -188,6 +195,7 @@ const EmailPage = () => {
   const [testEmailSent, setTestEmailSent] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [activeMembers, setActiveMembers] = useState([]);
+  const [emailSent, setEmailSent] = useState(false);
   const steps = ["Upload File", "Preview Email", "Select Recipients", "Send Email"];
 
   useEffect(() => {
@@ -233,6 +241,7 @@ const EmailPage = () => {
     }
 
     sendEmail(emailSubject, emailContents, recipients, csrf).then(res => {
+      setEmailSent(true);
       let toastMessage, toastStatus;
       if (res && res.payload && res.payload.status === 200 && !res.error) {
         toastStatus = "success";
@@ -249,8 +258,6 @@ const EmailPage = () => {
         }
       });
     });
-
-
   }
 
   const handleNextClick = () => {
@@ -287,11 +294,32 @@ const EmailPage = () => {
     }
   }
 
+  const stepCompleted = (step) => {
+    if (emailSent) {
+      return true;
+    }
+
+    switch (step) {
+      case 0:
+        return !!emailFile && currentStep > 0;
+      case 1:
+        return !!emailFile && currentStep > 1;
+      case 2:
+        return !!emailFile && recipients.length > 0 && currentStep > 2;
+      case 3:
+        return emailSent;
+      default:
+        console.warn(`Invalid step in stepper: ${currentStep}`);
+    }
+
+    return false;
+  }
+
   return (
     <Root className="email-page">
       <Stepper activeStep={currentStep}>
         {steps.map((step) => (
-          <Step key={step}>
+          <Step key={step} completed={stepCompleted(step)}>
             <StepLabel>{step}</StepLabel>
           </Step>
         ))}
@@ -305,6 +333,7 @@ const EmailPage = () => {
               emailContents={emailContents}
               onEmailFileChange={(file) => setEmailFile(file)}
               onEmailContentsChange={(content) => setEmailContents(content)}
+              emailSent={emailSent}
             />
           )}
           {currentStep === 1 && (
@@ -322,6 +351,7 @@ const EmailPage = () => {
             <SelectRecipientsStep
               recipientOptions={recipientOptions}
               recipients={recipients}
+              emailSent={emailSent}
               onRecipientsChange={({ left, right }) => {
                 setRecipientOptions(left);
                 setRecipients(right);
@@ -332,7 +362,10 @@ const EmailPage = () => {
             <SendEmailStep
               testEmail={testEmail}
               onTestEmailChange={(address) => setTestEmail(address)}
-              onSendTestEmail={sendTestEmail}/>
+              onSendTestEmail={sendTestEmail}
+              emailFile={emailFile?.name}
+              emailSent={emailSent}
+            />
           )}
         </CardContent>
       </Card>
@@ -350,7 +383,7 @@ const EmailPage = () => {
           variant="contained"
           color={currentStep === steps.length - 1 ? "success" : "primary"}
           endIcon={currentStep === steps.length - 1 ? <SendIcon/> : <RightArrowIcon/>}
-          disabled={currentStep === steps.length - 1 && !emailFile}
+          disabled={currentStep === steps.length - 1 && (!emailFile || emailSent)}
           onClick={handleNextClick}>
           {currentStep === steps.length - 1 ? "Send" : "Next"}
         </Button>
