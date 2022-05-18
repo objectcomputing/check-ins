@@ -19,6 +19,7 @@ delete from feedback_requests;
 delete from template_questions;
 delete from feedback_templates;
 delete from member_profile;
+delete from skills;
 
 INSERT INTO member_profile
 (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
@@ -848,3 +849,23 @@ INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
 ('a223135a-742b-45c6-b9a4-2bb990d956b2', PGP_SYM_ENCRYPT('They are always punctual, and work well with the other members of the team. Although they have a few technical skills they could brush up on, our team is lucky to have them.', '${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', '4240735d-15fd-4eea-8bca-8c642a433036', 0.7);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('f057af45-e627-499c-8a71-1e6b4ab2fcd2', 'React', false, 'Component-based JavaScript framework', false);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('689bb262-10af-40ef-bbf6-d8ad062e1470', 'Micronaut', false, 'JVM framework for microservices and serverless apps', false);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('6b56f0aa-09aa-4b09-bb81-03481af7e49f', 'CSS', true, 'Style sheet language', false);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('84682de9-85a7-4bf7-b74b-e9054311a61a', 'Git', true, 'Version control system', false);
