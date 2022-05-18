@@ -61,7 +61,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
     ? userProfile
     : {};
 
-  const [pdl, setPDL] = useState();
+  const [pdl, setPDL] = useState("");
   const [checkinPdl, setCheckinPdl] = useState("");
   const [supervisor, setSupervisor] = useState("");
 

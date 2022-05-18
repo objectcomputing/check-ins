@@ -59,6 +59,7 @@ exports[`renders correctly 1`] = `
 }
 
 .emotion-6 {
+  max-width: 100%;
   font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-size: 0.8125rem;
   display: -webkit-inline-box;
@@ -333,7 +334,7 @@ exports[`renders correctly 1`] = `
     className="MuiCardActions-root MuiCardActions-spacing emotion-10"
   >
     <button
-      className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root emotion-11"
+      className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-11"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -354,7 +355,7 @@ exports[`renders correctly 1`] = `
       Edit
     </button>
     <button
-      className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root emotion-11"
+      className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-11"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -615,6 +616,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
 }
 
 .emotion-5 {
+  float: unset;
+  overflow: hidden;
   display: block;
   width: auto;
   padding: 0;
@@ -624,12 +627,15 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
   max-width: 0.01px;
   -webkit-transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  white-space: nowrap;
 }
 
 .emotion-5>span {
   padding-left: 5px;
   padding-right: 5px;
   display: inline-block;
+  opacity: 0;
+  visibility: visible;
 }
 
 .emotion-6 {
@@ -736,6 +742,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
         <label
           className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-1"
           data-shrink={false}
+          htmlFor="mui-1"
+          id="mui-1-label"
         >
           Search skills
         </label>
@@ -748,6 +756,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
             autoFocus={false}
             className="MuiOutlinedInput-input MuiInputBase-input emotion-3"
             disabled={false}
+            id="mui-1"
             onAnimationStart={[Function]}
             onBlur={[Function]}
             onChange={[Function]}
@@ -791,7 +800,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
       className="combine-skills"
     >
       <button
-        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root emotion-6"
+        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-6"
         disabled={false}
         onBlur={[Function]}
         onClick={[Function]}

@@ -82,6 +82,45 @@ exports[`renders correctly 1`] = `
   }
 }
 
+@media (min-width:900px) {
+  .emotion-2 {
+    -webkit-flex-basis: 75%;
+    -ms-flex-preferred-size: 75%;
+    flex-basis: 75%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 75%;
+  }
+}
+
+@media (min-width:1200px) {
+  .emotion-2 {
+    -webkit-flex-basis: 75%;
+    -ms-flex-preferred-size: 75%;
+    flex-basis: 75%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 75%;
+  }
+}
+
+@media (min-width:1536px) {
+  .emotion-2 {
+    -webkit-flex-basis: 75%;
+    -ms-flex-preferred-size: 75%;
+    flex-basis: 75%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 75%;
+  }
+}
+
 .emotion-3 .Profile-profileInfo {
   display: -webkit-box;
   display: -webkit-flex;
@@ -604,6 +643,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
 }
 
 .emotion-18 {
+  float: unset;
+  overflow: hidden;
   display: block;
   width: auto;
   padding: 0;
@@ -613,12 +654,15 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
   max-width: 0.01px;
   -webkit-transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  white-space: nowrap;
 }
 
 .emotion-18>span {
   padding-left: 5px;
   padding-right: 5px;
   display: inline-block;
+  opacity: 0;
+  visibility: visible;
 }
 
 .emotion-21 {
@@ -739,6 +783,45 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
 }
 
 @media (min-width:600px) {
+  .emotion-25 {
+    -webkit-flex-basis: 25%;
+    -ms-flex-preferred-size: 25%;
+    flex-basis: 25%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 25%;
+  }
+}
+
+@media (min-width:900px) {
+  .emotion-25 {
+    -webkit-flex-basis: 25%;
+    -ms-flex-preferred-size: 25%;
+    flex-basis: 25%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 25%;
+  }
+}
+
+@media (min-width:1200px) {
+  .emotion-25 {
+    -webkit-flex-basis: 25%;
+    -ms-flex-preferred-size: 25%;
+    flex-basis: 25%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 25%;
+  }
+}
+
+@media (min-width:1536px) {
   .emotion-25 {
     -webkit-flex-basis: 25%;
     -ms-flex-preferred-size: 25%;
@@ -1034,6 +1117,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
               
               <br />
               Current PDL: 
+              
               <br />
               
             </p>
@@ -1094,6 +1178,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
             <label
               className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-14"
               data-shrink={false}
+              htmlFor="mui-1"
+              id="mui-1-label"
             >
               Check-In Date
             </label>
@@ -1107,6 +1193,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
                 aria-readonly={true}
                 autoFocus={false}
                 className="MuiOutlinedInput-input MuiInputBase-input emotion-16"
+                id="mui-1"
                 onAnimationStart={[Function]}
                 onBlur={[Function]}
                 onChange={[Function]}

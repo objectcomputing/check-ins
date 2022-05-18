@@ -182,7 +182,7 @@ exports[`renders the confirmation message 1`] = `
     }
   >
     <button
-      className="MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButtonBase-root emotion-4"
+      className="MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButtonBase-root  emotion-4"
       disabled={false}
       onBlur={[Function]}
       onContextMenu={[Function]}

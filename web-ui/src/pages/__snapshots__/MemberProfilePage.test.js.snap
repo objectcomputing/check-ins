@@ -38,6 +38,32 @@ exports[`renders correctly 1`] = `
   }
 }
 
+@media (min-width:1200px) {
+  .emotion-1 {
+    -webkit-flex-basis: 33.333333%;
+    -ms-flex-preferred-size: 33.333333%;
+    flex-basis: 33.333333%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 33.333333%;
+  }
+}
+
+@media (min-width:1536px) {
+  .emotion-1 {
+    -webkit-flex-basis: 33.333333%;
+    -ms-flex-preferred-size: 33.333333%;
+    flex-basis: 33.333333%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 33.333333%;
+  }
+}
+
 .emotion-2 {
   box-sizing: border-box;
   margin: 0;
@@ -47,6 +73,32 @@ exports[`renders correctly 1`] = `
 }
 
 @media (min-width:900px) {
+  .emotion-2 {
+    -webkit-flex-basis: 58.333333%;
+    -ms-flex-preferred-size: 58.333333%;
+    flex-basis: 58.333333%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 58.333333%;
+  }
+}
+
+@media (min-width:1200px) {
+  .emotion-2 {
+    -webkit-flex-basis: 58.333333%;
+    -ms-flex-preferred-size: 58.333333%;
+    flex-basis: 58.333333%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 58.333333%;
+  }
+}
+
+@media (min-width:1536px) {
   .emotion-2 {
     -webkit-flex-basis: 58.333333%;
     -ms-flex-preferred-size: 58.333333%;
@@ -106,7 +158,7 @@ exports[`renders correctly 1`] = `
 }
 
 <div
-  className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-undefined profile-page emotion-0"
+  className="MuiGrid-root MuiGrid-container profile-page emotion-0"
 >
   <div
     className="MuiGrid-root MuiGrid-item MuiGrid-grid-md-4 left emotion-1"

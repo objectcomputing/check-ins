@@ -1,10 +1,9 @@
 import React from "react";
-import Slider from "./Slider";
-import renderer from "react-test-renderer";
+import DiscreteSlider from "./DiscreteSlider";
 import { mount } from "enzyme";
 
 it("renders slider with title", () => {
-  snapshot(<Slider title="Some skill" />, {
+  snapshot(<DiscreteSlider title="Some skill" />, {
     createNodeMock: (element) => {
       if (element.type === 'div') {
         return {
@@ -19,9 +18,9 @@ it("value change is reported to the handler correctly", () => {
   const onChange = jest.fn();
 
   const wrapper = mount(
-    <Slider title="Some skill" onChange={onChange} />
+    <DiscreteSlider title="Some skill" onChange={onChange} />
   );
-  const slider = wrapper.find(Slider).at(0);
+  const slider = wrapper.find(DiscreteSlider).at(0);
   slider.simulate("change", { target: { value: 5 } });
   slider.simulate("change", { target: { value: 4 } });
   setTimeout(() => expect(onChange.mock.calls.length).toBe(2), 0);
@@ -32,12 +31,12 @@ it("value change is reported to all handlers correctly", () => {
   const onChangeCommitted = jest.fn();
 
   const wrapper = mount(
-    <Slider title="Some skill" onChange={onChange} onChangeCommitted={onChangeCommitted} />
+    <DiscreteSlider title="Some skill" onChange={onChange} onChangeCommitted={onChangeCommitted} />
   );
 
-  const slider = wrapper.find(Slider).at(0);
+  const slider = wrapper.find(DiscreteSlider).at(0);
   slider.simulate("change", { target: { value: 5 } });
-  slider.find(".MuiSlider-mark").at(2).simulate("click", { target: { value: 3 } });
+  slider.find("span.MuiSlider-mark").at(2).simulate("click", { target: { value: 3 } });
   setTimeout(() => {
     expect(onChange.mock.calls.length).toBe(2);
     expect(onChangeCommitted.mock.calls.length).toBe(1);

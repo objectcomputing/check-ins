@@ -83,7 +83,7 @@ public class GuildMemberHistory {
         return memberId;
     }
 
-    public void setMemberId(UUID guildMemberId) {
+    public void setMemberId(UUID memberId) {
         this.memberId = memberId;
     }
 

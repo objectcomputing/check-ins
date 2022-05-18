@@ -15,9 +15,15 @@ import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.net.URL;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
@@ -56,10 +62,23 @@ public class GuildServicesImpl implements GuildServices {
         this.emailSender = emailSender;
     }
 
+    public boolean validateLink (String link ) {
+        try {
+            new URL(link).toURI();
+        }  catch (Exception e) {
+            throw new BadArgException("Link is invalid");
+        }
+        return true;
+    }
+
     public GuildResponseDTO save(GuildCreateDTO guildDTO) {
         Guild newGuildEntity = null;
         List<GuildMemberResponseDTO> newMembers = new ArrayList<>();
         if (guildDTO != null) {
+            String link = guildDTO.getLink();
+            if (link != null) {
+                validateLink(link);
+            }
             if (!guildsRepo.search(guildDTO.getName(), null).isEmpty()) {
                 throw new BadArgException(String.format("Guild with name %s already exists", guildDTO.getName()));
             } else {
@@ -108,6 +127,10 @@ public class GuildServicesImpl implements GuildServices {
                     if (guildDTO.getGuildMembers() == null ||
                             guildDTO.getGuildMembers().stream().noneMatch(GuildUpdateDTO.GuildMemberUpdateDTO::getLead)) {
                         throw new BadArgException("Guild must include at least one guild lead");
+                    }
+                    String link = guildDTO.getLink();
+                    if (link != null) {
+                        validateLink(link);
                     }
 
                     // track membership changes for email notification
@@ -193,7 +216,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(dto.getId(), dto.getName(), dto.getDescription());
+        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink());
     }
 
     private GuildMember fromMemberDTO(GuildCreateDTO.GuildMemberCreateDTO memberDTO, UUID guildId) {
@@ -216,7 +239,7 @@ public class GuildServicesImpl implements GuildServices {
         if (entity == null) {
             return null;
         }
-        GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription());
+        GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(), entity.getLink());
         dto.setGuildMembers(memberEntities);
         return dto;
     }
@@ -225,7 +248,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(null, dto.getName(), dto.getDescription());
+        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink());
     }
 
     private GuildMemberResponseDTO fromMemberEntity(GuildMember guildMember, MemberProfile memberProfile) {

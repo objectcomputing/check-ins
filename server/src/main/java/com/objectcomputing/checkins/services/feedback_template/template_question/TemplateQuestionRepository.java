@@ -1,18 +1,17 @@
 package com.objectcomputing.checkins.services.feedback_template.template_question;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import io.micronaut.core.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
-import io.micronaut.core.annotation.NonNull;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface TemplateQuestionRepository extends CrudRepository<TemplateQuestion, UUID> {
@@ -29,7 +28,8 @@ public interface TemplateQuestionRepository extends CrudRepository<TemplateQuest
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(question as bytea),'${aes.key}') as question, " +
             "template_id, " +
-            "question_number " +
+            "question_number, " +
+            "input_type " + 
             "FROM template_questions " +
             "WHERE (template_id = :templateId) " +
             "ORDER BY question_number",
@@ -39,7 +39,8 @@ public interface TemplateQuestionRepository extends CrudRepository<TemplateQuest
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(question as bytea),'${aes.key}') as question, " +
             "template_id, " +
-            "question_number " +
+            "question_number, " +
+            "input_type " +
             "FROM template_questions " +
             "WHERE (question_number = :questionNumber) " +
             "AND (template_id = :templateId)", nativeQuery = true)

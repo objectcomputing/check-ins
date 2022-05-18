@@ -168,6 +168,16 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
             setGuild({ ...editedGuild, description: e.target.value })
           }
         />
+        <TextField
+          id="guild-link-input"
+          label="Link to Compass Page"
+          className="fullWidth"
+          placeholder="https://www.compass.objectcomputing.com/guilds/..."
+          value={editedGuild.link ? editedGuild.link: ""}
+          onChange={(e) =>
+            setGuild({ ...editedGuild, link: e.target.value })
+          }
+        />
         <Autocomplete
           id="guildLeadSelect"
           multiple

@@ -131,7 +131,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
-        if(dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
+        if (feedbackRequest.getStatus().equals("canceled") && originalFeedback.getStatus().equals("submitted")) {
+            throw new BadArgException("Attempted to cancel a feedback request that was already submitted");
+        }
+
+        if (dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -231,7 +235,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
         boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return isAdmin || currentUserId.equals(feedbackRequest.getRecipientId());
+        if (isAdmin) {
+            return true;
+        } else if (currentUserId.equals(feedbackRequest.getCreatorId())) {
+            if (feedbackRequest.getSubmitDate() != null) {
+                return true;
+            }
+        }
+
+        return currentUserId.equals(feedbackRequest.getRecipientId());
     }
 
     private FeedbackRequest getFromDTO(FeedbackRequestUpdateDTO dto) {

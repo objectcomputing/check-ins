@@ -590,6 +590,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-33:focus::-ms-input-
 }
 
 .emotion-37 {
+  float: unset;
+  overflow: hidden;
   display: block;
   width: auto;
   padding: 0;
@@ -599,12 +601,15 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-33:focus::-ms-input-
   max-width: 0.01px;
   -webkit-transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  white-space: nowrap;
 }
 
 .emotion-37>span {
   padding-left: 5px;
   padding-right: 5px;
   display: inline-block;
+  opacity: 0;
+  visibility: visible;
 }
 
 .emotion-39 {
@@ -838,6 +843,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-33:focus::-ms-input-
         <label
           className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-31"
           data-shrink={false}
+          htmlFor="mui-2"
+          id="mui-2-label"
         >
           Search Templates...
         </label>
@@ -850,6 +857,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-33:focus::-ms-input-
             autoFocus={false}
             className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedEnd emotion-33"
             disabled={false}
+            id="mui-2"
             onAnimationStart={[Function]}
             onBlur={[Function]}
             onChange={[Function]}
@@ -897,7 +905,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-33:focus::-ms-input-
         className="ad-hoc-button"
       >
         <button
-          className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root emotion-2"
+          className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root  emotion-2"
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}

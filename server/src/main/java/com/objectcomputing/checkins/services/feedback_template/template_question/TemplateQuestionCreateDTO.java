@@ -21,6 +21,10 @@ public class TemplateQuestionCreateDTO {
     @Schema(description = "order of question in template", required = true)
     private Integer questionNumber;
 
+    @NotBlank
+    @Schema(description = "the type of input used to answer the question", required = true)
+    public String inputType;
+
     public String getQuestion() {
         return question;
     }
@@ -43,5 +47,13 @@ public class TemplateQuestionCreateDTO {
 
     public void setQuestionNumber(Integer questionNumber) {
         this.questionNumber = questionNumber;
+    }
+
+    public String getInputType() {
+        return inputType;
+    }
+
+    public void setInputType(String inputType) {
+        this.inputType = inputType;
     }
 }

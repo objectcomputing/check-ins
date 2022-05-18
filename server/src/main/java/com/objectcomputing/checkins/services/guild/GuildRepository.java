@@ -26,7 +26,7 @@ public interface GuildRepository extends CrudRepository<Guild, UUID> {
     @Override
     <S extends Guild> S save(@Valid @NotNull @NonNull S entity);
 
-    @Query(value = "SELECT t_.id, PGP_SYM_DECRYPT(cast(t_.name as bytea),'${aes.key}') as name, PGP_SYM_DECRYPT(cast(description as bytea),'${aes.key}') as description  " +
+    @Query(value = "SELECT t_.id, PGP_SYM_DECRYPT(cast(t_.name as bytea),'${aes.key}') as name, PGP_SYM_DECRYPT(cast(description as bytea),'${aes.key}') as description, PGP_SYM_DECRYPT(cast(link as bytea),'${aes.key}') as link " +
             "FROM guild t_ " +
             "LEFT JOIN guild_member tm_ " +
             "   ON t_.id = tm_.guildid " +
