@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestStatus;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
 import java.time.LocalDate;
@@ -18,7 +19,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
      */
     default FeedbackRequest createSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null);
+        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, FeedbackRequestStatus.SENT, null);
     }
 
     /**
@@ -31,10 +32,10 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
      */
     default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null));
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, FeedbackRequestStatus.SENT, null));
     }
 
-    default FeedbackRequest saveSampleFeedbackRequestWithStatus(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, String status) {
+    default FeedbackRequest saveSampleFeedbackRequestWithStatus(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, FeedbackRequestStatus status) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
         return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, status, null));
     }

@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestStatus;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
@@ -42,7 +43,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
         if (!createIsPermitted(relatedFeedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
-        } else if (relatedFeedbackRequest.getStatus().equals("canceled")) {
+        } else if (relatedFeedbackRequest.getStatus() == FeedbackRequestStatus.CANCELED) {
             throw new BadArgException("Attempted to save an answer for a canceled feedback request");
         }
         if (feedbackAnswer.getId() != null) {
