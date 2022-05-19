@@ -9,6 +9,7 @@ import { selectProfile } from "../../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 import { AppContext } from "../../context/AppContext";
 import { Edit as EditIcon } from "@mui/icons-material";
+import {FeedbackRequestStatus} from "../../context/util";
 
 const dateFns = new DateFnsUtils();
 const PREFIX = 'ReceivedRequestCard';
@@ -71,7 +72,7 @@ const ReceivedRequestCard = ({ request }) => {
           Submitted {submitDate}
         </Typography>
       );
-    } else if (request.status === "canceled") {
+    } else if (request.status === FeedbackRequestStatus.CANCELED) {
       return (
         <Typography className={classes.grayTypography}>
           Canceled
@@ -138,7 +139,7 @@ const ReceivedRequestCard = ({ request }) => {
             <Submitted />
           </div>
           <div className="submission-link-container">
-            {request && !request.submitDate && request.id && request.status !== "canceled" ? (
+            {request && !request.submitDate && request.id && request.status !== FeedbackRequestStatus.CANCELED ? (
               <Link
                 to={`/feedback/submit?request=${request.id}`}
                 style={{ textDecoration: "none" }}

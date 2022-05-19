@@ -11,6 +11,7 @@ import {getFeedbackRequestById} from "../api/feedback";
 import Typography from "@mui/material/Typography";
 import {UPDATE_TOAST} from "../context/actions";
 import * as queryString from "query-string";
+import {FeedbackRequestStatus} from "../context/util";
 
 const PREFIX = 'FeedbackSubmitPage';
 const classes = {
@@ -82,9 +83,9 @@ const FeedbackSubmitPage = () => {
                 toast: "You are not authorized to perform this operation.",
               },
             });
-          } else if (request.status.toLowerCase() === "submitted" || request.submitDate) {
+          } else if (request.status.toLowerCase() === FeedbackRequestStatus.SUBMITTED || request.submitDate) {
             setRequestSubmitted(true);
-          } else if (request.status.toLowerCase() === "canceled") {
+          } else if (request.status.toLowerCase() === FeedbackRequestStatus.CANCELED) {
             setRequestCanceled(true);
           } else {
               setFeedbackRequest(request);

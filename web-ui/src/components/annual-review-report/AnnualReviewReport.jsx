@@ -18,6 +18,7 @@ import {
   Grid,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import {FeedbackRequestStatus} from "../../context/util";
 
 const dateFns = new DateFnsAdapter();
 
@@ -133,7 +134,7 @@ const QuestionResults = ({question, responses, requests}) => {
 const FeedbackTemplateResults = ({includeUnsubmitted, template, requests, answers, state}) => (
   <Root>
     <h2>{template?.title}</h2>
-    {includeUnsubmitted && requests.filter((request) => request.status !== "submitted").map((request)=> {
+    {includeUnsubmitted && requests.filter((request) => request.status !== FeedbackRequestStatus.SUBMITTED).map((request)=> {
       const fromProfile = selectProfile(state, request?.recipientId)
       const submitDate = request?.submitDate;
       const dueDate = request?.dueDate;
@@ -180,7 +181,7 @@ const AnnualReviewReport = ({ userId, includeUnsubmitted }) => {
         const res = await getFeedbackRequestsByRequestee(userId, null, csrf);
         let feedbackRequests = res.payload && res.payload.data && !res.error ? res.payload.data : [];
         if(!includeUnsubmitted) {
-          feedbackRequests = feedbackRequests.filter((request) => request.status === "submitted");
+          feedbackRequests = feedbackRequests.filter((request) => request.status === FeedbackRequestStatus.SUBMITTED);
         }
         setFeedbackRequests(feedbackRequests);
     }

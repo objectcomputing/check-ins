@@ -20,6 +20,7 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import MenuItem from "@mui/material/MenuItem";
 
 import "./FeedbackRequestSubcard.css";
+import {FeedbackRequestStatus} from "../../../context/util";
 
 const PREFIX = "FeedbackRequestSubcard";
 const classes = {
@@ -161,7 +162,7 @@ const FeedbackRequestSubcard = ({ request }) => {
     const enableFeedbackEdits = async () => {
       const requestWithEditsEnabled = {
         ...request,
-        status: "sent",
+        status: FeedbackRequestStatus.SENT,
         submitDate: null
       }
 
@@ -209,7 +210,7 @@ const FeedbackRequestSubcard = ({ request }) => {
           Submitted {submitDate}
         </Typography>
       );
-    } else if (requestStatus === "canceled") {
+    } else if (requestStatus === FeedbackRequestStatus.CANCELED) {
         return (
           <Typography className={classes.grayTypography}>
             Canceled
@@ -267,7 +268,7 @@ const FeedbackRequestSubcard = ({ request }) => {
               <Submitted />
             </Grid>
             <Grid item xs={6} md className="align-end">
-              {request && !request.submitDate && requestStatus !== "canceled" && (
+              {request && !request.submitDate && requestStatus !== FeedbackRequestStatus.CANCELED && (
                 <>
                   <Tooltip
                     title="Cancel Request"
@@ -345,7 +346,7 @@ const FeedbackRequestSubcard = ({ request }) => {
             </Grid>
           </Grid>
         </Grid>
-        {request && !request.submitDate && requestStatus !== "canceled" && (
+        {request && !request.submitDate && requestStatus !== FeedbackRequestStatus.CANCELED && (
           <Modal open={cancelingRequest} onClose={() => setCancelingRequest(false)}>
             <Card className="cancel-feedback-request-modal">
               <CardHeader title={<Typography variant="h5" fontWeight="bold">Cancel Feedback Request</Typography>}/>
