@@ -11,6 +11,7 @@ export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
 export const SET_CSRF = "@@check-ins/update_csrf";
 export const SET_ROLES = "@@check-ins/set_roles";
 export const SET_USER_ROLES = "@@check-ins/set_user_roles";
+export const SET_USER_PERMISSIONS = "@@check-ins/set_user_permissions";
 export const UPDATE_GUILD = "@@check-ins/update_guild";
 export const UPDATE_GUILDS = "@@check-ins/update_guilds";
 export const UPDATE_GUILD_MEMBERS = "@@check-ins/update_guild_members";

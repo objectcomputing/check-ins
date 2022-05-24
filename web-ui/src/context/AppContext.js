@@ -13,7 +13,7 @@ import {
   UPDATE_SKILLS,
   UPDATE_TEAMS,
   UPDATE_PEOPLE_LOADING,
-  UPDATE_TEAMS_LOADING,
+  UPDATE_TEAMS_LOADING, SET_USER_PERMISSIONS,
 } from "./actions";
 import {
   getCurrentUser,
@@ -27,6 +27,7 @@ import { getAllGuilds } from "../api/guild";
 import { getSkills } from "../api/skill";
 import { getAllTeams } from "../api/team";
 import axios from "axios";
+import {getUserPermissions} from "../api/permissions";
 
 const AppContext = React.createContext();
 
@@ -235,6 +236,26 @@ const AppContextProvider = (props) => {
      });
    }
 }, [csrf]);
+
+ useEffect(() => {
+   const loadUserPermissions = async () => {
+     let res = await getUserPermissions(id, csrf);
+     return (
+       res &&
+       res.payload &&
+       res.payload.data &&
+       res.payload.status === 200 &&
+       !res.error)
+       ? res.payload.data
+       : null;
+   }
+
+   if (csrf && id) {
+     loadUserPermissions().then((userPermissions) => {
+       dispatch({ type: SET_USER_PERMISSIONS, payload: userPermissions });
+     })
+   }
+ }, [csrf, id]);
 
   const value = useMemo(() => {
     return { state, dispatch };
