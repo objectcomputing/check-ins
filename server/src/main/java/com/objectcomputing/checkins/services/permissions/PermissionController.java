@@ -15,6 +15,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -59,6 +60,20 @@ public class PermissionController {
     public Single<HttpResponse<List<Permission>>> getAllPermissions() {
 
         return Single.fromCallable(permissionServices::findAll)
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
+                .subscribeOn(Schedulers.from(ioExecutorService));
+    }
+
+    // TODO: Validate that the current user can only access this if memberId is theirs (or user is admin)
+    /**
+     * Get all permissions for a specific user
+     * @param memberId the {@link UUID} of the member
+     * @return list of permissions
+     */
+    @Get("/{memberId}")
+    public Single<HttpResponse<List<Permission>>> getUserPermissions(UUID memberId) {
+        return Single.fromCallable(() -> permissionServices.findUserPermissions(memberId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
                 .subscribeOn(Schedulers.from(ioExecutorService));
