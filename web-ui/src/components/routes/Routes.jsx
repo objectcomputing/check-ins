@@ -28,6 +28,7 @@ import ViewFeedbackResponses from "../view_feedback_responses/ViewFeedbackRespon
 import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/FeedbackSubmitConfirmation";
 import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
+import ProtectedRoute from "../protected_route/ProtectedRoute";
 
 
 export default function Routes() {
@@ -127,9 +128,9 @@ export default function Routes() {
           <Route path="/feedback/request">
             <FeedbackRequestPage />
           </Route>
-          <Route exact path="/feedback/view">
+          <ProtectedRoute exact path="/feedback/view">
             <ViewFeedbackPage />
-          </Route>
+          </ProtectedRoute>
           <Route exact path="/feedback/view/responses">
             <ViewFeedbackResponses />
           </Route>

@@ -28,6 +28,7 @@ import {
 } from "@mui/material";
 
 import "./Menu.css";
+import {userHasPermissionForRoute} from "../../context/routePermissions";
 
 const drawerWidth = 150;
 const PREFIX = 'Menu';
@@ -133,6 +134,7 @@ function Menu() {
   const isAdmin = selectIsAdmin(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
+  const { userPermissions } = state;
 
   const theme = useTheme();
   const location = useLocation();
@@ -263,6 +265,11 @@ function Menu() {
   };
 
   const createLinkJsx = (path, name, isSubLink) => {
+
+    if (!userHasPermissionForRoute(path, userPermissions)) {
+      return;
+    }
+
     return (
       <ListItem
         key={path}
@@ -292,6 +299,11 @@ function Menu() {
   };
 
   const createListJsx = (listArr, isSublink) => {
+    // Do not render collapsible list is user does not have permission for any of its sublinks
+    if (listArr.every(([path]) => !userHasPermissionForRoute(path, userPermissions))) {
+      return;
+    }
+
     return listArr.map((listItem) => {
       const [path, name] = listItem;
       return createLinkJsx(path, name, isSublink);
