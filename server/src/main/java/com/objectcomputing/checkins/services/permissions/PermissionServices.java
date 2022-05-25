@@ -6,6 +6,8 @@ import java.util.UUID;
 public interface PermissionServices {
     List<Permission> findUserPermissions(UUID id);
 
+    List<Permission> findCurrentUserPermissions(UUID id);
+
     List<Permission> findAll();
 
     List<Permission> listOrderByPermission();

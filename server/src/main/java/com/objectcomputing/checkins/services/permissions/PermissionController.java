@@ -65,7 +65,6 @@ public class PermissionController {
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
-    // TODO: Validate that the current user can only access this if memberId is theirs (or user is admin)
     /**
      * Get all permissions for a specific user
      * @param memberId the {@link UUID} of the member
@@ -73,7 +72,7 @@ public class PermissionController {
      */
     @Get("/{memberId}")
     public Single<HttpResponse<List<Permission>>> getUserPermissions(UUID memberId) {
-        return Single.fromCallable(() -> permissionServices.findUserPermissions(memberId))
+        return Single.fromCallable(() -> permissionServices.findCurrentUserPermissions(memberId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
                 .subscribeOn(Schedulers.from(ioExecutorService));

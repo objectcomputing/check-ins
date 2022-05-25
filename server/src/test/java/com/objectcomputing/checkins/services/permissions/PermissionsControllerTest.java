@@ -101,4 +101,52 @@ public class PermissionsControllerTest extends TestContainersSuite implements Pe
         assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
     }
 
+    @Test
+    void testGetUserPermissions() {
+        MemberProfile currentUser = createADefaultMemberProfile();
+        MemberProfile adminUser = createASecondDefaultMemberProfile();
+        Role memberRole = createAndAssignRole(RoleType.MEMBER, currentUser);
+        Role adminRole = createAndAssignAdminRole(adminUser);
+
+        Permission memberPermission1 = createACustomPermission(Permissions.CAN_VIEW_PERMISSIONS);
+        Permission memberPermission2 = createACustomPermission(Permissions.CAN_VIEW_ROLE_PERMISSIONS);
+        Permission adminPermission = createACustomPermission(Permissions.CAN_CREATE_ORGANIZATION_MEMBERS);
+
+        setRolePermission(memberRole.getId(), memberPermission1.getId());
+        setRolePermission(memberRole.getId(), memberPermission2.getId());
+        setRolePermission(adminRole.getId(), adminPermission.getId());
+
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", currentUser.getId()))
+                .basicAuth(currentUser.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<Permission>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(Permission.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(2, response.getBody().get().size());
+        assertTrue(response.getBody().get().contains(memberPermission1));
+        assertTrue(response.getBody().get().contains(memberPermission2));
+    }
+
+    @Test
+    void testGetUserPermissionsNotAuthorized() {
+        MemberProfile currentUser = createADefaultMemberProfile();
+        MemberProfile otherUser = createAnUnrelatedUser();
+        Role memberRole = createAndAssignRole(RoleType.MEMBER, currentUser);
+
+        Permission permission1 = createACustomPermission(Permissions.CAN_VIEW_PERMISSIONS);
+        Permission permission2 = createACustomPermission(Permissions.CAN_VIEW_ROLE_PERMISSIONS);
+
+        setRolePermission(memberRole.getId(), permission1.getId());
+        setRolePermission(memberRole.getId(), permission2.getId());
+
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", otherUser.getId()))
+                .basicAuth(currentUser.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("You are not allowed to do this operation", responseException.getMessage());
+    }
+
 }
