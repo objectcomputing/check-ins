@@ -4,11 +4,8 @@ const permissionsUrl = "/services/permissions";
 
 export const getUserPermissions = (memberId, cookie) => {
   return resolve({
-    url: permissionsUrl,
+    url: `${permissionsUrl}/${memberId}`,
     responseType: "json",
-    params: {
-      memberId: memberId
-    },
     headers: { "X-CSRF-Header": cookie },
   });
 }

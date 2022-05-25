@@ -298,12 +298,12 @@ function Menu() {
     setSelectedFile(e.target.files[0]);
   };
 
-  const createListJsx = (listArr, isSublink) => {
-    // Do not render collapsible list is user does not have permission for any of its sublinks
-    if (listArr.every(([path]) => !userHasPermissionForRoute(path, userPermissions))) {
-      return;
-    }
+  const listHasSublinks = (listArr) => {
+    // Do not render collapsible list if user does not have permission for any of its sublinks
+    return listArr.some(([path]) => userHasPermissionForRoute(path, userPermissions));
+  }
 
+  const createListJsx = (listArr, isSublink) => {
     return listArr.map((listItem) => {
       const [path, name] = listItem;
       return createLinkJsx(path, name, isSublink);
@@ -323,7 +323,7 @@ function Menu() {
 
       <List component="nav" className={classes.listStyle}>
         {createLinkJsx("/", "HOME", false)}
-        {isAdmin && (
+        {isAdmin && listHasSublinks(adminLinks) && (
           <>
             <ListItem button onClick={toggleAdmin} className={classes.listItem}>
               <ListItemText primary="ADMIN" />
@@ -334,23 +334,31 @@ function Menu() {
           </>
         )}
         {createLinkJsx("/checkins", "CHECK-INS", false)}
-        <ListItem button onClick={toggleDirectory} className={classes.listItem}>
-          <ListItemText primary="DIRECTORY" />
-        </ListItem>
-        <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
-          {createListJsx(directoryLinks, true)}
-        </Collapse>
-        <ListItem
-          button
-          onClick={toggleFeedback}
-          className={classes.listItem}
-        >
-          <ListItemText primary="FEEDBACK" />
-        </ListItem>
-        <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
-          {createListJsx(feedbackLinks, true)}
-        </Collapse>
-        {isAdmin && (
+        {listHasSublinks(directoryLinks) &&
+          <>
+            <ListItem button onClick={toggleDirectory} className={classes.listItem}>
+              <ListItemText primary="DIRECTORY" />
+            </ListItem>
+            <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
+              {createListJsx(directoryLinks, true)}
+            </Collapse>
+          </>
+        }
+        {listHasSublinks(feedbackLinks) &&
+          <>
+            <ListItem
+              button
+              onClick={toggleFeedback}
+              className={classes.listItem}
+            >
+              <ListItemText primary="FEEDBACK" />
+            </ListItem>
+            <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
+              {createListJsx(feedbackLinks, true)}
+            </Collapse>
+          </>
+        }
+        {isAdmin && listHasSublinks(reportsLinks) && (
           <React.Fragment>
             <ListItem
               button

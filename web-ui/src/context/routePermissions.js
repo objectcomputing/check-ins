@@ -12,6 +12,7 @@ export const Permissions = {
 
 // Restrict access to a specific route with a permission
 export const RoutePermissions = {
+  "/admin/users": Permissions.CAN_CREATE_ORGANIZATION_MEMBERS,
   "/feedback/view": Permissions.CAN_VIEW_FEEDBACK_REQUEST,
 };
 
