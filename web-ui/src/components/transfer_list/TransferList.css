@@ -1,0 +1,22 @@
+.transfer-list-container {
+    display: grid;
+    grid-template-columns: minmax(270px, 1fr) 7rem minmax(270px, 1fr);
+    justify-content: center;
+    align-items: center;
+}
+
+.transfer-list .empty-list-message-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.transfer-list .empty-list-message-container .empty-list-message {
+    padding: 2rem 3rem;
+    color: gray;
+    background-color: #e8e8e8;
+    border: 1px dashed #c2c2c2;
+    border-radius: 4px;
+}

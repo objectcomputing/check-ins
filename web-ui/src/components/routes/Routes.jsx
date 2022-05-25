@@ -29,6 +29,7 @@ import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/Feedback
 import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 import ProtectedRoute from "../protected_route/ProtectedRoute";
+import EmailPage from "../../pages/EmailPage";
 
 
 export default function Routes() {
@@ -121,6 +122,10 @@ export default function Routes() {
           <Route path="/admin/users">
             <Header title="Users"></Header>
             <Users />
+          </Route>
+          <Route path="/admin/email">
+            <Header title="Send Email"></Header>
+            <EmailPage />
           </Route>
           <Route exact path="/feedback/request/confirmation">
             <FeedbackRequestConfirmation />
