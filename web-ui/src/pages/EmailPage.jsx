@@ -214,7 +214,7 @@ const EmailPage = () => {
       return;
     }
 
-    sendEmail(emailSubject, mjml2html(emailContents)?.html, [testEmail], csrf).then(res => {
+    sendEmail(`Test Email - ${emailSubject}`, mjml2html(emailContents)?.html, [testEmail], csrf).then(res => {
       let toastMessage, toastStatus;
       if (res && res.payload && res.payload.status === 201 && !res.error) {
         setTestEmailSent(true);
