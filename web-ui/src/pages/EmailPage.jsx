@@ -214,9 +214,9 @@ const EmailPage = () => {
       return;
     }
 
-    sendEmail(emailSubject, emailContents, testEmail, csrf).then(res => {
+    sendEmail(emailSubject, mjml2html(emailContents), [testEmail], csrf).then(res => {
       let toastMessage, toastStatus;
-      if (res && res.payload && res.payload.status === 200 && !res.error) {
+      if (res && res.payload && res.payload.status === 201 && !res.error) {
         setTestEmailSent(true);
         toastStatus = "success";
         toastMessage = `Sent a test email to ${testEmail}`;
@@ -243,9 +243,9 @@ const EmailPage = () => {
 
     const recipientEmails = recipients.map((member) => member.workEmail);
 
-    sendEmail(emailSubject, emailContents, recipientEmails, csrf).then(res => {
+    sendEmail(emailSubject, mjml2html(emailContents), recipientEmails, csrf).then(res => {
       let toastMessage, toastStatus;
-      if (res && res.payload && res.payload.status === 200 && !res.error) {
+      if (res && res.payload && res.payload.status === 201 && !res.error) {
         setEmailSent(true);
         toastStatus = "success";
         toastMessage = `Sent email to ${activeMembers.length} member${activeMembers.length === 1 ? "" : "s"}`;
