@@ -67,7 +67,7 @@
     border-top-left-radius: 0;
 }
 
-.send-email-to-all-confirmation-dialog {
+.send-email-to-all-confirmation-dialog, .change-email-format-confirmation-dialog {
     position: absolute;
     top: 50%;
     left: 50%;

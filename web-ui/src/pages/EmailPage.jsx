@@ -35,39 +35,76 @@ const Root = styled("div")({
   margin: "2rem"
 });
 
-const ChooseEmailFormatStep = ({ emailFormat, onEmailFormatChange, emailSent }) => {
+const ChooseEmailFormatStep = ({ emailFormat, onEmailFormatChange, emailContents, emailSent }) => {
+
+  const [formatDialog, setFormatDialog] = useState({open: false, format: null});
+
+  const handleFormatButtonClick = (format) => {
+    // Do nothing if the same button is clicked again
+    if (format === emailFormat) {
+      return;
+    }
+
+    // If the user tries to change the email format after composing an email, warn with dialog
+    if (emailFormat && emailContents.length > 0 && format !== emailFormat) {
+      setFormatDialog({open: true, format: format});
+    } else {
+      onEmailFormatChange(format);
+    }
+  }
 
   return (
-    <div className="email-format-container">
-      <Button
-        className="email-format-button"
-        style={emailFormat === "file" ? { borderColor: "green", backgroundColor: "#f7fff7" } : {}}
-        disabled={emailSent}
-        onClick={() => onEmailFormatChange("file")}>
-        <div className="email-format-button-content">
-          {emailFormat === "file" &&
-            <CheckIcon style={{ position: "absolute", right: "1rem", top: "1rem", color: "green" }}/>
-          }
-          <UploadFileIcon sx={{ fontSize: "80px", marginBottom: "1rem" }}/>
-          <Typography variant="h6" fontWeight="bold">MJML File</Typography>
-          <Typography variant="body2" color="gray">Create an email with a custom format using MJML</Typography>
-        </div>
-      </Button>
-      <Button
-        className="email-format-button"
-        style={emailFormat === "text" ? { borderColor: "green", backgroundColor: "#f7fff7" } : {}}
-        disabled={emailSent}
-        onClick={() => onEmailFormatChange("text")}>
-        <div className="email-format-button-content">
-          {emailFormat === "text" &&
-            <CheckIcon style={{position: "absolute", right: "1rem", top: "1rem", color: "green"}}/>
-          }
-          <EditIcon sx={{ fontSize: "80px", marginBottom: "1rem" }} />
-          <Typography variant="h6" fontWeight="bold">Text</Typography>
-          <Typography variant="body2" color="gray">Write a simple email with no formatting</Typography>
-        </div>
-      </Button>
-    </div>
+    <>
+      <div className="email-format-container">
+        <Button
+          className="email-format-button"
+          style={emailFormat === "file" ? { borderColor: "green", backgroundColor: "#f7fff7" } : {}}
+          disabled={emailSent}
+          onClick={() => handleFormatButtonClick("file")}>
+          <div className="email-format-button-content">
+            {emailFormat === "file" &&
+              <CheckIcon style={{ position: "absolute", right: "1rem", top: "1rem", color: "green" }}/>
+            }
+            <UploadFileIcon sx={{ fontSize: "80px", marginBottom: "1rem" }}/>
+            <Typography variant="h6" fontWeight="bold">MJML File</Typography>
+            <Typography variant="body2" color="gray">Create an email with a custom format using MJML</Typography>
+          </div>
+        </Button>
+        <Button
+          className="email-format-button"
+          style={emailFormat === "text" ? { borderColor: "green", backgroundColor: "#f7fff7" } : {}}
+          disabled={emailSent}
+          onClick={() => handleFormatButtonClick("text")}>
+          <div className="email-format-button-content">
+            {emailFormat === "text" &&
+              <CheckIcon style={{position: "absolute", right: "1rem", top: "1rem", color: "green"}}/>
+            }
+            <EditIcon sx={{ fontSize: "80px", marginBottom: "1rem" }} />
+            <Typography variant="h6" fontWeight="bold">Text</Typography>
+            <Typography variant="body2" color="gray">Write a simple email with no formatting</Typography>
+          </div>
+        </Button>
+      </div>
+      <Modal open={formatDialog.open}>
+        <Card className="change-email-format-confirmation-dialog">
+          <CardHeader title={<Typography variant="h5" fontWeight="bold">Change Email Format</Typography>}/>
+          <CardContent>
+            <Typography>You are attempting to change the format of this email, but you have already written a draft in the following step. Changing the format will reset this draft.</Typography>
+          </CardContent>
+          <CardActions>
+            <Button style={{ color: "gray" }} onClick={() => setFormatDialog({open: false, format: null})}>
+              Cancel
+            </Button>
+            <Button color="secondary" onClick={() => {
+              onEmailFormatChange(formatDialog.format);
+              setFormatDialog({open: false, format: null});
+            }}>
+              Discard Email Draft
+            </Button>
+          </CardActions>
+        </Card>
+      </Modal>
+    </>
   );
 }
 
@@ -168,6 +205,7 @@ const ComposeEmailStep = ({ emailFormat, emailContents, emailSubject, onSubjectC
           fullWidth
           multiline
           minRows={3}
+          maxRows={20}
           placeholder="Write your email here..."
           value={emailContents}
           onChange={(event) => onEmailContentsChange(event.target.value)}
@@ -381,7 +419,11 @@ const EmailPage = () => {
           {currentStep === 0 && (
             <ChooseEmailFormatStep
               emailFormat={emailFormat}
-              onEmailFormatChange={(format) => setEmailFormat(format)}
+              onEmailFormatChange={(format) => {
+                setEmailFormat(format);
+                setEmailContents("");
+              }}
+              emailContents={emailContents}
               emailSent={emailSent}
             />
           )}
