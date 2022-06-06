@@ -243,9 +243,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
                   disablePortal
                   options={filterOptions[recipientFilter]}
                   getOptionLabel={(option) => option.name}
-                  isOptionEqualToValue={(option, value) => {
-                    return option.name === value;
-                  }}
+                  isOptionEqualToValue={(option, value) => option.name === value.name}
                   value={recipientQuery}
                   onChange={(event, value) => setRecipientQuery(value)}
                   renderInput={(params) => (
