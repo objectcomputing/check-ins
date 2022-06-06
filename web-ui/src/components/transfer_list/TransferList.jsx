@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {
   Autocomplete,
   Avatar,
@@ -21,6 +21,9 @@ import {getAvatarURL} from "../../api/api";
 
 import "./TransferList.css";
 import {AppContext} from "../../context/AppContext";
+import {getMembersByTeam} from "../../api/team";
+import {getMembersByGuild} from "../../api/guild";
+import {UPDATE_TOAST} from "../../context/actions";
 
 const not = (a, b) => a.filter((value) => b.indexOf(value) === -1);
 const intersection = (a, b) => a.filter((value) => b.indexOf(value) !== -1);
@@ -45,12 +48,13 @@ const propTypes = {
 
 const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChanged, disabled }) => {
 
-  const { state } = useContext(AppContext);
-  const { memberProfiles, guilds, teams } = state;
+  const { state, dispatch } = useContext(AppContext);
+  const { memberProfiles, guilds, teams, csrf } = state;
   const [checked, setChecked] = useState([]);
   const [recipientFilterVisible, setRecipientFilterVisible] = useState(false);
   const [recipientFilter, setRecipientFilter] = useState(FilterOption.NAME);
   const [recipientQuery, setRecipientQuery] = useState(null);
+  const [filteredLeftList, setFilteredLeftList] = useState([]);
 
   const leftChecked = intersection(checked, leftList);
   const rightChecked = intersection(checked, rightList);
@@ -113,28 +117,74 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
     setChecked(not(checked, rightChecked));
   }
 
-  const getFilteredOptions = (members) => {
-    switch (recipientFilter) {
-      case FilterOption.NAME:
-        return members.filter(member => member.name.toLowerCase().includes(recipientQuery.trim().toLowerCase()));
-      case FilterOption.GUILD:
-        return members;
-      case FilterOption.TEAM:
-        return members;
-      case FilterOption.TITLE:
-        return members.filter(member => member.title === recipientQuery.name);
-      case FilterOption.LOCATION:
-        return members.filter(member => member.location === recipientQuery.name);
-      default:
-        console.warn(`Invalid recipient filter ${recipientFilter}`);
-        return members;
+  useEffect(() => {
+    const getFilteredOptions = async (members) => {
+      switch (recipientFilter) {
+        case FilterOption.NAME:
+          return members.filter(member => member.name.toLowerCase().includes(recipientQuery.trim().toLowerCase()));
+        case FilterOption.GUILD:
+          if (csrf) {
+            const guildId = recipientQuery.id;
+            const res = await getMembersByGuild(guildId, csrf);
+            const guildMembers = res && res.payload && res.payload.data && !res.error ? res.payload.data : null;
+            if (guildMembers) {
+              // Create set of member ids in the guild, then filter out ids not in the set (using set for quick access)
+              const guildMemberIds = new Set();
+              guildMembers.forEach(guildMember => guildMemberIds.add(guildMember.memberId));
+              return members.filter(member => guildMemberIds.has(member.id));
+            } else {
+              dispatch({
+                type: UPDATE_TOAST,
+                payload: {
+                  severity: "error",
+                  toast: `Could not retrieve members for guild ${recipientQuery.name}`
+                }
+              });
+            }
+          }
+          return members;
+        case FilterOption.TEAM:
+          if (csrf) {
+            const teamId = recipientQuery.id;
+            const res = await getMembersByTeam(teamId, csrf);
+            const teamMembers = res && res.payload && res.payload.data && !res.error ? res.payload.data : null;
+            if (teamMembers) {
+              // Create set of member ids in the guild, then filter out ids not in the set (using set for quick access)
+              const teamMemberIds = new Set();
+              teamMembers.forEach(teamMember => teamMemberIds.add(teamMember.memberId));
+              return members.filter(member => teamMemberIds.has(member.id));
+            } else {
+              dispatch({
+                type: UPDATE_TOAST,
+                payload: {
+                  severity: "error",
+                  toast: `Could not retrieve members for team ${recipientQuery.name}`
+                }
+              });
+            }
+          }
+          return members;
+        case FilterOption.TITLE:
+          return members.filter(member => member.title === recipientQuery.name);
+        case FilterOption.LOCATION:
+          return members.filter(member => member.location === recipientQuery.name);
+        default:
+          console.warn(`Invalid recipient filter ${recipientFilter}`);
+          return members;
+      }
     }
-  }
+
+    // Only filter items if the filter is open and the user has entered a query
+    if (recipientFilterVisible && recipientQuery) {
+      getFilteredOptions(leftList).then(filtered => {
+        setFilteredLeftList(filtered);
+      });
+    } else {
+      setFilteredLeftList(leftList);
+    }
+  },[leftList, recipientFilter, recipientQuery, recipientFilterVisible, csrf, dispatch]);
 
   const customList = (title, items, emptyMessage, includeFilter) => {
-    if (recipientFilterVisible && recipientQuery) {
-      items = getFilteredOptions(items);
-    }
     items = items.sort((a, b) => a.name.localeCompare(b.name));
     return (
       <Card className="transfer-list" variant="outlined">
@@ -276,7 +326,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
 
   return (
     <div className="transfer-list-container">
-      <Grid item>{customList(leftLabel || "Choices", leftList, "No members to select", true)}</Grid>
+      <Grid item>{customList(leftLabel || "Choices", filteredLeftList, "No members to select", true)}</Grid>
       <Grid item>
         <Grid container direction="column" alignContent="center" justifyContent="center" sx={{height: 480}}>
           <Button
