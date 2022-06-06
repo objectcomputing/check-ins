@@ -1,26 +1,38 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {
+  Autocomplete,
   Avatar,
   Button,
   Card,
   CardHeader,
   Checkbox,
-  Divider,
-  Grid,
+  Divider, FormControl,
+  Grid, IconButton, InputAdornment, InputLabel,
   List,
   ListItem, ListItemAvatar, ListItemButton,
-  ListItemText, Typography
+  ListItemText, MenuItem, Select, TextField, Tooltip, Typography, Collapse,
 } from "@mui/material";
 import LeftArrowIcon from "@mui/icons-material/KeyboardArrowLeft";
 import RightArrowIcon from "@mui/icons-material/KeyboardArrowRight";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterIcon from "@mui/icons-material/FilterList";
 import PropTypes from "prop-types";
 import {getAvatarURL} from "../../api/api";
 
 import "./TransferList.css";
+import {AppContext} from "../../context/AppContext";
 
 const not = (a, b) => a.filter((value) => b.indexOf(value) === -1);
 const intersection = (a, b) => a.filter((value) => b.indexOf(value) !== -1);
 const union = (a, b) => [...a, ...not(b, a)];
+
+const FilterOption = {
+  NAME: "NAME",
+  GUILD: "GUILD",
+  TEAM: "TEAM",
+  TITLE: "TITLE",
+  LOCATION: "LOCATION"
+};
 
 const propTypes = {
   leftList: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -33,10 +45,32 @@ const propTypes = {
 
 const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChanged, disabled }) => {
 
+  const { state } = useContext(AppContext);
+  const { memberProfiles, guilds, teams } = state;
   const [checked, setChecked] = useState([]);
+  const [recipientFilterVisible, setRecipientFilterVisible] = useState(false);
+  const [recipientFilter, setRecipientFilter] = useState(FilterOption.NAME);
+  const [recipientQuery, setRecipientQuery] = useState(null);
 
   const leftChecked = intersection(checked, leftList);
   const rightChecked = intersection(checked, rightList);
+
+  // Get all unique, defined titles
+  let memberTitles = memberProfiles.filter(member => !!member.title).map(member => member.title);
+  memberTitles = [...new Set(memberTitles)];
+  memberTitles = memberTitles.map(title => {return {name: title}});
+
+  // Get all unique, defined locations
+  let memberLocations = memberProfiles.filter(member => !!member.location).map(member => member.location);
+  memberLocations = [...new Set(memberLocations)];
+  memberLocations = memberLocations.map(location => {return {name: location}});
+
+  const filterOptions = {
+    [FilterOption.GUILD]: guilds,
+    [FilterOption.TEAM]: teams,
+    [FilterOption.TITLE]: memberTitles,
+    [FilterOption.LOCATION]: memberLocations
+  };
 
   const handleToggle = (value) => {
     if (disabled) return;
@@ -79,19 +113,57 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
     setChecked(not(checked, rightChecked));
   }
 
-  const customList = (title, items, emptyMessage) => {
+  const getFilteredOptions = (members) => {
+    switch (recipientFilter) {
+      case FilterOption.NAME:
+        return members.filter(member => member.name.toLowerCase().includes(recipientQuery.trim().toLowerCase()));
+      case FilterOption.GUILD:
+        return members;
+      case FilterOption.TEAM:
+        return members;
+      case FilterOption.TITLE:
+        return members.filter(member => member.title === recipientQuery.name);
+      case FilterOption.LOCATION:
+        return members.filter(member => member.location === recipientQuery.name);
+      default:
+        console.warn(`Invalid recipient filter ${recipientFilter}`);
+        return members;
+    }
+  }
+
+  const customList = (title, items, emptyMessage, includeFilter) => {
+    if (recipientFilterVisible && recipientQuery) {
+      items = getFilteredOptions(items);
+    }
     items = items.sort((a, b) => a.name.localeCompare(b.name));
     return (
       <Card className="transfer-list" variant="outlined">
         <CardHeader
           action={
-            <Checkbox
-              onClick={() => handleToggleAll(items)}
-              checked={numberOfChecked(items) === items.length && items.length !== 0}
-              indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
-              disabled={items.length === 0 || disabled}
-              style={{marginRight: "8px", marginTop: "-8px"}}
-            />
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {includeFilter &&
+                <Tooltip arrow title="Filter">
+                  <IconButton
+                    style={{ marginTop: "-8px" }}
+                    onClick={() => {
+                      if (!recipientFilterVisible) {
+                        setRecipientQuery(null);  // Reset the query when opening the filter
+                      }
+                      setRecipientFilterVisible(!recipientFilterVisible);
+                    }}
+                  >
+                    <FilterIcon/>
+                  </IconButton>
+                </Tooltip>
+              }
+              <Checkbox
+                onClick={() => handleToggleAll(items)}
+                checked={numberOfChecked(items) === items.length && items.length !== 0}
+                indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
+                disabled={items.length === 0 || disabled}
+                style={{marginRight: "8px", marginTop: "-8px"}}
+              />
+            </div>
           }
           title={title}
           subheader={`${numberOfChecked(items)}/${items.length} selected`}
@@ -100,6 +172,63 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
             fontSize: "18px"
           }}
         />
+        {includeFilter &&
+          <Collapse in={recipientFilterVisible}>
+            <div className="transfer-list-filter-container">
+              {recipientFilter === FilterOption.NAME ?
+                <TextField
+                  className="transfer-list-filter-field"
+                  label="Filter Recipients"
+                  placeholder="Search for a member name..."
+                  variant="outlined"
+                  value={recipientQuery ? recipientQuery : ""}
+                  onChange={(event) => setRecipientQuery(event.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment color="gray" position="end"><SearchIcon/></InputAdornment>
+                  }}
+                />
+                :
+                <Autocomplete
+                  className="transfer-list-filter-field"
+                  disablePortal
+                  options={filterOptions[recipientFilter]}
+                  getOptionLabel={(option) => option.name}
+                  isOptionEqualToValue={(option, value) => {
+                    return option.name === value;
+                  }}
+                  value={recipientQuery}
+                  onChange={(event, value) => setRecipientQuery(value)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      placeholder={`Search for a ${recipientFilter.toLowerCase()}...`}
+                      label="Filter Recipients"
+                    />
+                  )}
+                />
+              }
+              <FormControl className="transfer-list-filter">
+                <InputLabel id="recipient-filter-label">Filter by</InputLabel>
+                <Select
+                  labelId="recipient-filter-label"
+                  label="Filter by"
+                  value={recipientFilter}
+                  onChange={(event) => {
+                    setRecipientQuery(null);
+                    setRecipientFilter(event.target.value);
+                  }}
+                >
+                  <MenuItem value={FilterOption.NAME}>Name</MenuItem>
+                  <MenuItem value={FilterOption.GUILD}>Guild</MenuItem>
+                  <MenuItem value={FilterOption.TEAM}>Team</MenuItem>
+                  <MenuItem value={FilterOption.TITLE}>Title</MenuItem>
+                  <MenuItem value={FilterOption.LOCATION}>Location</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+          </Collapse>
+        }
         <Divider/>
         <List
           dense
@@ -147,9 +276,9 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
 
   return (
     <div className="transfer-list-container">
-      <Grid item>{customList(leftLabel || "Choices", leftList, "No members to select")}</Grid>
+      <Grid item>{customList(leftLabel || "Choices", leftList, "No members to select", true)}</Grid>
       <Grid item>
-        <Grid container direction="column" alignItems="center">
+        <Grid container direction="column" alignContent="center" justifyContent="center" sx={{height: 480}}>
           <Button
             sx={{ my: 1 }}
             variant="outlined"
@@ -172,7 +301,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
           </Button>
         </Grid>
       </Grid>
-      <Grid item>{customList(rightLabel || "Chosen", rightList, "No recipients")}</Grid>
+      <Grid item>{customList(rightLabel || "Chosen", rightList, "No recipients", false)}</Grid>
     </div>
   );
 }
