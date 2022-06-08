@@ -318,7 +318,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
                 />
               }
             >
-              <ListItemButton disableTouchRipple={disabled}>
+              <ListItemButton selected={checked.indexOf(member) !== -1} disableTouchRipple={disabled}>
                 <ListItemAvatar>
                   <Avatar src={getAvatarURL(member?.workEmail)}/>
                 </ListItemAvatar>
