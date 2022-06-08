@@ -80,10 +80,8 @@ const SkillReportPage = (props) => {
         <Autocomplete
           id="skillSelect"
           multiple
-          options={skills.filter(
-            (skill) =>
-              !searchSkills.map((sSkill) => sSkill.id).includes(skill.id)
-          )}
+          options={skills}
+          filterSelectedOptions
           value={searchSkills ? searchSkills : []}
           onChange={onSkillsChange}
           getOptionLabel={(option) => option.name}
