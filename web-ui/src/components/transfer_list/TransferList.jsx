@@ -119,9 +119,11 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
 
   useEffect(() => {
     const getFilteredOptions = async (members) => {
+      let filterMembers;
       switch (recipientFilter) {
         case FilterOption.NAME:
-          return members.filter(member => member.name.toLowerCase().includes(recipientQuery.trim().toLowerCase()));
+          filterMembers = (member) => member.name.toLowerCase().includes(recipientQuery.trim().toLowerCase());
+          break;
         case FilterOption.GUILD:
           if (csrf) {
             const guildId = recipientQuery.id;
@@ -131,7 +133,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
               // Create set of member ids in the guild, then filter out ids not in the set (using set for quick access)
               const guildMemberIds = new Set();
               guildMembers.forEach(guildMember => guildMemberIds.add(guildMember.memberId));
-              return members.filter(member => guildMemberIds.has(member.id));
+              filterMembers = (member) => guildMemberIds.has(member.id);
             } else {
               dispatch({
                 type: UPDATE_TOAST,
@@ -142,7 +144,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
               });
             }
           }
-          return members;
+          break;
         case FilterOption.TEAM:
           if (csrf) {
             const teamId = recipientQuery.id;
@@ -152,7 +154,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
               // Create set of member ids in the guild, then filter out ids not in the set (using set for quick access)
               const teamMemberIds = new Set();
               teamMembers.forEach(teamMember => teamMemberIds.add(teamMember.memberId));
-              return members.filter(member => teamMemberIds.has(member.id));
+              filterMembers = (member) => teamMemberIds.has(member.id);
             } else {
               dispatch({
                 type: UPDATE_TOAST,
@@ -163,15 +165,25 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
               });
             }
           }
-          return members;
+          break;
         case FilterOption.TITLE:
-          return members.filter(member => member.title === recipientQuery.name);
+          filterMembers = (member) => member.title === recipientQuery.name;
+          break;
         case FilterOption.LOCATION:
-          return members.filter(member => member.location === recipientQuery.name);
+          filterMembers = (member) => member.location === recipientQuery.name;
+          break;
         default:
           console.warn(`Invalid recipient filter ${recipientFilter}`);
           return members;
       }
+
+      // Display members that are checked, even if not included by the filter
+      const checkedMembers = new Set();
+      checked.forEach(member => checkedMembers.add(member.id));
+      if (filterMembers) {
+        return members.filter(member => filterMembers(member) || checkedMembers.has(member.id));
+      }
+      return members;
     }
 
     // Only filter items if the filter is open and the user has entered a query
@@ -182,7 +194,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
     } else {
       setFilteredLeftList(leftList);
     }
-  },[leftList, recipientFilter, recipientQuery, recipientFilterVisible, csrf, dispatch]);
+  },[leftList, recipientFilter, recipientQuery, recipientFilterVisible, csrf, dispatch, checked]);
 
   const customList = (title, items, emptyMessage, includeFilter) => {
     items = items.sort((a, b) => a.name.localeCompare(b.name));
