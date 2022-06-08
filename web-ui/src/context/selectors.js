@@ -152,6 +152,12 @@ export const selectOrderedMemberProfiles = createSelector(
     mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
+export const selectOrderedCurrentMemberProfiles = createSelector(
+  selectCurrentMembers,
+  (mappedMemberProfiles) =>
+    mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
+);
+
 export const selectOrderedMemberFirstName = createSelector(
   selectMemberProfiles,
   (mappedMemberProfiles) =>
