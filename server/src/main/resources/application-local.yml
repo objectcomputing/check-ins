@@ -19,7 +19,8 @@ micronaut:
             path: /oauth/access_token
             secret: ihaveChangedThisSecretForANewOne
           access-token:
-            expiration: 60000
+#            expiration: 60000
+            expiration: 30
           secret: ihaveChangedThisSecretForANewOne
     intercept-url-map:
       - pattern: /swagger-ui/**
