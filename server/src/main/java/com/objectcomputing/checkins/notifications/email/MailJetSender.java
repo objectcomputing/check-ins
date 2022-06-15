@@ -7,6 +7,7 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetServerException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
@@ -58,14 +59,18 @@ public class MailJetSender implements EmailSender {
 
     /**
      * This call sends a message to the given recipient with attachment.
-     * @param subject, {@link String} Subject of email
+     * @param subject {@link String} Subject of email
      * @param content {@link String} Contents of email
+     * @param html Whether the email is formatted using HTML
+     * @param recipients The array of recipient emails
      */
     @Override
-    public void sendEmail(String subject, String content, String... recipients) {
+    public void sendEmail(String subject, String content, boolean html, String... recipients) {
 
         MailjetRequest request;
         MailjetResponse response;
+        final String emailContentFormat = html ? Emailv31.Message.HTMLPART : Emailv31.Message.TEXTPART;
+
         try {
             JSONArray recipientList = new JSONArray();
             for (String recipient: recipients){
@@ -79,7 +84,7 @@ public class MailJetSender implements EmailSender {
                                             .put("Name", fromName))
                                     .put(Emailv31.Message.TO, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
-                                    .put(Emailv31.Message.HTMLPART, content)));
+                                    .put(emailContentFormat, content)));
             response = client.post(request);
             LOG.info("Mailjet response status: " + response.getStatus());
             LOG.info("Mailjet response data: " + response.getData());
@@ -94,10 +99,21 @@ public class MailJetSender implements EmailSender {
         }
     }
 
+    /**
+     * Send an email with the default format of HTML
+     * @param subject {@link String} Subject of email
+     * @param content {@link String} Contents of email
+     * @param recipients The array of recipient emails
+     */
     @Override
-    public boolean sendEmailReceivesStatus(String subject, String content, String... recipients) {
+    public void sendEmail(String subject, String content, String... recipients) {
+        this.sendEmail(subject, content, true, recipients);
+    }
+
+    @Override
+    public boolean sendEmailReceivesStatus(String subject, String content, boolean html, String... recipients) {
         try {
-            sendEmail(subject, content, recipients);
+            sendEmail(subject, content, html, recipients);
         } catch(Exception e){
             LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
             return false;
@@ -109,7 +125,21 @@ public class MailJetSender implements EmailSender {
     }
 
     @Override
-    public List<Email> sendAndSaveEmail(String subject, String content, String... recipients) {
+    public boolean sendEmailReceivesStatus(String subject, String content, String... recipients) {
+        try {
+            sendEmail(subject, content, true, recipients);
+        } catch(Exception e){
+            LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        } catch(Error e) {
+            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public List<Email> sendAndSaveEmail(String subject, String content, boolean html, String... recipients) {
 
         List<Email> sentEmails = new ArrayList<>();
 
@@ -118,7 +148,7 @@ public class MailJetSender implements EmailSender {
         }
 
         LocalDateTime sendDate = LocalDateTime.now();
-        boolean status = sendEmailReceivesStatus(subject, content, recipients);
+        boolean status = sendEmailReceivesStatus(subject, content, html, recipients);
 
         UUID senderId = currentUserServices.getCurrentUser().getId();
 
@@ -138,6 +168,8 @@ public class MailJetSender implements EmailSender {
                     }
                 }
             }
+        } else {
+            throw new BadArgException("Failed to send email");
         }
 
         return sentEmails;
