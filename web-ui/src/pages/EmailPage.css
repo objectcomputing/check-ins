@@ -11,18 +11,26 @@
     margin-top: 1rem;
 }
 
-.email-page .current-step-content-card .file-preview-container {
-    margin-top: 2rem;
+.email-page .email-format-container {
+    width: 100%;
+    text-align: center;
 }
 
-.email-page .current-step-content-card .file-preview-container .file-preview {
-    background-color: #282c34;
-    color: white;
-    width: 100%;
-    border: none;
-    outline: none;
-    resize: vertical;
-    min-height: 70px;
+.email-page .email-format-container .email-format-button {
+    color: #313131;
+    border: 2px solid #313131;
+    text-align: center;
+    margin: 0.5rem 3rem;
+}
+
+.email-page .email-format-container .email-format-button .email-format-button-content {
+    width: 250px;
+    height: 250px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .email-page .current-step-content-card .email-subject-container {
@@ -45,7 +53,8 @@
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    margin-top: 2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
 }
 
 .email-page .current-step-content-card .send-test-email-input {
@@ -58,7 +67,7 @@
     border-top-left-radius: 0;
 }
 
-.send-email-to-all-confirmation-dialog {
+.send-email-to-all-confirmation-dialog, .change-email-format-confirmation-dialog {
     position: absolute;
     top: 50%;
     left: 50%;
