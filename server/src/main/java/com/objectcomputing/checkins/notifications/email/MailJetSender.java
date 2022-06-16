@@ -38,7 +38,7 @@ public class MailJetSender implements EmailSender {
     public static final String FROM_NAME = "mail-jet.from_name";
     public static final String TO_ADDRESS = "checkins@objectcomputing.com";
     public static final String TO_NAME = "Check-Ins Members";
-    public static final int MAILJET_RECIPIENT_LIMIT = 10;
+    public static final int MAILJET_RECIPIENT_LIMIT = 50;
 
     private final String fromAddress;
     private final String fromName;
@@ -57,7 +57,7 @@ public class MailJetSender implements EmailSender {
         this.fromName = fromName;
     }
 
-    private List<JSONArray> getEmailBatches(String... recipients) {
+    public static List<JSONArray> getEmailBatches(String... recipients) {
         List<String> recipientList = new ArrayList<>(List.of(recipients));
         Collections.sort(recipientList);
         List<JSONArray> batches = new ArrayList<>();
