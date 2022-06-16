@@ -42,6 +42,7 @@ public class MailJetSender implements EmailSender {
 
     private final String fromAddress;
     private final String fromName;
+    private String emailFormat;
 
     public MailJetSender(MailjetClient client,
                          EmailRepository emailRepository,
@@ -55,21 +56,20 @@ public class MailJetSender implements EmailSender {
         this.memberProfileRepository = memberProfileRepository;
         this.fromAddress = fromAddress;
         this.fromName = fromName;
+        this.emailFormat = Emailv31.Message.HTMLPART;
     }
 
     /**
      * This call sends a message to the given recipient with attachment.
      * @param subject {@link String} Subject of email
      * @param content {@link String} Contents of email
-     * @param html Whether the email is formatted using HTML
      * @param recipients The array of recipient emails
      */
     @Override
-    public void sendEmail(String subject, String content, boolean html, String... recipients) {
+    public void sendEmail(String subject, String content, String... recipients) {
 
         MailjetRequest request;
         MailjetResponse response;
-        final String emailContentFormat = html ? Emailv31.Message.HTMLPART : Emailv31.Message.TEXTPART;
 
         try {
             JSONArray recipientList = new JSONArray();
@@ -84,7 +84,7 @@ public class MailJetSender implements EmailSender {
                                             .put("Name", fromName))
                                     .put(Emailv31.Message.TO, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
-                                    .put(emailContentFormat, content)));
+                                    .put(emailFormat, content)));
             response = client.post(request);
             LOG.info("Mailjet response status: " + response.getStatus());
             LOG.info("Mailjet response data: " + response.getData());
@@ -99,35 +99,10 @@ public class MailJetSender implements EmailSender {
         }
     }
 
-    /**
-     * Send an email with the default format of HTML
-     * @param subject {@link String} Subject of email
-     * @param content {@link String} Contents of email
-     * @param recipients The array of recipient emails
-     */
-    @Override
-    public void sendEmail(String subject, String content, String... recipients) {
-        this.sendEmail(subject, content, true, recipients);
-    }
-
-    @Override
-    public boolean sendEmailReceivesStatus(String subject, String content, boolean html, String... recipients) {
-        try {
-            sendEmail(subject, content, html, recipients);
-        } catch(Exception e){
-            LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
-            return false;
-        } catch(Error e) {
-            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public boolean sendEmailReceivesStatus(String subject, String content, String... recipients) {
         try {
-            sendEmail(subject, content, true, recipients);
+            sendEmail(subject, content, recipients);
         } catch(Exception e){
             LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
             return false;
@@ -147,8 +122,10 @@ public class MailJetSender implements EmailSender {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
+        this.emailFormat = html ? Emailv31.Message.HTMLPART : Emailv31.Message.TEXTPART;
+
         LocalDateTime sendDate = LocalDateTime.now();
-        boolean status = sendEmailReceivesStatus(subject, content, html, recipients);
+        boolean status = sendEmailReceivesStatus(subject, content, recipients);
 
         UUID senderId = currentUserServices.getCurrentUser().getId();
 
