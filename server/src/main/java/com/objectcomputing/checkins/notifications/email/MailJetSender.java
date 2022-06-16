@@ -20,10 +20,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Singleton;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Requires(property = MailJetSender.FROM_ADDRESS)
 @Requires(property = MailJetSender.FROM_NAME)
@@ -38,6 +36,9 @@ public class MailJetSender implements EmailSender {
 
     public static final String FROM_ADDRESS = "mail-jet.from_address";
     public static final String FROM_NAME = "mail-jet.from_name";
+    public static final String TO_ADDRESS = "checkins@objectcomputing.com";
+    public static final String TO_NAME = "Check-Ins Members";
+    public static final int MAILJET_RECIPIENT_LIMIT = 10;
 
     private final String fromAddress;
     private final String fromName;
@@ -56,6 +57,30 @@ public class MailJetSender implements EmailSender {
         this.fromName = fromName;
     }
 
+    private List<JSONArray> getEmailBatches(String... recipients) {
+        List<String> recipientList = new ArrayList<>(List.of(recipients));
+        Collections.sort(recipientList);
+        List<JSONArray> batches = new ArrayList<>();
+        while (!recipientList.isEmpty()) {
+            // Get only the first n elements limited by MailJet's API
+            List<String> limitedRecipients = recipientList.stream()
+                    .limit(MAILJET_RECIPIENT_LIMIT)
+                    .collect(Collectors.toList());
+
+            // Add each recipient to a JSON array to be sent in a MailJet request
+            JSONArray recipientArray = new JSONArray();
+            for (String recipient : limitedRecipients) {
+                recipientArray.put(new JSONObject().put("Email", recipient));
+            }
+
+            // Update the list of batches and remove emails that have already been added
+            batches.add(recipientArray);
+            recipientList.removeAll(limitedRecipients);
+        }
+
+        return batches;
+    }
+
     /**
      * This call sends a message to the given recipient with attachment.
      * @param subject, {@link String} Subject of email
@@ -64,33 +89,40 @@ public class MailJetSender implements EmailSender {
     @Override
     public void sendEmail(String subject, String content, String... recipients) {
 
-        MailjetRequest request;
-        MailjetResponse response;
-        try {
-            JSONArray recipientList = new JSONArray();
-            for (String recipient: recipients){
-                recipientList.put(new JSONObject().put("Email", recipient));
+        List<JSONArray> emailBatches = getEmailBatches(recipients);
+        List<JSONArray> failedBatches = new ArrayList<>();
+        JSONArray defaultRecipient = new JSONArray().put(new JSONObject()
+                .put("Email", TO_ADDRESS)
+                .put("Name", TO_NAME));
+
+        emailBatches.forEach((recipientList) -> {
+            try {
+                MailjetRequest request = new MailjetRequest(Emailv31.resource)
+                        .property(Emailv31.MESSAGES, new JSONArray()
+                                .put(new JSONObject()
+                                        .put(Emailv31.Message.FROM, new JSONObject()
+                                                .put("Email", fromAddress)
+                                                .put("Name", fromName))
+                                        .put(Emailv31.Message.TO, defaultRecipient)
+                                        .put(Emailv31.Message.BCC, recipientList)
+                                        .put(Emailv31.Message.SUBJECT, subject)
+                                        .put(Emailv31.Message.HTMLPART, content)));
+                MailjetResponse response = client.post(request);
+                LOG.info("Mailjet response status: " + response.getStatus());
+                LOG.info("Mailjet response data: " + response.getData());
+                System.out.println(response.getStatus());
+                System.out.println(response.getData());
+            } catch (MailjetException e) {
+                LOG.error("An unexpected error occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
+                failedBatches.add(recipientList);
+            } catch (MailjetSocketTimeoutException e) {
+                LOG.error("An unexpected timeout occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
+                failedBatches.add(recipientList);
             }
-            request = new MailjetRequest(Emailv31.resource)
-                    .property(Emailv31.MESSAGES, new JSONArray()
-                            .put(new JSONObject()
-                                    .put(Emailv31.Message.FROM, new JSONObject()
-                                            .put("Email", fromAddress)
-                                            .put("Name", fromName))
-                                    .put(Emailv31.Message.TO, recipientList)
-                                    .put(Emailv31.Message.SUBJECT, subject)
-                                    .put(Emailv31.Message.HTMLPART, content)));
-            response = client.post(request);
-            LOG.info("Mailjet response status: " + response.getStatus());
-            LOG.info("Mailjet response data: " + response.getData());
-            System.out.println(response.getStatus());
-            System.out.println(response.getData());
-        } catch(MailjetServerException e) {
-            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
-        } catch(MailjetException e) {
-            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
-        } catch(MailjetSocketTimeoutException e) {
-            LOG.error("An unexpected timeout occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+        });
+
+        if (!failedBatches.isEmpty()) {
+            throw new RuntimeException("Failed to send emails for " + failedBatches);
         }
     }
 
@@ -98,10 +130,10 @@ public class MailJetSender implements EmailSender {
     public boolean sendEmailReceivesStatus(String subject, String content, String... recipients) {
         try {
             sendEmail(subject, content, recipients);
-        } catch(Exception e){
+        } catch (Exception e){
             LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
             return false;
-        } catch(Error e) {
+        } catch (Error e) {
             LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
             return false;
         }
@@ -138,6 +170,8 @@ public class MailJetSender implements EmailSender {
                     }
                 }
             }
+        } else {
+            throw new RuntimeException("Failed to send emails");
         }
 
         return sentEmails;
