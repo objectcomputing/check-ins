@@ -36,8 +36,6 @@ public class MailJetSender implements EmailSender {
 
     public static final String FROM_ADDRESS = "mail-jet.from_address";
     public static final String FROM_NAME = "mail-jet.from_name";
-    public static final String TO_ADDRESS = "checkins@objectcomputing.com";
-    public static final String TO_NAME = "Check-Ins Members";
     public static final int MAILJET_RECIPIENT_LIMIT = 50;
 
     private final String fromAddress;
@@ -91,27 +89,23 @@ public class MailJetSender implements EmailSender {
 
         List<JSONArray> emailBatches = getEmailBatches(recipients);
         List<JSONArray> failedBatches = new ArrayList<>();
-        JSONArray defaultRecipient = new JSONArray().put(new JSONObject()
-                .put("Email", TO_ADDRESS)
-                .put("Name", TO_NAME));
+        JSONArray sender = new JSONArray().put(new JSONObject()
+                .put("Email", fromAddress)
+                .put("Name", fromName));
 
         emailBatches.forEach((recipientList) -> {
+            MailjetRequest request = new MailjetRequest(Emailv31.resource)
+                    .property(Emailv31.MESSAGES, new JSONArray()
+                            .put(new JSONObject()
+                                    .put(Emailv31.Message.FROM, sender)
+                                    .put(Emailv31.Message.TO, sender)
+                                    .put(Emailv31.Message.BCC, recipientList)
+                                    .put(Emailv31.Message.SUBJECT, subject)
+                                    .put(Emailv31.Message.HTMLPART, content)));
             try {
-                MailjetRequest request = new MailjetRequest(Emailv31.resource)
-                        .property(Emailv31.MESSAGES, new JSONArray()
-                                .put(new JSONObject()
-                                        .put(Emailv31.Message.FROM, new JSONObject()
-                                                .put("Email", fromAddress)
-                                                .put("Name", fromName))
-                                        .put(Emailv31.Message.TO, defaultRecipient)
-                                        .put(Emailv31.Message.BCC, recipientList)
-                                        .put(Emailv31.Message.SUBJECT, subject)
-                                        .put(Emailv31.Message.HTMLPART, content)));
                 MailjetResponse response = client.post(request);
                 LOG.info("Mailjet response status: " + response.getStatus());
                 LOG.info("Mailjet response data: " + response.getData());
-                System.out.println(response.getStatus());
-                System.out.println(response.getData());
             } catch (MailjetException e) {
                 LOG.error("An unexpected error occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
                 failedBatches.add(recipientList);

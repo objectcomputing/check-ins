@@ -20,6 +20,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.inject.Inject;
@@ -37,6 +38,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Client("/services/guilds")
     HttpClient client;
 
+    @Mock
     private final EmailSender emailSender = mock(EmailSender.class);
 
     @Inject
