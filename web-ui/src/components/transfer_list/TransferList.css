@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: minmax(270px, 1fr) 7rem minmax(270px, 1fr);
     justify-content: center;
-    align-items: center;
+    align-items: start;
 }
 
 .transfer-list .empty-list-message-container {
@@ -19,4 +19,19 @@
     background-color: #e8e8e8;
     border: 1px dashed #c2c2c2;
     border-radius: 4px;
+}
+
+.transfer-list-filter-container {
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    grid-column-gap: 10px;
+    padding: 8px 16px 16px 16px;
+}
+
+.transfer-list-filter-container .transfer-list-filter-field {
+    width: 100%;
+}
+
+.transfer-list-filter-container .transfer-list-filter {
+    width: 100%;
 }
