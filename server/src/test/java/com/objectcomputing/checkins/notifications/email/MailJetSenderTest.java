@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.notifications.email;
 
+import com.mailjet.client.MailjetClient;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
@@ -15,6 +16,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.inject.Inject;
@@ -23,6 +25,7 @@ import java.util.*;
 
 import static org.mockito.Mockito.mock;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 
 public class MailJetSenderTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
@@ -30,11 +33,20 @@ public class MailJetSenderTest extends TestContainersSuite implements MemberProf
     @Client("/services/email")
     private HttpClient client;
 
+    @Mock
     private final EmailSender emailSender = mock(EmailSender.class);
+
+    @Mock
+    private final MailjetClient mailjetClient = mock(MailjetClient.class);
+
+    @Inject
+    private MailJetSender mailJetSender;
 
     @BeforeEach
     void resetMocks() {
         Mockito.reset(emailSender);
+        Mockito.reset(mailjetClient);
+        mailJetSender.setEmailClient(mailjetClient);
     }
 
     @Test
@@ -84,6 +96,8 @@ public class MailJetSenderTest extends TestContainersSuite implements MemberProf
         assertEquals(admin.getId(), secondEmailRes.getSentBy());
         assertEquals(recipient2.getId(), secondEmailRes.getRecipient());
         assertTrue(secondEmailRes.getTransmissionDate().isAfter(secondEmailRes.getSendDate()));
+
+        verify(emailSender).sendEmail("Email Subject", "Email content", recipient1.getWorkEmail(), recipient2.getWorkEmail());
     }
 
     @Test

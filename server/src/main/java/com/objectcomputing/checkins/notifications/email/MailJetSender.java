@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class MailJetSender implements EmailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
-    private final MailjetClient client;
+    private MailjetClient client;
     private final EmailRepository emailRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileRepository memberProfileRepository;
@@ -53,6 +53,10 @@ public class MailJetSender implements EmailSender {
         this.memberProfileRepository = memberProfileRepository;
         this.fromAddress = fromAddress;
         this.fromName = fromName;
+    }
+
+    public void setEmailClient(MailjetClient client) {
+        this.client = client;
     }
 
     public static List<JSONArray> getEmailBatches(String... recipients) {
