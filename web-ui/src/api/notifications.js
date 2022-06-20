@@ -18,7 +18,7 @@ export const sendReminderNotification = async (feedbackRequestId, recipients, co
   });
 };
 
-export const sendEmail = async (subject, content, recipients, cookie) => {
+export const sendEmail = async (subject, content, html, recipients, cookie) => {
   return resolve({
     method: "post",
     url: emailNewsletterURL,
@@ -26,6 +26,7 @@ export const sendEmail = async (subject, content, recipients, cookie) => {
     data: {
       subject: subject,
       content: content,
+      html: html,
       recipients: recipients
     },
     headers: { "X-CSRF-Header": cookie }
