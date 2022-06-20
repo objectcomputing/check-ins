@@ -60,6 +60,7 @@ public class MailJetSenderTest extends TestContainersSuite implements MemberProf
         Map<String, Object> email = new HashMap<>();
         email.put("subject", "Email Subject");
         email.put("content", "Email content");
+        email.put("html", false);
         email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
 
         final HttpRequest<?> request = HttpRequest.POST("", email)
@@ -96,6 +97,7 @@ public class MailJetSenderTest extends TestContainersSuite implements MemberProf
         Map<String, Object> email = new HashMap<>();
         email.put("subject", "Email Subject");
         email.put("content", "Email content");
+        email.put("html", false);
         email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
 
         final HttpRequest<?> request = HttpRequest.POST("", email)

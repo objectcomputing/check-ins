@@ -31,8 +31,8 @@ public class MailJetNewsletterController {
     }
 
     @Post
-    public Single<HttpResponse<List<Email>>> sendEmail(String subject, String content, String... recipients) {
-        return Single.fromCallable(() -> emailSender.sendAndSaveEmail(subject, content, recipients))
+    public Single<HttpResponse<List<Email>>> sendEmail(String subject, String content, boolean html, String... recipients) {
+        return Single.fromCallable(() -> emailSender.sendAndSaveEmail(subject, content, html, recipients))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(emails -> (HttpResponse<List<Email>>) HttpResponse.created(emails))
                 .subscribeOn(Schedulers.from(ioExecutorService));

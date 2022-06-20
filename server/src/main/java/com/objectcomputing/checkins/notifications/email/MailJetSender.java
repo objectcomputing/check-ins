@@ -7,6 +7,7 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetServerException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
@@ -40,6 +41,7 @@ public class MailJetSender implements EmailSender {
 
     private final String fromAddress;
     private final String fromName;
+    private String emailFormat;
 
     public MailJetSender(MailjetClient client,
                          EmailRepository emailRepository,
@@ -53,6 +55,7 @@ public class MailJetSender implements EmailSender {
         this.memberProfileRepository = memberProfileRepository;
         this.fromAddress = fromAddress;
         this.fromName = fromName;
+        this.emailFormat = Emailv31.Message.HTMLPART;
     }
 
     public static List<JSONArray> getEmailBatches(String... recipients) {
@@ -81,8 +84,9 @@ public class MailJetSender implements EmailSender {
 
     /**
      * This call sends a message to the given recipient with attachment.
-     * @param subject, {@link String} Subject of email
+     * @param subject {@link String} Subject of email
      * @param content {@link String} Contents of email
+     * @param recipients The array of recipient emails
      */
     @Override
     public void sendEmail(String subject, String content, String... recipients) {
@@ -101,7 +105,7 @@ public class MailJetSender implements EmailSender {
                                     .put(Emailv31.Message.TO, sender)
                                     .put(Emailv31.Message.BCC, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
-                                    .put(Emailv31.Message.HTMLPART, content)));
+                                    .put(emailFormat, content)));
             try {
                 MailjetResponse response = client.post(request);
                 LOG.info("Mailjet response status: " + response.getStatus());
@@ -116,7 +120,7 @@ public class MailJetSender implements EmailSender {
         });
 
         if (!failedBatches.isEmpty()) {
-            throw new RuntimeException("Failed to send emails for " + failedBatches);
+            throw new BadArgException("Failed to send emails for " + failedBatches);
         }
     }
 
@@ -135,13 +139,15 @@ public class MailJetSender implements EmailSender {
     }
 
     @Override
-    public List<Email> sendAndSaveEmail(String subject, String content, String... recipients) {
+    public List<Email> sendAndSaveEmail(String subject, String content, boolean html, String... recipients) {
 
         List<Email> sentEmails = new ArrayList<>();
 
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
+
+        this.emailFormat = html ? Emailv31.Message.HTMLPART : Emailv31.Message.TEXTPART;
 
         LocalDateTime sendDate = LocalDateTime.now();
         boolean status = sendEmailReceivesStatus(subject, content, recipients);
@@ -165,7 +171,7 @@ public class MailJetSender implements EmailSender {
                 }
             }
         } else {
-            throw new RuntimeException("Failed to send emails");
+            throw new BadArgException("Failed to send emails");
         }
 
         return sentEmails;
