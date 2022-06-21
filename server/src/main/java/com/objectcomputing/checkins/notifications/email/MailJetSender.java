@@ -6,6 +6,11 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
@@ -30,6 +35,7 @@ public class MailJetSender implements EmailSender {
 
     private final String fromAddress;
     private final String fromName;
+    private String emailFormat;
 
     public MailJetSender(MailjetClient client,
                          @Property(name = FROM_ADDRESS) String fromAddress,
@@ -37,6 +43,7 @@ public class MailJetSender implements EmailSender {
         this.client = client;
         this.fromAddress = fromAddress;
         this.fromName = fromName;
+        this.emailFormat = Emailv31.Message.HTMLPART;
     }
 
     /**
@@ -71,7 +78,7 @@ public class MailJetSender implements EmailSender {
 
     /**
      * This call sends a message to the given recipient with attachment.
-     * @param subject, {@link String} Subject of email
+     * @param subject {@link String} Subject of email
      * @param content {@link String} Contents of email
      * @param recipients List of recipient email addresses
      */
@@ -92,7 +99,7 @@ public class MailJetSender implements EmailSender {
                                     .put(Emailv31.Message.TO, sender)
                                     .put(Emailv31.Message.BCC, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
-                                    .put(Emailv31.Message.HTMLPART, content)));
+                                    .put(emailFormat, content)));
             try {
                 MailjetResponse response = client.post(request);
                 LOG.info("Mailjet response status: " + response.getStatus());
@@ -107,7 +114,7 @@ public class MailJetSender implements EmailSender {
         });
 
         if (!failedBatches.isEmpty()) {
-            throw new RuntimeException("Failed to send emails for " + failedBatches);
+            throw new BadArgException("Failed to send emails for " + failedBatches);
         }
     }
 

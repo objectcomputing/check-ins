@@ -31,7 +31,7 @@ public class EmailController {
     }
 
     @Post
-    public Single<HttpResponse<List<Email>>> sendEmail(String subject, String content, String... recipients) {
+    public Single<HttpResponse<List<Email>>> sendEmail(String subject, String content, boolean html, String... recipients) {
         return Single.fromCallable(() -> emailServices.sendAndSaveEmail(subject, content, recipients))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(emails -> (HttpResponse<List<Email>>) HttpResponse.created(emails))
