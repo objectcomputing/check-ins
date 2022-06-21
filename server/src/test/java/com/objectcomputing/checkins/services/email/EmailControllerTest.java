@@ -69,6 +69,7 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
         Map<String, Object> email = new HashMap<>();
         email.put("subject", "Email Subject");
         email.put("content", "Email content");
+        email.put("html", false);
         email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
 
         when(emailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString())).thenReturn(true);
@@ -109,6 +110,7 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
         Map<String, Object> email = new HashMap<>();
         email.put("subject", "Email Subject");
         email.put("content", "Email content");
+        email.put("html", false);
         email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
 
         final HttpRequest<?> request = HttpRequest.POST("", email)
