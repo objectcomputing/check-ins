@@ -6,4 +6,5 @@ public interface EmailSender {
 
     boolean sendEmailReceivesStatus(String subject, String content, String... recipients);
 
+    void setEmailFormat(String format);
 }

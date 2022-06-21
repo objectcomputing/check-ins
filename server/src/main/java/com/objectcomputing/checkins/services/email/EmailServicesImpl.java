@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.email;
 
+import com.mailjet.client.resource.Emailv31;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -40,7 +41,7 @@ public class EmailServicesImpl implements EmailServices {
     }
 
     @Override
-    public List<Email> sendAndSaveEmail(String subject, String content, String... recipients) {
+    public List<Email> sendAndSaveEmail(String subject, String content, boolean html, String... recipients) {
 
         List<Email> sentEmails = new ArrayList<>();
 
@@ -49,6 +50,7 @@ public class EmailServicesImpl implements EmailServices {
         }
 
         LocalDateTime sendDate = LocalDateTime.now();
+        emailSender.setEmailFormat(html ? Emailv31.Message.HTMLPART : Emailv31.Message.TEXTPART);
         boolean status = emailSender.sendEmailReceivesStatus(subject, content, recipients);
 
         UUID senderId = currentUserServices.getCurrentUser().getId();

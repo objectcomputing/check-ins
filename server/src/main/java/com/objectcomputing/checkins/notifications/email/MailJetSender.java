@@ -7,10 +7,6 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
@@ -123,12 +119,21 @@ public class MailJetSender implements EmailSender {
         try {
             sendEmail(subject, content, recipients);
         } catch (Exception e){
-            LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            LOG.error("An unexpected exception occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
             return false;
         } catch (Error e) {
-            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            LOG.error("An unexpected error occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void setEmailFormat(String format) {
+        if (format.equals(Emailv31.Message.HTMLPART) || format.equals(Emailv31.Message.TEXTPART)) {
+            this.emailFormat = format;
+        } else {
+            throw new BadArgException(String.format("Email format must be either HTMLPART or TEXTPART, got %s", format));
+        }
     }
 }
