@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { getMembersByPDL } from "../../api/member";
-import { getAllCheckins, getCheckinByMemberId } from "../../api/checkins";
+import { getCheckinByMemberId, getCheckinByPdlId } from "../../api/checkins";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_CHECKINS } from "../../context/actions";
 import {
@@ -27,7 +27,7 @@ const Personnel = () => {
   const history = useHistory();
   const csrf = selectCsrfToken(state);
   const id = selectCurrentUserId(state);
-  const [checkins, setCheckins] = useState();
+  const [pastCheckins, setPastCheckins] = useState();
   const [personnel, setPersonnel] = useState();
 
   // Get personnel
@@ -52,6 +52,28 @@ const Personnel = () => {
     }
   }, [csrf, id]);
 
+  // Get former personnel
+  useEffect(() => {
+    async function updatePastCheckins() {
+      if (id) {
+        let res = await getCheckinByPdlId(id, csrf);
+        let data =
+          res.payload.data &&
+          res.payload.data.pdlId === id &&
+          res.payload.status === 200 &&
+          !res.error
+            ? res.payload.data
+            : null;
+        if (data) {
+          setPastCheckins(data);
+        }
+      }
+    }
+    if (csrf) {
+      updatePastCheckins();
+    }
+  }, [csrf, id]);
+
   // Get checkins per personnel
   useEffect(() => {
     async function updateCheckins() {
@@ -73,22 +95,6 @@ const Personnel = () => {
     }
   }, [csrf, personnel, dispatch]);
 
-  // Get other checkins
-  useEffect(() => {
-    async function allOtherCheckins() {
-      let res = await getAllCheckins();
-      let data =
-        res && res.payload && res.payload.status === 200
-          ? res.payload.data
-          : null;
-      if (data.pdlId === id) {
-        setCheckins(data);
-      }
-    }
-    if (csrf) {
-      allOtherCheckins();
-    }
-  });
   // Create feedback request link
   const createFeedbackRequestLink = (memberId) => (
     <span
@@ -133,6 +139,8 @@ const Personnel = () => {
       </ListItem>
     );
   }
+  console.log(personnel);
+  console.log(pastCheckins);
 
   // Create the entries for the personnel container
   const createPersonnelEntries = () => {
@@ -146,10 +154,23 @@ const Personnel = () => {
   };
 
   // Create entries for open checkins for former personnel
-  const createOtherCheckinEntries = () => {
-    if (checkins) {
-      return checkins.map((checkins) =>
-        createEntry(checkins, selectMostRecentCheckin(state), null)
+  const pastCheckinsEntries = () => {
+    if (pastCheckins && pastCheckins.length > 0) {
+      const personnelIds = personnel.map((profile) => profile.id);
+      const pastPersonnelIds = pastCheckins
+        .filter((checkins) => !personnelIds.includes(checkins.memberId))
+        .reduce((personnelIds, checkins) => {
+          if (!personnelIds.includes(checkins.memberId)) {
+            personnelIds.push(checkins.memberId);
+          }
+          return pastPersonnelIds;
+        });
+      return pastCheckins.map((pastPersonnelIds) =>
+        createEntry(
+          pastPersonnelIds,
+          selectMostRecentCheckin(state, pastPersonnelIds),
+          null
+        )
       );
     } else {
       return [];
@@ -161,7 +182,8 @@ const Personnel = () => {
       <CardHeader avatar={<GroupIcon />} title="Development Partners" />
       <List dense>{createPersonnelEntries()}</List>
       <Divider variant="middle" />
-      <List dense>{createOtherCheckinEntries()}</List>
+      <CardHeader avatar={<GroupIcon />} title="Former Partners" />
+      <List dense>{pastCheckinsEntries()}</List>
     </Card>
   );
 };
