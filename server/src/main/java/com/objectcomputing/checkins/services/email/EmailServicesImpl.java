@@ -1,14 +1,15 @@
 package com.objectcomputing.checkins.services.email;
 
-import com.mailjet.client.resource.Emailv31;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,23 +22,30 @@ import java.util.UUID;
 public class EmailServicesImpl implements EmailServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmailServicesImpl.class);
-    private EmailSender emailSender;
+    private EmailSender htmlEmailSender;
+    private EmailSender textEmailSender;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileRepository memberProfileRepository;
     private final EmailRepository emailRepository;
 
-    public EmailServicesImpl(EmailSender emailSender,
+    public EmailServicesImpl(@Named(MailJetConfig.HTML_FORMAT) EmailSender htmlEmailSender,
+                             @Named(MailJetConfig.TEXT_FORMAT) EmailSender textEmailSender,
                              CurrentUserServices currentUserServices,
                              MemberProfileRepository memberProfileRepository,
                              EmailRepository emailRepository) {
-        this.emailSender = emailSender;
+        this.htmlEmailSender = htmlEmailSender;
+        this.textEmailSender = textEmailSender;
         this.currentUserServices = currentUserServices;
         this.memberProfileRepository = memberProfileRepository;
         this.emailRepository = emailRepository;
     }
 
-    public void setEmailSender(EmailSender emailSender) {
-        this.emailSender = emailSender;
+    public void setHtmlEmailSender(EmailSender emailSender) {
+        this.htmlEmailSender = emailSender;
+    }
+
+    public void setTextEmailSender(EmailSender emailSender) {
+        this.textEmailSender = emailSender;
     }
 
     @Override
@@ -50,8 +58,12 @@ public class EmailServicesImpl implements EmailServices {
         }
 
         LocalDateTime sendDate = LocalDateTime.now();
-        emailSender.setEmailFormat(html ? Emailv31.Message.HTMLPART : Emailv31.Message.TEXTPART);
-        boolean status = emailSender.sendEmailReceivesStatus(subject, content, recipients);
+        boolean status;
+        if (html) {
+            status = htmlEmailSender.sendEmailReceivesStatus(subject, content, recipients);
+        } else {
+            status = textEmailSender.sendEmailReceivesStatus(subject, content, recipients);
+        }
 
         UUID senderId = currentUserServices.getCurrentUser().getId();
 

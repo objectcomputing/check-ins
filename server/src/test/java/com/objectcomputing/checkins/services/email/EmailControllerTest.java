@@ -35,15 +35,20 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
     private HttpClient client;
 
     @Mock
-    private final EmailSender emailSender = mock(EmailSender.class);
+    private final EmailSender htmlEmailSender = mock(EmailSender.class);
+
+    @Mock
+    private final EmailSender textEmailSender = mock(EmailSender.class);
 
     @Inject
     private EmailServicesImpl emailServicesImpl;
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(emailSender);
-        emailServicesImpl.setEmailSender(emailSender);
+        Mockito.reset(htmlEmailSender);
+        Mockito.reset(textEmailSender);
+        emailServicesImpl.setHtmlEmailSender(htmlEmailSender);
+        emailServicesImpl.setTextEmailSender(textEmailSender);
     }
 
     @Test
@@ -60,7 +65,7 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
     }
 
     @Test
-    void testSendAndSaveEmail() {
+    void testSendAndSaveHtmlEmail() {
         MemberProfile admin = createADefaultMemberProfile();
         createAndAssignAdminRole(admin);
         MemberProfile recipient1 = createASecondDefaultMemberProfile();
@@ -68,11 +73,11 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
 
         Map<String, Object> email = new HashMap<>();
         email.put("subject", "Email Subject");
-        email.put("content", "Email content");
-        email.put("html", false);
+        email.put("content", "<p>Email content</p>");
+        email.put("html", true);
         email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
 
-        when(emailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString())).thenReturn(true);
+        when(htmlEmailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString())).thenReturn(true);
 
         final HttpRequest<?> request = HttpRequest.POST("", email)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
@@ -97,7 +102,50 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
         assertEquals(recipient2.getId(), secondEmailRes.getRecipient());
         assertTrue(secondEmailRes.getTransmissionDate().isAfter(secondEmailRes.getSendDate()));
 
-        verify(emailSender).sendEmailReceivesStatus("Email Subject", "Email content", recipient1.getWorkEmail(), recipient2.getWorkEmail());
+        verify(htmlEmailSender).sendEmailReceivesStatus("Email Subject", "<p>Email content</p>", recipient1.getWorkEmail(), recipient2.getWorkEmail());
+        verify(textEmailSender, never()).sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void testSendAndSaveTextEmail() {
+        MemberProfile admin = createADefaultMemberProfile();
+        createAndAssignAdminRole(admin);
+        MemberProfile recipient1 = createASecondDefaultMemberProfile();
+        MemberProfile recipient2 = createAThirdDefaultMemberProfile();
+
+        Map<String, Object> email = new HashMap<>();
+        email.put("subject", "Email Subject");
+        email.put("content", "Email content");
+        email.put("html", false);
+        email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
+
+        when(textEmailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString())).thenReturn(true);
+
+        final HttpRequest<?> request = HttpRequest.POST("", email)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<List<Email>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(Email.class));
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(2, response.getBody().get().size());
+
+        Email firstEmailRes = response.getBody().get().get(0);
+        assertEquals(email.get("subject"), firstEmailRes.getSubject());
+        assertEquals(email.get("content"), firstEmailRes.getContents());
+        assertEquals(admin.getId(), firstEmailRes.getSentBy());
+        assertEquals(recipient1.getId(), firstEmailRes.getRecipient());
+        assertTrue(firstEmailRes.getTransmissionDate().isAfter(firstEmailRes.getSendDate()));
+
+        Email secondEmailRes = response.getBody().get().get(1);
+        assertEquals(email.get("subject"), secondEmailRes.getSubject());
+        assertEquals(email.get("content"), secondEmailRes.getContents());
+        assertEquals(admin.getId(), secondEmailRes.getSentBy());
+        assertEquals(recipient2.getId(), secondEmailRes.getRecipient());
+        assertTrue(secondEmailRes.getTransmissionDate().isAfter(secondEmailRes.getSendDate()));
+
+        verify(textEmailSender).sendEmailReceivesStatus("Email Subject", "Email content", recipient1.getWorkEmail(), recipient2.getWorkEmail());
+        verify(htmlEmailSender, never()).sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
