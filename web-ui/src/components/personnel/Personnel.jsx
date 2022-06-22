@@ -107,7 +107,7 @@ const Personnel = () => {
   );
 
   // Create entry of member and their last checkin
-  function createEntry(person, lastCheckin, keyInput) {
+  function personnelEntries(person, lastCheckin, keyInput) {
     let key = keyInput ? keyInput : undefined;
     let name = "Team Member";
     let workEmail = "";
@@ -129,7 +129,6 @@ const Personnel = () => {
             }}
           />
         </ListItemAvatar>
-
         <ListItemText
           primary={name}
           secondary={createFeedbackRequestLink(person.id)}
@@ -137,11 +136,44 @@ const Personnel = () => {
       </ListItem>
     );
   }
+
+  // Create entry of former partners and their last checkin
+  function formerPersonnelEntries(person, lastCheckin, keyInput) {
+    let key = keyInput ? keyInput : undefined;
+    let name = "Team Member";
+    let workEmail = "";
+
+    if (person) {
+      let id = person.id ? person.id : null;
+      name = person.name ? person.name : id ? id : name;
+      workEmail = person.workEmail;
+      key = id && !key ? `${id}Personnel` : key;
+    }
+    return (
+      <ListItem key={key}>
+        <ListItemAvatar>
+          <Avatar
+            alt={name}
+            src={getAvatarURL(workEmail)}
+            onClick={() => {
+              history.push(`/checkins/${person?.id}`);
+            }}
+          />
+        </ListItemAvatar>
+        <ListItemText primary={name} />
+      </ListItem>
+    );
+  }
+
   // Create the entries for the personnel container
   const createPersonnelEntries = () => {
     if (personnel && personnel.length > 0) {
       return personnel.map((person) =>
-        createEntry(person, selectMostRecentCheckin(state, person.id), null)
+        personnelEntries(
+          person,
+          selectMostRecentCheckin(state, person.id),
+          null
+        )
       );
     } else {
       return [];
@@ -149,7 +181,7 @@ const Personnel = () => {
   };
 
   // Create entries for open checkins for former personnel
-  const pastCheckinsEntries = () => {
+  const createFormerPersonnelEntries = () => {
     if (pastCheckins && pastCheckins.length > 0) {
       const personnelIds = personnel.map((person) => person.id);
       const pastPersonnelIds = pastCheckins
@@ -162,7 +194,7 @@ const Personnel = () => {
         }, []);
       return pastPersonnelIds.map((memberId) => {
         const person = selectProfile(state, memberId);
-        return createEntry(
+        return formerPersonnelEntries(
           person,
           selectMostRecentCheckin(state, memberId),
           null
@@ -179,7 +211,7 @@ const Personnel = () => {
       <List dense>{createPersonnelEntries()}</List>
       <Divider variant="middle" />
       <CardHeader avatar={<GroupIcon />} title="Former Partners" />
-      <List dense>{pastCheckinsEntries()}</List>
+      <List dense>{createFormerPersonnelEntries()}</List>
     </Card>
   );
 };
