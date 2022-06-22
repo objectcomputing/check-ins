@@ -83,16 +83,16 @@ public class MailJetSender implements EmailSender {
 
         List<JSONArray> emailBatches = getEmailBatches(recipients);
         List<JSONArray> failedBatches = new ArrayList<>();
-        JSONArray sender = new JSONArray().put(new JSONObject()
+        JSONObject sender = new JSONObject()
                 .put("Email", fromAddress)
-                .put("Name", fromName));
+                .put("Name", fromName);
 
         emailBatches.forEach((recipientList) -> {
             MailjetRequest request = new MailjetRequest(Emailv31.resource)
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
                                     .put(Emailv31.Message.FROM, sender)
-                                    .put(Emailv31.Message.TO, sender)
+                                    .put(Emailv31.Message.TO, new JSONArray().put(sender))
                                     .put(Emailv31.Message.BCC, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
                                     .put(emailFormat, content)));
