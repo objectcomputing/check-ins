@@ -8,6 +8,7 @@ import {
   selectCurrentUserId,
   selectMostRecentCheckin,
   selectCsrfToken,
+  selectProfile,
 } from "../../context/selectors";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -58,10 +59,7 @@ const Personnel = () => {
       if (id) {
         let res = await getCheckinByPdlId(id, csrf);
         let data =
-          res.payload.data &&
-          res.payload.data.pdlId === id &&
-          res.payload.status === 200 &&
-          !res.error
+          res.payload.data && res.payload.status === 200 && !res.error
             ? res.payload.data
             : null;
         if (data) {
@@ -120,7 +118,6 @@ const Personnel = () => {
       workEmail = person.workEmail;
       key = id && !key ? `${id}Personnel` : key;
     }
-
     return (
       <ListItem key={key}>
         <ListItemAvatar>
@@ -132,6 +129,7 @@ const Personnel = () => {
             }}
           />
         </ListItemAvatar>
+
         <ListItemText
           primary={name}
           secondary={createFeedbackRequestLink(person.id)}
@@ -139,9 +137,6 @@ const Personnel = () => {
       </ListItem>
     );
   }
-  console.log(personnel);
-  console.log(pastCheckins);
-
   // Create the entries for the personnel container
   const createPersonnelEntries = () => {
     if (personnel && personnel.length > 0) {
@@ -156,22 +151,23 @@ const Personnel = () => {
   // Create entries for open checkins for former personnel
   const pastCheckinsEntries = () => {
     if (pastCheckins && pastCheckins.length > 0) {
-      const personnelIds = personnel.map((profile) => profile.id);
+      const personnelIds = personnel.map((person) => person.id);
       const pastPersonnelIds = pastCheckins
-        .filter((checkins) => !personnelIds.includes(checkins.memberId))
-        .reduce((personnelIds, checkins) => {
-          if (!personnelIds.includes(checkins.memberId)) {
-            personnelIds.push(checkins.memberId);
+        .filter((checkins) => !personnelIds.includes(checkins.teamMemberId))
+        .reduce((pastIds, checkins) => {
+          if (!personnelIds.includes(checkins.teamMemberId)) {
+            pastIds.push(checkins.teamMemberId);
           }
-          return pastPersonnelIds;
-        });
-      return pastCheckins.map((pastPersonnelIds) =>
-        createEntry(
-          pastPersonnelIds,
-          selectMostRecentCheckin(state, pastPersonnelIds),
+          return pastIds;
+        }, []);
+      return pastPersonnelIds.map((memberId) => {
+        const person = selectProfile(state, memberId);
+        return createEntry(
+          person,
+          selectMostRecentCheckin(state, memberId),
           null
-        )
-      );
+        );
+      });
     } else {
       return [];
     }
