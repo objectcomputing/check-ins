@@ -76,6 +76,19 @@ exports[`renders correctly with null 1`] = `
   padding-bottom: 8px;
 }
 
+.emotion-7 {
+  margin: 0;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  border-width: 0;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.12);
+  border-bottom-width: thin;
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
 <div
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root emotion-0"
 >
@@ -104,6 +117,40 @@ exports[`renders correctly with null 1`] = `
         className="MuiTypography-root MuiTypography-body2 MuiCardHeader-title emotion-5"
       >
         Development Partners
+      </span>
+    </div>
+  </div>
+  <ul
+    className="MuiList-root MuiList-padding MuiList-dense emotion-6"
+  />
+  <hr
+    className="MuiDivider-root MuiDivider-middle emotion-7"
+  />
+  <div
+    className="MuiCardHeader-root emotion-1"
+  >
+    <div
+      className="MuiCardHeader-avatar emotion-2"
+    >
+      <svg
+        aria-hidden={true}
+        className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-3"
+        data-testid="GroupIcon"
+        focusable="false"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+        />
+      </svg>
+    </div>
+    <div
+      className="MuiCardHeader-content emotion-4"
+    >
+      <span
+        className="MuiTypography-root MuiTypography-body2 MuiCardHeader-title emotion-5"
+      >
+        Former Partners
       </span>
     </div>
   </div>
