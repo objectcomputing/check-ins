@@ -8,18 +8,18 @@ import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Requires(property = MailJetSender.FROM_ADDRESS)
 @Requires(property = MailJetSender.FROM_NAME)
-@Singleton
+@Prototype
 public class MailJetSender implements EmailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
@@ -83,16 +83,16 @@ public class MailJetSender implements EmailSender {
 
         List<JSONArray> emailBatches = getEmailBatches(recipients);
         List<JSONArray> failedBatches = new ArrayList<>();
-        JSONArray sender = new JSONArray().put(new JSONObject()
+        JSONObject sender = new JSONObject()
                 .put("Email", fromAddress)
-                .put("Name", fromName));
+                .put("Name", fromName);
 
         emailBatches.forEach((recipientList) -> {
             MailjetRequest request = new MailjetRequest(Emailv31.resource)
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
                                     .put(Emailv31.Message.FROM, sender)
-                                    .put(Emailv31.Message.TO, sender)
+                                    .put(Emailv31.Message.TO, new JSONArray().put(sender))
                                     .put(Emailv31.Message.BCC, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
                                     .put(emailFormat, content)));
