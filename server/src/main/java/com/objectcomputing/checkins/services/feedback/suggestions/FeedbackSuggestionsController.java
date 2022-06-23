@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback.suggestions;
 
-import com.objectcomputing.checkins.services.feedback.FeedbackResponseDTO;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
@@ -12,8 +11,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;

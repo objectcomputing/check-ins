@@ -1,5 +1,4 @@
 package com.objectcomputing.checkins.services.feedback_request;
-import com.objectcomputing.checkins.services.feedback.FeedbackResponseDTO;
 import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
@@ -48,7 +47,7 @@ public class FeedbackRequestController {
      * Create a feedback request
      *
      * @param requestBody {@link FeedbackRequestCreateDTO} New feedback request to create
-     * @return {@link FeedbackResponseDTO}
+     * @return {@link FeedbackRequestResponseDTO}
      */
     @RequiredPermission(Permissions.CAN_CREATE_FEEDBACK_REQUEST)
     @Post()
