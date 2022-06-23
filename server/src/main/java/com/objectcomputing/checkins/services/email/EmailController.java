@@ -7,10 +7,10 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
-import javax.inject.Named;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -31,11 +31,11 @@ public class EmailController {
     }
 
     @Post
-    public Single<HttpResponse<List<Email>>> sendEmail(String subject, String content, boolean html, String... recipients) {
-        return Single.fromCallable(() -> emailServices.sendAndSaveEmail(subject, content, html, recipients))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<List<Email>>> sendEmail(String subject, String content, boolean html, String... recipients) {
+        return Mono.fromCallable(() -> emailServices.sendAndSaveEmail(subject, content, html, recipients))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(emails -> (HttpResponse<List<Email>>) HttpResponse.created(emails))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
 }

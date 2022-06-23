@@ -4,7 +4,6 @@ import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
-import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import io.micronaut.context.annotation.Property;
@@ -102,9 +101,6 @@ public class MailJetSender implements EmailSender {
                 LOG.info("Mailjet response data: " + response.getData());
             } catch (MailjetException e) {
                 LOG.error("An unexpected error occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
-                failedBatches.add(recipientList);
-            } catch (MailjetSocketTimeoutException e) {
-                LOG.error("An unexpected timeout occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
                 failedBatches.add(recipientList);
             }
         });

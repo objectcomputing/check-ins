@@ -12,9 +12,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.time.LocalDate;

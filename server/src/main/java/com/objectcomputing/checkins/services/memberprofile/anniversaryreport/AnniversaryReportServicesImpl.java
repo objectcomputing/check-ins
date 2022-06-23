@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;

@@ -19,7 +19,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTag.EntityType;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -90,9 +90,9 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("Required Body [entityTag] not specified", errors.asText());
+        assertEquals("Required Body [entityTag] not specified", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 

@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.context.annotation.Property;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.time.LocalDate;
 import java.util.*;
 

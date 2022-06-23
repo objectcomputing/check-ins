@@ -13,9 +13,8 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.annotation.Nullable;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

@@ -27,12 +27,12 @@ import io.micronaut.security.rules.SecurityRule;
 import java.time.LocalDate;
 import io.micronaut.core.convert.format.Format;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.util.concurrent.ExecutorService;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.micronaut.scheduling.TaskExecutors;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Controller("/services/pulse-responses")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -62,13 +62,13 @@ public class PulseResponseController {
      * @return
      */
     @Get("/{?teamMemberId,dateFrom,dateTo}")
-    public Single<HttpResponse<Set<PulseResponse>>> findPulseResponses(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom,
+    public Mono<HttpResponse<Set<PulseResponse>>> findPulseResponses(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom,
                                                                        @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,
                                                                        @Nullable UUID teamMemberId) {
-        return Single.fromCallable(() -> pulseResponseServices.findByFields(teamMemberId, dateFrom, dateTo))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> pulseResponseServices.findByFields(teamMemberId, dateFrom, dateTo))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(pulseresponse -> (HttpResponse<Set<PulseResponse>>) HttpResponse.ok(pulseresponse))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
      /**
@@ -79,14 +79,14 @@ public class PulseResponseController {
      */
 
     @Post()
-    public Single<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
+    public Mono<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                                     HttpRequest<PulseResponseCreateDTO> request) {
-        return Single.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(pulseresponse -> {return (HttpResponse<PulseResponse>) HttpResponse
                     .created(pulseresponse)
                     .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), pulseresponse.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
      /**
@@ -96,15 +96,15 @@ public class PulseResponseController {
      * @return {@link HttpResponse<PulseResponse>}
      */
     @Put()
-    public Single<HttpResponse<PulseResponse>> update(@Body @Valid @NotNull PulseResponse pulseResponse,
+    public Mono<HttpResponse<PulseResponse>> update(@Body @Valid @NotNull PulseResponse pulseResponse,
                                                       HttpRequest<PulseResponse> request) {
-        return Single.fromCallable(() -> pulseResponseServices.update(pulseResponse))
-            .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> pulseResponseServices.update(pulseResponse))
+            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
             .map(updatedPulseResponse -> (HttpResponse<PulseResponse>) HttpResponse
                     .ok()
                     .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedPulseResponse.getId()))))
                     .body(updatedPulseResponse))
-            .subscribeOn(Schedulers.from(ioExecutorService));
+            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 
@@ -114,18 +114,18 @@ public class PulseResponseController {
      * @return
      */
     @Get("/{id}")
-    public Single<HttpResponse<PulseResponse>> readRole(@NotNull UUID id) {
-        return Single.fromCallable(() -> {
+    public Mono<HttpResponse<PulseResponse>> readRole(@NotNull UUID id) {
+        return Mono.fromCallable(() -> {
             PulseResponse result = pulseResponseServices.read(id);
             if (result == null) {
                 throw new NotFoundException("No role item for UUID");
             }
             return result;
         })
-        .observeOn(Schedulers.from(eventLoopGroup))
+        .publishOn(Schedulers.fromExecutor(eventLoopGroup))
         .map(pulseresponse -> {
             return (HttpResponse<PulseResponse>)HttpResponse.ok(pulseresponse);
-        }).subscribeOn(Schedulers.from(ioExecutorService));
+        }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 }

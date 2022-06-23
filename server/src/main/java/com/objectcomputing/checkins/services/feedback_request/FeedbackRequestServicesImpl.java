@@ -10,9 +10,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

@@ -13,12 +13,13 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.Set;
@@ -59,13 +60,13 @@ public class FileController {
      * @return {@link HttpResponse<Set<FileInfoDTO>>} Returns a set of FileInfoDTO associated with CheckInId or all files
      */
     @Get("{?id}")
-    public Single<HttpResponse<Set<FileInfoDTO>>> findDocuments(@Nullable UUID id) {
+    public Mono<HttpResponse<Set<FileInfoDTO>>> findDocuments(@Nullable UUID id) {
 
-        return Single.fromCallable(() -> fileServices.findFiles(id))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> fileServices.findFiles(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(fileInfo -> {
                     return (HttpResponse<Set<FileInfoDTO>>)HttpResponse.ok(fileInfo);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -75,11 +76,11 @@ public class FileController {
      * @return {@link HttpResponse<java.io.File>} Returns file
      */
     @Get("/{uploadDocId}/download")
-    public Single<HttpResponse<File>> downloadDocument(@NotNull String uploadDocId) {
-        return Single.fromCallable(() -> fileServices.downloadFiles(uploadDocId))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<File>> downloadDocument(@NotNull String uploadDocId) {
+        return Mono.fromCallable(() -> fileServices.downloadFiles(uploadDocId))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(file -> (HttpResponse<File>) HttpResponse.ok(file))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -89,11 +90,11 @@ public class FileController {
      * @return {@link HttpResponse<FileInfoDTO>} Returns metadata of document uploaded to Google Drive
      */
     @Post(uri = "/{checkInId}", consumes = MediaType.MULTIPART_FORM_DATA)
-    public Single<HttpResponse<FileInfoDTO>> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
-        return Single.fromCallable(() -> fileServices.uploadFile(checkInId, file))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<FileInfoDTO>> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
+        return Mono.fromCallable(() -> fileServices.uploadFile(checkInId, file))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(fileInfo -> (HttpResponse<FileInfoDTO>) HttpResponse.created(fileInfo))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -103,10 +104,10 @@ public class FileController {
      * @return HttpResponse
      */
     @Delete("/{uploadDocId}")
-    public Single<HttpResponse> delete(@NotNull String uploadDocId) {
-        return Single.fromCallable(() -> fileServices.deleteFile(uploadDocId))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse> delete(@NotNull String uploadDocId) {
+        return Mono.fromCallable(() -> fileServices.deleteFile(uploadDocId))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(successFlag -> (HttpResponse)HttpResponse.ok())
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 }
