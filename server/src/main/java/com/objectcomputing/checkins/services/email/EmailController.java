@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.notifications.email;
+package com.objectcomputing.checkins.services.email;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -16,23 +16,23 @@ import java.util.concurrent.ExecutorService;
 
 @Controller("/services/email")
 @Secured(SecurityRule.IS_AUTHENTICATED)
-public class MailJetNewsletterController {
+public class EmailController {
 
-    private final EmailSender emailSender;
+    private final EmailServices emailServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
 
-    public MailJetNewsletterController(EmailSender emailSender,
-                                       EventLoopGroup eventLoopGroup,
-                                       @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
-        this.emailSender = emailSender;
+    public EmailController(EmailServices emailServices,
+                           EventLoopGroup eventLoopGroup,
+                           @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+        this.emailServices = emailServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
     }
 
     @Post
-    public Mono<HttpResponse<List<Email>>> sendEmail(String subject, String content, String... recipients) {
-        return Mono.fromCallable(() -> emailSender.sendAndSaveEmail(subject, content, recipients))
+    public Mono<HttpResponse<List<Email>>> sendEmail(String subject, String content, boolean html, String... recipients) {
+        return Mono.fromCallable(() -> emailServices.sendAndSaveEmail(subject, content, html, recipients))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(emails -> (HttpResponse<List<Email>>) HttpResponse.created(emails))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
