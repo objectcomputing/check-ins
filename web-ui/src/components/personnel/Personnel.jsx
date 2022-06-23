@@ -1,15 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { getMembersByPDL } from "../../api/member";
-import { getCheckinByMemberId, getCheckinByPdlId } from "../../api/checkins";
+// Imports
 import { AppContext } from "../../context/AppContext";
-import { UPDATE_CHECKINS } from "../../context/actions";
+import Avatar from "../avatar/Avatar";
+import { getAvatarURL } from "../../api/api.js";
+import { getCheckinByMemberId, getCheckinByPdlId } from "../../api/checkins";
+import { getMembersByPDL } from "../../api/member";
 import {
   selectCurrentUserId,
-  selectMostRecentCheckin,
   selectCsrfToken,
+  selectMostRecentCheckin,
+  selectMostRecentCheckinWithPDL,
   selectProfile,
 } from "../../context/selectors";
+import { UPDATE_CHECKINS } from "../../context/actions";
+// MUI components
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import Divider from "@mui/material/Divider";
@@ -18,8 +23,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import GroupIcon from "@mui/icons-material/Group";
-import Avatar from "../avatar/Avatar";
-import { getAvatarURL } from "../../api/api.js";
 
 import "./Personnel.css";
 
@@ -196,7 +199,7 @@ const Personnel = () => {
         const person = selectProfile(state, memberId);
         return formerPersonnelEntries(
           person,
-          selectMostRecentCheckin(state, memberId),
+          selectMostRecentCheckinWithPDL(state, memberId),
           null
         );
       });
