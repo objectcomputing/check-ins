@@ -26,7 +26,7 @@ public class MailJetSender implements EmailSender {
 
     public static final String FROM_ADDRESS = "mail-jet.from_address";
     public static final String FROM_NAME = "mail-jet.from_name";
-    public static final int MAILJET_RECIPIENT_LIMIT = 50;
+    public static final int MAILJET_RECIPIENT_LIMIT = 49;
 
     private final String fromAddress;
     private final String fromName;
