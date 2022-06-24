@@ -24,6 +24,7 @@ import {AppContext} from "../../context/AppContext";
 import {getMembersByTeam} from "../../api/team";
 import {getMembersByGuild} from "../../api/guild";
 import {UPDATE_TOAST} from "../../context/actions";
+import {selectMappedUserRoles} from "../../context/selectors";
 
 const not = (a, b) => a.filter((value) => b.indexOf(value) === -1);
 const intersection = (a, b) => a.filter((value) => b.indexOf(value) !== -1);
@@ -34,7 +35,8 @@ const FilterOption = {
   GUILD: "GUILD",
   TEAM: "TEAM",
   TITLE: "TITLE",
-  LOCATION: "LOCATION"
+  LOCATION: "LOCATION",
+  ROLE: "ROLE"
 };
 
 const propTypes = {
@@ -49,7 +51,8 @@ const propTypes = {
 const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChanged, disabled }) => {
 
   const { state, dispatch } = useContext(AppContext);
-  const { memberProfiles, guilds, teams, csrf } = state;
+  const { memberProfiles, guilds, teams, roles, csrf } = state;
+  const mappedUserRoles = selectMappedUserRoles(state);
   const [checked, setChecked] = useState([]);
   const [recipientFilterVisible, setRecipientFilterVisible] = useState(false);
   const [recipientFilter, setRecipientFilter] = useState(FilterOption.NAME);
@@ -69,11 +72,15 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
   memberLocations = [...new Set(memberLocations)];
   memberLocations = memberLocations.map(location => {return {name: location}});
 
+  // Get all roles
+  let memberRoles = roles.map(role => {return {name: role.role}});
+
   const filterOptions = {
     [FilterOption.GUILD]: guilds,
     [FilterOption.TEAM]: teams,
     [FilterOption.TITLE]: memberTitles,
-    [FilterOption.LOCATION]: memberLocations
+    [FilterOption.LOCATION]: memberLocations,
+    [FilterOption.ROLE]: memberRoles
   };
 
   const handleToggle = (value) => {
@@ -172,6 +179,9 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
         case FilterOption.LOCATION:
           filterMembers = (member) => member.location === recipientQuery.name;
           break;
+        case FilterOption.ROLE:
+          filterMembers = (member) => (member.id in mappedUserRoles) && mappedUserRoles[member.id].has(recipientQuery.name);
+          break;
         default:
           console.warn(`Invalid recipient filter ${recipientFilter}`);
           return members;
@@ -194,7 +204,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
     } else {
       setFilteredLeftList(leftList);
     }
-  },[leftList, recipientFilter, recipientQuery, recipientFilterVisible, csrf, dispatch, checked]);
+  },[leftList, recipientFilter, recipientQuery, recipientFilterVisible, csrf, dispatch, checked, mappedUserRoles]);
 
   const customList = (title, items, emptyMessage, includeFilter) => {
     items = items.sort((a, b) => a.name.localeCompare(b.name));
@@ -284,6 +294,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
                   <MenuItem value={FilterOption.TEAM}>Team</MenuItem>
                   <MenuItem value={FilterOption.TITLE}>Title</MenuItem>
                   <MenuItem value={FilterOption.LOCATION}>Location</MenuItem>
+                  <MenuItem value={FilterOption.ROLE}>Role</MenuItem>
                 </Select>
               </FormControl>
             </div>
