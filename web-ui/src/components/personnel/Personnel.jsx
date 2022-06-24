@@ -31,8 +31,9 @@ const Personnel = () => {
   const history = useHistory();
   const csrf = selectCsrfToken(state);
   const id = selectCurrentUserId(state);
-  const [pastCheckins, setPastCheckins] = useState();
-  const [personnel, setPersonnel] = useState();
+  // const [pastCheckins, setPastCheckins] = useState([]);
+  const [pastPersonnelIds, setPastPersonnelIds] = useState([]);
+  const [personnel, setPersonnel] = useState([]);
 
   // Get personnel
   useEffect(() => {
@@ -45,7 +46,7 @@ const Personnel = () => {
           res.payload.status === 200 &&
           !res.error
             ? res.payload.data
-            : null;
+            : [];
         if (data) {
           setPersonnel(data);
         }
@@ -58,36 +59,37 @@ const Personnel = () => {
 
   // Get former personnel
   useEffect(() => {
+    console.log(id, csrf);
     async function updatePastCheckins() {
       if (id) {
         let res = await getCheckinByPdlId(id, csrf);
         let data =
           res.payload.data && res.payload.status === 200 && !res.error
             ? res.payload.data
-            : null;
+            : [];
         if (data) {
-          setPastCheckins(data);
+          // setPastCheckins(data);
+          setPastPersonnelIds(getPastPersonnelIds(data));
         }
       }
     }
     if (csrf) {
       updatePastCheckins();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csrf, id]);
 
   // Get checkins per personnel
   useEffect(() => {
     async function updateCheckins() {
-      if (personnel) {
-        for (const person of personnel) {
-          let res = await getCheckinByMemberId(person.id, csrf);
-          let data =
-            res && res.payload && res.payload.status === 200
-              ? res.payload.data
-              : null;
-          if (data && data.length > 0 && !res.error) {
-            dispatch({ type: UPDATE_CHECKINS, payload: data });
-          }
+      for (const person of personnel) {
+        let res = await getCheckinByMemberId(person.id, csrf);
+        let data =
+          res && res.payload && res.payload.status === 200
+            ? res.payload.data
+            : null;
+        if (data && data.length > 0 && !res.error) {
+          dispatch({ type: UPDATE_CHECKINS, payload: data });
         }
       }
     }
@@ -170,51 +172,56 @@ const Personnel = () => {
 
   // Create the entries for the personnel container
   const createPersonnelEntries = () => {
-    if (personnel && personnel.length > 0) {
-      return personnel.map((person) =>
-        personnelEntries(
-          person,
-          selectMostRecentCheckin(state, person.id),
-          null
-        )
-      );
-    } else {
-      return [];
-    }
+    return personnel.map((person) =>
+      personnelEntries(person, selectMostRecentCheckin(state, person.id), null)
+    );
   };
 
   // Create entries for open checkins for former personnel
   const createFormerPersonnelEntries = () => {
-    if (pastCheckins && pastCheckins.length > 0) {
-      const personnelIds = personnel.map((person) => person.id);
-      const pastPersonnelIds = pastCheckins
-        .filter((checkins) => !personnelIds.includes(checkins.teamMemberId))
-        .reduce((pastIds, checkins) => {
-          if (!personnelIds.includes(checkins.teamMemberId)) {
-            pastIds.push(checkins.teamMemberId);
-          }
-          return pastIds;
-        }, []);
-      return pastPersonnelIds.map((memberId) => {
-        const person = selectProfile(state, memberId);
-        return formerPersonnelEntries(
-          person,
-          selectMostRecentCheckinWithPDL(state, memberId),
-          null
-        );
-      });
-    } else {
-      return [];
-    }
+    // if (pastPersonnelIds.length >0)
+    // if (pastCheckins.length > 0) {
+    // const pastPersonnelIds = getPastPersonnelIds(pastCheckins);
+    return pastPersonnelIds.map((memberId) => {
+      const person = selectProfile(state, memberId);
+      return formerPersonnelEntries(
+        person,
+        selectMostRecentCheckinWithPDL(state, memberId),
+        null
+      );
+    });
+    // } else {
+    //   return [];
+    // }
   };
+
+  function getPastPersonnelIds(pastCheckins) {
+    console.log("past checkins: ", pastCheckins);
+    const personnelIds = personnel.map((person) => person.id);
+    const result = pastCheckins
+      .filter((checkins) => !personnelIds.includes(checkins.teamMemberId))
+      .reduce((pastIds, checkins) => {
+        if (!personnelIds.includes(checkins.teamMemberId)) {
+          pastIds.push(checkins.teamMemberId);
+        }
+        return pastIds;
+      }, []);
+    console.log("result: ", result);
+    return result;
+  }
 
   return (
     <Card>
       <CardHeader avatar={<GroupIcon />} title="Development Partners" />
       <List dense>{createPersonnelEntries()}</List>
-      <Divider variant="middle" />
-      <CardHeader avatar={<GroupIcon />} title="Former Partners" />
-      <List dense>{createFormerPersonnelEntries()}</List>
+      {/* {getPastPersonnelIds(pastCheckins).length > 0 && ( */}
+      {pastPersonnelIds.length > 0 && (
+        <>
+          <Divider variant="middle" />
+          <CardHeader avatar={<GroupIcon />} title="Former Partners" />
+          <List dense>{createFormerPersonnelEntries()}</List>
+        </>
+      )}
     </Card>
   );
 };
