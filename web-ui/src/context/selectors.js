@@ -205,12 +205,13 @@ export const selectMostRecentCheckin = createSelector(
 
 export const selectMostRecentCheckinWithPDL = createSelector(
   selectCheckinsForMember,
-  (checkins) => {
+  (state, memberId, pdlId) => pdlId,
+  (checkins, pdlId) => {
     if (checkins && checkins.length > 0) {
       return (
         checkins &&
         checkins[checkins.length - 1] &&
-        checkins[checkins.length - 1].pdlId
+        checkins[checkins.length - 1].pdlId === pdlId
       );
     }
   }

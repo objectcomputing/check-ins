@@ -31,9 +31,15 @@ const Personnel = () => {
   const history = useHistory();
   const csrf = selectCsrfToken(state);
   const id = selectCurrentUserId(state);
-  // const [pastCheckins, setPastCheckins] = useState([]);
-  const [pastPersonnelIds, setPastPersonnelIds] = useState([]);
+  const [pastCheckins, setPastCheckins] = useState(null);
+  const [pastPersonnelIds, setPastPersonnelIds] = useState(null);
   const [personnel, setPersonnel] = useState([]);
+
+  useEffect(() => {
+    if(pastCheckins && personnel) {
+      setPastPersonnelIds(getPastPersonnelIds(pastCheckins))
+    }
+  }, [pastCheckins, personnel])
 
   // Get personnel
   useEffect(() => {
@@ -59,7 +65,6 @@ const Personnel = () => {
 
   // Get former personnel
   useEffect(() => {
-    console.log(id, csrf);
     async function updatePastCheckins() {
       if (id) {
         let res = await getCheckinByPdlId(id, csrf);
@@ -68,8 +73,7 @@ const Personnel = () => {
             ? res.payload.data
             : [];
         if (data) {
-          // setPastCheckins(data);
-          setPastPersonnelIds(getPastPersonnelIds(data));
+          setPastCheckins(data);
         }
       }
     }
@@ -179,43 +183,34 @@ const Personnel = () => {
 
   // Create entries for open checkins for former personnel
   const createFormerPersonnelEntries = () => {
-    // if (pastPersonnelIds.length >0)
-    // if (pastCheckins.length > 0) {
-    // const pastPersonnelIds = getPastPersonnelIds(pastCheckins);
     return pastPersonnelIds.map((memberId) => {
       const person = selectProfile(state, memberId);
       return formerPersonnelEntries(
         person,
-        selectMostRecentCheckinWithPDL(state, memberId),
+        selectMostRecentCheckinWithPDL(state, memberId, id),
         null
       );
     });
-    // } else {
-    //   return [];
-    // }
   };
 
+  // Get IDs for former personnel based on past checkins
   function getPastPersonnelIds(pastCheckins) {
-    console.log("past checkins: ", pastCheckins);
     const personnelIds = personnel.map((person) => person.id);
     const result = pastCheckins
       .filter((checkins) => !personnelIds.includes(checkins.teamMemberId))
       .reduce((pastIds, checkins) => {
-        if (!personnelIds.includes(checkins.teamMemberId)) {
           pastIds.push(checkins.teamMemberId);
-        }
         return pastIds;
       }, []);
-    console.log("result: ", result);
     return result;
   }
-
+  
   return (
     <Card>
       <CardHeader avatar={<GroupIcon />} title="Development Partners" />
       <List dense>{createPersonnelEntries()}</List>
-      {/* {getPastPersonnelIds(pastCheckins).length > 0 && ( */}
-      {pastPersonnelIds.length > 0 && (
+      {/* If there are no former personnel, the following code will not be rendered */}
+      {pastPersonnelIds && pastPersonnelIds.length > 0 && (
         <>
           <Divider variant="middle" />
           <CardHeader avatar={<GroupIcon />} title="Former Partners" />
