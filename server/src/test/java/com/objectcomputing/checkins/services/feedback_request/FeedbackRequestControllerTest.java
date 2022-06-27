@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
@@ -24,10 +25,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
@@ -366,8 +368,10 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message").asText();
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("requestBody.requesteeId: must not be null", responseException.getMessage());
+        assertEquals("requestBody.requesteeId: must not be null", error);
     }
 
     @Test
@@ -408,8 +412,10 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message").asText();
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("requestBody.recipientId: must not be null", responseException.getMessage());
+        assertEquals("requestBody.recipientId: must not be null", error);
     }
 
     @Test
@@ -430,8 +436,10 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message").asText();
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("requestBody.templateId: must not be null", responseException.getMessage());
+        assertEquals("requestBody.templateId: must not be null", error);
     }
 
     @Test

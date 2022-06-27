@@ -7,7 +7,7 @@ import com.mailjet.client.resource.Emailv31;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 @Factory
 public class MailJetConfig {
@@ -17,7 +17,13 @@ public class MailJetConfig {
 
     @Bean
     MailjetClient getClient() {
-        return new MailjetClient(System.getenv("MJ_APIKEY_PUBLIC"), System.getenv("MJ_APIKEY_PRIVATE"), new ClientOptions("v3.1"));
+        return new MailjetClient(
+                ClientOptions
+                        .builder()
+                        .apiKey(System.getenv("MJ_APIKEY_PUBLIC"))
+                        .apiSecretKey(System.getenv("MJ_APIKEY_PRIVATE"))
+                        .build()
+        );
     }
 
     @Bean
