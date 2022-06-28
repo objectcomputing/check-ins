@@ -10,6 +10,20 @@ function AccessCodePage() {
     <div>
       <center>
         <h1>Please Enter in your Access Code:</h1>
+        <Box
+          component="form"
+          sx={{
+            "& > :not(style)": { m: 1, width: "50ch" },
+          }}
+          noValidate
+          autoComplete="off"
+        >
+          <TextField
+            id="outlined-basic"
+            label="Access Code:"
+            variant="outlined"
+          />
+        </Box>
       </center>
       <Link to="/culturevideo">
         <Button variant="contained" size="large" id="cultureVideo">
