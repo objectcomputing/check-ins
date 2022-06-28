@@ -2,7 +2,13 @@ import React, { useContext } from "react";
 import { Switch, Route } from "react-router-dom";
 import Header from "../header/Header";
 import HomePage from "../../pages/HomePage";
-import Test from "../../pages/Test";
+import CultureVideoPage from "../../pages/CultureVideoPage";
+import AccessCodePage from "../../pages/AccessCodePage";
+import BackgroundInformationPage from "../../pages/BackgroundInformationPage";
+import IntroductionSurveyPage from "../../pages/IntroductionSurveyPage";
+import WorkingLocationPage from "../../pages/WorkingLocationPage";
+import EquipmentPage from "../../pages/EquipmentPage";
+import DocumentSigningPage from "../../pages/DocumentSigningPage";
 
 export default function NewUserRoutes() {
   return (
@@ -12,7 +18,31 @@ export default function NewUserRoutes() {
         <HomePage />
       </Route>
       <Route path="/onboarding">
-        <Test />
+        <CultureVideoPage />
+      </Route>
+
+      <Route path="/accesscode">
+        <AccessCodePage />
+      </Route>
+
+      <Route path="/backgroundinformation">
+        <BackgroundInformationPage />
+      </Route>
+
+      <Route path="/survey">
+        <IntroductionSurveyPage />
+      </Route>
+
+      <Route path="/worklocation">
+        <WorkingLocationPage />
+      </Route>
+
+      <Route path="/equipment">
+        <EquipmentPage />
+      </Route>
+
+      <Route path="/documents">
+        <DocumentSigningPage />
       </Route>
     </Switch>
   );
