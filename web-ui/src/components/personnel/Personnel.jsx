@@ -35,12 +35,6 @@ const Personnel = () => {
   const [pastPersonnelIds, setPastPersonnelIds] = useState(null);
   const [personnel, setPersonnel] = useState([]);
 
-  useEffect(() => {
-    if(pastCheckins && personnel) {
-      setPastPersonnelIds(getPastPersonnelIds(pastCheckins))
-    }
-  }, [getPastPersonnelIds, pastCheckins, personnel])
-
   // Get personnel
   useEffect(() => {
     async function updatePersonnel() {
@@ -194,7 +188,7 @@ const Personnel = () => {
   };
 
   // Get IDs for former personnel based on past checkins
-  useCallback(() => function getPastPersonnelIds(pastCheckins) {
+  const getPastPersonnelIds = (pastCheckins) => {
     const personnelIds = personnel.map((person) => person.id);
     const result = pastCheckins
       .filter((checkins) => !personnelIds.includes(checkins.teamMemberId))
@@ -203,7 +197,13 @@ const Personnel = () => {
         return pastIds;
       }, []);
     return result;
-  }, [pastCheckins]);
+  };
+
+  useEffect(() => {
+    if(pastCheckins && personnel) {
+      setPastPersonnelIds(getPastPersonnelIds(pastCheckins))
+    }
+  }, [getPastPersonnelIds, pastCheckins, personnel])
   
   return (
     <Card>
