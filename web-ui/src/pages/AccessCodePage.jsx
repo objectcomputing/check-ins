@@ -13,7 +13,7 @@ function AccessCodePage() {
 
   return (
     <div>
-<<<<<<< HEAD
+{/* <<<<<<< HEAD
       <div className="page_body">
         <div className="page_content">
           <center>
@@ -26,7 +26,7 @@ function AccessCodePage() {
           </Link>
         </div>
       </div>
-=======
+======= */}
       <center>
         <h1>Please Enter in your Access Code Below</h1>
       </center>
@@ -54,7 +54,6 @@ function AccessCodePage() {
       <Button variant="contained" size="large" id="submitCode">
         Submit
       </Button>
->>>>>>> 0757d3feaf52bf14265be69e83085d3f812d6e9d
     </div>
   );
 }
