@@ -39,7 +39,7 @@ const Personnel = () => {
     if(pastCheckins && personnel) {
       setPastPersonnelIds(getPastPersonnelIds(pastCheckins))
     }
-  }, [pastCheckins, personnel])
+  }, [getPastPersonnelIds, pastCheckins, personnel])
 
   // Get personnel
   useEffect(() => {
