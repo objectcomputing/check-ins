@@ -9,6 +9,7 @@ import IntroductionSurveyPage from "../../pages/IntroductionSurveyPage";
 import WorkingLocationPage from "../../pages/WorkingLocationPage";
 import EquipmentPage from "../../pages/EquipmentPage";
 import DocumentSigningPage from "../../pages/DocumentSigningPage";
+import Congratulations from "../../pages/CongratulationsPage";
 
 export default function NewUserRoutes() {
   return (
@@ -17,7 +18,7 @@ export default function NewUserRoutes() {
         <Header />
         <HomePage />
       </Route>
-      <Route path="/onboarding">
+      <Route path="/culturevideo">
         <CultureVideoPage />
       </Route>
 
@@ -43,6 +44,10 @@ export default function NewUserRoutes() {
 
       <Route path="/documents">
         <DocumentSigningPage />
+      </Route>
+
+      <Route path="/congratulations">
+        <Congratulations />
       </Route>
     </Switch>
   );

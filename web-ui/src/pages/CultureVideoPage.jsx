@@ -1,6 +1,8 @@
 import react from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@mui/material";
 
-const CultureVideoPage= () => {
+function CultureVideoPage() {
   return (
     <div>
       <center>
@@ -17,8 +19,11 @@ const CultureVideoPage= () => {
           allowfullscreen
         ></iframe>
       </center>
+      <Link to="/backgroundinformation">
+        <Button>Go to Background Information.</Button>
+      </Link>
     </div>
   );
-};
+}
 
 export default CultureVideoPage;
