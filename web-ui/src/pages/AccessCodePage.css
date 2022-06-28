@@ -1,7 +1,18 @@
 #cultureVideo {
   text-transform: unset !important;
-
-  position: absolute;
-  left: 5%;
-  bottom: 5%;
+  /* position: absolute; */
+  /* left: 5%;
+  bottom: 5%; */
+  margin-left: 80%;
 }
+
+.page_body {
+  display: flex;
+}
+
+.page_content {
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+}
+
