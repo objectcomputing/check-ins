@@ -203,7 +203,7 @@ const Personnel = () => {
         return pastIds;
       }, []);
     return result;
-  }, [pastCheckins]}
+  }, [pastCheckins]});
   
   return (
     <Card>
