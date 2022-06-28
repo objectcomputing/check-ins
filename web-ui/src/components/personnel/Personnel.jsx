@@ -194,7 +194,7 @@ const Personnel = () => {
   };
 
   // Get IDs for former personnel based on past checkins
-  function getPastPersonnelIds(pastCheckins) {
+  useCallback(() => {function getPastPersonnelIds(pastCheckins) {
     const personnelIds = personnel.map((person) => person.id);
     const result = pastCheckins
       .filter((checkins) => !personnelIds.includes(checkins.teamMemberId))
@@ -203,7 +203,7 @@ const Personnel = () => {
         return pastIds;
       }, []);
     return result;
-  }
+  }, [pastCheckins]}
   
   return (
     <Card>
