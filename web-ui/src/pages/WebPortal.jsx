@@ -21,38 +21,37 @@ function WebPortal() {
     },
     {
       index: 1,
-      name: "About You Survey",
-      title: "Lorem ipsum",
+      name: "Job Application",
       completed: false,
       child: <BackgroundInformationPage />,
     },
     {
       index: 2,
+      name: "About You Survey",
+      title: "Lorem ipsum",
+      completed: false,
+      child: <IntroductionSurveyPage />,
+    },
+    {
+      index: 3,
       name: "Work Preference",
       title: "Lorem ipsum",
       completed: false,
       child: <WorkingLocationPage />,
     },
     {
-      index: 3,
+      index: 4,
       name: "Computer and Accessories",
       title: "Lorem ipsum",
       completed: false,
       child: <EquipmentPage />,
     },
     {
-      index: 4,
+      index: 5,
       name: "Internal Document Signing",
       title: "Lorem ipsum",
       completed: false,
       child: <DocumentSigningPage />,
-    },
-    {
-      index: 5,
-      name: "Check-Ins Skills",
-      title: "Lorem ipsum",
-      completed: false,
-      child: <IntroductionSurveyPage />,
     },
     {
       index: 6,
@@ -62,6 +61,7 @@ function WebPortal() {
       child: <Congratulations />,
     },
   ];
+
 
   const fillCheckMark = () => {};
 
