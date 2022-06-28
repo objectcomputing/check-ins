@@ -1,6 +1,5 @@
 #location {
   text-transform: unset !important;
-
   position: absolute;
   left: 5%;
   bottom: 5%;
@@ -8,7 +7,6 @@
 
 #documentSigning {
   text-transform: unset !important;
-
   position: absolute;
   right: 5%;
   bottom: 5%;
