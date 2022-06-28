@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import "./WebPortal.css";
 import RightSidebar from "../components/onboarding_sidebar/RightSidebar";
 import CultureVideoPage from "./CultureVideoPage";
@@ -9,8 +9,6 @@ import EquipmentPage from "./EquipmentPage";
 import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
 import { Container } from "@mui/material";
-
-
 
 function WebPortal() {
   const menuList = [
