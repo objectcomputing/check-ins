@@ -1,6 +1,7 @@
 import react from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
+import "./CultureVideoPage.css";
 
 function CultureVideoPage() {
   return (
@@ -20,7 +21,9 @@ function CultureVideoPage() {
         ></iframe>
       </center>
       <Link to="/backgroundinformation">
-        <Button>Go to Background Information.</Button>
+        <Button variant="contained" size="large" id="backgroundInformation">
+          Background Information
+        </Button>
       </Link>
     </div>
   );

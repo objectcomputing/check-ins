@@ -1,6 +1,8 @@
 import react from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
+import "./IntroductionSurveyPage.css";
+
 const IntroductionSurveyPage = () => {
   return (
     <div>
@@ -8,10 +10,14 @@ const IntroductionSurveyPage = () => {
         <h1>You Know About Us Now! Tell Us About You!</h1>
       </center>
       <Link to="/backgroundinformation">
-        <Button>Go to background information survey</Button>
+        <Button variant="contained" size="large" id="backgroundInformation">
+          Background Information Survey
+        </Button>
       </Link>
       <Link to="/worklocation">
-        <Button>Go to work location page</Button>
+        <Button variant="contained" size="large" id="workLocation">
+          Work Location
+        </Button>
       </Link>
     </div>
   );

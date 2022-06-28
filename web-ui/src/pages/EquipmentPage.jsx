@@ -1,6 +1,7 @@
 import react from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
+import "./EquipmentPage.css";
 
 const EquipmentPage = () => {
   return (
@@ -9,10 +10,14 @@ const EquipmentPage = () => {
         <h1>Please select your computer Prefrence</h1>
       </center>
       <Link to="/worklocation">
-        <Button>Go to work location page</Button>
+        <Button variant="contained" size="large" id="location">
+          Work Location
+        </Button>
       </Link>
       <Link to="/documents">
-        <Button>Go to work document signing page</Button>
+        <Button variant="contained" size="large" id="documentSigning">
+          Document Signing
+        </Button>
       </Link>
     </div>
   );
