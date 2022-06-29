@@ -10,7 +10,7 @@ const Congratulations = () => {
         <h1>Congratulations!</h1>
         <h2>
           <br />
-          Thank you for completeing your job application.
+          Thank you for completing your job application.
           <br />
           You will be receiving information about accessing your ADP account
           soon from HR via email.
@@ -31,4 +31,3 @@ const Congratulations = () => {
 };
 
 export default Congratulations;
-
