@@ -101,13 +101,36 @@ function WebPortal() {
             padding: "0px !important",
           }}
         >
-          <RightSidebar
-            currentPageIndex={currentPageIndex}
-            handleChange={handleChange}
-            data={data}
-            handleChangeSidebar={handleChangeSidebar}
-          />
-          <Button onClick={submitHandler}>Submit</Button>
+          <div className="container_content">
+            <RightSidebar
+              currentPageIndex={currentPageIndex}
+              handleChange={handleChange}
+              data={data}
+              handleChangeSidebar={handleChangeSidebar}
+            />
+          </div>
+          <Button 
+          sx ={{
+            "&:hover": {
+              color: 'gray',
+              backgroundColor: 'lightgray'
+            },
+            maxWidth:800,
+            fontSize:40,
+            bgcolor:"lightgreen",
+            color:"white",
+            
+            //button positioning 
+            zIndex:"modal",
+            position:"absolute",
+            bottom: "15%",
+            right: "20%"
+          }}
+           
+          className="submitButton" 
+          onClick={submitHandler}>
+            Next
+          </Button>
         </Container>
       </div>
     </div>
