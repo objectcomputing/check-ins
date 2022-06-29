@@ -21,11 +21,9 @@ function CultureVideoPage() {
         ></iframe>
       </center>
       <Link to="/backgroundinformation">
-        <div id="backgroundInformation">
-          <Button variant="contained" size="large">
-            Background Information
-          </Button>
-        </div>
+        <Button variant="contained" size="large" id="backgroundInformation">
+          Background Information
+        </Button>
       </Link>
     </div>
   );
