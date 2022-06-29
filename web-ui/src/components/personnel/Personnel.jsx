@@ -188,22 +188,21 @@ const Personnel = () => {
   };
 
   // Get IDs for former personnel based on past checkins
-  const getPastPersonnelIds = (pastCheckins) => {
-    const personnelIds = personnel.map((person) => person.id);
-    const result = pastCheckins
-      .filter((checkins) => !personnelIds.includes(checkins.teamMemberId))
-      .reduce((pastIds, checkins) => {
-          pastIds.push(checkins.teamMemberId);
-        return pastIds;
-      }, []);
-    return result;
-  };
-
   useEffect(() => {
+    const getPastPersonnelIds = (pastCheckins) => {
+      const personnelIds = personnel.map((person) => person.id);
+      const result = pastCheckins
+        .filter((checkins) => !personnelIds.includes(checkins.teamMemberId))
+        .reduce((pastIds, checkins) => {
+            pastIds.push(checkins.teamMemberId);
+          return pastIds;
+        }, []);
+      return result;
+    };
     if(pastCheckins && personnel) {
       setPastPersonnelIds(getPastPersonnelIds(pastCheckins))
     }
-  }, [getPastPersonnelIds, pastCheckins, personnel])
+  }, [pastCheckins, personnel])
   
   return (
     <Card>
