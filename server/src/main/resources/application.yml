@@ -49,6 +49,11 @@ micronaut:
         get-allowed: true
     intercept-url-map:
       -
+        pattern: /onboard/**
+        http-method: GET
+        access:
+          - isAnonymous()
+      -
         pattern: /**
         http-method: GET
         access:
