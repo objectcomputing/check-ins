@@ -11,8 +11,8 @@ function CultureVideoPage() {
       </center>
       <center>
         <iframe
-          width="100%"
-          height="720px"
+          width="1280"
+          height="720"
           src="https://www.youtube.com/embed/D7Ka15wQL5U"
           title="YouTube video player"
           frameborder="0"
@@ -21,6 +21,7 @@ function CultureVideoPage() {
         ></iframe>
       </center>
       <Link to="/backgroundinformation">
+        <div></div>
         <Button variant="contained" size="large" id="backgroundInformation">
           Background Information
         </Button>

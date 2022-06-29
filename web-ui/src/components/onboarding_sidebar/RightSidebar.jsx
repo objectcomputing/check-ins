@@ -41,7 +41,7 @@ function RightSidebar({ menuList }) {
         flexGrow: 1,
         bgcolor: "background.paper",
         display: "flex",
-        minHeight: "calc(100vh - 64px)"
+        minHeight: "100vh",
       }}
     >
       <Tabs
@@ -54,7 +54,7 @@ function RightSidebar({ menuList }) {
           borderColor: "divider",
           backgroundColor: "#dfdfdf",
           color: "#000",
-          "& .Mui-selected": { color: "Yellow !important", fontWeight: 'bold' },
+          "& .Mui-selected": { color: "Yellow !important", fontWeight: "bold" },
           "& .MuiButtonBase-root": {
             alignItems: "flex-start",
             textTransform: "none",
@@ -101,7 +101,8 @@ function RightSidebar({ menuList }) {
                               color: lightBlue[600],
                             },
                           }}
-                          disabled Check
+                          disabled
+                          Check
                         />
                       )}
                     </div>
