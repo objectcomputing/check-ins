@@ -6,10 +6,8 @@ import "./RightSidebar.css";
 import { Checkbox } from "@mui/material";
 import { lightBlue } from "@mui/material/colors";
 
-function RightSidebar({ menuList }) {
-  const [val, setValue] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
-
+function RightSidebar({ menuList, currentValue }) {
+  const [val, setValue] = useState(currentValue);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -38,7 +36,7 @@ function RightSidebar({ menuList }) {
         flexGrow: 1,
         bgcolor: "background.paper",
         display: "flex",
-        minHeight: "calc(100vh - 64px)"
+        minHeight: "calc(100vh - 64px)",
       }}
     >
       <Tabs
@@ -51,7 +49,7 @@ function RightSidebar({ menuList }) {
           borderColor: "divider",
           backgroundColor: "#dfdfdf",
           color: "#000",
-          "& .Mui-selected": { color: "Yellow !important", fontWeight: 'bold' },
+          "& .Mui-selected": { color: "Yellow !important", fontWeight: "bold" },
           "& .MuiButtonBase-root": {
             alignItems: "flex-start",
             textTransform: "none",
@@ -77,30 +75,16 @@ function RightSidebar({ menuList }) {
                 label={
                   <div className="sidebar__item">
                     <div className="sidebar__check">
-                      {!isCompleted && (
-                        <Checkbox
-                          {...label}
-                          sx={{
-                            color: lightBlue[800],
-                            "&.Mui-checked": {
-                              color: lightBlue[600],
-                            },
-                          }}
-                          disabled
-                        />
-                      )}
-                      {isCompleted && (
-                        <Checkbox
-                          {...label}
-                          sx={{
-                            color: lightBlue[800],
-                            "&.Mui-checked": {
-                              color: lightBlue[600],
-                            },
-                          }}
-                          disabled Check
-                        />
-                      )}
+                      <Checkbox
+                        checked={menuItem.completed}
+                        {...label}
+                        sx={{
+                          color: lightBlue[800],
+                          "&.Mui-checked": {
+                            color: lightBlue[600],
+                          },
+                        }}
+                      />
                     </div>
 
                     <div className="sidebar__title">
@@ -117,7 +101,7 @@ function RightSidebar({ menuList }) {
         menuList.map((menuItem, i) => {
           return (
             <TabPanel
-              value={val}
+              value={currentValue}
               index={menuItem.index}
               key={menuItem.index}
               className="wrapPanel"

@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import "./WebPortal.css";
 import RightSidebar from "../components/onboarding_sidebar/RightSidebar";
 import CultureVideoPage from "./CultureVideoPage";
@@ -8,9 +8,7 @@ import WorkingLocationPage from "./WorkingLocationPage";
 import EquipmentPage from "./EquipmentPage";
 import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
-import { Container } from "@mui/material";
-
-
+import { Button, Container } from "@mui/material";
 
 function WebPortal() {
   const menuList = [
@@ -65,7 +63,25 @@ function WebPortal() {
     },
   ];
 
-  const fillCheckMark = () => {};
+  const [data, setData] = useState(menuList);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+
+  const submitHandler = () => {
+    const newData = data.map((obj) => {
+      if (obj.index === currentPageIndex) {
+        return {
+          index: currentPageIndex,
+          name: obj.name,
+          title: obj.title,
+          completed: true,
+          child: obj.child
+        };
+      }
+      return obj;
+    });
+    setData(newData);
+    setCurrentPageIndex(currentPageIndex+1);
+  };
 
   return (
     <div className="rootStyle">
@@ -77,7 +93,8 @@ function WebPortal() {
             padding: "0px !important",
           }}
         >
-          <RightSidebar menuList={menuList} />
+          <RightSidebar menuList={data} currentValue={currentPageIndex}/>
+          <Button onClick={submitHandler}>Submit</Button>
         </Container>
       </div>
     </div>

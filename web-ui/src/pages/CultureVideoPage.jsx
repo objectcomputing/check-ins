@@ -1,9 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
+// import { Link } from "react-router-dom";
 import "./CultureVideoPage.css";
 
-function CultureVideoPage() {
+function CultureVideoPage(props) {
+  
   return (
     <div>
       <center>
@@ -20,11 +20,11 @@ function CultureVideoPage() {
           allowfullscreen
         ></iframe>
       </center>
-      <Link to="/backgroundinformation">
-        <Button variant="contained" size="large" id="backgroundInformation">
+      {/* <Link to="/backgroundinformation"> */}
+        {/* <Button variant="contained" size="large" id="backgroundInformation">
           Background Information
-        </Button>
-      </Link>
+        </Button> */}
+      {/* </Link> */}
     </div>
   );
 }

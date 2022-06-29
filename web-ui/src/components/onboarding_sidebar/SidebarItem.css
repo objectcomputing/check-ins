@@ -1,0 +1,24 @@
+.sidebar__item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  margin: 1rem 0;
+  /* background-color: #4b4b4b; */
+  width: 200px;
+  color: white;
+  height: 100%;
+}
+
+@media (min-width: 580px) {
+  .sidebar__title {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    flex: 1;
+  }
+}
+
+.wrapPanel {
+  width: 100%;
+}
