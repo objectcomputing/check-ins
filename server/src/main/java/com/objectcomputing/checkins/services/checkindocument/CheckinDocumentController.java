@@ -8,12 +8,13 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Set;
@@ -48,11 +49,11 @@ public class CheckinDocumentController {
      */
 
     @Get("/{?checkinsId}")
-    public Single<HttpResponse<Set<CheckinDocument>>> findCheckinDocument(@Nullable UUID checkinsId) {
-        return Single.fromCallable(() -> checkinDocumentService.read(checkinsId))
-                .observeOn(Schedulers.from(eventLoopGroup))
-                .map(checkinDocuments -> {return (HttpResponse<Set<CheckinDocument>>) HttpResponse.ok(checkinDocuments);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+    public Mono<HttpResponse<Set<CheckinDocument>>> findCheckinDocument(@Nullable UUID checkinsId) {
+        return Mono.fromCallable(() -> checkinDocumentService.read(checkinsId))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(checkinDocuments -> (HttpResponse<Set<CheckinDocument>>) HttpResponse.ok(checkinDocuments))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -63,14 +64,14 @@ public class CheckinDocumentController {
      */
 
     @Post()
-    public Single<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
+    public Mono<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
                                                                     HttpRequest<CheckinDocumentCreateDTO> request) {
-        return Single.fromCallable(() -> checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(),checkinDocument.getUploadDocId())))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(),checkinDocument.getUploadDocId())))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdCheckinDocument -> {return (HttpResponse<CheckinDocument>) HttpResponse
                     .created(createdCheckinDocument)
                     .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdCheckinDocument.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -80,18 +81,18 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
     @Put()
-    public Single<HttpResponse<CheckinDocument>> update(@Body @Valid CheckinDocument checkinDocument,
+    public Mono<HttpResponse<CheckinDocument>> update(@Body @Valid CheckinDocument checkinDocument,
                                             HttpRequest<CheckinDocument> request) {
         if (checkinDocument == null) {
-            return Single.just(HttpResponse.ok());
+            return Mono.just(HttpResponse.ok());
         }
-        return Single.fromCallable(() -> checkinDocumentService.update(checkinDocument))
-            .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> checkinDocumentService.update(checkinDocument))
+            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
             .map(updatedCheckinDocument -> (HttpResponse<CheckinDocument>) HttpResponse
                     .ok()
                     .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedCheckinDocument.getId()))))
                     .body(updatedCheckinDocument))
-            .subscribeOn(Schedulers.from(ioExecutorService));
+            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 
@@ -99,7 +100,7 @@ public class CheckinDocumentController {
      * Delete a CheckinDocument
      *
      * @param checkinsId, id of the checkins record you wish to delete
-     * @return {@link HttpResponse<?>}
+     * @return {@link HttpResponse<>}
      */
     @Delete("/{checkinsId}")
     public HttpResponse<?> delete(UUID checkinsId) {

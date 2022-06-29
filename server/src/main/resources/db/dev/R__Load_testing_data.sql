@@ -869,3 +869,18 @@ INSERT INTO skills
 (id, name, pending, description, extraneous)
 VALUES
 ('84682de9-85a7-4bf7-b74b-e9054311a61a', 'Git', true, 'Version control system', false);
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('99b7b700-bba3-440b-8df5-c1b668e9e7e0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '5', '2022-06-01');
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('daad16fa-2268-4e72-a2ad-e13aa8b8665b', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '6b56f0aa-09aa-4b09-bb81-03481af7e49f', '4', '2022-06-01');
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('e2de59a8-71be-4972-86be-608538503195', '105f2968-a182-45a3-892c-eeff76383fe0', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '3', '2022-05-01');

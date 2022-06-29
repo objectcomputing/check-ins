@@ -1,5 +1,6 @@
-package com.objectcomputing.checkins.notifications.email;
+package com.objectcomputing.checkins.services.email;
 
+import com.objectcomputing.checkins.services.email.Email;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;

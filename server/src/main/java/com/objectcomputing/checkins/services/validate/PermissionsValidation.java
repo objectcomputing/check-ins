@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.validate;
 
 import com.objectcomputing.checkins.exceptions.PermissionException;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
 @Singleton

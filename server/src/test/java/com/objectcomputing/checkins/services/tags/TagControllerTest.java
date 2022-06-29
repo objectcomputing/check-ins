@@ -16,7 +16,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -151,10 +151,10 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals("Required Body [tag] not specified", errors.asText());
+        assertEquals("Required Body [tag] not specified", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 

@@ -23,7 +23,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.*;
 
 public class TemplateQuestionControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, TemplateQuestionFixture, RoleFixture {

@@ -7,17 +7,17 @@ import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import io.micronaut.security.authentication.UserDetails;
 import io.micronaut.security.oauth2.endpoint.token.response.JWTOpenIdClaims;
+import io.micronaut.security.oauth2.endpoint.token.response.OpenIdAuthenticationMapper;
 import io.micronaut.security.oauth2.endpoint.token.response.OpenIdClaims;
 import io.micronaut.security.oauth2.endpoint.token.response.OpenIdTokenResponse;
-import io.micronaut.security.oauth2.endpoint.token.response.OpenIdUserDetailsMapper;
-import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -27,20 +27,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @MicronautTest(environments = "prodtest", transactional = false)
-public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+public class CheckinsOpenIdAuthenticationMapperTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
-    OpenIdUserDetailsMapper openIdUserDetailsMapper;
+    OpenIdAuthenticationMapper openIdAuthenticationMapper;
 
     @Test
     void testInjection() {
-        assertTrue(openIdUserDetailsMapper instanceof CheckinsOpenIdUserDetailMapper);
+        assertTrue(openIdAuthenticationMapper instanceof CheckinsOpenIdAuthenticationMapper);
     }
 
 
     @Test
     void testCreateAuthenticationResponse() {
-        CheckinsOpenIdUserDetailMapper checkinsOpenIdUserDetailMapper = (CheckinsOpenIdUserDetailMapper) openIdUserDetailsMapper;
+        CheckinsOpenIdAuthenticationMapper checkinsOpenIdAuthenticationMapper = (CheckinsOpenIdAuthenticationMapper) openIdAuthenticationMapper;
         MemberProfile memberProfile = createADefaultMemberProfile();
         List<String> roles = List.of(RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE);
         for (String role : roles) {
@@ -53,15 +53,15 @@ public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite impl
                         claim("email", memberProfile.getWorkEmail())
                         .claim("sub", MemberProfileUtils.getFullName(memberProfile))
                         .build());
-        AuthenticationResponse auth = checkinsOpenIdUserDetailMapper.createAuthenticationResponse(provider,
+        AuthenticationResponse auth = checkinsOpenIdAuthenticationMapper.createAuthenticationResponse(provider,
                 openIdTokenResponse, openIdClaims, null);
 
         assertNotNull(auth);
-        UserDetails userDetails = auth.getUserDetails().orElse(null);
-        assertNotNull(userDetails);
-        assertEquals(MemberProfileUtils.getFullName(memberProfile), userDetails.getUsername());
-        assertThat(userDetails.getRoles(), CoreMatchers.hasItems(RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE));
-        assertTrue(roles.containsAll(userDetails.getRoles()));
-        assertEquals(roles.size(), userDetails.getRoles().size());
+        Authentication authentication = auth.getAuthentication().orElse(null);
+        assertNotNull(authentication);
+        assertEquals(MemberProfileUtils.getFullName(memberProfile), authentication.getName());
+        assertThat(authentication.getRoles(), CoreMatchers.hasItems(RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE));
+        assertTrue(roles.containsAll(authentication.getRoles()));
+        assertEquals(roles.size(), authentication.getRoles().size());
     }
 }

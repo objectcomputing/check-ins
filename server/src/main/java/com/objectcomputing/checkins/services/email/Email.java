@@ -1,7 +1,6 @@
-package com.objectcomputing.checkins.notifications.email;
+package com.objectcomputing.checkins.services.email;
 
 import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;

@@ -18,7 +18,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,10 +103,10 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals("Required Body [opportunitiesResponse] not specified",errors.asText());
+        assertEquals("Required Body [opportunitiesResponse] not specified",error.asText());
         assertEquals(request.getPath(),href.asText());
         assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
 
@@ -314,10 +314,10 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals("Required Body [opportunitiesResponse] not specified",errors.asText());
+        assertEquals("Required Body [opportunitiesResponse] not specified",error.asText());
         assertEquals(request.getPath(),href.asText());
         assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
 

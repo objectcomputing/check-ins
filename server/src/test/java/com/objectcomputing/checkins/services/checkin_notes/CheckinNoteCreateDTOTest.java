@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
-import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

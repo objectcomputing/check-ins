@@ -8,12 +8,13 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -51,18 +52,18 @@ public class SurveyController {
      * @return
      */
     @Get("/{?name,createdBy}")
-    public Single<HttpResponse<Set<Survey>>> findSurveys(@Nullable String name,
-                                                                       @Nullable UUID createdBy) {
-        return Single.fromCallable(() -> {
+    public Mono<HttpResponse<Set<Survey>>> findSurveys(@Nullable String name,
+                                                       @Nullable UUID createdBy) {
+        return Mono.fromCallable(() -> {
             if (name!=null || createdBy!=null) {
                 return surveyResponseServices.findByFields(name, createdBy);
             } else {
                 return surveyResponseServices.readAll();
             }
         })
-                .observeOn(Schedulers.from(eventLoopGroup))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(survey -> (HttpResponse<Set<Survey>>) HttpResponse.ok(survey))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -73,14 +74,14 @@ public class SurveyController {
      */
 
     @Post()
-    public Single<HttpResponse<Survey>> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse,
+    public Mono<HttpResponse<Survey>> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse,
                                                                    HttpRequest<SurveyCreateDTO> request) {
-        return Single.fromCallable(() -> surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(), surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription())))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(), surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription())))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(survey -> {return (HttpResponse<Survey>) HttpResponse
                         .created(survey)
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), survey.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -90,15 +91,15 @@ public class SurveyController {
      * @return {@link HttpResponse<Survey>}
      */
     @Put()
-    public Single<HttpResponse<Survey>> update(@Body @Valid @NotNull Survey surveyResponse,
+    public Mono<HttpResponse<Survey>> update(@Body @Valid @NotNull Survey surveyResponse,
                                                       HttpRequest<Survey> request) {
-        return Single.fromCallable(() -> surveyResponseServices.update(surveyResponse))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> surveyResponseServices.update(surveyResponse))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedSurvey -> (HttpResponse<Survey>) HttpResponse
                         .ok()
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSurvey.getId()))))
                         .body(updatedSurvey))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 

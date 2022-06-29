@@ -140,15 +140,6 @@ describe("Selectors", () => {
         role: "PDL",
       },
     ];
-    const testMemberRoles = [
-      {
-        id: "11",
-        memberid: "1",
-        role: "MEMBER",
-      },
-      matchingRoles[0],
-      matchingRoles[1],
-    ];
     const testState = {
       roles: [
         {
@@ -173,51 +164,9 @@ describe("Selectors", () => {
   });
 
   it("selectMappedPdls should return an array of all member PDL profiles", () => {
-    const testMemberProfiles = [
-      {
-        id: 1,
-        bioText: "foo",
-        employeeId: 11,
-        name: "A Person",
-        firstName: "A",
-        lastName: "PersonA",
-        location: "St Louis",
-        title: "engineer",
-        workEmail: "employee@sample.com",
-        pdlId: 9,
-        startDate: [2012, 9, 29],
-      },
-      {
-        id: 2,
-        bioText: "foo",
-        employeeId: 12,
-        name: "B Person",
-        firstName: "B",
-        lastName: "PersonB",
-        location: "St Louis",
-        title: "engineer",
-        workEmail: "employee@sample.com",
-        pdlId: 9,
-        startDate: [2012, 9, 29],
-      },
-      {
-        id: 3,
-        bioText: "foo",
-        employeeId: 13,
-        name: "C Person",
-        firstName: "C",
-        lastName: "PersonC",
-        location: "St Louis",
-        title: "engineer",
-        workEmail: "employee@sample.com",
-        pdlId: 9,
-        startDate: [2012, 9, 29],
-      },
-    ];
-
     const matchingMembers = [
       {
-        id: 2,
+        id: "2",
         bioText: "foo",
         employeeId: 12,
         name: "B Person",
@@ -230,7 +179,7 @@ describe("Selectors", () => {
         startDate: [2012, 9, 29],
       },
       {
-        id: 3,
+        id: "3",
         bioText: "foo",
         employeeId: 13,
         name: "C Person",
@@ -284,7 +233,7 @@ describe("Selectors", () => {
     const testState = {
       memberProfiles: [
         {
-          id: 1,
+          id: "1",
           bioText: "foo",
           employeeId: 11,
           name: "A Person",
@@ -297,7 +246,7 @@ describe("Selectors", () => {
           startDate: [2012, 9, 29],
         },
         {
-          id: 2,
+          id: "2",
           bioText: "foo",
           employeeId: 12,
           name: "B Person",
@@ -310,7 +259,7 @@ describe("Selectors", () => {
           startDate: [2012, 9, 29],
         },
         {
-          id: 3,
+          id: "3",
           bioText: "foo",
           employeeId: 13,
           name: "C Person",
@@ -330,51 +279,9 @@ describe("Selectors", () => {
   });
 
   it("selectOrderedPdls should return an array of all member PDL profiles ordered by last name", () => {
-    const testMemberProfiles = [
-      {
-        id: 1,
-        bioText: "foo",
-        employeeId: 11,
-        name: "A PersonA",
-        firstName: "A",
-        lastName: "PersonA",
-        location: "St Louis",
-        title: "engineer",
-        workEmail: "employee@sample.com",
-        pdlId: 9,
-        startDate: [2012, 9, 29],
-      },
-      {
-        id: 2,
-        bioText: "foo",
-        employeeId: 12,
-        name: "C PersonC",
-        firstName: "C",
-        lastName: "PersonC",
-        location: "St Louis",
-        title: "engineer",
-        workEmail: "employee@sample.com",
-        pdlId: 9,
-        startDate: [2012, 9, 29],
-      },
-      {
-        id: 3,
-        bioText: "foo",
-        employeeId: 13,
-        name: "B PersonB",
-        firstName: "B",
-        lastName: "PersonB",
-        location: "St Louis",
-        title: "engineer",
-        workEmail: "employee@sample.com",
-        pdlId: 9,
-        startDate: [2012, 9, 29],
-      },
-    ];
-
     const matchingMembers = [
       {
-        id: 3,
+        id: "3",
         bioText: "foo",
         employeeId: 13,
         name: "B PersonB",
@@ -387,7 +294,7 @@ describe("Selectors", () => {
         startDate: [2012, 9, 29],
       },
       {
-        id: 2,
+        id: "2",
         bioText: "foo",
         employeeId: 12,
         name: "C PersonC",
@@ -441,7 +348,7 @@ describe("Selectors", () => {
     const testState = {
       memberProfiles: [
         {
-          id: 1,
+          id: "1",
           bioText: "foo",
           employeeId: 11,
           name: "A PersonA",
@@ -454,7 +361,7 @@ describe("Selectors", () => {
           startDate: [2012, 9, 29],
         },
         {
-          id: 2,
+          id: "2",
           bioText: "foo",
           employeeId: 12,
           name: "C PersonC",
@@ -467,7 +374,7 @@ describe("Selectors", () => {
           startDate: [2012, 9, 29],
         },
         {
-          id: 3,
+          id: "3",
           bioText: "foo",
           employeeId: 13,
           name: "B PersonB",

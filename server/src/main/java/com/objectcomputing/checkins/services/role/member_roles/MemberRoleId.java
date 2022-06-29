@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.role.member_roles;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.Role;
-//import io.micronaut.data.annotation.Transient;
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 
@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Embeddable
+@Introspected
 public class MemberRoleId {
 
     @TypeDef(type = DataType.STRING)

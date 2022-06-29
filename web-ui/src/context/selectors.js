@@ -126,10 +126,34 @@ export const selectPdlRoles = createSelector(selectRoles, (roles) =>
   roles?.filter((role) => role.role?.includes("PDL"))
 );
 
+export const selectCurrentUserRoles = createSelector(
+  selectUserRoles,
+  selectCurrentMemberIds,
+  (userRoles, memberIds) =>
+    userRoles?.filter((userRole) => memberIds.includes(userRole.memberRoleId.memberId))
+);
+
+export const selectMappedUserRoles = createSelector(
+  selectUserRoles,
+  selectRoles,
+  (userRoles, roles) => {
+    const mappedUserRoles = {};
+    userRoles.forEach(userRole => {
+      const memberId = userRole.memberRoleId.memberId;
+      const role = roles.find(role => role.id === userRole.memberRoleId.roleId);
+      if (!(memberId in mappedUserRoles)) {
+        mappedUserRoles[memberId] = new Set();
+      }
+      mappedUserRoles[memberId].add(role.role);
+    });
+    return mappedUserRoles;
+  }
+);
+
 export const selectMappedPdls = createSelector(
   selectProfileMap,
   selectPdlRoles,
-  selectUserRoles,
+  selectCurrentUserRoles,
   (memberProfileMap, roles, userRoles) =>
     userRoles?.filter((userRole) => roles.find((role) => role.id === userRole?.memberRoleId?.roleId ) !== undefined)?.map((userRole) =>
       userRole?.memberRoleId?.memberId in memberProfileMap ? memberProfileMap[userRole?.memberRoleId?.memberId] : {}
@@ -148,6 +172,12 @@ export const selectOrderedPdls = createSelector(
 
 export const selectOrderedMemberProfiles = createSelector(
   selectMemberProfiles,
+  (mappedMemberProfiles) =>
+    mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
+);
+
+export const selectOrderedCurrentMemberProfiles = createSelector(
+  selectCurrentMembers,
   (mappedMemberProfiles) =>
     mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
 );

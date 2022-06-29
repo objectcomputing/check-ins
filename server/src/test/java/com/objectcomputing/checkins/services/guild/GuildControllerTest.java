@@ -8,7 +8,7 @@ import com.objectcomputing.checkins.services.fixture.GuildMemberFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
-import com.objectcomputing.checkins.services.guild.member.GuildMemberUpdateDTO;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberServicesImpl;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -20,9 +20,10 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
@@ -37,15 +38,20 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Client("/services/guilds")
     HttpClient client;
 
+    @Mock
     private final EmailSender emailSender = mock(EmailSender.class);
 
     @Inject
     private GuildServicesImpl guildServicesImpl;
 
+    @Inject
+    private GuildMemberServicesImpl guildMemberServicesImpl;
+
     @BeforeEach
     void resetMocks() {
         Mockito.reset(emailSender);
         guildServicesImpl.setEmailSender(emailSender);
+        guildMemberServicesImpl.setEmailSender(emailSender);
     }
 
     @Test
@@ -108,31 +114,6 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
                 "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been removed:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "billm@objectcomputing.com"
         );
-    }
-
-    @Test
-    void testNoEmailSentWhenGuildLeadMakesChanges() {
-        // create a guild and guild lead
-        Guild guildEntity = createDefaultGuild();
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildLead = createLeadGuildMember(guildEntity, memberProfile);
-
-        // create member and a DTO for the request to add them to the guild
-        MemberProfile newMember = createADefaultMemberProfileWithBirthDay();
-        GuildUpdateDTO.GuildMemberUpdateDTO newMemberDTO = guildMemberUpdateDTOFromNonExistingMember(newMember, false);
-
-        // create a guildUpdateDTO from existing guild
-        GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        // create list of existing guild lead and new member and add it to the request
-        List<GuildUpdateDTO.GuildMemberUpdateDTO> newAndExistingMembers = new ArrayList<>();
-        newAndExistingMembers.add(newMemberDTO);
-        newAndExistingMembers.add(updateDefaultGuildMemberDto(guildLead, guildLead.isLead()));
-        requestBody.setGuildMembers(newAndExistingMembers);
-
-        final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
-        client.toBlocking().exchange(request, GuildResponseDTO.class);
-
-        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString());
     }
     
     @Test
@@ -206,9 +187,9 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("guild.name: must not be blank", errors.asText());
+        assertEquals("guild.name: must not be blank", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -221,9 +202,9 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("Required Body [guild] not specified", errors.asText());
+        assertEquals("Required Body [guild] not specified", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -408,9 +389,9 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("guild.name: must not be blank", errors.asText());
+        assertEquals("guild.name: must not be blank", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -422,9 +403,9 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("Required Body [guild] not specified", errors.asText());
+        assertEquals("Required Body [guild] not specified", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }

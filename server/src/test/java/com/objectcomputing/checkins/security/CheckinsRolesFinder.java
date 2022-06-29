@@ -3,16 +3,18 @@ package com.objectcomputing.checkins.security;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.context.annotation.Replaces;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.security.oauth2.endpoint.token.response.JWTOpenIdClaims;
-import io.micronaut.security.token.Claims;
 import io.micronaut.security.token.DefaultRolesFinder;
 import io.micronaut.security.token.RolesFinder;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -28,11 +30,11 @@ public class CheckinsRolesFinder implements RolesFinder {
         this.roleRepository = roleRepository;
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public List<String> findInClaims(@NotNull Claims openIdClaims) {
+    public List<String> resolveRoles(@NotNull Map<String, Object> attributes) {
         List<String> roles = new ArrayList<>();
-        memberProfileRepository.findByWorkEmail(openIdClaims.get(JWTOpenIdClaims.CLAIMS_EMAIL).toString())
+        memberProfileRepository.findByWorkEmail(attributes.get(JWTOpenIdClaims.CLAIMS_EMAIL).toString())
                 .ifPresent((memberProfile) -> {
                     roles.addAll(roleRepository.findUserRoles(memberProfile.getId())
                             .stream()

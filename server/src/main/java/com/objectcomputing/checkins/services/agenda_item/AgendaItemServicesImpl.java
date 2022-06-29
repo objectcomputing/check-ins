@@ -9,7 +9,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;

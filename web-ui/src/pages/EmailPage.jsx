@@ -308,7 +308,7 @@ const EmailPage = () => {
       return;
     }
 
-    sendEmail(`Test Email - ${emailSubject}`, emailContents, [testEmail], csrf).then(res => {
+    sendEmail(`Test Email - ${emailSubject}`, emailContents, emailFormat === "file", [testEmail], csrf).then(res => {
       let toastMessage, toastStatus;
       if (res && res.payload && res.payload.status === 201 && !res.error) {
         setTestEmailSent(true);
@@ -337,7 +337,7 @@ const EmailPage = () => {
 
     const recipientEmails = recipients.map((member) => member.workEmail);
 
-    sendEmail(emailSubject, emailContents, recipientEmails, csrf).then(res => {
+    sendEmail(emailSubject, emailContents, emailFormat === "file", recipientEmails, csrf).then(res => {
       let toastMessage, toastStatus;
       if (res && res.payload && res.payload.status === 201 && !res.error) {
         setEmailSent(true);

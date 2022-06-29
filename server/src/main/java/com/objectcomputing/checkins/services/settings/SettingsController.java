@@ -8,6 +8,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 
 import java.net.URI;
@@ -25,9 +26,11 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 @Controller("/services/settings")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -37,13 +40,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class SettingsController {
     
     private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
+    private final Scheduler scheduler;
     private final SettingsServices settingsServices;
     private final CurrentUserServices currentUserServices;
 
-    public SettingsController(EventLoopGroup eventLoopGroup, ExecutorService ioExecutorService, SettingsServices settingsServices, CurrentUserServices currentUserServices) {
+    public SettingsController(EventLoopGroup eventLoopGroup,
+                              @Named(TaskExecutors.IO) ExecutorService ioExecutorService,
+                              SettingsServices settingsServices,
+                              CurrentUserServices currentUserServices) {
         this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
+        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
         this.settingsServices = settingsServices;
         this.currentUserServices = currentUserServices;
     }
@@ -55,11 +61,11 @@ public class SettingsController {
      * @return {@link <List<SettingResponseDTO>>} Returned setting
      */
     @Get("/{?name}")
-    public Single<HttpResponse<List<SettingsResponseDTO>>> getByValue(@Nullable String name) {
-        return Single.fromCallable(() -> settingsServices.findByName(name))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<List<SettingsResponseDTO>>> getByValue(@Nullable String name) {
+        return Mono.fromCallable(() -> settingsServices.findByName(name))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(settings -> (HttpResponse<List<SettingsResponseDTO>>) HttpResponse.ok(settings))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -69,14 +75,14 @@ public class SettingsController {
      * @return {@link HttpResponse<SettingsResponseDTO>}
      */
     @Post()
-    public Single<HttpResponse<SettingsResponseDTO>> save(@Body @Valid SettingsCreateDTO settingDTO, HttpRequest<SettingsCreateDTO> request) {
-        return Single.fromCallable(() -> settingsServices.save(fromDTO(settingDTO)))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<SettingsResponseDTO>> save(@Body @Valid SettingsCreateDTO settingDTO, HttpRequest<SettingsCreateDTO> request) {
+        return Mono.fromCallable(() -> settingsServices.save(fromDTO(settingDTO)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedSetting -> (HttpResponse<SettingsResponseDTO>) HttpResponse
                         .created(fromEntity(savedSetting))
                         .headers(headers -> headers.location(
                                 URI.create(String.format("%s/%s", request.getPath(), savedSetting.getId())))))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
   
     /**
@@ -86,14 +92,14 @@ public class SettingsController {
      * @return {@link <SettingsReponseDTO>}
      */
     @Put()
-    public Single<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO,
+    public Mono<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO,
             HttpRequest<SettingsUpdateDTO> request) {
-        return Single.fromCallable(() -> settingsServices.update(fromUpdateDTO(settingDTO)))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> settingsServices.update(fromUpdateDTO(settingDTO)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedSetting -> (HttpResponse<SettingsResponseDTO>) HttpResponse.ok(fromEntity(savedSetting))
                         .headers(headers -> headers
                                 .location(URI.create(String.format("%s/%s", request.getPath(), savedSetting.getId())))))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
        
     

@@ -17,7 +17,7 @@ export const getMembersByGuild = async (id, cookie) => {
     url: guildMemberUrl,
     responseType: "json",
     params: {
-      guildId: id,
+      guildid: id,
     },
     withCredentials: true,
     headers: { "X-CSRF-Header": cookie },

@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services;
 import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
 import io.micronaut.context.env.Environment;
 import io.micronaut.runtime.server.EmbeddedServer;
-import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
@@ -12,7 +12,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
     private static final PostgreSQLContainer<?> postgres;
 
     static {
-        postgres = new PostgreSQLContainer<>("postgres:11.6");
+        postgres = new PostgreSQLContainer<>("postgres:11.16");
         postgres.waitingFor(Wait.forLogMessage(".*database system is ready to accept connections\\n", 1));
         postgres.start();
 //        System.setProperties("FROM_ADDRESS", "moshirim@objectcomputing.com");

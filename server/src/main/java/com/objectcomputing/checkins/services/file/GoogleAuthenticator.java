@@ -4,7 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Property;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;

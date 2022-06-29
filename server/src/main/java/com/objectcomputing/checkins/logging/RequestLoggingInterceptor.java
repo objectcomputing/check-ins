@@ -6,12 +6,13 @@ import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.inject.ExecutableMethod;
-import io.micronaut.security.authentication.AuthenticationUserDetailsAdapter;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.web.router.MethodBasedRoute;
-import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class RequestLoggingInterceptor implements HttpServerFilter {
     public boolean intercept(HttpRequest request) {
         String requestVerb = request.getMethodName();
         String username = "not authenticated";
-        Optional<AuthenticationUserDetailsAdapter> auth = request.getAttribute("micronaut.AUTHENTICATION", AuthenticationUserDetailsAdapter.class);
+        Optional<Authentication> auth = request.getAttribute("micronaut.AUTHENTICATION", Authentication.class);
         if (auth.isEmpty()) {
            return false; //Seems to fire twice per request. First time without auth, so we just skip that one.
         }
@@ -47,7 +48,7 @@ public class RequestLoggingInterceptor implements HttpServerFilter {
 
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
-        return Flowable.fromCallable(() -> intercept(request))
-                .switchMap(bool -> chain.proceed(request));
+        Mono<Boolean> interceptMono = Mono.fromCallable(() -> intercept(request));
+        return Flux.from(interceptMono).switchMap(bool -> chain.proceed(request));
     }
 }

@@ -10,11 +10,11 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
-
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -49,15 +49,16 @@ public class EntityTagController {
          * @return {@link HttpResponse<  EntityTag  >}
          */
         @Post()
-        public Single<HttpResponse<EntityTag>> createAEntityTag(@Body @Valid @NotNull EntityTagCreateDTO entityTag, HttpRequest<EntityTagCreateDTO> request) {
+        public Mono<HttpResponse<EntityTag>> createAEntityTag(@Body @Valid @NotNull EntityTagCreateDTO entityTag, HttpRequest<EntityTagCreateDTO> request) {
 
-            return Single.fromCallable(() -> entityTagServices.save(new EntityTag(entityTag.getEntityId(),
+            return Mono.fromCallable(() -> entityTagServices.save(new EntityTag(entityTag.getEntityId(),
                     entityTag.getTagId(), entityTag.getType())))
-                    .observeOn(Schedulers.from(eventLoopGroup))
+                    .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                     .map(createdEntityTag -> (HttpResponse<EntityTag>)HttpResponse
                             .created(createdEntityTag)
                             .headers(headers -> headers.location(
-                                    URI.create(String.format("%s/%s", request.getPath(), createdEntityTag.getId()))))).subscribeOn(Schedulers.from(ioExecutorService));
+                                    URI.create(String.format("%s/%s", request.getPath(), createdEntityTag.getId())))))
+                    .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
         }
 
         /**
@@ -78,18 +79,18 @@ public class EntityTagController {
          * @return {@link EntityTag}
          */
         @Get("/{id}")
-        public Single<HttpResponse<EntityTag>> readEntityTag(@NotNull UUID id) {
+        public Mono<HttpResponse<EntityTag>> readEntityTag(@NotNull UUID id) {
 
-            return Single.fromCallable(() -> {
+            return Mono.fromCallable(() -> {
                 EntityTag result = entityTagServices.read(id);
                 if (result == null) {
                     throw new NotFoundException("No entity tag for UUID");
                 }
                 return result;
             })
-                    .observeOn(Schedulers.from(eventLoopGroup))
+                    .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                     .map(entityTag -> (HttpResponse<EntityTag>)HttpResponse.ok(entityTag))
-                    .subscribeOn(Schedulers.from(ioExecutorService));
+                    .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
         }
 
         /**
@@ -97,15 +98,15 @@ public class EntityTagController {
          *
          * @param entityId {@link UUID} of entity tag
          * @param tagId  {@link UUID} of tags
-         * @return {@link List < EntityTag > list of Entity Tags}
+         * @return {@link List <EntityTag > list of Entity Tags
          */
         @Get("/{?entityId,tagId}")
-        public Single<HttpResponse<Set<EntityTag>>> findEntityTag(@Nullable UUID entityId,
+        public Mono<HttpResponse<Set<EntityTag>>> findEntityTag(@Nullable UUID entityId,
                                                                   @Nullable UUID tagId,
                                                                   @Nullable EntityType type) {
-            return Single.fromCallable(() -> entityTagServices.findByFields(entityId, tagId, type))
-                    .observeOn(Schedulers.from(eventLoopGroup))
+            return Mono.fromCallable(() -> entityTagServices.findByFields(entityId, tagId, type))
+                    .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                     .map(entityTags -> (HttpResponse<Set<EntityTag>>)HttpResponse
-                            .ok(entityTags)).subscribeOn(Schedulers.from(ioExecutorService));
+                            .ok(entityTags)).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
         }
 }

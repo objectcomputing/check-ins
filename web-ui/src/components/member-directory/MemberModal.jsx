@@ -266,7 +266,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
           }
         />
         <Autocomplete
-          options={sortedPdls && ["", ...sortedPdls]}
+          options={sortedPdls}
           value={
             (sortedPdls &&
               sortedPdls.find((pdl) => pdl?.id === editedMember.pdlId)) ||

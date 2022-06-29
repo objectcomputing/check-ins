@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.demographics;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
@@ -15,7 +16,8 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Entity
-@Table(name="demographics")
+@Introspected
+@Table(name = "demographics")
 public class Demographics {
 
     @Id
