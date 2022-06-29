@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./WebPortal.css";
 import RightSidebar from "../components/onboarding_sidebar/RightSidebar";
 import CultureVideoPage from "./CultureVideoPage";
@@ -61,9 +61,6 @@ function WebPortal() {
       child: <Congratulations />,
     },
   ];
-
-
-  const fillCheckMark = () => {};
 
   return (
     <div className="rootStyle">

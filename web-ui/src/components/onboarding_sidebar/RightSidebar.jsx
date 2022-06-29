@@ -8,7 +8,10 @@ import { lightBlue } from "@mui/material/colors";
 
 function RightSidebar({ menuList }) {
   const [val, setValue] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
+  //const [isCompleted, setIsCompleted] = useState(false);
+
+  //Until the useState is actually used, this is needed to make sure the gradle doesn't fail. Once used, uncomment above and remove below statement.
+  const isCompleted = true;
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
