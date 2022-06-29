@@ -4,7 +4,6 @@ import { ErrorBoundary } from "react-error-boundary";
 import { createBrowserHistory } from "history";
 
 import Routes from "./components/routes/Routes";
-import NewUserRoutes from "./components/routes/NewUserRoutes";
 import Menu from "./components/menu/Menu";
 import ErrorFallback from "./pages/ErrorBoundaryPage";
 import { AppContextProvider } from "./context/AppContext";
@@ -40,16 +39,11 @@ const theme = createTheme({
   },
 });
 
-// TODO:
-// Enable the backend to serve a webpage to a user that is not logged in
-let isLoggedIn = true; // This boolean allows you to see the new web portal which is devlopment.
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Router history={customHistory}>
-          {isLoggedIn ? (
             <AppContextProvider>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <div>
@@ -68,9 +62,6 @@ function App() {
               </ErrorBoundary>
               <SnackBarWithContext />
             </AppContextProvider>
-          ) : (
-            <NewUserRoutes />
-          )}
         </Router>
       </LocalizationProvider>
     </ThemeProvider>

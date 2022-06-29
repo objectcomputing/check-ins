@@ -1,6 +1,6 @@
 import React from "react";
 import "./WebPortal.css";
-import RightSidebar from "../components/onboarding_sidebar/RightSidebar";
+import RightSidebar from "../components/sidebar/RightSidebar";
 import CultureVideoPage from "./CultureVideoPage";
 import BackgroundInformationPage from "./BackgroundInformationPage";
 import IntroductionSurveyPage from "./IntroductionSurveyPage";

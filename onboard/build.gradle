@@ -1,0 +1,28 @@
+plugins {
+    id "base"
+    id "com.github.node-gradle.node" version "2.2.3"
+}
+
+node {
+    version = '14.17.6' // https://nodejs.org/en/
+    yarnVersion = '1.22.5' // https://yarnpkg.com/en/
+    download = true
+}
+
+yarn_run_coverage {
+    group 'verification'
+    outputs.dir 'coverage'
+}
+
+yarn_run_build {
+    group 'build'
+    outputs.dir 'build'
+}
+
+check {
+    dependsOn yarn_run_coverage
+}
+
+artifacts {
+    'default' file: buildDir, type: 'directory', builtBy: yarn_run_build
+}

@@ -30,6 +30,7 @@ configurations {
     // for dependencies that are needed for development only
     developmentOnly
     publicResources
+    onboardResources
 }
 
 dependencies {
@@ -135,6 +136,7 @@ dependencies {
     //testImplementation("org.testcontainers:postgresql")
 
     publicResources project(':web-ui')
+    onboardResources project(':onboard')
 
     rewrite('org.openrewrite.recipe:rewrite-micronaut:1.10.0')
 }
@@ -165,6 +167,9 @@ if(System.getenv("SKIP_WEB_UI") == null) {
     processResources {
         into('public') {
             from configurations.publicResources
+        }
+        into('public/onboard') {
+            from configurations.onboardResources
         }
     }
 }
