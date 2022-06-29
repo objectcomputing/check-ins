@@ -7,11 +7,10 @@ import "./WorkingLocationPage.css";
 const WorkingLocationPage = () => {
   return (
     <div>
-      <center>
-        <h1>Where would you PREFER to work?</h1>
-      </center>
-
       <div id="workOption">
+        <center>
+          <h1>Where would you PREFER to work?</h1>
+        </center>
         <ButtonGroup variant="outlined" aria-label="outlined button group">
           <Button>Office</Button>
           <Button>Remote</Button>

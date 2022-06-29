@@ -40,22 +40,6 @@ const IntroductionSurveyPage = () => {
         </div>
       </div>
 
-      {/* <div>
-        <strong>2.</strong> What are some of your hobbies?
-        <TextField id="outlined-basic" label="" variant="outlined" />
-      </div>
-
-      <div>
-        <strong>3.</strong> Can you tell us a fun fact about yourself?
-        <TextField id="outlined-basic" label="" variant="outlined" />
-      </div>
-
-      <div>
-        <strong>4.</strong> Is there any special certificates we would need to
-        know?
-        <TextField id="outlined-basic" label="" variant="outlined" />
-      </div> */}
-
       <Link to="/backgroundinformation">
         <Button variant="contained" size="large" id="backgroundInformation">
           Background Information Survey
