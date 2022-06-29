@@ -6,12 +6,7 @@ import "./RightSidebar.css";
 import { Checkbox } from "@mui/material";
 import { lightBlue } from "@mui/material/colors";
 
-function RightSidebar({ menuList, currentValue }) {
-  const [val, setValue] = useState(currentValue);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
+function RightSidebar({ handleChange, data, currentPageIndex }) {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   function TabPanel(props) {
@@ -42,7 +37,7 @@ function RightSidebar({ menuList, currentValue }) {
       <Tabs
         orientation="vertical"
         variant="scrollable"
-        value={val}
+        value={currentPageIndex}
         onChange={handleChange}
         sx={{
           borderRight: 1,
@@ -62,8 +57,8 @@ function RightSidebar({ menuList, currentValue }) {
           },
         }}
       >
-        {menuList &&
-          menuList.map((menuItem, i) => {
+        {data &&
+          data.map((menuItem, i) => {
             return (
               <Tab
                 sx={{
@@ -97,11 +92,11 @@ function RightSidebar({ menuList, currentValue }) {
             );
           })}
       </Tabs>
-      {menuList &&
-        menuList.map((menuItem, i) => {
+      {data &&
+        data.map((menuItem, i) => {
           return (
             <TabPanel
-              value={currentValue}
+              value={currentPageIndex}
               index={menuItem.index}
               key={menuItem.index}
               className="wrapPanel"

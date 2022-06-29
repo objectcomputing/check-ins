@@ -10,61 +10,65 @@ import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
 import { Button, Container } from "@mui/material";
 
-function WebPortal() {
-  const menuList = [
-    {
-      index: 0,
-      name: "Culture Video",
-      title: "Lorem ipsum",
-      completed: false,
-      child: <CultureVideoPage />,
-    },
-    {
-      index: 1,
-      name: "About You Survey",
-      title: "Lorem ipsum",
-      completed: false,
-      child: <BackgroundInformationPage />,
-    },
-    {
-      index: 2,
-      name: "Work Preference",
-      title: "Lorem ipsum",
-      completed: false,
-      child: <WorkingLocationPage />,
-    },
-    {
-      index: 3,
-      name: "Computer and Accessories",
-      title: "Lorem ipsum",
-      completed: false,
-      child: <EquipmentPage />,
-    },
-    {
-      index: 4,
-      name: "Internal Document Signing",
-      title: "Lorem ipsum",
-      completed: false,
-      child: <DocumentSigningPage />,
-    },
-    {
-      index: 5,
-      name: "Check-Ins Skills",
-      title: "Lorem ipsum",
-      completed: false,
-      child: <IntroductionSurveyPage />,
-    },
-    {
-      index: 6,
-      name: "Cake!",
-      title: "Lorem ipsum",
-      completed: false,
-      child: <Congratulations />,
-    },
-  ];
+const menuList = [
+  {
+    index: 0,
+    name: "Culture Video",
+    title: "Lorem ipsum",
+    completed: false,
+    child: <CultureVideoPage />,
+  },
+  {
+    index: 1,
+    name: "About You Survey",
+    title: "Lorem ipsum",
+    completed: false,
+    child: <BackgroundInformationPage />,
+  },
+  {
+    index: 2,
+    name: "Work Preference",
+    title: "Lorem ipsum",
+    completed: false,
+    child: <WorkingLocationPage />,
+  },
+  {
+    index: 3,
+    name: "Computer and Accessories",
+    title: "Lorem ipsum",
+    completed: false,
+    child: <EquipmentPage />,
+  },
+  {
+    index: 4,
+    name: "Internal Document Signing",
+    title: "Lorem ipsum",
+    completed: false,
+    child: <DocumentSigningPage />,
+  },
+  {
+    index: 5,
+    name: "Check-Ins Skills",
+    title: "Lorem ipsum",
+    completed: false,
+    child: <IntroductionSurveyPage />,
+  },
+  {
+    index: 6,
+    name: "Cake!",
+    title: "Lorem ipsum",
+    completed: false,
+    child: <Congratulations />,
+  },
+];
 
+function WebPortal() {
   const [data, setData] = useState(menuList);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+
+  const handleChange = (event, newIndex) => {
+    setCurrentPageIndex(newIndex);
+  };
 
   const submitHandler = () => {
     const newData = data.map((obj) => {
@@ -74,13 +78,17 @@ function WebPortal() {
           name: obj.name,
           title: obj.title,
           completed: true,
-          child: obj.child
+          child: obj.child,
         };
       }
       return obj;
     });
     setData(newData);
-    setCurrentPageIndex(currentPageIndex+1);
+    setCurrentPageIndex(currentPageIndex + 1);
+  };
+
+  const handleChangeSidebar = (num) => {
+    setCurrentPageIndex(num);
   };
 
   return (
@@ -93,7 +101,12 @@ function WebPortal() {
             padding: "0px !important",
           }}
         >
-          <RightSidebar menuList={data} currentValue={currentPageIndex}/>
+          <RightSidebar
+            currentPageIndex={currentPageIndex}
+            handleChange={handleChange}
+            data={data}
+            handleChangeSidebar={handleChangeSidebar}
+          />
           <Button onClick={submitHandler}>Submit</Button>
         </Container>
       </div>
