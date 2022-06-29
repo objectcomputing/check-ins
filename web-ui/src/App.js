@@ -40,7 +40,9 @@ const theme = createTheme({
   },
 });
 
-let isLoggedIn = false;
+// TODO:
+// Enable the backend to serve a webpage to a user that is not logged in
+let isLoggedIn = true; // This boolean allows you to see the new web portal which is devlopment.
 
 function App() {
   return (

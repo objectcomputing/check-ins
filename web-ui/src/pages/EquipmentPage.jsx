@@ -25,10 +25,8 @@ const EquipmentPage = () => {
         </Button>
       </Link>
       <center>
-        <h1>
-          Please select your computer accessories
-        </h1>
-      <ButtonGroup variant="outlined" aria-label="outlined button group">
+        <h1>Please select your computer accessories</h1>
+        <ButtonGroup variant="outlined" aria-label="outlined button group">
           <Button>Keyboard</Button>
           <Button>Mouse</Button>
           <Button>Monitor</Button>
