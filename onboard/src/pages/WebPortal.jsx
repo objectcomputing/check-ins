@@ -17,6 +17,7 @@ const menuList = [
     title: "Lorem ipsum",
     completed: false,
     child: <CultureVideoPage />,
+    visited: true
   },
   {
     index: 1,
@@ -24,6 +25,7 @@ const menuList = [
     title: "Lorem ipsum",
     completed: false,
     child: <BackgroundInformationPage />,
+    visited: false
   },
   {
     index: 2,
@@ -31,6 +33,7 @@ const menuList = [
     title: "Lorem ipsum",
     completed: false,
     child: <WorkingLocationPage />,
+    visited: false
   },
   {
     index: 3,
@@ -38,6 +41,7 @@ const menuList = [
     title: "Lorem ipsum",
     completed: false,
     child: <EquipmentPage />,
+    visited: false
   },
   {
     index: 4,
@@ -45,6 +49,7 @@ const menuList = [
     title: "Lorem ipsum",
     completed: false,
     child: <DocumentSigningPage />,
+    visited: false
   },
   {
     index: 5,
@@ -52,6 +57,7 @@ const menuList = [
     title: "Lorem ipsum",
     completed: false,
     child: <IntroductionSurveyPage />,
+    visited: false
   },
   {
     index: 6,
@@ -59,6 +65,7 @@ const menuList = [
     title: "Lorem ipsum",
     completed: false,
     child: <Congratulations />,
+    visited: false
   },
 ];
 
@@ -79,6 +86,17 @@ function WebPortal() {
           title: obj.title,
           completed: true,
           child: obj.child,
+          visited: true
+        };
+      }
+      else if(obj.index === (currentPageIndex + 1)) {
+        return {
+          index: currentPageIndex+1,
+          name: obj.name,
+          title: obj.title,
+          completed: obj.completed,
+          child: obj.child,
+          visited: true
         };
       }
       return obj;
