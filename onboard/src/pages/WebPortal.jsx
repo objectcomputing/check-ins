@@ -89,9 +89,9 @@ function WebPortal() {
           visited: true
         };
       }
-      else if(obj.index === (currentPageIndex + 1)) {
+      else if (obj.index === (currentPageIndex + 1)) {
         return {
-          index: currentPageIndex+1,
+          index: currentPageIndex + 1,
           name: obj.name,
           title: obj.title,
           completed: obj.completed,
@@ -127,26 +127,26 @@ function WebPortal() {
               handleChangeSidebar={handleChangeSidebar}
             />
           </div>
-          <Button 
-          sx ={{
-            "&:hover": {
-              color: 'gray',
-              backgroundColor: 'lightgray'
-            },
-            maxWidth:800,
-            fontSize:40,
-            bgcolor:"lightgreen",
-            color:"white",
-            
-            //button positioning 
-            zIndex:"modal",
-            position:"absolute",
-            bottom: "15%",
-            right: "20%"
-          }}
-           
-          className="submitButton" 
-          onClick={submitHandler}>
+          <Button
+            sx={{
+              "&:hover": {
+                color: 'gray',
+                backgroundColor: 'lightgray'
+              },
+              maxWidth: 800,
+              fontSize: 40,
+              bgcolor: "lightgreen",
+              color: "white",
+
+              //button positioning 
+              zIndex: "modal",
+              position: "absolute",
+              bottom: "15%",
+              right: "20%"
+            }}
+
+            className="submitButton"
+            onClick={submitHandler}>
             Next
           </Button>
         </Container>
