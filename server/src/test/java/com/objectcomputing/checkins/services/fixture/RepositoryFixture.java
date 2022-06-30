@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 
+import com.objectcomputing.checkins.services.document.DocumentRepository;
+import com.objectcomputing.checkins.services.document.role_document.RoleDocumentRepository;
 import com.objectcomputing.checkins.services.email.EmailRepository;
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
@@ -172,5 +174,13 @@ public interface RepositoryFixture {
 
     default EmailRepository getEmailRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EmailRepository.class);
+    }
+
+    default DocumentRepository getDocumentRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(DocumentRepository.class);
+    }
+
+    default RoleDocumentRepository getRoleDocumentRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(RoleDocumentRepository.class);
     }
 }
