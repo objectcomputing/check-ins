@@ -16,6 +16,7 @@ import LeftArrowIcon from "@mui/icons-material/KeyboardArrowLeft";
 import RightArrowIcon from "@mui/icons-material/KeyboardArrowRight";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterIcon from "@mui/icons-material/FilterList";
+import DownloadIcon from "@mui/icons-material/FileDownload";
 import PropTypes from "prop-types";
 import {getAvatarURL} from "../../api/api";
 
@@ -25,6 +26,7 @@ import {getMembersByTeam} from "../../api/team";
 import {getMembersByGuild} from "../../api/guild";
 import {UPDATE_TOAST} from "../../context/actions";
 import {selectMappedUserRoles} from "../../context/selectors";
+import {CSVLink} from "react-csv";
 
 const not = (a, b) => a.filter((value) => b.indexOf(value) === -1);
 const intersection = (a, b) => a.filter((value) => b.indexOf(value) !== -1);
@@ -206,6 +208,21 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
     }
   },[leftList, recipientFilter, recipientQuery, recipientFilterVisible, csrf, dispatch, checked, mappedUserRoles]);
 
+  const getCsvData = (members) => {
+    return members.map((member) => {
+      return { firstName: member.firstName, lastName: member.lastName, title: member.title, workEmail: member.workEmail };
+    });
+  }
+
+  const getCsvHeaders = () => {
+    return [
+      { label: "First Name", key: "firstName" },
+      { label: "Last Name", key: "lastName" },
+      { label: "Title", key: "title" },
+      { label: "Email", key: "workEmail" }
+    ];
+  }
+
   const customList = (title, items, emptyMessage, includeFilter) => {
     items = items.sort((a, b) => a.name.localeCompare(b.name));
     return (
@@ -213,7 +230,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
         <CardHeader
           action={
             <div style={{ display: "flex", alignItems: "center" }}>
-              {includeFilter &&
+              {includeFilter ?
                 <Tooltip arrow title="Filter">
                   <IconButton
                     style={{ marginTop: "-8px" }}
@@ -226,6 +243,21 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
                   >
                     <FilterIcon/>
                   </IconButton>
+                </Tooltip>
+                :
+                <Tooltip arrow title="Download CSV">
+                  <div>
+                    <CSVLink
+                      data={getCsvData(items)}
+                      headers={getCsvHeaders()}
+                      filename="members.csv"
+                      enclosingCharacter=""
+                    >
+                      <IconButton style={{ marginTop: "-8px" }}>
+                        <DownloadIcon/>
+                      </IconButton>
+                    </CSVLink>
+                  </div>
                 </Tooltip>
               }
               <Checkbox
