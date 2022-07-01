@@ -1,6 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import "./IntroductionSurveyPage.css";
 
@@ -39,17 +37,6 @@ const IntroductionSurveyPage = () => {
           <TextField id="outlined-basic" label="" variant="outlined" />
         </div>
       </div>
-
-      <Link to="/backgroundinformation">
-        <Button variant="contained" size="large" id="backgroundInformation">
-          Background Information Survey
-        </Button>
-      </Link>
-      <Link to="/worklocation">
-        <Button variant="contained" size="large" id="workLocation">
-          Work Location
-        </Button>
-      </Link>
     </div>
   );
 };
