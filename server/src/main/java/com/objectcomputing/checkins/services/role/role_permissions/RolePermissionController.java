@@ -53,7 +53,6 @@ public class RolePermissionController {
     @RequiredPermission(Permissions.CAN_VIEW_ROLE_PERMISSIONS)
     @Get
     public Mono<HttpResponse<List<RolePermissionResponseDTO>>> getAllRolePermissions() {
-
         return Mono.fromCallable(rolePermissionServices::findAll)
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(rolePermissions -> (HttpResponse<List<RolePermissionResponseDTO>>) HttpResponse.ok(rolePermissions))
@@ -62,15 +61,19 @@ public class RolePermissionController {
 
     @Post
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public HttpResponse<RolePermission> saveRolePermission(@NotNull UUID roleId, @NotNull UUID permissionId) {
-        RolePermission rolePermission = rolePermissionServices.saveByIds(roleId, permissionId);
-        return HttpResponse.created(rolePermission);
+    public Mono<HttpResponse<RolePermission>> saveRolePermission(@NotNull UUID roleId, @NotNull UUID permissionId) {
+        return Mono.fromCallable(() -> rolePermissionServices.saveByIds(roleId, permissionId))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(rolePermission -> (HttpResponse<RolePermission>) HttpResponse.created(rolePermission))
+                .subscribeOn(scheduler);
     }
 
     @Delete("/{roleId}/{permissionId}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    HttpResponse<?> delete(@NotNull UUID roleId, @NotNull UUID permissionId) {
-        rolePermissionServices.delete(new RolePermissionId(roleId, permissionId));
-        return HttpResponse.ok();
+    public Mono<? extends HttpResponse<?>> delete(@NotNull UUID roleId, @NotNull UUID permissionId) {
+        return Mono.fromCallable(() -> rolePermissionServices.delete(new RolePermissionId(roleId, permissionId)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(success -> (HttpResponse<?>) HttpResponse.ok())
+                .subscribeOn(scheduler);
     }
 }

@@ -8,7 +8,7 @@ public interface RolePermissionServices {
 
     RolePermission saveByIds(UUID roleId, UUID permissionId);
 
-    void delete(@NotNull RolePermissionId id);
+    boolean delete(@NotNull RolePermissionId id);
 
     List<RolePermissionResponseDTO> findAll();
 

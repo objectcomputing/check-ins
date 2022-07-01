@@ -57,8 +57,12 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
     }
 
     @Override
-    public void delete(RolePermissionId id) {
+    public boolean delete(RolePermissionId id) {
+        rolePermissionRepository.findByRoleIdAndPermissionId(id.getRoleId(), id.getPermissionId()).orElseThrow(() -> {
+            throw new BadArgException("Attempted to delete role permission with invalid id");
+        });
         rolePermissionRepository.deleteById(id);
+        return true;
     }
 
     public List<RolePermissionResponseDTO> findAll() {
