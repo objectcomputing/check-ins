@@ -61,6 +61,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
           data.map((menuItem, i) => {
             return (
               <Tab
+                disabled={!menuItem.visited}
                 sx={{
                   color: "#000",
                   width: "300px !important",
