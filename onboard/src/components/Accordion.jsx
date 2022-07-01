@@ -6,8 +6,8 @@ import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import  "./Accordion.css";
 
-// Flexible Accordion module with a number of props, some of which are optional (importance, open)
 function Accordion({ title, open, index, content }) {
   const [isActive, setIsActive] = useState(open ? true : false);
 
