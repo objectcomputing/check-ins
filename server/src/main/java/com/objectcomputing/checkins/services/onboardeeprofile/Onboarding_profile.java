@@ -102,6 +102,15 @@ public class Onboarding_profile {
     @Schema(description = "phone # of the new employee")
     private Integer phoneNumber;
 
+    @Nullable
+    @Column(name = "secondphonenumber")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(secondPhoneNumber::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Schema(description = " 2nd phone # of the new employee")
+    private Integer secondPhoneNumber;
+
     public Onboarding_profile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, Date birthDate, String currentAddress, @Nullable String previousAddress, Integer phoneNumber) {
         this.id= id;
         this.firstName = firstName;
@@ -183,6 +192,15 @@ public class Onboarding_profile {
 
     public void setPhoneNumber(Integer phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    @Nullable
+    public Integer getSecondPhoneNumber() {
+        return secondPhoneNumber;
+    }
+
+    public void setSecondPhoneNumber(@Nullable Integer secondPhoneNumber) {
+        this.secondPhoneNumber = secondPhoneNumber;
     }
 }
 
