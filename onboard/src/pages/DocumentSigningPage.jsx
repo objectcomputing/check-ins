@@ -3,18 +3,21 @@ import "./DocumentSigningPage.css";
 import getSigner from "../api/signer.js";
 
 const DocumentSigningPage = () => {
-  const [document, setDocument] = useState(null);
+  const [document, setDocument] = useState([]);
 
-  useEffect(async () => {
-    let res = await getSigner();
-    let document;
-    if (res && res.payload) {
-      document = res.payload.data && !res.error ? res.payload.data : undefined;
-      if (document) {
-        setDocument(document);
+  useEffect(() => {
+    async function getData() {
+      let res = await getSigner();
+      let document;
+      if (res && res.payload) {
+        document = res.payload.data && !res.error ? res.payload.data : undefined;
+        if (document) {
+          setDocument(document);
+        }
       }
     }
-  }, [getSigner]);
+    getData();
+  }, []);
 
   return (
     <div>
