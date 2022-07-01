@@ -1,6 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
 import { Typography } from "@mui/material";
 import "./CongratulationsPage.css";
 import cakeImg from "./../assets/img/cake.png";
@@ -22,11 +20,6 @@ const Congratulations = () => {
         </Typography>
         <img src={cakeImg} alt="Cake" />
       </center>
-      <Link to="/documents">
-        <Button variant="contained" size="large" id="signing">
-          Document Signing
-        </Button>
-      </Link>
     </div>
   );
 };
