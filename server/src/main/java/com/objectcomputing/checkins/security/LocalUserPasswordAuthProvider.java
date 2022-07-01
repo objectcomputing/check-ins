@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.Environments;
-import com.objectcomputing.checkins.security.permissions.ExtendedUserDetails;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
@@ -18,10 +17,11 @@ import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
+import reactor.core.publisher.Mono;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +57,7 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
         if (StringUtils.isNotEmpty(role = authReq.getSecret().toString())) {
             List<String> roles = usersStore.getUserRole(role);
             if(roles == null) {
-                return Flowable.just(new AuthenticationFailed(String.format("Invalid role selected %s", role)));
+                return Mono.just(new AuthenticationFailed(String.format("Invalid role selected %s", role)));
             }
 
           // remove a user from the roles they currently have (as assigned in test data)
@@ -84,6 +84,6 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
         attributes.put("permissions", permissionsAsString);
         attributes.put("email", memberProfile.getWorkEmail());
 
-        return Flowable.just(new ExtendedUserDetails(email, rolesAsString, attributes));
+        return Mono.just(AuthenticationResponse.success(email, rolesAsString, attributes));
     }
 }

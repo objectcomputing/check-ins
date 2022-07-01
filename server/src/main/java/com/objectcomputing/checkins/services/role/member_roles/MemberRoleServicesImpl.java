@@ -1,10 +1,10 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
+import jakarta.inject.Singleton;
 import com.objectcomputing.checkins.services.role.MemberRoleDTO;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

@@ -19,6 +19,7 @@ delete from feedback_requests;
 delete from template_questions;
 delete from feedback_templates;
 delete from member_profile;
+delete from skills;
 
 INSERT INTO member_profile
 (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
@@ -741,7 +742,7 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
-('b5596a80-fac3-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '1b4f99da-ef70-4a76-9b37-8bb783b749ad','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-02-15', '2020-02-25', '2020-02-20', 'submitted');
+('b5596a80-fac3-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '1b4f99da-ef70-4a76-9b37-8bb783b749ad','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-02-15', '2021-02-25', '2021-02-20', 'submitted');
 
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
@@ -848,3 +849,38 @@ INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
 ('a223135a-742b-45c6-b9a4-2bb990d956b2', PGP_SYM_ENCRYPT('They are always punctual, and work well with the other members of the team. Although they have a few technical skills they could brush up on, our team is lucky to have them.', '${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', '4240735d-15fd-4eea-8bca-8c642a433036', 0.7);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('f057af45-e627-499c-8a71-1e6b4ab2fcd2', 'React', false, 'Component-based JavaScript framework', false);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('689bb262-10af-40ef-bbf6-d8ad062e1470', 'Micronaut', false, 'JVM framework for microservices and serverless apps', false);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('6b56f0aa-09aa-4b09-bb81-03481af7e49f', 'CSS', true, 'Style sheet language', false);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('84682de9-85a7-4bf7-b74b-e9054311a61a', 'Git', true, 'Version control system', false);
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('99b7b700-bba3-440b-8df5-c1b668e9e7e0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '5', '2022-06-01');
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('daad16fa-2268-4e72-a2ad-e13aa8b8665b', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '6b56f0aa-09aa-4b09-bb81-03481af7e49f', '4', '2022-06-01');
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('e2de59a8-71be-4972-86be-608538503195', '105f2968-a182-45a3-892c-eeff76383fe0', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '3', '2022-05-01');

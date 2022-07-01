@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+.emotion-0 {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  background-color: #fff;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  min-height: 100vh;
+}
+
+.emotion-1 {
+  overflow: hidden;
+  min-height: 48px;
+  -webkit-overflow-scrolling: touch;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  border-right: 1px solid;
+  border-color: rgba(0, 0, 0, 0.12);
+  background-color: #dfdfdf;
+  color: #000;
+}
+
+@media (max-width:599.95px) {
+  .emotion-1 .MuiTabs-scrollButtons {
+    display: none;
+  }
+}
+
+.emotion-1 .Mui-selected {
+  color: Yellow!important;
+  font-weight: 700;
+}
+
+.emotion-1 .MuiButtonBase-root {
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  text-transform: none;
+  min-width: 50px;
+}
+
+.emotion-2 {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.emotion-2::-webkit-scrollbar {
+  display: none;
+}
+
+.emotion-3 {
+  position: relative;
+  display: inline-block;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.emotion-3::-webkit-scrollbar {
+  display: none;
+}
+
+.emotion-4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+<div
+  className="MuiBox-root emotion-0"
+>
+  <div
+    className="MuiTabs-root MuiTabs-vertical emotion-1"
+  >
+    <div
+      className="MuiTabs-hideScrollbar emotion-2"
+      style={
+        Object {
+          "height": 99,
+          "overflow": "scroll",
+          "position": "absolute",
+          "top": -9999,
+          "width": 99,
+        }
+      }
+    />
+    <div
+      className="MuiTabs-scroller MuiTabs-hideScrollbar MuiTabs-scrollableY emotion-3"
+      onScroll={[Function]}
+      style={
+        Object {
+          "marginRight": -0,
+          "overflow": "hidden",
+        }
+      }
+    >
+      <div
+        aria-orientation="vertical"
+        className="MuiTabs-flexContainer MuiTabs-flexContainerVertical emotion-4"
+        onKeyDown={[Function]}
+        role="tablist"
+      />
+    </div>
+  </div>
+</div>
+`;

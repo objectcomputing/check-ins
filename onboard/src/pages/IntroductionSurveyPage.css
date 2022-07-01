@@ -1,0 +1,55 @@
+.aboutYourself {
+  font-size: 25px;
+}
+
+.aboutYouInput {
+  margin-top: 2em;
+  position: absolute;
+  width: 100%;
+}
+
+#shortIntro {
+  position: absolute;
+  width: 100%;
+  left: 20%;
+  top: 26%;
+}
+
+#hobbies {
+  position: absolute;
+  width: 100%;
+  left: 60%;
+  top: 26%;
+}
+
+#funFact {
+  position: absolute;
+  width: 100%;
+  left: 20%;
+  bottom: 40%;
+}
+
+#specialCertificates {
+  position: absolute;
+  width: 100%;
+  left: 60%;
+  bottom: 40%;
+}
+
+#outlined-basic {
+  margin-top: 5em;
+}
+
+#backgroundInformation {
+  text-transform: unset !important;
+  position: absolute;
+  left: 5%;
+  bottom: 5%;
+}
+
+#workLocation {
+  text-transform: unset !important;
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+}
