@@ -4,7 +4,6 @@ import { ErrorBoundary } from "react-error-boundary";
 import { createBrowserHistory } from "history";
 
 import Routes from "./components/routes/Routes";
-import NewUserRoutes from "./components/routes/NewUserRoutes";
 import Menu from "./components/menu/Menu";
 import ErrorFallback from "./pages/ErrorBoundaryPage";
 import { AppContextProvider } from "./context/AppContext";
@@ -40,14 +39,11 @@ const theme = createTheme({
   },
 });
 
-let isLoggedIn = false;
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Router history={customHistory}>
-          {isLoggedIn ? (
             <AppContextProvider>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <div>
@@ -66,9 +62,6 @@ function App() {
               </ErrorBoundary>
               <SnackBarWithContext />
             </AppContextProvider>
-          ) : (
-            <NewUserRoutes />
-          )}
         </Router>
       </LocalizationProvider>
     </ThemeProvider>

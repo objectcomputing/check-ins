@@ -11,7 +11,7 @@ function CultureVideoPage() {
       </center>
       <center>
         <iframe
-          width="1280"
+          width="100%"
           height="720"
           src="https://www.youtube.com/embed/D7Ka15wQL5U"
           title="YouTube video player"

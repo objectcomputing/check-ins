@@ -1,0 +1,39 @@
+.inputCode {
+  font-size: 40px;
+  position: absolute;
+  top: -25%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inputField {
+  position: absolute;
+  top: -15%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#submitCode {
+  text-transform: unset !important;
+  margin-left: 80%;
+}
+
+.page_body {
+  display: flex;
+}
+
+.page_content {
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+  position: absolute;
+  margin-left: -50px;
+  left: 50%;
+  bottom: 55%;
+}
