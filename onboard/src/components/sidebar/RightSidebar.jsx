@@ -88,6 +88,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
                   </div>
                 }
                 value={menuItem.index}
+                
               />
             );
           })}
