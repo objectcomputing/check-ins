@@ -16,7 +16,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -88,6 +88,29 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
+    void testCurrentPdlAbleToReadPreviousPrivateNotes() {
+        // Create a previously established PDL for the user
+        MemberProfile memberProfileOfPreviousPdl = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPreviousPdl);
+
+        // Create a check-in with a private note under the previous PDL
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPreviousPdl);
+        PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfPreviousPdl);
+
+        // Assign the user a new PDL
+        MemberProfile memberProfileOfCurrentPdl = createASecondDefaultMemberProfile();
+        memberProfileOfUser.setPdlId(memberProfileOfCurrentPdl.getId());
+        getMemberProfileRepository().update(memberProfileOfUser);
+
+        // Ensure the new PDL can access the private note from the previous PDL
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfCurrentPdl.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(privateNote, response.body());
+    }
+
+    @Test
     void testAdminAbleToReadPdlsPrivateNotes() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -136,10 +159,10 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals("Required Body [privateNote] not specified", errors.asText());
+        assertEquals("Required Body [privateNote] not specified", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
@@ -325,9 +348,9 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("Required Body [privateNote] not specified", errors.asText());
+        assertEquals("Required Body [privateNote] not specified", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 

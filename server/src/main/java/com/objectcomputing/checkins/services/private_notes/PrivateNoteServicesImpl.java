@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.private_notes;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
@@ -14,7 +13,7 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;

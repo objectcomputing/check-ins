@@ -1,12 +1,12 @@
 package com.objectcomputing.checkins.services.fixture;
 
+import com.objectcomputing.checkins.services.email.EmailRepository;
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.demographics.DemographicsRepository;
-import com.objectcomputing.checkins.services.feedback.FeedbackRepository;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionRepository;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
@@ -35,7 +35,6 @@ import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.survey.SurveyRepository;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
 import com.objectcomputing.checkins.services.opportunities.OpportunitiesRepository;
-
 
 public interface RepositoryFixture {
     EmbeddedServer getEmbeddedServer();
@@ -126,10 +125,6 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(FeedbackRequestRepository.class);
     }
 
-    default FeedbackRepository getFeedbackRepository() {
-        return getEmbeddedServer().getApplicationContext().getBean(FeedbackRepository.class);
-    }
-
     default QuestionCategoryRepository getQuestionCategoryRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(QuestionCategoryRepository.class);
     }
@@ -173,5 +168,9 @@ public interface RepositoryFixture {
 
     default RolePermissionRepository getRolePermissionRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(RolePermissionRepository.class);
+    }
+
+    default EmailRepository getEmailRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(EmailRepository.class);
     }
 }

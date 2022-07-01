@@ -69,15 +69,16 @@ const Root = styled('div')({
 });
 
 const SortOption = {
-  DATE_DESCENDING: "date_descending",
-  DATE_ASCENDING: "date_ascending"
+  SEND_DATE_DESCENDING: "send_date_descending",
+  SEND_DATE_ASCENDING: "send_date_ascending",
+  DUE_DATE: "due_date"
 };
 
 const ReceivedRequestsPage = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const [searchText, setSearchText] = useState("");
-  const [sortValue, setSortValue] = useState(SortOption.DATE_DESCENDING);
+  const [sortValue, setSortValue] = useState(SortOption.SEND_DATE_DESCENDING);
   const [isLoading, setIsLoading] = useState(true)
   const [receivedRequests, setReceivedRequests] = useState([]);
   const [filteredReceivedRequests, setFilteredReceivedRequests] = useState([]);
@@ -140,10 +141,23 @@ const ReceivedRequestsPage = () => {
 
     // Sort according to selected sort option
     let sortMethod;
-    if (sortValue === SortOption.DATE_ASCENDING) {
-      sortMethod = (a, b) => (new Date(a.sendDate) > new Date(b.sendDate) ? 1 : -1);
-    } else if (sortValue === SortOption.DATE_DESCENDING) {
-      sortMethod = (a, b) => (new Date(a.sendDate) > new Date(b.sendDate) ? -1 : 1);
+    switch (sortValue) {
+      case SortOption.SEND_DATE_ASCENDING:
+        sortMethod = (a, b) => (new Date(a.sendDate) > new Date(b.sendDate) ? 1 : -1);
+        break;
+      case SortOption.SEND_DATE_DESCENDING:
+        sortMethod = (a, b) => (new Date(a.sendDate) > new Date(b.sendDate) ? -1 : 1);
+        break;
+      case SortOption.DUE_DATE:
+        sortMethod = (a, b) => {
+          if (a.dueDate && b.dueDate) {
+            return new Date(a.dueDate) > new Date(b.dueDate) ? 1 : -1;
+          }
+          return !a.dueDate && b.dueDate ? 1 : -1;
+        };
+        break;
+      default:
+        console.warn(`Invalid sort option ${sortValue} provided for received requests`);
     }
 
     filteredReceived.sort(sortMethod);
@@ -185,11 +199,12 @@ const ReceivedRequestsPage = () => {
               label="Sort by"
               fullWidth
               onChange={(e) => setSortValue(e.target.value)}
-              defaultValue={SortOption.DATE_ASCENDING}
+              defaultValue={SortOption.SEND_DATE_ASCENDING}
               variant="outlined"
             >
-              <MenuItem value={SortOption.DATE_DESCENDING}>Send date (least recent)</MenuItem>
-              <MenuItem value={SortOption.DATE_ASCENDING}>Send date (most recent)</MenuItem>
+              <MenuItem value={SortOption.SEND_DATE_DESCENDING}>Send date (least recent)</MenuItem>
+              <MenuItem value={SortOption.SEND_DATE_ASCENDING}>Send date (most recent)</MenuItem>
+              <MenuItem value={SortOption.DUE_DATE}>Due date</MenuItem>
             </TextField>
           </FormControl>
         </div>

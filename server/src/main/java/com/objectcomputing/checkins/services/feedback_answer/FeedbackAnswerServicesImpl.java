@@ -10,7 +10,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.util.Util;
 import java.util.List;
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,6 +42,8 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
         if (!createIsPermitted(relatedFeedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
+        } else if (relatedFeedbackRequest.getStatus().equals("canceled")) {
+            throw new BadArgException("Attempted to save an answer for a canceled feedback request");
         }
         if (feedbackAnswer.getId() != null) {
             return update(feedbackAnswer);

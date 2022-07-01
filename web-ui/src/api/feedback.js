@@ -34,6 +34,21 @@ export const updateFeedbackRequest = async (feedbackRequest, cookie) => {
   });
 };
 
+export const cancelFeedbackRequest = async (feedbackRequest, cookie) => {
+  return resolve({
+    method: "put",
+    url: feedbackRequestURL,
+    responseType: "json",
+    data: {
+      ...feedbackRequest,
+      status: "canceled",
+      dueDate: null
+    },
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
+
+
 export const deleteFeedbackRequestById = async (id, cookie) => {
   return resolve({
     method: "delete",
@@ -95,6 +110,16 @@ export const getQuestionsByRequestId = async (requestId, cookie) => {
   if (requestRes.payload && requestRes.payload.data && !requestRes.error) {
     return getFeedbackTemplateWithQuestions(requestRes.payload.data.templateId, cookie);
   }
+}
+
+export const saveSingleAnswer = (answer, cookie) => {
+  return resolve({
+    url: answerURL,
+    method: "post",
+    responseType: "json",
+    data: answer,
+    headers: { "X-CSRF-Header": cookie }
+  });
 }
 
 export const updateSingleAnswer = (answer, cookie) => {

@@ -1,0 +1,7 @@
+.wrapPanel {
+  width: 100%;
+}
+
+.sidebar__item {
+  display: flex;
+}

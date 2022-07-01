@@ -8,7 +8,7 @@ import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateR
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +37,8 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             throw new BadArgException("Attempted to save question with non-auto-populated ID");
         } else if (templateQuestion.getTemplateId() == null) {
             throw new BadArgException("Attempted to save question with no template ID");
+        } else if (templateQuestion.getInputType() == null) {
+            throw new BadArgException("Attempted to save question with input type not specified");
         }
 
         Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.getTemplateId());
@@ -63,6 +65,8 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             throw new BadArgException("Attempted to save null template question");
         } else if (templateQuestion.getId() == null) {
             throw new BadArgException("Attempted to save question with null ID");
+        } else if (templateQuestion.getInputType() == null) {
+            throw new BadArgException("Attempted to update question with input type not specified");
         }
 
         TemplateQuestion oldTemplateQuestion = getById(templateQuestion.getId());

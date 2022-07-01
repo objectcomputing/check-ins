@@ -14,7 +14,7 @@ import { getAvatarURL } from "../../../api/api.js";
 const propTypes = {
   responderId: PropTypes.string.isRequired,
   answer: PropTypes.string.isRequired,
-  sentiment: PropTypes.number.isRequired
+  sentiment: PropTypes.number
 }
 
 const FeedbackResponseCard = (props) => {

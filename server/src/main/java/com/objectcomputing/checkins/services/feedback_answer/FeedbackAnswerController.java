@@ -9,9 +9,10 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -43,13 +44,13 @@ public class FeedbackAnswerController {
      * @return {@link FeedbackAnswerResponseDTO}
      */
     @Post()
-    public Single<HttpResponse<FeedbackAnswerResponseDTO>> save(@Body @Valid @NotNull FeedbackAnswerCreateDTO requestBody) {
-        return Single.fromCallable(() -> feedbackAnswerServices.save(fromDTO(requestBody)))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<FeedbackAnswerResponseDTO>> save(@Body @Valid @NotNull FeedbackAnswerCreateDTO requestBody) {
+        return Mono.fromCallable(() -> feedbackAnswerServices.save(fromDTO(requestBody)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedAnswer -> (HttpResponse<FeedbackAnswerResponseDTO>) HttpResponse
                         .created(fromEntity(savedAnswer))
                         .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId()))))
-                .subscribeOn(Schedulers.from(executorService));
+                .subscribeOn(Schedulers.fromExecutor(executorService));
     }
 
     /**
@@ -59,14 +60,14 @@ public class FeedbackAnswerController {
      * @return {@link FeedbackAnswerResponseDTO}
      */
     @Put()
-    public Single<HttpResponse<FeedbackAnswerResponseDTO>> update(@Body @Valid @NotNull FeedbackAnswerUpdateDTO requestBody) {
-        return Single.fromCallable(() -> feedbackAnswerServices.update(fromDTO(requestBody)))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<FeedbackAnswerResponseDTO>> update(@Body @Valid @NotNull FeedbackAnswerUpdateDTO requestBody) {
+        return Mono.fromCallable(() -> feedbackAnswerServices.update(fromDTO(requestBody)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedAnswer -> (HttpResponse<FeedbackAnswerResponseDTO>) HttpResponse
                         .ok()
                         .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId())))
                         .body(fromEntity(savedAnswer)))
-                .subscribeOn(Schedulers.from(executorService));
+                .subscribeOn(Schedulers.fromExecutor(executorService));
     }
 
     /**
@@ -77,13 +78,13 @@ public class FeedbackAnswerController {
      */
     @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_ANSWER)
     @Get("/{id}")
-    public Single<HttpResponse<FeedbackAnswerResponseDTO>> getById(UUID id) {
-        return Single.fromCallable(() -> feedbackAnswerServices.getById(id))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<FeedbackAnswerResponseDTO>> getById(UUID id) {
+        return Mono.fromCallable(() -> feedbackAnswerServices.getById(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedAnswer -> (HttpResponse<FeedbackAnswerResponseDTO>) HttpResponse
                         .ok(fromEntity(savedAnswer))
                         .headers(headers -> headers.location(URI.create("/feedback_answer/" +  savedAnswer.getId()))))
-                .subscribeOn(Schedulers.from(executorService));
+                .subscribeOn(Schedulers.fromExecutor(executorService));
     }
 
     /**
@@ -96,14 +97,14 @@ public class FeedbackAnswerController {
      */
     @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_ANSWER)
     @Get("/{?questionId,requestId}")
-    public Single<HttpResponse<List<FeedbackAnswerResponseDTO>>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
-        return Single.fromCallable(() -> feedbackAnswerServices.findByValues(questionId, requestId))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<List<FeedbackAnswerResponseDTO>>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
+        return Mono.fromCallable(() -> feedbackAnswerServices.findByValues(questionId, requestId))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(feedbackAnswers -> {
                     List<FeedbackAnswerResponseDTO> dtoList = feedbackAnswers.stream()
                             .map(this::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<FeedbackAnswerResponseDTO>>) HttpResponse.ok(dtoList);
-                }).subscribeOn(Schedulers.from(executorService));
+                }).subscribeOn(Schedulers.fromExecutor(executorService));
     }
 
     private FeedbackAnswer fromDTO(FeedbackAnswerCreateDTO dto) {
