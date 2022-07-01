@@ -115,7 +115,7 @@ function WebPortal() {
         <Container
           maxWidth={false}
           sx={{
-            minHeight: "calc(100vh - 64px)",
+            minHeight: "100vh",
             padding: "0px !important",
           }}
         >

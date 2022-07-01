@@ -31,7 +31,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
         flexGrow: 1,
         bgcolor: "background.paper",
         display: "flex",
-        minHeight: "calc(100vh - 64px)",
+        minHeight: "100vh",
       }}
     >
       <Tabs
