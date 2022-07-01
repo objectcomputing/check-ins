@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
@@ -7,6 +8,8 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TextField from "@mui/material/TextField";
+
+
 import "./BackgroundInformationPage.css";
 
 const BackgroundInformationPage = () => {
@@ -15,6 +18,7 @@ const BackgroundInformationPage = () => {
       <center>
       <Typography variant="h3">Please enter in your background information</Typography>
       </center>
+
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -166,6 +170,7 @@ const BackgroundInformationPage = () => {
           Introduction Survey
         </Button>
       </Link>
+
     </div>
   );
 };
