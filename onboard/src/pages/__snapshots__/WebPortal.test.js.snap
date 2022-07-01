@@ -348,24 +348,18 @@ exports[`renders correctly 1`] = `
   color: inherit;
   font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   line-height: 1.75;
   letter-spacing: 0.02857em;
   text-transform: uppercase;
   min-width: 64px;
-  padding: 6px 8px;
+  padding: 8px 22px;
   border-radius: 4px;
   -webkit-transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  color: #1976d2;
-  max-width: 800px;
-  font-size: 40px;
-  background-color: lightgreen;
-  color: white;
-  z-index: 1300;
-  position: absolute;
-  bottom: 15%;
-  right: 20%;
+  color: #fff;
+  background-color: #1976d2;
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
 }
 
 .emotion-36::-moz-focus-inner {
@@ -387,22 +381,28 @@ exports[`renders correctly 1`] = `
 .emotion-36:hover {
   -webkit-text-decoration: none;
   text-decoration: none;
-  background-color: rgba(25, 118, 210, 0.04);
+  background-color: #1565c0;
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
 }
 
 @media (hover: none) {
   .emotion-36:hover {
-    background-color: transparent;
+    background-color: #1976d2;
   }
+}
+
+.emotion-36:active {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.emotion-36.Mui-focusVisible {
+  box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12);
 }
 
 .emotion-36.Mui-disabled {
   color: rgba(0, 0, 0, 0.26);
-}
-
-.emotion-36:hover {
-  color: gray;
-  background-color: lightgray;
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0.12);
 }
 
 <div
@@ -415,48 +415,617 @@ exports[`renders correctly 1`] = `
       className="MuiContainer-root emotion-0"
     >
       <div
-        className="container_content"
+        className="MuiBox-root emotion-1"
       >
         <div
-          className="MuiBox-root emotion-1"
+          className="MuiTabs-root MuiTabs-vertical emotion-2"
         >
           <div
-            className="MuiTabs-root MuiTabs-vertical emotion-2"
+            className="MuiTabs-hideScrollbar emotion-3"
+            style={
+              Object {
+                "height": 99,
+                "overflow": "scroll",
+                "position": "absolute",
+                "top": -9999,
+                "width": 99,
+              }
+            }
+          />
+          <div
+            className="MuiTabs-scroller MuiTabs-hideScrollbar MuiTabs-scrollableY emotion-4"
+            onScroll={[Function]}
+            style={
+              Object {
+                "marginRight": -0,
+                "overflow": "hidden",
+              }
+            }
           >
             <div
-              className="MuiTabs-hideScrollbar emotion-3"
-              style={
-                Object {
-                  "height": 99,
-                  "overflow": "scroll",
-                  "position": "absolute",
-                  "top": -9999,
-                  "width": 99,
-                }
-              }
-            />
-            <div
-              className="MuiTabs-scroller MuiTabs-hideScrollbar MuiTabs-scrollableY emotion-4"
-              onScroll={[Function]}
-              style={
-                Object {
-                  "marginRight": -0,
-                  "overflow": "hidden",
-                }
-              }
+              aria-orientation="vertical"
+              className="MuiTabs-flexContainer MuiTabs-flexContainerVertical emotion-5"
+              onKeyDown={[Function]}
+              role="tablist"
             >
-              <div
-                aria-orientation="vertical"
-                className="MuiTabs-flexContainer MuiTabs-flexContainerVertical emotion-5"
+              <button
+                aria-selected={true}
+                className="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected emotion-6"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onContextMenu={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
                 onKeyDown={[Function]}
-                role="tablist"
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                role="tab"
+                tabIndex={0}
+                type="button"
+              >
+                <div
+                  className="sidebar__item"
+                >
+                  <div
+                    className="sidebar__check"
+                  >
+                    <span
+                      Check={true}
+                      aria-disabled={true}
+                      className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root Mui-disabled MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-disabled emotion-7"
+                      onBlur={[Function]}
+                      onContextMenu={[Function]}
+                      onDragLeave={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseUp={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchMove={[Function]}
+                      onTouchStart={[Function]}
+                      tabIndex={-1}
+                    >
+                      <input
+                        aria-label="Checkbox demo"
+                        className="PrivateSwitchBase-input emotion-8"
+                        data-indeterminate={false}
+                        disabled={true}
+                        onChange={[Function]}
+                        type="checkbox"
+                      />
+                      <svg
+                        aria-hidden={true}
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+                        data-testid="CheckBoxOutlineBlankIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <div
+                    className="sidebar__title"
+                  >
+                    <p>
+                       
+                      Culture Video
+                    </p>
+                  </div>
+                </div>
+                <span
+                  className="MuiTabs-indicator emotion-10"
+                  style={Object {}}
+                />
+              </button>
+              <button
+                aria-selected={false}
+                className="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary emotion-6"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onContextMenu={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                role="tab"
+                tabIndex={-1}
+                type="button"
+              >
+                <div
+                  className="sidebar__item"
+                >
+                  <div
+                    className="sidebar__check"
+                  >
+                    <span
+                      Check={true}
+                      aria-disabled={true}
+                      className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root Mui-disabled MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-disabled emotion-7"
+                      onBlur={[Function]}
+                      onContextMenu={[Function]}
+                      onDragLeave={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseUp={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchMove={[Function]}
+                      onTouchStart={[Function]}
+                      tabIndex={-1}
+                    >
+                      <input
+                        aria-label="Checkbox demo"
+                        className="PrivateSwitchBase-input emotion-8"
+                        data-indeterminate={false}
+                        disabled={true}
+                        onChange={[Function]}
+                        type="checkbox"
+                      />
+                      <svg
+                        aria-hidden={true}
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+                        data-testid="CheckBoxOutlineBlankIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <div
+                    className="sidebar__title"
+                  >
+                    <p>
+                       
+                      Job Application
+                    </p>
+                  </div>
+                </div>
+              </button>
+              <button
+                aria-selected={false}
+                className="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary emotion-6"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onContextMenu={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                role="tab"
+                tabIndex={-1}
+                type="button"
+              >
+                <div
+                  className="sidebar__item"
+                >
+                  <div
+                    className="sidebar__check"
+                  >
+                    <span
+                      Check={true}
+                      aria-disabled={true}
+                      className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root Mui-disabled MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-disabled emotion-7"
+                      onBlur={[Function]}
+                      onContextMenu={[Function]}
+                      onDragLeave={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseUp={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchMove={[Function]}
+                      onTouchStart={[Function]}
+                      tabIndex={-1}
+                    >
+                      <input
+                        aria-label="Checkbox demo"
+                        className="PrivateSwitchBase-input emotion-8"
+                        data-indeterminate={false}
+                        disabled={true}
+                        onChange={[Function]}
+                        type="checkbox"
+                      />
+                      <svg
+                        aria-hidden={true}
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+                        data-testid="CheckBoxOutlineBlankIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <div
+                    className="sidebar__title"
+                  >
+                    <p>
+                       
+                      About You Survey
+                    </p>
+                  </div>
+                </div>
+              </button>
+              <button
+                aria-selected={false}
+                className="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary emotion-6"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onContextMenu={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                role="tab"
+                tabIndex={-1}
+                type="button"
+              >
+                <div
+                  className="sidebar__item"
+                >
+                  <div
+                    className="sidebar__check"
+                  >
+                    <span
+                      Check={true}
+                      aria-disabled={true}
+                      className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root Mui-disabled MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-disabled emotion-7"
+                      onBlur={[Function]}
+                      onContextMenu={[Function]}
+                      onDragLeave={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseUp={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchMove={[Function]}
+                      onTouchStart={[Function]}
+                      tabIndex={-1}
+                    >
+                      <input
+                        aria-label="Checkbox demo"
+                        className="PrivateSwitchBase-input emotion-8"
+                        data-indeterminate={false}
+                        disabled={true}
+                        onChange={[Function]}
+                        type="checkbox"
+                      />
+                      <svg
+                        aria-hidden={true}
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+                        data-testid="CheckBoxOutlineBlankIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <div
+                    className="sidebar__title"
+                  >
+                    <p>
+                       
+                      Work Preference
+                    </p>
+                  </div>
+                </div>
+              </button>
+              <button
+                aria-selected={false}
+                className="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary emotion-6"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onContextMenu={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                role="tab"
+                tabIndex={-1}
+                type="button"
+              >
+                <div
+                  className="sidebar__item"
+                >
+                  <div
+                    className="sidebar__check"
+                  >
+                    <span
+                      Check={true}
+                      aria-disabled={true}
+                      className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root Mui-disabled MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-disabled emotion-7"
+                      onBlur={[Function]}
+                      onContextMenu={[Function]}
+                      onDragLeave={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseUp={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchMove={[Function]}
+                      onTouchStart={[Function]}
+                      tabIndex={-1}
+                    >
+                      <input
+                        aria-label="Checkbox demo"
+                        className="PrivateSwitchBase-input emotion-8"
+                        data-indeterminate={false}
+                        disabled={true}
+                        onChange={[Function]}
+                        type="checkbox"
+                      />
+                      <svg
+                        aria-hidden={true}
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+                        data-testid="CheckBoxOutlineBlankIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <div
+                    className="sidebar__title"
+                  >
+                    <p>
+                       
+                      Computer and Accessories
+                    </p>
+                  </div>
+                </div>
+              </button>
+              <button
+                aria-selected={false}
+                className="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary emotion-6"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onContextMenu={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                role="tab"
+                tabIndex={-1}
+                type="button"
+              >
+                <div
+                  className="sidebar__item"
+                >
+                  <div
+                    className="sidebar__check"
+                  >
+                    <span
+                      Check={true}
+                      aria-disabled={true}
+                      className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root Mui-disabled MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-disabled emotion-7"
+                      onBlur={[Function]}
+                      onContextMenu={[Function]}
+                      onDragLeave={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseUp={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchMove={[Function]}
+                      onTouchStart={[Function]}
+                      tabIndex={-1}
+                    >
+                      <input
+                        aria-label="Checkbox demo"
+                        className="PrivateSwitchBase-input emotion-8"
+                        data-indeterminate={false}
+                        disabled={true}
+                        onChange={[Function]}
+                        type="checkbox"
+                      />
+                      <svg
+                        aria-hidden={true}
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+                        data-testid="CheckBoxOutlineBlankIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <div
+                    className="sidebar__title"
+                  >
+                    <p>
+                       
+                      Internal Document Signing
+                    </p>
+                  </div>
+                </div>
+              </button>
+              <button
+                aria-selected={false}
+                className="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary emotion-6"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onContextMenu={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                role="tab"
+                tabIndex={-1}
+                type="button"
+              >
+                <div
+                  className="sidebar__item"
+                >
+                  <div
+                    className="sidebar__check"
+                  >
+                    <span
+                      Check={true}
+                      aria-disabled={true}
+                      className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root Mui-disabled MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-disabled emotion-7"
+                      onBlur={[Function]}
+                      onContextMenu={[Function]}
+                      onDragLeave={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyUp={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseUp={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchMove={[Function]}
+                      onTouchStart={[Function]}
+                      tabIndex={-1}
+                    >
+                      <input
+                        aria-label="Checkbox demo"
+                        className="PrivateSwitchBase-input emotion-8"
+                        data-indeterminate={false}
+                        disabled={true}
+                        onChange={[Function]}
+                        type="checkbox"
+                      />
+                      <svg
+                        aria-hidden={true}
+                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
+                        data-testid="CheckBoxOutlineBlankIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <div
+                    className="sidebar__title"
+                  >
+                    <p>
+                       
+                      Cake!
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          aria-labelledby="vertical-tab-0"
+          className="wrapPanel"
+          hidden={false}
+          id="vertical-tabpanel-0"
+          role="tabpanel"
+        >
+          <div
+            className="MuiBox-root emotion-35"
+          >
+            <h2>
+              Culture Video
+            </h2>
+            <div>
+              <center>
+                <h1>
+                  At OCI We Care
+                </h1>
+              </center>
+              <center>
+                <iframe
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen={true}
+                  frameborder="0"
+                  height="720"
+                  src="https://www.youtube.com/embed/D7Ka15wQL5U"
+                  title="YouTube video player"
+                  width="100%"
+                />
+              </center>
+              <a
+                href="/backgroundinformation"
+                onClick={[Function]}
               >
                 <button
-                  aria-selected={true}
-                  className="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected emotion-6"
+                  className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButtonBase-root  emotion-36"
                   disabled={false}
+                  id="backgroundInformation"
                   onBlur={[Function]}
-                  onClick={[Function]}
                   onContextMenu={[Function]}
                   onDragLeave={[Function]}
                   onFocus={[Function]}
@@ -468,612 +1037,58 @@ exports[`renders correctly 1`] = `
                   onTouchEnd={[Function]}
                   onTouchMove={[Function]}
                   onTouchStart={[Function]}
-                  role="tab"
                   tabIndex={0}
                   type="button"
                 >
-                  <div
-                    className="sidebar__item"
-                  >
-                    <div
-                      className="sidebar__check"
-                    >
-                      <span
-                        className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-7"
-                        onBlur={[Function]}
-                        onContextMenu={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        tabIndex={null}
-                      >
-                        <input
-                          aria-label="Checkbox demo"
-                          checked={false}
-                          className="PrivateSwitchBase-input emotion-8"
-                          data-indeterminate={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                        />
-                        <svg
-                          aria-hidden={true}
-                          className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
-                          data-testid="CheckBoxOutlineBlankIcon"
-                          focusable="false"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div
-                      className="sidebar__title"
-                    >
-                      <p>
-                         
-                        Culture Video
-                      </p>
-                    </div>
-                  </div>
-                  <span
-                    className="MuiTabs-indicator emotion-10"
-                    style={Object {}}
-                  />
+                  Background Information
                 </button>
-                <button
-                  aria-selected={false}
-                  className="MuiButtonBase-root Mui-disabled MuiTab-root MuiTab-textColorPrimary Mui-disabled emotion-6"
-                  disabled={true}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onContextMenu={[Function]}
-                  onDragLeave={[Function]}
-                  onFocus={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseLeave={[Function]}
-                  onMouseUp={[Function]}
-                  onTouchEnd={[Function]}
-                  onTouchMove={[Function]}
-                  onTouchStart={[Function]}
-                  role="tab"
-                  tabIndex={-1}
-                  type="button"
-                >
-                  <div
-                    className="sidebar__item"
-                  >
-                    <div
-                      className="sidebar__check"
-                    >
-                      <span
-                        className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-7"
-                        onBlur={[Function]}
-                        onContextMenu={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        tabIndex={null}
-                      >
-                        <input
-                          aria-label="Checkbox demo"
-                          checked={false}
-                          className="PrivateSwitchBase-input emotion-8"
-                          data-indeterminate={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                        />
-                        <svg
-                          aria-hidden={true}
-                          className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
-                          data-testid="CheckBoxOutlineBlankIcon"
-                          focusable="false"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div
-                      className="sidebar__title"
-                    >
-                      <p>
-                         
-                        About You Survey
-                      </p>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  aria-selected={false}
-                  className="MuiButtonBase-root Mui-disabled MuiTab-root MuiTab-textColorPrimary Mui-disabled emotion-6"
-                  disabled={true}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onContextMenu={[Function]}
-                  onDragLeave={[Function]}
-                  onFocus={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseLeave={[Function]}
-                  onMouseUp={[Function]}
-                  onTouchEnd={[Function]}
-                  onTouchMove={[Function]}
-                  onTouchStart={[Function]}
-                  role="tab"
-                  tabIndex={-1}
-                  type="button"
-                >
-                  <div
-                    className="sidebar__item"
-                  >
-                    <div
-                      className="sidebar__check"
-                    >
-                      <span
-                        className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-7"
-                        onBlur={[Function]}
-                        onContextMenu={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        tabIndex={null}
-                      >
-                        <input
-                          aria-label="Checkbox demo"
-                          checked={false}
-                          className="PrivateSwitchBase-input emotion-8"
-                          data-indeterminate={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                        />
-                        <svg
-                          aria-hidden={true}
-                          className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
-                          data-testid="CheckBoxOutlineBlankIcon"
-                          focusable="false"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div
-                      className="sidebar__title"
-                    >
-                      <p>
-                         
-                        Work Preference
-                      </p>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  aria-selected={false}
-                  className="MuiButtonBase-root Mui-disabled MuiTab-root MuiTab-textColorPrimary Mui-disabled emotion-6"
-                  disabled={true}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onContextMenu={[Function]}
-                  onDragLeave={[Function]}
-                  onFocus={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseLeave={[Function]}
-                  onMouseUp={[Function]}
-                  onTouchEnd={[Function]}
-                  onTouchMove={[Function]}
-                  onTouchStart={[Function]}
-                  role="tab"
-                  tabIndex={-1}
-                  type="button"
-                >
-                  <div
-                    className="sidebar__item"
-                  >
-                    <div
-                      className="sidebar__check"
-                    >
-                      <span
-                        className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-7"
-                        onBlur={[Function]}
-                        onContextMenu={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        tabIndex={null}
-                      >
-                        <input
-                          aria-label="Checkbox demo"
-                          checked={false}
-                          className="PrivateSwitchBase-input emotion-8"
-                          data-indeterminate={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                        />
-                        <svg
-                          aria-hidden={true}
-                          className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
-                          data-testid="CheckBoxOutlineBlankIcon"
-                          focusable="false"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div
-                      className="sidebar__title"
-                    >
-                      <p>
-                         
-                        Computer and Accessories
-                      </p>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  aria-selected={false}
-                  className="MuiButtonBase-root Mui-disabled MuiTab-root MuiTab-textColorPrimary Mui-disabled emotion-6"
-                  disabled={true}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onContextMenu={[Function]}
-                  onDragLeave={[Function]}
-                  onFocus={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseLeave={[Function]}
-                  onMouseUp={[Function]}
-                  onTouchEnd={[Function]}
-                  onTouchMove={[Function]}
-                  onTouchStart={[Function]}
-                  role="tab"
-                  tabIndex={-1}
-                  type="button"
-                >
-                  <div
-                    className="sidebar__item"
-                  >
-                    <div
-                      className="sidebar__check"
-                    >
-                      <span
-                        className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-7"
-                        onBlur={[Function]}
-                        onContextMenu={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        tabIndex={null}
-                      >
-                        <input
-                          aria-label="Checkbox demo"
-                          checked={false}
-                          className="PrivateSwitchBase-input emotion-8"
-                          data-indeterminate={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                        />
-                        <svg
-                          aria-hidden={true}
-                          className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
-                          data-testid="CheckBoxOutlineBlankIcon"
-                          focusable="false"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div
-                      className="sidebar__title"
-                    >
-                      <p>
-                         
-                        Internal Document Signing
-                      </p>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  aria-selected={false}
-                  className="MuiButtonBase-root Mui-disabled MuiTab-root MuiTab-textColorPrimary Mui-disabled emotion-6"
-                  disabled={true}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onContextMenu={[Function]}
-                  onDragLeave={[Function]}
-                  onFocus={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseLeave={[Function]}
-                  onMouseUp={[Function]}
-                  onTouchEnd={[Function]}
-                  onTouchMove={[Function]}
-                  onTouchStart={[Function]}
-                  role="tab"
-                  tabIndex={-1}
-                  type="button"
-                >
-                  <div
-                    className="sidebar__item"
-                  >
-                    <div
-                      className="sidebar__check"
-                    >
-                      <span
-                        className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-7"
-                        onBlur={[Function]}
-                        onContextMenu={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        tabIndex={null}
-                      >
-                        <input
-                          aria-label="Checkbox demo"
-                          checked={false}
-                          className="PrivateSwitchBase-input emotion-8"
-                          data-indeterminate={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                        />
-                        <svg
-                          aria-hidden={true}
-                          className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
-                          data-testid="CheckBoxOutlineBlankIcon"
-                          focusable="false"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div
-                      className="sidebar__title"
-                    >
-                      <p>
-                         
-                        Check-Ins Skills
-                      </p>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  aria-selected={false}
-                  className="MuiButtonBase-root Mui-disabled MuiTab-root MuiTab-textColorPrimary Mui-disabled emotion-6"
-                  disabled={true}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onContextMenu={[Function]}
-                  onDragLeave={[Function]}
-                  onFocus={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseLeave={[Function]}
-                  onMouseUp={[Function]}
-                  onTouchEnd={[Function]}
-                  onTouchMove={[Function]}
-                  onTouchStart={[Function]}
-                  role="tab"
-                  tabIndex={-1}
-                  type="button"
-                >
-                  <div
-                    className="sidebar__item"
-                  >
-                    <div
-                      className="sidebar__check"
-                    >
-                      <span
-                        className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-7"
-                        onBlur={[Function]}
-                        onContextMenu={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        tabIndex={null}
-                      >
-                        <input
-                          aria-label="Checkbox demo"
-                          checked={false}
-                          className="PrivateSwitchBase-input emotion-8"
-                          data-indeterminate={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                        />
-                        <svg
-                          aria-hidden={true}
-                          className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-9"
-                          data-testid="CheckBoxOutlineBlankIcon"
-                          focusable="false"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div
-                      className="sidebar__title"
-                    >
-                      <p>
-                         
-                        Cake!
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              </div>
+              </a>
             </div>
           </div>
-          <div
-            aria-labelledby="vertical-tab-0"
-            className="wrapPanel"
-            hidden={false}
-            id="vertical-tabpanel-0"
-            role="tabpanel"
-          >
-            <div
-              className="MuiBox-root emotion-35"
-            >
-              <h2>
-                Lorem ipsum
-              </h2>
-              <div>
-                <center>
-                  <h1>
-                    At OCI We Care
-                  </h1>
-                </center>
-                <center>
-                  <iframe
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen={true}
-                    frameBorder="0"
-                    height="720"
-                    src="https://www.youtube.com/embed/D7Ka15wQL5U"
-                    title="YouTube video player"
-                    width="1280"
-                  />
-                </center>
-              </div>
-            </div>
-          </div>
-          <div
-            aria-labelledby="vertical-tab-1"
-            className="wrapPanel"
-            hidden={true}
-            id="vertical-tabpanel-1"
-            role="tabpanel"
-          />
-          <div
-            aria-labelledby="vertical-tab-2"
-            className="wrapPanel"
-            hidden={true}
-            id="vertical-tabpanel-2"
-            role="tabpanel"
-          />
-          <div
-            aria-labelledby="vertical-tab-3"
-            className="wrapPanel"
-            hidden={true}
-            id="vertical-tabpanel-3"
-            role="tabpanel"
-          />
-          <div
-            aria-labelledby="vertical-tab-4"
-            className="wrapPanel"
-            hidden={true}
-            id="vertical-tabpanel-4"
-            role="tabpanel"
-          />
-          <div
-            aria-labelledby="vertical-tab-5"
-            className="wrapPanel"
-            hidden={true}
-            id="vertical-tabpanel-5"
-            role="tabpanel"
-          />
-          <div
-            aria-labelledby="vertical-tab-6"
-            className="wrapPanel"
-            hidden={true}
-            id="vertical-tabpanel-6"
-            role="tabpanel"
-          />
         </div>
+        <div
+          aria-labelledby="vertical-tab-1"
+          className="wrapPanel"
+          hidden={true}
+          id="vertical-tabpanel-1"
+          role="tabpanel"
+        />
+        <div
+          aria-labelledby="vertical-tab-2"
+          className="wrapPanel"
+          hidden={true}
+          id="vertical-tabpanel-2"
+          role="tabpanel"
+        />
+        <div
+          aria-labelledby="vertical-tab-3"
+          className="wrapPanel"
+          hidden={true}
+          id="vertical-tabpanel-3"
+          role="tabpanel"
+        />
+        <div
+          aria-labelledby="vertical-tab-4"
+          className="wrapPanel"
+          hidden={true}
+          id="vertical-tabpanel-4"
+          role="tabpanel"
+        />
+        <div
+          aria-labelledby="vertical-tab-5"
+          className="wrapPanel"
+          hidden={true}
+          id="vertical-tabpanel-5"
+          role="tabpanel"
+        />
+        <div
+          aria-labelledby="vertical-tab-6"
+          className="wrapPanel"
+          hidden={true}
+          id="vertical-tabpanel-6"
+          role="tabpanel"
+        />
       </div>
-      <button
-        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root submitButton emotion-36"
-        disabled={false}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onContextMenu={[Function]}
-        onDragLeave={[Function]}
-        onFocus={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseDown={[Function]}
-        onMouseLeave={[Function]}
-        onMouseUp={[Function]}
-        onTouchEnd={[Function]}
-        onTouchMove={[Function]}
-        onTouchStart={[Function]}
-        tabIndex={0}
-        type="button"
-      >
-        Next
-      </button>
     </div>
   </div>
 </div>
