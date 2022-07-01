@@ -24,7 +24,6 @@ public class SignRequestController {
     @Inject
     @Client("https://ocitest.signrequest.com/api/v1/")
     private HttpClient httpClient;
-    private Signer signer;
     private Map<String,String> signerInfo = new HashMap<>();
 
     @Get("/signer")
