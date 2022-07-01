@@ -2,6 +2,11 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import Accordion from "../components/Accordion";
 import PersonalInformation from "./subsections/backgroundInformation/Personalnformation";
+import Education from "./subsections/backgroundInformation/Education";
+import EmploymentDesired from "./subsections/backgroundInformation/EmploymentDesired";
+import EmploymentHistory from "./subsections/backgroundInformation/EmploymentHistory";
+import EmploymentEligbility from "./subsections/backgroundInformation/EmploymentEligbility";
+import ReferralTypeAndSignature from "./subsections/backgroundInformation/ReferralTypeAndSignature";
 import { isArrayPresent } from "../utils/helperFunctions";
 import "./BackgroundInformationPage.css";
 
@@ -12,23 +17,23 @@ const accordionArr = [
   },
   {
     title: "Employment Eligbility",
-    content: <PersonalInformation />,
+    content: <EmploymentEligbility />,
   },
   {
     title: "Employment Desired and Avaiablity",
-    content: <PersonalInformation />,
+    content: <EmploymentDesired />,
   },
   {
     title: "Education",
-    content: <PersonalInformation />,
+    content: <Education />,
   },
   {
     title: "Employment History",
-    content: <PersonalInformation />,
+    content: <EmploymentHistory />,
   },
   {
-    title: "Referral Type",
-    content: <PersonalInformation />,
+    title: "Referral Type and Signature",
+    content: <ReferralTypeAndSignature />,
   },
 ];
 
