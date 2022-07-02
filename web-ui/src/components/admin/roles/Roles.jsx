@@ -153,7 +153,7 @@ const Roles = () => {
   };
 
   const roleContainsMember = (member) => {
-    return !roleToMemberMap[selectedRole].find((currentMember) => {
+    return selectedRole && roleToMemberMap[selectedRole].find((currentMember) => {
       return currentMember.id === member.id;
     });
   };
@@ -225,7 +225,7 @@ const Roles = () => {
                     <div className="role-modal">
                       <Autocomplete
                         options={memberProfiles.filter((member) =>
-                          roleContainsMember(member)
+                          !roleContainsMember(member)
                         )}
                         value={selectedMember}
                         onChange={(event, newValue) =>
