@@ -16,7 +16,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.hateoas.Resource;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -504,7 +504,9 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         testMemberProfile.setId(null);
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("", testMemberProfile)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE)));
-        assertEquals("memberProfile.id: must not be null", thrown.getMessage());
+        JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
+        assertEquals("memberProfile.id: must not be null", error.asText());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 

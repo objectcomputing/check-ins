@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;

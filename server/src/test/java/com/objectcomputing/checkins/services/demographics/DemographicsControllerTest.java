@@ -16,7 +16,11 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -84,12 +88,18 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
         final HttpRequest<Object> request = HttpRequest.
                 GET("/").basicAuth(alice.getWorkEmail(), ADMIN_ROLE);
 
-        final HttpResponse<List<DemographicsResponseDTO>> response = client.toBlocking()
+        final Publisher<HttpResponse<List<DemographicsResponseDTO>>> response = client
                 .exchange(request, Argument.listOf(DemographicsResponseDTO.class));
 
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.body().get(0).getId(), demographic.getId());
-        assertEquals(response.body().size(), 1);
+        StepVerifier.create(response)
+                        .thenConsumeWhile(resp -> {
+                            assertEquals(resp.getStatus(), HttpStatus.OK);
+                            assertEquals(resp.body().get(0).getId(), demographic.getId());
+                            assertEquals(resp.body().size(), 1);
+                            return true;
+                        })
+                .expectComplete()
+                .verify();
 
     }
 

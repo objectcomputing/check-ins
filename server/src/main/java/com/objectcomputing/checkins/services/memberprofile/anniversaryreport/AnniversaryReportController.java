@@ -6,14 +6,18 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -27,14 +31,14 @@ public class AnniversaryReportController {
 
     private final AnniversaryServices anniversaryServices;
     private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
+    private final Scheduler scheduler;
 
     public AnniversaryReportController(AnniversaryServices anniversaryServices,
                                        EventLoopGroup eventLoopGroup,
-                                       ExecutorService ioExecutorService) {
+                                       @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.anniversaryServices = anniversaryServices;
         this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
+        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -45,11 +49,11 @@ public class AnniversaryReportController {
      */
 
     @Get("/{?month}")
-    public Single<HttpResponse<List<AnniversaryReportResponseDTO>>> findByValue(@Nullable String[] month) {
+    public Mono<HttpResponse<List<AnniversaryReportResponseDTO>>> findByValue(@Nullable String[] month) {
 
-        return Single.fromCallable(() -> anniversaryServices.findByValue(month))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> anniversaryServices.findByValue(month))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(anniversaries -> (HttpResponse<List<AnniversaryReportResponseDTO>>) HttpResponse.ok(anniversaries))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 }

@@ -3,3 +3,4 @@ defaultPackage: com.objectcomputing
 ---
 testFramework: junit
 sourceLanguage: java
+features: [annotation-api, app-name, gradle, http-client, jackson-databind, java, java-application, junit, logback, micronaut-build, netty-server, openrewrite, readme, shade, yaml]

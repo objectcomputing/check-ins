@@ -4,5 +4,5 @@ micronaut:
 
 datasources:
   default:
-    url:  jdbc:tc:postgresql:///
+    url:  jdbc:tc:postgresql:11.16:///
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver

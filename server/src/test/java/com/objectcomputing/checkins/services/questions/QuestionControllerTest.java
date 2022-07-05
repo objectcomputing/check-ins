@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.questions;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.QuestionCategoryFixture;
 import com.objectcomputing.checkins.services.fixture.QuestionFixture;
@@ -14,7 +15,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.hateoas.JsonError;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -136,9 +137,9 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
                     .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
         });
 
-        JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
-
-        assertEquals("question.id: must not be null", responseBody.getMessage());
+        JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
+        assertEquals("question.id: must not be null", error.asText());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
