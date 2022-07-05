@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @Singleton
 public class RoleDocumentServicesImpl implements RoleDocumentServices {
 
+    private static final Logger LOG = LoggerFactory.getLogger(RoleDocumentServicesImpl.class);
     private final RoleDocumentRepository roleDocumentRepository;
     private final CurrentUserServices currentUserServices;
     private final RoleServices roleServices;
