@@ -58,3 +58,30 @@ export const createNewCheckin = async (memberProfile, dispatch, csrf) => {
     return checkin?.id;
   }
 };
+
+export const createNewCheckinWithDate = async (memberProfile, date, dispatch, csrf) => {
+  if (memberProfile) {
+    const dateTimeArray = [
+      date.getFullYear(),
+      date.getMonth() + 1,
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes(),
+      date.getSeconds(),
+    ];
+    const res = await createCheckin(
+      {
+        teamMemberId: memberProfile.id,
+        pdlId: memberProfile.pdlId,
+        checkInDate: dateTimeArray,
+        completed: false,
+      },
+      csrf
+    );
+    const checkin =
+      res.payload && res.payload.data && !res.error ? res.payload.data : null;
+
+    dispatch({ type: ADD_CHECKIN, payload: checkin });
+    return checkin?.id;
+  }
+}

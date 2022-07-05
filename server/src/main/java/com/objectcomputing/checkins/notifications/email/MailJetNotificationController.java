@@ -8,10 +8,11 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/email-notifications")
@@ -31,11 +32,11 @@ public class MailJetNotificationController {
     }
 
     @Post()
-    public Single<? extends HttpResponse<?>> sendEmailReceivesStatus(String subject, String content, String... recipients) {
-              return Single.fromCallable(() -> emailSender.sendEmailReceivesStatus(subject, content, recipients))
-                      .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<? extends HttpResponse<?>> sendEmailReceivesStatus(String subject, String content, String... recipients) {
+              return Mono.fromCallable(() -> emailSender.sendEmailReceivesStatus(subject, content, recipients))
+                      .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                       .map(success -> (HttpResponse<?>) HttpResponse.ok())
-                      .subscribeOn(Schedulers.from(ioExecutorService));
+                      .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
 
     }

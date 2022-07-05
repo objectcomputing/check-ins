@@ -1,0 +1,13 @@
+.rootStyle {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(248, 248, 248);
+}
+
+.wrapApp {
+  margin: 0 auto;
+  width: auto;
+  min-height: 100vh;
+  overflow: auto;
+}

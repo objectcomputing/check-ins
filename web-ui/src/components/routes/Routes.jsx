@@ -91,7 +91,7 @@ export default function Routes() {
 
       {isAdmin && (
         <Switch>
-          <Route path="/edit-skills">
+          <Route path="/admin/edit-skills">
             <Header title="Skills" />
             <EditSkillsPage />
           </Route>

@@ -7,12 +7,15 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,12 +30,14 @@ public class PermissionController {
 
     private final PermissionServices permissionServices;
     private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
+    private final Scheduler scheduler;
 
-    public PermissionController(PermissionServices permissionServices, EventLoopGroup eventLoopGroup, ExecutorService ioExecutorService) {
+    public PermissionController(PermissionServices permissionServices,
+                                EventLoopGroup eventLoopGroup,
+                                @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.permissionServices = permissionServices;
         this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
+        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -42,12 +47,12 @@ public class PermissionController {
      */
     @RequiredPermission(Permissions.CAN_VIEW_PERMISSIONS)
     @Get("/OrderByPermission")
-    public Single<HttpResponse<List<Permission>>> listOrderByPermission() {
+    public Mono<HttpResponse<List<Permission>>> listOrderByPermission() {
 
-        return Single.fromCallable(permissionServices::listOrderByPermission)
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(permissionServices::listOrderByPermission)
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -57,12 +62,12 @@ public class PermissionController {
      */
     @RequiredPermission(Permissions.CAN_VIEW_PERMISSIONS)
     @Get
-    public Single<HttpResponse<List<Permission>>> getAllPermissions() {
+    public Mono<HttpResponse<List<Permission>>> getAllPermissions() {
 
-        return Single.fromCallable(permissionServices::findAll)
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(permissionServices::findAll)
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**

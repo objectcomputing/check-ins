@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.DateCreated;
@@ -14,6 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Introspected
 @Table(name = "feedback_templates")
 public class FeedbackTemplate {
 

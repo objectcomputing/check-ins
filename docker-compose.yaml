@@ -6,7 +6,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: checkins@objectcomputing.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - "80:80"
+      - "1080:80"
     container_name: pgadmin
   postgresql:
     image: postgres:11.6

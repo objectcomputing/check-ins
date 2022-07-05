@@ -16,7 +16,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,8 +78,9 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("role.role: must not be null", body.get("message").asText());
+        assertEquals("role.role: must not be null", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -138,9 +139,9 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("Required Body [role] not specified", errors.asText());
+        assertEquals("Required Body [role] not specified", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -279,10 +280,10 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals("role.role: must not be null", body.get("message").asText());
+        assertEquals("role.role: must not be null", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -298,9 +299,9 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String errors = Objects.requireNonNull(body).get("message").asText();
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-        assertEquals("Required Body [role] not specified", errors);
+        assertEquals("Required Body [role] not specified", error.asText());
         assertEquals(request.getPath(), href);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -374,9 +375,9 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String errors = Objects.requireNonNull(body).get("message").asText();
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-        assertTrue(errors.contains(String.format("Failed to convert argument [id] for value [%s]", uuid)));
+        assertTrue(error.asText().contains(String.format("Failed to convert argument [id] for value [%s]", uuid)));
         assertEquals(request.getPath(), href);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }

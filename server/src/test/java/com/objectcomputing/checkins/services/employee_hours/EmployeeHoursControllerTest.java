@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.util.*;
 
