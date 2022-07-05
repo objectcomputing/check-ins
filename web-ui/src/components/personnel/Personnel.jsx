@@ -190,20 +190,28 @@ const Personnel = () => {
   // Get IDs for former personnel based on past checkins
   useEffect(() => {
     const getPastPersonnelIds = (pastCheckins) => {
+      let uniqueEntries = [];
       const personnelIds = personnel.map((person) => person.id);
       const result = pastCheckins
         .filter((checkins) => !personnelIds.includes(checkins.teamMemberId))
         .reduce((pastIds, checkins) => {
-            pastIds.push(checkins.teamMemberId);
+          pastIds.push(checkins.teamMemberId);
           return pastIds;
-        }, []);
-      return result;
+        }, [])
+        .forEach((x) => {
+          if (!uniqueEntries.includes(x)) {
+            uniqueEntries.push(x);
+          }
+        });
+
+      return uniqueEntries;
     };
-    if(pastCheckins && personnel) {
-      setPastPersonnelIds(getPastPersonnelIds(pastCheckins))
+
+    if (pastCheckins && personnel) {
+      setPastPersonnelIds(getPastPersonnelIds(pastCheckins));
     }
-  }, [pastCheckins, personnel])
-  
+  }, [pastCheckins, personnel]);
+
   return (
     <Card>
       <CardHeader avatar={<GroupIcon />} title="Development Partners" />
