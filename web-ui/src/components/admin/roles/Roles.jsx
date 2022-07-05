@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "../../../context/AppContext";
 import {
@@ -21,12 +21,14 @@ import {
   CardContent,
   CardHeader, InputAdornment,
   List,
+  ListSubheader,
   Modal,
   TextField,
   Typography,
+  Divider
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete from "@mui/material/Autocomplete";
 
 import "./Roles.css";
 import {selectProfile} from "../../../context/selectors";
@@ -39,7 +41,6 @@ const Roles = () => {
   const [showAddUser, setShowAddUser] = useState(false);
   const [showAddRole, setShowAddRole] = useState(false);
   const [newRole, setNewRole] = useState("");
-  // const [editRole, setEditRole] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [selectedMember, setSelectedMember] = useState({});
   const [selectedRole, setSelectedRole] = useState("");
@@ -102,7 +103,7 @@ const Roles = () => {
     setSelectedMember({});
   };
 
-  const addRole = async (member, role) => {
+  const addRole = async (member) => {
     let res = await addNewRole(selectedRole, member.id, csrf);
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
@@ -130,9 +131,11 @@ const Roles = () => {
     setShowAddRole(false);
   };
 
-  // const closeEditRole = () => {
-  //   setEditRole(false);
-  // };
+  const roleContainsMember = (member) => {
+    return selectedRole && roleToMemberMap[selectedRole].find((currentMember) => {
+      return currentMember.id === member.id;
+    });
+  };
 
   return (
     <div className="roles-content">
@@ -153,9 +156,6 @@ const Roles = () => {
               )}}
             />
           </div>
-          {/* <Button color="primary" onClick={() => setShowAddRole(true)}>
-            Add New Role
-          </Button> */}
         </div>
         <div className="roles-bot">
           {userRoles?.map((roleObj) =>
@@ -249,29 +249,6 @@ const Roles = () => {
                       </Button>
                     </div>
                   </Modal>
-                  {/* <Modal open={} onClose={closeEditRole}>
-                  <div className="edit-role-modal">
-                    <TextField
-                      id="role-description"
-                      label="description"
-                      required
-                      className="halfWidth"
-                      placeholder="Pdl Description"
-                      value={
-                        editedMember.firstName ? editedMember.firstName : ""
-                      }
-                      onChange={(e) =>
-                        setMember({
-                          ...editedMember,
-                          firstName: e.target.value,
-                        })
-                      }
-                    />
-                    <Button onClick={() => addToRole(selectedMember)}>
-                      Save
-                    </Button>
-                  </div>
-                </Modal> */}
                 </CardActions>
               </Card>
             ) : null

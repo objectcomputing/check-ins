@@ -11,12 +11,12 @@ import java.util.UUID;
 @Embeddable
 public class RolePermissionId {
 
-    @Column(name="roleid")
     @TypeDef(type = DataType.STRING)
+    @Column(name="roleid")
     private final UUID roleId;
 
-    @Column(name = "permissionid")
     @TypeDef(type = DataType.STRING)
+    @Column(name = "permissionid")
     private final UUID permissionId;
 
     public RolePermissionId(UUID roleId, UUID permissionId) {
