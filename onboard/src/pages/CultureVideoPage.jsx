@@ -1,9 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
 import "./CultureVideoPage.css";
-
-function CultureVideoPage() {
+function CultureVideoPage(props) {
+  
   return (
     <div>
       <center>
@@ -11,20 +9,15 @@ function CultureVideoPage() {
       </center>
       <center>
         <iframe
-          width="100%"
+          width="1280"
           height="720"
           src="https://www.youtube.com/embed/D7Ka15wQL5U"
           title="YouTube video player"
-          frameborder="0"
+          frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
+          allowFullScreen
         ></iframe>
       </center>
-      <Link to="/backgroundinformation">
-        <Button variant="contained" size="large" id="backgroundInformation">
-          Background Information
-        </Button>
-      </Link>
     </div>
   );
 }
