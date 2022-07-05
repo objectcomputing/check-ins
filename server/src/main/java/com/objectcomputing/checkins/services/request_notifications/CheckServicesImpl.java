@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.request_notifications;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Singleton;
 import java.time.LocalDate;

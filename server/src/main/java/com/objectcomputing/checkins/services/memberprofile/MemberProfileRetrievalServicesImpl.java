@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import com.objectcomputing.checkins.exceptions.NotFoundException;
-
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.Optional;
 import java.util.UUID;
 

@@ -157,8 +157,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         // Send email if the feedback request has been reopened for edits
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
-            MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
-            MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+            MemberProfile creator = memberProfileRetrievalServices.getById(storedRequest.getCreatorId()).orElseThrow();
+            MemberProfile requestee = memberProfileRetrievalServices.getById(storedRequest.getRequesteeId()).orElseThrow();
+            MemberProfile recipient = memberProfileRetrievalServices.getById(storedRequest.getRequesteeId()).orElseThrow();
             String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
                     "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
                     "</b> has reopened the feedback request on <b>" +
@@ -166,7 +167,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                     "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
             newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
-            emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+            emailSender.sendEmail(notificationSubject, newContent, recipient.getWorkEmail());
         }
 
         return storedRequest;
