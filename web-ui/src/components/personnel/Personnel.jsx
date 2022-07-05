@@ -197,12 +197,13 @@ const Personnel = () => {
         .reduce((pastIds, checkins) => {
           pastIds.push(checkins.teamMemberId);
           return pastIds;
-        }, [])
-        .forEach((x) => {
-          if (!uniqueEntries.includes(x)) {
-            uniqueEntries.push(x);
-          }
-        });
+        }, []);
+
+      result.forEach((x) => {
+        if (!uniqueEntries.includes(x)) {
+          uniqueEntries.push(x);
+        }
+      });
 
       return uniqueEntries;
     };
