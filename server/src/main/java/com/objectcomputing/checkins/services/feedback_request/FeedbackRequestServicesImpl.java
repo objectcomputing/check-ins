@@ -156,12 +156,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         originalFeedback.setDueDate(feedbackRequest.getDueDate());
         originalFeedback.setStatus(feedbackRequest.getStatus());
         originalFeedback.setSubmitDate(feedbackRequest.getSubmitDate());
-        return feedbackReqRepository.update(originalFeedback);
-
-        FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
+        FeedbackRequest storedRequest = feedbackReqRepository.update(originalFeedback);
 
         // Send email if the feedback request has been reopened for edits
-        if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
+        if (originalFeedback.getStatus() == FeedbackRequestStatus.SUBMITTED && feedbackRequest.getStatus() == FeedbackRequestStatus.SENT) {
             MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
             MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
             String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
