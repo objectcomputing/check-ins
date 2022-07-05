@@ -28,7 +28,7 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
         return onboardingProfile.get();
     }
 
-//    @Override
+    @Override
     public Set<Onboarding_profile> findByValues (
             @Nullable UUID id,
             @Nullable String firstName,
@@ -48,23 +48,20 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
 
     @Override
     public Onboarding_profile saveProfile(Onboarding_profile onboarding_profile) {
-        Onboarding_profile employeeSocialSecurityNumber = onboardingProfileRepository.findBySocial(onboarding_profile.socialSecurityNumber()).orElse(null);
-
+        Onboarding_profile employeeSocialSecurityNumber = onboardingProfileRepository.findBySocial(onboarding_profile.getSocialSecurityNumber()).orElse(null);
         if (employeeSocialSecurityNumber != null && employeeSocialSecurityNumber.getId() != null && !Objects.equals(onboarding_profile.getId(), employeeSocialSecurityNumber.getId())) {
             throw new AlreadyExistsException(String.format("Employee SSN already exists in database",
                     onboarding_profile.getSocialSecurityNumber()));
         }
-
         if (onboarding_profile.getId() == null) {
             return onboardingProfileRepository.save(onboarding_profile);
         }
-
         return onboardingProfileRepository.update(onboarding_profile);
     }
 
     @Override
     public Boolean deleteProfile(@NotNull UUID id) {
-        memberProfileRepository.deleteById(id);
+        onboardingProfileRepository.deleteById(id);
         return true;
     }
 

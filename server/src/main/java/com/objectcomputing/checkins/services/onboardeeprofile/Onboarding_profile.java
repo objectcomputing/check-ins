@@ -1,5 +1,4 @@
 package com.objectcomputing.checkins.services.onboardeeprofile;
-
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -7,13 +6,13 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
+import java.time.LocalDate;
+
 import java.util.UUID;
 
 @Entity //specifies that the class is an entity and is mapped to a database table
@@ -73,7 +72,7 @@ public class Onboarding_profile {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "birthdate of the new employee")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @NotBlank
     @Column(name = "currentaddress")
