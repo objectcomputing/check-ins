@@ -34,6 +34,11 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
         return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null));
     }
 
+    default FeedbackRequest saveSampleFeedbackRequestWithStatus(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, String status) {
+        LocalDate testDate = LocalDate.of(2010, 10, 8);
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, status, null));
+    }
+
     default MemberProfile createADefaultRecipient() {
         return getMemberProfileRepository().save(new MemberProfile("Ron", null, "Swanson",
                 null, "Parks Director", null, "Pawnee, Indiana",

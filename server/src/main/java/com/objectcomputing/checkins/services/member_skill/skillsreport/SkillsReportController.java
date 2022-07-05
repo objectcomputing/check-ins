@@ -8,11 +8,12 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.scheduling.TaskExecutors;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -43,13 +44,13 @@ public class SkillsReportController {
      * @return {@link SkillsReportResponseDTO} Returned skills report
      */
     @Post()
-    public Single<HttpResponse<SkillsReportResponseDTO>> reportSkills(@Body @Valid @NotNull SkillsReportRequestDTO requestBody,
-                                                                      HttpRequest<SkillsReportRequestDTO> request) {
-        return Single.fromCallable(() -> skillsReportServices.report(requestBody))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<SkillsReportResponseDTO>> reportSkills(@Body @Valid @NotNull SkillsReportRequestDTO requestBody,
+                                                                    HttpRequest<SkillsReportRequestDTO> request) {
+        return Mono.fromCallable(() -> skillsReportServices.report(requestBody))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(responseBody -> (HttpResponse<SkillsReportResponseDTO>) HttpResponse
                         .created(responseBody)
                         .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))))
-                .subscribeOn(Schedulers.from(executorService));
+                .subscribeOn(Schedulers.fromExecutor(executorService));
     }
 }

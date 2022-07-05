@@ -9,12 +9,13 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -49,15 +50,15 @@ public class RoleController {
      */
     @Post()
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Single<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,
+    public Mono<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,
                                              HttpRequest<RoleCreateDTO> request) {
-        return Single.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription())))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription())))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(userRole -> {
                     return (HttpResponse<Role>) HttpResponse
                             .created(userRole)
                             .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), userRole.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -68,14 +69,14 @@ public class RoleController {
      */
     @Put()
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Single<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<Role> request) {
-        return Single.fromCallable(() -> roleServices.update(role))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<Role> request) {
+        return Mono.fromCallable(() -> roleServices.update(role))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedRole -> (HttpResponse<Role>) HttpResponse
                         .ok()
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedRole.getId()))))
                         .body(updatedRole))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -85,16 +86,16 @@ public class RoleController {
      * @return {@link Role}
      */
     @Get("/{id}")
-    public Single<HttpResponse<Role>> readRole(@NotNull UUID id) {
-        return Single.fromCallable(() -> {
+    public Mono<HttpResponse<Role>> readRole(@NotNull UUID id) {
+        return Mono.fromCallable(() -> {
             Role result = roleServices.read(id);
             if (result == null) {
                 throw new NotFoundException("No role item for UUID");
             }
             return result;
-        }).observeOn(Schedulers.from(eventLoopGroup)).map(userRole -> {
+        }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(userRole -> {
                     return (HttpResponse<Role>) HttpResponse.ok(userRole);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
 
@@ -105,13 +106,13 @@ public class RoleController {
      * @return {@link Role}
      */
     @Get()
-    public Single<HttpResponse<List<Role>>> findAll() {
-        return Single.fromCallable(() -> {
+    public Mono<HttpResponse<List<Role>>> findAll() {
+        return Mono.fromCallable(() -> {
             List<Role> result = roleServices.findAllRoles();
             return result;
-        }).observeOn(Schedulers.from(eventLoopGroup)).map(userRole -> {
+        }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(userRole -> {
             return (HttpResponse<List<Role>>) HttpResponse.ok(userRole);
-        }).subscribeOn(Schedulers.from(ioExecutorService));
+        }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**

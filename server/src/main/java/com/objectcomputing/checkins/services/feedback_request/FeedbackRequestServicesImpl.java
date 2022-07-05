@@ -4,12 +4,14 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
                                        MemberProfileRetrievalServices memberProfileRetrievalServices,
-                                       EmailSender emailSender,
+                                       @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
                                        @Property(name = WEB_UI_URL) String webURL
@@ -99,7 +101,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (storedRequest.getDueDate() != null) {
             newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " +storedRequest.getDueDate().getYear() + ".";
         }
-        newContent+="<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
+        newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
         emailSender.sendEmail(notificationSubject, newContent, memberProfileRetrievalServices.getById(storedRequest.getRecipientId()).orElseThrow(() -> {
             throw new BadArgException("Email recipient %s does not exist", storedRequest.getRecipientId());
@@ -116,7 +118,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
          */
 
         final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         FeedbackRequest originalFeedback = null;
 
         if (feedbackRequest.getId() != null) {
@@ -132,7 +133,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
-        if(dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
+        if (feedbackRequest.getStatus().equals("canceled") && originalFeedback.getStatus().equals("submitted")) {
+            throw new BadArgException("Attempted to cancel a feedback request that was already submitted");
+        }
+
+        if (dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -148,10 +153,23 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
 
-        originalFeedback.setDueDate(feedbackRequest.getDueDate());
-        originalFeedback.setStatus(feedbackRequest.getStatus());
-        originalFeedback.setSubmitDate(feedbackRequest.getSubmitDate());
-        return feedbackReqRepository.update(originalFeedback);
+        FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
+
+        // Send email if the feedback request has been reopened for edits
+        if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
+            MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
+            MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+            String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
+                    "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
+                    "</b> has reopened the feedback request on <b>" +
+                    requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
+                    "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
+            newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
+
+            emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        }
+
+        return storedRequest;
     }
 
     @Override
@@ -234,7 +252,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
         boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return isAdmin || currentUserId.equals(feedbackRequest.getRecipientId());
+        if (isAdmin) {
+            return true;
+        } else if (currentUserId.equals(feedbackRequest.getCreatorId())) {
+            if (feedbackRequest.getSubmitDate() != null) {
+                return true;
+            }
+        }
+
+        return currentUserId.equals(feedbackRequest.getRecipientId());
     }
 
     private FeedbackRequest getFromDTO(FeedbackRequestUpdateDTO dto) {

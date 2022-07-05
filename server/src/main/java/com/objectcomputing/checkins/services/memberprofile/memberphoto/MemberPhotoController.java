@@ -10,11 +10,12 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.constraints.NotNull;
 import java.util.concurrent.ExecutorService;
 
@@ -48,13 +49,13 @@ public class MemberPhotoController {
      * @return {@link HttpResponse<String>} StringURL of photo data
      */
     @Get("/{workEmail}")
-    public Single<HttpResponse<byte[]>> userImage(@NotNull String workEmail) {
+    public Mono<HttpResponse<byte[]>> userImage(@NotNull String workEmail) {
 
-        return Single.fromCallable(() -> memberPhotoService.getImageByEmailAddress(workEmail))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> memberPhotoService.getImageByEmailAddress(workEmail))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(photoData -> (HttpResponse<byte[]>) HttpResponse
                         .ok(photoData)
                         .header(CACHE_CONTROL, String.format("public, max-age=%s", expiry)))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 }

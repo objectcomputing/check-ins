@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.guild.Guild;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -12,7 +13,8 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -38,7 +40,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
                                    MemberProfileRetrievalServices memberProfileRetrievalServices,
                                    CurrentUserServices currentUserServices,
                                    GuildMemberHistoryRepository guildMemberHistoryRepository,
-                                   EmailSender emailSender,
+                                   @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                    @Property(name = WEB_ADDRESS) String webAddress
     ) {
         this.guildRepo = guildRepo;

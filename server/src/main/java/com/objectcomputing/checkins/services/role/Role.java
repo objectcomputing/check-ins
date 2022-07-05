@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.role;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 
 @Entity
+@Introspected
 @Table(name = "role")
 public class Role {
 

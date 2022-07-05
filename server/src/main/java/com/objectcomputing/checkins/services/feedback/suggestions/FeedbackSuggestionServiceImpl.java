@@ -9,7 +9,7 @@ import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.context.annotation.Property;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;

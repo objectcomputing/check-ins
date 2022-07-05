@@ -5,14 +5,15 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.guild.member.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
-
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.time.LocalDate;
@@ -39,7 +40,8 @@ public class GuildServicesImpl implements GuildServices {
                              CurrentUserServices currentUserServices,
                              MemberProfileRetrievalServices memberProfileRetrievalServices,
                              GuildMemberServices guildMemberServices,
-                             EmailSender emailSender, Environment environment,
+                             @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
+                             Environment environment,
                              @Property(name = WEB_ADDRESS) String webAddress
     ) {
         this.guildsRepo = guildsRepo;

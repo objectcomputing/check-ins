@@ -26,14 +26,23 @@ export const getMyAxios = async () => {
       },
       // Any status codes that falls outside the range of 2xx cause this function to trigger
       (err) => {
-        if (401 === err.response.status) {
-          // create a message for 401 error so that the Toast is updated properly
-          err.response.data = {
-            message:
-              "Your session has expired.  Please refresh the page to start a new session.",
-          };
+        if (err.response.status !== 401) {
+          return Promise.reject(err);
         }
-        return Promise.reject(err);
+
+        // trade in refresh token for access token
+        return axios.get('/oauth/access_token', {
+          baseURL: BASE_API_URL,
+          withCredentials: true,
+          timeout: 30000
+        })
+          .then(() => {
+            // retry original request
+            return myAxios(err.config);
+          })
+          .catch(() => {
+            return Promise.reject(err);
+          })
       }
     );
   }

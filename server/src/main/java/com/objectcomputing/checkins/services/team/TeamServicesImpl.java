@@ -8,7 +8,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrieva
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.member.*;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
