@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 
 import { AppContext } from "../../../context/AppContext";
 import {
@@ -19,7 +19,7 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardHeader, InputAdornment,
+  InputAdornment,
   List,
   ListSubheader,
   Modal,
@@ -131,12 +131,6 @@ const Roles = () => {
     setShowAddRole(false);
   };
 
-  const roleContainsMember = (member) => {
-    return selectedRole && roleToMemberMap[selectedRole].find((currentMember) => {
-      return currentMember.id === member.id;
-    });
-  };
-
   return (
     <div className="roles-content">
       <div className="roles">
@@ -161,49 +155,43 @@ const Roles = () => {
           {userRoles?.map((roleObj) =>
             roleObj.role.toLowerCase().includes(searchText.toLowerCase()) ? (
               <Card className="role" key={roleObj.roleId}>
-                <CardHeader
-                  title={
-                    <div className="role-header">
-                      <Typography variant="h4" component="h3">
-                        {roleObj.role}
-                      </Typography>
-                      <Typography variant="h6" component="h6" color="gray">
-                        {roleObj.description || ""}
-                      </Typography>
-                    </div>
-                  }
-                  action={
-                    <div>
-                      <div className="role-buttons">
-                        <Button
-                          className="role-add"
-                          color="primary"
-                          onClick={() => {
-                            setShowAddUser(true);
-                            setSelectedRole(roleObj.role);
-                          }}
-                        >
-                          <span>Add User</span>
-                          <PersonAddIcon />
-                        </Button>
-                        {/* <Button className="role-edit" color="primary">
-                        <span>Edit Role</span> <EditIcon />
-                      </Button> */}
-                      </div>
-                    </div>
-                  }
-                />
                 <CardContent className="role-card">
-                  {
-                    <List>
+                  <List style={{ paddingTop: 0 }}>
+                    <div>
+                      <ListSubheader style={{ padding: 0 }}>
+                        <div className="role-header">
+                          <div className="role-header-title">
+                            <Typography variant="h4" component="h3" color="black">
+                              {roleObj.role}
+                            </Typography>
+                            <Typography variant="h6" component="h6">
+                              {roleObj.description || ""}
+                            </Typography>
+                          </div>
+                          <div className="role-header-buttons">
+                            <Button
+                              className="role-add"
+                              color="primary"
+                              endIcon={<PersonAddIcon/>}
+                              onClick={() => {
+                                setShowAddUser(true);
+                                setSelectedRole(roleObj.role);
+                              }}
+                            >
+                              Add User
+                            </Button>
+                          </div>
+                        </div>
+                        <Divider component="li"/>
+                      </ListSubheader>
                       <RoleUserCards
                         roleId={roleObj.roleId}
                         roleName={roleObj.role}
                         roleMembers={roleObj.memberIds.map((memberId) => selectProfile(state, memberId))}
                         onRemove={(member) => removeFromRole(member, roleObj.roleId, roleObj.role)}
                       />
-                    </List>
-                  }
+                    </div>
+                  </List>
                 </CardContent>
                 <CardActions>
                   <Modal open={showAddUser} onClose={closeAddUser}>

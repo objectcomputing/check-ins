@@ -43,7 +43,7 @@ const RoleUserCards = ({ roleMembers, onRemove }) => {
             <DeleteIcon />
           </div>
         </ListItem>
-        <Divider variant="inset" component="li" />
+        <Divider variant="inset" component="li" style={{ marginRight: "2rem" }} />
       </div>
     )
   );
