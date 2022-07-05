@@ -35,11 +35,6 @@
     padding-bottom: 1em;
 }
 
-.MuiCardHeader-action {
-    margin: 1em 0 0;
-    padding-top: 1em;
-}
-
 .no-wrap {
     flex-wrap: nowrap;
 }
