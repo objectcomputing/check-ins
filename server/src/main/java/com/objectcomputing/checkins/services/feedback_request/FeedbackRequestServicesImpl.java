@@ -159,11 +159,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
             MemberProfile creator = memberProfileRetrievalServices.getById(storedRequest.getCreatorId()).orElseThrow();
             MemberProfile requestee = memberProfileRetrievalServices.getById(storedRequest.getRequesteeId()).orElseThrow();
-            MemberProfile recipient = memberProfileRetrievalServices.getById(storedRequest.getRequesteeId()).orElseThrow();
+            MemberProfile recipient = memberProfileRetrievalServices.getById(storedRequest.getRecipientId()).orElseThrow();
             String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
                     "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
                     "</b> has reopened the feedback request on <b>" +
-                    requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
+                    requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you. " +
                     "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
             newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 

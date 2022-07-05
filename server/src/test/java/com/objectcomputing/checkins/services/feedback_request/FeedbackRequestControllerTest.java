@@ -79,7 +79,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
                 "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
                 "</b> has reopened the feedback request on <b>" +
-                requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
+                requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you. " +
                 "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
         newContent += "<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
         return newContent;
