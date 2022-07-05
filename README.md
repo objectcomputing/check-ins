@@ -1,37 +1,33 @@
 [![Gradle Build & Deploy - Develop](https://github.com/objectcomputing/check-ins/actions/workflows/gradle-build-development.yml/badge.svg)](https://github.com/objectcomputing/check-ins/actions/workflows/gradle-build-development.yml)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
 <!-- TOC -->
 
 - [Check-ins](#check-ins)
 - [Project Links](#project-links)
 - [Setup](#setup)
-    - [directory.json](#directory-json)
-    - [credentials.json](#credentials-json)
+    - [directory.json](#directoryjson)
+    - [credentials.json](#credentialsjson)
     - [Running the application](#running-the-application)
 - [Contributing](#contributing)
 
 <!-- /TOC -->
 
 # Check-ins
-<a id="markdown-check-ins" name="check-ins"></a>
 This web application is written in [Micronaut](https://micronaut.io) for uploading files and tracking skill set of team members. This application will also be used for PDL checkins and to auto-generate resumes from the skill set.
 
 # Project Links
-<a id="markdown-project-links" name="project-links"></a>
 **Project Document:** \*TBA\*
 
-**Project Board:** [Board](https://github.com/oci-labs/check-ins/projects/1)
+**Project Board:** [Board](https://github.com/objectcomputing/check-ins/projects)
 
 **Environments:** \*TBA\*
 
 # Setup
-<a id="markdown-setup" name="setup"></a>
 There are two files required to run the application successfully. Both of which must be created and placed in
 `src/main/resources/secrets`
 
 ### directory.json
-<a id="markdown-directory-json" name="directory-json"></a>
 This is a simple JSON file containing the identifier for the Google Drive folder into which the uploaded files are to be deposited.
 
 ```json
@@ -41,18 +37,27 @@ This is a simple JSON file containing the identifier for the Google Drive folder
 ```
 
 ### credentials.json
-<a id="markdown-credentials-json" name="credentials-json"></a>
 This JSON file should create the generated credentials for a service account that has access to write to the identified Google Drive folder. Information on configuring GCP service account credentials can be [found here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys).
 
 Note: Be sure that the target Google Drive folder has edit access granted to the service account.
 
-### Running the application
-<a id="markdown-running-the-application" name="running-the-application"></a>
+## Running the application
+
 #### Installs
-- [Docker](https://docs.docker.com/get-docker/)
+- [Podman](https://podman.io/)
+- [Podman-Compose](https://github.com/containers/podman-compose)
 
 #### Building
-1. Start the database in a Docker container by running `docker-compose up` in a terminal.
+1. Start the database in a Podman container:
+    * Initialize and start a Podman VM:
+        ```shell
+        $ podman machine init
+        $ podman machine start 
+        ```
+    * Start the Podman container:
+        ```shell
+        $ podman-compose up
+        ```
 2. In a different terminal, execute the following commands : 
     * On Bash/Zsh -
         ```sh
@@ -82,11 +87,10 @@ Note: Be sure that the target Google Drive folder has edit access granted to the
         ```sh
         $ gradlew run
         ```
-4. Open the browser to run the application at `http://localhost:8080`
-5. Access swagger-UI at - `http://localhost:8080/swagger-ui`
+3. Open the browser to run the application at `http://localhost:8080`
+4. Access swagger-UI at - `http://localhost:8080/swagger-ui`
 
 # Contributing
-<a id="markdown-contributing" name="contributing"></a>
 [Contributing](./CONTRIBUTING.md)
 
 

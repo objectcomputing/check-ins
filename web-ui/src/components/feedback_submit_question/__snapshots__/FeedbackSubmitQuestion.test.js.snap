@@ -15,17 +15,5 @@ exports[`renders the feedback submit question 1`] = `
      
     How is the project going so far?
   </ForwardRef(Typography)>
-  <ForwardRef(TextField)
-    InputProps={
-      Object {
-        "readOnly": true,
-      }
-    }
-    className="fullWidth"
-    maxRows={20}
-    multiline={true}
-    placeholder="Type your answer..."
-    variant="outlined"
-  />
 </div>
 `;

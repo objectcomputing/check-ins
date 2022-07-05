@@ -95,6 +95,8 @@ const adminLinks = [
   ["/admin/roles", "Roles"],
   ["/admin/permissions", "Permissions"],
   ["/admin/users", "Users"],
+  ["/admin/email", "Send Email"],
+  ["/admin/edit-skills", "Skills"],
 ];
 
 const directoryLinks = [
@@ -351,7 +353,6 @@ function Menu() {
             <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
               {createListJsx(reportsLinks, true)}
             </Collapse>
-            {createLinkJsx("/edit-skills", "SKILLS", false)}
           </React.Fragment>
         )}
       </List>

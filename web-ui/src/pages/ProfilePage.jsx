@@ -158,7 +158,7 @@ const ProfilePage = () => {
   return (
     <div className="Profile">
       <Profile memberId={id} pdlId={pdlId} />
-      <div class="profile-grid">
+      <div className="profile-grid">
         <div className="profile-page-bio">
           <Card>
             <CardHeader

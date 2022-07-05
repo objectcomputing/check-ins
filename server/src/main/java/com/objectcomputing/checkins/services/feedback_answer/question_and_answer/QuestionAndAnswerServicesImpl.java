@@ -10,10 +10,10 @@ import com.objectcomputing.checkins.services.feedback_template.template_question
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +25,6 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
     private final CurrentUserServices currentUserServices;
     private final TemplateQuestionServices templateQuestionServices;
     private final FeedbackRequestServices feedbackRequestServices;
-    private final Logger LOG = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
 
     public QuestionAndAnswerServicesImpl(FeedbackAnswerServices feedbackAnswerServices,
                                          CurrentUserServices currentUserServices,
@@ -45,6 +44,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         }
         List<TemplateQuestion> templateQuestions = templateQuestionServices.findByFields(feedbackRequest.getTemplateId());
         List<FeedbackAnswer> answerList = feedbackAnswerServices.findByValues(null, requestId);
+
         List<Tuple> returnerList = new ArrayList<>();
 
         if (answerList.isEmpty()) {
@@ -54,8 +54,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
                 newAnswerObject.setQuestionId(question.getId());
                 newAnswerObject.setRequestId(requestId);
                 newAnswerObject.setSentiment(null);
-                FeedbackAnswer savedAnswer = feedbackAnswerServices.save(newAnswerObject);
-                Tuple newTuple = new Tuple(question, savedAnswer, feedbackRequest);
+                Tuple newTuple = new Tuple(question, newAnswerObject, feedbackRequest);
                 returnerList.add(newTuple);
 
             }

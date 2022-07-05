@@ -2,6 +2,20 @@
   display: none;
 }
 
-.skill-slider {
-  color: black;
+.skill-slider-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.discrete-slider {
+  margin-right: 10px;
+  width: 40rem;
+}
+
+@media screen and (max-width: 900px) {
+  .discrete-slider {
+    width: 90%;
+  }
 }

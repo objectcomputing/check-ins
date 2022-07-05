@@ -11,12 +11,13 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
@@ -44,11 +45,11 @@ public class EmployeeHoursController {
      * @return
      */
     @Get("/{?employeeId}")
-    public Single<HttpResponse<Set<EmployeeHours>>> findEmployeeHours(@Nullable String employeeId) {
-        return Single.fromCallable(() -> employeeHoursServices.findByFields(employeeId))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<Set<EmployeeHours>>> findEmployeeHours(@Nullable String employeeId) {
+        return Mono.fromCallable(() -> employeeHoursServices.findByFields(employeeId))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdEmployeeHours -> (HttpResponse<Set<EmployeeHours>>) HttpResponse.ok(createdEmployeeHours))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
 
@@ -57,18 +58,18 @@ public class EmployeeHoursController {
      * @return
      */
     @Get("/{id}")
-    public Single<HttpResponse<EmployeeHours>> readEmployeeHours(@NotNull UUID id) {
-        return Single.fromCallable(() -> {
+    public Mono<HttpResponse<EmployeeHours>> readEmployeeHours(@NotNull UUID id) {
+        return Mono.fromCallable(() -> {
             EmployeeHours result = employeeHoursServices.read(id);
             if (result == null) {
                 throw new NotFoundException("No employee hours for employee id");
             }
             return result;
         })
-                .observeOn(Schedulers.from(eventLoopGroup))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(employeeHour -> {
                     return (HttpResponse<EmployeeHours>) HttpResponse.ok(employeeHour);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 
@@ -78,11 +79,11 @@ public class EmployeeHoursController {
      * @{@link HttpResponse<EmployeeHoursResponseDTO>}
      */
     @Post(uri="/upload" , consumes = MediaType.MULTIPART_FORM_DATA)
-    public Single<HttpResponse<EmployeeHoursResponseDTO>> upload(CompletedFileUpload file){
-        return Single.fromCallable(() -> employeeHoursServices.save(file))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<EmployeeHoursResponseDTO>> upload(CompletedFileUpload file){
+        return Mono.fromCallable(() -> employeeHoursServices.save(file))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(fileInfo -> (HttpResponse<EmployeeHoursResponseDTO>) HttpResponse.ok(fileInfo))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
 }

@@ -19,6 +19,7 @@ delete from feedback_requests;
 delete from template_questions;
 delete from feedback_templates;
 delete from member_profile;
+delete from skills;
 
 INSERT INTO member_profile
 (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
@@ -99,6 +100,26 @@ INSERT INTO member_profile
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Unreal','${aeskey}'),  PGP_SYM_ENCRYPT('Ulysses','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer 2','${aeskey}'), '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing2@objectcomputing.com','${aeskey}'), '010101012', '2021-05-22', PGP_SYM_ENCRYPT('Test user 2','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1950-01-01');
+
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('a90be358-aa3d-49c8-945a-879a93646e45', PGP_SYM_ENCRYPT('Kazuhira','${aeskey}'),  PGP_SYM_ENCRYPT('Miller','${aeskey}'), PGP_SYM_ENCRYPT('Unit Coordinator','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('millerkaz@objectcomputing.com','${aeskey}'), '012345678', '2022-03-29', PGP_SYM_ENCRYPT('Bff with Big Boss','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
+
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', PGP_SYM_ENCRYPT('Big','${aeskey}'),  PGP_SYM_ENCRYPT('Boss','${aeskey}'), PGP_SYM_ENCRYPT('Sneaky Snake','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('bossb@objectcomputing.com','${aeskey}'), '351242153', '2022-03-29', PGP_SYM_ENCRYPT('The Legendary Big Boss','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
+
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Shalashaska','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
+
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('8d75c07e-6adc-437a-8659-7dd953ce6600', PGP_SYM_ENCRYPT('Huey','${aeskey}'),  PGP_SYM_ENCRYPT('Emmerich','${aeskey}'), PGP_SYM_ENCRYPT('Head of R&D','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('emmerichh@objectcomputing.com','${aeskey}'), '657483498', '2022-03-29', PGP_SYM_ENCRYPT('Waiting for love to bloom on the battlefield','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
 
 INSERT INTO role
     (id, description, role)
@@ -594,30 +615,54 @@ VALUES
 ('18ef2032-c264-411e-a8e1-ddda9a714bae', 'Q1 Feedback', 'Get feedback for quarter 1', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2021-06-06', true, true, false);
 
 INSERT INTO template_questions
-(id, question, template_id, question_number)
+(id, question, template_id, question_number, input_type)
 VALUES
-('d6d05f53-682c-4c37-be32-8aab5f89767f', PGP_SYM_ENCRYPT('What are this team member''s top strengths (include examples where possible)?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 1);
+('d6d05f53-682c-4c37-be32-8aab5f89767f', PGP_SYM_ENCRYPT('What are this team member''s top strengths (include examples where possible)?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 1, 'TEXT');
 
 INSERT INTO template_questions
-(id, question, template_id, question_number)
+(id, question, template_id, question_number, input_type)
 VALUES
-('47f997ca-0045-4147-afcb-0c9ed0b44978', PGP_SYM_ENCRYPT('In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
+('47f997ca-0045-4147-afcb-0c9ed0b44978', PGP_SYM_ENCRYPT('In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 2, 'TEXT');
 
 INSERT INTO feedback_templates
 (id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
 VALUES
 ('97b0a312-e5dd-46f4-a600-d8be2ad925bb', 'Survey 1', 'Make a survey with a few questions', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2021-05-05', true, true, false);
 
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('89c8b612-fca8-4144-88cd-176ddfca35ad', PGP_SYM_ENCRYPT('What can this team member improve on that would help them increase their effectiveness (include examples where possible)?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 1, 'TEXT');
 
 INSERT INTO template_questions
-(id, question, template_id, question_number)
+(id, question, template_id, question_number, input_type)
 VALUES
-('89c8b612-fca8-4144-88cd-176ddfca35ad', PGP_SYM_ENCRYPT('What can this team member improve on that would help them increase their effectiveness (include examples where possible)?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 1);
+('3571cf89-22b9-4e0e-baff-1a1e45482472', PGP_SYM_ENCRYPT('Try to recall a time when this team member helped you out with something. What was the problem and how did you work together to solve it?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 3, 'TEXT');
 
 INSERT INTO template_questions
-(id, question, template_id, question_number)
+(id, question, template_id, question_number, input_type)
 VALUES
-('afa7e2cb-366a-4c16-a205-c0d493b80d85', PGP_SYM_ENCRYPT('In what ways does this team member represent OCI values?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
+('afa7e2cb-366a-4c16-a205-c0d493b80d85', PGP_SYM_ENCRYPT('In what ways does this team member represent OCI values?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2, 'TEXT');
+
+INSERT INTO feedback_templates
+(id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
+VALUES
+('1c8bc142-c447-4889-986e-42ab177da683', 'Multiple Choice Survey', 'This survey contains radio buttons and sliders.', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2022-04-04', true, true, false);
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('22113310-04dd-4931-96f2-37303a2515a4', PGP_SYM_ENCRYPT('Does this team member regularly attend meetings?', '${aeskey}'), '1c8bc142-c447-4889-986e-42ab177da683', 1, 'RADIO');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('11d7b14c-2eee-4f72-a2b6-8c57a094207e', PGP_SYM_ENCRYPT('Would you say that this team member demonstrates high productivity?', '${aeskey}'), '1c8bc142-c447-4889-986e-42ab177da683', 2, 'SLIDER');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('bf328e35-e486-4ec8-b3e8-acc2c09419fa', PGP_SYM_ENCRYPT('Feel free to elaborate on the choices you made above if you choose to do so', '${aeskey}'), '1c8bc142-c447-4889-986e-42ab177da683', 3, 'TEXT');
 
 INSERT INTO feedback_templates
 (id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
@@ -654,7 +699,6 @@ INSERT INTO feedback_requests
 VALUES
 ('c15961e4-6e9b-42cd-8140-ece9efe2445c', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498' , 'b2d35288-7f1e-4549-aa2b-68396b162490', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2020-07-07', null, '2020-07-08', 'submitted');
 
-
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
@@ -680,6 +724,11 @@ INSERT INTO feedback_requests
 VALUES
 ('d09031be-fac1-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2020-08-01', '2020-08-05', '2020-08-02', 'submitted');
 
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('a50f2f8a-7eb0-4456-b5ef-382086827ba0', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '2559a257-ae84-4076-9ed4-3820c427beeb', '1c8bc142-c447-4889-986e-42ab177da683', '2022-04-14', null, null, 'sent');
+
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
@@ -693,7 +742,7 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
-('b5596a80-fac3-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '1b4f99da-ef70-4a76-9b37-8bb783b749ad','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-02-15', '2020-02-25', '2020-02-20', 'submitted');
+('b5596a80-fac3-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '1b4f99da-ef70-4a76-9b37-8bb783b749ad','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-02-15', '2021-02-25', '2021-02-20', 'submitted');
 
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
@@ -710,6 +759,35 @@ INSERT INTO feedback_requests
 VALUES
 ('ab2da7fc-fac2-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3' ,'18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-08-01', '2021-08-05', null, 'pending');
 
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('74623897-5279-4dbe-94d4-5a247d9f00b1', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'pending');
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('4cbd9576-e580-4da7-8488-d1f75477f5fb', PGP_SYM_ENCRYPT('Brilliant feedback', '${aeskey}'), 'd6d05f53-682c-4c37-be32-8aab5f89767f', '74623897-5279-4dbe-94d4-5a247d9f00b1', 0.8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('01565a0e-b8ea-486f-af2e-821a74519953', PGP_SYM_ENCRYPT('Excellent feedback', '${aeskey}'), '47f997ca-0045-4147-afcb-0c9ed0b44978', '74623897-5279-4dbe-94d4-5a247d9f00b1', 0.7);
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('0d0d872d-4f05-4af8-9804-d0a99e450c37', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'pending');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('1aff4993-2324-41cc-8b21-2ab5715ca70b', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'pending');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('7ca4d402-0bb9-4989-9087-8a52a63ee5d0', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'pending');
 
 
 INSERT INTO feedback_requests
@@ -727,12 +805,15 @@ INSERT INTO feedback_answers
 VALUES
 ('c38e5fba-face-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('They are very fun to work with :)', '${aeskey}'), '47f997ca-0045-4147-afcb-0c9ed0b44978', 'b1f60cfa-fac2-11eb-9a03-0242ac130003', 0.8);
 
-
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('e238dd00-fac4-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2021-03-22', '2021-04-01', '2021-04-01', 'submitted');
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
-('e238dd00-fac4-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '43ee8e79-b33d-44cd-b23c-e183894ebfef','97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2021-03-22', '2021-04-01', '2021-04-01', 'submitted');
+('4240735d-15fd-4eea-8bca-8c642a433036', '59b790d2-fabc-11eb-9a03-0242ac130003', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '066b186f-1425-45de-89f2-4ddcc6ebe237', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2021-03-22', '2021-04-01', '2021-04-01', 'submitted');
 
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
@@ -742,4 +823,64 @@ VALUES
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
-('8c13ffa2-fad0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('They are very good at working on a team--all of us is better than any one of us', '${aeskey}'), '47f997ca-0045-4147-afcb-0c9ed0b44978', 'e238dd00-fac4-11eb-9a03-0242ac130003', 0.6);
+('0c819e0e-e237-4759-9967-550a3462e516', PGP_SYM_ENCRYPT('They sometimes struggle with writing services using Micronaut.', '${aeskey}'), '89c8b612-fca8-4144-88cd-176ddfca35ad', 'e238dd00-fac4-11eb-9a03-0242ac130003', 0.4);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('d19e6ac1-f081-414c-a51a-ccc684131bec', PGP_SYM_ENCRYPT('They could definitely learn how to use Vim better. They keep asking me how to exit!', '${aeskey}'), '89c8b612-fca8-4144-88cd-176ddfca35ad', '4240735d-15fd-4eea-8bca-8c642a433036', 0.3);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('5a65fe6b-0f27-4d2c-bc25-a637bc33d630', PGP_SYM_ENCRYPT('Nothing comes to mind.', '${aeskey}'), '3571cf89-22b9-4e0e-baff-1a1e45482472', 'e238dd00-fac4-11eb-9a03-0242ac130003', 0.5);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('They are very good at working on a team--all of us is better than any one of us', '${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', 'e238dd00-fac4-11eb-9a03-0242ac130003', 0.8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('603b1308-6cc4-4534-b588-921b7b3e476d', PGP_SYM_ENCRYPT('There was one time where I could not figure out the cause of a bug. They showed me how to use the debugging software to locate the bug, which was extremely helpful. I was able to quickly patch the bug after that.', '${aeskey}'), '3571cf89-22b9-4e0e-baff-1a1e45482472', '4240735d-15fd-4eea-8bca-8c642a433036', 0.9);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('a223135a-742b-45c6-b9a4-2bb990d956b2', PGP_SYM_ENCRYPT('They are always punctual, and work well with the other members of the team. Although they have a few technical skills they could brush up on, our team is lucky to have them.', '${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', '4240735d-15fd-4eea-8bca-8c642a433036', 0.7);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('f057af45-e627-499c-8a71-1e6b4ab2fcd2', 'React', false, 'Component-based JavaScript framework', false);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('689bb262-10af-40ef-bbf6-d8ad062e1470', 'Micronaut', false, 'JVM framework for microservices and serverless apps', false);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('6b56f0aa-09aa-4b09-bb81-03481af7e49f', 'CSS', true, 'Style sheet language', false);
+
+INSERT INTO skills
+(id, name, pending, description, extraneous)
+VALUES
+('84682de9-85a7-4bf7-b74b-e9054311a61a', 'Git', true, 'Version control system', false);
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('99b7b700-bba3-440b-8df5-c1b668e9e7e0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '5', '2022-06-01');
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('daad16fa-2268-4e72-a2ad-e13aa8b8665b', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '6b56f0aa-09aa-4b09-bb81-03481af7e49f', '4', '2022-06-01');
+
+INSERT INTO member_skills
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('e2de59a8-71be-4972-86be-608538503195', '105f2968-a182-45a3-892c-eeff76383fe0', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '3', '2022-05-01');

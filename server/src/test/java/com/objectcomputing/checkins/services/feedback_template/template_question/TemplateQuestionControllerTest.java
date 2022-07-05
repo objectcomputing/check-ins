@@ -23,7 +23,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.*;
 
 public class TemplateQuestionControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, TemplateQuestionFixture, RoleFixture {
@@ -37,6 +37,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
         dto.setQuestion(templateQuestion.getQuestion());
         dto.setTemplateId(templateQuestion.getTemplateId());
         dto.setQuestionNumber(templateQuestion.getQuestionNumber());
+        dto.setInputType(templateQuestion.getInputType());
         return dto;
     }
 
@@ -45,6 +46,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
         dto.setId(templateQuestion.getId());
         dto.setQuestion(templateQuestion.getQuestion());
         dto.setQuestionNumber(templateQuestion.getQuestionNumber());
+        dto.setInputType(templateQuestion.getInputType());
         return dto;
     }
 
@@ -52,6 +54,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
         assertEquals(content.getQuestion(), dto.getQuestion());
         assertEquals(content.getTemplateId(), dto.getTemplateId());
         assertEquals(content.getQuestionNumber(), dto.getQuestionNumber());
+        assertEquals(content.getInputType(), dto.getInputType());
     }
 
     @Test
@@ -304,6 +307,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
         // Update by an admin to another user's question
         question.setQuestion("Do you think opossums are misunderstood creatures?");
         question.setQuestionNumber(2);
+        question.setInputType("RADIO");
         final TemplateQuestionUpdateDTO updateDTO = updateDTO(question);
 
         final HttpRequest<?> request = HttpRequest.PUT("", updateDTO)

@@ -6,14 +6,18 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Set;
@@ -29,12 +33,14 @@ public class PrivateNoteController {
 
     private final PrivateNoteServices privateNoteServices;
     private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
+    private final Scheduler scheduler;
 
-    public PrivateNoteController(PrivateNoteServices privateNoteServices, EventLoopGroup eventLoopGroup, ExecutorService ioExecutorService) {
+    public PrivateNoteController(PrivateNoteServices privateNoteServices,
+                                 EventLoopGroup eventLoopGroup,
+                                 @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.privateNoteServices = privateNoteServices;
         this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
+        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -45,17 +51,17 @@ public class PrivateNoteController {
      * @return
      */
     @Post("/")
-    public Single<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
-        return Single.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
+    public Mono<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
+        return Mono.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
                 privateNote.getCreatedbyid(), privateNote.getDescription())))
-                .observeOn(Schedulers.from(eventLoopGroup))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createPrivateNote -> {
                     //Using code block rather than lambda so we can log what thread we're in
                     return (HttpResponse<PrivateNote>) HttpResponse
                             .created(createPrivateNote)
                             .headers(headers -> headers.location(
                                     URI.create(String.format("%s/%s", request.getPath(), createPrivateNote.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(scheduler);
 
     }
 
@@ -67,19 +73,19 @@ public class PrivateNoteController {
      * @return
      */
     @Put("/")
-    public Single<HttpResponse<PrivateNote>> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
+    public Mono<HttpResponse<PrivateNote>> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         if (privateNote == null) {
-            return Single.just(HttpResponse.ok());
+            return Mono.just(HttpResponse.ok());
         }
-        return Single.fromCallable(() -> privateNoteServices.update(privateNote))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> privateNoteServices.update(privateNote))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatePrivateNote ->
                         (HttpResponse<PrivateNote>) HttpResponse
                                 .ok()
                                 .headers(headers -> headers.location(
                                         URI.create(String.format("%s/%s", request.getPath(), updatePrivateNote.getId()))))
                                 .body(updatePrivateNote))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -102,18 +108,18 @@ public class PrivateNoteController {
      * @return
      */
     @Get("/{id}")
-    public Single<HttpResponse<PrivateNote>> readPrivateNote(UUID id) {
-        return Single.fromCallable(() -> {
+    public Mono<HttpResponse<PrivateNote>> readPrivateNote(UUID id) {
+        return Mono.fromCallable(() -> {
             PrivateNote result = privateNoteServices.read(id);
             if (result == null) {
                 throw new NotFoundException("No private note for UUID");
             }
             return result;
         })
-                .observeOn(Schedulers.from(eventLoopGroup))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(privateNote -> {
                     return (HttpResponse<PrivateNote>)HttpResponse.ok(privateNote);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(scheduler);
 
     }
 

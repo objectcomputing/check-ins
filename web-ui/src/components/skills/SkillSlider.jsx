@@ -5,13 +5,13 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  IconButton,
-  Tooltip,
+  IconButton
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
-import DiscreteSlider from "../slider/Slider";
+import DiscreteSlider from "../discrete_slider/DiscreteSlider";
+import Typography from "@mui/material/Typography";
 
 const PREFIX = 'SkillSlider';
 const classes = {
@@ -21,25 +21,25 @@ const classes = {
 const Root = styled('span')(() => ({
   [`& .${classes.hidden}`]: {
     display: "none",
+  },
+  '@media screen and (max-width: 900px)': {
+    width: "100%"
   }
 }));
 
 const SkillSlider = ({
   id,
-  description,
   name,
   startLevel,
   lastUsedDate,
   onDelete,
   onUpdate,
-  key,
 }) => {
   let [currCheck, setCurrCheck] = useState(!lastUsedDate);
   let [lastUsed, setLastUsed] = useState(lastUsedDate);
   let [skillLevel, setSkillLevel] = useState(startLevel);
-  const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
-  const datePickerVisibility = (event) => {
+  const datePickerVisibility = () => {
     setCurrCheck(!currCheck);
   };
 
@@ -67,21 +67,17 @@ const SkillSlider = ({
   return (
     <>
       <Root>
-        <Tooltip
-          open={tooltipIsOpen && description ? true : false}
-          onOpen={() => setTooltipIsOpen(true)}
-          onClose={() => setTooltipIsOpen(false)}
-          enterTouchDelay={0}
-          placement="top-start"
-          title={description || ""}
-        >
-          <div className="skill-slider">{name}</div>
-        </Tooltip>
-        <DiscreteSlider
-          inStartPos={skillLevel}
-          onChange={updateLevel}
-          onChangeCommitted={updateSkillLevel}
-        />
+        <Typography variant="body1" className="skill-slider-title">{name}</Typography>
+        <div className="skill-slider-container">
+          <DiscreteSlider
+            inStartPos={skillLevel}
+            onChange={updateLevel}
+            onChangeCommitted={updateSkillLevel}
+          />
+          <IconButton onClick={() => onDelete(id)} size="large">
+            <DeleteIcon />
+          </IconButton>
+        </div>
         {false && (
           <FormControl>
             <FormControlLabel
@@ -93,18 +89,15 @@ const SkillSlider = ({
             />
           </FormControl>
         )}
+        {false && (
+          <TextField
+            className={currCheck ? classes.hidden : undefined}
+            type="date"
+            onChange={(event, value) => updateLastUsed(value)}
+            defaultValue={formatDate(lastUsed)}
+          />
+        )}
       </Root>
-      {false && (
-        <TextField
-          className={currCheck ? classes.hidden : undefined}
-          type="date"
-          onChange={(event, value) => updateLastUsed(value)}
-          defaultValue={formatDate(lastUsed)}
-        />
-      )}
-      <IconButton onClick={(event) => onDelete(id)} size="large">
-        <DeleteIcon />
-      </IconButton>
     </>
   );
 };

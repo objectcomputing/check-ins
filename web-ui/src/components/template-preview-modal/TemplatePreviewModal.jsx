@@ -157,7 +157,13 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
               <ListItem
                 className={classes.questionListItem}
                 key={templateQuestion?.id}
-                divider>
+                divider
+                secondaryAction={
+                  <Typography variant="body1" fontStyle="italic" color="gray">
+                    {templateQuestion?.inputType}
+                  </Typography>
+                }
+              >
                 <ListItemAvatar>
                   <Avatar className={classes.questionNumber}>
                     {templateQuestion?.questionNumber}
