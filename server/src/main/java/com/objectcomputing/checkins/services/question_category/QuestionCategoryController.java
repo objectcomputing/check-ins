@@ -4,14 +4,18 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -27,14 +31,14 @@ public class QuestionCategoryController {
 
     private final QuestionCategoryServices questionCategoryService;
     private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
+    private final Scheduler scheduler;
 
     public QuestionCategoryController(QuestionCategoryServices questionCategoryService,
                                       EventLoopGroup eventLoopGroup,
-                                      ExecutorService ioExecutorService) {
+                                      @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.questionCategoryService = questionCategoryService;
         this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
+        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -45,16 +49,16 @@ public class QuestionCategoryController {
      */
 
     @Post()
-    public Single<HttpResponse<QuestionCategory>> createAQuestionCategory(@Body @Valid QuestionCategoryCreateDTO questionCategory,
-                                                                          HttpRequest<QuestionCategoryCreateDTO> request) {
+    public Mono<HttpResponse<QuestionCategory>> createAQuestionCategory(@Body @Valid QuestionCategoryCreateDTO questionCategory,
+                                                                        HttpRequest<QuestionCategoryCreateDTO> request) {
 
-        return Single.fromCallable(() -> questionCategoryService.saveQuestionCategory(new QuestionCategory(questionCategory.getName())))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> questionCategoryService.saveQuestionCategory(new QuestionCategory(questionCategory.getName())))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdQuestionCategory -> {
                     return (HttpResponse<QuestionCategory>) HttpResponse.created(createdQuestionCategory)
                             .headers(headers -> headers.location(
                                     URI.create(String.format("%s/%s", request.getPath(), createdQuestionCategory.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(scheduler);
 
     }
 
@@ -67,12 +71,12 @@ public class QuestionCategoryController {
      */
 
     @Get("/{?id,name}")
-    public Single<HttpResponse<Set<QuestionCategory>>> findByValue(@Nullable UUID id,
+    public Mono<HttpResponse<Set<QuestionCategory>>> findByValue(@Nullable UUID id,
                                                                    @Nullable String name) {
-        return Single.fromCallable(() -> questionCategoryService.findByValue(name, id))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> questionCategoryService.findByValue(name, id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(questionCategories -> (HttpResponse<Set<QuestionCategory>>) HttpResponse.ok(questionCategories))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -82,15 +86,15 @@ public class QuestionCategoryController {
      * @return {@link HttpResponse<QuestionCategory>}
      */
     @Put()
-    public Single<HttpResponse<QuestionCategory>> update(@Body @Valid QuestionCategory questionCategory, HttpRequest<QuestionCategory> request) {
+    public Mono<HttpResponse<QuestionCategory>> update(@Body @Valid QuestionCategory questionCategory, HttpRequest<QuestionCategory> request) {
 
-        return Single.fromCallable(() -> questionCategoryService.update(questionCategory))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> questionCategoryService.update(questionCategory))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedQuestionCategory -> (HttpResponse<QuestionCategory>) HttpResponse
                         .ok()
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedQuestionCategory.getId()))))
                         .body(updatedQuestionCategory))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**

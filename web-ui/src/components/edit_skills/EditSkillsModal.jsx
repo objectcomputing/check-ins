@@ -9,7 +9,7 @@ import { combineSkill } from "../../api/skill";
 import { getMemberSkills } from "../../api/memberskill";
 
 import Autocomplete from '@mui/material/Autocomplete';
-import { Checkbox, Modal, TextField } from "@mui/material";
+import {Checkbox, Modal, TextField} from "@mui/material";
 import { Button } from "@mui/material";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -87,8 +87,8 @@ const EditSkillsModal = ({ open, onClose, skillsToEdit }) => {
             disableCloseOnSelect
             getOptionLabel={(option) => option.name}
             onChange={handleSelections}
-            renderOption={(option, { selected }) => (
-              <React.Fragment>
+            renderOption={(props, option, { selected }) => (
+              <li {...props}>
                 <Checkbox
                   icon={icon}
                   checkedIcon={checkedIcon}
@@ -96,7 +96,7 @@ const EditSkillsModal = ({ open, onClose, skillsToEdit }) => {
                   checked={selected}
                 />
                 {option.name}
-              </React.Fragment>
+              </li>
             )}
             style={{ width: 500 }}
             renderInput={(params) => (

@@ -7,7 +7,7 @@ import SearchResults from "../components/search-results/SearchResults";
 import {
   selectOrderedSkills,
   selectCsrfToken,
-  selectOrderedMemberProfiles,
+  selectCurrentMemberIds,
 } from "../context/selectors";
 
 import { Button, TextField } from "@mui/material";
@@ -19,7 +19,7 @@ const SkillReportPage = (props) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const skills = selectOrderedSkills(state);
-  const memberProfiles = selectOrderedMemberProfiles(state);
+  const memberIds = selectCurrentMemberIds(state);
   const [searchResults, setSearchResults] = useState([]);
   const [searchRequestDTO] = useState([]);
   const [searchSkills, setSearchSkills] = useState([]);
@@ -36,7 +36,9 @@ const SkillReportPage = (props) => {
           ? res.payload.data.teamMembers
           : undefined;
     }
-    if (memberSkillsFound && memberProfiles) {
+    // Filter out skills of terminated members
+    memberSkillsFound = memberSkillsFound.filter(memberSkill => memberIds.includes(memberSkill.id));
+    if (memberSkillsFound && memberIds) {
       setSearchResults(memberSkillsFound);
     } else {
       setSearchResults(undefined);
@@ -78,10 +80,8 @@ const SkillReportPage = (props) => {
         <Autocomplete
           id="skillSelect"
           multiple
-          options={skills.filter(
-            (skill) =>
-              !searchSkills.map((sSkill) => sSkill.id).includes(skill.id)
-          )}
+          options={skills}
+          filterSelectedOptions
           value={searchSkills ? searchSkills : []}
           onChange={onSkillsChange}
           getOptionLabel={(option) => option.name}

@@ -1,0 +1,9 @@
+h1 {
+  margin-top: 5%;
+}
+
+#backgroundInformation {
+  text-transform: unset !important;
+  position: absolute;
+  margin-left: 5%;
+}

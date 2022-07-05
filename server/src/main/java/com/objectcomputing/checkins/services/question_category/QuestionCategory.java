@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.question_category;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -14,6 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Introspected
 @Table(name = "question_categories")
 public class QuestionCategory {
 

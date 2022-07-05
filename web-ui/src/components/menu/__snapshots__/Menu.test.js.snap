@@ -2663,25 +2663,25 @@ Array [
   width: 100%;
 }
 
-.emotion-63 {
+.emotion-59 {
   -webkit-flex: 0 0 auto;
   -ms-flex: 0 0 auto;
   flex: 0 0 auto;
 }
 
 @media (min-width:0px) {
-  .emotion-63 {
+  .emotion-59 {
     display: none;
   }
 }
 
 @media (min-width:600px) {
-  .emotion-63 {
+  .emotion-59 {
     display: block;
   }
 }
 
-.emotion-64 {
+.emotion-60 {
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
@@ -3678,44 +3678,6 @@ Array [
                         />
                       </div>,
                     ]
-                    
-                    Array [
-                      "",
-                      <a
-                        className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-20"
-                        href="/edit-skills"
-                        onBlur={[Function]}
-                        onClick={[Function]}
-                        onContextMenu={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        tabIndex={0}
-                      >
-                        
-                        <div
-                          className="MuiListItemText-root emotion-21"
-                        >
-                          
-                          <span
-                            className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-22"
-                          >
-                            SKILLS
-                          </span>
-                        </div>
-                        
-                        <span
-                          className="MuiTouchRipple-root emotion-5"
-                        />
-                      </a>,
-                    ]
                   </nav>
                 </div>
               </div>,
@@ -3730,13 +3692,13 @@ Array [
       ]
       
       <div
-        className="MuiDrawer-root MuiDrawer-docked emotion-63"
+        className="MuiDrawer-root MuiDrawer-docked emotion-59"
       >
         
         Array [
           "",
           <div
-            className="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 Menu-drawerPaper MuiDrawer-paper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft emotion-64"
+            className="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 Menu-drawerPaper MuiDrawer-paper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft emotion-60"
           >
             <div>
               <div />
@@ -4123,44 +4085,6 @@ Array [
                       className="MuiTouchRipple-root emotion-5"
                     />
                   </div>,
-                ]
-                
-                Array [
-                  "",
-                  <a
-                    className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-20"
-                    href="/edit-skills"
-                    onBlur={[Function]}
-                    onClick={[Function]}
-                    onContextMenu={[Function]}
-                    onDragLeave={[Function]}
-                    onFocus={[Function]}
-                    onKeyDown={[Function]}
-                    onKeyUp={[Function]}
-                    onMouseDown={[Function]}
-                    onMouseLeave={[Function]}
-                    onMouseUp={[Function]}
-                    onTouchEnd={[Function]}
-                    onTouchMove={[Function]}
-                    onTouchStart={[Function]}
-                    tabIndex={0}
-                  >
-                    
-                    <div
-                      className="MuiListItemText-root emotion-21"
-                    >
-                      
-                      <span
-                        className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-22"
-                      >
-                        SKILLS
-                      </span>
-                    </div>
-                    
-                    <span
-                      className="MuiTouchRipple-root emotion-5"
-                    />
-                  </a>,
                 ]
               </nav>
             </div>

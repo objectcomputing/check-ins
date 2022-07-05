@@ -26,7 +26,6 @@ import {
   Button,
   Card,
   CardActions,
-  CardHeader,
   Dialog,
   DialogActions,
   DialogContent,
@@ -41,6 +40,7 @@ import Autocomplete, {
   createFilterOptions,
 } from '@mui/material/Autocomplete';
 import BuildIcon from "@mui/icons-material/Build";
+import Typography from "@mui/material/Typography";
 
 const PREFIX = 'SkillSection';
 const classes = {
@@ -50,8 +50,8 @@ const classes = {
 
 const Root = styled('span')(() => ({
   [`& .${classes.skillRow}`]: {
+    justifyContent: "center",
     fontWeight: "bold",
-    justifyContent: "space-around",
   }
 }));
 
@@ -151,7 +151,7 @@ const SkillSection = ({ userId }) => {
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: "Skill deleted",
+          toast: "Skill removed from profile",
         },
       });
       dispatch({ type: DELETE_MEMBER_SKILL, payload: id });
@@ -177,14 +177,14 @@ const SkillSection = ({ userId }) => {
   };
   const filter = createFilterOptions();
 
-  const SkillSelector = (props) => (
+  const SkillSelector = () => (
     <Autocomplete
       isOptionEqualToValue={(option, value) =>
         value ? value.id === option.id : false
       }
       value={skillToAdd}
-      style={{ width: "18em" }}
       id="skillSearchAutocomplete"
+      className="skill-search-autocomplete"
       selectOnFocus
       clearOnBlur={true}
       handleHomeEndKeys
@@ -279,12 +279,13 @@ const SkillSection = ({ userId }) => {
         </Modal>
       <Root>
         <Card>
-          <CardHeader
-            avatar={<BuildIcon />}
-            title="Skills"
-            titleTypographyProps={{ variant: "h5", component: "h2" }}
-            action={<SkillSelector />}
-          />
+          <div className="skill-card-header">
+            <div className="skill-card-header-title">
+              <BuildIcon style={{ marginRight: "16px" }}/>
+              <Typography variant="h5" component="h2">Skills</Typography>
+            </div>
+            <SkillSelector/>
+          </div>
           <List>
             {mySkills &&
             mySkills.map((memberSkill) => {
@@ -322,7 +323,7 @@ const SkillSection = ({ userId }) => {
                 <DialogTitle id="alert-dialog-title">Delete Skill?</DialogTitle>
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to delete the skill?
+                    Are you sure you want to remove this skill from your profile?
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>

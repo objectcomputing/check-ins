@@ -28,6 +28,14 @@ micronaut:
   security:
     enabled: true
     authentication: cookie
+    token:
+      jwt:
+        enabled: true
+        generator:
+          refresh-token:
+            enabled: true
+            path: /oauth/access_token
+            secret: ${ OAUTH_REFRESH_TOKEN_SECRET:'pleaseChangeThisSecretForANewOne' }
     oauth2:
       callback-uri: ${ OAUTH_CALLBACK_URI }
       clients:
@@ -40,6 +48,11 @@ micronaut:
       logout:
         get-allowed: true
     intercept-url-map:
+      -
+        pattern: /onboard/**
+        http-method: GET
+        access:
+          - isAnonymous()
       -
         pattern: /**
         http-method: GET

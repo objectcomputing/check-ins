@@ -1,11 +1,12 @@
 package com.objectcomputing.checkins.services.questions;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
+@Introspected
 public class QuestionResponseDTO {
     @Schema(description = "id of the question this entry is associated with")
     private UUID id;

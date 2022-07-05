@@ -8,9 +8,10 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -32,18 +33,18 @@ public class QuestionAndAnswerController {
     }
 
     @Get("/{?requestId,questionId}")
-    public Single<HttpResponse<QuestionAndAnswerServices.Tuple>> getQuestionAndAnswer(@Nullable UUID requestId, @Nullable UUID questionId) {
-        return Single.fromCallable(() -> questionAndAnswerServices.getQuestionAndAnswer(requestId, questionId))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<QuestionAndAnswerServices.Tuple>> getQuestionAndAnswer(@Nullable UUID requestId, @Nullable UUID questionId) {
+        return Mono.fromCallable(() -> questionAndAnswerServices.getQuestionAndAnswer(requestId, questionId))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(pair -> (HttpResponse<QuestionAndAnswerServices.Tuple>) HttpResponse.ok(pair))
-                .subscribeOn(Schedulers.from(executorService));
+                .subscribeOn(Schedulers.fromExecutor(executorService));
     }
 
     @Get("/{requestId}")
-    public Single<HttpResponse<List<QuestionAndAnswerServices.Tuple>>> getAllQuestionsAndAnswers(@Nullable UUID requestId) {
-        return Single.fromCallable(() -> questionAndAnswerServices.getAllQuestionsAndAnswers(requestId))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<List<QuestionAndAnswerServices.Tuple>>> getAllQuestionsAndAnswers(@Nullable UUID requestId) {
+        return Mono.fromCallable(() -> questionAndAnswerServices.getAllQuestionsAndAnswers(requestId))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(answerPairs -> (HttpResponse<List<QuestionAndAnswerServices.Tuple>>) HttpResponse.ok(answerPairs))
-                .subscribeOn(Schedulers.from(executorService));
+                .subscribeOn(Schedulers.fromExecutor(executorService));
     }
 }

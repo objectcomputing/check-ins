@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.member_skill;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -15,7 +16,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name ="member_skills")
+@Introspected
+@Table(name = "member_skills")
 public class MemberSkill {
 
     @Id
