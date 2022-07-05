@@ -884,3 +884,83 @@ INSERT INTO member_skills
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
 ('e2de59a8-71be-4972-86be-608538503195', '105f2968-a182-45a3-892c-eeff76383fe0', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '3', '2022-05-01');
+
+INSERT INTO documents
+(id, name, description, url)
+VALUES
+('10ff99d8-7c5e-4e5f-9cf6-aa8264bc84f5', PGP_SYM_ENCRYPT('Expectations Discussion Guide for Team Members', '${aeskey}'), PGP_SYM_ENCRYPT('Guide for format and talking points during Check-Ins', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Expectations_Discussion_Guide_for_Team_Members.pdf', '${aeskey}'));
+
+INSERT INTO documents
+(id, name, description, url)
+VALUES
+('dc55df67-f124-469f-9381-914824de7f2d', PGP_SYM_ENCRYPT('Expectations Worksheet', '${aeskey}'), PGP_SYM_ENCRYPT('Define Objectives and Key Results', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Expectations_Worksheet.pdf', '${aeskey}'));
+
+INSERT INTO documents
+(id, name, description, url)
+VALUES
+('34934a9c-8c21-4b29-911b-0b9605ed058e', PGP_SYM_ENCRYPT('Feedback Discussion Guide for Team Members', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for providing and receiving feedback', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Feedback_Discussion_Guide_for_Team_Members.pdf', '${aeskey}'));
+
+INSERT INTO documents
+(id, name, description, url)
+VALUES
+('7bbe19b9-3382-4869-b95f-39350cb9104a', PGP_SYM_ENCRYPT('Development Discussion Guide for Team Members', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for reflecting on career development and aspirations', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Development_Discussion_Guide_for_Team_Members.pdf', '${aeskey}'));
+
+INSERT INTO documents
+(id, name, description, url)
+VALUES
+('07d54d3d-6695-42b7-b493-0ed531882978', PGP_SYM_ENCRYPT('Individual Development Plan', '${aeskey}'), PGP_SYM_ENCRYPT('Create an action plan for your career goals', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Individual_Development_Plan.pdf', '${aeskey}'));
+
+INSERT INTO role_documents
+(roleid, documentid, documentnumber)
+VALUES
+('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '10ff99d8-7c5e-4e5f-9cf6-aa8264bc84f5', 1);
+
+INSERT INTO role_documents
+(roleid, documentid, documentnumber)
+VALUES
+('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'dc55df67-f124-469f-9381-914824de7f2d', 2);
+
+INSERT INTO role_documents
+(roleid, documentid, documentnumber)
+VALUES
+('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '34934a9c-8c21-4b29-911b-0b9605ed058e', 3);
+
+INSERT INTO role_documents
+(roleid, documentid, documentnumber)
+VALUES
+('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '7bbe19b9-3382-4869-b95f-39350cb9104a', 4);
+
+INSERT INTO role_documents
+(roleid, documentid, documentnumber)
+VALUES
+('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '07d54d3d-6695-42b7-b493-0ed531882978', 5);
+
+INSERT INTO documents
+(id, name, description, url)
+VALUES
+('3c9864a0-7d1b-48f0-9a9a-36b177183dfa', PGP_SYM_ENCRYPT('Development Discussion Guide for PDLs', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for PDLs when discussing professional development', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Development_Discussion_Guide_for_PDLs.pdf', '${aeskey}'));
+
+INSERT INTO documents
+(id, name, description, url)
+VALUES
+('e4b910e7-4844-458d-b92e-5b699837b7e1', PGP_SYM_ENCRYPT('Expectations Discussion Guide for PDLs', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for PDLs when discussing objectives, obstacles, and expectations', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Expectations_Discussion_Guide_for_PDLs.pdf', '${aeskey}'));
+
+INSERT INTO documents
+(id, name, description, url)
+VALUES
+('b553d4c0-9b7a-4691-8fe0-e3bdda4f67ae', PGP_SYM_ENCRYPT('Feedback Discussion Guide for PDLs', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for PDLs when providing or receiving feedback', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Feedback_Discussion_Guide_for_PDLs.pdf', '${aeskey}'));
+
+INSERT INTO role_documents
+(roleid, documentid, documentnumber)
+VALUES
+('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '3c9864a0-7d1b-48f0-9a9a-36b177183dfa', 1);
+
+INSERT INTO role_documents
+(roleid, documentid, documentnumber)
+VALUES
+('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'e4b910e7-4844-458d-b92e-5b699837b7e1', 2);
+
+INSERT INTO role_documents
+(roleid, documentid, documentnumber)
+VALUES
+('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'b553d4c0-9b7a-4691-8fe0-e3bdda4f67ae', 3);
