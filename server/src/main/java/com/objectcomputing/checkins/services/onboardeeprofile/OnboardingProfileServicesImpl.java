@@ -5,9 +5,8 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
-import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
-
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.*;
 
 
@@ -35,13 +34,10 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
             @Nullable String middleName,
             @Nullable String lastName,
             @Nullable Integer socialSecurityNumber,
-            @Nullable Date birthDate,
-            @Nullable String currentAddress,
-            @Nullable String previousAddress,
-            @Nullable Integer phoneNumber,
-            @Nullable Integer secondPhoneNumber) {
-        HashSet<Onboarding_profile> onboarding_profiles = new HashSet<>(onboardingProfileRepository.search((firstName, null, lastName, null, middleName,
-                nullSafeUUIDToString(id),socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber));
+            @Nullable LocalDate birthDate,
+            @Nullable Integer phoneNumber) {
+        HashSet<Onboarding_profile> onboarding_profiles = new HashSet<>(onboardingProfileRepository.search((nullSafeUUIDToString(id)), firstName, null, lastName, null, middleName,
+                socialSecurityNumber, birthDate, phoneNumber,);
 
         return onboarding_profiles;
     }

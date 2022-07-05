@@ -74,13 +74,17 @@ public class OnboardingProfileController {
     /**
      * Find onboarding profile by or find all.
      *
-     * @param firstName {@link String} Find members with the given first name
-     * @param lastName {@link String} Find member with the given last name
-     * @param title {@link String} Find member
      * @param id {@link UUID} ID of the onboardee
-     * @param workEmail {@link String} Requested work email
-     * @param supervisorId {@link UUID} ID of the supervisor
-     * @return {@link List<OnboardingProfileResponseDTO>} List of members that match the input parameters
+     * @param firstName {@link String} Find onboardees with the given first name
+     * @param middleName {@link String} Find onboardees with the given middle name
+     * @param lastName {@link String} Find onboardees with the given last name
+     * @param socialSecurityNumber {@link Integer} Find onboardee
+     * @param birthDate  {@link LocalDate} birth date of the onboardee
+     * @param currentAddress {@link String} Onboardee's current address
+     * @param previousAddress {@link String} Onboardee's previous address
+     * @param phoneNumber {@link Integer} Onboardee's phone number
+     * @param phoneNumber {@link Integer} Onboardee's phone number
+     * @return {@link List<OnboardingProfileResponseDTO>} List of Onboardees that match the input parameters
      */
     @Get("/{?firstName,lastName,title,pdlId,workEmail,supervisorId,terminated}")
     public Mono<HttpResponse<List<OnboardingProfileResponseDTO>>> findByValue(@Nullable String firstName,
