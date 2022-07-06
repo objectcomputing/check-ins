@@ -14,7 +14,7 @@ export const getMyAxios = async () => {
     });
 
     myAxios.interceptors.response.use(
-      // Any status code that lie within the range of 2xx cause this function to trigger
+      // Any status codes that lie within the range of 2xx cause this function to trigger
       (res) => {
         return res;
       },
@@ -25,18 +25,19 @@ export const getMyAxios = async () => {
         }
 
         // trade in refresh token for access token
-        return axios.get('/oauth/access_token', {
-          baseURL: BASE_API_URL,
-          withCredentials: true,
-          timeout: 30000
-        })
+        return axios
+          .get("/oauth/access_token", {
+            baseURL: BASE_API_URL,
+            withCredentials: true,
+            timeout: 30000,
+          })
           .then(() => {
             // retry original request
             return myAxios(err.config);
           })
           .catch(() => {
             return Promise.reject(err);
-          })
+          });
       }
     );
   }
@@ -55,15 +56,6 @@ export const resolve = async (payload) => {
     resolved.payload = await promise;
   } catch (e) {
     resolved.error = e;
-    // if (window.snackDispatch) {
-    //   window.snackDispatch({
-    //     type: UPDATE_TOAST,
-    //     payload: {
-    //       severity: "error",
-    //       toast: e?.response?.data?.message,
-    //     },
-    //   });
-    // }
   }
 
   return resolved;
