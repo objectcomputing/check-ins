@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import { AppContext } from "../../../context/AppContext";
 import {
@@ -41,7 +41,6 @@ import SearchIcon from "@mui/icons-material/Search";
 
 import "./Roles.css";
 import {selectProfile} from "../../../context/selectors";
-import {Search} from "@mui/icons-material";
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -50,7 +49,6 @@ const Roles = () => {
   const [showAddUser, setShowAddUser] = useState(false);
   const [showAddRole, setShowAddRole] = useState(false);
   const [newRole, setNewRole] = useState("");
-  const [searchText, setSearchText] = useState("");
   // const [editRole, setEditRole] = useState(false);
   const [memberSearchText, setMemberSearchText] = useState("");
   const [selectedRoles, setSelectedRoles] = useState([]);
@@ -85,6 +83,12 @@ const Roles = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (userRoles) {
+      setSelectedRoles(userRoles.map(roleObj => roleObj.role));
+    }
+  }, [userRoles]);
 
   const addToRole = async (member) => {
     const role = roles.find((role) => role.role === selectedRole);
@@ -163,7 +167,7 @@ const Roles = () => {
                   renderValue={(selected) => selected.join(", ")}
                 >
                   {userRoles?.map((roleObj) => (
-                    <MenuItem value={roleObj.role}>
+                    <MenuItem key={roleObj.role} value={roleObj.role}>
                       <Checkbox checked={selectedRoles.indexOf(roleObj.role) > -1}/>
                       <ListItemText primary={roleObj.role}/>
                     </MenuItem>
@@ -188,7 +192,7 @@ const Roles = () => {
         </div>
         <div className="roles-bot">
           {userRoles?.map((roleObj) =>
-            roleObj.role.toLowerCase().includes(searchText.toLowerCase()) ? (
+            selectedRoles.includes(roleObj.role) ? (
               <Card className="role" key={roleObj.roleId}>
                 <CardContent className="role-card">
                   <List style={{ paddingTop: 0 }}>
