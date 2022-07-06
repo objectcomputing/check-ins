@@ -76,10 +76,10 @@ public class PermissionController {
      * @return list of permissions
      */
     @Get("/{memberId}")
-    public Single<HttpResponse<List<Permission>>> getUserPermissions(UUID memberId) {
-        return Single.fromCallable(() -> permissionServices.findCurrentUserPermissions(memberId))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<List<Permission>>> getUserPermissions(UUID memberId) {
+        return Mono.fromCallable(() -> permissionServices.findCurrentUserPermissions(memberId))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 }
