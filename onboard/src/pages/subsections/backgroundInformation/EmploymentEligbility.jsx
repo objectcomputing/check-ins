@@ -28,7 +28,6 @@ function EmploymentEligbility() {
             <Item>
               <FormControl>
                 <FormLabel id="18-yrs-or-not">
-                  {" "}
                   Are you 18 years of age?
                 </FormLabel>
                 <RadioGroup
@@ -72,13 +71,8 @@ function EmploymentEligbility() {
           </Grid>
           <Grid item xs={6}>
             <Item>
-              <Typography>
-              Visa Status if Applicable
-              </Typography>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-              />
+              <Typography>Visa Status if Applicable</Typography>
+              <TextField id="outlined-basic" variant="outlined" />
             </Item>
           </Grid>
           <Grid item xs={6}>
