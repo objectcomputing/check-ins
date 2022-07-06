@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import Input from "@mui/material/Input";
 import Box from "@mui/material/Box";
-import { validPhoneNum, validSSN } from "../../../components/Regex";
+import { validDOB, validPhoneNum, validSSN } from "../../../components/Regex";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -18,17 +18,38 @@ function PersonalInformation() {
   const [phoneNum, setPhoneNum] = useState("");
   const [secondaryPhoneNum, setSecondaryPhoneNum] = useState("");
   const [ssn, setSSN] = useState("");
-  const validate = () => {
-    if (validPhoneNum.test(phoneNum)) {
-      alert("Phone Number is Valid");
-    } else {
-      alert("Phone Number is not Valid");
-    }
+  const [dateOfBirth, setDateOfBirth] = useState("");
 
-    if (validSSN.test(ssn)) {
-      alert("SSN is valid");
-    } else {
-      alert("SSN is not valid");
+  const validate = (type) => {
+    switch (type) {
+      case "PhoneNum":
+        if (validPhoneNum.test(phoneNum)) {
+          console.log("phone num Good");
+
+          return true;
+        } else {
+          console.log("phone num bad");
+
+          return false;
+        }
+
+      case "SSN":
+        if (validSSN.test(ssn)) {
+          console.log("ssn Good");
+          return true;
+        } else {
+          console.log("ssn bad");
+          return false;
+        }
+
+      case "DOB":
+        if (validDOB.test(dateOfBirth)) {
+          return true;
+        } else {
+          return false;
+        }
+
+      default:
     }
   };
 
@@ -38,7 +59,8 @@ function PersonalInformation() {
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={4}>
             <Item>
-              <TextField
+              First Name:
+              <Input
                 id="outlined-basic"
                 label="First Name"
                 variant="outlined"
@@ -47,16 +69,14 @@ function PersonalInformation() {
           </Grid>
           <Grid item xs={4}>
             <Item>
-              <TextField
-                id="outlined-basic"
-                label="Last Name"
-                variant="outlined"
-              />
+              Last Name:
+              <Input id="outlined-basic" label="Last Name" variant="outlined" />
             </Item>
           </Grid>
           <Grid item xs={4}>
             <Item>
-              <TextField
+              Middle Initial:
+              <Input
                 id="outlined-basic"
                 label="Middle Initial"
                 variant="outlined"
@@ -65,29 +85,42 @@ function PersonalInformation() {
           </Grid>
           <Grid item xs={4}>
             <Item>
-              <TextField
+              SSN:
+              <Input
                 type="password"
                 id="outlined-basic"
                 label="SSN"
                 variant="outlined"
+                error={!validate("SSN")}
                 value={ssn}
-                onChange={(e) => setSSN(e.target.value)}
+                onChange={(e) => {
+                  setSSN(e.target.value);
+                  validate("SSN");
+                }}
               />
             </Item>
           </Grid>
           <Grid item xs={4}>
             <Item>
-              <TextField
-                type="date"
+              Birth Date:
+              <Input
+                type="text"
                 id="outlined-basic"
                 label="Birthdate"
                 variant="outlined"
+                value={dateOfBirth}
+                error={!validate("DOB")}
+                onChange={(e) => {
+                  setDateOfBirth(e.target.value);
+                  validate("DOB");
+                }}
               />
             </Item>
           </Grid>
           <Grid item xs={4}>
             <Item>
-              <TextField
+              Current Address:
+              <Input
                 id="outlined-basic"
                 label="Current Address"
                 variant="outlined"
@@ -96,7 +129,8 @@ function PersonalInformation() {
           </Grid>
           <Grid item xs={4}>
             <Item>
-              <TextField
+              Permanent Address:
+              <Input
                 id="outlined-basic"
                 label="Permanent Address"
                 variant="outlined"
@@ -105,25 +139,32 @@ function PersonalInformation() {
           </Grid>
           <Grid item xs={4}>
             <Item>
-              <TextField
-                required = "true"
+              Primary Phone Number:
+              <Input
+                required="true"
                 id="outlined-basic"
                 label="Primary Phone Number"
                 variant="outlined"
                 value={phoneNum}
-                onChange={(e) => setPhoneNum(e.target.value)}
+                helperText="Example: 123-456-7890"
+                error={!validate("PhoneNum")}
+                onChange={(e) => {
+                  setPhoneNum(e.target.value);
+                  validate("PhoneNum");
+                }}
               />
             </Item>
           </Grid>
           <Grid item xs={4}>
             <Item>
-              <TextField
+              Secondary Phone Number
+              <Input
                 type="number"
                 id="outlined-basic"
                 label="Secondary Phone Number"
                 variant="outlined"
                 value={secondaryPhoneNum}
-                onChange={(e)=>setSecondaryPhoneNum(e.target.value)}
+                onChange={(e) => setSecondaryPhoneNum(e.target.value)}
               />
             </Item>
           </Grid>
