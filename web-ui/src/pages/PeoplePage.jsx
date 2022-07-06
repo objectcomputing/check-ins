@@ -51,12 +51,12 @@ const PeoplePage = () => {
 
 
   const createMemberCards = normalizedMembers.map((member, index) => {
-    return (
+    return (!member.terminationDate ? (
       <MemberSummaryCard
         key={`${member.name}-${member.id}`}
         index={index}
         member={member}
-      />
+      />) : (null)
     );
 
   })
