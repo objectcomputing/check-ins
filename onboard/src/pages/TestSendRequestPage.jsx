@@ -13,7 +13,7 @@ const SendRequest = () => {
         variant="contained"
         size="large"
         id="submitCode"
-        onClick={sendSignRequest}
+        onClick={this.sendSignRequest}
       >
         Send SignRequest
       </Button>

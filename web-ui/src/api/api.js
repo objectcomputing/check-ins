@@ -8,7 +8,7 @@ export const BASE_API_URL = process.env.REACT_APP_API_URL
 export const getAvatarURL = (email) =>
   BASE_API_URL +
   "/services/member-profiles/member-photos/" +
-  encodeURIComponent(email);
+  encodeURIComponent(email);``
 
 let myAxios = null;
 
