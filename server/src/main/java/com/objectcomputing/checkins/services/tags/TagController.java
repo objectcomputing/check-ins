@@ -10,11 +10,11 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
-
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -49,14 +49,15 @@ public class TagController {
      * @return {@link HttpResponse<  Tag  >}
      */
     @Post()
-    public Single<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<TagCreateDTO> request) {
+    public Mono<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<TagCreateDTO> request) {
 
-        return Single.fromCallable(() -> tagServices.save(new Tag(tag.getName())))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> tagServices.save(new Tag(tag.getName())))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdTag -> (HttpResponse<Tag>)HttpResponse
                         .created(createdTag)
                         .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createdTag.getId()))))).subscribeOn(Schedulers.from(ioExecutorService));
+                                URI.create(String.format("%s/%s", request.getPath(), createdTag.getId())))))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -77,32 +78,32 @@ public class TagController {
      * @return {@link Tag}
      */
     @Get("/{id}")
-    public Single<HttpResponse<Tag>> readTag(@NotNull UUID id) {
+    public Mono<HttpResponse<Tag>> readTag(@NotNull UUID id) {
 
-        return Single.fromCallable(() -> {
+        return Mono.fromCallable(() -> {
             Tag result = tagServices.read(id);
             if (result == null) {
                 throw new NotFoundException("No tag for UUID");
                 }
                 return result;
         })
-                .observeOn(Schedulers.from(eventLoopGroup))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(tag -> (HttpResponse<Tag>)HttpResponse.ok(tag))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
      * Find tag that match all filled in parameters, return all results when given no params
      *
      * @param name {@link String} of tag
-     * @return {@link Set < tag > set of tags}
+     * @return {@link Set <tag > set of tags
      */
     @Get("/{?name}")
-    public Single<HttpResponse<Set<Tag>>> findtags(@Nullable String name) {
-        return Single.fromCallable(() -> tagServices.findByFields(name))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<Set<Tag>>> findtags(@Nullable String name) {
+        return Mono.fromCallable(() -> tagServices.findByFields(name))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(tag -> (HttpResponse<Set<Tag>>)HttpResponse
-                        .ok(tag)).subscribeOn(Schedulers.from(ioExecutorService));
+                        .ok(tag)).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -112,15 +113,15 @@ public class TagController {
      * @return {@link Tag}
      */
     @Put()
-    public Single<HttpResponse<Tag>> update(@Body @Valid Tag tag, HttpRequest<Skill> request) {
+    public Mono<HttpResponse<Tag>> update(@Body @Valid Tag tag, HttpRequest<Skill> request) {
 
-        return Single.fromCallable(() -> tagServices.update(tag))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> tagServices.update(tag))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(tag1 -> (HttpResponse<Tag>) HttpResponse
                         .ok()
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), tag1.getId()))))
                         .body(tag1))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
 

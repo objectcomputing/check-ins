@@ -9,11 +9,12 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -48,16 +49,16 @@ public class OpportunitiesController {
      * @param name {@link String}
      * @param description {@link String}
      * @param submittedBy {@link UUID} of member
-     * @return {@link Set < Opportunities > list of opportunities}
+     * @return {@link Set <Opportunities > list of opportunities
      */
     @Get("/{?name,description,submittedBy}")
-    public Single<HttpResponse<List<Opportunities>>> findOpportunities(@Nullable String name,
-                                                                       @Nullable String description,@Nullable UUID submittedBy) {
-        return Single.fromCallable(() -> opportunitiesResponseServices.findByFields(name, description, submittedBy))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse<List<Opportunities>>> findOpportunities(@Nullable String name,
+                                                                     @Nullable String description, @Nullable UUID submittedBy) {
+        return Mono.fromCallable(() -> opportunitiesResponseServices.findByFields(name, description, submittedBy))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(opportunities -> { List<Opportunities>  opportunity = opportunities.stream().collect(Collectors.toList());
                    return (HttpResponse<List<Opportunities>>) HttpResponse.ok(opportunity);})
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -68,14 +69,14 @@ public class OpportunitiesController {
      */
 
     @Post()
-    public Single<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
+    public Mono<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
                                                      HttpRequest<OpportunitiesCreateDTO> request) {
-        return Single.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(), opportunitiesResponse.getDescription(), opportunitiesResponse.getUrl(), opportunitiesResponse.getExpiresOn(),opportunitiesResponse.getPending())))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(), opportunitiesResponse.getDescription(), opportunitiesResponse.getUrl(), opportunitiesResponse.getExpiresOn(),opportunitiesResponse.getPending())))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(opportunities -> {return (HttpResponse<Opportunities>) HttpResponse
                         .created(opportunities)
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), opportunities.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -85,15 +86,15 @@ public class OpportunitiesController {
      * @return {@link HttpResponse<Opportunities>}
      */
     @Put()
-    public Single<HttpResponse<Opportunities>> update(@Body @Valid @NotNull Opportunities opportunitiesResponse,
+    public Mono<HttpResponse<Opportunities>> update(@Body @Valid @NotNull Opportunities opportunitiesResponse,
                                                HttpRequest<Opportunities> request) {
-        return Single.fromCallable(() -> opportunitiesResponseServices.update(opportunitiesResponse))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> opportunitiesResponseServices.update(opportunitiesResponse))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedOpportunities -> (HttpResponse<Opportunities>) HttpResponse
                         .ok()
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedOpportunities.getId()))))
                         .body(updatedOpportunities))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 

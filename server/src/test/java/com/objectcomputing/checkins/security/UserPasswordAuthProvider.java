@@ -6,12 +6,12 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import io.micronaut.security.authentication.UserDetails;
-import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import reactor.core.publisher.Mono;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +29,6 @@ public class UserPasswordAuthProvider implements AuthenticationProvider {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("email", email);
 
-        UserDetails details = new UserDetails(email, store.getUserRole(roleCred), attributes);
-        return Flowable.just(details);
+        return Mono.just(AuthenticationResponse.success(email, store.getUserRole(roleCred), attributes));
     }
 }

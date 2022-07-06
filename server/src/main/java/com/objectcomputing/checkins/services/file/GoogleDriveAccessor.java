@@ -9,7 +9,7 @@ import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
 import io.micronaut.context.annotation.Property;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 

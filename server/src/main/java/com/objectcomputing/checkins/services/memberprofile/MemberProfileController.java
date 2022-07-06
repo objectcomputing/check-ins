@@ -16,13 +16,15 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -41,14 +43,14 @@ public class MemberProfileController {
     private static final Logger LOG = LoggerFactory.getLogger(MemberProfileController.class);
     private final MemberProfileServices memberProfileServices;
     private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
+    private final Scheduler scheduler;
 
     public MemberProfileController(MemberProfileServices memberProfileServices,
                                    EventLoopGroup eventLoopGroup,
                                    @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.memberProfileServices = memberProfileServices;
         this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
+        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -58,14 +60,14 @@ public class MemberProfileController {
      * @return {@link MemberProfileResponseDTO} Returned member profile
      */
     @Get("/{id}")
-    public Single<HttpResponse<MemberProfileResponseDTO>> getById(UUID id) {
+    public Mono<HttpResponse<MemberProfileResponseDTO>> getById(UUID id) {
 
-        return Single.fromCallable(() -> memberProfileServices.getById(id))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> memberProfileServices.getById(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(memberProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
                         .ok(fromEntity(memberProfile))
                         .headers(headers -> headers.location(location(memberProfile.getId()))))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -80,22 +82,22 @@ public class MemberProfileController {
      * @return {@link List<MemberProfileResponseDTO>} List of members that match the input parameters
      */
     @Get("/{?firstName,lastName,title,pdlId,workEmail,supervisorId,terminated}")
-    public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String firstName,
+    public Mono<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String firstName,
                                                                             @Nullable String lastName,
                                                                             @Nullable String title,
                                                                             @Nullable UUID pdlId,
                                                                             @Nullable String workEmail,
                                                                             @Nullable UUID supervisorId,
                                                                             @QueryValue(value = "terminated" , defaultValue = "false") Boolean terminated) {
-        return Single.fromCallable(() -> memberProfileServices.findByValues(firstName, lastName, title, pdlId, workEmail, supervisorId, terminated))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> memberProfileServices.findByValues(firstName, lastName, title, pdlId, workEmail, supervisorId, terminated))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(memberProfiles -> {
                     List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
                             .map(this::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<MemberProfileResponseDTO>>) HttpResponse
                             .ok(dtoList);
 
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(scheduler);
     }
 
     /**
@@ -105,14 +107,14 @@ public class MemberProfileController {
      * @return {@link MemberProfileResponseDTO} The created member profile
      */
     @Post()
-    public Single<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
+    public Mono<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 
-        return Single.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
                         .created(fromEntity(savedProfile))
                         .headers(headers -> headers.location(location(savedProfile.getId()))))
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -122,10 +124,10 @@ public class MemberProfileController {
      * @return {@link MemberProfileResponseDTO} The updated member profile
      */
     @Put()
-    public Single<HttpResponse<MemberProfileResponseDTO>> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
+    public Mono<HttpResponse<MemberProfileResponseDTO>> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
 
-        return Single.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
-                .observeOn(Schedulers.from(eventLoopGroup))
+        return Mono.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> {
                     MemberProfileResponseDTO updatedMemberProfile = fromEntity(savedProfile);
                     return (HttpResponse<MemberProfileResponseDTO>) HttpResponse
@@ -133,7 +135,7 @@ public class MemberProfileController {
                             .headers(headers -> headers.location(location(updatedMemberProfile.getId())))
                             .body(updatedMemberProfile);
                 })
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     /**
@@ -143,11 +145,11 @@ public class MemberProfileController {
      * @return
      */
     @Delete("/{id}")
-    public Single<HttpResponse> delete(@NotNull UUID id) {
-        return Single.fromCallable(() -> memberProfileServices.deleteProfile(id))
-                .observeOn(Schedulers.from(eventLoopGroup))
+    public Mono<HttpResponse> delete(@NotNull UUID id) {
+        return Mono.fromCallable(() -> memberProfileServices.deleteProfile(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(successFlag -> (HttpResponse) HttpResponse.ok())
-                .subscribeOn(Schedulers.from(ioExecutorService));
+                .subscribeOn(scheduler);
     }
 
     protected URI location(UUID id) {

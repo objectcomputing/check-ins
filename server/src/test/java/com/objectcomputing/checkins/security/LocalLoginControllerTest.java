@@ -12,11 +12,17 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
 import java.util.Map;
+import java.util.concurrent.Flow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,35 +40,41 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
     void testGetLogin() {
         HttpRequest<?> request = HttpRequest.GET("");
         String response = client.toBlocking().retrieve(request);
-        assertEquals("<!DOCTYPE HTML>\n" +
-                "<html>\n" +
-                "<head>\n" +
-                "    <title>Login</title>\n" +
-                "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "<h1>Local Login</h1>\n" +
-                "<form action=\"/oauth/login/google\" method=\"post\">\n" +
-                "    <p>Email: <input type=\"text\" name=\"email\"/></p>\n" +
-                "    <p>Role Override: <input type=\"text\" name=\"role\"/></p>\n" +
-                "    <p><input type=\"submit\" value=\"Submit\" /> </p>\n" +
-                "</form>\n" +
-                "</body>\n" +
-                "</html>", response.trim());
+        assertEquals("<!DOCTYPE HTML>" +
+                "<html>" +
+                "<head>" +
+                "    <title>Login</title>" +
+                "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />" +
+                "</head>" +
+                "<body>" +
+                "<h1>Local Login</h1>" +
+                "<form action=\"/oauth/login/google\" method=\"post\">" +
+                "    <p>Email: <input type=\"text\" name=\"email\"/></p>" +
+                "    <p>Role Override: <input type=\"text\" name=\"role\"/></p>" +
+                "    <p><input type=\"submit\" value=\"Submit\" /> </p>" +
+                "</form>" +
+                "</body>" +
+                "</html>", response.replace(System.getProperty("line.separator"), ""));
     }
 
     @Test
     void testPostLogin() {
         HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", "ADMIN", "role", "SUPER"))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
-        String response = client.toBlocking().retrieve(request);
-        assertNotNull(response);
-        assertTrue(response.contains("\"roles\":"));
-        assertTrue(response.contains("\"ADMIN\""));
-        assertTrue(response.contains("\"PDL\""));
-        assertTrue(response.contains("\"MEMBER\""));
-        assertTrue(response.contains("\"username\":\"ADMIN\""));
-        assertTrue(response.contains("\"access_token\":\""));
+        Publisher<String> resp = client.retrieve(request);
+        StepVerifier.create(resp)
+                .thenConsumeWhile(response -> {
+                    assertTrue(response.contains("\"roles\":"));
+                    assertTrue(response.contains("\"roles\":"));
+                    assertTrue(response.contains("\"ADMIN\""));
+                    assertTrue(response.contains("\"PDL\""));
+                    assertTrue(response.contains("\"MEMBER\""));
+                    assertTrue(response.contains("\"username\":\"ADMIN\""));
+                    assertTrue(response.contains("\"access_token\":\""));
+                    return true;
+                })
+                .expectComplete()
+                .verify();
     }
 
     @Test

@@ -83,7 +83,8 @@ const FeedbackTemplateSelector = ({query, changeQuery}) => {
 
       const newTemplateQuestion = {
         question: submittedQuestion,
-        questionNumber: 1
+        questionNumber: 1,
+        inputType: "TEXT"
       }
 
       const {templateRes, questionRes} = await createFeedbackTemplateWithQuestion(newFeedbackTemplate, newTemplateQuestion, csrf);

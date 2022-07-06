@@ -11,7 +11,7 @@ import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.inject.Named;
+import jakarta.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -89,7 +89,7 @@ public class GuildMemberController {
      * @param guildid   {@link UUID} of guild
      * @param memberid {@link UUID} of member
      * @param lead,    is lead of the guild
-     * @return {@link List < Guild > list of guilds}
+     * @return {@link List <Guild > list of guilds
      */
     @Get("/{?guildid,memberid,lead}")
     public Set<GuildMember> findGuildMembers(@Nullable UUID guildid,

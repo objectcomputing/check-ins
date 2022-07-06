@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
 
+import com.objectcomputing.checkins.services.role.MemberRoleDTO;
 import io.micronaut.core.annotation.NonNull;
 
 import javax.validation.constraints.NotNull;
@@ -12,18 +13,16 @@ public interface MemberRoleServices {
 
     List<MemberRole> findAll();
 
+    List<MemberRoleDTO> getAllMembersGroupedByRole();
+
     MemberRole saveByIds(UUID memberid, UUID roleid);
 
     void delete(@NotNull MemberRoleId id);
 
     void removeMemberFromRoles(UUID memberid);
 
-
     @NonNull
     Optional<MemberRole> findById(@NotNull MemberRoleId memberRoleId);
 
     void removeAllByRoleId(UUID roleId);
-
-
-
 }

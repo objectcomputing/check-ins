@@ -12,10 +12,9 @@ import {
   selectCsrfToken,
   selectCheckin,
   selectProfile,
-  selectCheckinsForMember,
 } from "../context/selectors";
-import { getCheckins, createNewCheckin } from "../context/thunks";
-import { UPDATE_CHECKIN, UPDATE_TOAST } from "../context/actions";
+import { getCheckins } from "../context/thunks";
+import { UPDATE_CHECKIN } from "../context/actions";
 import CheckinDocs from "../components/checkin/documents/CheckinDocs";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import Profile from "../components/profile/Profile";
@@ -24,8 +23,7 @@ import PDLGuidesPanel from "../components/guides/PDLGuidesPanel";
 import Note from "../components/notes/Note";
 import PrivateNote from "../components/private-note/PrivateNote";
 import Personnel from "../components/personnel/Personnel";
-import { Button, Grid, Modal, Tooltip } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { Button, Grid, Modal } from "@mui/material";
 
 import "./CheckinsPage.css";
 import { updateCheckin } from "../api/checkins";
@@ -33,8 +31,7 @@ import { updateCheckin } from "../api/checkins";
 const PREFIX = 'CheckinsPage';
 const classes = {
   root: `${PREFIX}-root`,
-  navigate: `${PREFIX}-navigate`,
-  addButton: `${PREFIX}-addButton`
+  navigate: `${PREFIX}-navigate`
 };
 
 const Root = styled('div')(() => ({
@@ -64,12 +61,6 @@ const CheckinsPage = () => {
   const mostRecent = selectMostRecentCheckin(state, memberId);
 
   const selectedProfile = selectProfile(state, memberId);
-  const memberCheckins = selectCheckinsForMember(
-    state,
-    selectedProfile ? selectedProfile.id : currentUserId
-  );
-  const hasOpenCheckins = memberCheckins.some((checkin) => !checkin.completed);
-  const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   useEffect(() => {
     if (selectedProfile) {
@@ -110,21 +101,6 @@ const CheckinsPage = () => {
     handleClose();
   };
 
-  const handleCreate = async () => {
-    if (!selectedProfile.pdlId) {
-      window.snackDispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "You must have an assigned PDL in order to create a Check In",
-        },
-      });
-      return;
-    }
-    const newId = await createNewCheckin(selectedProfile, dispatch, csrf);
-    if (newId) history.push(`/checkins/${memberId}/${newId}`);
-  };
-
   return (
     <Root className={classes.root} >
       <Grid container spacing={3}>
@@ -140,32 +116,6 @@ const CheckinsPage = () => {
               memberId={memberId}
               checkinId={checkinId}
             />
-            <Tooltip
-              open={tooltipIsOpen && hasOpenCheckins}
-              onOpen={() => setTooltipIsOpen(true)}
-              onClose={() => setTooltipIsOpen(false)}
-              enterTouchDelay={0}
-              placement="top-start"
-              title={
-                "This is disabled because there is already an open Check-In"
-              }
-            >
-              <div
-                aria-describedby="checkin-tooltip-wrapper"
-                className="create-checkin-tooltip-wrapper"
-              >
-                {(isAdmin || isPdl || currentUserId === memberId) && (
-                  <Button
-                    disabled={hasOpenCheckins}
-                    className={classes.addButton}
-                    startIcon={<CheckCircleIcon />}
-                    onClick={handleCreate}
-                  >
-                    Create Check-In
-                  </Button>
-                )}
-              </div>
-            </Tooltip>
           </div>
           {currentCheckin && currentCheckin.id && (
             <React.Fragment>

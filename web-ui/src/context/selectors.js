@@ -14,18 +14,13 @@ export const selectTeams = (state) => state.teams;
 export const selectGuilds = (state) => state.guilds;
 export const selectLoading = (state) => state.loading;
 
-export const selectTeamsLoading = createSelector (
+export const selectTeamsLoading = createSelector(selectLoading, (loading) => {
+  return loading.teams;
+});
+export const selectMemberProfilesLoading = createSelector(
   selectLoading,
-  loading =>  {
-    return loading.teams
-  }
-)
-export const selectMemberProfilesLoading = createSelector (
-  selectLoading,
-  (loading) => 
-  loading.memberProfiles
-  
-)
+  (loading) => loading.memberProfiles
+);
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
@@ -131,9 +126,40 @@ export const selectMappedPdls = createSelector(
   selectPdlRoles,
   selectUserRoles,
   (memberProfileMap, roles, userRoles) =>
-    userRoles?.filter((userRole) => roles.find((role) => role.id === userRole?.memberRoleId?.roleId ) !== undefined)?.map((userRole) =>
-      userRole?.memberRoleId?.memberId in memberProfileMap ? memberProfileMap[userRole?.memberRoleId?.memberId] : {}
-    )
+    userRoles
+      ?.filter(
+        (userRole) =>
+          roles.find((role) => role.id === userRole?.memberRoleId?.roleId) !==
+          undefined
+      )
+      ?.map((userRole) =>
+        userRole?.memberRoleId?.memberId in memberProfileMap
+          ? memberProfileMap[userRole?.memberRoleId?.memberId]
+          : {}
+      )
+);
+
+export const selectMappedUserRoles = createSelector(
+  selectUserRoles,
+  selectRoles,
+  (userRoles, roles) => {
+    const mappedUserRoles = {};
+    userRoles.forEach(userRole => {
+      const memberId = userRole.memberRoleId.memberId;
+      const role = roles.find(role => role.id === userRole.memberRoleId.roleId);
+      if (!(memberId in mappedUserRoles)) {
+        mappedUserRoles[memberId] = new Set();
+      }
+      mappedUserRoles[memberId].add(role.role);
+    });
+    return mappedUserRoles;
+  }
+);
+
+export const selectOrderedCurrentMemberProfiles = createSelector(
+  selectCurrentMembers,
+  (mappedMemberProfiles) =>
+    mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectOrderedPdls = createSelector(
@@ -195,7 +221,21 @@ export const selectMostRecentCheckin = createSelector(
   selectCheckinsForMember,
   (checkins) => {
     if (checkins && checkins.length > 0) {
-      return checkins && checkins[checkins.length-1]
+      return checkins && checkins[checkins.length - 1];
+    }
+  }
+);
+
+export const selectMostRecentCheckinWithPDL = createSelector(
+  selectCheckinsForMember,
+  (state, memberId, pdlId) => pdlId,
+  (checkins, pdlId) => {
+    if (checkins && checkins.length > 0) {
+      return (
+        checkins &&
+        checkins[checkins.length - 1] &&
+        checkins[checkins.length - 1].pdlId === pdlId
+      );
     }
   }
 );

@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.MemberRoleDTO;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRole;
@@ -14,9 +15,9 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,21 +38,29 @@ public class MemberRoleControllerTest extends TestContainersSuite implements Mem
         Role memberRole = createAndAssignRole(RoleType.MEMBER, member);
         Role adminRole = createAndAssignAdminRole(admin);
 
-        final List<MemberRoleId> memberRoleIds = new ArrayList<>();
-        memberRoleIds.add(new MemberRoleId(member.getId(), memberRole.getId()));
-        memberRoleIds.add(new MemberRoleId(admin.getId(), adminRole.getId()));
-        memberRoleIds.add(new MemberRoleId(admin.getId(), memberRole.getId()));
-
         final HttpRequest<Object> request = HttpRequest.GET("/")
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpResponse<List<MemberRole>> response = client.toBlocking()
-                .exchange(request, Argument.listOf(MemberRole.class));
+        final HttpResponse<List<MemberRoleDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(MemberRoleDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
-        for (int i = 0; i < response.getBody().get().size(); i++) {
-            assertEquals(memberRoleIds.get(i), response.getBody().get().get(i).getMemberRoleId());
-        }
+        assertEquals(2, response.getBody().get().size());
+
+        final MemberRoleDTO memberGroupResponse = response.getBody().get().get(0);
+        assertEquals(memberRole.getId(), memberGroupResponse.getRoleId());
+        assertEquals(memberRole.getRole(), memberGroupResponse.getRole());
+        assertEquals(memberRole.getDescription(), memberGroupResponse.getDescription());
+        assertEquals(2, memberGroupResponse.getMemberIds().size());
+        assertTrue(memberGroupResponse.getMemberIds().contains(member.getId()));
+        assertTrue(memberGroupResponse.getMemberIds().contains(admin.getId()));
+
+        final MemberRoleDTO adminGroupResponse = response.getBody().get().get(1);
+        assertEquals(adminRole.getId(), adminGroupResponse.getRoleId());
+        assertEquals(adminRole.getRole(), adminGroupResponse.getRole());
+        assertEquals(adminRole.getDescription(), adminGroupResponse.getDescription());
+        assertEquals(1, adminGroupResponse.getMemberIds().size());
+        assertTrue(adminGroupResponse.getMemberIds().contains(admin.getId()));
     }
 
     @Test
