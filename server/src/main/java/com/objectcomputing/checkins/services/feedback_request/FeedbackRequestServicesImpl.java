@@ -153,10 +153,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Attempted to cancel a feedback request that was already submitted");
         }
 
-        originalFeedback.setDueDate(feedbackRequest.getDueDate());
-        originalFeedback.setStatus(feedbackRequest.getStatus());
-        originalFeedback.setSubmitDate(feedbackRequest.getSubmitDate());
-        FeedbackRequest storedRequest = feedbackReqRepository.update(originalFeedback);
+        FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
 
         // Send email if the feedback request has been reopened for edits
         if (originalFeedback.getStatus() == FeedbackRequestStatus.SUBMITTED && feedbackRequest.getStatus() == FeedbackRequestStatus.SENT) {
