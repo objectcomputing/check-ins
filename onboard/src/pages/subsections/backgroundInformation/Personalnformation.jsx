@@ -16,6 +16,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function PersonalInformation() {
   const [phoneNum, setPhoneNum] = useState("");
+  const [secondaryPhoneNum, setSecondaryPhoneNum] = useState("");
   const [ssn, setSSN] = useState("");
   const validate = () => {
     if (validPhoneNum.test(phoneNum)) {
@@ -65,6 +66,7 @@ function PersonalInformation() {
           <Grid item xs={4}>
             <Item>
               <TextField
+                type="password"
                 id="outlined-basic"
                 label="SSN"
                 variant="outlined"
@@ -104,6 +106,7 @@ function PersonalInformation() {
           <Grid item xs={4}>
             <Item>
               <TextField
+                required = "true"
                 id="outlined-basic"
                 label="Primary Phone Number"
                 variant="outlined"
@@ -119,6 +122,8 @@ function PersonalInformation() {
                 id="outlined-basic"
                 label="Secondary Phone Number"
                 variant="outlined"
+                value={secondaryPhoneNum}
+                onChange={(e)=>setSecondaryPhoneNum(e.target.value)}
               />
             </Item>
           </Grid>
