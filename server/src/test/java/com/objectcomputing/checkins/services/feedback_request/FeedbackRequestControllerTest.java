@@ -1065,12 +1065,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         // Save feedback request that has already been submitted
         final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
         feedbackReq.setSubmitDate(LocalDate.now());
-        feedbackReq.setStatus("submitted");
+        feedbackReq.setStatus(FeedbackRequestStatus.SUBMITTED);
         getFeedbackRequestRepository().save(feedbackReq);
 
         // The PDL attempts to enable edits on the request
         feedbackReq.setSubmitDate(null);
-        feedbackReq.setStatus("sent");
+        feedbackReq.setStatus(FeedbackRequestStatus.SENT);
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
