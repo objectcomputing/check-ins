@@ -1,6 +1,10 @@
-.role-buttons {
+.role-header {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row;
+  align-items: center;
+  height: 100px;
+  justify-content: space-between;
+  padding: 0 1rem 0 1rem;
 }
 
 .role-modal {
@@ -16,7 +20,7 @@
 }
 
 .role-modal h2 {
-  margin-block-end: 0rem;
+  margin-block-end: 0;
   margin-left: 0.5rem;
 }
 
@@ -45,18 +49,14 @@
   margin-left: 1rem;
 }
 
-.roles-header {
-  display: flex;
-  justify-content: center;
-}
-
 .roles-content .icon {
-  padding-right: 2rem;
   cursor: pointer;
 }
 
 .roles-content .roles-list-item {
   align-items: center;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .roles-content .roles-search {
@@ -86,26 +86,28 @@
   overflow: scroll;
 }
 
-.roles-content .roles .role-buttons .role-add {
+.roles-content .roles .role-header-buttons .role-add {
   cursor: pointer;
   display: flex;
   align-items: center;
   margin-left: 0.5rem;
 }
 
-.roles-content .roles .role-buttons .role-edit {
+.roles-content .roles .role-header-buttons .role-edit {
   cursor: pointer;
   display: flex;
   align-items: center;
   margin-left: 0.5rem;
 }
 
-.roles-content .roles .role-buttons span {
+.roles-content .roles .role-header-buttons span {
   margin-right: 0.5rem;
 }
 
 .roles-content .roles .roles-bot {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-right: 1rem;
 }
 
 .roles-content .roles .roles-top {

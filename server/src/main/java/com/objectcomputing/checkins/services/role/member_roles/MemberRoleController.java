@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
+import com.objectcomputing.checkins.services.role.MemberRoleDTO;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -23,8 +24,9 @@ public class MemberRoleController {
     }
 
     @Get
-    HttpResponse<List<MemberRole>> getAllAssignedMemberRoles() {
-        return HttpResponse.ok(memberRoleServices.findAll());
+    HttpResponse<List<MemberRoleDTO>> getAllMembersGroupedByRole() {
+        List<MemberRoleDTO> membersGroupedByRole = memberRoleServices.getAllMembersGroupedByRole();
+        return HttpResponse.ok(membersGroupedByRole);
     }
 
     @Delete("/{roleId}/{memberId}")
