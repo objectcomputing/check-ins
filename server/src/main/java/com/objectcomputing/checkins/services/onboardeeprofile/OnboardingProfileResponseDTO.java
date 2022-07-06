@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public class OnboardingProfileResponseDTO {
 
     @NotBlank
     @Schema(description = "birthdate of the new employee")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @NotBlank
     @Schema(description = "currentAddress of the new employee")
@@ -89,11 +90,11 @@ public class OnboardingProfileResponseDTO {
         this.socialSecurityNumber = socialSecurityNumber;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

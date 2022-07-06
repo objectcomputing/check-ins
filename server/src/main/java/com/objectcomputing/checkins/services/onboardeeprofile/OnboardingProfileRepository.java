@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @JdbcRepository (dialect = Dialect.POSTGRES)
-public interface OnboardingProfileRepository extends CrudRepository<Onboarding_profile, UUID> {
+public interface OnboardingProfileRepository extends CrudRepository<Onboarding_Profile, UUID> {
 
 
 
@@ -28,8 +28,8 @@ public interface OnboardingProfileRepository extends CrudRepository<Onboarding_p
             "FROM \"onboarding_profile\" mp " +
             "WHERE  (:socialSecurityNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea), '${aes.key}') = :socialSecurityNumber) ",
             nativeQuery = true)
-    Optional<Onboarding_profile> findBySocial(@NotNull Integer socialSecurityNumber);
-    List<Onboarding_profile> findAll();
+    Optional<Onboarding_Profile> findBySocial(@NotNull Integer socialSecurityNumber);
+    List<Onboarding_Profile> findAll();
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
             "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName," +
@@ -52,8 +52,8 @@ public interface OnboardingProfileRepository extends CrudRepository<Onboarding_p
                     "AND  (:phoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') =: phoneNumber," +
                     "OR  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber," ,
             nativeQuery = true)
-    List<Onboarding_profile> search(
-            @Nullable UUID id,
+    List<Onboarding_Profile> search(
+            @Nullable String id,
             @Nullable String firstName,
             @Nullable String middleName,
             @Nullable String lastName,
