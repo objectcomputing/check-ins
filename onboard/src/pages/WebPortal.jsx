@@ -9,6 +9,7 @@ import EquipmentPage from "./EquipmentPage";
 import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
 import SendRequest from "./TestSendRequestPage";
+import EmbedRequest from "./TestEmbeddedSigningPage";
 import { Button, Container } from "@mui/material";
 
 const menuList = [
@@ -70,10 +71,18 @@ const menuList = [
   },
   {
     index: 7,
-    name: "Test Sign Request",
+    name: "Test Send Sign Request",
     title: "",
     completed: false,
     child: <SendRequest />,
+    visited: false,
+  },
+  {
+    index: 8,
+    name: "Test Embedded Sign Request",
+    title: "",
+    completed: false,
+    child: <EmbedRequest />,
     visited: false,
   },
 ];
