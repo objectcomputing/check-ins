@@ -79,7 +79,7 @@ public class OnboardingProfileController {
 //     * @param phoneNumber          {@link Integer} Onboardee's phone number
 //     * @return {@link List<OnboardingProfileResponseDTO>} List of Onboardees that match the input parameters
 //     */
-    @Get("/{?id,firstName,lastName,socialSecurityNumber,birthDate,supervisorId,terminated}")
+    @Get("/{?id,firstName,lastName,socialSecurityNumber,birthDate,phoneNumber}")
     public Mono<HttpResponse<List<OnboardingProfileResponseDTO>>> findByValue(@Nullable UUID id,
                                                                               @Nullable String firstName,
                                                                               @Nullable String lastName,
@@ -118,14 +118,14 @@ public class OnboardingProfileController {
         return dto;
     }
 
-//    private Onboarding_Profile fromDTO(OnboardingProfileResponseDTO dto) {
-//        return new Onboarding_Profile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
-//                dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(), dto.getPhoneNumber(),
-//                dto.getSecondPhoneNumber());
-//    }
-//
-//    private Onboarding_Profile fromDTO(OnboardingProfileCreateDTO dto) {
-//        return new Onboarding_Profile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(), dto.getPhoneNumber(),
-//                dto.getSecondPhoneNumber());
-//    }
+    private Onboarding_Profile fromDTO(OnboardingProfileResponseDTO dto) {
+        return new Onboarding_Profile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
+                dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(), dto.getPhoneNumber(),
+                dto.getSecondPhoneNumber());
+    }
+
+    private Onboarding_Profile fromDTO(OnboardingProfileCreateDTO dto) {
+        return new Onboarding_Profile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(), dto.getPhoneNumber(),
+                dto.getSecondPhoneNumber());
+    }
 }
