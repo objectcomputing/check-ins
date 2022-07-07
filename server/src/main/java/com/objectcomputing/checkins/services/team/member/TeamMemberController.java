@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.team.member;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -8,7 +11,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -34,6 +36,7 @@ public class TeamMemberController {
      * @param teamMember, {@link TeamMemberResponseDTO}
      * @return {@link HttpResponse <TeamMember>}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_MEMBER)
     @Post()
     public HttpResponse<TeamMember> createMembers(@Body @Valid TeamMemberCreateDTO teamMember,
                                                   HttpRequest<TeamMemberResponseDTO> request) {
@@ -68,6 +71,7 @@ public class TeamMemberController {
      * @param id {@link UUID} of the team member entry
      * @return {@link TeamMember}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_MEMBER)
     @Get("/{id}")
     public TeamMember readTeamMember(UUID id) {
         return teamMemberServices.read(id);
@@ -81,6 +85,7 @@ public class TeamMemberController {
      * @param lead,    is lead of the team
      * @return {@link List < Team > list of teams}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_MEMBER)
     @Get("/{?teamId,memberId,lead}")
     public Set<TeamMember> findTeamMembers(@Nullable UUID teamId,
                                            @Nullable UUID memberId,
@@ -93,6 +98,7 @@ public class TeamMemberController {
      *
      * @param id, id of {@link UUID} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_MEMBER)
     @Delete("/{id}")
     public HttpResponse<?> deleteTeamMember(@NotNull UUID id) {
         teamMemberServices.delete(id);

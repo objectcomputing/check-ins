@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -47,6 +49,7 @@ public class AgendaItemController {
      * @param agendaItem, {@link AgendaItemCreateDTO}
      * @return {@link HttpResponse <AgendaItem>}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_AGENDA_ITEM)
     @Post("/")
     public Mono<HttpResponse<AgendaItem>> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem,
                                                              HttpRequest<AgendaItemCreateDTO> request) {
@@ -92,6 +95,7 @@ public class AgendaItemController {
      * @param createdbyid {@link UUID} of member	
      * @return {@link List <CheckIn > list of checkins
      */
+    @RequiredPermission(Permissions.CAN_VIEW_AGENDA_ITEM)
     @Get("/{?checkinid,createdbyid}")
     public Mono<HttpResponse<Set<AgendaItem>>> findAgendaItems(@Nullable UUID checkinid,
                                                                  @Nullable UUID createdbyid) {
@@ -108,6 +112,7 @@ public class AgendaItemController {
      * @param id {@link UUID} of the agenda item entry
      * @return {@link AgendaItem}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_AGENDA_ITEM)
     @Get("/{id}")
     public Mono<HttpResponse<AgendaItem>> readAgendaItem(UUID id) {
         return Mono.fromCallable(() -> agendaItemServices.read(id))
@@ -123,6 +128,7 @@ public class AgendaItemController {
      *
      * @param id, id of {@link AgendaItem} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_AGENDA_ITEM)
     @Delete("/{id}")
     public HttpResponse<?> deleteAgendaItem(UUID id) {
         agendaItemServices.delete(id);

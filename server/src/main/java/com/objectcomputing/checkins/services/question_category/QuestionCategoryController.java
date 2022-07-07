@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.question_category;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -9,8 +12,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
@@ -47,7 +48,7 @@ public class QuestionCategoryController {
      * @param questionCategory, {@link QuestionCategoryCreateDTO}
      * @return {@link HttpResponse<QuestionCategory>}
      */
-
+    @RequiredPermission(Permissions.CAN_CREATE_QUESTION_CATEGORY)
     @Post()
     public Mono<HttpResponse<QuestionCategory>> createAQuestionCategory(@Body @Valid QuestionCategoryCreateDTO questionCategory,
                                                                         HttpRequest<QuestionCategoryCreateDTO> request) {
@@ -69,7 +70,7 @@ public class QuestionCategoryController {
      * @param name,  name of the question category
      * @return {@link Set < QuestionCategory > list of Question Categories}
      */
-
+    @RequiredPermission(Permissions.CAN_VIEW_QUESTION_CATEGORY)
     @Get("/{?id,name}")
     public Mono<HttpResponse<Set<QuestionCategory>>> findByValue(@Nullable UUID id,
                                                                    @Nullable String name) {
@@ -102,6 +103,7 @@ public class QuestionCategoryController {
      *
      * @param id, id of {@link QuestionCategory} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_QUESTION_CATEGORY)
     @Delete("/{id}")
     public HttpResponse<?> deleteQuestionCategory(@NotNull UUID id) {
         questionCategoryService.delete(id);

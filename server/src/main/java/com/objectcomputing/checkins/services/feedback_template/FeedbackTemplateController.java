@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -14,14 +16,13 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.stream.Collectors;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Controller("/services/feedback/templates")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -47,6 +48,7 @@ public class FeedbackTemplateController {
      * @param requestBody {@link FeedbackTemplateCreateDTO} New feedback template to create
      * @return {@link FeedbackTemplateResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_FEEDBACK_TEMPLATE)
     @Post()
     public Mono<HttpResponse<FeedbackTemplateResponseDTO>> save(@Body @Valid @NotNull FeedbackTemplateCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackTemplateServices.save(fromDTO(requestBody)))
@@ -80,6 +82,7 @@ public class FeedbackTemplateController {
      * @param id {@link UUID} ID of the feedback template being deleted
      * @return {@link FeedbackTemplateResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_DELETE_FEEDBACK_TEMPLATE)
     @Delete("/{id}")
     public Mono<? extends HttpResponse<?>> delete(@NotNull UUID id) {
         return Mono.fromCallable(() -> feedbackTemplateServices.delete(id))
@@ -93,6 +96,7 @@ public class FeedbackTemplateController {
      * @param creatorId The {@link UUID} of the creator of the ad-hoc template(s)
      * @return {@link FeedbackTemplateResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_DELETE_FEEDBACK_TEMPLATE)
     @Delete("/creator/{creatorId}")
     public Mono<? extends HttpResponse<?>> deleteByCreatorId(@Nullable UUID creatorId) {
         return Mono.fromCallable(() -> feedbackTemplateServices.setAdHocInactiveByCreator(creatorId))
@@ -107,6 +111,7 @@ public class FeedbackTemplateController {
      * @param id {@link UUID} ID of the requested feedback template
      * @return {@link FeedbackTemplateResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_TEMPLATE)
     @Get("/{id}")
     public Mono<HttpResponse<FeedbackTemplateResponseDTO>> getById(UUID id) {
         return Mono.fromCallable(() -> feedbackTemplateServices.getById(id))
@@ -122,6 +127,7 @@ public class FeedbackTemplateController {
      * @param creatorId {@link UUID} UUID of creator
      * @return {@link List<FeedbackTemplateResponseDTO>} List of feedback templates that match the input parameters
      */
+    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_TEMPLATE)
     @Get("/{?creatorId,title}")
     public Mono<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable String title) {
         return Mono.fromCallable(() -> feedbackTemplateServices.findByFields(creatorId, title))

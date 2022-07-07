@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -9,8 +12,6 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -47,7 +48,7 @@ public class CheckinDocumentController {
      * @param checkinsId
      * @return {@link Set<CheckinDocument> Set of CheckinDocument(s) associated with the checkinsId}
      */
-
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN_DOCUMENTS)
     @Get("/{?checkinsId}")
     public Mono<HttpResponse<Set<CheckinDocument>>> findCheckinDocument(@Nullable UUID checkinsId) {
         return Mono.fromCallable(() -> checkinDocumentService.read(checkinsId))
@@ -62,7 +63,7 @@ public class CheckinDocumentController {
      * @param checkinDocument, {@link CheckinDocumentCreateDTO}
      * @return {@link HttpResponse<CheckinDocument>}
      */
-
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKIN_DOCUMENTS)
     @Post()
     public Mono<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
                                                                     HttpRequest<CheckinDocumentCreateDTO> request) {
@@ -102,6 +103,7 @@ public class CheckinDocumentController {
      * @param checkinsId, id of the checkins record you wish to delete
      * @return {@link HttpResponse<>}
      */
+    @RequiredPermission(Permissions.CAN_DELETE_CHECKIN_DOCUMENTS)
     @Delete("/{checkinsId}")
     public HttpResponse<?> delete(UUID checkinsId) {
         checkinDocumentService.deleteByCheckinId(checkinsId);

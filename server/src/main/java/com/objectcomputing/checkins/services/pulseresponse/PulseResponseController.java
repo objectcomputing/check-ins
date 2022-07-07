@@ -1,38 +1,30 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
-import java.net.URI;
-import java.util.Set;
-import java.util.UUID;
-
-import io.micronaut.core.annotation.Nullable;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Put;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
+import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-
-import java.time.LocalDate;
-import io.micronaut.core.convert.format.Format;
-
-import jakarta.inject.Named;
-import java.util.concurrent.ExecutorService;
 import io.netty.channel.EventLoopGroup;
-import io.micronaut.scheduling.TaskExecutors;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.time.LocalDate;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/pulse-responses")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -61,6 +53,7 @@ public class PulseResponseController {
      * @param dateTo
      * @return
      */
+    @RequiredPermission(Permissions.CAN_VIEW_PULSE_RESPONSE)
     @Get("/{?teamMemberId,dateFrom,dateTo}")
     public Mono<HttpResponse<Set<PulseResponse>>> findPulseResponses(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom,
                                                                        @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,
@@ -77,7 +70,7 @@ public class PulseResponseController {
      * @param pulseResponse, {@link PulseResponseCreateDTO}
      * @return {@link HttpResponse<PulseResponse>}
      */
-
+    @RequiredPermission(Permissions.CAN_CREATE_PULSE_RESPONSE)
     @Post()
     public Mono<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                                     HttpRequest<PulseResponseCreateDTO> request) {

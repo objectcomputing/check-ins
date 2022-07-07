@@ -1,29 +1,15 @@
 package com.objectcomputing.checkins.services.settings;
 
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Put;
-import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.security.annotation.Secured;
-
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-
-import io.micronaut.core.annotation.Nullable;
-import javax.validation.Valid;
-
+import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,6 +17,12 @@ import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/settings")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -60,6 +52,7 @@ public class SettingsController {
      * @param name {@link String} name of the setting
      * @return {@link <List<SettingResponseDTO>>} Returned setting
      */
+    @RequiredPermission(Permissions.CAN_VIEW_SETTING)
     @Get("/{?name}")
     public Mono<HttpResponse<List<SettingsResponseDTO>>> getByValue(@Nullable String name) {
         return Mono.fromCallable(() -> settingsServices.findByName(name))
@@ -74,6 +67,7 @@ public class SettingsController {
      * @param settingDTO, {@link SettingsCreateDTO}
      * @return {@link HttpResponse<SettingsResponseDTO>}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_SETTING)
     @Post()
     public Mono<HttpResponse<SettingsResponseDTO>> save(@Body @Valid SettingsCreateDTO settingDTO, HttpRequest<SettingsCreateDTO> request) {
         return Mono.fromCallable(() -> settingsServices.save(fromDTO(settingDTO)))
@@ -108,6 +102,7 @@ public class SettingsController {
      *
      * @param id, id of {@link Setting} to delete
      */
+     @RequiredPermission(Permissions.CAN_DELETE_SETTING)
     @Delete("/{id}")
     public HttpResponse<?> delete(UUID id) {
         settingsServices.delete(id);

@@ -1,7 +1,9 @@
 package com.objectcomputing.checkins.services.private_notes;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -11,8 +13,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
@@ -22,7 +22,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
-
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/private-notes")
@@ -50,6 +49,7 @@ public class PrivateNoteController {
      * @param request
      * @return
      */
+    @RequiredPermission(Permissions.CAN_CREATE_PRIVATE_NOTE)
     @Post("/")
     public Mono<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         return Mono.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
@@ -95,6 +95,7 @@ public class PrivateNoteController {
      * @param createdbyid
      * @return
      */
+    @RequiredPermission(Permissions.CAN_VIEW_PRIVATE_NOTE)
     @Get("/{?checkinid,createdbyid}")
     public Set<PrivateNote> findPrivateNote(@Nullable UUID checkinid,
                                             @Nullable UUID createdbyid) {
@@ -107,6 +108,7 @@ public class PrivateNoteController {
      * @param id
      * @return
      */
+    @RequiredPermission(Permissions.CAN_VIEW_PRIVATE_NOTE)
     @Get("/{id}")
     public Mono<HttpResponse<PrivateNote>> readPrivateNote(UUID id) {
         return Mono.fromCallable(() -> {

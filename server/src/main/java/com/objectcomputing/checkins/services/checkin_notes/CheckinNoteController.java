@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -8,7 +11,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -34,6 +36,7 @@ public class CheckinNoteController {
      * @param request
      * @return
      */
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKIN_NOTE)
     @Post()
     public HttpResponse<CheckinNote> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote, HttpRequest<CheckinNoteCreateDTO> request) {
         CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(), checkinNote.getCreatedbyid()
@@ -65,6 +68,7 @@ public class CheckinNoteController {
      * @param createdbyid
      * @return
      */
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN_NOTE)
     @Get("/{?checkinid,createdbyid}")
     public Set<CheckinNote> findCheckinNote(@Nullable UUID checkinid,
                                             @Nullable UUID createdbyid) {
@@ -77,6 +81,7 @@ public class CheckinNoteController {
      * @param id
      * @return
      */
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN_NOTE)
     @Get("/{id}")
     public CheckinNote readCheckinNote(@NotNull UUID id) {
         return checkinNoteServices.read(id);

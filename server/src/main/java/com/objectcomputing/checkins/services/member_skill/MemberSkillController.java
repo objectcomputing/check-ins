@@ -1,7 +1,10 @@
 package com.objectcomputing.checkins.services.member_skill;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.skills.Skill;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -11,8 +14,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -50,6 +51,7 @@ public class MemberSkillController {
      * @param memberSkill, {@link MemberSkillCreateDTO}
      * @return {@link HttpResponse< MemberSkill >}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_MEMBER_SKILL)
     @Post()
     public Mono<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
 
@@ -68,6 +70,7 @@ public class MemberSkillController {
      *
      * @param id, id of {@link MemberSkill} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_MEMBER_SKILL)
     @Delete("/{id}")
     public HttpResponse<?> deleteMemberSkill(@NotNull UUID id) {
         memberSkillsService.delete(id);
@@ -81,6 +84,7 @@ public class MemberSkillController {
      * @param id {@link UUID} of the member skill entry
      * @return {@link MemberSkill}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_MEMBER_SKILL)
     @Get("/{id}")
     public Mono<HttpResponse<MemberSkill>> readMemberSkill(@NotNull UUID id) {
 
@@ -103,6 +107,7 @@ public class MemberSkillController {
      * @param skillid  {@link UUID} of skills
      * @return {@link List <MemberSkill > list of Member Skills
      */
+    @RequiredPermission(Permissions.CAN_VIEW_MEMBER_SKILL)
     @Get("/{?memberid,skillid}")
     public Mono<HttpResponse<Set<MemberSkill>>> findMemberSkills(@Nullable UUID memberid,
                                              @Nullable UUID skillid) {

@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.skills;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,8 +13,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -47,7 +48,7 @@ public class SkillController {
      * @param skill, {@link SkillCreateDTO}
      * @return {@link HttpResponse< Skill >}
      */
-
+    @RequiredPermission(Permissions.CAN_CREATE_SKILL)
     @Post()
     public Mono<HttpResponse<Skill>> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<SkillCreateDTO> request) {
 
@@ -67,7 +68,7 @@ public class SkillController {
      * @param id {@link UUID} of the skill entry
      * @return
      */
-
+    @RequiredPermission(Permissions.CAN_VIEW_SKILL)
     @Get("/{id}")
     public Mono<HttpResponse<Skill>> getById(@NotNull UUID id) {
 
@@ -89,7 +90,7 @@ public class SkillController {
      * @param pending, whether or not the skill has been officially accepted
      * @return {@link Set <Skill > list of Skills
      */
-
+    @RequiredPermission(Permissions.CAN_VIEW_SKILL)
     @Get("/{?name,pending}")
     public Mono<HttpResponse<Set<Skill>>> findByValue(@Nullable String name,
                                                         @Nullable Boolean pending) {
@@ -123,6 +124,7 @@ public class SkillController {
      *
      * @param id, id of {@link Skill} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_SKILL)
     @Delete("/{id}")
     public HttpResponse<?> deleteSkill(@NotNull UUID id) {
         skillServices.delete(id);

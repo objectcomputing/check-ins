@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -8,7 +11,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -31,6 +33,7 @@ public class ActionItemController {
      * @param actionItem, {@link ActionItemCreateDTO}
      * @return {@link HttpResponse <ActionItem>}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_ACTION_ITEM)
     @Post()
     public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
                                                      HttpRequest<ActionItemCreateDTO> request) {
@@ -64,6 +67,7 @@ public class ActionItemController {
      *
      * @param id, id of {@link ActionItem} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_ACTION_ITEM)
     @Delete("/{id}")
     public HttpResponse<?> deleteActionItem(UUID id) {
         actionItemServices.delete(id);
@@ -77,6 +81,7 @@ public class ActionItemController {
      * @param id {@link UUID} of the action item entry
      * @return {@link ActionItem}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_ACTION_ITEM)
     @Get("/{id}")
     public ActionItem readActionItem(UUID id) {
         return actionItemServices.read(id);
@@ -89,6 +94,7 @@ public class ActionItemController {
      * @param createdbyid {@link UUID} of member
      * @return {@link List < CheckIn > list of checkins}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_ACTION_ITEM)
     @Get("/{?checkinid,createdbyid}")
     public Set<ActionItem> findActionItems(@Nullable UUID checkinid,
                                            @Nullable UUID createdbyid) {

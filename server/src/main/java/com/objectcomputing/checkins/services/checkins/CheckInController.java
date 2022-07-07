@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.checkins;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,8 +13,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -49,6 +50,7 @@ public class CheckInController {
      * @param pdlId
      * @return
      */
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN)
     @Get("/{?teamMemberId,pdlId,completed}")
     public Mono<HttpResponse<Set<CheckIn>>> findCheckIns(@Nullable UUID teamMemberId, @Nullable UUID pdlId, @Nullable Boolean completed) {
         return Mono.fromCallable(() -> checkInServices.findByFields(teamMemberId, pdlId, completed))
@@ -63,7 +65,7 @@ public class CheckInController {
      * @param checkIn, {@link CheckInCreateDTO}
      * @return {@link HttpResponse<CheckIn>}
      */
-
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKIN)
     @Post("/")
     public Mono<HttpResponse<CheckIn>> createCheckIn(@Body @Valid CheckInCreateDTO checkIn,
                                                        HttpRequest<CheckInCreateDTO> request) {

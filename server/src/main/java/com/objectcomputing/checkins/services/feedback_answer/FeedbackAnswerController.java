@@ -43,6 +43,7 @@ public class FeedbackAnswerController {
      * @param requestBody {@link FeedbackAnswerCreateDTO} New feedback answer to create
      * @return {@link FeedbackAnswerResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_FEEDBACK_ANSWER)
     @Post()
     public Mono<HttpResponse<FeedbackAnswerResponseDTO>> save(@Body @Valid @NotNull FeedbackAnswerCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackAnswerServices.save(fromDTO(requestBody)))

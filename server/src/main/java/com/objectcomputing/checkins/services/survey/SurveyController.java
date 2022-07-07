@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.survey;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -9,8 +12,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -18,7 +19,6 @@ import reactor.core.scheduler.Schedulers;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -51,6 +51,7 @@ public class SurveyController {
      * @param createdBy
      * @return
      */
+    @RequiredPermission(Permissions.CAN_VIEW_SURVEY)
     @Get("/{?name,createdBy}")
     public Mono<HttpResponse<Set<Survey>>> findSurveys(@Nullable String name,
                                                        @Nullable UUID createdBy) {
@@ -72,7 +73,7 @@ public class SurveyController {
      * @param surveyResponse, {@link SurveyCreateDTO}
      * @return {@link HttpResponse<Survey>}
      */
-
+    @RequiredPermission(Permissions.CAN_CREATE_SURVEY)
     @Post()
     public Mono<HttpResponse<Survey>> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse,
                                                                    HttpRequest<SurveyCreateDTO> request) {
@@ -108,6 +109,7 @@ public class SurveyController {
      *
      * @param id, id of {@link Survey} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_SURVEY)
     @Delete("/{id}")
     public HttpResponse<?> deleteSurvey(@NotNull UUID id) {
         surveyResponseServices.delete(id);

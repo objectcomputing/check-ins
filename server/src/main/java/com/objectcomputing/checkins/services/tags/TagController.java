@@ -1,7 +1,10 @@
 package com.objectcomputing.checkins.services.tags;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.skills.Skill;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,7 +13,6 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -48,6 +50,7 @@ public class TagController {
      * @param tag, {@link TagCreateDTO}
      * @return {@link HttpResponse<  Tag  >}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_TAG)
     @Post()
     public Mono<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<TagCreateDTO> request) {
 
@@ -65,6 +68,7 @@ public class TagController {
      *
      * @param id, id of {@link Tag} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_TAG)
     @Delete("/{id}")
     public HttpResponse<?> deleteTag(UUID id) {
         tagServices.delete(id);
@@ -77,6 +81,7 @@ public class TagController {
      * @param id {@link UUID} of the tag entry
      * @return {@link Tag}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_TAG)
     @Get("/{id}")
     public Mono<HttpResponse<Tag>> readTag(@NotNull UUID id) {
 
@@ -98,6 +103,7 @@ public class TagController {
      * @param name {@link String} of tag
      * @return {@link Set <tag > set of tags
      */
+    @RequiredPermission(Permissions.CAN_VIEW_TAG)
     @Get("/{?name}")
     public Mono<HttpResponse<Set<Tag>>> findtags(@Nullable String name) {
         return Mono.fromCallable(() -> tagServices.findByFields(name))

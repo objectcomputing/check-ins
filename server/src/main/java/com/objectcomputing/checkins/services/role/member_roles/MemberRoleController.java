@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.MemberRoleDTO;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -23,18 +25,21 @@ public class MemberRoleController {
         this.memberRoleServices = memberRoleServices;
     }
 
+    @RequiredPermission(Permissions.CAN_VIEW_ROLE)
     @Get
     HttpResponse<List<MemberRoleDTO>> getAllMembersGroupedByRole() {
         List<MemberRoleDTO> membersGroupedByRole = memberRoleServices.getAllMembersGroupedByRole();
         return HttpResponse.ok(membersGroupedByRole);
     }
 
+    @RequiredPermission(Permissions.CAN_DELETE_ROLE)
     @Delete("/{roleId}/{memberId}")
     HttpResponse<?> deleteMemberRole(@NotNull UUID roleId, @NotNull UUID memberId){
         memberRoleServices.delete(new MemberRoleId(memberId, roleId));
         return HttpResponse.ok();
     }
 
+    @RequiredPermission(Permissions.CAN_CREATE_ROLE)
     @Post
     HttpResponse<MemberRole> saveMemberRole(@NotNull MemberRoleId id){
         MemberRole memberRole = memberRoleServices.saveByIds(id.getMemberId(), id.getRoleId());

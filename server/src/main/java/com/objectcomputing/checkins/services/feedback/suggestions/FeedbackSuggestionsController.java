@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.feedback.suggestions;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
@@ -11,7 +13,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -39,6 +40,7 @@ public class FeedbackSuggestionsController {
         this.executorService = executorService;
     }
 
+    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_SUGGESTION)
     @Get("/{id}")
     public Mono<HttpResponse<List<FeedbackSuggestionDTO>>> getSuggestionsByProfileId(UUID id) {
         return Mono.fromCallable(() -> suggestionsService.getSuggestionsByProfileId(id))

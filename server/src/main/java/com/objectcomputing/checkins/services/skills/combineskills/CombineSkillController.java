@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.skills.combineskills;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -13,7 +15,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -46,7 +47,7 @@ public class CombineSkillController {
      * @param skill, {@link CombineSkillsDTO}
      * @return {@link HttpResponse<Skill>}
      */
-
+    @RequiredPermission(Permissions.CAN_CREATE_SKILL)
     @Post()
     public Mono<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<CombineSkillsDTO> request) {
         return Mono.fromCallable(() -> combineSkillServices.combine(skill))

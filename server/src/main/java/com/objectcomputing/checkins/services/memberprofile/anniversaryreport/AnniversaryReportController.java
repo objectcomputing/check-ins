@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile.anniversaryreport;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
@@ -11,8 +14,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
@@ -47,7 +48,7 @@ public class AnniversaryReportController {
      * @param month,    month of the anniversary
      * @return {@link Set < AnniversaryReportResponseDTO > list of anniversaries}
      */
-
+    @RequiredPermission(Permissions.CAN_VIEW_ANNIVERSARY)
     @Get("/{?month}")
     public Mono<HttpResponse<List<AnniversaryReportResponseDTO>>> findByValue(@Nullable String[] month) {
 

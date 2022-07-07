@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.file;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -14,8 +17,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -59,6 +60,7 @@ public class FileController {
      * @param {id}
      * @return {@link HttpResponse<Set<FileInfoDTO>>} Returns a set of FileInfoDTO associated with CheckInId or all files
      */
+    @RequiredPermission(Permissions.CAN_VIEW_FILES)
     @Get("{?id}")
     public Mono<HttpResponse<Set<FileInfoDTO>>> findDocuments(@Nullable UUID id) {
 
@@ -75,6 +77,7 @@ public class FileController {
      * @param {uploadDocId}, the fileId of the file to be deleted
      * @return {@link HttpResponse<java.io.File>} Returns file
      */
+    @RequiredPermission(Permissions.CAN_DOWNLOAD_FILES)
     @Get("/{uploadDocId}/download")
     public Mono<HttpResponse<File>> downloadDocument(@NotNull String uploadDocId) {
         return Mono.fromCallable(() -> fileServices.downloadFiles(uploadDocId))
@@ -89,6 +92,7 @@ public class FileController {
      * @param file, the file to upload to Google Drive
      * @return {@link HttpResponse<FileInfoDTO>} Returns metadata of document uploaded to Google Drive
      */
+    @RequiredPermission(Permissions.CAN_UPLOAD_FILES)
     @Post(uri = "/{checkInId}", consumes = MediaType.MULTIPART_FORM_DATA)
     public Mono<HttpResponse<FileInfoDTO>> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
         return Mono.fromCallable(() -> fileServices.uploadFile(checkInId, file))
@@ -103,6 +107,7 @@ public class FileController {
      * @param {uploadDocId}, the uploadDocId of the document
      * @return HttpResponse
      */
+    @RequiredPermission(Permissions.CAN_DELETE_FILES)
     @Delete("/{uploadDocId}")
     public Mono<HttpResponse> delete(@NotNull String uploadDocId) {
         return Mono.fromCallable(() -> fileServices.deleteFile(uploadDocId))

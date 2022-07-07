@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.github;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -10,7 +12,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.reactivestreams.Publisher;
-
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ public class GithubController {
      * @param request, {@link IssueCreateDTO}
      * @return {@link HttpResponse < IssueResponseDTO >}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_GITHUB_ISSUE)
     @Post
     Publisher<IssueResponseDTO> sendIssue(@Body @Valid @NotNull IssueCreateDTO request) {
         return githubClient.sendIssue(request);

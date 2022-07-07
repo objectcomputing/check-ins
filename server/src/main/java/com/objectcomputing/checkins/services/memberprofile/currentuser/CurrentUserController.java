@@ -1,13 +1,14 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionServices;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.Role;
-import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.RoleServices;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -16,7 +17,6 @@ import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import io.micronaut.core.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +46,7 @@ public class CurrentUserController {
      * @param authentication {@link Authentication} or null
      * @return {@link HttpResponse<CurrentUserDTO>}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_CURRENT_USER)
     @Get
     public HttpResponse<CurrentUserDTO> currentUser(@Nullable Authentication authentication) {
 

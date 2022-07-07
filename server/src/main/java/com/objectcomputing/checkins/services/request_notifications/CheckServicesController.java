@@ -1,13 +1,14 @@
 package com.objectcomputing.checkins.services.request_notifications;
 
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.scheduling.TaskExecutors;
 import io.netty.channel.EventLoopGroup;
 import jakarta.annotation.security.PermitAll;
-
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -27,7 +28,7 @@ public class CheckServicesController {
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
     }
-
+    @RequiredPermission(Permissions.CAN_VIEW_REQUESTS)
     @Get
     public Mono<? extends HttpResponse<?>> GetTodaysRequests() {
         return Mono.fromCallable(checkServices::GetTodaysRequests)

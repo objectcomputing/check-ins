@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.memberprofile.birthday;
 
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
@@ -12,8 +15,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
@@ -49,7 +50,7 @@ public class BirthDayController {
      * @param month,    month of the birthday
      * @return {@link Set < BirthDayResponseDTO > list of birthdays}
      */
-
+    @RequiredPermission(Permissions.CAN_VIEW_MEMBER_BDAY)
     @Get("/{?month}")
     public Mono<HttpResponse<List<BirthDayResponseDTO>>> findByValue(@Nullable String[] month) {
 

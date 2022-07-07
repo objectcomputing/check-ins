@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.questions;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,8 +13,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -47,7 +48,7 @@ public class QuestionController {
      * @param question, {@link QuestionCreateDTO}
      * @return {@link HttpResponse<QuestionResponseDTO>}
      */
-
+    @RequiredPermission(Permissions.CAN_CREATE_QUESTION)
     @Post()
     public Mono<HttpResponse<QuestionResponseDTO>> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<QuestionCreateDTO> request) {
 
@@ -67,6 +68,7 @@ public class QuestionController {
      * @param id {@link UUID} of the question entry
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_QUESTION)
     @Get("/{id}")
     public Mono<HttpResponse<QuestionResponseDTO>> getById(UUID id) {
         return Mono.fromCallable(() -> {
@@ -88,6 +90,7 @@ public class QuestionController {
      * @param categoryId, the category id of the question
      * @return {@link List HttpResponse<QuestionResponseDTO >
      */
+    @RequiredPermission(Permissions.CAN_VIEW_QUESTION)
     @Get("/{?text,categoryId}")
     public Mono<HttpResponse<Set<QuestionResponseDTO>>> findByText(@Nullable String text, @Nullable UUID categoryId) {
         return Mono.fromCallable(() -> {

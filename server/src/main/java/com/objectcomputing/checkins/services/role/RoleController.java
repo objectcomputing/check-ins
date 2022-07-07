@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.role;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,8 +12,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -20,7 +20,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
@@ -48,6 +47,7 @@ public class RoleController {
      * @param role, {@link RoleCreateDTO}
      * @return {@link HttpResponse <Role>}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_ROLE)
     @Post()
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Mono<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,
@@ -85,6 +85,7 @@ public class RoleController {
      * @param id {@link RoleType} of the role member entry
      * @return {@link Role}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_ROLE)
     @Get("/{id}")
     public Mono<HttpResponse<Role>> readRole(@NotNull UUID id) {
         return Mono.fromCallable(() -> {
@@ -105,6 +106,7 @@ public class RoleController {
      *
      * @return {@link Role}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_ROLE)
     @Get()
     public Mono<HttpResponse<List<Role>>> findAll() {
         return Mono.fromCallable(() -> {
@@ -120,6 +122,7 @@ public class RoleController {
      *
      * @param id, id of {@link Role} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_ROLE)
     @Delete("/{id}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> deleteRole(UUID id) {

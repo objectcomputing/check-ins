@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -48,6 +50,7 @@ public class GuildController {
      * @param guild, {@link GuildCreateDTO}
      * @return {@link HttpResponse<GuildResponseDTO>}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_GUILD)
     @Post()
     public Mono<HttpResponse<GuildResponseDTO>> createAGuild(@Body @Valid GuildCreateDTO guild, HttpRequest<GuildCreateDTO> request) {
 
@@ -65,7 +68,7 @@ public class GuildController {
      * @param id of guild
      * @return {@link GuildResponseDTO guild matching id}
      */
-
+    @RequiredPermission(Permissions.CAN_VIEW_GUILD)
     @Get("/{id}")
     public Mono<HttpResponse<GuildResponseDTO>> readGuild(@NotNull UUID id) {
         return Mono.fromCallable(() -> guildService.read(id))
@@ -82,7 +85,7 @@ public class GuildController {
      * @return {@link List < GuildResponseDTO > list of guilds}, return all guilds when no parameters filled in else
      * return all guilds that match all of the filled in params
      */
-
+    @RequiredPermission(Permissions.CAN_VIEW_GUILD)
     @Get("/{?name,memberid}")
     public Mono<HttpResponse<Set<GuildResponseDTO>>> findGuilds(@Nullable String name, @Nullable UUID memberid) {
         return Mono.fromCallable(() -> guildService.findByFields(name, memberid))
@@ -115,6 +118,7 @@ public class GuildController {
      * @param id, id of {@link GuildUpdateDTO} to delete
      * @return
      */
+    @RequiredPermission(Permissions.CAN_DELETE_GUILD)
     @Delete("/{id}")
     public Mono<HttpResponse> deleteGuild(@NotNull UUID id) {
         return Mono.fromCallable(() -> guildService.delete(id))

@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.opportunities;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -51,6 +53,7 @@ public class OpportunitiesController {
      * @param submittedBy {@link UUID} of member
      * @return {@link Set <Opportunities > list of opportunities
      */
+    @RequiredPermission(Permissions.CAN_VIEW_OPPORTUNITIES)
     @Get("/{?name,description,submittedBy}")
     public Mono<HttpResponse<List<Opportunities>>> findOpportunities(@Nullable String name,
                                                                      @Nullable String description, @Nullable UUID submittedBy) {
@@ -67,7 +70,7 @@ public class OpportunitiesController {
      * @param opportunitiesResponse, {@link OpportunitiesCreateDTO}
      * @return {@link HttpResponse<Opportunities>}
      */
-
+    @RequiredPermission(Permissions.CAN_CREATE_OPPORTUNITIES)
     @Post()
     public Mono<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
                                                      HttpRequest<OpportunitiesCreateDTO> request) {
@@ -103,6 +106,7 @@ public class OpportunitiesController {
      *
      * @param id, id of {@link Opportunities} to delete
      */
+    @RequiredPermission(Permissions.CAN_DELETE_OPPORTUNITIES)
     @Delete("/{id}")
     public HttpResponse<?> deleteOpportunities(@NotNull UUID id) {
         opportunitiesResponseServices.delete(id);

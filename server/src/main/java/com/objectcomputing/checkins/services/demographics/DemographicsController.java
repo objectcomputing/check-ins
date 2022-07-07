@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.demographics;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -46,6 +48,7 @@ public class DemographicsController {
      * @param id {@link UUID} ID of the demographic
      * @return {@link DemographicsResponseDTO} Returned demographic
      */
+    @RequiredPermission(Permissions.CAN_VIEW_DEMOGRAPHIC)
     @Get("/{id}")
     public Mono<HttpResponse<DemographicsResponseDTO>> getById(UUID id) {
 
@@ -70,6 +73,7 @@ public class DemographicsController {
      * @param militaryBranch {@link String} Find demographics with given military branch
      * @return {@link List <DemographicsResponseDTO>} List of demographics that match the input parameters
      */
+    @RequiredPermission(Permissions.CAN_VIEW_DEMOGRAPHIC)
     @Get("/{?memberId,gender,degreeLevel,industryTenure,personOfColor,veteran,militaryTenure,militaryBranch}")
     public Mono<HttpResponse<List<DemographicsResponseDTO>>> findByValue(@Nullable UUID memberId,
                                                                             @Nullable String gender,
@@ -97,6 +101,7 @@ public class DemographicsController {
      * @return {@link DemographicsResponseDTO} The created demographics
      */
     @Post()
+    @RequiredPermission(Permissions.CAN_CREATE_DEMOGRAPHIC)
     public Mono<HttpResponse<DemographicsResponseDTO>> save(@Body @Valid DemographicsCreateDTO demographics,
                                                               HttpRequest<DemographicsCreateDTO> request) {
 
@@ -140,6 +145,7 @@ public class DemographicsController {
      * @param id {@link UUID} Demographics unique id
      * @return
      */
+    @RequiredPermission(Permissions.CAN_DELETE_DEMOGRAPHIC)
     @Delete("/{id}")
     public Mono<HttpResponse> delete(@NotNull UUID id) {
         return Mono.fromCallable(() -> demographicsServices.deleteDemographics(id))

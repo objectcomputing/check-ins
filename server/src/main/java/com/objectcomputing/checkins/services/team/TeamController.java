@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.team;
 
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,8 +13,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -48,6 +49,7 @@ public class TeamController {
      * @param team, {@link TeamCreateDTO}
      * @return {@link HttpResponse<TeamResponseDTO>}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_MEMBER)
     @Post()
     public Mono<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<TeamCreateDTO> request) {
 
@@ -65,7 +67,7 @@ public class TeamController {
      * @param id of team
      * @return {@link TeamResponseDTO team matching id}
      */
-
+    @RequiredPermission(Permissions.CAN_VIEW_TEAM)
     @Get("/{id}")
     public Mono<HttpResponse<TeamResponseDTO>> readTeam(@NotNull UUID id) {
         return Mono.fromCallable(() -> teamService.read(id))
@@ -82,6 +84,7 @@ public class TeamController {
      * @return {@link List<TeamResponseDTO> list of teams}, return all teams when no parameters filled in else
      * return all teams that match all of the filled in params
      */
+    @RequiredPermission(Permissions.CAN_VIEW_TEAM)
     @Get("/{?name,memberId}")
     public Mono<HttpResponse<Set<TeamResponseDTO>>> findTeams(@Nullable String name, @Nullable UUID memberId) {
         return Mono.fromCallable(() -> teamService.findByFields(name, memberId))
@@ -114,6 +117,7 @@ public class TeamController {
      * @param id, id of {@link TeamUpdateDTO} to delete
      * @return
      */
+    @RequiredPermission(Permissions.CAN_DELETE_TEAM)
     @Delete("/{id}")
     public Mono<HttpResponse> deleteTeam(@NotNull UUID id) {
         return Mono.fromCallable(() -> teamService.delete(id))
