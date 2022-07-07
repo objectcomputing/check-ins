@@ -1,4 +1,9 @@
 version: '3'
+
+volumes:
+  postgres_data:
+    driver: local
+
 services:
   pgadmin:
     image: dpage/pgadmin4
@@ -21,3 +26,40 @@ services:
     image: sonarqube:lts
     ports:
       - 9000:9000
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    ports:
+      - "15432:15432"
+    container_name: keycloak_db
+  keycloak:
+    image: jboss/keycloak
+    container_name: check_ins_keycloak
+    volumes:
+      - ./realm-export.json:/opt/jboss/keycloak/realm-export.json
+    command:
+      [
+        '-b',
+        '0.0.0.0',
+        '-Djboss.http.port=8880',
+        '-Dkeycloak.import=/opt/jboss/keycloak/realm-export.json',
+      ]
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak_db
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_USER: ${keyAdmin}
+      KEYCLOAK_PASSWORD: ${keyPass}
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #"ssl=true"
+    ports:
+      - 8880:8880
+    depends_on:
+      - postgres
