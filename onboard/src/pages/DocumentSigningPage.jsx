@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "./DocumentSigningPage.css";
-import getSigner from "../api/signer.js";
+import getDocuments from "../api/signrequest_documents.js";
 
 const DocumentSigningPage = () => {
-  const [document, setDocument] = useState({});
+  const [documentArr, setDocumentArr] = useState([]);
 
   useEffect(() => {
     async function getData() {
-      let res = await getSigner();
+      let res = await getDocuments();
       let document;
       if (res && res.payload) {
-        document = res?.payload?.data && !res.error ? res.payload.data : undefined;
+        document =
+          res?.payload?.data && !res.error ? res.payload.data : undefined;
         if (document) {
-          setDocument(document);
+          setDocumentArr([...document.results]);
         }
       }
     }
@@ -23,7 +24,14 @@ const DocumentSigningPage = () => {
     <div>
       <center>
         <h1>Internal Document Signing</h1>
-        {document.status === "se" || document.status === "si" ? "Signed Baby!" : "Not Signed. :("}
+        {documentArr.map((e) => (
+          <p key={e.uuid}>
+            {e.name + " is "}
+            {e.status === "sd" || e.status === "si"
+              ? "signed"
+              : "not signed yet"}
+          </p>
+        ))}
       </center>
     </div>
   );

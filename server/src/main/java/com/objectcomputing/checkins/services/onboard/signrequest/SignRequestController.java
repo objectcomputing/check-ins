@@ -30,19 +30,18 @@ public class SignRequestController {
     @Property(name = "signrequest-credentials.signrequest_token")
     private String SIGNREQUEST_TOKEN;
 
-    @Get("/signer")
+    @Get("/signrequest-documents")
     public String getData(){
 
         try{
             String retrieve = httpClient.toBlocking()
-                    .retrieve(HttpRequest.GET("/documents/152408ef-4b71-40a4-9416-92011a443450/")
+                    .retrieve(HttpRequest.GET("/documents/")
                             .header("Authorization", SIGNREQUEST_TOKEN));
             return retrieve;
         }
         catch (Exception e){
             System.out.println(e);
+            return null;
         }
-
-        return null;
     }
 }
