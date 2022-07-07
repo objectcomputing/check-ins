@@ -99,7 +99,7 @@ public class Onboarding_Profile {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "phone # of the new employee")
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @Nullable
     @Column(name = "secondphonenumber")
@@ -108,10 +108,10 @@ public class Onboarding_Profile {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = " 2nd phone # of the new employee")
-    private Integer secondPhoneNumber;
+    private String secondPhoneNumber;
 
 
-    public Onboarding_Profile(String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, Integer phoneNumber, Integer secondPhoneNumber) {
+    public Onboarding_Profile(String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -122,7 +122,7 @@ public class Onboarding_Profile {
         this.phoneNumber = phoneNumber;
         this.secondPhoneNumber = secondPhoneNumber;
     }
-    public Onboarding_Profile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, Integer phoneNumber, Integer secondPhoneNumber) {
+    public Onboarding_Profile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber) {
         this.id= id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -198,20 +198,20 @@ public class Onboarding_Profile {
         this.previousAddress = previousAddress;
     }
 
-    public Integer getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(Integer phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
     @Nullable
-    public Integer getSecondPhoneNumber() {
+    public String getSecondPhoneNumber() {
         return secondPhoneNumber;
     }
 
-    public void setSecondPhoneNumber(@Nullable Integer secondPhoneNumber) {
+    public void setSecondPhoneNumber(@Nullable String secondPhoneNumber) {
         this.secondPhoneNumber = secondPhoneNumber;
     }
 }

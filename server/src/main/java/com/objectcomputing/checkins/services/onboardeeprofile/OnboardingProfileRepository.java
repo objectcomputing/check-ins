@@ -61,8 +61,8 @@ public interface OnboardingProfileRepository extends CrudRepository<Onboarding_P
             @Nullable LocalDate birthDate,
             @Nullable String currentAddress,
             @Nullable String previousAddress,
-            @Nullable Integer phoneNumber,
-            @Nullable Integer secondPhoneNumber
+            @Nullable String phoneNumber,
+            @Nullable String secondPhoneNumber
     );
 
 }
