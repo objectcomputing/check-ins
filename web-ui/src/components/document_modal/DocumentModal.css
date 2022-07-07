@@ -1,0 +1,14 @@
+.document-modal .document-modal-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 8rem;
+    margin-top: 1rem;
+    padding: 4rem;
+}
+
+.document-modal .document-modal-content .document-modal-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+}
