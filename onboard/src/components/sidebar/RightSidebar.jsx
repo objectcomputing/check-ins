@@ -44,7 +44,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
           borderColor: "divider",
           backgroundColor: "#dfdfdf",
           color: "#000",
-          "& .Mui-selected": { color: "Yellow !important", fontWeight: "bold" },
+          "& .Mui-selected": { color: "#1666b6 !important", fontWeight: "bold" },
           "& .MuiButtonBase-root": {
             alignItems: "flex-start",
             textTransform: "none",
@@ -53,7 +53,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
         }}
         TabIndicatorProps={{
           sx: {
-            backgroundColor: "#ffe0a7",
+            backgroundColor: "#1666b6",
           },
         }}
       >
