@@ -3,5 +3,16 @@
     height: fit-content;
     border: solid 3px black;
     margin-top: 1rem;
-  }
+}
+
+.no-documents-message {
+    color: gray;
+    background-color: #e7e7e7;
+    border: 1px dashed gray;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin: 0 1rem 1rem 1rem;
+    text-align: center;
+}
+
   

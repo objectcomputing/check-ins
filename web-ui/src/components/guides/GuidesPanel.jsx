@@ -12,16 +12,11 @@ import {selectRoles} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import {UPDATE_TOAST} from "../../context/actions";
 import {
-  Button,
-  CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField
+  CardContent, Collapse,
+  IconButton, Typography
 } from "@mui/material";
 import "./GuidesPanel.css";
+import DocumentModal from "../document_modal/DocumentModal";
 
 const propTypes = {
   role: PropTypes.oneOf(["ADMIN", "PDL", "MEMBER"]).isRequired,
@@ -32,7 +27,8 @@ const GuidesPanel = ({ role, title }) => {
 
   const { state, dispatch } = useContext(AppContext);
   const [guides, setGuides] = useState([]);
-  const [editGuideDialogOpen, setEditGuideDialogOpen] = useState(false);
+  const [guideDialogOpen, setGuideDialogOpen] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const allRoles = selectRoles(state);
 
   useEffect(() => {
@@ -45,7 +41,6 @@ const GuidesPanel = ({ role, title }) => {
         return;
       }
       const res = await getDocumentsByRole(roleId);
-      console.log(res);
       const data = res && res.payload && res.payload.data && !res.error ? res.payload.data : null;
       if (data) {
         return data;
@@ -70,39 +65,47 @@ const GuidesPanel = ({ role, title }) => {
 
   return (
     <>
-      <Dialog open={editGuideDialogOpen}>
-        <DialogTitle>Add Document</DialogTitle>
-        <DialogContent>
-          <TextField label="Name"/>
-          <TextField label="Description" multiline/>
-          <TextField label="URL"/>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditGuideDialogOpen(false)}>
-            Cancel
-          </Button>
-          <Button>
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DocumentModal
+        open={guideDialogOpen}
+        onClose={() => setGuideDialogOpen(false)}
+        onSave={(document) => {
+          console.log(document);
+          setGuideDialogOpen(false);
+        }}
+      />
       <Card>
         <CardHeader
           avatar={<PdfIcon/>}
           title={title}
+          onClick={() => setExpanded(!expanded)}
+          style={{ cursor: "pointer" }}
           action={
-            <IconButton>
+            <IconButton onClick={(event) => {
+              event.stopPropagation();
+              setGuideDialogOpen(true);
+            }}>
               <AddIcon/>
             </IconButton>
           }
         />
-        <CardContent>
-          <List dense>
-            {guides.map((guide) => (
-              <GuideLink key={guide.id} name={guide.name} url={guide.url}/>
-            ))}
-          </List>
-        </CardContent>
+        <Collapse in={expanded} timeout="auto">
+          <CardContent style={{ padding: 0 }}>
+            {guides.length > 0
+              ? (
+                <List dense style={{ paddingTop: 0 }}>
+                  {guides.map((guide) => (
+                    <GuideLink key={guide.id} document={guide}/>
+                  ))}
+                </List>
+              )
+              : (
+                <div className="no-documents-message">
+                  <Typography fontSize={14}>This section has no documents</Typography>
+                </div>
+              )
+            }
+          </CardContent>
+        </Collapse>
       </Card>
     </>
   );
