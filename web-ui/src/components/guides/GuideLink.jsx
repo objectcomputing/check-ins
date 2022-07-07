@@ -1,61 +1,50 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
 import {
-  CardHeader,
   IconButton,
   ListItem,
   ListItemButton,
-  ListItemText,
-  Modal,
-  Card,
-  CardContent,
-  CardActions, Button, TextField
+  ListItemText
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import PropTypes from "prop-types";
 import "./GuideLink.css";
+import DocumentModal from "../document_modal/DocumentModal";
 
 const propTypes = {
-  name: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired
+  document: PropTypes.object.isRequired
 };
 
-const GuideLink = ({ name, url }) => {
+const GuideLink = ({ document }) => {
 
-  const [editGuideDialogOpen, setEditGuideDialogOpen] = useState(false);
+  const [guideDialogOpen, setGuideDialogOpen] = useState(false);
 
   return (
     <>
+      <DocumentModal
+        open={guideDialogOpen}
+        onClose={() => setGuideDialogOpen(false)}
+        onSave={() => {
+          setGuideDialogOpen(false);
+          console.log("Saving...");
+        }}
+        document={document}
+      />
       <ListItem
+        disablePadding
         secondaryAction={
-          <IconButton edge="end" onClick={() => setEditGuideDialogOpen(true)}>
+          <IconButton edge="end" onClick={() => setGuideDialogOpen(true)}>
             <EditIcon/>
           </IconButton>
         }
       >
         <ListItemButton
           component={Link}
-          to={url}
+          to={document?.url || ""}
           target="_blank">
-          <ListItemText primary={name}/>
+          <ListItemText style={{paddingLeft: "1rem"}} primary={document?.name || "Undefined"}/>
         </ListItemButton>
       </ListItem>
-      <Modal open={editGuideDialogOpen} onClose={() => setEditGuideDialogOpen(false)}>
-        <Card>
-          <CardHeader title="Edit Document" subheader={name}/>
-          <CardContent>
-            <div>
-              <TextField label="Name"/>
-              <TextField label="Description" multiline/>
-              <TextField label="URL"/>
-            </div>
-          </CardContent>
-          <CardActions>
-            <Button>Cancel</Button>
-            <Button>Save</Button>
-          </CardActions>
-        </Card>
-      </Modal>
     </>
   );
 };
