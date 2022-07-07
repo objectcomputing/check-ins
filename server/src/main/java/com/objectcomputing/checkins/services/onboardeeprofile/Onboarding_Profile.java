@@ -110,7 +110,19 @@ public class Onboarding_Profile {
     @Schema(description = " 2nd phone # of the new employee")
     private Integer secondPhoneNumber;
 
-    public Onboarding_Profile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, Integer phoneNumber) {
+
+    public Onboarding_Profile(String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, Integer phoneNumber, Integer secondPhoneNumber) {
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.socialSecurityNumber = socialSecurityNumber;
+        this.birthDate = birthDate;
+        this.currentAddress = currentAddress;
+        this.previousAddress = previousAddress;
+        this.phoneNumber = phoneNumber;
+        this.secondPhoneNumber = secondPhoneNumber;
+    }
+    public Onboarding_Profile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, Integer phoneNumber, Integer secondPhoneNumber) {
         this.id= id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -120,6 +132,7 @@ public class Onboarding_Profile {
         this.currentAddress = currentAddress;
         this.previousAddress = previousAddress;
         this.phoneNumber = phoneNumber;
+        this.secondPhoneNumber = secondPhoneNumber;
     }
 
     public Onboarding_Profile(){}

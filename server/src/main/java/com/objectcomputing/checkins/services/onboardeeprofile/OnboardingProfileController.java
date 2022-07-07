@@ -3,10 +3,7 @@ package com.objectcomputing.checkins.services.onboardeeprofile;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -20,6 +17,8 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -48,9 +47,9 @@ public class OnboardingProfileController {
     }
 
     /**
-     * Find member profile by id.
+     * Find onboardee profile by id.
      *
-     * @param id {@link UUID} ID of the member profile
+     * @param id {@link UUID} ID of the onboardee profile
      * @return {@link OnboardingProfileResponseDTO } Returned onboardee profile
      */
     @Get("/{id}")
@@ -64,21 +63,16 @@ public class OnboardingProfileController {
                 .subscribeOn(scheduler);
     }
 
-//    /**
-//     * Find onboarding profile by or find all.
-//     *
-//     * @param id                   {@link UUID} ID of the onboardee
-//     * @param firstName            {@link String} Find onboardees with the given first name
-//     * @param middleName           {@link String} Find onboardees with the given middle name
-//     * @param lastName             {@link String} Find onboardees with the given last name
-//     * @param socialSecurityNumber {@link Integer} Find onboardee
-//     * @param birthDate            {@link LocalDate} birth date of the onboardee
-//     * @param currentAddress       {@link String} Onboardee's current address
-//     * @param previousAddress      {@link String} Onboardee's previous address
-//     * @param phoneNumber          {@link Integer} Onboardee's phone number
-//     * @param phoneNumber          {@link Integer} Onboardee's phone number
-//     * @return {@link List<OnboardingProfileResponseDTO>} List of Onboardees that match the input parameters
-//     */
+    /**
+     * Find onboarding profile by or find all.
+     *
+     * @param id                   {@link UUID} ID of the onboardee
+     * @param lastName             {@link String} Find onboardees with the given last name
+     * @param socialSecurityNumber {@link Integer} Find onboardee
+     * @param birthDate            {@link LocalDate} birth date of the onboardee
+     * @param phoneNumber          {@link Integer} Onboardee's phone number
+     * @return {@link List<OnboardingProfileResponseDTO>} List of Onboardees that match the input parameters
+     */
     @Get("/{?id,firstName,lastName,socialSecurityNumber,birthDate,phoneNumber}")
     public Mono<HttpResponse<List<OnboardingProfileResponseDTO>>> findByValue(@Nullable UUID id,
                                                                               @Nullable String firstName,
@@ -93,9 +87,65 @@ public class OnboardingProfileController {
                             .map(this::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<OnboardingProfileResponseDTO>>) HttpResponse
                             .ok(dtoList);
-
                 }).subscribeOn(scheduler);
     }
+
+    /**
+     * Save a new onboardee profile.
+     *
+     * @param onboardeeProfile {@link OnboardingProfileCreateDTO } Information of the onboardee profile being created
+     * @return {@link OnboardingProfileResponseDTO} The created onboardee profile
+     */
+    @Post()
+    public Mono<HttpResponse<OnboardingProfileResponseDTO>> save(@Body @Valid OnboardingProfileCreateDTO onboardeeProfile) {
+
+        return Mono.fromCallable(() -> onboardingProfileServices.saveProfile(fromDTO(onboardeeProfile)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(savedProfile -> (HttpResponse<OnboardingProfileResponseDTO>) HttpResponse
+                        .created(fromEntity(savedProfile))
+                        .headers(headers -> headers.location(location(savedProfile.getId()))))
+                .subscribeOn(scheduler);
+    }
+
+    /**
+     * Update a onboardee profile.
+     *
+     * @param onboardeeProfile {@link OnboardingProfileResponseDTO} Information of the onboardee profile being updated
+     *                    *Note: There is no OnboardingProfileUpdateDTO since the information returned in an update is
+     *                           the same as the information returned in a response
+     *
+     * @return {@link OnboardingProfileResponseDTO} The updated onboardee profile
+     */
+    @Put()
+    public Mono<HttpResponse<OnboardingProfileResponseDTO>> update(@Body @Valid OnboardingProfileResponseDTO onboardeeProfile) {
+
+        return Mono.fromCallable(() -> onboardingProfileServices.saveProfile(fromDTO(onboardeeProfile)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(savedProfile -> {
+                    OnboardingProfileResponseDTO updatedOnboardeeProfile = fromEntity(savedProfile);
+                    return (HttpResponse<OnboardingProfileResponseDTO>) HttpResponse
+                            .ok()
+                            .headers(headers -> headers.location(location(updatedOnboardeeProfile.getId())))
+                            .body(updatedOnboardeeProfile);
+                })
+                .subscribeOn(scheduler);
+    }
+
+    /**
+     * Delete a onboardee profile
+     *
+     * @param id {@link UUID} Member unique id
+     * @return {@link HttpResponse}
+     */
+    @Delete("/{id}")
+    public Mono<? extends HttpResponse<?>> delete(@NotNull UUID id) {
+        return Mono.fromCallable(() -> onboardingProfileServices.deleteProfile(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(successFlag -> (HttpResponse<?>) HttpResponse.ok())
+                .subscribeOn(scheduler);
+    }
+
+
 
 
     protected URI location(UUID id) {
@@ -104,7 +154,6 @@ public class OnboardingProfileController {
 
     private OnboardingProfileResponseDTO fromEntity(Onboarding_Profile entity) {
         OnboardingProfileResponseDTO dto = new OnboardingProfileResponseDTO();
-//        dto.setId(entity.getId());
         dto.setFirstName(entity.getFirstName());
         dto.setMiddleName(entity.getMiddleName());
         dto.setLastName(entity.getLastName());
@@ -120,12 +169,13 @@ public class OnboardingProfileController {
 
     private Onboarding_Profile fromDTO(OnboardingProfileResponseDTO dto) {
         return new Onboarding_Profile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
-                dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(), dto.getPhoneNumber(),
-                dto.getSecondPhoneNumber());
+                dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(),
+                dto.getPhoneNumber(), dto.getSecondPhoneNumber());
     }
 
     private Onboarding_Profile fromDTO(OnboardingProfileCreateDTO dto) {
-        return new Onboarding_Profile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(), dto.getPhoneNumber(),
-                dto.getSecondPhoneNumber());
+        return new Onboarding_Profile( dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
+                dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(),
+                dto.getPhoneNumber(), dto.getSecondPhoneNumber());
     }
 }

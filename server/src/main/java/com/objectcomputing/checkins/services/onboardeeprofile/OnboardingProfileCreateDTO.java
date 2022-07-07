@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class OnboardingProfileCreateDTO {
 
     @NotBlank
     @Schema(description = "birthdate of the new employee")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @NotBlank
     @Schema(description = "currentAddress of the new employee")
@@ -86,11 +87,11 @@ public class OnboardingProfileCreateDTO {
         this.socialSecurityNumber = socialSecurityNumber;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
