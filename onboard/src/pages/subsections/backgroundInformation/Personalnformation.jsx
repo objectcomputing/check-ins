@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Input from "@mui/material/Input";
 import Box from "@mui/material/Box";
-import { validDOB, validPhoneNum, validSSN } from "../../../components/Regex";
+import {validPhoneNum, validSSN } from "../../../components/Regex";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -39,13 +39,6 @@ function PersonalInformation() {
           return true;
         } else {
           console.log("ssn bad");
-          return false;
-        }
-
-      case "DOB":
-        if (validDOB.test(dateOfBirth)) {
-          return true;
-        } else {
           return false;
         }
 
@@ -113,16 +106,15 @@ function PersonalInformation() {
             <Item>
               Birth Date:
               <Input
-                type="text"
+                type="date"
                 id="outlined-basic"
                 label="Birthdate"
                 variant="outlined"
                 value={dateOfBirth}
                 placeholder=" dd/mm/yyyy"
-                error={!validate("DOB")}
                 onChange={(e) => {
                   setDateOfBirth(e.target.value);
-                  validate("DOB");
+                  
                 }}
               />
             </Item>
