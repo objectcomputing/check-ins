@@ -61,6 +61,7 @@ function PersonalInformation() {
             <Item>
               First Name:
               <Input
+                placeholder="John"
                 id="outlined-basic"
                 label="First Name"
                 variant="outlined"
@@ -70,13 +71,19 @@ function PersonalInformation() {
           <Grid item xs={4}>
             <Item>
               Last Name:
-              <Input id="outlined-basic" label="Last Name" variant="outlined" />
+              <Input
+                id="outlined-basic"
+                label="Last Name"
+                variant="outlined"
+                placeholder=" Doe"
+              />
             </Item>
           </Grid>
           <Grid item xs={4}>
             <Item>
               Middle Initial:
               <Input
+                placeholder=" H"
                 id="outlined-basic"
                 label="Middle Initial"
                 variant="outlined"
@@ -90,6 +97,8 @@ function PersonalInformation() {
                 type="password"
                 id="outlined-basic"
                 label="SSN"
+                placeholder=" xxx-xx-xxxx"
+                required="true"
                 variant="outlined"
                 error={!validate("SSN")}
                 value={ssn}
@@ -109,6 +118,7 @@ function PersonalInformation() {
                 label="Birthdate"
                 variant="outlined"
                 value={dateOfBirth}
+                placeholder=" dd/mm/yyyy"
                 error={!validate("DOB")}
                 onChange={(e) => {
                   setDateOfBirth(e.target.value);
@@ -121,6 +131,7 @@ function PersonalInformation() {
             <Item>
               Current Address:
               <Input
+                placeholder=" 123 Main Street USA"
                 id="outlined-basic"
                 label="Current Address"
                 variant="outlined"
@@ -131,6 +142,7 @@ function PersonalInformation() {
             <Item>
               Permanent Address:
               <Input
+                placeholder=" 123 Main Street USA"
                 id="outlined-basic"
                 label="Permanent Address"
                 variant="outlined"
@@ -146,7 +158,7 @@ function PersonalInformation() {
                 label="Primary Phone Number"
                 variant="outlined"
                 value={phoneNum}
-                helperText="Example: 123-456-7890"
+                placeholder=" 123-456-7890"
                 error={!validate("PhoneNum")}
                 onChange={(e) => {
                   setPhoneNum(e.target.value);
@@ -162,15 +174,11 @@ function PersonalInformation() {
                 type="number"
                 id="outlined-basic"
                 label="Secondary Phone Number"
+                placeholder=" 123-456-7890"
                 variant="outlined"
                 value={secondaryPhoneNum}
                 onChange={(e) => setSecondaryPhoneNum(e.target.value)}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              <button onClick={validate}>Validate</button>
             </Item>
           </Grid>
         </Grid>
