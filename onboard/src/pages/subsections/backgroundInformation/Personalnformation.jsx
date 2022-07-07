@@ -3,7 +3,12 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { FormControl } from "@mui/material";
 import InputField from "../../../components/inputs/InputField";
-import { validAddress, validDOB, validPhoneNum, validSSN } from "../../../components/Regex";
+import {
+  validAddress,
+  validDOB,
+  validPhoneNum,
+  validSSN,
+} from "../../../components/Regex";
 
 function PersonalInformation() {
   const [firstName, setFirstName] = useState("");
@@ -111,29 +116,22 @@ function PersonalInformation() {
       }
     } else if (name === "phoneNum") {
       setPhoneNum(val);
-      if (validPhoneNum.test(val))
-      {
+      if (validPhoneNum.test(val)) {
         setPhoneNumError(false);
         setPhoneNumHelper("");
-      }
-      else
-      {
+      } else {
         setPhoneNumError(true);
         setPhoneNumHelper("Please enter in a valid phone number");
-        }
-    }
-    else if (name === "secondaryPhoneNum") {
+      }
+    } else if (name === "secondaryPhoneNum") {
       setSecondaryPhoneNum(val);
-      if (validPhoneNum.test(val))
-      {
+      if (validPhoneNum.test(val)) {
         setSecondaryPhoneNumError(false);
         setSecondaryPhoneNumHelper("");
-      }
-      else
-      {
+      } else {
         setSecondaryPhoneNumError(true);
         setSecondaryPhoneNumHelper("Please enter in a valid phone number");
-        }
+      }
     }
   }
 
@@ -347,19 +345,6 @@ function PersonalInformation() {
                 helperMessage={secondaryPhoneNumHelper}
               />
             </FormControl>
-            {/* 
-         
-        
-          Secondary Phone Number
-          <Input
-            type="number"
-            id="outlined-basic"
-            label="Secondary Phone Number"
-            placeholder=" 123-456-7890"
-            variant="outlined"
-            value={secondaryPhoneNum}
-            onChange={(e) => setSecondaryPhoneNum(e.target.value)}
-          /> */}
           </form>
         </Grid>
       </Grid>
