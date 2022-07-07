@@ -1,181 +1,369 @@
 import React, { useState } from "react";
-import { styled } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Input from "@mui/material/Input";
 import Box from "@mui/material/Box";
-import {validPhoneNum, validSSN } from "../../../components/Regex";
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
+import { FormControl } from "@mui/material";
+import InputField from "../../../components/inputs/InputField";
+import { validAddress, validDOB, validPhoneNum, validSSN } from "../../../components/Regex";
 
 function PersonalInformation() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [middleInital, setMiddleInital] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [secondaryPhoneNum, setSecondaryPhoneNum] = useState("");
   const [ssn, setSSN] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+  const [currentAddress, setCurrentAddress] = useState("");
+  const [permanentAddress, setPermanentAddress] = useState("");
 
-  const validate = (type) => {
-    switch (type) {
-      case "PhoneNum":
-        if (validPhoneNum.test(phoneNum)) {
-          console.log("phone num Good");
+  const [firstNameHelper, setFirstNameHelper] = useState("");
+  const [lastNameHelper, setLastNameHelper] = useState("");
+  const [phoneNumHelper, setPhoneNumHelper] = useState("");
+  const [middleInitalHelper, setMiddleInitalHelper] = useState("");
+  const [secondaryPhoneNumHelper, setSecondaryPhoneNumHelper] = useState("");
+  const [ssnHelper, setSSNHelper] = useState("");
+  const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
+  const [currentAddressHelper, setCurrentAddressHelper] = useState("");
+  const [permanentAddressHelper, setPermanentAddressHelper] = useState("");
 
-          return true;
-        } else {
-          console.log("phone num bad");
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+  const [middleInitalError, setMiddleInitalError] = useState(false);
+  const [phoneNumError, setPhoneNumError] = useState("");
+  const [secondaryPhoneNumError, setSecondaryPhoneNumError] = useState(false);
+  const [ssnError, setSSNError] = useState(false);
+  const [dateOfBirthError, setDateOfBirthError] = useState(false);
+  const [currentAddressError, setCurrentAddressError] = useState(false);
+  const [permanentAddressError, setPermanentAddressError] = useState(false);
 
-          return false;
+  function handleChange(event) {
+    const e = event;
+    const val = e.target.value;
+    const name = e.target.name;
+
+    console.log(val);
+    console.log(name);
+
+    // Event handler for the fields
+
+    if (name === "firstName") {
+      setFirstName(val);
+      if (val.length >= 5) {
+        setFirstNameError(false);
+        setFirstNameHelper("");
+      } else {
+        setFirstNameError(true);
+        setFirstNameHelper("Please enter a full first name.");
+      }
+    } else if (name === "lastName") {
+      setLastName(val);
+      if (val.length >= 3) {
+        setLastNameError(false);
+        setLastNameHelper("");
+      } else {
+        setLastNameError(true);
+        setLastNameHelper("Please enter a full last name.");
+      }
+    } else if (name === "middleInitial") {
+      setMiddleInital(val);
+      if (val.length === 1) {
+        setMiddleInitalError(false);
+        setMiddleInitalHelper("");
+      } else {
+        setMiddleInitalError(true);
+        setMiddleInitalHelper("Please enter a one letter initial.");
+      }
+    } else if (name === "ssn") {
+      setSSN(val);
+      if (validSSN.test(val)) {
+        setSSNError(false);
+        setSSNHelper("");
+      } else {
+        setSSNError(true);
+        setSSNHelper("Please enter a valid SSN.");
+      }
+    } else if (name === "dob") {
+      setDateOfBirth(val);
+      if (validDOB.test(val)) {
+        setDateOfBirthError(false);
+        setDateOfBirthHelper("");
+      } else {
+        setDateOfBirthError(true);
+        setDateOfBirthHelper("Please enter a valid date");
+      }
+    } else if (name === "currentAddress") {
+      setCurrentAddress(val);
+      if (validAddress.test(val)) {
+        setCurrentAddressError(false);
+        setCurrentAddressHelper("");
+      } else {
+        setCurrentAddressError(true);
+        setCurrentAddressHelper("Please enter in a valid address");
+      }
+    } else if (name === "permanentAddress") {
+      setPermanentAddress(val);
+      if (validAddress.test(val)) {
+        setPermanentAddressError(false);
+        setPermanentAddressHelper("");
+      } else {
+        setPermanentAddressError(true);
+        setPermanentAddressHelper("Please enter in a valid address");
+      }
+    } else if (name === "phoneNum") {
+      setPhoneNum(val);
+      if (validPhoneNum.test(val))
+      {
+        setPhoneNumError(false);
+        setPhoneNumHelper("");
+      }
+      else
+      {
+        setPhoneNumError(true);
+        setPhoneNumHelper("Please enter in a valid phone number");
         }
-
-      case "SSN":
-        if (validSSN.test(ssn)) {
-          console.log("ssn Good");
-          return true;
-        } else {
-          console.log("ssn bad");
-          return false;
-        }
-
-      default:
     }
-  };
+    else if (name === "secondaryPhoneNum") {
+      setSecondaryPhoneNum(val);
+      if (validPhoneNum.test(val))
+      {
+        setSecondaryPhoneNumError(false);
+        setSecondaryPhoneNumHelper("");
+      }
+      else
+      {
+        setSecondaryPhoneNumError(true);
+        setSecondaryPhoneNumHelper("Please enter in a valid phone number");
+        }
+    }
+  }
+
+  function handleSaveInformation(e) {
+    e.preventDefault();
+    console.log("TODO: Submit data to backend!");
+  }
 
   return (
-    <>
-      <Box sx={{ width: "100%" }}>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={4}>
-            <Item>
-              First Name:
-              <Input
-                placeholder="John"
-                id="outlined-basic"
+    <Box sx={{ width: "100%" }}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+        <Grid item xs={8}>
+          <form autoComplete="off" onSubmit={handleSaveInformation}>
+            <FormControl
+              sx={{
+                marginTop: 3,
+                marginBottom: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="first-name"
+                title="First Name"
+                id="firstName"
+                value={firstName}
+                autoFocus={true}
+                error={firstNameError}
+                onChangeHandler={handleChange}
                 label="First Name"
-                variant="outlined"
+                placeholder="John"
+                type="text"
+                helperMessage={firstNameHelper}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              Last Name:
-              <Input
-                id="outlined-basic"
+            </FormControl>
+
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="last-name"
+                title="Last Name"
+                id="lastName"
+                value={lastName}
+                autoFocus={true}
+                error={lastNameError}
+                onChangeHandler={handleChange}
                 label="Last Name"
-                variant="outlined"
-                placeholder=" Doe"
+                placeholder="Doe"
+                type="text"
+                helperMessage={lastNameHelper}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              Middle Initial:
-              <Input
-                placeholder=" H"
-                id="outlined-basic"
+            </FormControl>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="middle-initial"
+                title="Middle Initial"
+                id="middleInitial"
+                value={middleInital}
+                autoFocus={true}
+                error={middleInitalError}
+                onChangeHandler={handleChange}
                 label="Middle Initial"
-                variant="outlined"
+                placeholder="H"
+                type="text"
+                helperMessage={middleInitalHelper}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              SSN:
-              <Input
-                type="password"
-                id="outlined-basic"
-                label="SSN"
-                placeholder=" xxx-xx-xxxx"
-                required="true"
-                variant="outlined"
-                error={!validate("SSN")}
+            </FormControl>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="social-security-number"
+                title="Social Security Number"
+                id="ssn"
                 value={ssn}
-                onChange={(e) => {
-                  setSSN(e.target.value);
-                  validate("SSN");
-                }}
+                autoFocus={true}
+                error={ssnError}
+                onChangeHandler={handleChange}
+                label="Social Security Number"
+                placeholder="xxx-xx-xxxx"
+                type="password"
+                helperMessage={ssnHelper}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              Birth Date:
-              <Input
-                type="date"
-                id="outlined-basic"
-                label="Birthdate"
-                variant="outlined"
+            </FormControl>
+
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="date-of-birth"
+                title="Date of Birth"
+                id="dob"
                 value={dateOfBirth}
-                placeholder=" dd/mm/yyyy"
-                onChange={(e) => {
-                  setDateOfBirth(e.target.value);
-                  
-                }}
+                error={dateOfBirthError}
+                onChangeHandler={handleChange}
+                label="Date of Birth"
+                placeholder="dd/mm/yyyy"
+                type="text"
+                helperMessage={dateOfBirthHelper}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              Current Address:
-              <Input
-                placeholder=" 123 Main Street USA"
-                id="outlined-basic"
+            </FormControl>
+
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="current-address"
+                title="Current Address"
+                id="currentAddress"
+                value={currentAddress}
+                error={currentAddressError}
+                onChangeHandler={handleChange}
                 label="Current Address"
-                variant="outlined"
+                placeholder="123 Main Street USA"
+                type="text"
+                helperMessage={currentAddressHelper}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              Permanent Address:
-              <Input
-                placeholder=" 123 Main Street USA"
-                id="outlined-basic"
+            </FormControl>
+
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="permanent-address"
+                title="Permanent Address"
+                id="permanentAddress"
+                value={permanentAddress}
+                error={permanentAddressError}
+                onChangeHandler={handleChange}
                 label="Permanent Address"
-                variant="outlined"
+                placeholder="123 Main Street USA"
+                type="text"
+                helperMessage={permanentAddressHelper}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              Primary Phone Number:
-              <Input
-                required="true"
-                id="outlined-basic"
-                label="Primary Phone Number"
-                variant="outlined"
+            </FormControl>
+
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="phone-number"
+                title="Primary Phone Number"
+                id="phoneNum"
                 value={phoneNum}
-                placeholder=" 123-456-7890"
-                error={!validate("PhoneNum")}
-                onChange={(e) => {
-                  setPhoneNum(e.target.value);
-                  validate("PhoneNum");
-                }}
+                error={phoneNumError}
+                onChangeHandler={handleChange}
+                label="Primary Phone Number"
+                placeholder="123-456-7890"
+                type="text"
+                helperMessage={phoneNumHelper}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={4}>
-            <Item>
-              Secondary Phone Number
-              <Input
-                type="number"
-                id="outlined-basic"
-                label="Secondary Phone Number"
-                placeholder=" 123-456-7890"
-                variant="outlined"
+            </FormControl>
+
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="secondary-phone-number"
+                title="Secondary Phone Number"
+                id="secondaryPhoneNum"
                 value={secondaryPhoneNum}
-                onChange={(e) => setSecondaryPhoneNum(e.target.value)}
+                error={secondaryPhoneNumError}
+                onChangeHandler={handleChange}
+                label="Secondary Phone Number"
+                placeholder="123-456-7890"
+                type="text"
+                helperMessage={secondaryPhoneNumHelper}
               />
-            </Item>
-          </Grid>
+            </FormControl>
+            {/* 
+         
+        
+          Secondary Phone Number
+          <Input
+            type="number"
+            id="outlined-basic"
+            label="Secondary Phone Number"
+            placeholder=" 123-456-7890"
+            variant="outlined"
+            value={secondaryPhoneNum}
+            onChange={(e) => setSecondaryPhoneNum(e.target.value)}
+          /> */}
+          </form>
         </Grid>
-      </Box>
-    </>
+      </Grid>
+    </Box>
   );
 }
 

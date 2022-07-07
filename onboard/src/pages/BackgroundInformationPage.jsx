@@ -49,6 +49,7 @@ const BackgroundInformationPage = () => {
         accordionArr.map((arr, i) => {
           return (
             <Accordion
+              key={i}
               title={arr.title}
               open={i === 0 ? true : false}
               index={i}

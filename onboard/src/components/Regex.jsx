@@ -7,3 +7,4 @@ export const validSSN = new RegExp(
 export const validDOB = new RegExp(
   /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/
 );
+export const validAddress = new RegExp(/^\s*\S+(?:\s+\S+){2}/);
