@@ -227,6 +227,7 @@ const CheckinsPage = () => {
             {isPdl && <Personnel history={history} />}
             {<GuidesPanel role="MEMBER" title="Team Member Resources"/>}
             {isPdl && <GuidesPanel role="PDL" title="Development Lead Guides"/>}
+            {isAdmin && <GuidesPanel role="ADMIN" title="Admin Documents"/>}
           </div>
         </Grid>
       </Grid>
