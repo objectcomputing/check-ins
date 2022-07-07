@@ -10,7 +10,8 @@ const DocumentSigningPage = () => {
       let res = await getSigner();
       let document;
       if (res && res.payload) {
-        document = res?.payload?.data && !res.error ? res.payload.data : undefined;
+        document =
+          res?.payload?.data && !res.error ? res.payload.data : undefined;
         if (document) {
           setDocument(document);
         }
@@ -23,7 +24,9 @@ const DocumentSigningPage = () => {
     <div>
       <center>
         <h1>Internal Document Signing</h1>
-        {document.status === "se" || document.status === "si" ? "Signed Baby!" : "Not Signed. :("}
+        {document.status === "se" || document.status === "si"
+          ? "Signed Baby!"
+          : "Not Signed. :("}
       </center>
     </div>
   );

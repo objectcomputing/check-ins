@@ -45,4 +45,6 @@ public class SignRequestController {
 
         return null;
     }
+
+    @Post("/signer")
 }

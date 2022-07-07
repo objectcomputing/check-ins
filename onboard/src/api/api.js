@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const BASE_API_URL = process.env.REACT_APP_API_URL
   ? process.env.REACT_APP_API_URL
-  : "http://localhost:8080";
+  : "http://localhost:8080/";
 
 let myAxios = null;
 
