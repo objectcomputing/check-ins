@@ -36,7 +36,7 @@ public class CheckinNoteController {
      * @param request
      * @return
      */
-    @RequiredPermission(Permissions.CAN_CREATE_CHECKIN_NOTE)
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKIN)
     @Post()
     public HttpResponse<CheckinNote> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote, HttpRequest<CheckinNoteCreateDTO> request) {
         CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(), checkinNote.getCreatedbyid()
@@ -68,7 +68,7 @@ public class CheckinNoteController {
      * @param createdbyid
      * @return
      */
-    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN_NOTE)
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN)
     @Get("/{?checkinid,createdbyid}")
     public Set<CheckinNote> findCheckinNote(@Nullable UUID checkinid,
                                             @Nullable UUID createdbyid) {
@@ -81,7 +81,7 @@ public class CheckinNoteController {
      * @param id
      * @return
      */
-    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN_NOTE)
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN)
     @Get("/{id}")
     public CheckinNote readCheckinNote(@NotNull UUID id) {
         return checkinNoteServices.read(id);

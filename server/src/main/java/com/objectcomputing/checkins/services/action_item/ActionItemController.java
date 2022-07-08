@@ -33,7 +33,7 @@ public class ActionItemController {
      * @param actionItem, {@link ActionItemCreateDTO}
      * @return {@link HttpResponse <ActionItem>}
      */
-    @RequiredPermission(Permissions.CAN_CREATE_ACTION_ITEM)
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKIN)
     @Post()
     public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
                                                      HttpRequest<ActionItemCreateDTO> request) {
@@ -67,7 +67,7 @@ public class ActionItemController {
      *
      * @param id, id of {@link ActionItem} to delete
      */
-    @RequiredPermission(Permissions.CAN_DELETE_ACTION_ITEM)
+    @RequiredPermission(Permissions.CAN_DELETE_CHECKIN)
     @Delete("/{id}")
     public HttpResponse<?> deleteActionItem(UUID id) {
         actionItemServices.delete(id);
@@ -81,7 +81,7 @@ public class ActionItemController {
      * @param id {@link UUID} of the action item entry
      * @return {@link ActionItem}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_ACTION_ITEM)
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN)
     @Get("/{id}")
     public ActionItem readActionItem(UUID id) {
         return actionItemServices.read(id);
@@ -94,7 +94,7 @@ public class ActionItemController {
      * @param createdbyid {@link UUID} of member
      * @return {@link List < CheckIn > list of checkins}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_ACTION_ITEM)
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN)
     @Get("/{?checkinid,createdbyid}")
     public Set<ActionItem> findActionItems(@Nullable UUID checkinid,
                                            @Nullable UUID createdbyid) {

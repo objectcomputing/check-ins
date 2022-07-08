@@ -49,7 +49,7 @@ public class AgendaItemController {
      * @param agendaItem, {@link AgendaItemCreateDTO}
      * @return {@link HttpResponse <AgendaItem>}
      */
-    @RequiredPermission(Permissions.CAN_CREATE_AGENDA_ITEM)
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKIN)
     @Post("/")
     public Mono<HttpResponse<AgendaItem>> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem,
                                                              HttpRequest<AgendaItemCreateDTO> request) {
@@ -95,7 +95,7 @@ public class AgendaItemController {
      * @param createdbyid {@link UUID} of member	
      * @return {@link List <CheckIn > list of checkins
      */
-    @RequiredPermission(Permissions.CAN_VIEW_AGENDA_ITEM)
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN)
     @Get("/{?checkinid,createdbyid}")
     public Mono<HttpResponse<Set<AgendaItem>>> findAgendaItems(@Nullable UUID checkinid,
                                                                  @Nullable UUID createdbyid) {
@@ -112,7 +112,7 @@ public class AgendaItemController {
      * @param id {@link UUID} of the agenda item entry
      * @return {@link AgendaItem}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_AGENDA_ITEM)
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN)
     @Get("/{id}")
     public Mono<HttpResponse<AgendaItem>> readAgendaItem(UUID id) {
         return Mono.fromCallable(() -> agendaItemServices.read(id))
@@ -128,7 +128,7 @@ public class AgendaItemController {
      *
      * @param id, id of {@link AgendaItem} to delete
      */
-    @RequiredPermission(Permissions.CAN_DELETE_AGENDA_ITEM)
+    @RequiredPermission(Permissions.CAN_DELETE_CHECKIN)
     @Delete("/{id}")
     public HttpResponse<?> deleteAgendaItem(UUID id) {
         agendaItemServices.delete(id);

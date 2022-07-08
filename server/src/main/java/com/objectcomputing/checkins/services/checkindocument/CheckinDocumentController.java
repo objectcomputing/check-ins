@@ -48,7 +48,7 @@ public class CheckinDocumentController {
      * @param checkinsId
      * @return {@link Set<CheckinDocument> Set of CheckinDocument(s) associated with the checkinsId}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_CHECKIN_DOCUMENTS)
+    @RequiredPermission(Permissions.CAN_VIEW_SENSITIVE_DATA)
     @Get("/{?checkinsId}")
     public Mono<HttpResponse<Set<CheckinDocument>>> findCheckinDocument(@Nullable UUID checkinsId) {
         return Mono.fromCallable(() -> checkinDocumentService.read(checkinsId))
@@ -63,7 +63,7 @@ public class CheckinDocumentController {
      * @param checkinDocument, {@link CheckinDocumentCreateDTO}
      * @return {@link HttpResponse<CheckinDocument>}
      */
-    @RequiredPermission(Permissions.CAN_CREATE_CHECKIN_DOCUMENTS)
+    @RequiredPermission(Permissions.CAN_CREATE_SENSITIVE_DATA)
     @Post()
     public Mono<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
                                                                     HttpRequest<CheckinDocumentCreateDTO> request) {
@@ -103,7 +103,7 @@ public class CheckinDocumentController {
      * @param checkinsId, id of the checkins record you wish to delete
      * @return {@link HttpResponse<>}
      */
-    @RequiredPermission(Permissions.CAN_DELETE_CHECKIN_DOCUMENTS)
+    @RequiredPermission(Permissions.CAN_DELETE_SENSITIVE_DATA)
     @Delete("/{checkinsId}")
     public HttpResponse<?> delete(UUID checkinsId) {
         checkinDocumentService.deleteByCheckinId(checkinsId);

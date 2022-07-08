@@ -6,25 +6,15 @@ package com.objectcomputing.checkins.security.permissions;
  */
 
 public enum Permissions {
-    // Action Items
-    CAN_CREATE_ACTION_ITEM,
-    CAN_DELETE_ACTION_ITEM,
-    CAN_VIEW_ACTION_ITEM,
-
-    // Agenda Items
-    CAN_CREATE_AGENDA_ITEM,
-    CAN_DELETE_AGENDA_ITEM,
-    CAN_VIEW_AGENDA_ITEM,
-
-    //Check-ins
+    // Check-ins
     CAN_CREATE_CHECKIN,
     CAN_DELETE_CHECKIN,
     CAN_VIEW_CHECKIN,
 
-    //Check-in Documents
-    CAN_CREATE_CHECKIN_DOCUMENTS,
-    CAN_DELETE_CHECKIN_DOCUMENTS,
-    CAN_VIEW_CHECKIN_DOCUMENTS,
+    //Check-in Documents and Private Notes
+    CAN_CREATE_SENSITIVE_DATA,
+    CAN_DELETE_SENSITIVE_DATA,
+    CAN_VIEW_SENSITIVE_DATA,
 
     // Demographics
     CAN_CREATE_DEMOGRAPHIC,
@@ -34,12 +24,6 @@ public enum Permissions {
     // Employee Hours
     CAN_UPLOAD_HOURS,
     CAN_VIEW_HOURS,
-
-    // Files
-    CAN_DELETE_FILES,
-    CAN_DOWNLOAD_FILES,
-    CAN_UPLOAD_FILES,
-    CAN_VIEW_FILES,
 
     // Feedback
     CAN_CREATE_FEEDBACK_ANSWER,
@@ -51,6 +35,12 @@ public enum Permissions {
     CAN_VIEW_FEEDBACK_REQUEST,
     CAN_VIEW_FEEDBACK_SUGGESTION,
     CAN_VIEW_FEEDBACK_TEMPLATE,
+
+    // Files
+    CAN_DELETE_FILES,
+    CAN_DOWNLOAD_FILES,
+    CAN_UPLOAD_FILES,
+    CAN_VIEW_FILES,
 
     // GitHub
     CAN_CREATE_GITHUB_ISSUE,
@@ -73,9 +63,7 @@ public enum Permissions {
     CAN_VIEW_MEMBER_SKILL,
 
     // Notes
-    CAN_CREATE_CHECKIN_NOTE,
     CAN_CREATE_PRIVATE_NOTE,
-    CAN_VIEW_CHECKIN_NOTE,
     CAN_VIEW_PRIVATE_NOTE,
 
     // Opportunities
@@ -101,7 +89,7 @@ public enum Permissions {
     CAN_VIEW_QUESTION,
     CAN_VIEW_QUESTION_CATEGORY,
 
-    //Request Notifications
+    // Request Notifications
     CAN_VIEW_REQUESTS,
 
     // Roles

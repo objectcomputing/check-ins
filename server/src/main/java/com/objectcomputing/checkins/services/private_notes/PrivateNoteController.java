@@ -49,7 +49,7 @@ public class PrivateNoteController {
      * @param request
      * @return
      */
-    @RequiredPermission(Permissions.CAN_CREATE_PRIVATE_NOTE)
+    @RequiredPermission(Permissions.CAN_CREATE_SENSITIVE_DATA)
     @Post("/")
     public Mono<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         return Mono.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
@@ -95,7 +95,7 @@ public class PrivateNoteController {
      * @param createdbyid
      * @return
      */
-    @RequiredPermission(Permissions.CAN_VIEW_PRIVATE_NOTE)
+    @RequiredPermission(Permissions.CAN_VIEW_SENSITIVE_DATA)
     @Get("/{?checkinid,createdbyid}")
     public Set<PrivateNote> findPrivateNote(@Nullable UUID checkinid,
                                             @Nullable UUID createdbyid) {
@@ -108,7 +108,7 @@ public class PrivateNoteController {
      * @param id
      * @return
      */
-    @RequiredPermission(Permissions.CAN_VIEW_PRIVATE_NOTE)
+    @RequiredPermission(Permissions.CAN_VIEW_SENSITIVE_DATA)
     @Get("/{id}")
     public Mono<HttpResponse<PrivateNote>> readPrivateNote(UUID id) {
         return Mono.fromCallable(() -> {
