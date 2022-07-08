@@ -101,7 +101,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
                     </div>
 
                     <div className="sidebar__title">
-                      <p> {menuItem.name}</p>
+                      <p> {menuItem.index + 1}{')'} {menuItem.name}</p>
                     </div>
                   </div>
                 }
