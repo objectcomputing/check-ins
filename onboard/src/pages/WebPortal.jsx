@@ -129,22 +129,23 @@ function WebPortal() {
           <Button
             variant="contained"
             color="success"
-            // sx={{
-            //   "&:hover": {
-            //     color: "gray",
-            //     backgroundColor: "lightgray",
-            //   },
-            //   maxWidth: 800,
-            //   fontSize: 40,
-            //   bgcolor: "lightgreen",
-            //   color: "white",
+            size="large"
+            sx={{
+              // "&:hover": {
+              //   color: "gray",
+              //   backgroundColor: "lightgray",
+              // },
+              // maxWidth: 800,
+              // fontSize: 40,
+              // bgcolor: "lightgreen",
+              // color: "white",
 
-            //   //button positioning
-            //   zIndex: "modal",
-            //   position: "absolute",
-            //   bottom: "15%",
-            //   right: "20%",
-            // }}
+              //button positioning
+              zIndex: "modal",
+              position: "absolute",
+              bottom: "15%",
+              right: "20%",
+            }}
             className="submitButton"
             onClick={submitHandler}
           >

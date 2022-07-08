@@ -1,4 +1,4 @@
-/* .rootStyle {
+.rootStyle {
   display: block;
   width: 100%;
   height: 100%;
@@ -10,7 +10,7 @@
   width: auto;
   min-height: 100vh;
   overflow: auto;
-} */
+}
 
 .submitButton {
   zindex: "modal";
