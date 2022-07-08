@@ -1,4 +1,85 @@
 package com.objectcomputing.checkins.services.onboarding_profile;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileCreateDTO;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUpdateDTO;
+import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileCreateDTO;
+import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileResponseDTO;
+import com.objectcomputing.checkins.services.onboardeeprofile.Onboarding_Profile;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class OnboardingProfileTestUtil {
+
+    public static OnboardingProfileCreateDTO mkCreateOnboardeeProfileDTO() {
+        OnboardingProfileCreateDTO dto = new OnboardingProfileCreateDTO();
+        dto.setFirstName("TestFirstName");
+        dto.setLastName("TestLastName");
+        dto.setSocialSecurityNumber(500505000);
+        dto.setBirthDate(LocalDate.of(2000,12,25));
+        dto.setCurrentAddress("TestAddress");
+        dto.setPreviousAddress("TestPreviousAddress");
+        dto.setPhoneNumber("TestPhoneNumber");
+        dto.setPhoneNumber("TestSecondPhoneNumber");
+        return dto;
+    }
+
+    //ResponseDTO here is used as an UpdateDTO
+    public static OnboardingProfileResponseDTO mkUpdateOnboardeeProfileDTO() {
+        OnboardingProfileResponseDTO dto = new OnboardingProfileResponseDTO();
+        dto.setFirstName("TestFirstName");
+        dto.setLastName("TestLastName");
+        dto.setSocialSecurityNumber(500505000);
+        dto.setBirthDate(LocalDate.of(2000,12,25));
+        dto.setCurrentAddress("TestAddress");
+        dto.setPreviousAddress("TestPreviousAddress");
+        dto.setPhoneNumber("TestPhoneNumber");
+        dto.setPhoneNumber("TestSecondPhoneNumber");
+        return dto;
+    }
+
+    public static Onboarding_Profile mkOnboarding_Profile(String seed) {
+        return new Onboarding_Profile("TestFirstName" + seed,
+                null,
+                "TestLastName" + seed,
+                500505000,
+                LocalDate.of(2000, 12, 25),
+                "TestAddress" + seed,
+                "TestPreviousAddress" + seed,
+                "TestPhoneNumber" + seed,
+                "TestSecondPhoneNumber" + seed
+                );
+    }
+
+    public static Onboarding_Profile mkOnboarding_Profile() {
+        return mkOnboarding_Profile("");
+    }
+
+    public static void assertProfilesEqual(Onboarding_Profile entity, OnboardingProfileResponseDTO dto) {
+        assertEquals(entity.getFirstName(), dto.getFirstName());
+        assertEquals(entity.getMiddleName(), dto.getMiddleName());
+        assertEquals(entity.getLastName(), dto.getLastName());
+        assertEquals(entity.getSocialSecurityNumber(), dto.getSocialSecurityNumber());
+        assertEquals(entity.getBirthDate(), dto.getBirthDate());
+        assertEquals(entity.getCurrentAddress(), dto.getCurrentAddress());
+        assertEquals(entity.getPreviousAddress(), dto.getPreviousAddress());
+        assertEquals(entity.getPhoneNumber(), dto.getPhoneNumber());
+        assertEquals(entity.getSecondPhoneNumber(), dto.getSecondPhoneNumber());
+    }
+
+    public static void assertProfilesEqual(OnboardingProfileCreateDTO entity, OnboardingProfileResponseDTO dto) {
+        assertEquals(entity.getFirstName(), dto.getFirstName());
+        assertEquals(entity.getMiddleName(), dto.getMiddleName());
+        assertEquals(entity.getLastName(), dto.getLastName());
+        assertEquals(entity.getSocialSecurityNumber(), dto.getSocialSecurityNumber());
+        assertEquals(entity.getBirthDate(), dto.getBirthDate());
+        assertEquals(entity.getCurrentAddress(), dto.getCurrentAddress());
+        assertEquals(entity.getPreviousAddress(), dto.getPreviousAddress());
+        assertEquals(entity.getPhoneNumber(), dto.getPhoneNumber());
+        assertEquals(entity.getSecondPhoneNumber(), dto.getSecondPhoneNumber());
+    }
 }

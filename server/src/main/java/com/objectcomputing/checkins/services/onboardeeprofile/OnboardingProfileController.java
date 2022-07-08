@@ -35,6 +35,7 @@ public class OnboardingProfileController {
 
     private static final Logger LOG = LoggerFactory.getLogger(OnboardingProfileController.class);
     private final OnboardingProfileServices onboardingProfileServices;
+    private final OnboardingProfileServices onboardingProfileServices;
     private final EventLoopGroup eventLoopGroup;
     private final Scheduler scheduler;
 
@@ -44,6 +45,20 @@ public class OnboardingProfileController {
         this.onboardingProfileServices = onboardingProfileServices;
         this.eventLoopGroup = eventLoopGroup;
         this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
+    }
+
+
+
+
+    @Get()
+    public Mono<HttpResponse<OnboardingProfileResponseDTO>> findAll(Onboarding_Profile onboardingProfile) {
+
+        return Mono.fromCallable(() -> onboardingProfileServices.onboardingProfileRepository.onboardingProfile)
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(Onboarding_Profile -> (HttpResponse<OnboardingProfileResponseDTO>) HttpResponse
+                        .ok(fromEntity(Onboarding_Profile))
+                        .headers(headers -> headers.location(location(Onboarding_Profile))))
+                .subscribeOn(scheduler);
     }
 
     /**

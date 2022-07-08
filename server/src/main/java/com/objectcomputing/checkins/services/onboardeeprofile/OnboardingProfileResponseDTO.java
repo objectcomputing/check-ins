@@ -47,11 +47,11 @@ public class OnboardingProfileResponseDTO {
 
     @NotBlank
     @Schema(description = "phone # of the new employee")
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @Nullable
     @Schema(description = "2nd phone # of the new employee")
-    private Integer secondPhoneNumber;
+    private String secondPhoneNumber;
 
 
     public UUID getId() {
@@ -115,20 +115,20 @@ public class OnboardingProfileResponseDTO {
         this.previousAddress = previousAddress;
     }
 
-    public Integer getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(Integer phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
     @Nullable
-    public Integer getSecondPhoneNumber() {
+    public String getSecondPhoneNumber() {
         return secondPhoneNumber;
     }
 
-    public void setSecondPhoneNumber(@Nullable Integer secondPhoneNumber) {
+    public void setSecondPhoneNumber(@Nullable String secondPhoneNumber) {
         this.secondPhoneNumber = secondPhoneNumber;
     }
 
