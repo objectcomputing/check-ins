@@ -8,6 +8,7 @@ import WorkingLocationPage from "./WorkingLocationPage";
 import EquipmentPage from "./EquipmentPage";
 import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
+import Footer from "./../components/footer/Footer";
 import { Button, Container } from "@mui/material";
 
 const menuList = [
@@ -125,6 +126,7 @@ function WebPortal() {
               data={data}
               handleChangeSidebar={handleChangeSidebar}
             />
+            <Footer></Footer>
           </div>
           <Button
             variant="contained"
