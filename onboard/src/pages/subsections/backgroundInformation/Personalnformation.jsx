@@ -6,7 +6,6 @@ import FormLabel from "@mui/material/FormLabel";
 import InputField from "../../../components/inputs/InputField";
 import {
   validAddress,
-  //validDOB,
   validPhoneNum,
   validSSN,
 } from "../../../components/Regex";
@@ -28,17 +27,17 @@ function PersonalInformation() {
   const [middleInitalHelper, setMiddleInitalHelper] = useState("");
   const [secondaryPhoneNumHelper, setSecondaryPhoneNumHelper] = useState("");
   const [ssnHelper, setSSNHelper] = useState("");
-  //const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
+
   const [currentAddressHelper, setCurrentAddressHelper] = useState("");
   const [permanentAddressHelper, setPermanentAddressHelper] = useState("");
-  
+
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [middleInitalError, setMiddleInitalError] = useState(false);
   const [phoneNumError, setPhoneNumError] = useState(false);
   const [secondaryPhoneNumError, setSecondaryPhoneNumError] = useState(false);
   const [ssnError, setSSNError] = useState(false);
-  //const [dateOfBirthError, setDateOfBirthError] = useState(false);
+
   const [currentAddressError, setCurrentAddressError] = useState(false);
   const [permanentAddressError, setPermanentAddressError] = useState(false);
 
@@ -90,13 +89,6 @@ function PersonalInformation() {
       }
     } else if (name === "dob") {
       setDateOfBirth(val);
-      // if (validDOB.test(val)) {
-      //   setDateOfBirthError(false);
-      //   setDateOfBirthHelper("");
-      // } else {
-      //   setDateOfBirthError(true);
-      //   setDateOfBirthHelper("Please enter a valid date");
-      // }
     } else if (name === "currentAddress") {
       setCurrentAddress(val);
       if (validAddress.test(val)) {
