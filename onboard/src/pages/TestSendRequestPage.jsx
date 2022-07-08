@@ -34,7 +34,7 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import getSignRequest from "../api/signRequest.js";
 
-const request = require("superagent");
+//const request = require("superagent");
 const baseUrl = "https://ocitest.signrequest.com/api/v1";
 
 const data = {
@@ -50,7 +50,6 @@ const data = {
 };
 
 const SendingRequestPage = () => {
-  const request = require("superagent");
   const [document, setDocument] = useState({});
 
   useEffect(() => {
@@ -85,15 +84,16 @@ const SendingRequestPage = () => {
   );
 
   function sendSignRequest() {
-    request
-      .post(`${baseUrl}/signrequest-quick-create/`)
-      //.post("https://signrequest.com/static/demo/SignRequestDemoDocument.pdf")
-      .set("Authorization", "Token 4c22605811560d976c23554f5b8b01f57cc11401")
-      .send(data)
-      .then((response) => {
-        console.log("Response: ", response.body);
-      })
-      .catch(console.error);
+    console.log("Hi");
+    // request
+    //   .post(`${baseUrl}/signrequest-quick-create/`)
+    //   //.post("https://signrequest.com/static/demo/SignRequestDemoDocument.pdf")
+    //   .set("Authorization", "Token 4c22605811560d976c23554f5b8b01f57cc11401")
+    //   .send(data)
+    //   .then((response) => {
+    //     console.log("Response: ", response.body);
+    //   })
+    //   .catch(console.error);
   }
 };
 
