@@ -4,44 +4,75 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import TextField from "@mui/material/TextField";
-import { Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
+import TextField from "../../../components/inputs/TextField";
+import InputField from "../../../components/inputs/InputField";
 import Box from "@mui/material/Box";
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
+import { FormHelperText } from "@mui/material";
 
 function EmploymentEligbility() {
   const [age18Yrs, setAge18Yrs] = useState("");
   const [usCitizen, setUSCitizen] = useState("");
-  const [visaStatus, sestVisaStatus] = useState("");
+  const [visaStatus, setVisaStatus] = useState("");
   const [dateOfExpiration, setDateOfExpiration] = useState("");
   const [felonyStatus, setFelonyStatus] = useState("");
   const [felonyExplanation, setFelonyExplanation] = useState("");
+
+  function handleChange(event) {
+    const e = event;
+    const val = e.target.value;
+    const name = e.target.name;
+
+    console.log(val);
+    console.log(name);
+
+    if (name === "18-or-not") {
+      setAge18Yrs(val);
+    }
+    else if(name === "us-Citizen-or-not")
+    {
+      setUSCitizen(val);
+    }
+    else if (name === "visaStatus")
+    {
+      setVisaStatus(val);
+
+    }
+    else if (name === "dateOfExpiration")
+    {
+      setDateOfExpiration(val);
+
+    }
+    else if (name === "felonyStatus")
+    {
+      setFelonyStatus(val);
+      }
+  }
+
+  function handleSaveInformation(e) {
+    e.preventDefault();
+    console.log("TODO: Submit data to backend!");
+  }
 
   return (
     <>
       <Box sx={{ width: "100%" }}>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={6}>
-            <Item>
-              <FormControl>
-                <FormLabel id="18-yrs-or-not"> Are you 18 years old?</FormLabel>
+          <Grid item xs={8}>
+            <form autoComplete="off" onSubmit={handleSaveInformation}>
+              <FormControl
+                sx={{
+                  my: 1,
+                  marginLeft: 3,
+                  width: "90%",
+                  maxWidth: "500px",
+                }}
+              >
+                <FormLabel>Are you at least 18yrs of age?</FormLabel>
                 <RadioGroup
-                  aria-labelledby="18-yrs-or-not"
-                  name="18-yrs-or-not"
+                  name="18-or-not"
                   value={age18Yrs}
-                  onChange={(e) => {
-                    setAge18Yrs(e.target.value);
-                  }}
+                  onChange={handleChange}
                 >
                   <FormControlLabel
                     value="yes"
@@ -50,23 +81,27 @@ function EmploymentEligbility() {
                   />
                   <FormControlLabel value="no" control={<Radio />} label="No" />
                 </RadioGroup>
+                <FormHelperText>
+                  {"Please select a valid option"}
+                </FormHelperText>
               </FormControl>
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <FormControl>
-                <FormLabel id="us-citizen-or-not">
-                  If hired, can you present evidence of U.S citizenship or your
+
+              <FormControl
+                sx={{
+                  my: 1,
+                  marginLeft: 3,
+                  width: "90%",
+                  maxWidth: "500px",
+                }}
+              >
+                <FormLabel>
+                  If hired, can you present evidence of U.S. citizenship or your
                   legal right to live and work in the United States?
                 </FormLabel>
                 <RadioGroup
-                  aria-labelledby="us-citizen-or-not"
-                  name="us-citizen-or-not"
+                  name="us-Citizen-or-not"
                   value={usCitizen}
-                  onChange={(e) => {
-                    setUSCitizen(e.target.value);
-                  }}
+                  onChange={handleChange}
                 >
                   <FormControlLabel
                     value="yes"
@@ -75,49 +110,72 @@ function EmploymentEligbility() {
                   />
                   <FormControlLabel value="no" control={<Radio />} label="No" />
                 </RadioGroup>
+                <FormHelperText>
+                  {"Please select a valid option"}
+                </FormHelperText>
               </FormControl>
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <Typography>Visa Status if Applicable</Typography>
+              
+              <FormControl
+              sx={{
+                marginTop: 3,
+                marginBottom: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
               <TextField
-                id="outlined-basic"
-                variant="outlined"
+                
+                title="Visa Status"
+                id="visaStatus"
                 value={visaStatus}
-                onChange={(e) => {
-                  sestVisaStatus(e.target.value);
-                }}
+                autoFocus={true}
+                //error={firstNameError}
+                onChangeHandler={handleChange}
+                label="Visa Status if applicable"
+                
+                type="text"
+                helperMessage={"Please enter your Visa Status"}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <TextField
-                type="date"
-                id="outlined-basic"
-                label="Date of Expiration"
-                variant="outlined"
+            </FormControl>
+              
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <FormLabel>Date of Expiration</FormLabel>
+              <InputField
+                
+                id="dateOfExpiration"
                 value={dateOfExpiration}
-                onChange={(e) => {
-                  setDateOfExpiration(e.target.value);
-                }}
+                //error={dateOfBirthError}
+                onChangeHandler={handleChange}
+                //label="Date of Birth"
+                placeholder="dd/mm/yyyy"
+                type="date"
+                //helperMessage={dateOfBirthHelper}
               />
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <FormControl>
-                <FormLabel id="felony-or-not">
-                  Have you ever been convecited of a felony?
+              </FormControl>
+              
+              <FormControl
+                sx={{
+                  my: 1,
+                  marginLeft: 3,
+                  width: "90%",
+                  maxWidth: "500px",
+                }}
+              >
+                <FormLabel>
+                  Have you ever been convected of a felony
                 </FormLabel>
                 <RadioGroup
-                  aria-labelledby="felony-or-not"
-                  name="felony-or-not"
+                  name="felonyStatus"
                   value={felonyStatus}
-                  onChange={(e) => {
-                    setFelonyStatus(e.target.value);
-                  }}
+                  onChange={handleChange}
                 >
                   <FormControlLabel
                     value="yes"
@@ -126,21 +184,12 @@ function EmploymentEligbility() {
                   />
                   <FormControlLabel value="no" control={<Radio />} label="No" />
                 </RadioGroup>
+                <FormHelperText>
+                  {"Please select a valid option"}
+                </FormHelperText>
               </FormControl>
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <TextField
-                id="outlined-basic"
-                label="If yes, please explain:"
-                variant="outlined"
-                value={felonyExplanation}
-                onChange={(e) => {
-                  setFelonyExplanation(e.target.value);
-                }}
-              />
-            </Item>
+
+            </form>
           </Grid>
         </Grid>
       </Box>

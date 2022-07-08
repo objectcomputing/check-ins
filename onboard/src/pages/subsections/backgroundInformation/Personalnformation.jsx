@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { FormControl } from "@mui/material";
+import FormLabel from "@mui/material/FormLabel";
 import InputField from "../../../components/inputs/InputField";
 import {
   validAddress,
@@ -30,11 +31,11 @@ function PersonalInformation() {
   const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
   const [currentAddressHelper, setCurrentAddressHelper] = useState("");
   const [permanentAddressHelper, setPermanentAddressHelper] = useState("");
-
+  
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [middleInitalError, setMiddleInitalError] = useState(false);
-  const [phoneNumError, setPhoneNumError] = useState("");
+  const [phoneNumError, setPhoneNumError] = useState(false);
   const [secondaryPhoneNumError, setSecondaryPhoneNumError] = useState(false);
   const [ssnError, setSSNError] = useState(false);
   const [dateOfBirthError, setDateOfBirthError] = useState(false);
@@ -89,13 +90,13 @@ function PersonalInformation() {
       }
     } else if (name === "dob") {
       setDateOfBirth(val);
-      if (validDOB.test(val)) {
-        setDateOfBirthError(false);
-        setDateOfBirthHelper("");
-      } else {
-        setDateOfBirthError(true);
-        setDateOfBirthHelper("Please enter a valid date");
-      }
+      // if (validDOB.test(val)) {
+      //   setDateOfBirthError(false);
+      //   setDateOfBirthHelper("");
+      // } else {
+      //   setDateOfBirthError(true);
+      //   setDateOfBirthHelper("Please enter a valid date");
+      // }
     } else if (name === "currentAddress") {
       setCurrentAddress(val);
       if (validAddress.test(val)) {
@@ -182,7 +183,6 @@ function PersonalInformation() {
                 title="Last Name"
                 id="lastName"
                 value={lastName}
-                autoFocus={true}
                 error={lastNameError}
                 onChangeHandler={handleChange}
                 label="Last Name"
@@ -204,7 +204,6 @@ function PersonalInformation() {
                 title="Middle Initial"
                 id="middleInitial"
                 value={middleInital}
-                autoFocus={true}
                 error={middleInitalError}
                 onChangeHandler={handleChange}
                 label="Middle Initial"
@@ -226,7 +225,6 @@ function PersonalInformation() {
                 title="Social Security Number"
                 id="ssn"
                 value={ssn}
-                autoFocus={true}
                 error={ssnError}
                 onChangeHandler={handleChange}
                 label="Social Security Number"
@@ -244,16 +242,17 @@ function PersonalInformation() {
                 maxWidth: "500px",
               }}
             >
+              <FormLabel>Date Of Birth</FormLabel>
               <InputField
                 autocomplete="date-of-birth"
-                title="Date of Birth"
+                //title="Date of Birth"
                 id="dob"
                 value={dateOfBirth}
                 error={dateOfBirthError}
                 onChangeHandler={handleChange}
-                label="Date of Birth"
+                //label="Date of Birth"
                 placeholder="dd/mm/yyyy"
-                type="text"
+                type="date"
                 helperMessage={dateOfBirthHelper}
               />
             </FormControl>
