@@ -57,6 +57,21 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
           },
         }}
       >
+        <Tab
+          disabled
+          sx={{
+            alignItems: "flex-start",
+            color: "#000",
+            width: "45vh !important",
+            paddingRight: "0px !important",
+          }}
+          label={
+            <div className="sidebar_logo" style={{ display: "flex", justifyContent: "flex-start" }}>
+              <img src="img\ocicube-white.png" alt="Object Computing, Inc." style={{ width: "30%"}}/>
+            </div>
+          }
+
+        />
         {data &&
           data.map((menuItem, i) => {
             return (
@@ -64,7 +79,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
                 disabled={!menuItem.visited}
                 sx={{
                   color: "#000",
-                  width: "300px !important",
+                  width: "50vh !important",
                   paddingRight: "0px !important",
                 }}
                 key={menuItem.index}
@@ -72,6 +87,8 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
                   <div className="sidebar__item">
                     <div className="sidebar__check">
                       <Checkbox
+                        align='left'
+                        disabled
                         checked={menuItem.completed}
                         {...label}
                         sx={{
@@ -89,7 +106,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
                   </div>
                 }
                 value={menuItem.index}
-                
+
               />
             );
           })}
@@ -98,12 +115,13 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
         data.map((menuItem, i) => {
           return (
             <TabPanel
+              align="center"
               value={currentPageIndex}
               index={menuItem.index}
               key={menuItem.index}
               className="wrapPanel"
             >
-              <h2>{menuItem.title}</h2>
+              <h3>{menuItem.name}</h3>
               {menuItem.child}
             </TabPanel>
           );

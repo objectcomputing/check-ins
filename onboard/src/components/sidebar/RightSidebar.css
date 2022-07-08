@@ -5,3 +5,7 @@
 .sidebar__item {
   display: flex;
 }
+
+h3{
+  font-size: 3.5em;
+}

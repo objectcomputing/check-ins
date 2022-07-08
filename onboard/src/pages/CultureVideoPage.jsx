@@ -9,7 +9,10 @@ function CultureVideoPage(props) {
       </center>
       <center>
         <iframe
-          width="1280"
+          align="center"
+          min-width="480"
+          min-height="360"
+          width="1080"
           height="720"
           src="https://www.youtube.com/embed/D7Ka15wQL5U"
           title="YouTube video player"
