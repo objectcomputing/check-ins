@@ -6,7 +6,7 @@ import FormLabel from "@mui/material/FormLabel";
 import InputField from "../../../components/inputs/InputField";
 import {
   validAddress,
-  validDOB,
+  //validDOB,
   validPhoneNum,
   validSSN,
 } from "../../../components/Regex";
@@ -28,7 +28,7 @@ function PersonalInformation() {
   const [middleInitalHelper, setMiddleInitalHelper] = useState("");
   const [secondaryPhoneNumHelper, setSecondaryPhoneNumHelper] = useState("");
   const [ssnHelper, setSSNHelper] = useState("");
-  const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
+  //const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
   const [currentAddressHelper, setCurrentAddressHelper] = useState("");
   const [permanentAddressHelper, setPermanentAddressHelper] = useState("");
   
@@ -38,7 +38,7 @@ function PersonalInformation() {
   const [phoneNumError, setPhoneNumError] = useState(false);
   const [secondaryPhoneNumError, setSecondaryPhoneNumError] = useState(false);
   const [ssnError, setSSNError] = useState(false);
-  const [dateOfBirthError, setDateOfBirthError] = useState(false);
+  //const [dateOfBirthError, setDateOfBirthError] = useState(false);
   const [currentAddressError, setCurrentAddressError] = useState(false);
   const [permanentAddressError, setPermanentAddressError] = useState(false);
 
@@ -248,12 +248,12 @@ function PersonalInformation() {
                 //title="Date of Birth"
                 id="dob"
                 value={dateOfBirth}
-                error={dateOfBirthError}
+                //error={dateOfBirthError}
                 onChangeHandler={handleChange}
                 //label="Date of Birth"
                 placeholder="dd/mm/yyyy"
                 type="date"
-                helperMessage={dateOfBirthHelper}
+                //helperMessage={dateOfBirthHelper}
               />
             </FormControl>
 

@@ -28,25 +28,17 @@ function EmploymentEligbility() {
 
     if (name === "18-or-not") {
       setAge18Yrs(val);
-    }
-    else if(name === "us-Citizen-or-not")
-    {
+    } else if (name === "us-Citizen-or-not") {
       setUSCitizen(val);
-    }
-    else if (name === "visaStatus")
-    {
+    } else if (name === "visaStatus") {
       setVisaStatus(val);
-
-    }
-    else if (name === "dateOfExpiration")
-    {
+    } else if (name === "dateOfExpiration") {
       setDateOfExpiration(val);
-
-    }
-    else if (name === "felonyStatus")
-    {
+    } else if (name === "felonyStatus") {
       setFelonyStatus(val);
-      }
+    } else if (name === "felonyExplaination") {
+      setFelonyExplanation(val);
+    }
   }
 
   function handleSaveInformation(e) {
@@ -114,53 +106,28 @@ function EmploymentEligbility() {
                   {"Please select a valid option"}
                 </FormHelperText>
               </FormControl>
-              
+
               <FormControl
-              sx={{
-                marginTop: 3,
-                marginBottom: 1,
-                marginLeft: 3,
-                width: "90%",
-                maxWidth: "500px",
-              }}
-            >
-              <TextField
-                
-                title="Visa Status"
-                id="visaStatus"
-                value={visaStatus}
-                autoFocus={true}
-                //error={firstNameError}
-                onChangeHandler={handleChange}
-                label="Visa Status if applicable"
-                
-                type="text"
-                helperMessage={"Please enter your Visa Status"}
-              />
-            </FormControl>
-              
-            <FormControl
-              sx={{
-                my: 1,
-                marginLeft: 3,
-                width: "90%",
-                maxWidth: "500px",
-              }}
-            >
-              <FormLabel>Date of Expiration</FormLabel>
-              <InputField
-                
-                id="dateOfExpiration"
-                value={dateOfExpiration}
-                //error={dateOfBirthError}
-                onChangeHandler={handleChange}
-                //label="Date of Birth"
-                placeholder="dd/mm/yyyy"
-                type="date"
-                //helperMessage={dateOfBirthHelper}
-              />
+                sx={{
+                  marginTop: 3,
+                  marginBottom: 1,
+                  marginLeft: 3,
+                  width: "90%",
+                  maxWidth: "500px",
+                }}
+              >
+                <InputField
+                  title="Visa Status"
+                  id="visaStatus"
+                  value={visaStatus}
+                  autoFocus={true}
+                  onChangeHandler={handleChange}
+                  label="Visa Status if applicable"
+                  type="text"
+                  helperMessage={"Please enter your Visa Status"}
+                />
               </FormControl>
-              
+
               <FormControl
                 sx={{
                   my: 1,
@@ -169,9 +136,25 @@ function EmploymentEligbility() {
                   maxWidth: "500px",
                 }}
               >
-                <FormLabel>
-                  Have you ever been convected of a felony
-                </FormLabel>
+                <FormLabel>Date of Expiration</FormLabel>
+                <InputField
+                  id="dateOfExpiration"
+                  value={dateOfExpiration}
+                  onChangeHandler={handleChange}
+                  placeholder="dd/mm/yyyy"
+                  type="date"
+                />
+              </FormControl>
+
+              <FormControl
+                sx={{
+                  my: 1,
+                  marginLeft: 3,
+                  width: "90%",
+                  maxWidth: "500px",
+                }}
+              >
+                <FormLabel>Have you ever been convected of a felony</FormLabel>
                 <RadioGroup
                   name="felonyStatus"
                   value={felonyStatus}
@@ -189,6 +172,25 @@ function EmploymentEligbility() {
                 </FormHelperText>
               </FormControl>
 
+              <FormControl
+                sx={{
+                  marginTop: 3,
+                  marginBottom: 1,
+                  marginLeft: 3,
+                  width: "90%",
+                  maxWidth: "500px",
+                }}
+              >
+                <TextField
+                  title="If yes, please Explain:"
+                  id="felonyExplaination"
+                  value={felonyExplanation}
+                  autoFocus={true}
+                  onChangeHandler={handleChange}
+                  label="If yes, please Explain"
+                  type="text"
+                />
+              </FormControl>
             </form>
           </Grid>
         </Grid>
