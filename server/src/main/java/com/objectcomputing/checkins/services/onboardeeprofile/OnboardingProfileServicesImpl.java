@@ -37,7 +37,7 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
             @Nullable String lastName,
             @Nullable Integer socialSecurityNumber,
             @Nullable LocalDate birthDate,
-            @Nullable Integer phoneNumber) {
+            @Nullable String phoneNumber) {
         HashSet<Onboarding_Profile> onboarding_profiles = new HashSet<>(onboardingProfileRepository.search( (nullSafeUUIDToString(id)), firstName, null, lastName,
                 socialSecurityNumber,  birthDate,null, null, phoneNumber, null));
 

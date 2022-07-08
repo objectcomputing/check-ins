@@ -51,13 +51,13 @@ public class OnboardingProfileController {
 
 
     @Get()
-    public Mono<HttpResponse<OnboardingProfileResponseDTO>> findAll(Onboarding_Profile onboardingProfile) {
+    public Mono<HttpResponse<List<OnboardingProfileResponseDTO>>> findAll() {
 
-        return Mono.fromCallable(() -> onboardingProfileServices.onboardingProfileRepository.onboardingProfile)
+        return Mono.fromCallable(() -> onboardingProfileServices.findAll())
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(Onboarding_Profile -> (HttpResponse<OnboardingProfileResponseDTO>) HttpResponse
-                        .ok(fromEntity(Onboarding_Profile))
-                        .headers(headers -> headers.location(location(Onboarding_Profile))))
+                .map(profile -> (HttpResponse<OnboardingProfileResponseDTO>) HttpResponse
+                        .ok(fromEntity(profile))
+                        .headers(headers -> headers.location(location(profile))))
                 .subscribeOn(scheduler);
     }
 
@@ -72,9 +72,9 @@ public class OnboardingProfileController {
 
         return Mono.fromCallable(() -> onboardingProfileServices.getById(id))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(Onboarding_Profile -> (HttpResponse<OnboardingProfileResponseDTO>) HttpResponse
-                        .ok(fromEntity(Onboarding_Profile))
-                        .headers(headers -> headers.location(location(Onboarding_Profile.getId()))))
+                .map(profile -> (HttpResponse<OnboardingProfileResponseDTO>) HttpResponse
+                        .ok(fromEntity(profile))
+                        .headers(headers -> headers.location(location(profile.getId()))))
                 .subscribeOn(scheduler);
     }
 

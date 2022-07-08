@@ -119,6 +119,7 @@ public class FeedbackRequestController {
      * @param oldestDate The date that filters out any requests that were made before that date
      * @return list of {@link FeedbackRequestResponseDTO}
      */
+    //
     @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_REQUEST)
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate}")
     public Mono<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {
@@ -126,12 +127,12 @@ public class FeedbackRequestController {
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(feedbackReqs -> {
                     List<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
+                            .map(FeedbackRequestController::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<FeedbackRequestResponseDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(Schedulers.fromExecutor(executorService));
     }
 
-    private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
+    private static FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
         FeedbackRequestResponseDTO dto = new FeedbackRequestResponseDTO();
         dto.setId(feedbackRequest.getId());
         dto.setCreatorId(feedbackRequest.getCreatorId());

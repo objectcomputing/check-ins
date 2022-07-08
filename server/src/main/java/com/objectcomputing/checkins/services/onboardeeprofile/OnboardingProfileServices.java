@@ -10,7 +10,7 @@ public interface OnboardingProfileServices {
     Onboarding_Profile getById(UUID id);
 
     Set<Onboarding_Profile> findByValues (UUID id, String firstName, String lastName, Integer socialSecurityNumber,
-                                          LocalDate birthDate, Integer phoneNumber);
+                                          LocalDate birthDate, String phoneNumber);
 
     Onboarding_Profile saveProfile(Onboarding_Profile onboardingProfile);
 
