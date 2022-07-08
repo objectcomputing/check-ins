@@ -14,58 +14,58 @@ const menuList = [
   {
     index: 0,
     name: "Culture Video",
-    title: "Lorem ipsum",
+    title: "",
     completed: false,
     child: <CultureVideoPage />,
-    visited: true
+    visited: true,
   },
   {
     index: 1,
     name: "About You Survey",
-    title: "Lorem ipsum",
+    title: "",
     completed: false,
     child: <BackgroundInformationPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 2,
     name: "Work Preference",
-    title: "Lorem ipsum",
+    title: "",
     completed: false,
     child: <WorkingLocationPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 3,
     name: "Computer and Accessories",
-    title: "Lorem ipsum",
+    title: "",
     completed: false,
     child: <EquipmentPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 4,
     name: "Internal Document Signing",
-    title: "Lorem ipsum",
+    title: "",
     completed: false,
     child: <DocumentSigningPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 5,
     name: "Check-Ins Skills",
-    title: "Lorem ipsum",
+    title: "",
     completed: false,
     child: <IntroductionSurveyPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 6,
     name: "Cake!",
-    title: "Lorem ipsum",
+    title: "",
     completed: false,
     child: <Congratulations />,
-    visited: false
+    visited: false,
   },
 ];
 
@@ -86,17 +86,16 @@ function WebPortal() {
           title: obj.title,
           completed: true,
           child: obj.child,
-          visited: true
+          visited: true,
         };
-      }
-      else if (obj.index === (currentPageIndex + 1)) {
+      } else if (obj.index === currentPageIndex + 1) {
         return {
           index: currentPageIndex + 1,
           name: obj.name,
           title: obj.title,
           completed: obj.completed,
           child: obj.child,
-          visited: true
+          visited: true,
         };
       }
       return obj;
@@ -130,23 +129,23 @@ function WebPortal() {
           <Button
             sx={{
               "&:hover": {
-                color: 'gray',
-                backgroundColor: 'lightgray'
+                color: "gray",
+                backgroundColor: "lightgray",
               },
               maxWidth: 800,
               fontSize: 40,
               bgcolor: "lightgreen",
               color: "white",
 
-              //button positioning 
+              //button positioning
               zIndex: "modal",
               position: "absolute",
               bottom: "15%",
-              right: "20%"
+              right: "20%",
             }}
-
             className="submitButton"
-            onClick={submitHandler}>
+            onClick={submitHandler}
+          >
             Next
           </Button>
         </Container>
