@@ -24,7 +24,9 @@ const DocumentsPage = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf } = state;
   const [documents, setDocuments] = useState([]);
+  const [filteredDocuments, setFilteredDocuments] = useState([]);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const loadDocuments = async () => {
@@ -51,8 +53,13 @@ const DocumentsPage = () => {
   }, [csrf, dispatch]);
 
   useEffect(() => {
-    console.log(documents);
-  }, [documents]);
+    if (searchText.trim()) {
+      const filtered = documents.filter(doc => doc.name.toLowerCase().includes(searchText.trim().toLowerCase()));
+      setFilteredDocuments(filtered);
+    } else {
+      setFilteredDocuments(documents);
+    }
+  }, [documents, searchText]);
 
   return (
     <Root className="documents-page">
@@ -66,6 +73,8 @@ const DocumentsPage = () => {
           <TextField
             label="Search"
             placeholder="Document Name"
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
             style={{ width: "400px" }}
             InputProps={{
               endAdornment: (
@@ -83,13 +92,21 @@ const DocumentsPage = () => {
         </div>
       </div>
       <div className="documents-list">
-        {documents.map(document => (
-          <DocumentCard key={document.id} document={document}/>
-        ))}
+        {filteredDocuments.length === 0
+          ? (
+            <div className="empty-documents-message">
+              {documents.length === 0 ? "No documents exist" : `No documents matching "${searchText}"`}
+            </div>
+          )
+          : (
+            filteredDocuments.map(document => (
+              <DocumentCard key={document.id} document={document}/>
+            ))
+          )
+        }
       </div>
     </Root>
   );
-
 };
 
 export default DocumentsPage;

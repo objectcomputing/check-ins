@@ -14,3 +14,11 @@
     align-items: flex-end;
     column-gap: 2rem;
 }
+
+.documents-page .documents-list .empty-documents-message {
+    color: gray;
+    background-color: #e7e7e7;
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+}
