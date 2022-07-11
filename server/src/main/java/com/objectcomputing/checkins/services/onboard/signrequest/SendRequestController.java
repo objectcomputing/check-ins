@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -24,9 +25,13 @@ public class SendRequestController {
     @Get("/sign-request")
     public String getData(){
 
+        JSONObject data = new JSONObject();
+        data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
+        data.put("signers", "email")
+
         try{
             String retrieve = httpClient.toBlocking()
-                    .retrieve(HttpRequest.GET("/documents/152408ef-4b71-40a4-9416-92011a443450/")
+                    .retrieve(HttpRequest.POST("/signrequest-quick-create/", data)
                             .header("Authorization", SIGNREQUEST_TOKEN));
             return retrieve;
         }
