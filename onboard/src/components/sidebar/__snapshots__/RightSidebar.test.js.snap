@@ -38,7 +38,7 @@ exports[`renders correctly 1`] = `
 }
 
 .emotion-1 .Mui-selected {
-  color: Yellow!important;
+  color: #1666b6!important;
   font-weight: 700;
 }
 
