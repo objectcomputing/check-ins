@@ -12,3 +12,10 @@
     gap: 2rem;
     width: 100%;
 }
+
+.document-modal .document-modal-content .document-modal-roles-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
