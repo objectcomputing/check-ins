@@ -27,18 +27,19 @@ public class SendRequestController {
 
         JSONObject data = new JSONObject();
         data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
-        data.put("signers", "email")
+        //data.put("signers", "email");
+        data.put("from_email", "lib@objectcomputing.com");
 
-        try{
-            String retrieve = httpClient.toBlocking()
-                    .retrieve(HttpRequest.POST("/signrequest-quick-create/", data)
-                            .header("Authorization", SIGNREQUEST_TOKEN));
-            return retrieve;
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
+//        try{
+//            String retrieve = httpClient.toBlocking()
+//                    .retrieve(HttpRequest.POST("/signrequest-quick-create/", data)
+//                            .header("Authorization", SIGNREQUEST_TOKEN));
+//            return retrieve;
+//        }
+//        catch (Exception e){
+//            System.out.println(e);
+//        }
 
-        return null;
+        return data.toString();
     }
 }
