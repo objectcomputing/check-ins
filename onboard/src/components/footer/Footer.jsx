@@ -1,4 +1,5 @@
 import { Button, Container, Grid, Box, Link } from "@mui/material";
+import "./Footer.css";
 
 export default function Footer() {
   return (
