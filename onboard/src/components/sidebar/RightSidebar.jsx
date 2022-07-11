@@ -43,6 +43,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
           borderRight: 1,
           borderColor: "divider",
           backgroundColor: "#dfdfdf",
+          width: "300px",
           color: "#000",
           "& .Mui-selected": { color: "#1666b6 !important", fontWeight: "bold" },
           "& .MuiButtonBase-root": {
@@ -62,11 +63,10 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
           sx={{
             alignItems: "flex-start",
             color: "#000",
-            width: "45vh !important",
             paddingRight: "0px !important",
           }}
           label={
-            <div className="sidebar_logo" style={{ display: "flex", justifyContent: "flex-start" }}>
+            <div className="sidebar_logo" style={{ display: "flex", justifyContent: "center" }}>
               <img src="img\ocicube-white.png" alt="Object Computing, Inc." style={{ width: "30%"}}/>
             </div>
           }
@@ -121,7 +121,7 @@ function RightSidebar({ handleChange, data, currentPageIndex }) {
               key={menuItem.index}
               className="wrapPanel"
             >
-              <h3>{menuItem.name}</h3>
+              <h1>{menuItem.name}</h1>
               {menuItem.child}
             </TabPanel>
           );

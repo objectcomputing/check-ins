@@ -1,11 +1,9 @@
 .wrapPanel {
-  width: 100%;
+  width: calc(100% - 300px);
 }
 
 .sidebar__item {
   display: flex;
 }
 
-h3{
-  font-size: 3.5em;
-}
+
