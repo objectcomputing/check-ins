@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import { FormControl } from "@mui/material";
 import FormLabel from "@mui/material/FormLabel";
 import InputField from "../../../components/inputs/InputField";
+import DateInputField from "../../../components/inputs/DateInputField";
 import {
   validAddress,
   validPhoneNum,
@@ -17,10 +18,11 @@ function PersonalInformation() {
   const [phoneNum, setPhoneNum] = useState("");
   const [secondaryPhoneNum, setSecondaryPhoneNum] = useState("");
   const [ssn, setSSN] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [currentAddress, setCurrentAddress] = useState("");
   const [permanentAddress, setPermanentAddress] = useState("");
 
+  const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
   const [firstNameHelper, setFirstNameHelper] = useState("");
   const [lastNameHelper, setLastNameHelper] = useState("");
   const [phoneNumHelper, setPhoneNumHelper] = useState("");
@@ -31,6 +33,7 @@ function PersonalInformation() {
   const [currentAddressHelper, setCurrentAddressHelper] = useState("");
   const [permanentAddressHelper, setPermanentAddressHelper] = useState("");
 
+  const [dateOfBirthError, setDateOfBirthError] = useState(false);
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [middleInitalError, setMiddleInitalError] = useState(false);
@@ -40,6 +43,10 @@ function PersonalInformation() {
 
   const [currentAddressError, setCurrentAddressError] = useState(false);
   const [permanentAddressError, setPermanentAddressError] = useState(false);
+
+  const handleDateChange = (newValue) => {
+    setDateOfBirth(newValue);
+  };
 
   function handleChange(event) {
     const e = event;
@@ -135,13 +142,18 @@ function PersonalInformation() {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-        <Grid item xs={8}>
-          <form autoComplete="off" onSubmit={handleSaveInformation}>
+      <form autoComplete="off" onSubmit={handleSaveInformation}>
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          sx={{ marginTop: 3 }}
+        >
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
-                marginTop: 3,
-                marginBottom: 1,
+                my: 1,
+                marginLeft: 3,
                 marginLeft: 3,
                 width: "90%",
                 maxWidth: "500px",
@@ -161,7 +173,9 @@ function PersonalInformation() {
                 helperMessage={firstNameHelper}
               />
             </FormControl>
+          </Grid>
 
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
                 my: 1,
@@ -183,6 +197,9 @@ function PersonalInformation() {
                 helperMessage={lastNameHelper}
               />
             </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
                 my: 1,
@@ -204,6 +221,9 @@ function PersonalInformation() {
                 helperMessage={middleInitalHelper}
               />
             </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
                 my: 1,
@@ -225,7 +245,9 @@ function PersonalInformation() {
                 helperMessage={ssnHelper}
               />
             </FormControl>
+          </Grid>
 
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
                 my: 1,
@@ -234,21 +256,33 @@ function PersonalInformation() {
                 maxWidth: "500px",
               }}
             >
-              <FormLabel>Date Of Birth</FormLabel>
-              <InputField
+              {/* <FormLabel>Date Of Birth</FormLabel> */}
+              {/* <InputField
                 autocomplete="date-of-birth"
-                //title="Date of Birth"
+                title="Date of Birth"
                 id="dob"
                 value={dateOfBirth}
                 //error={dateOfBirthError}
                 onChangeHandler={handleChange}
                 //label="Date of Birth"
-                placeholder="dd/mm/yyyy"
+                // placeholder="dd/mm/yyyy"
                 type="date"
                 //helperMessage={dateOfBirthHelper}
+              /> */}
+              <DateInputField
+                title="Date of Birth"
+                id="dob"
+                value={dateOfBirth}
+                error={dateOfBirthError}
+                onChangeHandler={handleDateChange}
+                label="Date of Birth"
+                autocomplete="dob"
+                helperMessage={dateOfBirthHelper}
               />
             </FormControl>
+          </Grid>
 
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
                 my: 1,
@@ -270,7 +304,9 @@ function PersonalInformation() {
                 helperMessage={currentAddressHelper}
               />
             </FormControl>
+          </Grid>
 
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
                 my: 1,
@@ -292,7 +328,9 @@ function PersonalInformation() {
                 helperMessage={permanentAddressHelper}
               />
             </FormControl>
+          </Grid>
 
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
                 my: 1,
@@ -314,7 +352,9 @@ function PersonalInformation() {
                 helperMessage={phoneNumHelper}
               />
             </FormControl>
+          </Grid>
 
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
                 my: 1,
@@ -336,9 +376,9 @@ function PersonalInformation() {
                 helperMessage={secondaryPhoneNumHelper}
               />
             </FormControl>
-          </form>
+          </Grid>
         </Grid>
-      </Grid>
+      </form>
     </Box>
   );
 }

@@ -48,7 +48,7 @@ function Accordion({ title, open, index, content }) {
             mt: 1,
           }}
         >
-          <Box sx={{ width: "100%", textAlign: "center" }}>{content}</Box>
+          <Box sx={{ width: "100%"}}>{content}</Box>
         </Box>
       )}
     </Grid>

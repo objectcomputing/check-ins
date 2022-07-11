@@ -47,11 +47,15 @@ function EmploymentEligbility() {
   }
 
   return (
-    <>
       <Box sx={{ width: "100%" }}>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={8}>
-            <form autoComplete="off" onSubmit={handleSaveInformation}>
+        <form autoComplete="off" onSubmit={handleSaveInformation}>
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          sx={{ marginTop: 3 }}
+          >
+            <Grid item xs={12} sm={12} md={12} lg={6}>
               <FormControl
                 sx={{
                   my: 1,
@@ -62,6 +66,7 @@ function EmploymentEligbility() {
               >
                 <FormLabel>Are you at least 18yrs of age?</FormLabel>
                 <RadioGroup
+                  autoFocus={true}
                   name="18-or-not"
                   value={age18Yrs}
                   onChange={handleChange}
@@ -77,7 +82,8 @@ function EmploymentEligbility() {
                   {"Please select a valid option"}
                 </FormHelperText>
               </FormControl>
-
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={6}>
               <FormControl
                 sx={{
                   my: 1,
@@ -106,7 +112,8 @@ function EmploymentEligbility() {
                   {"Please select a valid option"}
                 </FormHelperText>
               </FormControl>
-
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={6}>
               <FormControl
                 sx={{
                   marginTop: 3,
@@ -127,7 +134,8 @@ function EmploymentEligbility() {
                   helperMessage={"Please enter your Visa Status"}
                 />
               </FormControl>
-
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={6}>
               <FormControl
                 sx={{
                   my: 1,
@@ -138,6 +146,7 @@ function EmploymentEligbility() {
               >
                 <FormLabel>Date of Expiration</FormLabel>
                 <InputField
+               
                   id="dateOfExpiration"
                   value={dateOfExpiration}
                   onChangeHandler={handleChange}
@@ -145,7 +154,7 @@ function EmploymentEligbility() {
                   type="date"
                 />
               </FormControl>
-
+                </Grid><Grid item xs={12} sm={12} md={12} lg={6}>
               <FormControl
                 sx={{
                   my: 1,
@@ -171,7 +180,8 @@ function EmploymentEligbility() {
                   {"Please select a valid option"}
                 </FormHelperText>
               </FormControl>
-
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={6}>
               <FormControl
                 sx={{
                   marginTop: 3,
@@ -185,17 +195,15 @@ function EmploymentEligbility() {
                   title="If yes, please Explain:"
                   id="felonyExplaination"
                   value={felonyExplanation}
-                  autoFocus={true}
                   onChangeHandler={handleChange}
                   label="If yes, please Explain"
                   type="text"
                 />
-              </FormControl>
-            </form>
+               </FormControl>
           </Grid>
         </Grid>
-      </Box>
-    </>
+      </form>
+    </Box>
   );
 }
 
