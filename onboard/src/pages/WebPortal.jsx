@@ -14,7 +14,6 @@ const menuList = [
   {
     index: 0,
     name: "Culture Video",
-    title: "Lorem ipsum",
     completed: false,
     child: <CultureVideoPage />,
     visited: true
@@ -22,7 +21,6 @@ const menuList = [
   {
     index: 1,
     name: "About You Survey",
-    title: "Lorem ipsum",
     completed: false,
     child: <BackgroundInformationPage />,
     visited: false
@@ -30,7 +28,6 @@ const menuList = [
   {
     index: 2,
     name: "Work Preference",
-    title: "Lorem ipsum",
     completed: false,
     child: <WorkingLocationPage />,
     visited: false
@@ -38,7 +35,6 @@ const menuList = [
   {
     index: 3,
     name: "Computer and Accessories",
-    title: "Lorem ipsum",
     completed: false,
     child: <EquipmentPage />,
     visited: false
@@ -46,7 +42,6 @@ const menuList = [
   {
     index: 4,
     name: "Internal Document Signing",
-    title: "Lorem ipsum",
     completed: false,
     child: <DocumentSigningPage />,
     visited: false
@@ -54,7 +49,6 @@ const menuList = [
   {
     index: 5,
     name: "Check-Ins Skills",
-    title: "Lorem ipsum",
     completed: false,
     child: <IntroductionSurveyPage />,
     visited: false
@@ -62,7 +56,6 @@ const menuList = [
   {
     index: 6,
     name: "Cake!",
-    title: "Lorem ipsum",
     completed: false,
     child: <Congratulations />,
     visited: false
@@ -83,7 +76,6 @@ function WebPortal() {
         return {
           index: currentPageIndex,
           name: obj.name,
-          title: obj.title,
           completed: true,
           child: obj.child,
           visited: true
@@ -93,7 +85,6 @@ function WebPortal() {
         return {
           index: currentPageIndex + 1,
           name: obj.name,
-          title: obj.title,
           completed: obj.completed,
           child: obj.child,
           visited: true
