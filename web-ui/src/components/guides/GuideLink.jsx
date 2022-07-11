@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import {
   IconButton,
   ListItem,
@@ -33,7 +33,7 @@ const GuideLink = ({ document }) => {
       <ListItem
         disablePadding
         secondaryAction={
-          <IconButton edge="end" onClick={() => setGuideDialogOpen(true)}>
+          <IconButton edge="end" onClick={() => setGuideDialogOpen(true)} style={{ marginLeft: "10px", marginRight: "-8px"}}>
             <EditIcon/>
           </IconButton>
         }
