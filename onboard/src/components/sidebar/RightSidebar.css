@@ -5,3 +5,21 @@
 .sidebar__item {
   display: flex;
 }
+
+.wrapTabPane {
+  display: flex;
+  width: 100%;
+  overflow-y: scroll;
+  max-height: calc(100vh - 100px);
+  background-color: #f7f7f7;
+  border-radius: 15px;
+  box-shadow: #80808059 0px 0px 10px;
+}
+
+.tabInterior {
+  height: 100%;
+  position: relative;
+  display: flex;
+  width: 100%;
+  padding: 2rem;
+}

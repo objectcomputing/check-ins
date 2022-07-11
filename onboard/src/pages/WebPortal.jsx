@@ -8,8 +8,7 @@ import WorkingLocationPage from "./WorkingLocationPage";
 import EquipmentPage from "./EquipmentPage";
 import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
-import Footer from "./../components/footer/Footer";
-import { Button, Container } from "@mui/material";
+import { Container } from "@mui/material";
 
 const menuList = [
   {
@@ -125,34 +124,9 @@ function WebPortal() {
               handleChange={handleChange}
               data={data}
               handleChangeSidebar={handleChangeSidebar}
+              handleNextButton={submitHandler}
             />
-            <Footer></Footer>
           </div>
-          <Button
-            variant="contained"
-            color="success"
-            size="large"
-            sx={{
-              // "&:hover": {
-              //   color: "gray",
-              //   backgroundColor: "lightgray",
-              // },
-              // maxWidth: 800,
-              // fontSize: 40,
-              // bgcolor: "lightgreen",
-              // color: "white",
-
-              //button positioning
-              zIndex: "modal",
-              position: "absolute",
-              bottom: "15%",
-              right: "20%",
-            }}
-            className="submitButton"
-            onClick={submitHandler}
-          >
-            Next
-          </Button>
         </Container>
       </div>
     </div>

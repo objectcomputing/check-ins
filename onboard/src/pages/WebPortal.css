@@ -11,10 +11,3 @@
   min-height: 100vh;
   overflow: auto;
 }
-
-.submitButton {
-  zindex: "modal";
-  position: "absolute";
-  bottom: "15%";
-  right: "20%";
-}
