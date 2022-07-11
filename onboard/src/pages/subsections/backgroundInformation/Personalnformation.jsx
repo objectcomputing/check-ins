@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { FormControl } from "@mui/material";
-import FormLabel from "@mui/material/FormLabel";
+
 import InputField from "../../../components/inputs/InputField";
 import DateInputField from "../../../components/inputs/DateInputField";
 import {
@@ -22,7 +22,7 @@ function PersonalInformation() {
   const [currentAddress, setCurrentAddress] = useState("");
   const [permanentAddress, setPermanentAddress] = useState("");
 
-  const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
+  //const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
   const [firstNameHelper, setFirstNameHelper] = useState("");
   const [lastNameHelper, setLastNameHelper] = useState("");
   const [phoneNumHelper, setPhoneNumHelper] = useState("");
@@ -33,7 +33,7 @@ function PersonalInformation() {
   const [currentAddressHelper, setCurrentAddressHelper] = useState("");
   const [permanentAddressHelper, setPermanentAddressHelper] = useState("");
 
-  const [dateOfBirthError, setDateOfBirthError] = useState(false);
+  //const [dateOfBirthError, setDateOfBirthError] = useState(false);
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [middleInitalError, setMiddleInitalError] = useState(false);
@@ -154,7 +154,6 @@ function PersonalInformation() {
               sx={{
                 my: 1,
                 marginLeft: 3,
-                marginLeft: 3,
                 width: "90%",
                 maxWidth: "500px",
               }}
@@ -273,11 +272,11 @@ function PersonalInformation() {
                 title="Date of Birth"
                 id="dob"
                 value={dateOfBirth}
-                error={dateOfBirthError}
+                //error={dateOfBirthError}
                 onChangeHandler={handleDateChange}
                 label="Date of Birth"
                 autocomplete="dob"
-                helperMessage={dateOfBirthHelper}
+                //helperMessage={dateOfBirthHelper}
               />
             </FormControl>
           </Grid>
