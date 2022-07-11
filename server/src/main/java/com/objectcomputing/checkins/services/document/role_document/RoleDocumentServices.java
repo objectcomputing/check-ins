@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.document.role_document;
 
+import com.objectcomputing.checkins.services.document.DocumentResponseDTO;
+
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
@@ -15,5 +17,7 @@ public interface RoleDocumentServices {
     void delete(@NotNull RoleDocumentId id);
 
     List<DocumentResponseDTO> getDocumentsByRole(UUID roleId);
+
+    List<RoleDocumentResponseDTO> getAllDocuments();
 
 }

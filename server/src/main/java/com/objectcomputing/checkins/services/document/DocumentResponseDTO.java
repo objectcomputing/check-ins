@@ -1,39 +1,37 @@
-package com.objectcomputing.checkins.services.document.role_document;
+package com.objectcomputing.checkins.services.document;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Combines information from {@link Document} with a document number for sorting
+ */
 @Introspected
 public class DocumentResponseDTO {
 
     @NotNull
-    @Column(name = "id")
     @Schema(description = "id of the document", required = true)
     private UUID id;
 
     @NotNull
-    @Column(name = "name")
     @Schema(description = "the name of the document", required = true)
     private String name;
 
     @Nullable
-    @Column(name = "description")
     @Schema(description = "description of the document")
     private String description;
 
     @NotNull
-    @Column(name = "url")
     @Schema(description = "the URL where the document is accessed")
     private String url;
 
     @NotNull
-    @Column(name = "documentnumber")
-    @Schema(description = "the order in which the document appears")
+    @Schema(description = "the order of the document")
     private int documentNumber;
 
     public DocumentResponseDTO(UUID id, String name, @Nullable String description, String url, int documentNumber) {
@@ -83,5 +81,28 @@ public class DocumentResponseDTO {
 
     public void setDocumentNumber(int documentNumber) {
         this.documentNumber = documentNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DocumentResponseDTO that = (DocumentResponseDTO) o;
+        return documentNumber == that.documentNumber && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(url, that.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, url, documentNumber);
+    }
+
+    @Override
+    public String toString() {
+        return "DocumentResponseDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", documentNumber=" + documentNumber +
+                '}';
     }
 }

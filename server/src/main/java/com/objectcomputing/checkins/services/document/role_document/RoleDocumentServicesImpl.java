@@ -4,6 +4,8 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.document.Document;
+import com.objectcomputing.checkins.services.document.DocumentResponseDTO;
 import com.objectcomputing.checkins.services.document.DocumentServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
@@ -12,6 +14,7 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -111,5 +114,19 @@ public class RoleDocumentServicesImpl implements RoleDocumentServices {
         }
 
         return roleDocumentRepository.findDocumentsByRoleId(roleId);
+    }
+
+    @Override
+    public List<RoleDocumentResponseDTO> getAllDocuments() {
+        List<Document> documents = documentServices.findAll();
+        List<RoleDocumentResponseDTO> documentsWithRoles = new ArrayList<>(documents.size());
+
+        documents.forEach(document -> {
+            List<RoleDocument> roles = roleDocumentRepository.findRoleDocumentsByDocumentId(document.getId());
+            RoleDocumentResponseDTO dto = new RoleDocumentResponseDTO(document.getId(), document.getName(), document.getDescription(), document.getUrl(), roles);
+            documentsWithRoles.add(dto);
+        });
+
+        return documentsWithRoles;
     }
 }

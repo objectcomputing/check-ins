@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.document.role_document;
 
+import com.objectcomputing.checkins.services.document.DocumentResponseDTO;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -46,7 +47,7 @@ public class RoleDocumentController {
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
-    @Get("/{?roleId}")
+    @Get("/{roleId}")
     public Mono<HttpResponse<List<DocumentResponseDTO>>> getDocumentsByRole(UUID roleId) {
         return Mono.fromCallable(() -> roleDocumentServices.getDocumentsByRole(roleId))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -68,5 +69,14 @@ public class RoleDocumentController {
     public HttpResponse<?> delete(@NotNull UUID roleId, @NotNull UUID documentId) {
         roleDocumentServices.delete(new RoleDocumentId(roleId, documentId));
         return HttpResponse.noContent();
+    }
+
+    @Get
+    @Secured(RoleType.Constants.ADMIN_ROLE)
+    public Mono<HttpResponse<List<RoleDocumentResponseDTO>>> getAllDocuments() {
+        return Mono.fromCallable(roleDocumentServices::getAllDocuments)
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(documents -> (HttpResponse<List<RoleDocumentResponseDTO>>) HttpResponse.ok(documents))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 }
