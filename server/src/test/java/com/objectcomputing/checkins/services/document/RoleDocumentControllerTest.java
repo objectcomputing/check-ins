@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.document;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.document.role_document.DocumentResponseDTO;
 import com.objectcomputing.checkins.services.document.role_document.RoleDocument;
 import com.objectcomputing.checkins.services.fixture.DocumentFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;

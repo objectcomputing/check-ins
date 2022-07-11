@@ -1,0 +1,16 @@
+.documents-page .documents-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.documents-page .documents-header .documents-header-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    column-gap: 2rem;
+}
