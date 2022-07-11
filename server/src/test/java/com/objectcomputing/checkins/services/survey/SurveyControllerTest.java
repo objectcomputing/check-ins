@@ -2,10 +2,9 @@ package com.objectcomputing.checkins.services.survey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.SurveyFixture;
-import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -14,9 +13,10 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,7 +26,6 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class SurveyControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, SurveyFixture {
 
@@ -56,6 +55,11 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(surveyResponseCreateDTO.getCreatedBy(),surveyResponseResponse.getCreatedBy());
         assertEquals(String.format("%s/%s", request.getPath(), surveyResponseResponse.getId()), response.getHeaders().get("location"));
+    }
+
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
     }
 
     @Test

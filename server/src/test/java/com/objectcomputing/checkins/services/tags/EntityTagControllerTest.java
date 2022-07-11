@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.TagFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTag;
+import com.objectcomputing.checkins.services.tags.entityTag.EntityTag.EntityType;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTagCreateDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -16,10 +17,10 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import org.junit.jupiter.api.Test;
-import com.objectcomputing.checkins.services.tags.entityTag.EntityTag.EntityType;
-
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,10 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
     @Client("/services/entity-tags")
         HttpClient client;
 
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
 
     @Test
     void testCreateAEntityTag() {

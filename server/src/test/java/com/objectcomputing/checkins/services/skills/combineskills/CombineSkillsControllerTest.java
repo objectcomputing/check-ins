@@ -18,9 +18,10 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
@@ -52,6 +53,11 @@ public class CombineSkillsControllerTest extends TestContainersSuite
 
     public CombineSkillsControllerTest(SkillServices skillServices1) {
         this.skillServices = skillServices1;
+    }
+
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
     }
 
     @Test

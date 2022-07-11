@@ -17,9 +17,10 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,11 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Inject
     @Client("/services/teams/members")
     HttpClient client;
+
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
 
     @Test
     void testCreateATeamMemberByAdmin() {

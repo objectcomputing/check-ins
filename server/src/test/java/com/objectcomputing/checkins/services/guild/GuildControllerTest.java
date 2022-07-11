@@ -54,6 +54,11 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildMemberServicesImpl.setEmailSender(emailSender);
     }
 
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
+
     @Test
     void testEmailSentToGuildLeadWhenGuildMembersAdded() {
         // create a guild and guild lead

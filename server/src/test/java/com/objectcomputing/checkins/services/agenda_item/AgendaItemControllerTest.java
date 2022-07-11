@@ -16,11 +16,9 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import org.junit.jupiter.api.Test;
-
 import jakarta.inject.Inject;
-import org.reactivestreams.Publisher;
-import reactor.test.StepVerifier;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +34,11 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
     @Inject
     @Client("/services/agenda-items")
     HttpClient client;
+
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
 
     @Test
     void testCreateAgendaItemByAdmin() {

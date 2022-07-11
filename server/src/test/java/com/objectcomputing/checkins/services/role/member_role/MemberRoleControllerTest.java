@@ -12,9 +12,9 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import org.junit.jupiter.api.Test;
-
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +24,11 @@ public class MemberRoleControllerTest extends TestContainersSuite implements Mem
     @Inject
     @Client("/services/roles/members")
     HttpClient client;
+
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
 
     @Test
     void testCreateMemberRole() {

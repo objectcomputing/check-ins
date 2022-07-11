@@ -14,9 +14,10 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,6 +34,11 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     @Inject
     @Client("/services/private-notes")
     HttpClient client;
+
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
 
     /////////////////////////////////// READ TESTS /////////////////////////////////////////////////
     @Test

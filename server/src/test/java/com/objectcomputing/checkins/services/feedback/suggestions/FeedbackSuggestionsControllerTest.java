@@ -12,15 +12,17 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import org.junit.jupiter.api.Test;
-
 import jakarta.inject.Inject;
-import java.util.*;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mortbay.util.ajax.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class FeedbackSuggestionsControllerTest extends TestContainersSuite implements MemberProfileFixture, TeamMemberFixture, TeamFixture, FeedbackFixture, RoleFixture {
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackSuggestionsControllerTest.class);
@@ -38,6 +40,12 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         assertEquals(ideal.getReason(), actualResponse.getReason());
         assertEquals(ideal.getId(), actualResponse.getId());
     }
+
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
+
     @Test
     void testGetRecsIfPdl() {
         Team team = createDefaultTeam();

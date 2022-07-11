@@ -64,6 +64,10 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         createAndAssignRoles();
     }
 
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
 
     private String createEmailContent(FeedbackRequest storedRequest, UUID requestId, MemberProfile creator, MemberProfile requestee){
         String newContent = "<h1>You have received a feedback request.</h1>" +

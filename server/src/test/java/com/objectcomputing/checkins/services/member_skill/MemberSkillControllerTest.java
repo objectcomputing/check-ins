@@ -14,9 +14,9 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +31,6 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     @Inject
     @Client("/services/member-skills")
     HttpClient client;
-
 
     @Test
     void testCreateAMemberSkill() {

@@ -51,6 +51,11 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
         emailServicesImpl.setTextEmailSender(textEmailSender);
     }
 
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
+
     @Test
     void testSaveEmail() {
         MemberProfile admin = createADefaultMemberProfile();

@@ -42,6 +42,11 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         createAndAssignRoles();
     }
 
+    @BeforeEach
+    void reset() {
+        createAndAssignRoles();
+    }
+
     public FeedbackAnswer createSampleAnswer(MemberProfile sender, MemberProfile recipient) {
         assignPdlRole(sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);

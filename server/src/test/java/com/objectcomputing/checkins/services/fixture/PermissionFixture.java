@@ -278,11 +278,6 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
             Permissions.CAN_DELETE_SURVEY,
             Permissions.CAN_VIEW_SURVEY,
 
-            // Surveys
-            Permissions.CAN_CREATE_SURVEY,
-            Permissions.CAN_DELETE_SURVEY,
-            Permissions.CAN_VIEW_SURVEY,
-
             // Tags
             Permissions.CAN_CREATE_TAG,
             Permissions.CAN_DELETE_TAG,
