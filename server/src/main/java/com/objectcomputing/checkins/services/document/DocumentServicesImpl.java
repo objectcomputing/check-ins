@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Singleton
@@ -56,5 +56,10 @@ public class DocumentServicesImpl implements DocumentServices {
     @Override
     public void delete(@NotNull UUID id) {
         documentRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Document> findAll() {
+        return documentRepository.findAll();
     }
 }

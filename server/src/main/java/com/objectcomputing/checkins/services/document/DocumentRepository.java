@@ -1,10 +1,12 @@
 package com.objectcomputing.checkins.services.document;
 
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,4 +21,7 @@ public interface DocumentRepository extends CrudRepository<Document, UUID> {
             "WHERE LOWER(PGP_SYM_DECRYPT(cast(documents.name as bytea), '${aes.key}')) = LOWER(:name)"
     )
     Optional<Document> findByName(String name);
+
+    @NonNull
+    List<Document> findAll();
 }
