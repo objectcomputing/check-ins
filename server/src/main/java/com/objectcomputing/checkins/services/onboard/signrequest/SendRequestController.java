@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -26,19 +27,30 @@ public class SendRequestController {
     public String getData(){
 
         JSONObject data = new JSONObject();
-        data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
-        //data.put("signers", "email");
-        data.put("from_email", "lib@objectcomputing.com");
 
-//        try{
-//            String retrieve = httpClient.toBlocking()
-//                    .retrieve(HttpRequest.POST("/signrequest-quick-create/", data)
-//                            .header("Authorization", SIGNREQUEST_TOKEN));
-//            return retrieve;
-//        }
-//        catch (Exception e){
-//            System.out.println(e);
-//        }
+        JSONArray array = new JSONArray();
+        JSONObject item = new JSONObject();
+        item.put("email", "lib@objectcomputing.com");
+        item.put("embed_url_user_id", "TEST");
+        array.put(item);
+
+        data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
+        data.put("signers", "email: lib@objectcomputing.com");
+        data.put("from_email", "lib@objectcomputing.com");
+        data.put("message", "Please sign this document");
+        data.put("needs_to_sign", "true");
+        data.put("subject", "SignTest - YourTeam API");
+        data.put("signers", array);
+
+        try{
+            String retrieve = httpClient.toBlocking()
+                    .retrieve(HttpRequest.POST("/signrequest-quick-create/", data)
+                            .header("Authorization", SIGNREQUEST_TOKEN));
+            return retrieve;
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
 
         return data.toString();
     }
