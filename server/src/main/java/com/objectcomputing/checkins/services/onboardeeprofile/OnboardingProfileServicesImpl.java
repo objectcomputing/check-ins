@@ -21,8 +21,8 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
     }
 
     @Override
-    public Onboarding_Profile getById(@NotNull UUID id) {
-        Optional<Onboarding_Profile> onboardingProfile = onboardingProfileRepository.findById(id);
+    public OnboardingProfile getById(@NotNull UUID id) {
+        Optional<OnboardingProfile> onboardingProfile = onboardingProfileRepository.findById(id);
         if (onboardingProfile.isEmpty()) {
             throw new NotFoundException("No new employee profile for id" + id);
         }
@@ -31,22 +31,22 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
 
 
     @Override
-    public Set<Onboarding_Profile> findByValues (
+    public Set<OnboardingProfile> findByValues (
             @Nullable UUID id,
             @Nullable String firstName,
             @Nullable String lastName,
             @Nullable Integer socialSecurityNumber,
             @Nullable LocalDate birthDate,
             @Nullable String phoneNumber) {
-        HashSet<Onboarding_Profile> onboarding_profiles = new HashSet<>(onboardingProfileRepository.search( (nullSafeUUIDToString(id)), firstName, null, lastName,
+        HashSet<OnboardingProfile> onboarding_profiles = new HashSet<>(onboardingProfileRepository.search( (nullSafeUUIDToString(id)), firstName, null, lastName,
                 socialSecurityNumber,  birthDate,null, null, phoneNumber, null));
 
         return onboarding_profiles;
     }
 
     @Override
-    public Onboarding_Profile saveProfile(Onboarding_Profile onboarding_profile) {
-        Onboarding_Profile employeeSocialSecurityNumber = onboardingProfileRepository.findBySocial(onboarding_profile.getSocialSecurityNumber()).orElse(null);
+    public OnboardingProfile saveProfile(OnboardingProfile onboarding_profile) {
+        OnboardingProfile employeeSocialSecurityNumber = onboardingProfileRepository.findBySocial(onboarding_profile.getSocialSecurityNumber()).orElse(null);
         if (employeeSocialSecurityNumber != null && employeeSocialSecurityNumber.getId() != null && !Objects.equals(onboarding_profile.getId(), employeeSocialSecurityNumber.getId())) {
             throw new AlreadyExistsException(String.format("Onboardee SSN already exists in database",
                     onboarding_profile.getSocialSecurityNumber()));
@@ -64,8 +64,8 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
     }
 
     @Override
-    public Onboarding_Profile findByName(String firstName, String lastName) {
-        List<Onboarding_Profile> searchResult = onboardingProfileRepository.search(null, firstName, null, lastName,
+    public OnboardingProfile findByName(String firstName, String lastName) {
+        List<OnboardingProfile> searchResult = onboardingProfileRepository.search(null, firstName, null, lastName,
                 null, null, null, null, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
@@ -75,7 +75,7 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
 
 
     @Override
-    public List<Onboarding_Profile> findAll() {
+    public List<OnboardingProfile> findAll() {
         return onboardingProfileRepository.findAll();
     }
 

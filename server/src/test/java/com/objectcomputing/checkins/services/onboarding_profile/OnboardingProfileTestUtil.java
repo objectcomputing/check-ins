@@ -1,15 +1,10 @@
 package com.objectcomputing.checkins.services.onboarding_profile;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileCreateDTO;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileUpdateDTO;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileCreateDTO;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileResponseDTO;
-import com.objectcomputing.checkins.services.onboardeeprofile.Onboarding_Profile;
+import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -42,8 +37,8 @@ public class OnboardingProfileTestUtil {
         return dto;
     }
 
-    public static Onboarding_Profile mkOnboarding_Profile(String seed) {
-        return new Onboarding_Profile("TestFirstName" + seed,
+    public static OnboardingProfile mkOnboarding_Profile(String seed) {
+        return new OnboardingProfile("TestFirstName" + seed,
                 null,
                 "TestLastName" + seed,
                 500505000,
@@ -55,11 +50,11 @@ public class OnboardingProfileTestUtil {
                 );
     }
 
-    public static Onboarding_Profile mkOnboarding_Profile() {
+    public static OnboardingProfile mkOnboarding_Profile() {
         return mkOnboarding_Profile("");
     }
 
-    public static void assertProfilesEqual(Onboarding_Profile entity, OnboardingProfileResponseDTO dto) {
+    public static void assertProfilesEqual(OnboardingProfile entity, OnboardingProfileResponseDTO dto) {
         assertEquals(entity.getFirstName(), dto.getFirstName());
         assertEquals(entity.getMiddleName(), dto.getMiddleName());
         assertEquals(entity.getLastName(), dto.getLastName());

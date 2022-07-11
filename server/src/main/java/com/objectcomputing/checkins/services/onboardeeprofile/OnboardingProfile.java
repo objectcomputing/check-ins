@@ -19,7 +19,7 @@ import java.util.UUID;
 @Introspected //indicates a type should produce a BeanIntrospection
 @Table(name="onboard_profile") //specifies the name of the database table to be used for mappe
 //see the file path ...src/resources/db/common to create the table schema from above with the name from above
-public class Onboarding_Profile {
+public class OnboardingProfile {
 
     @Id // indicates this member field below is the primary key of the current entity
     @Column(name = "id") //indicates this value is stored under a column in the database with the name "id"
@@ -111,7 +111,7 @@ public class Onboarding_Profile {
     private String secondPhoneNumber;
 
 
-    public Onboarding_Profile(String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber) {
+    public OnboardingProfile(String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -122,7 +122,7 @@ public class Onboarding_Profile {
         this.phoneNumber = phoneNumber;
         this.secondPhoneNumber = secondPhoneNumber;
     }
-    public Onboarding_Profile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber) {
+    public OnboardingProfile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber) {
         this.id= id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -135,7 +135,7 @@ public class Onboarding_Profile {
         this.secondPhoneNumber = secondPhoneNumber;
     }
 
-    public Onboarding_Profile(){}
+    public OnboardingProfile(){}
 
     public UUID getId() {
         return id;

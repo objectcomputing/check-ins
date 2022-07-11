@@ -35,7 +35,6 @@ public class OnboardingProfileController {
 
     private static final Logger LOG = LoggerFactory.getLogger(OnboardingProfileController.class);
     private final OnboardingProfileServices onboardingProfileServices;
-    private final OnboardingProfileServices onboardingProfileServices;
     private final EventLoopGroup eventLoopGroup;
     private final Scheduler scheduler;
 
@@ -47,7 +46,11 @@ public class OnboardingProfileController {
         this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
-
+    /**
+     * Find all onboardee profiles.
+     *
+     * @return {@link OnboardingProfileResponseDTO } Returned onboardee profiles
+     */
 
 
     @Get()
@@ -55,11 +58,14 @@ public class OnboardingProfileController {
 
         return Mono.fromCallable(() -> onboardingProfileServices.findAll())
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(profile -> (HttpResponse<OnboardingProfileResponseDTO>) HttpResponse
-                        .ok(fromEntity(profile))
-                        .headers(headers -> headers.location(location(profile))))
-                .subscribeOn(scheduler);
+                .map(profile -> {
+                    List <OnboardingProfileResponseDTO> dtoList = profile.stream()
+                            .map (this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<OnboardingProfileResponseDTO>>) HttpResponse
+                            .ok(dtoList);
+                }) .subscribeOn(scheduler);
     }
+
 
     /**
      * Find onboardee profile by id.
@@ -94,7 +100,7 @@ public class OnboardingProfileController {
                                                                               @Nullable String lastName,
                                                                               @Nullable Integer socialSecurityNumber,
                                                                               @Nullable LocalDate birthDate,
-                                                                              @Nullable Integer phoneNumber) {
+                                                                              @Nullable String phoneNumber) {
         return Mono.fromCallable(() -> onboardingProfileServices.findByValues(id, firstName, lastName, socialSecurityNumber, birthDate, phoneNumber))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(Onboarding_profile -> {
@@ -167,7 +173,7 @@ public class OnboardingProfileController {
         return URI.create("/onboardee-profiles/" + id);
     }
 
-    private OnboardingProfileResponseDTO fromEntity(Onboarding_Profile entity) {
+    private OnboardingProfileResponseDTO fromEntity(OnboardingProfile entity) {
         OnboardingProfileResponseDTO dto = new OnboardingProfileResponseDTO();
         dto.setFirstName(entity.getFirstName());
         dto.setMiddleName(entity.getMiddleName());
@@ -182,14 +188,14 @@ public class OnboardingProfileController {
         return dto;
     }
 
-    private Onboarding_Profile fromDTO(OnboardingProfileResponseDTO dto) {
-        return new Onboarding_Profile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
+    private OnboardingProfile fromDTO(OnboardingProfileResponseDTO dto) {
+        return new OnboardingProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(),
                 dto.getPhoneNumber(), dto.getSecondPhoneNumber());
     }
 
-    private Onboarding_Profile fromDTO(OnboardingProfileCreateDTO dto) {
-        return new Onboarding_Profile( dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
+    private OnboardingProfile fromDTO(OnboardingProfileCreateDTO dto) {
+        return new OnboardingProfile( dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(),
                 dto.getPhoneNumber(), dto.getSecondPhoneNumber());
     }
