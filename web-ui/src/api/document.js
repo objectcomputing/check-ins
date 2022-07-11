@@ -15,14 +15,19 @@ export const createDocument = async (document, cookie) => {
 
 export const getDocumentsByRole = async (roleId, cookie) => {
   return resolve({
-    url: roleDocumentsUrl,
+    url: `${roleDocumentsUrl}/${roleId}`,
     responseType: "json",
-    params: {
-      roleId: roleId
-    },
     headers: { "X-CSRF-Header": cookie }
   });
 };
+
+export const getAllDocuments = async (cookie) => {
+  return resolve({
+    url: roleDocumentsUrl,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
 
 export const updateDocument = async (document, cookie) => {
   return resolve({
