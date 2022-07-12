@@ -1,5 +1,5 @@
 import React from 'react';
-import InputLabel from '@mui/material/InputLabel';
+import { FormLabel } from '@mui/material';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import FormHelperText from '@mui/material/FormHelperText';
 
@@ -10,7 +10,6 @@ function InputTextfield({
   autoFocus,
   error,
   onChangeHandler,
-  label,
   placeholder,
   type,
   autocomplete,
@@ -18,7 +17,7 @@ function InputTextfield({
 }) {
   return (
     <>
-      <InputLabel htmlFor={`outlined-adornment-${id}`}>{title}</InputLabel>
+      <FormLabel>{title} </FormLabel>
       <OutlinedInput
         id={id}
         name={id}
@@ -26,7 +25,6 @@ function InputTextfield({
         autoFocus={autoFocus}
         error={error}
         onChange={onChangeHandler}
-        label={label}
         placeholder={placeholder}
         type={type}
         autoComplete={autocomplete}

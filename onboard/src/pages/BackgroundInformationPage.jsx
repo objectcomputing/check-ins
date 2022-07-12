@@ -20,7 +20,7 @@ const accordionArr = [
     content: <EmploymentEligbility />,
   },
   {
-    title: "Employment Desired and Avaiablity",
+    title: "Employment Desired and Availability",
     content: <EmploymentDesired />,
   },
   {

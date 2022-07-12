@@ -3,7 +3,7 @@ import ClickAwayListener from "@mui/material/ClickAwayListener";
 import FormHelperText from "@mui/material/FormHelperText";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
-import InputLabel from "@mui/material/InputLabel";
+import { FormLabel } from "@mui/material";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -15,7 +15,6 @@ function InputField({
   autoFocus,
   error,
   onChangeHandler,
-  label,
   placeholder,
   type,
   autocomplete,
@@ -33,7 +32,7 @@ function InputField({
 
   return (
     <>
-      <InputLabel htmlFor={`outlined-adornment-${id}`}>{title}</InputLabel>
+      <FormLabel>{title} </FormLabel>
       {type === "password" ? (
         <ClickAwayListener onClickAway={handleClickAway}>
           <OutlinedInput
@@ -43,7 +42,6 @@ function InputField({
             autoFocus={autoFocus}
             error={error}
             onChange={onChangeHandler}
-            label={label}
             placeholder={placeholder}
             type={showPassword ? "text" : "password"}
             autoComplete={autocomplete}
@@ -67,7 +65,6 @@ function InputField({
           autoFocus={autoFocus}
           error={error}
           onChange={onChangeHandler}
-          label={label}
           placeholder={placeholder}
           type={type}
           autoComplete={autocomplete}

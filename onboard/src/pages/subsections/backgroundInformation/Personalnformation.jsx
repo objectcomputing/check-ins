@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { FormControl } from "@mui/material";
-
 import InputField from "../../../components/inputs/InputField";
-import DateInputField from "../../../components/inputs/DateInputField";
 import {
   validAddress,
   validPhoneNum,
@@ -44,9 +42,6 @@ function PersonalInformation() {
   const [currentAddressError, setCurrentAddressError] = useState(false);
   const [permanentAddressError, setPermanentAddressError] = useState(false);
 
-  const handleDateChange = (newValue) => {
-    setDateOfBirth(newValue);
-  };
 
   function handleChange(event) {
     const e = event;
@@ -60,7 +55,7 @@ function PersonalInformation() {
 
     if (name === "firstName") {
       setFirstName(val);
-      if (val.length >= 5) {
+      if (val.length >= 2) {
         setFirstNameError(false);
         setFirstNameHelper("");
       } else {
@@ -69,7 +64,7 @@ function PersonalInformation() {
       }
     } else if (name === "lastName") {
       setLastName(val);
-      if (val.length >= 3) {
+      if (val.length >= 2) {
         setLastNameError(false);
         setLastNameHelper("");
       } else {
@@ -160,13 +155,12 @@ function PersonalInformation() {
             >
               <InputField
                 autocomplete="first-name"
-                title="First Name"
+                title="First Name:"
                 id="firstName"
                 value={firstName}
                 autoFocus={true}
                 error={firstNameError}
                 onChangeHandler={handleChange}
-                label="First Name"
                 placeholder="John"
                 type="text"
                 helperMessage={firstNameHelper}
@@ -185,12 +179,11 @@ function PersonalInformation() {
             >
               <InputField
                 autocomplete="last-name"
-                title="Last Name"
+                title="Last Name:"
                 id="lastName"
                 value={lastName}
                 error={lastNameError}
                 onChangeHandler={handleChange}
-                label="Last Name"
                 placeholder="Doe"
                 type="text"
                 helperMessage={lastNameHelper}
@@ -209,12 +202,11 @@ function PersonalInformation() {
             >
               <InputField
                 autocomplete="middle-initial"
-                title="Middle Initial"
+                title="Middle Initial:"
                 id="middleInitial"
                 value={middleInital}
                 error={middleInitalError}
                 onChangeHandler={handleChange}
-                label="Middle Initial"
                 placeholder="H"
                 type="text"
                 helperMessage={middleInitalHelper}
@@ -233,12 +225,11 @@ function PersonalInformation() {
             >
               <InputField
                 autocomplete="social-security-number"
-                title="Social Security Number"
+                title="Social Security Number:"
                 id="ssn"
                 value={ssn}
                 error={ssnError}
                 onChangeHandler={handleChange}
-                label="Social Security Number"
                 placeholder="xxx-xx-xxxx"
                 type="password"
                 helperMessage={ssnHelper}
@@ -255,29 +246,19 @@ function PersonalInformation() {
                 maxWidth: "500px",
               }}
             >
-              {/* <FormLabel>Date Of Birth</FormLabel> */}
-              {/* <InputField
+            
+              <InputField
                 autocomplete="date-of-birth"
-                title="Date of Birth"
+                title="Date of Birth:"
                 id="dob"
                 value={dateOfBirth}
                 //error={dateOfBirthError}
                 onChangeHandler={handleChange}
-                //label="Date of Birth"
                 // placeholder="dd/mm/yyyy"
                 type="date"
                 //helperMessage={dateOfBirthHelper}
-              /> */}
-              <DateInputField
-                title="Date of Birth"
-                id="dob"
-                value={dateOfBirth}
-                //error={dateOfBirthError}
-                onChangeHandler={handleDateChange}
-                label="Date of Birth"
-                autocomplete="dob"
-                //helperMessage={dateOfBirthHelper}
-              />
+              /> 
+              
             </FormControl>
           </Grid>
 
@@ -292,13 +273,12 @@ function PersonalInformation() {
             >
               <InputField
                 autocomplete="current-address"
-                title="Current Address"
+                title="Current Address:"
                 id="currentAddress"
                 value={currentAddress}
                 error={currentAddressError}
                 onChangeHandler={handleChange}
-                label="Current Address"
-                placeholder="123 Main Street USA"
+                placeholder="4391 Clover Drive, Colorado Springs, CO 80903"
                 type="text"
                 helperMessage={currentAddressHelper}
               />
@@ -316,13 +296,12 @@ function PersonalInformation() {
             >
               <InputField
                 autocomplete="permanent-address"
-                title="Permanent Address"
+                title="Permanent Address:"
                 id="permanentAddress"
                 value={permanentAddress}
                 error={permanentAddressError}
                 onChangeHandler={handleChange}
-                label="Permanent Address"
-                placeholder="123 Main Street USA"
+                placeholder="4477 Hidden Valley Road, Buffalo, NY 14216"
                 type="text"
                 helperMessage={permanentAddressHelper}
               />
@@ -340,12 +319,11 @@ function PersonalInformation() {
             >
               <InputField
                 autocomplete="phone-number"
-                title="Primary Phone Number"
+                title="Primary Phone Number:"
                 id="phoneNum"
                 value={phoneNum}
                 error={phoneNumError}
                 onChangeHandler={handleChange}
-                label="Primary Phone Number"
                 placeholder="123-456-7890"
                 type="text"
                 helperMessage={phoneNumHelper}
@@ -364,12 +342,11 @@ function PersonalInformation() {
             >
               <InputField
                 autocomplete="secondary-phone-number"
-                title="Secondary Phone Number"
+                title="Secondary Phone Number:"
                 id="secondaryPhoneNum"
                 value={secondaryPhoneNum}
                 error={secondaryPhoneNumError}
                 onChangeHandler={handleChange}
-                label="Secondary Phone Number"
                 placeholder="123-456-7890"
                 type="text"
                 helperMessage={secondaryPhoneNumHelper}

@@ -19,6 +19,18 @@ function EmploymentDesired() {
   const [nonCompeteStatus, setNonCompeteStatus] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
 
+  const [nonCompeteStatusHelper, setNonCompeteStatusHelper] = useState(
+    "Please select a valid option"
+  );
+  const [employmentStatusHelper, setEmploymentStatusHelper] = useState(
+    "Please select a valid option"
+  );
+  const [contactCurrentEmployerHelper, setContactCurrentEmployerHelper] =
+    useState("Please select a valid option");
+  const [employedAtOCIHelper, setEmployedAtOCIHelper] = useState(
+    "Please select a valid option"
+  );
+
   function handleChange(event) {
     const e = event;
     const val = e.target.value;
@@ -35,12 +47,16 @@ function EmploymentDesired() {
       setDesiredSalary(val);
     } else if (name === "contactCurrentEmployer") {
       setContactCurrentEmployer(val);
+      setContactCurrentEmployerHelper("");
     } else if (name === "employmentStatus") {
       setEmploymentStatus(val);
-    } else if (name === "employmentAtOCI") {
+      setEmploymentStatusHelper("");
+    } else if (name === "employedAtOCI") {
       setEmployedAtOCI(val);
+      setEmployedAtOCIHelper("");
     } else if (name === "nonCompeteStatus") {
       setNonCompeteStatus(val);
+      setNonCompeteStatusHelper("");
     } else if (name === "expirationDate") {
       setExpirationDate(val);
     }
@@ -116,7 +132,7 @@ function EmploymentDesired() {
                 value={desiredSalary}
                 onChangeHandler={handleChange}
                 label="What is your desired salary?"
-                type="number"
+                type="text"
               />
             </FormControl>
           </Grid>
@@ -138,7 +154,7 @@ function EmploymentDesired() {
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                 <FormControlLabel value="no" control={<Radio />} label="No" />
               </RadioGroup>
-              <FormHelperText>{"Please select a valid option"}</FormHelperText>
+              <FormHelperText>{employmentStatusHelper}</FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={12} md={12} lg={6}>
@@ -161,7 +177,7 @@ function EmploymentDesired() {
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                 <FormControlLabel value="no" control={<Radio />} label="No" />
               </RadioGroup>
-              <FormHelperText>{"Please select a valid option"}</FormHelperText>
+              <FormHelperText>{contactCurrentEmployerHelper}</FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={12} md={12} lg={6}>
@@ -182,7 +198,7 @@ function EmploymentDesired() {
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                 <FormControlLabel value="no" control={<Radio />} label="No" />
               </RadioGroup>
-              <FormHelperText>{"Please select a valid option"}</FormHelperText>
+              <FormHelperText>{employedAtOCIHelper}</FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={12} md={12} lg={6}>
@@ -196,7 +212,7 @@ function EmploymentDesired() {
             >
               <FormLabel>
                 Do you have an non-compete agreement in effect that might
-                preclude you from beig employed by OCI?
+                preclude you from being employed by OCI?
               </FormLabel>
               <RadioGroup
                 name="nonCompeteStatus"
@@ -206,7 +222,7 @@ function EmploymentDesired() {
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                 <FormControlLabel value="no" control={<Radio />} label="No" />
               </RadioGroup>
-              <FormHelperText>{"Please select a valid option"}</FormHelperText>
+              <FormHelperText>{nonCompeteStatusHelper}</FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={12} md={12} lg={6}>
@@ -218,7 +234,7 @@ function EmploymentDesired() {
                 maxWidth: "500px",
               }}
             >
-              <FormLabel>If yes, what is the expiration date</FormLabel>
+              <FormLabel>If yes, what is the expiration date:</FormLabel>
               <InputField
                 id="expirationDate"
                 value={expirationDate}

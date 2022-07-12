@@ -18,6 +18,19 @@ function EmploymentEligbility() {
   const [felonyStatus, setFelonyStatus] = useState("");
   const [felonyExplanation, setFelonyExplanation] = useState("");
 
+  const [visaStatusHelper, setVisaStatusHelper] = useState(
+    "Please enter your Visa Status"
+  );
+  const [age18YrsHelper, setAge18YrsHelper] = useState(
+    "Please select a valid option"
+  );
+  const [citizenHelper, setCitizenHelper] = useState(
+    "Please select a valid option"
+  );
+  const [felonyHelper, setFelonyHelper] = useState(
+    "Please select a valid option"
+  );
+
   function handleChange(event) {
     const e = event;
     const val = e.target.value;
@@ -28,14 +41,22 @@ function EmploymentEligbility() {
 
     if (name === "18-or-not") {
       setAge18Yrs(val);
+      setAge18YrsHelper("");
     } else if (name === "us-Citizen-or-not") {
       setUSCitizen(val);
+      setCitizenHelper("");
     } else if (name === "visaStatus") {
       setVisaStatus(val);
+      if (val.length > 0) {
+        setVisaStatusHelper("");
+      } else {
+        setVisaStatusHelper("Please enter your Visa Status");
+      }
     } else if (name === "dateOfExpiration") {
       setDateOfExpiration(val);
     } else if (name === "felonyStatus") {
       setFelonyStatus(val);
+      setFelonyHelper("");
     } else if (name === "felonyExplaination") {
       setFelonyExplanation(val);
     }
@@ -47,159 +68,141 @@ function EmploymentEligbility() {
   }
 
   return (
-      <Box sx={{ width: "100%" }}>
-        <form autoComplete="off" onSubmit={handleSaveInformation}>
+    <Box sx={{ width: "100%" }}>
+      <form autoComplete="off" onSubmit={handleSaveInformation}>
         <Grid
           container
           rowSpacing={1}
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           sx={{ marginTop: 3 }}
-          >
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-              <FormControl
-                sx={{
-                  my: 1,
-                  marginLeft: 3,
-                  width: "90%",
-                  maxWidth: "500px",
-                }}
+        >
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <FormLabel>Are you at least 18yrs of age?</FormLabel>
+              <RadioGroup
+                autoFocus={true}
+                name="18-or-not"
+                value={age18Yrs}
+                onChange={handleChange}
               >
-                <FormLabel>Are you at least 18yrs of age?</FormLabel>
-                <RadioGroup
-                  autoFocus={true}
-                  name="18-or-not"
-                  value={age18Yrs}
-                  onChange={handleChange}
-                >
-                  <FormControlLabel
-                    value="yes"
-                    control={<Radio />}
-                    label="Yes"
-                  />
-                  <FormControlLabel value="no" control={<Radio />} label="No" />
-                </RadioGroup>
-                <FormHelperText>
-                  {"Please select a valid option"}
-                </FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-              <FormControl
-                sx={{
-                  my: 1,
-                  marginLeft: 3,
-                  width: "90%",
-                  maxWidth: "500px",
-                }}
+                <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                <FormControlLabel value="no" control={<Radio />} label="No" />
+              </RadioGroup>
+              <FormHelperText>{age18YrsHelper}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <FormLabel>
+                If hired, can you present evidence of U.S. citizenship or your
+                legal right to live and work in the United States?
+              </FormLabel>
+              <RadioGroup
+                name="us-Citizen-or-not"
+                value={usCitizen}
+                onChange={handleChange}
               >
-                <FormLabel>
-                  If hired, can you present evidence of U.S. citizenship or your
-                  legal right to live and work in the United States?
-                </FormLabel>
-                <RadioGroup
-                  name="us-Citizen-or-not"
-                  value={usCitizen}
-                  onChange={handleChange}
-                >
-                  <FormControlLabel
-                    value="yes"
-                    control={<Radio />}
-                    label="Yes"
-                  />
-                  <FormControlLabel value="no" control={<Radio />} label="No" />
-                </RadioGroup>
-                <FormHelperText>
-                  {"Please select a valid option"}
-                </FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-              <FormControl
-                sx={{
-                  marginTop: 3,
-                  marginBottom: 1,
-                  marginLeft: 3,
-                  width: "90%",
-                  maxWidth: "500px",
-                }}
+                <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                <FormControlLabel value="no" control={<Radio />} label="No" />
+              </RadioGroup>
+              <FormHelperText>{citizenHelper}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                marginTop: 3,
+                marginBottom: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                title="Visa Status:"
+                id="visaStatus"
+                value={visaStatus}
+                autoFocus={true}
+                onChangeHandler={handleChange}
+                label="Visa Status if applicable"
+                type="text"
+                helperMessage={visaStatusHelper}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <FormLabel>Date of Expiration:</FormLabel>
+              <InputField
+                id="dateOfExpiration"
+                value={dateOfExpiration}
+                onChangeHandler={handleChange}
+                placeholder="dd/mm/yyyy"
+                type="date"
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <FormLabel>Have you ever been convicted of a felony?</FormLabel>
+              <RadioGroup
+                name="felonyStatus"
+                value={felonyStatus}
+                onChange={handleChange}
               >
-                <InputField
-                  title="Visa Status"
-                  id="visaStatus"
-                  value={visaStatus}
-                  autoFocus={true}
-                  onChangeHandler={handleChange}
-                  label="Visa Status if applicable"
-                  type="text"
-                  helperMessage={"Please enter your Visa Status"}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-              <FormControl
-                sx={{
-                  my: 1,
-                  marginLeft: 3,
-                  width: "90%",
-                  maxWidth: "500px",
-                }}
-              >
-                <FormLabel>Date of Expiration</FormLabel>
-                <InputField
-               
-                  id="dateOfExpiration"
-                  value={dateOfExpiration}
-                  onChangeHandler={handleChange}
-                  placeholder="dd/mm/yyyy"
-                  type="date"
-                />
-              </FormControl>
-                </Grid><Grid item xs={12} sm={12} md={12} lg={6}>
-              <FormControl
-                sx={{
-                  my: 1,
-                  marginLeft: 3,
-                  width: "90%",
-                  maxWidth: "500px",
-                }}
-              >
-                <FormLabel>Have you ever been convected of a felony</FormLabel>
-                <RadioGroup
-                  name="felonyStatus"
-                  value={felonyStatus}
-                  onChange={handleChange}
-                >
-                  <FormControlLabel
-                    value="yes"
-                    control={<Radio />}
-                    label="Yes"
-                  />
-                  <FormControlLabel value="no" control={<Radio />} label="No" />
-                </RadioGroup>
-                <FormHelperText>
-                  {"Please select a valid option"}
-                </FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-              <FormControl
-                sx={{
-                  marginTop: 3,
-                  marginBottom: 1,
-                  marginLeft: 3,
-                  width: "90%",
-                  maxWidth: "500px",
-                }}
-              >
-                <TextField
-                  title="If yes, please Explain:"
-                  id="felonyExplaination"
-                  value={felonyExplanation}
-                  onChangeHandler={handleChange}
-                  label="If yes, please Explain"
-                  type="text"
-                />
-               </FormControl>
+                <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                <FormControlLabel value="no" control={<Radio />} label="No" />
+              </RadioGroup>
+              <FormHelperText>{felonyHelper}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                marginTop: 3,
+                marginBottom: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <TextField
+                title="If you have been convicted of a felony, please explain:"
+                id="felonyExplaination"
+                value={felonyExplanation}
+                onChangeHandler={handleChange}
+                label="If yes, please Explain"
+                type="text"
+              />
+            </FormControl>
           </Grid>
         </Grid>
       </form>
