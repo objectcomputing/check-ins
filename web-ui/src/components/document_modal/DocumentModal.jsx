@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {
   AppBar,
   Button,
@@ -18,6 +18,8 @@ import HelpIcon from "@mui/icons-material/HelpOutline";
 import OpenLinkIcon from "@mui/icons-material/OpenInNew";
 import {styled} from "@mui/material/styles";
 import "./DocumentModal.css";
+import {AppContext} from "../../context/AppContext";
+import {selectRoles} from "../../context/selectors";
 
 const PREFIX = "DocumentModal";
 const classes = {
@@ -31,6 +33,12 @@ const StyledDialog = styled(Dialog)(() => ({
   }
 }));
 
+const roleSectionMap = {
+  "ADMIN": "Admin Documents",
+  "PDL": "Development Lead Guides",
+  "MEMBER": "Team Member Resources"
+};
+
 const propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func,
@@ -39,29 +47,27 @@ const propTypes = {
     name: PropTypes.string,
     url: PropTypes.string,
     description: PropTypes.string,
-    roles: PropTypes.arrayOf(PropTypes.oneOf(["MEMBER", "PDL", "ADMIN"]))
-  }),
-  initialRole: PropTypes.oneOf(["MEMBER", "PDL", "ADMIN"])
+    roles: PropTypes.arrayOf(PropTypes.object)
+  })
 };
 
 const Transition = React.forwardRef((props, ref) => {
   return <Slide direction="up" ref={ref} {...props}/>
 });
 
-const DocumentModal = ({ open, onClose, onSave, document, initialRole }) => {
+const DocumentModal = ({ open, onClose, onSave, document }) => {
   const defaultName = document?.name || "";
   const defaultUrl = document?.url || "";
   const defaultDescription = document?.description || "";
-  const memberSelected = document?.roles?.includes("MEMBER") || initialRole === "MEMBER";
-  const pdlSelected = document?.roles?.includes("PDL") || initialRole === "PDL";
-  const adminSelected = document?.roles?.includes("ADMIN") || initialRole === "ADMIN";
+
+  const { state } = useContext(AppContext);
+  const allRoles = selectRoles(state);
 
   const [name, setName] = useState(defaultName);
   const [url, setUrl] = useState(defaultUrl);
   const [description, setDescription] = useState(defaultDescription);
-  const [accessForMembers, setAccessForMembers] = useState(memberSelected);
-  const [accessForPdls, setAccessForPdls] = useState(pdlSelected);
-  const [accessForAdmins, setAccessForAdmins] = useState(adminSelected);
+  const [selectedRoles, setSelectedRoles] = useState(new Set());
+  const [defaultRoles, setDefaultRoles] = useState(new Set());
   const [nameError, setNameError] = useState("");
   const [urlError, setUrlError] = useState("");
 
@@ -71,13 +77,23 @@ const DocumentModal = ({ open, onClose, onSave, document, initialRole }) => {
       setName(defaultName);
       setUrl(defaultUrl);
       setDescription(defaultDescription);
+      setSelectedRoles(defaultRoles);
       setNameError("");
       setUrlError("");
-      setAccessForMembers(memberSelected);
-      setAccessForPdls(pdlSelected);
-      setAccessForAdmins(adminSelected);
     }
-  }, [open, defaultName, defaultUrl, defaultDescription, memberSelected, pdlSelected, adminSelected]);
+  }, [open, defaultName, defaultUrl, defaultDescription, defaultRoles]);
+
+  // Select default roles when roles load
+  useEffect(() => {
+    const defaultRoles = allRoles
+      .filter(role => !!document?.roles?.find(docRole => docRole.roleDocumentId.roleId === role.id))
+      .map(role => role.role);
+    setDefaultRoles(new Set(defaultRoles));
+  }, [document, allRoles]);
+
+  useEffect(() => {
+    setSelectedRoles(defaultRoles);
+  }, [defaultRoles]);
 
   const onSaveClick = () => {
     if (!name.trim() || !url.trim()) {
@@ -87,7 +103,6 @@ const DocumentModal = ({ open, onClose, onSave, document, initialRole }) => {
       if (!url.trim()) {
         setUrlError("Document URL must not be blank");
       }
-
       return;
     }
 
@@ -100,31 +115,13 @@ const DocumentModal = ({ open, onClose, onSave, document, initialRole }) => {
       return;
     }
 
-    const selectedRoles = [];
-    if (accessForMembers) {
-      selectedRoles.push("MEMBER");
-    }
-    if (accessForPdls) {
-      selectedRoles.push("PDL");
-    }
-    if (accessForAdmins) {
-      selectedRoles.push("ADMIN");
-    }
-    const newDocument = {
+    const documentInfo = {
       name: name,
       url: sanitizedUrl,
       description: description,
       roles: selectedRoles
     };
-
-    if (document) {
-      onSave({
-        ...document,
-        ...newDocument
-      });
-    } else {
-      onSave(newDocument);
-    }
+    onSave(documentInfo);
   }
 
   return (
@@ -181,13 +178,19 @@ const DocumentModal = ({ open, onClose, onSave, document, initialRole }) => {
             }}
             error={!!urlError}
             helperText={urlError}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton edge="end">
-                  <OpenLinkIcon/>
-                </IconButton>
-              </InputAdornment>
-            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip arrow title="Open in New Tab">
+                    <IconButton onClick={() => {
+                      window.open(url.toString(), "_blank");
+                    }} edge="end" style={{ marginRight: 0 }}>
+                      <OpenLinkIcon/>
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              )
+            }}
           />
           <TextField
             label="Description (optional)"
@@ -208,30 +211,26 @@ const DocumentModal = ({ open, onClose, onSave, document, initialRole }) => {
           </div>
           <FormControl fullWidth>
             <FormGroup>
-              <FormControlLabel
-                label="Team Member Resources"
-                control={
-                  <Checkbox
-                    checked={accessForMembers}
-                    onChange={(event) => setAccessForMembers(event.target.checked)}
-                  />}
-              />
-              <FormControlLabel
-                label="Development Lead Guides"
-                control={
-                  <Checkbox
-                    checked={accessForPdls}
-                    onChange={(event) => setAccessForPdls(event.target.checked)}
-                  />}
-              />
-              <FormControlLabel
-                label="Admin Documents"
-                control={
-                  <Checkbox
-                    checked={accessForAdmins}
-                    onChange={(event) => setAccessForAdmins(event.target.checked)}
-                  />}
-              />
+              {allRoles.map(role => (
+                <FormControlLabel
+                  key={role.id}
+                  label={roleSectionMap[role.role]}
+                  control={
+                    <Checkbox
+                      checked={selectedRoles.has(role.role)}
+                      onChange={(event) => {
+                        const selected = new Set(selectedRoles);
+                        if (event.target.checked) {
+                          selected.add(role.role);
+                        } else {
+                          selected.delete(role.role);
+                        }
+                        setSelectedRoles(selected);
+                      }}
+                    />
+                  }
+                />
+              ))}
             </FormGroup>
           </FormControl>
         </div>
