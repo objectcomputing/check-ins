@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Box, OutlinedInput, ToggleButton, createTheme, ThemeProvider, Grid } from "@mui/material";
+import { Button, Box, OutlinedInput, ToggleButton, Grid } from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import "./EquipmentPage.css";
@@ -13,14 +13,6 @@ const equipmentList = [
   { id: "e4", name: "Headphones", isClicked: false },
   { id: "e5", name: "HDMI Cable", isClicked: false },
 ];
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1666b6',
-    }
-  }
-});
 
 const EquipmentPage = () => {
   const [currentOS, setCurrentOS] = useState("windows");
@@ -78,6 +70,7 @@ const EquipmentPage = () => {
       <h2 style={{ marginTop: '3rem' }}>Please select your computer accessories:</h2>
       <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
         <Grid item xs={12}>
+
           <ButtonGroup
             sx={{
               gap: 6,
@@ -125,7 +118,7 @@ const EquipmentPage = () => {
         autoComplete="off"
       >
         <h2>Please list any other equipment you would need:</h2>
-        <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
+        <Grid container justifyContent="center" alignItems="center" direction="row" item xs={12}>
           <Grid item xs={8}>
             <OutlinedInput
               fullWidth
