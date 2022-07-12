@@ -65,6 +65,7 @@ function RightSidebar({
           borderRight: 1,
           borderColor: "divider",
           backgroundColor: "#dfdfdf",
+          width: "300px",
           color: "#000",
           "& .Mui-selected": {
             color: "#1666b6 !important",
@@ -82,6 +83,20 @@ function RightSidebar({
           },
         }}
       >
+        <Tab
+          disabled
+          sx={{
+            alignItems: "flex-start",
+            color: "#000",
+            paddingRight: "0px !important",
+          }}
+          label={
+            <div className="sidebar_logo" style={{ display: "flex", justifyContent: "center" }}>
+              <img src="img\ocicube-white.png" alt="Object Computing, Inc." style={{ width: "30%"}}/>
+            </div>
+          }
+
+        />
         {data &&
           data.map((menuItem, i) => {
             return (
@@ -89,7 +104,7 @@ function RightSidebar({
                 disabled={!menuItem.visited}
                 sx={{
                   color: "#000",
-                  width: "300px !important",
+                  width: "50vh !important",
                   paddingRight: "0px !important",
                 }}
                 key={menuItem.index}
@@ -97,6 +112,8 @@ function RightSidebar({
                   <div className="sidebar__item">
                     <div className="sidebar__check">
                       <Checkbox
+                        align='left'
+                        disabled
                         checked={menuItem.completed}
                         {...label}
                         sx={{
@@ -109,7 +126,7 @@ function RightSidebar({
                     </div>
 
                     <div className="sidebar__title">
-                      <p> {menuItem.name}</p>
+                      <p> {menuItem.index + 1}{')'} {menuItem.name}</p>
                     </div>
                   </div>
                 }
@@ -122,6 +139,7 @@ function RightSidebar({
         data.map((menuItem, i) => {
           return (
             <TabPanel
+              align="center"
               value={currentPageIndex}
               index={menuItem.index}
               key={menuItem.index}
