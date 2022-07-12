@@ -1,6 +1,6 @@
 import getDocuments from "./signrequest_documents";
 
-function simulateAsyncCall(request) {
+function simulateAsyncCall() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const user = getDocuments();
@@ -14,10 +14,9 @@ function simulateAsyncCall(request) {
 }
 
 describe("Mock API call", () => {
-  it("returns a 400 bad request status if the request is invalid", () => {
+  it("returns a 400 bad request status if the request is invalid", async () => {
     const mockApiCall = simulateAsyncCall();
-    return mockApiCall.then((response) => {
+    const response = await mockApiCall;
       expect(response.status).toBe(200);
-    });
   });
 });

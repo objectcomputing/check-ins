@@ -24,7 +24,7 @@ const DocumentIndicator = (props) => {
         {documentArr.map((e) => (
           <p key={e.uuid}>
             {e.name + " is "}
-            {e.status === "si" || e.status === "si"
+            {e.status === "sd" || e.status === "si"
               ? "signed"
               : "not signed yet"}
           </p>
