@@ -30,14 +30,14 @@ function EmploymentEligbility() {
   const [felonyHelper, setFelonyHelper] = useState(
     "Please select a valid option"
   );
+  const [felonyExplanationHelper, setFelonyExplanationHelper] = useState("");
+
+  const [felonyExplanationError, setFelonyExplanationError] = useState(false);
 
   function handleChange(event) {
     const e = event;
     const val = e.target.value;
     const name = e.target.name;
-
-    console.log(val);
-    console.log(name);
 
     if (name === "18-or-not") {
       setAge18Yrs(val);
@@ -59,12 +59,21 @@ function EmploymentEligbility() {
       setFelonyHelper("");
     } else if (name === "felonyExplaination") {
       setFelonyExplanation(val);
+      if (felonyStatus === "yes" && val.length === 0) {
+        setFelonyExplanationError(true);
+        setFelonyExplanationHelper(
+          "Since you selected yes in the previous question please explain"
+        );
+      } else {
+        setFelonyExplanationError(false);
+        setFelonyExplanationHelper("");
+      }
     }
   }
 
   function handleSaveInformation(e) {
     e.preventDefault();
-    console.log("TODO: Submit data to backend!");
+    //console.log("TODO: Submit data to backend!");
   }
 
   return (
@@ -198,7 +207,9 @@ function EmploymentEligbility() {
                 title="If you have been convicted of a felony, please explain:"
                 id="felonyExplaination"
                 value={felonyExplanation}
+                error={felonyExplanationError}
                 onChangeHandler={handleChange}
+                helperMessage={felonyExplanationHelper}
                 label="If yes, please Explain"
                 type="text"
               />

@@ -27,7 +27,6 @@ function PersonalInformation() {
   const [middleInitalHelper, setMiddleInitalHelper] = useState("");
   const [secondaryPhoneNumHelper, setSecondaryPhoneNumHelper] = useState("");
   const [ssnHelper, setSSNHelper] = useState("");
-
   const [currentAddressHelper, setCurrentAddressHelper] = useState("");
   const [permanentAddressHelper, setPermanentAddressHelper] = useState("");
 
@@ -38,21 +37,15 @@ function PersonalInformation() {
   const [phoneNumError, setPhoneNumError] = useState(false);
   const [secondaryPhoneNumError, setSecondaryPhoneNumError] = useState(false);
   const [ssnError, setSSNError] = useState(false);
-
   const [currentAddressError, setCurrentAddressError] = useState(false);
   const [permanentAddressError, setPermanentAddressError] = useState(false);
-
 
   function handleChange(event) {
     const e = event;
     const val = e.target.value;
     const name = e.target.name;
 
-    console.log(val);
-    console.log(name);
-
     // Event handler for the fields
-
     if (name === "firstName") {
       setFirstName(val);
       if (val.length >= 2) {

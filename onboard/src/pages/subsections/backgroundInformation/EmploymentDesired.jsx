@@ -19,6 +19,8 @@ function EmploymentDesired() {
   const [nonCompeteStatus, setNonCompeteStatus] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
 
+  const [positionHelper, setPositionHelper] = useState("Please enter the position you are applying for");
+  const [desiredSalaryHelper, setDesiredSalaryHelper] = useState("Please enter in your desired salary");
   const [nonCompeteStatusHelper, setNonCompeteStatusHelper] = useState(
     "Please select a valid option"
   );
@@ -31,20 +33,39 @@ function EmploymentDesired() {
     "Please select a valid option"
   );
 
+  const [positionError, setPositionError] = useState(false)
+  const [desiredSalaryError, setDesiredSalaryError] = useState(false);
+  const [expirationDateError, setExpirationDateError] = useState(false);
+  
   function handleChange(event) {
     const e = event;
     const val = e.target.value;
     const name = e.target.name;
 
-    console.log(val);
-    console.log(name);
-
     if (name === "position") {
       setPosition(val);
+      if (val.length > 0)
+      {
+        setPositionHelper("");
+        setPositionError(false);
+      }
+      else {
+        setPositionHelper("Please enter the position you are applying for")
+        setPositionError(true);
+      }
     } else if (name === "startDate") {
       setStartDate(val);
     } else if (name === "desiredSalary") {
       setDesiredSalary(val);
+      if (val.length > 0)
+      {
+        setDesiredSalaryHelper("");
+        setDesiredSalaryError(false);
+      }
+      else {
+        setDesiredSalaryHelper("Please enter in your desired salary");
+        setDesiredSalaryError(true);
+      }
     } else if (name === "contactCurrentEmployer") {
       setContactCurrentEmployer(val);
       setContactCurrentEmployerHelper("");
@@ -59,6 +80,14 @@ function EmploymentDesired() {
       setNonCompeteStatusHelper("");
     } else if (name === "expirationDate") {
       setExpirationDate(val);
+      if (nonCompeteStatus === "yes" && val.length === 0)
+      {
+        setExpirationDateError(true);
+      }
+      else
+      {
+        setExpirationDateError(false);
+        }
     }
   }
 
@@ -91,7 +120,9 @@ function EmploymentDesired() {
                 id="position"
                 value={position}
                 autoFocus={true}
+                error={positionError}
                 onChangeHandler={handleChange}
+                helperMessage={positionHelper}
                 label="For what position are you applying for?"
                 type="text"
               />
@@ -130,6 +161,8 @@ function EmploymentDesired() {
                 title="What is your desired salary?"
                 id="desiredSalary"
                 value={desiredSalary}
+                error={desiredSalaryError}
+                helperMessage={desiredSalaryHelper}
                 onChangeHandler={handleChange}
                 label="What is your desired salary?"
                 type="text"
@@ -238,6 +271,7 @@ function EmploymentDesired() {
               <InputField
                 id="expirationDate"
                 value={expirationDate}
+                error={expirationDateError}
                 onChangeHandler={handleChange}
                 placeholder="dd/mm/yyyy"
                 type="date"
