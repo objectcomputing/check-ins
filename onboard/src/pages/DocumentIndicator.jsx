@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import getDocuments from "../api/signrequest_documents.js";
 
-const DocumentIndicator = () => {
+const DocumentIndicator = (props) => {
   const [documentArr, setDocumentArr] = useState([]);
 
   useEffect(() => {
     async function getData() {
-      let res = await getDocuments();
+      let res = await props.documentRequest;
       let document;
       if (res && res.payload) {
         document =
@@ -25,7 +24,7 @@ const DocumentIndicator = () => {
         {documentArr.map((e) => (
           <p key={e.uuid}>
             {e.name + " is "}
-            {e.status === "sd" || e.status === "si"
+            {e.status === "si" || e.status === "si"
               ? "signed"
               : "not signed yet"}
           </p>
