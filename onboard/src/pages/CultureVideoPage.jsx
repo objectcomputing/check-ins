@@ -5,9 +5,6 @@ function CultureVideoPage(props) {
   return (
     <div>
       <center>
-        <h2>At OCI We Care</h2>
-      </center>
-      <center>
         <iframe
           align="center"
           min-width="480"

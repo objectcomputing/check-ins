@@ -37,9 +37,9 @@ const EquipmentPage = () => {
   };
 
   return (
-    <div>
-
-      <h2 style={{ marginTop: '3rem' }}>Please select your computer preference:</h2>
+    <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
+      <Grid item xs={8}>
+      <h2 style={{ marginTop: '1rem' }}>Please select your computer preference:</h2>
       <ThemeProvider theme={theme}>
         <ToggleButtonGroup
           size="medium"
@@ -77,7 +77,7 @@ const EquipmentPage = () => {
 
       <h2 style={{ marginTop: '3rem' }}>Please select your computer accessories:</h2>
       <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
-        <Grid item xs={8}>
+        <Grid item xs={12}>
           <ButtonGroup
             sx={{
               gap: 6,
@@ -137,7 +137,8 @@ const EquipmentPage = () => {
           </Grid>
         </Grid>
       </Box>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

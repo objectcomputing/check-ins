@@ -91,11 +91,17 @@ function RightSidebar({
             paddingRight: "0px !important",
           }}
           label={
-            <div className="sidebar_logo" style={{ display: "flex", justifyContent: "center" }}>
-              <img src="img\ocicube-white.png" alt="Object Computing, Inc." style={{ width: "30%"}}/>
+            <div
+              className="sidebar_logo"
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              <img
+                src="img\ocicube-white.png"
+                alt="Object Computing, Inc."
+                style={{ width: "30%" }}
+              />
             </div>
           }
-
         />
         {data &&
           data.map((menuItem, i) => {
@@ -112,7 +118,7 @@ function RightSidebar({
                   <div className="sidebar__item">
                     <div className="sidebar__check">
                       <Checkbox
-                        align='left'
+                        align="left"
                         disabled
                         checked={menuItem.completed}
                         {...label}
@@ -126,7 +132,11 @@ function RightSidebar({
                     </div>
 
                     <div className="sidebar__title">
-                      <p> {menuItem.index + 1}{')'} {menuItem.name}</p>
+                      <p>
+                        {" "}
+                        {menuItem.index + 1}
+                        {")"} {menuItem.name}
+                      </p>
                     </div>
                   </div>
                 }
@@ -147,8 +157,10 @@ function RightSidebar({
             >
               <div className="wrapTabPane">
                 <div className="tabInterior">
-                  <h2>{menuItem.title}</h2>
-                  {menuItem.child}
+                  <div className="titleSection">
+                    <h1>{menuItem.title}</h1>
+                  </div>
+                  <div className="bodySection">{menuItem.child}</div>
                 </div>
               </div>
               <Footer handleNextButton={handleNextButton} />
