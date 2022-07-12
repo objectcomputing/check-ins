@@ -65,7 +65,7 @@ const EquipmentPage = () => {
       </ToggleButtonGroup>
 
       <h2 style={{ marginTop: '3rem' }}>Please select your computer accessories:</h2>
-      <Grid container justifyContent="center" alignitems="center" direction="row" item xs={12}>
+      <Grid container justifyContent="center" alignItems="center" direction="row" item xs={12}>
         <Grid item xs={8}>
           <ButtonGroup
             sx={{
