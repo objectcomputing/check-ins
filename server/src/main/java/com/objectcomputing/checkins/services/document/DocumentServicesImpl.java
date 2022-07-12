@@ -3,6 +3,8 @@ package com.objectcomputing.checkins.services.document;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.document.role_document.RoleDocument;
+import com.objectcomputing.checkins.services.document.role_document.RoleDocumentRepository;
 import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotNull;
@@ -13,9 +15,12 @@ import java.util.UUID;
 public class DocumentServicesImpl implements DocumentServices {
 
     private final DocumentRepository documentRepository;
+    private final RoleDocumentRepository roleDocumentRepository;
 
-    public DocumentServicesImpl(DocumentRepository documentRepository) {
+    public DocumentServicesImpl(DocumentRepository documentRepository,
+                                RoleDocumentRepository roleDocumentRepository) {
         this.documentRepository = documentRepository;
+        this.roleDocumentRepository = roleDocumentRepository;
     }
 
     @Override
@@ -55,6 +60,8 @@ public class DocumentServicesImpl implements DocumentServices {
 
     @Override
     public void delete(@NotNull UUID id) {
+        List<RoleDocument> relatedRoleDocuments = roleDocumentRepository.findRoleDocumentsByDocumentId(id);
+        relatedRoleDocuments.forEach(roleDocument -> roleDocumentRepository.deleteById(roleDocument.getRoleDocumentId()));
         documentRepository.deleteById(id);
     }
 
