@@ -39,10 +39,19 @@ export const updateDocument = async (document, cookie) => {
   });
 };
 
+export const deleteDocument = async (documentId, cookie) => {
+  return resolve({
+    method: "delete",
+    url: `${documentUrl}/${documentId}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+};
+
 export const addRoleAccessToDocument = async (roleId, documentId, cookie) => {
   return resolve({
     method: "post",
-    url: `${roleDocumentsUrl}/${roleId}/${documentId}`,
+    url: roleDocumentsUrl,
     data: {
       roleId: roleId,
       documentId: documentId
