@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import getDocuments from "../api/signrequest_documents.js";
 
-const DocumentIndicator = (props) => {
+const DocumentIndicator = () => {
   const [documentArr, setDocumentArr] = useState([]);
 
   useEffect(() => {
     async function getData() {
-      let res = await props.documentRequest;
+      let res = await getDocuments();
       let document;
       if (res && res.payload) {
         document =
