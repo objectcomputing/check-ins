@@ -14,10 +14,7 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class RoleDocumentServicesImpl implements RoleDocumentServices {
@@ -39,9 +36,7 @@ public class RoleDocumentServicesImpl implements RoleDocumentServices {
     }
 
     @Override
-    public RoleDocument save(RoleDocument roleDocument) {
-        UUID roleId = roleDocument.getRoleDocumentId().getRoleId();
-        UUID documentId = roleDocument.getRoleDocumentId().getDocumentId();
+    public RoleDocument saveByIds(UUID roleId, UUID documentId) {
 
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You are not allowed to do this operation");
@@ -55,14 +50,20 @@ public class RoleDocumentServicesImpl implements RoleDocumentServices {
             throw new BadArgException(String.format("Cannot save role document with nonexistent document id %s", documentId));
         }
 
-        if (roleDocumentRepository.findById(roleDocument.getRoleDocumentId()).isPresent()) {
-            throw new AlreadyExistsException(String.format("There already exists a role document with %s", roleDocument.getRoleDocumentId()));
+        RoleDocumentId newRoleDocumentId = new RoleDocumentId(roleId, documentId);
+        if (roleDocumentRepository.findById(newRoleDocumentId).isPresent()) {
+            throw new AlreadyExistsException(String.format("There already exists a role document with %s", newRoleDocumentId));
         }
 
-        if (roleDocument.getDocumentNumber() < 1) {
-            throw new BadArgException("Document number must be at least 1");
+        // Set the order of the document to be last (one greater than the current highest)
+        int documentNumber = 1;
+        List<DocumentResponseDTO> relatedDocuments = roleDocumentRepository.findDocumentsByRoleId(roleId);
+        if (!relatedDocuments.isEmpty()) {
+            DocumentResponseDTO maxDocument = relatedDocuments.stream().max(Comparator.comparingInt(DocumentResponseDTO::getDocumentNumber)).get();
+            documentNumber = maxDocument.getDocumentNumber() + 1;
         }
 
+        RoleDocument roleDocument = new RoleDocument(roleId, documentId, documentNumber);
         return roleDocumentRepository.save(roleDocument);
     }
 

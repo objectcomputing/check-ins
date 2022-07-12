@@ -40,8 +40,8 @@ public class RoleDocumentController {
 
     @Post
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<RoleDocument>> create(@Body @Valid RoleDocument roleDocument) {
-        return Mono.fromCallable(() -> roleDocumentServices.save(roleDocument))
+    public Mono<HttpResponse<RoleDocument>> create(UUID roleId, UUID documentId) {
+        return Mono.fromCallable(() -> roleDocumentServices.saveByIds(roleId, documentId))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(roleDoc -> (HttpResponse<RoleDocument>) HttpResponse.created(roleDoc))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));

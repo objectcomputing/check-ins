@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface RoleDocumentServices {
 
-    RoleDocument save(RoleDocument roleDocument);
+    RoleDocument saveByIds(UUID roleId, UUID documentId);
 
     RoleDocument getById(@NotNull RoleDocumentId roleDocumentId);
 
