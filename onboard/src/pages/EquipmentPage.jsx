@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Box, OutlinedInput, ToggleButton, createTheme, ThemeProvider, Grid } from "@mui/material";
+import { Button, Box, OutlinedInput, ToggleButton, Grid } from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import "./EquipmentPage.css";
@@ -13,14 +13,6 @@ const equipmentList = [
   { id: "e4", name: "Headphones", isClicked: false },
   { id: "e5", name: "HDMI Cable", isClicked: false },
 ];
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1666b6',
-    }
-  }
-});
 
 const EquipmentPage = () => {
   const [currentOS, setCurrentOS] = useState("windows");
@@ -38,45 +30,42 @@ const EquipmentPage = () => {
 
   return (
     <div>
-
       <h2 style={{ marginTop: '3rem' }}>Please select your computer preference:</h2>
-      <ThemeProvider theme={theme}>
-        <ToggleButtonGroup
-          size="medium"
-          value={currentOS}
-          exclusive
-          onChange={handleClick}
-          sx={{
-            gap: 15,
-            "& .Mui-selected": {
-              backgroundColor: "#1666b6 !important", color: "white !important",
-              fontWeight: "bold"
-            }, "& .MuiToggleButtonGroup-grouped:not(:first-of-type)": {
-              marginLeft: '0px !important',
-              borderLeft: '1px solid rgba(25, 118, 210, 0.5) !important'
-            }
-          }}
-        >
-          <ToggleButton value="windows" sx={{
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
-          }}>Windows</ToggleButton>
-          <ToggleButton value="mac" sx={{
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
-          }}>Mac</ToggleButton>
-          <ToggleButton value="linux" sx={{
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
-          }}>Linux</ToggleButton>
-        </ToggleButtonGroup>
-      </ThemeProvider>
+      <ToggleButtonGroup
+        size="medium"
+        value={currentOS}
+        exclusive
+        onChange={handleClick}
+        sx={{
+          gap: 15,
+          "& .Mui-selected": {
+            backgroundColor: "#1666b6 !important", color: "white !important",
+            fontWeight: "bold"
+          }, "& .MuiToggleButtonGroup-grouped:not(:first-of-type)": {
+            marginLeft: '0px !important',
+            borderLeft: '1px solid rgba(25, 118, 210, 0.5) !important'
+          }
+        }}
+      >
+        <ToggleButton value="windows" sx={{
+          transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+          border: '1px solid rgba(25, 118, 210, 0.5)',
+          color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
+        }}>Windows</ToggleButton>
+        <ToggleButton value="mac" sx={{
+          transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+          border: '1px solid rgba(25, 118, 210, 0.5)',
+          color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
+        }}>Mac</ToggleButton>
+        <ToggleButton value="linux" sx={{
+          transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+          border: '1px solid rgba(25, 118, 210, 0.5)',
+          color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
+        }}>Linux</ToggleButton>
+      </ToggleButtonGroup>
 
       <h2 style={{ marginTop: '3rem' }}>Please select your computer accessories:</h2>
-      <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
+      <Grid container justifyContent="center" alignItems="center" direction="row" item xs={12}>
         <Grid item xs={8}>
           <ButtonGroup
             sx={{
@@ -125,7 +114,7 @@ const EquipmentPage = () => {
         autoComplete="off"
       >
         <h2>Please list any other equipment you would need:</h2>
-        <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
+        <Grid container justifyContent="center" alignItems="center" direction="row" item xs={12}>
           <Grid item xs={8}>
             <OutlinedInput
               fullWidth
