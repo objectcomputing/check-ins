@@ -7,7 +7,7 @@ import List from '@mui/material/List';
 
 import GuideLink from "./GuideLink";
 import PropTypes from "prop-types";
-import {createDocument, getDocumentsByRole} from "../../api/document";
+import {getDocumentsByRole} from "../../api/document";
 import {selectRoles} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import {UPDATE_TOAST} from "../../context/actions";
@@ -16,7 +16,6 @@ import {
   IconButton, Typography
 } from "@mui/material";
 import "./GuidesPanel.css";
-import DocumentModal from "../document_modal/DocumentModal";
 
 const propTypes = {
   role: PropTypes.oneOf(["ADMIN", "PDL", "MEMBER"]).isRequired,
@@ -28,7 +27,6 @@ const GuidesPanel = ({ role, title }) => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf } = state;
   const [guides, setGuides] = useState([]);
-  const [guideDialogOpen, setGuideDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const allRoles = selectRoles(state);
 
@@ -63,45 +61,8 @@ const GuidesPanel = ({ role, title }) => {
     });
   }, [allRoles, loadDocuments]);
 
-  const saveDocument = async (document) => {
-    console.log(document);
-    setGuideDialogOpen(false);
-
-    const docRes = await createDocument(document, csrf);
-    const data = docRes && docRes.payload && docRes.payload.data && !docRes.error ? docRes.payload.data : null;
-
-    let toastMessage;
-    if (data) {
-      toastMessage = "Saved new document";
-    } else {
-      toastMessage = "Failed to create document";
-    }
-
-    dispatch({
-      type: UPDATE_TOAST,
-      payload: {
-        severity: data ? "success" : "error",
-        toast: toastMessage
-      }
-    });
-
-    if (data) {
-      loadDocuments().then(documents => {
-        if (documents) {
-          setGuides(documents);
-        }
-      });
-    }
-  }
-
   return (
     <>
-      <DocumentModal
-        open={guideDialogOpen}
-        onClose={() => setGuideDialogOpen(false)}
-        onSave={saveDocument}
-        initialRole={role}
-      />
       <Card>
         <CardHeader
           avatar={<PdfIcon/>}
@@ -111,7 +72,6 @@ const GuidesPanel = ({ role, title }) => {
           action={
             <IconButton onClick={(event) => {
               event.stopPropagation();
-              setGuideDialogOpen(true);
             }}>
               <AddIcon/>
             </IconButton>
