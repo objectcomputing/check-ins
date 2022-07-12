@@ -1,7 +1,6 @@
 import React from "react";
 import "./DocumentSigningPage.css";
 import DocumentIndicator from "./DocumentIndicator";
-import getDocuments from "../api/signrequest_documents.js";
 
 const DocumentSigningPage = () => {
   return (
