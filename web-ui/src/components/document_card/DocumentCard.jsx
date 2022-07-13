@@ -20,7 +20,7 @@ import DocumentModal from "../document_modal/DocumentModal";
 import PropTypes from "prop-types";
 import {AppContext} from "../../context/AppContext";
 import {selectRoles} from "../../context/selectors";
-import {deleteDocument} from "../../api/document";
+import {addRoleAccessToDocument, deleteDocument, removeRoleAccessToDocument, updateDocument} from "../../api/document";
 import {UPDATE_TOAST} from "../../context/actions";
 
 const propTypes = {
@@ -30,10 +30,11 @@ const propTypes = {
     description: PropTypes.string,
     url: PropTypes.string.isRequired,
     roles: PropTypes.arrayOf(PropTypes.object).isRequired
-  }).isRequired
+  }).isRequired,
+  onChange: PropTypes.func
 };
 
-const DocumentCard = ({ document }) => {
+const DocumentCard = ({ document, onChange }) => {
 
   const { state, dispatch } = useContext(AppContext);
   const { csrf } = state;
@@ -60,14 +61,63 @@ const DocumentCard = ({ document }) => {
     return roles.join(", ");
   }
 
-  const updateThisDocument = async () => {
+  const updateThisDocument = async (documentInfo) => {
+    setEditDialogOpen(false);
+    const res = await updateDocument({
+      id: document.id,
+      name: documentInfo.name,
+      description: documentInfo.description,
+      url: documentInfo.url
+    });
 
+    const docData = res && res.payload && res.payload.data && !res.error ? res.payload.data : null;
+    if (docData) {
+      for (let role of allRoles) {
+        const previouslySelected = document.roles.find(r => r.roleDocumentId.roleId === role.id);
+        const currentlySelected = documentInfo.roles.has(role.role);
+        if (!previouslySelected && currentlySelected) {
+          const roleRes = await addRoleAccessToDocument(role.id, docData.id, csrf);
+          const roleData = roleRes && roleRes.payload && roleRes.payload.data && !roleRes.error ? roleRes.payload.data : null;
+          if (!roleData) {
+            dispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: "error",
+                toast: `Failed to give access to role ${role.role}`
+              }
+            });
+          }
+        } else if (previouslySelected && !currentlySelected) {
+          const roleRes = await removeRoleAccessToDocument(role.id, docData.id, csrf);
+          const success = roleRes && roleRes.payload && roleRes.payload.status === 204 && !roleRes.error;
+          if (!success) {
+            dispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: "error",
+                toast: `Failed to remove access from role ${role.role}`
+              }
+            });
+          }
+        }
+      }
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to update document"
+        }
+      });
+    }
+    onChange();
   }
 
   const deleteThisDocument = async () => {
     setDeleteDialogOpen(false);
     const res = await deleteDocument(document.id, csrf);
     if (res?.payload?.status === 204 && !res.error) {
+      onChange();
       dispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -91,7 +141,7 @@ const DocumentCard = ({ document }) => {
       <DocumentModal
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
-        onSave={() => setEditDialogOpen(false)}
+        onSave={updateThisDocument}
         document={document}
       />
       <Dialog open={deleteDialogOpen}>

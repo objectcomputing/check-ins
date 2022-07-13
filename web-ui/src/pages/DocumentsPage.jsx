@@ -160,7 +160,18 @@ const DocumentsPage = () => {
           )
           : (
             filteredDocuments.map(document => (
-              <DocumentCard key={document.id} document={document}/>
+              <DocumentCard
+                key={document.id}
+                document={document}
+                onChange={() => {
+                  loadDocuments().then(data => {
+                    if (data) {
+                      data.sort((a, b) => a.name.localeCompare(b.name));
+                      setDocuments(data);
+                    }
+                  });
+                }}
+              />
             ))
           )
         }
