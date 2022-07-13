@@ -9,6 +9,7 @@ import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Singleton
@@ -51,7 +52,10 @@ public class DocumentServicesImpl implements DocumentServices {
             throw new BadArgException(String.format("Cannot find document to update with id %s", document.getId()));
         } else if (document.getName().isBlank()) {
             throw new BadArgException("Document name must not be blank");
-        } else if (documentRepository.findByName(document.getName()).isPresent()) {
+        }
+
+        Optional<Document> documentWithSameName = documentRepository.findByName(document.getName());
+        if (documentWithSameName.isPresent() && !documentWithSameName.get().getId().equals(document.getId())) {
             throw new AlreadyExistsException(String.format("A document with the name '%s' already exists", document.getName()));
         }
 
