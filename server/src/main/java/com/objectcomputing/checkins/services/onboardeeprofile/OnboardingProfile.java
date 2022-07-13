@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity //specifies that the class is an entity and is mapped to a database table
@@ -120,7 +121,7 @@ public class OnboardingProfile {
     private String personalEmail;
 
 
-    public OnboardingProfile(String firstName, String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber, String personalEmail) {
+    public OnboardingProfile(String firstName, @Nullable String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, @Nullable String secondPhoneNumber, String personalEmail) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -132,7 +133,7 @@ public class OnboardingProfile {
         this.secondPhoneNumber = secondPhoneNumber;
         this.personalEmail = personalEmail;
     }
-    public OnboardingProfile(UUID id, String firstName, String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber, String personalEmail) {
+    public OnboardingProfile(UUID id, String firstName, @Nullable String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber,@Nullable String secondPhoneNumber, String personalEmail) {
         this.id= id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -164,11 +165,12 @@ public class OnboardingProfile {
         this.firstName = firstName;
     }
 
+    @Nullable
     public String getMiddleName() {
         return middleName;
     }
 
-    public void setMiddleName(String middleName) {
+    public void setMiddleName(@Nullable String middleName) {
         this.middleName = middleName;
     }
 
@@ -236,6 +238,29 @@ public class OnboardingProfile {
 
     public void setPersonalEmail(String personalEmail) {
         this.personalEmail = personalEmail;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OnboardingProfile that = (OnboardingProfile) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(middleName, that.middleName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(socialSecurityNumber, that.socialSecurityNumber) &&
+                Objects.equals(birthDate, that.birthDate) &&
+                Objects.equals(currentAddress, that.currentAddress) &&
+                Objects.equals(previousAddress, that.previousAddress) &&
+                Objects.equals(phoneNumber, that.phoneNumber) &&
+                Objects.equals(secondPhoneNumber, that.secondPhoneNumber) &&
+                Objects.equals(personalEmail, that.personalEmail);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail);
     }
 }
 

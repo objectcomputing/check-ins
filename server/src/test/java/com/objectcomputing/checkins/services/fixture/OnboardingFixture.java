@@ -1,10 +1,12 @@
 package com.objectcomputing.checkins.services.fixture;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
+import io.micronaut.core.annotation.Nullable;
+
 import java.time.LocalDate;
 
 public interface OnboardingFixture extends RepositoryFixture {
     default OnboardingProfile createADefaultOnboardeeProfile() {
-        return getOnboardingProfileRepository().save(new OnboardingProfile("Bill", null, "Charles",
+        return getOnboardingProfileRepository().save(new OnboardingProfile("Bill", null , "Charles",
                 "100935009", LocalDate.now(),"5000 Main Street" , "4351 Wyoming St.",
                 "9193330000", "8322933423", "bill.Charles@yahoo.com"));
         }

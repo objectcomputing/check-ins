@@ -39,7 +39,7 @@ public class OnboardingProfileTestUtil {
 
     public static OnboardingProfile mkOnboarding_Profile(String seed) {
         return new OnboardingProfile("TestFirstName" + seed,
-                null,
+                "TestMiddleName" + seed,
                 "TestLastName" + seed,
                 "TestSocialSecurityNumber" + seed,
                 LocalDate.of(2000, 12, 25),

@@ -83,9 +83,9 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
                 final HttpRequest<Object> request = HttpRequest.
                         GET(String.format("/%s", onboardingProfile.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
-                final HttpResponse<OnboardingProfile> response = client.toBlocking().exchange(request, OnboardingProfile.class);
+                final HttpResponse<OnboardingProfileDTO> response = client.toBlocking().exchange(request, OnboardingProfileDTO.class);
 
-                assertEquals(onboardingProfile, response.body());
+                assertProfilesEqual(onboardingProfile, response.body());
                 assertEquals(HttpStatus.OK, response.getStatus());
         }
 
