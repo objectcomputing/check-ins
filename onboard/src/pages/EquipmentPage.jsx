@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Button, Box, OutlinedInput, ToggleButton, createTheme, ThemeProvider, Grid } from "@mui/material";
+import {
+  Button,
+  Box,
+  OutlinedInput,
+  ToggleButton,
+  createTheme,
+  ThemeProvider,
+  Grid,
+} from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import "./EquipmentPage.css";
@@ -17,9 +25,9 @@ const equipmentList = [
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1666b6',
-    }
-  }
+      main: "#1666b6",
+    },
+  },
 });
 
 const EquipmentPage = () => {
@@ -37,10 +45,17 @@ const EquipmentPage = () => {
   };
 
   return (
-    <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
+    <Grid
+      container
+      justifyContent="center"
+      alingItems="center"
+      direction="row"
+      xs={12}
+    >
       <Grid item xs={8}>
-      <h2 style={{ marginTop: '1rem' }}>Please select your computer preference:</h2>
-      <ThemeProvider theme={theme}>
+        <h2 style={{ marginTop: "1rem" }}>
+          Please select your computer preference:
+        </h2>
         <ToggleButtonGroup
           size="medium"
           value={currentOS}
@@ -49,94 +64,141 @@ const EquipmentPage = () => {
           sx={{
             gap: 15,
             "& .Mui-selected": {
-              backgroundColor: "#1666b6 !important", color: "white !important",
-              fontWeight: "bold"
-            }, "& .MuiToggleButtonGroup-grouped:not(:first-of-type)": {
-              marginLeft: '0px !important',
-              borderLeft: '1px solid rgba(25, 118, 210, 0.5) !important'
-            }
+              backgroundColor: "#1666b6 !important",
+              color: "white !important",
+              fontWeight: "bold",
+            },
+            "& .MuiToggleButtonGroup-grouped:not(:first-of-type)": {
+              marginLeft: "0px !important",
+              borderLeft: "1px solid rgba(25, 118, 210, 0.5) !important",
+            },
           }}
         >
-          <ToggleButton value="windows" sx={{
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
-          }}>Windows</ToggleButton>
-          <ToggleButton value="mac" sx={{
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
-          }}>Mac</ToggleButton>
-          <ToggleButton value="linux" sx={{
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
-          }}>Linux</ToggleButton>
-        </ToggleButtonGroup>
-      </ThemeProvider>
-
-      <h2 style={{ marginTop: '3rem' }}>Please select your computer accessories:</h2>
-      <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
-        <Grid item xs={12}>
-          <ButtonGroup
+          <ToggleButton
+            value="windows"
             sx={{
-              gap: 6,
-              "& .Mui-selected": {
-                backgroundColor: "#1666b6 !important", color: "white !important",
-                fontWeight: "bold"
-              }, "& .MuiButtonGroup-grouped:not(:last-of-type)": {
-                marginLeft: '0px !important',
-                border: '1px solid rgba(25, 118, 210, 0.5) !important'
-              }, ".MuiButtonGroup-grouped:hover": {
-                textDecoration: 'none',
-                backgroundColor: 'rgba(0, 0, 0, 0.04)'
-              }
+              transition:
+                "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+              border: "1px solid rgba(25, 118, 210, 0.5)",
+              color: "rgb(25, 118, 210)",
+              borderRadius: "4px !important",
+              boxShadow:
+                "0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)",
             }}
           >
-            {currentAccessory &&
-              currentAccessory.map((item, i) => {
-                return (
-                  <Button
-                    className={item.isClicked ? "Mui-selected" : ""}
-                    variant="contained"
-                    key={item.id}
-                    onClick={() => handleAccessoryClick(i)}
-                    sx={{
-                      transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-                      border: '1px solid rgba(25, 118, 210, 0.5)',
-                      color: 'rgb(25, 118, 210)', borderRadius: '4px !important', backgroundColor: 'transparent'
-                    }}
-                  >
-                    {item.name}
-                  </Button>
-                );
-              })}
-          </ButtonGroup>
-        </Grid>
-      </Grid>
+            Windows
+          </ToggleButton>
+          <ToggleButton
+            value="mac"
+            sx={{
+              transition:
+                "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+              border: "1px solid rgba(25, 118, 210, 0.5)",
+              color: "rgb(25, 118, 210)",
+              borderRadius: "4px !important",
+              boxShadow:
+                "0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)",
+            }}
+          >
+            Mac
+          </ToggleButton>
+          <ToggleButton
+            value="linux"
+            sx={{
+              transition:
+                "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+              border: "1px solid rgba(25, 118, 210, 0.5)",
+              color: "rgb(25, 118, 210)",
+              borderRadius: "4px !important",
+              boxShadow:
+                "0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)",
+            }}
+          >
+            Linux
+          </ToggleButton>
+        </ToggleButtonGroup>
 
-
-      <Box
-        component="form"
-        sx={{
-          marginTop: '3rem'
-        }}
-        noValidate
-        autoComplete="off"
-      >
-        <h2>Please list any other equipment you would need:</h2>
-        <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
-          <Grid item xs={8}>
-            <OutlinedInput
-              fullWidth
-              multiline
-              maxRows={8}
-              minRows={3}
-              inputProps={ariaLabel}
-            />
+        <h2 style={{ marginTop: "3rem" }}>
+          Please select your computer accessories:
+        </h2>
+        <Grid
+          container
+          justifyContent="center"
+          alingItems="center"
+          direction="row"
+          xs={12}
+        >
+          <Grid item xs={12}>
+            <ButtonGroup
+              sx={{
+                gap: 6,
+                "& .Mui-selected": {
+                  backgroundColor: "#1666b6 !important",
+                  color: "white !important",
+                  fontWeight: "bold",
+                },
+                "& .MuiButtonGroup-grouped:not(:last-of-type)": {
+                  marginLeft: "0px !important",
+                  border: "1px solid rgba(25, 118, 210, 0.5) !important",
+                },
+                ".MuiButtonGroup-grouped:hover": {
+                  textDecoration: "none",
+                  backgroundColor: "rgba(0, 0, 0, 0.04)",
+                },
+              }}
+            >
+              {currentAccessory &&
+                currentAccessory.map((item, i) => {
+                  return (
+                    <Button
+                      className={item.isClicked ? "Mui-selected" : ""}
+                      variant="contained"
+                      key={item.id}
+                      onClick={() => handleAccessoryClick(i)}
+                      sx={{
+                        transition:
+                          "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+                        border: "1px solid rgba(25, 118, 210, 0.5)",
+                        color: "rgb(25, 118, 210)",
+                        borderRadius: "4px !important",
+                        backgroundColor: "transparent",
+                      }}
+                    >
+                      {item.name}
+                    </Button>
+                  );
+                })}
+            </ButtonGroup>
           </Grid>
         </Grid>
-      </Box>
+
+        <Box
+          component="form"
+          sx={{
+            marginTop: "3rem",
+          }}
+          noValidate
+          autoComplete="off"
+        >
+          <h2>Please list any other equipment you would need:</h2>
+          <Grid
+            container
+            justifyContent="center"
+            alingItems="center"
+            direction="row"
+            xs={12}
+          >
+            <Grid item xs={8}>
+              <OutlinedInput
+                fullWidth
+                multiline
+                maxRows={8}
+                minRows={3}
+                inputProps={ariaLabel}
+              />
+            </Grid>
+          </Grid>
+        </Box>
       </Grid>
     </Grid>
   );
