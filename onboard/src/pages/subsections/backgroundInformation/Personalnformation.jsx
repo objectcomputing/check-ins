@@ -20,7 +20,7 @@ function PersonalInformation() {
   const [currentAddress, setCurrentAddress] = useState("");
   const [permanentAddress, setPermanentAddress] = useState("");
 
-  //const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
+  const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
   const [firstNameHelper, setFirstNameHelper] = useState("");
   const [lastNameHelper, setLastNameHelper] = useState("");
   const [phoneNumHelper, setPhoneNumHelper] = useState("");
@@ -30,7 +30,7 @@ function PersonalInformation() {
   const [currentAddressHelper, setCurrentAddressHelper] = useState("");
   const [permanentAddressHelper, setPermanentAddressHelper] = useState("");
 
-  //const [dateOfBirthError, setDateOfBirthError] = useState(false);
+  const [dateOfBirthError, setDateOfBirthError] = useState(false);
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [middleInitalError, setMiddleInitalError] = useState(false);
@@ -39,6 +39,24 @@ function PersonalInformation() {
   const [ssnError, setSSNError] = useState(false);
   const [currentAddressError, setCurrentAddressError] = useState(false);
   const [permanentAddressError, setPermanentAddressError] = useState(false);
+
+  function isDateValid(date) {
+    let dateValid = false;
+    let currentDate = new Date();
+    let inputDate = new Date(date);
+    let currentYear = currentDate.getFullYear();
+    let inputYear = inputDate.getFullYear();
+
+    let isInputYearCurrentOrFuture = inputYear >= currentYear;
+    let olderThan100 = currentYear - 100 > inputYear;
+    dateValid = !isInputYearCurrentOrFuture && !olderThan100;
+
+    if (dateValid) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   function handleChange(event) {
     const e = event;
@@ -84,6 +102,13 @@ function PersonalInformation() {
       }
     } else if (name === "dob") {
       setDateOfBirth(val);
+      if (isDateValid(val)) {
+        setDateOfBirthError(false);
+        setDateOfBirthHelper("");
+      } else {
+        setDateOfBirthError(true);
+        setDateOfBirthHelper("Plase enter in a valid date");
+      }
     } else if (name === "currentAddress") {
       setCurrentAddress(val);
       if (validAddress.test(val)) {
@@ -239,19 +264,16 @@ function PersonalInformation() {
                 maxWidth: "500px",
               }}
             >
-            
               <InputField
                 autocomplete="date-of-birth"
                 title="Date of Birth:"
                 id="dob"
                 value={dateOfBirth}
-                //error={dateOfBirthError}
+                error={dateOfBirthError}
                 onChangeHandler={handleChange}
-                // placeholder="dd/mm/yyyy"
                 type="date"
-                //helperMessage={dateOfBirthHelper}
-              /> 
-              
+                helperMessage={dateOfBirthHelper}
+              />
             </FormControl>
           </Grid>
 

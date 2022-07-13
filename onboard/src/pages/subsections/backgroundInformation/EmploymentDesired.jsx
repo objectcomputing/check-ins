@@ -19,8 +19,12 @@ function EmploymentDesired() {
   const [nonCompeteStatus, setNonCompeteStatus] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
 
-  const [positionHelper, setPositionHelper] = useState("Please enter the position you are applying for");
-  const [desiredSalaryHelper, setDesiredSalaryHelper] = useState("Please enter in your desired salary");
+  const [positionHelper, setPositionHelper] = useState(
+    "Please enter the position you are applying for"
+  );
+  const [desiredSalaryHelper, setDesiredSalaryHelper] = useState(
+    "Please enter in your desired salary"
+  );
   const [nonCompeteStatusHelper, setNonCompeteStatusHelper] = useState(
     "Please select a valid option"
   );
@@ -32,11 +36,25 @@ function EmploymentDesired() {
   const [employedAtOCIHelper, setEmployedAtOCIHelper] = useState(
     "Please select a valid option"
   );
+  const [startDateHelper, setStartDateHelper] = useState();
+  const [expirationDateHelper, setExpirationDateHelper] = useState();
 
-  const [positionError, setPositionError] = useState(false)
+  const [positionError, setPositionError] = useState(false);
   const [desiredSalaryError, setDesiredSalaryError] = useState(false);
   const [expirationDateError, setExpirationDateError] = useState(false);
-  
+  const [startDateError, setStartDateError] = useState(false);
+
+  function isDateInTheFuture(startDate) {
+    let currentDate = new Date();
+    let inputDate = new Date(startDate);
+
+    if (currentDate < inputDate) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   function handleChange(event) {
     const e = event;
     const val = e.target.value;
@@ -44,25 +62,28 @@ function EmploymentDesired() {
 
     if (name === "position") {
       setPosition(val);
-      if (val.length > 0)
-      {
+      if (val.length > 0) {
         setPositionHelper("");
         setPositionError(false);
-      }
-      else {
-        setPositionHelper("Please enter the position you are applying for")
+      } else {
+        setPositionHelper("Please enter the position you are applying for");
         setPositionError(true);
       }
     } else if (name === "startDate") {
       setStartDate(val);
+      if (isDateInTheFuture(startDate)) {
+        setStartDateError(false);
+        setStartDateHelper("");
+      } else {
+        setStartDateError(true);
+        setStartDateHelper("Please enter in a valid start date");
+      }
     } else if (name === "desiredSalary") {
       setDesiredSalary(val);
-      if (val.length > 0)
-      {
+      if (val.length > 0) {
         setDesiredSalaryHelper("");
         setDesiredSalaryError(false);
-      }
-      else {
+      } else {
         setDesiredSalaryHelper("Please enter in your desired salary");
         setDesiredSalaryError(true);
       }
@@ -80,20 +101,19 @@ function EmploymentDesired() {
       setNonCompeteStatusHelper("");
     } else if (name === "expirationDate") {
       setExpirationDate(val);
-      if (nonCompeteStatus === "yes" && val.length === 0)
-      {
+      if (nonCompeteStatus === "yes" && !isDateInTheFuture(expirationDate)) {
         setExpirationDateError(true);
-      }
-      else
-      {
+        setExpirationDateHelper("Please enter in a valid date");
+      } else {
         setExpirationDateError(false);
-        }
+        setExpirationDateHelper("");
+      }
     }
   }
 
   function handleSaveInformation(e) {
     e.preventDefault();
-    console.log("TODO: Submit data to backend!");
+    // console.log("TODO: Submit data to backend!");
   }
 
   return (
@@ -139,10 +159,11 @@ function EmploymentDesired() {
             >
               <FormLabel>When would you like to start?</FormLabel>
               <InputField
-                id="dob"
+                id="startDate"
                 value={startDate}
+                error={startDateError}
+                helperMessage={startDateHelper}
                 onChangeHandler={handleChange}
-                placeholder="dd/mm/yyyy"
                 type="date"
               />
             </FormControl>
@@ -271,6 +292,7 @@ function EmploymentDesired() {
               <InputField
                 id="expirationDate"
                 value={expirationDate}
+                helperMessage={expirationDateHelper}
                 error={expirationDateError}
                 onChangeHandler={handleChange}
                 placeholder="dd/mm/yyyy"

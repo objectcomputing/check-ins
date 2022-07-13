@@ -34,10 +34,13 @@ function EmploymentEligbility() {
 
   const [felonyExplanationError, setFelonyExplanationError] = useState(false);
 
+ 
+
   function handleChange(event) {
     const e = event;
     const val = e.target.value;
     const name = e.target.name;
+    console.log(val);
 
     if (name === "18-or-not") {
       setAge18Yrs(val);
@@ -141,6 +144,18 @@ function EmploymentEligbility() {
                 maxWidth: "500px",
               }}
             >
+              {/* <InputLabel>Visa Status</InputLabel>
+              <Select
+                title="Visa Status:"
+                name="visaStatus"
+                label="Visa Status if applicable"
+                value={visaStatus}
+                onChangeHandler={handleChange}
+              >
+                <MenuItem value={1}> H1</MenuItem>
+                <MenuItem value={2}> H2</MenuItem>
+              </Select> */}
+
               <InputField
                 title="Visa Status:"
                 id="visaStatus"
