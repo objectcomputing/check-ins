@@ -14,6 +14,7 @@ const menuList = [
   {
     index: 0,
     name: "Culture Video",
+    title: "At OCI We Care",
     completed: false,
     child: <CultureVideoPage />,
     visited: true,
@@ -21,6 +22,7 @@ const menuList = [
   {
     index: 1,
     name: "About You Survey",
+    title: "Please enter in your background information:",
     completed: false,
     child: <BackgroundInformationPage />,
     visited: false,
@@ -28,6 +30,7 @@ const menuList = [
   {
     index: 2,
     name: "Work Preference",
+    title: "Where would you PREFER to work?",
     completed: false,
     child: <WorkingLocationPage />,
     visited: false,
@@ -35,6 +38,7 @@ const menuList = [
   {
     index: 3,
     name: "Computer and Accessories",
+    title: "Computer and Accessories",
     completed: false,
     child: <EquipmentPage />,
     visited: false,
@@ -42,6 +46,7 @@ const menuList = [
   {
     index: 4,
     name: "Internal Document Signing",
+    title: "Internal Document Signing",
     completed: false,
     child: <DocumentSigningPage />,
     visited: false,
@@ -49,6 +54,7 @@ const menuList = [
   {
     index: 5,
     name: "Check-Ins Skills",
+    title: "You Know About Us Now! Tell Us About You!",
     completed: false,
     child: <IntroductionSurveyPage />,
     visited: false,
@@ -56,6 +62,7 @@ const menuList = [
   {
     index: 6,
     name: "Cake!",
+    title: "Congratulations!",
     completed: false,
     child: <Congratulations />,
     visited: false,
@@ -76,6 +83,7 @@ function WebPortal() {
         return {
           index: currentPageIndex,
           name: obj.name,
+          title: obj.title,
           completed: true,
           child: obj.child,
           visited: true,
@@ -84,6 +92,7 @@ function WebPortal() {
         return {
           index: currentPageIndex + 1,
           name: obj.name,
+          title: obj.title,
           completed: obj.completed,
           child: obj.child,
           visited: true,

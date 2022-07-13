@@ -4,22 +4,13 @@ exports[`renders correctly 1`] = `
 .emotion-0 {
   margin: 0;
   font-family: "Roboto","Helvetica","Arial",sans-serif;
-  font-weight: 300;
-  font-size: 6rem;
-  line-height: 1.167;
-  letter-spacing: -0.01562em;
-}
-
-.emotion-1 {
-  margin: 0;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-weight: 400;
   font-size: 1rem;
   line-height: 1.5;
   letter-spacing: 0.00938em;
 }
 
-.emotion-2 {
+.emotion-1 {
   margin: 0;
   font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-weight: 400;
@@ -31,19 +22,14 @@ exports[`renders correctly 1`] = `
 
 <div>
   <center>
-    <h1
-      className="MuiTypography-root MuiTypography-h1 emotion-0"
-    >
-      Congratulations!
-    </h1>
     <div
-      className="MuiTypography-root MuiTypography-body1 emotion-1"
+      className="MuiTypography-root MuiTypography-body1 emotion-0"
       dispay="block"
     >
       <br />
       Thank you for completing your job application.
       <p
-        className="MuiTypography-root MuiTypography-body1 emotion-2"
+        className="MuiTypography-root MuiTypography-body1 emotion-1"
       >
         You will be receiving information about accessing your ADP account soon from HR via email.
       </p>
