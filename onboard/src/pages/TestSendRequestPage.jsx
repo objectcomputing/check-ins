@@ -31,41 +31,40 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import axios from "axios";
-import getSignRequest from "../api/signRequest.js";
+//import getSignRequest from "../api/signRequest.js";
 
 //const request = require("superagent");
-const baseUrl = "https://ocitest.signrequest.com/api/v1";
+//const baseUrl = "https://ocitest.signrequest.com/api/v1";
 
-const data = {
-  document:
-    "https://ocitest.signrequest.com/api/v1/documents/152408ef-4b71-40a4-9416-92011a443450/",
-  signers: [
-    {
-      email: "lib@objectcomputing.com",
-    },
-  ],
-  from_email: "librandon0706@gmail.com",
-  message: "Please sign this document",
-};
+// const data = {
+//   document:
+//     "https://ocitest.signrequest.com/api/v1/documents/152408ef-4b71-40a4-9416-92011a443450/",
+//   signers: [
+//     {
+//       email: "lib@objectcomputing.com",
+//     },
+//   ],
+//   from_email: "librandon0706@gmail.com",
+//   message: "Please sign this document",
+// };
 
 const SendingRequestPage = () => {
-  const [document, setDocument] = useState({});
+  // const [document, setDocument] = useState({});
 
-  useEffect(() => {
-    async function getData() {
-      let res = await getSignRequest();
-      let document;
-      if (res && res.payload) {
-        document =
-          res?.payload?.data && !res.error ? res.payload.data : undefined;
-        if (document) {
-          setDocument(document);
-        }
-      }
-    }
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   async function getData() {
+  //     let res = await getSignRequest();
+  //     let document;
+  //     if (res && res.payload) {
+  //       document =
+  //         res?.payload?.data && !res.error ? res.payload.data : undefined;
+  //       if (document) {
+  //         setDocument(document);
+  //       }
+  //     }
+  //   }
+  //   getData();
+  // }, []);
 
   return (
     <div>
