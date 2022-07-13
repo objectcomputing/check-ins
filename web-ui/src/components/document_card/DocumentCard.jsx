@@ -101,6 +101,13 @@ const DocumentCard = ({ document, onChange }) => {
           }
         }
       }
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: "Saved changes to document"
+        }
+      });
     } else {
       dispatch({
         type: UPDATE_TOAST,

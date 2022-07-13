@@ -15,6 +15,7 @@ import DocumentModal from "../components/document_modal/DocumentModal";
 import DocumentCard from "../components/document_card/DocumentCard";
 import {UPDATE_TOAST} from "../context/actions";
 import {selectRoles} from "../context/selectors";
+import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
 
 const Root = styled("div")({
   margin: "4rem"
@@ -29,6 +30,7 @@ const DocumentsPage = () => {
   const [filteredDocuments, setFilteredDocuments] = useState([]);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const loadDocuments = useCallback(async () => {
     const res = await getAllDocuments(csrf);
@@ -57,6 +59,7 @@ const DocumentsPage = () => {
       if (data) {
         data.sort((a, b) => a.name.localeCompare(b.name));
         setDocuments(data);
+        setLoading(false);
       }
     });
   }, [loadDocuments, csrf]);
@@ -152,27 +155,35 @@ const DocumentsPage = () => {
         </div>
       </div>
       <div className="documents-list">
-        {filteredDocuments.length === 0
+        {loading
           ? (
-            <div className="empty-documents-message">
-              {documents.length === 0 ? "No documents exist" : `No documents matching "${searchText}"`}
-            </div>
+            Array.from({ length: 10 }).map((_, index) => (
+              <SkeletonLoader key={index} type="documents"/>
+            ))
           )
           : (
-            filteredDocuments.map(document => (
-              <DocumentCard
-                key={document.id}
-                document={document}
-                onChange={() => {
-                  loadDocuments().then(data => {
-                    if (data) {
-                      data.sort((a, b) => a.name.localeCompare(b.name));
-                      setDocuments(data);
-                    }
-                  });
-                }}
-              />
-            ))
+            filteredDocuments.length === 0
+            ? (
+              <div className="empty-documents-message">
+                {documents.length === 0 ? "No documents exist" : `No documents matching "${searchText}"`}
+              </div>
+            )
+            : (
+              filteredDocuments.map(document => (
+                <DocumentCard
+                  key={document.id}
+                  document={document}
+                  onChange={() => {
+                    loadDocuments().then(data => {
+                      if (data) {
+                        data.sort((a, b) => a.name.localeCompare(b.name));
+                        setDocuments(data);
+                      }
+                    });
+                  }}
+                />
+              ))
+            )
           )
         }
       </div>
