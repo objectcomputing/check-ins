@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class OnboardingProfile {
     @Schema(description = "first name of the new employee")
     private String firstName;
 
-    @NotBlank //the below field, middleName, is not allowed to be blank on submission
+
     @Column(name = "middlename")
     @ColumnTransformer(
             read = "pgp_sym_decrypt(middleName::bytea,'${aes.key}')",
@@ -110,8 +111,17 @@ public class OnboardingProfile {
     @Schema(description = " 2nd phone # of the new employee")
     private String secondPhoneNumber;
 
+    @NotNull
+    @Column(name="personalemail")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(personalEmail::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Schema(description = "onboardee's personal email.", required = true)
+    private String personalEmail;
 
-    public OnboardingProfile(String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber) {
+
+    public OnboardingProfile(String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber, String personalEmail) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -121,8 +131,9 @@ public class OnboardingProfile {
         this.previousAddress = previousAddress;
         this.phoneNumber = phoneNumber;
         this.secondPhoneNumber = secondPhoneNumber;
+        this.personalEmail = personalEmail;
     }
-    public OnboardingProfile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber) {
+    public OnboardingProfile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber, String personalEmail) {
         this.id= id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -133,9 +144,14 @@ public class OnboardingProfile {
         this.previousAddress = previousAddress;
         this.phoneNumber = phoneNumber;
         this.secondPhoneNumber = secondPhoneNumber;
+        this.personalEmail= personalEmail;
     }
 
     public OnboardingProfile(){}
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public UUID getId() {
         return id;
@@ -213,6 +229,14 @@ public class OnboardingProfile {
 
     public void setSecondPhoneNumber(@Nullable String secondPhoneNumber) {
         this.secondPhoneNumber = secondPhoneNumber;
+    }
+
+    public String getPersonalEmail() {
+        return personalEmail;
+    }
+
+    public void setPersonalEmail(String personalEmail) {
+        this.personalEmail = personalEmail;
     }
 }
 

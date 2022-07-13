@@ -7,55 +7,62 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.UUID;
 
 @Introspected
-public class OnboardingProfileResponseDTO {
+public class OnboardingProfileDTO {
 
     @NotNull
     @Schema(description = "id of the onboardee this profile entry is associated with", required = true)
     private UUID id;
 
     @NotBlank //the below field,firstName, is not allowed to be blank on submission
-    @Schema(description = "first name of the new employee")
+    @Schema(description = "first name of the new onboardee")
     private String firstName;
 
     @NotBlank //the below field, middleName, is not allowed to be blank on submission
-    @Schema(description = "middle name of the new employee")
+    @Schema(description = "middle name of the new onboardee")
     private String middleName;
 
     @NotBlank
-    @Schema(description = "last name of the new employee")
+    @Schema(description = "last name of the new onboardee")
     private String lastName;
 
     @NotBlank
-    @Schema(description = "social Security # of the new employee")
+    @Schema(description = "social Security # of the new onboardee")
     private Integer socialSecurityNumber;
 
     @NotBlank
-    @Schema(description = "birthdate of the new employee")
+    @Schema(description = "birthdate of the new onboardee")
     private LocalDate birthDate;
 
     @NotBlank
-    @Schema(description = "currentAddress of the new employee")
+    @Schema(description = "currentAddress of the new onboardee")
     private String currentAddress;
 
     @Nullable
-    @Schema(description = "previousAddress of the new employee")
+    @Schema(description = "previousAddress of the new onboardee")
     private String previousAddress;
 
     @NotBlank
-    @Schema(description = "phone # of the new employee")
+    @Schema(description = "phone # of the new onboardee")
     private String phoneNumber;
 
     @Nullable
-    @Schema(description = "2nd phone # of the new employee")
+    @Schema(description = "2nd phone # of the new onboardee")
     private String secondPhoneNumber;
+
+    @NotBlank
+    @Schema(description = "Personal email of onboardee")
+    private String personalEmail;
 
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -132,9 +139,17 @@ public class OnboardingProfileResponseDTO {
         this.secondPhoneNumber = secondPhoneNumber;
     }
 
+    public String getPersonalEmail() {
+        return personalEmail;
+    }
+
+    public void setPersonalEmail(String personalEmail) {
+        this.personalEmail = personalEmail;
+    }
+
     @Override
     public String toString() {
-        return "OnboardingProfileResponseDTO{" +
+        return "OnboardingProfileDTO{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
@@ -142,9 +157,10 @@ public class OnboardingProfileResponseDTO {
                 ", socialSecurityNumber='" + socialSecurityNumber + '\'' +
                 ", birthDate='" + birthDate +
                 ", currentAddress='" + currentAddress + '\'' +
-                ", previousAddress=" + previousAddress +
+                ", previousAddress=" + previousAddress +  '\'' +
                 ", phoneNumber='" + phoneNumber +
                 ", secondPhoneNumber='" + secondPhoneNumber +
+                ", personalEmail=" + personalEmail +  '\'' +
                 '}';
     }
 }

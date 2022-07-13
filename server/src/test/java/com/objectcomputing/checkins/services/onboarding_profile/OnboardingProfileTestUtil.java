@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.onboarding_profile;
 
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileCreateDTO;
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileResponseDTO;
+import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileDTO;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
 
 import java.time.LocalDate;
@@ -20,12 +20,13 @@ public class OnboardingProfileTestUtil {
         dto.setPreviousAddress("TestPreviousAddress");
         dto.setPhoneNumber("TestPhoneNumber");
         dto.setPhoneNumber("TestSecondPhoneNumber");
+        dto.setPersonalEmail("TestPersonalEmail");
         return dto;
     }
 
     //ResponseDTO here is used as an UpdateDTO
-    public static OnboardingProfileResponseDTO mkUpdateOnboardeeProfileDTO() {
-        OnboardingProfileResponseDTO dto = new OnboardingProfileResponseDTO();
+    public static OnboardingProfileDTO mkUpdateOnboardeeProfileDTO() {
+        OnboardingProfileDTO dto = new OnboardingProfileDTO();
         dto.setFirstName("TestFirstName");
         dto.setLastName("TestLastName");
         dto.setSocialSecurityNumber(500505000);
@@ -34,6 +35,7 @@ public class OnboardingProfileTestUtil {
         dto.setPreviousAddress("TestPreviousAddress");
         dto.setPhoneNumber("TestPhoneNumber");
         dto.setPhoneNumber("TestSecondPhoneNumber");
+        dto.setPersonalEmail("TestPersonalEmail");
         return dto;
     }
 
@@ -46,7 +48,8 @@ public class OnboardingProfileTestUtil {
                 "TestAddress" + seed,
                 "TestPreviousAddress" + seed,
                 "TestPhoneNumber" + seed,
-                "TestSecondPhoneNumber" + seed
+                "TestSecondPhoneNumber" + seed,
+                "TestPersonalEmail" + seed
                 );
     }
 
@@ -54,7 +57,7 @@ public class OnboardingProfileTestUtil {
         return mkOnboarding_Profile("");
     }
 
-    public static void assertProfilesEqual(OnboardingProfile entity, OnboardingProfileResponseDTO dto) {
+    public static void assertProfilesEqual(OnboardingProfile entity, OnboardingProfileDTO dto) {
         assertEquals(entity.getFirstName(), dto.getFirstName());
         assertEquals(entity.getMiddleName(), dto.getMiddleName());
         assertEquals(entity.getLastName(), dto.getLastName());
@@ -64,9 +67,10 @@ public class OnboardingProfileTestUtil {
         assertEquals(entity.getPreviousAddress(), dto.getPreviousAddress());
         assertEquals(entity.getPhoneNumber(), dto.getPhoneNumber());
         assertEquals(entity.getSecondPhoneNumber(), dto.getSecondPhoneNumber());
+        assertEquals(entity.getPersonalEmail(), dto.getPersonalEmail());
     }
 
-    public static void assertProfilesEqual(OnboardingProfileCreateDTO entity, OnboardingProfileResponseDTO dto) {
+    public static void assertProfilesEqual(OnboardingProfileCreateDTO entity, OnboardingProfileDTO dto) {
         assertEquals(entity.getFirstName(), dto.getFirstName());
         assertEquals(entity.getMiddleName(), dto.getMiddleName());
         assertEquals(entity.getLastName(), dto.getLastName());
@@ -76,5 +80,25 @@ public class OnboardingProfileTestUtil {
         assertEquals(entity.getPreviousAddress(), dto.getPreviousAddress());
         assertEquals(entity.getPhoneNumber(), dto.getPhoneNumber());
         assertEquals(entity.getSecondPhoneNumber(), dto.getSecondPhoneNumber());
+        assertEquals(entity.getPersonalEmail(), dto.getPersonalEmail());
     }
+
+    public static OnboardingProfileDTO toDto(OnboardingProfile entity)
+   {
+       OnboardingProfileDTO dto= new OnboardingProfileDTO();
+
+       dto.setFirstName(entity.getFirstName());
+       dto.setMiddleName(entity.getMiddleName());
+       dto.setLastName(entity.getLastName());
+       dto.setSocialSecurityNumber(entity.getSocialSecurityNumber());
+       dto.setBirthDate(entity.getBirthDate());
+       dto.setCurrentAddress(entity.getCurrentAddress());
+       dto.setPreviousAddress(entity.getPreviousAddress());
+       dto.setPhoneNumber(entity.getPhoneNumber());
+       dto.setSecondPhoneNumber(entity.getSecondPhoneNumber());
+       dto.setPersonalEmail(entity.getPersonalEmail());
+
+       return dto;
+    }
+
 }
