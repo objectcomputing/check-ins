@@ -3,11 +3,9 @@ package com.objectcomputing.checkins.services.onboarding_profile;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileCreateDTO;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileDTO;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
-
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class OnboardingProfileTestUtil {
 
     public static OnboardingProfileCreateDTO mkCreateOnboardeeProfileDTO() {
@@ -100,5 +98,4 @@ public class OnboardingProfileTestUtil {
 
        return dto;
     }
-
 }

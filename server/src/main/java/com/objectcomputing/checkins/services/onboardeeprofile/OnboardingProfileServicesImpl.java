@@ -10,10 +10,8 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 
-
 @Singleton
 public class OnboardingProfileServicesImpl implements OnboardingProfileServices  {
-
 
     private final OnboardingProfileRepository onboardingProfileRepository;
     public OnboardingProfileServicesImpl(OnboardingProfileRepository onboardingProfileRepository) {
@@ -28,8 +26,6 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
         }
         return onboardingProfile.get();
     }
-
-
     @Override
     public Set<OnboardingProfile> findByValues (
             @Nullable UUID id,
@@ -73,11 +69,8 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
         return searchResult.get(0);
     }
 
-
     @Override
     public List<OnboardingProfile> findAll() {
         return onboardingProfileRepository.findAll();
     }
-
-
 }

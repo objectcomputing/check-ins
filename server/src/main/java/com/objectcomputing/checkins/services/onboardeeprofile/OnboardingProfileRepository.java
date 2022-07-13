@@ -13,8 +13,6 @@ import java.util.UUID;
 @JdbcRepository (dialect = Dialect.POSTGRES)
 public interface OnboardingProfileRepository extends CrudRepository<OnboardingProfile, UUID> {
 
-
-
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
             "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName," +
@@ -64,5 +62,4 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
             @Nullable String phoneNumber,
             @Nullable String secondPhoneNumber
     );
-
 }

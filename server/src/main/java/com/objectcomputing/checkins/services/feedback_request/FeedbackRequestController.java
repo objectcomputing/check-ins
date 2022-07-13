@@ -119,7 +119,6 @@ public class FeedbackRequestController {
      * @param oldestDate The date that filters out any requests that were made before that date
      * @return list of {@link FeedbackRequestResponseDTO}
      */
-    //
     @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_REQUEST)
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate}")
     public Mono<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {

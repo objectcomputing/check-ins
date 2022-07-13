@@ -52,7 +52,6 @@ public class OnboardingProfileController {
      * @return {@link OnboardingProfileDTO } Returned onboardee profiles
      */
 
-
     @Get()
     public Mono<HttpResponse<List<OnboardingProfileDTO>>> findAll() {
 
@@ -65,7 +64,6 @@ public class OnboardingProfileController {
                             .ok(dtoList);
                 }) .subscribeOn(scheduler);
     }
-
 
     /**
      * Find onboardee profile by id.
@@ -166,13 +164,9 @@ public class OnboardingProfileController {
                 .subscribeOn(scheduler);
     }
 
-
-
-
     protected URI location(UUID id) {
         return URI.create("/onboardee-profiles/" + id);
     }
-
     private OnboardingProfileDTO fromEntity(OnboardingProfile entity) {
         OnboardingProfileDTO dto = new OnboardingProfileDTO();
         dto.setFirstName(entity.getFirstName());
@@ -185,10 +179,8 @@ public class OnboardingProfileController {
         dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setSecondPhoneNumber(entity.getSecondPhoneNumber());
         dto.setPersonalEmail(entity.getPersonalEmail());
-
         return dto;
     }
-
     private OnboardingProfile fromDTO(OnboardingProfileDTO dto) {
         return new OnboardingProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(),
