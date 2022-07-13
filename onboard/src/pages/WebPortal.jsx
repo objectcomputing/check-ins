@@ -8,9 +8,7 @@ import WorkingLocationPage from "./WorkingLocationPage";
 import EquipmentPage from "./EquipmentPage";
 import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
-import SendRequest from "./TestSendRequestPage";
-import EmbedRequest from "./TestEmbeddedSigningPage";
-import { Button, Container } from "@mui/material";
+import { Container } from "@mui/material";
 
 const menuList = [
   {
@@ -67,22 +65,6 @@ const menuList = [
     title: "Congratulations!",
     completed: false,
     child: <Congratulations />,
-    visited: false,
-  },
-  {
-    index: 7,
-    name: "Test Send Sign Request",
-    title: "",
-    completed: false,
-    child: <SendRequest />,
-    visited: false,
-  },
-  {
-    index: 8,
-    name: "Test Embedded Sign Request",
-    title: "",
-    completed: false,
-    child: <EmbedRequest />,
     visited: false,
   },
 ];
@@ -145,28 +127,6 @@ function WebPortal() {
               handleNextButton={submitHandler}
             />
           </div>
-          <Button
-            sx={{
-              "&:hover": {
-                color: "gray",
-                backgroundColor: "lightgray",
-              },
-              maxWidth: 800,
-              fontSize: 40,
-              bgcolor: "lightgreen",
-              color: "white",
-
-              //button positioning
-              zIndex: "modal",
-              position: "absolute",
-              bottom: "15%",
-              right: "20%",
-            }}
-            className="submitButton"
-            onClick={submitHandler}
-          >
-            Next
-          </Button>
         </Container>
       </div>
     </div>
