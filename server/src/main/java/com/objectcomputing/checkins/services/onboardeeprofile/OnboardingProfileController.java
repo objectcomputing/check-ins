@@ -87,19 +87,20 @@ public class OnboardingProfileController {
      *
      * @param id                   {@link UUID} ID of the onboardee
      * @param lastName             {@link String} Find onboardees with the given last name
-     * @param socialSecurityNumber {@link Integer} Find onboardee
+     * @param socialSecurityNumber {@link String} Find onboardee
      * @param birthDate            {@link LocalDate} birth date of the onboardee
-     * @param phoneNumber          {@link Integer} Onboardee's phone number
+     * @param phoneNumber          {@link String} Onboardee's phone number
      * @return {@link List< OnboardingProfileDTO >} List of Onboardees that match the input parameters
      */
     @Get("/{?id,firstName,lastName,socialSecurityNumber,birthDate,phoneNumber}")
     public Mono<HttpResponse<List<OnboardingProfileDTO>>> findByValue(@Nullable UUID id,
                                                                       @Nullable String firstName,
                                                                       @Nullable String lastName,
-                                                                      @Nullable Integer socialSecurityNumber,
+                                                                      @Nullable String socialSecurityNumber,
                                                                       @Nullable LocalDate birthDate,
-                                                                      @Nullable String phoneNumber) {
-        return Mono.fromCallable(() -> onboardingProfileServices.findByValues(id, firstName, lastName, socialSecurityNumber, birthDate, phoneNumber))
+                                                                      @Nullable String phoneNumber,
+                                                                      @Nullable String personalEmail) {
+        return Mono.fromCallable(() -> onboardingProfileServices.findByValues(id, firstName, lastName, socialSecurityNumber, birthDate, phoneNumber, personalEmail))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(Onboarding_profile -> {
                     List<OnboardingProfileDTO> dtoList = Onboarding_profile.stream()

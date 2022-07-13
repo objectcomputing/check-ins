@@ -33,7 +33,7 @@ public class OnboardingProfileCreateDTO {
 
     @NotBlank
     @Schema(description = "social Security # of the new onboardee")
-    private Integer socialSecurityNumber;
+    private String socialSecurityNumber;
 
     @NotBlank
     @Schema(description = "birthdate of the new onboardee")
@@ -83,11 +83,11 @@ public class OnboardingProfileCreateDTO {
         this.lastName = lastName;
     }
 
-    public Integer getSocialSecurityNumber() {
+    public String getSocialSecurityNumber() {
         return socialSecurityNumber;
     }
 
-    public void setSocialSecurityNumber(Integer socialSecurityNumber) {
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
         this.socialSecurityNumber = socialSecurityNumber;
     }
 

@@ -38,7 +38,7 @@ public class OnboardingProfile {
     @Schema(description = "first name of the new employee")
     private String firstName;
 
-
+    @Nullable
     @Column(name = "middlename")
     @ColumnTransformer(
             read = "pgp_sym_decrypt(middleName::bytea,'${aes.key}')",
@@ -63,7 +63,7 @@ public class OnboardingProfile {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "social Security # of the new employee")
-    private Integer socialSecurityNumber;
+    private String socialSecurityNumber;
 
     @NotBlank
     @Column(name = "birthdate")
@@ -86,7 +86,7 @@ public class OnboardingProfile {
     @Nullable
     @Column(name = "previousaddress")
     @ColumnTransformer(
-            read = "pgp_sym_decrypt(reviousAddress::bytea,'${aes.key}')",
+            read = "pgp_sym_decrypt(previousAddress::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "previousAddress of the new employee")
@@ -120,7 +120,7 @@ public class OnboardingProfile {
     private String personalEmail;
 
 
-    public OnboardingProfile(String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber, String personalEmail) {
+    public OnboardingProfile(String firstName, String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber, String personalEmail) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -132,7 +132,7 @@ public class OnboardingProfile {
         this.secondPhoneNumber = secondPhoneNumber;
         this.personalEmail = personalEmail;
     }
-    public OnboardingProfile(UUID id, String firstName, String middleName, String lastName, Integer socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber, String personalEmail) {
+    public OnboardingProfile(UUID id, String firstName, String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, String secondPhoneNumber, String personalEmail) {
         this.id= id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -180,11 +180,11 @@ public class OnboardingProfile {
         this.lastName = lastName;
     }
 
-    public Integer getSocialSecurityNumber() {
+    public String getSocialSecurityNumber() {
         return socialSecurityNumber;
     }
 
-    public void setSocialSecurityNumber(Integer socialSecurityNumber) {
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
         this.socialSecurityNumber = socialSecurityNumber;
     }
 

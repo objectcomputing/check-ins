@@ -12,7 +12,7 @@ public class OnboardingProfileTestUtil {
         OnboardingProfileCreateDTO dto = new OnboardingProfileCreateDTO();
         dto.setFirstName("TestFirstName");
         dto.setLastName("TestLastName");
-        dto.setSocialSecurityNumber(500505000);
+        dto.setSocialSecurityNumber("TestSocialSecurityNumber");
         dto.setBirthDate(LocalDate.of(2000,12,25));
         dto.setCurrentAddress("TestAddress");
         dto.setPreviousAddress("TestPreviousAddress");
@@ -27,7 +27,7 @@ public class OnboardingProfileTestUtil {
         OnboardingProfileDTO dto = new OnboardingProfileDTO();
         dto.setFirstName("TestFirstName");
         dto.setLastName("TestLastName");
-        dto.setSocialSecurityNumber(500505000);
+        dto.setSocialSecurityNumber("TestSocialSecurityNumber");
         dto.setBirthDate(LocalDate.of(2000,12,25));
         dto.setCurrentAddress("TestAddress");
         dto.setPreviousAddress("TestPreviousAddress");
@@ -41,7 +41,7 @@ public class OnboardingProfileTestUtil {
         return new OnboardingProfile("TestFirstName" + seed,
                 null,
                 "TestLastName" + seed,
-                500505000,
+                "TestSocialSecurityNumber" + seed,
                 LocalDate.of(2000, 12, 25),
                 "TestAddress" + seed,
                 "TestPreviousAddress" + seed,

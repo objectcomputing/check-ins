@@ -9,8 +9,8 @@ import java.util.UUID;
 public interface OnboardingProfileServices {
     OnboardingProfile getById(UUID id);
 
-    Set<OnboardingProfile> findByValues (UUID id, String firstName, String lastName, Integer socialSecurityNumber,
-                                         LocalDate birthDate, String phoneNumber);
+    Set<OnboardingProfile> findByValues (UUID id, String firstName, String lastName, String socialSecurityNumber,
+                                         LocalDate birthDate, String phoneNumber, String personalEmail);
 
     OnboardingProfile saveProfile(OnboardingProfile onboardingProfile);
 

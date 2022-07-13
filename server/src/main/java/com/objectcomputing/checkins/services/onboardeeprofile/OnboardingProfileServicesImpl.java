@@ -31,11 +31,12 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
             @Nullable UUID id,
             @Nullable String firstName,
             @Nullable String lastName,
-            @Nullable Integer socialSecurityNumber,
+            @Nullable String socialSecurityNumber,
             @Nullable LocalDate birthDate,
-            @Nullable String phoneNumber) {
+            @Nullable String phoneNumber,
+            @Nullable String personalEmail) {
         HashSet<OnboardingProfile> onboarding_profiles = new HashSet<>(onboardingProfileRepository.search( (nullSafeUUIDToString(id)), firstName, null, lastName,
-                socialSecurityNumber,  birthDate,null, null, phoneNumber, null));
+                socialSecurityNumber,  birthDate,null, null, phoneNumber, null, personalEmail));
 
         return onboarding_profiles;
     }
@@ -62,7 +63,7 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
     @Override
     public OnboardingProfile findByName(String firstName, String lastName) {
         List<OnboardingProfile> searchResult = onboardingProfileRepository.search(null, firstName, null, lastName,
-                null, null, null, null, null, null);
+                null, null, null, null, null, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }

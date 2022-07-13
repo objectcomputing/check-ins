@@ -17,27 +17,29 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
             "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
             "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName," +
             "PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') as lastName," +
-            "PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea),'${aes.key}') as ," +
+            "PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea),'${aes.key}') as socialSecurityNumber," +
             "PGP_SYM_DECRYPT(cast(mp.birthDate as bytea),'${aes.key}') as birthDate," +
             "PGP_SYM_DECRYPT(cast(mp.currentAddress as bytea),'${aes.key}') as currentAddress," +
             "PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') as previousAddress," +
             "PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') as phoneNumber," +
             "PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber," +
+            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail," +
             "FROM \"onboarding_profile\" mp " +
             "WHERE  (:socialSecurityNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea), '${aes.key}') = :socialSecurityNumber) ",
             nativeQuery = true)
-    Optional<OnboardingProfile> findBySocial(@NotNull Integer socialSecurityNumber);
+    Optional<OnboardingProfile> findBySocial(@NotNull String socialSecurityNumber);
     List<OnboardingProfile> findAll();
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
             "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName," +
             "PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') as lastName," +
-            "PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea),'${aes.key}') as ," +
+            "PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea),'${aes.key}') as socialSecurityNumber," +
             "PGP_SYM_DECRYPT(cast(mp.birthDate as bytea),'${aes.key}') as birthDate," +
             "PGP_SYM_DECRYPT(cast(mp.currentAddress as bytea),'${aes.key}') as currentAddress," +
             "PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') as previousAddress," +
             "PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') as phoneNumber," +
             "PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber," +
+            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail," +
             "FROM \"onboarding_profile\" mp " +
             "WHERE  (:socialSecurityNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea), '${aes.key}') = :socialSecurityNumber) " +
             "AND  (:firstName IS NULL OR PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') = :firstName, " +
@@ -48,18 +50,20 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
                     "AND  (:currentAddress IS NULL OR PGP_SYM_DECRYPT(cast(mp.currentAddress as bytea),'${aes.key}') = : currentAddress," +
                     "AND  (:previousAddress IS NULL OR PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') = : previousAddress," +
                     "AND  (:phoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') =: phoneNumber," +
-                    "OR  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber," ,
+                    "AND  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber," +
+                    "OR  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail," ,
             nativeQuery = true)
     List<OnboardingProfile> search(
             @Nullable String id,
             @Nullable String firstName,
             @Nullable String middleName,
             @Nullable String lastName,
-            @Nullable Integer socialSecurityNumber,
+            @Nullable String socialSecurityNumber,
             @Nullable LocalDate birthDate,
             @Nullable String currentAddress,
             @Nullable String previousAddress,
             @Nullable String phoneNumber,
-            @Nullable String secondPhoneNumber
+            @Nullable String secondPhoneNumber,
+            @Nullable String personalEmail
     );
 }
