@@ -8,57 +8,64 @@ import WorkingLocationPage from "./WorkingLocationPage";
 import EquipmentPage from "./EquipmentPage";
 import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
-import { Button, Container } from "@mui/material";
+import { Container } from "@mui/material";
 
 const menuList = [
   {
     index: 0,
     name: "Culture Video",
+    title: "At OCI We Care",
     completed: false,
     child: <CultureVideoPage />,
-    visited: true
+    visited: true,
   },
   {
     index: 1,
     name: "About You Survey",
+    title: "Please enter in your background information:",
     completed: false,
     child: <BackgroundInformationPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 2,
     name: "Work Preference",
+    title: "Where would you PREFER to work?",
     completed: false,
     child: <WorkingLocationPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 3,
     name: "Computer and Accessories",
+    title: "Computer and Accessories",
     completed: false,
     child: <EquipmentPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 4,
     name: "Internal Document Signing",
+    title: "Internal Document Signing",
     completed: false,
     child: <DocumentSigningPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 5,
     name: "Check-Ins Skills",
+    title: "You Know About Us Now! Tell Us About You!",
     completed: false,
     child: <IntroductionSurveyPage />,
-    visited: false
+    visited: false,
   },
   {
     index: 6,
     name: "Cake!",
+    title: "Congratulations!",
     completed: false,
     child: <Congratulations />,
-    visited: false
+    visited: false,
   },
 ];
 
@@ -76,18 +83,19 @@ function WebPortal() {
         return {
           index: currentPageIndex,
           name: obj.name,
+          title: obj.title,
           completed: true,
           child: obj.child,
-          visited: true
+          visited: true,
         };
-      }
-      else if (obj.index === (currentPageIndex + 1)) {
+      } else if (obj.index === currentPageIndex + 1) {
         return {
           index: currentPageIndex + 1,
           name: obj.name,
+          title: obj.title,
           completed: obj.completed,
           child: obj.child,
-          visited: true
+          visited: true,
         };
       }
       return obj;
@@ -116,30 +124,9 @@ function WebPortal() {
               handleChange={handleChange}
               data={data}
               handleChangeSidebar={handleChangeSidebar}
+              handleNextButton={submitHandler}
             />
           </div>
-          <Button
-            sx={{
-              "&:hover": {
-                color: 'gray',
-                backgroundColor: 'lightgray'
-              },
-              maxWidth: 800,
-              fontSize: 40,
-              bgcolor: "lightgreen",
-              color: "white",
-
-              //button positioning 
-              zIndex: "modal",
-              position: "absolute",
-              bottom: "15%",
-              right: "20%"
-            }}
-
-            className="submitButton"
-            onClick={submitHandler}>
-            Next
-          </Button>
         </Container>
       </div>
     </div>

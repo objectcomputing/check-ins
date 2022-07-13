@@ -387,12 +387,12 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
     </h1>
   </center>
   <div
-    class="inputCode"
+    className="inputCode"
   >
     Access Code:
   </div>
   <div
-    class="inputField"
+    className="inputField"
   >
     <div
       className="MuiFormControl-root MuiTextField-root emotion-0"

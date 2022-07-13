@@ -11,9 +11,9 @@ function AccessCodePage() {
         <h1>Please Enter in your Access Code Below</h1>
       </center>
 
-      <div class="inputCode">Access Code:</div>
+      <div className="inputCode">Access Code:</div>
 
-      <div class="inputField">
+      <div className="inputField">
         <TextField
           required
           error

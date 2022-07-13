@@ -3,6 +3,12 @@ import WebPortal from "./WebPortal";
 import {render,screen} from '@testing-library/react';
 
 describe('Sidebar component', () => {
+    test('Render OCI logo image', () => {
+        render(<WebPortal />);
+        const ociLogo = screen.getByAltText('Object Computing, Inc.');
+        expect(ociLogo).toBeInTheDocument();
+    });
+    
     test('renders culture video menu item', () => {
         render(<WebPortal/>);
         const cultureVideo = screen.getByText('1) Culture Video');
