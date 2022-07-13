@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Button, Box, OutlinedInput, ToggleButton, Grid } from "@mui/material";
+import {
+  Button,
+  Box,
+  OutlinedInput,
+  ToggleButton,
+  Grid,
+} from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import "./EquipmentPage.css";
@@ -32,9 +38,8 @@ const EquipmentPage = () => {
     <Grid
       container
       justifyContent="center"
-      alingItems="center"
+      alignItems="center"
       direction="row"
-      xs={12}
     >
       <Grid item xs={8}>
         <h2 style={{ marginTop: "1rem" }}>
@@ -58,29 +63,8 @@ const EquipmentPage = () => {
             },
           }}
         >
-          <ToggleButton value="windows" sx={{
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
-          }}>Windows</ToggleButton>
-          <ToggleButton value="mac" sx={{
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
-          }}>Mac</ToggleButton>
-          <ToggleButton value="linux" sx={{
-            transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            color: 'rgb(25, 118, 210)', borderRadius: '4px !important', boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
-          }}>Linux</ToggleButton>
-        </ToggleButtonGroup>
-      </ThemeProvider>
-
-      <h2 style={{ marginTop: '3rem' }}>Please select your computer accessories:</h2>
-      <Grid container justifyContent="center" alingItems="center" direction="row" xs={12}>
-        <Grid item xs={12}>
-
-          <ButtonGroup
+          <ToggleButton
+            value="windows"
             sx={{
               transition:
                 "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
@@ -129,9 +113,8 @@ const EquipmentPage = () => {
         <Grid
           container
           justifyContent="center"
-          alingItems="center"
+          alignItems="center"
           direction="row"
-          xs={12}
         >
           <Grid item xs={12}>
             <ButtonGroup
@@ -177,25 +160,30 @@ const EquipmentPage = () => {
           </Grid>
         </Grid>
 
-
-      <Box
-        component="form"
-        sx={{
-          marginTop: '3rem'
-        }}
-        noValidate
-        autoComplete="off"
-      >
-        <h2>Please list any other equipment you would need:</h2>
-        <Grid container justifyContent="center" alignItems="center" direction="row" item xs={12}>
-          <Grid item xs={8}>
-            <OutlinedInput
-              fullWidth
-              multiline
-              maxRows={8}
-              minRows={3}
-              inputProps={ariaLabel}
-            />
+        <Box
+          component="form"
+          sx={{
+            marginTop: "3rem",
+          }}
+          noValidate
+          autoComplete="off"
+        >
+          <h2>Please list any other equipment you would need:</h2>
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            direction="row"
+          >
+            <Grid item xs={8}>
+              <OutlinedInput
+                fullWidth
+                multiline
+                maxRows={8}
+                minRows={3}
+                inputProps={ariaLabel}
+              />
+            </Grid>
           </Grid>
         </Box>
       </Grid>
