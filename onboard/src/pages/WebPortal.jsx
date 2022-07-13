@@ -16,7 +16,7 @@ const menuList = [
   {
     index: 0,
     name: "Culture Video",
-    title: "Lorem ipsum",
+    title: "At OCI We Care",
     completed: false,
     child: <CultureVideoPage />,
     visited: true,
@@ -24,7 +24,7 @@ const menuList = [
   {
     index: 1,
     name: "About You Survey",
-    title: "Lorem ipsum",
+    title: "Please enter in your background information:",
     completed: false,
     child: <BackgroundInformationPage />,
     visited: false,
@@ -32,7 +32,7 @@ const menuList = [
   {
     index: 2,
     name: "Work Preference",
-    title: "Lorem ipsum",
+    title: "Where would you PREFER to work?",
     completed: false,
     child: <WorkingLocationPage />,
     visited: false,
@@ -40,7 +40,7 @@ const menuList = [
   {
     index: 3,
     name: "Computer and Accessories",
-    title: "Lorem ipsum",
+    title: "Computer and Accessories",
     completed: false,
     child: <EquipmentPage />,
     visited: false,
@@ -48,7 +48,7 @@ const menuList = [
   {
     index: 4,
     name: "Internal Document Signing",
-    title: "Lorem ipsum",
+    title: "Internal Document Signing",
     completed: false,
     child: <DocumentSigningPage />,
     visited: false,
@@ -56,7 +56,7 @@ const menuList = [
   {
     index: 5,
     name: "Check-Ins Skills",
-    title: "Lorem ipsum",
+    title: "You Know About Us Now! Tell Us About You!",
     completed: false,
     child: <IntroductionSurveyPage />,
     visited: false,
@@ -64,7 +64,7 @@ const menuList = [
   {
     index: 6,
     name: "Cake!",
-    title: "Lorem ipsum",
+    title: "Congratulations!",
     completed: false,
     child: <Congratulations />,
     visited: false,
@@ -142,6 +142,7 @@ function WebPortal() {
               handleChange={handleChange}
               data={data}
               handleChangeSidebar={handleChangeSidebar}
+              handleNextButton={submitHandler}
             />
           </div>
           <Button
