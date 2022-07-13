@@ -84,7 +84,7 @@ public class OnboardingProfileTestUtil {
     public static OnboardingProfileDTO toDto(OnboardingProfile entity)
    {
        OnboardingProfileDTO dto= new OnboardingProfileDTO();
-
+       dto.setId(entity.getId());
        dto.setFirstName(entity.getFirstName());
        dto.setMiddleName(entity.getMiddleName());
        dto.setLastName(entity.getLastName());

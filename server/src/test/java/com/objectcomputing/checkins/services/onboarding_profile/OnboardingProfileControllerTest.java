@@ -140,7 +140,7 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 
                 profileUpdateDTO.setFirstName("Sally");
 
-                final HttpRequest<OnboardingProfileDTO> request = HttpRequest.PUT("/", profileUpdateDTO)
+                final HttpRequest<OnboardingProfileDTO> request = HttpRequest.PUT("", profileUpdateDTO)
                         .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
                 final HttpResponse<OnboardingProfileDTO> response = client.toBlocking().exchange(request, OnboardingProfileDTO.class);
 
