@@ -43,12 +43,13 @@ function EmploymentDesired() {
   const [desiredSalaryError, setDesiredSalaryError] = useState(false);
   const [expirationDateError, setExpirationDateError] = useState(false);
   const [startDateError, setStartDateError] = useState(false);
-
+  
   function isDateInTheFuture(startDate) {
+    let date = startDate;
     let currentDate = new Date();
-    let inputDate = new Date(startDate);
+    let inputDate = new Date(date.split('-'));
 
-    if (currentDate < inputDate) {
+    if (inputDate.getTime() > currentDate.getTime()) {
       return true;
     } else {
       return false;
@@ -71,7 +72,7 @@ function EmploymentDesired() {
       }
     } else if (name === "startDate") {
       setStartDate(val);
-      if (isDateInTheFuture(startDate)) {
+      if (isDateInTheFuture(val)) {
         setStartDateError(false);
         setStartDateHelper("");
       } else {
@@ -101,7 +102,7 @@ function EmploymentDesired() {
       setNonCompeteStatusHelper("");
     } else if (name === "expirationDate") {
       setExpirationDate(val);
-      if (nonCompeteStatus === "yes" && !isDateInTheFuture(expirationDate)) {
+      if (nonCompeteStatus === "yes" && !isDateInTheFuture(val)) {
         setExpirationDateError(true);
         setExpirationDateHelper("Please enter in a valid date");
       } else {
@@ -117,7 +118,7 @@ function EmploymentDesired() {
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", textAlign: "left"}}>
       <form autoComplete="off" onSubmit={handleSaveInformation}>
         <Grid
           container

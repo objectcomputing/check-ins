@@ -40,7 +40,6 @@ function EmploymentEligbility() {
     const e = event;
     const val = e.target.value;
     const name = e.target.name;
-    console.log(val);
 
     if (name === "18-or-not") {
       setAge18Yrs(val);
@@ -80,7 +79,7 @@ function EmploymentEligbility() {
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", textAlign: "left"}}>
       <form autoComplete="off" onSubmit={handleSaveInformation}>
         <Grid
           container
