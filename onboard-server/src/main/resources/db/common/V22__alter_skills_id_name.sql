@@ -1,0 +1,2 @@
+ALTER TABLE skills
+RENAME COLUMN skillid TO id;
