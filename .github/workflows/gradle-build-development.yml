@@ -67,20 +67,65 @@ jobs:
       - name: Auth Configure Docker
         run: |-
           gcloud --quiet auth configure-docker
-      - name: Build the Docker image
+      - name: Build the main Docker image
         run: |-
           cd server
           docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" .
-      - name: Push the Docker image to Google Container Registry
+      - name: Push the main Docker image to Google Container Registry
         run: |-
           cd server
           docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
-      - name: Deploy image to Cloud Run
+      - name: Build the onboard Docker image
+        run: |-
+          cd onboard-server
+          docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME-onboard:$GITHUB_SHA" .
+      - name: Push the onboard Docker image to Google Container Registry
+        run: |-
+          cd onboard-server
+          docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME-onboard:$GITHUB_SHA"
+      - name: Deploy main image to Cloud Run
         run: |-
           gcloud run deploy "$SERVICE_NAME" \
             --quiet \
             --region "$RUN_REGION" \
             --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --memory 1Gi \
+            --add-cloudsql-instances ${{ secrets.DB_CONNECTION_NAME }} \
+            --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.DB_CONNECTION_NAME }}" \
+            --set-env-vars "DB_NAME=${{ secrets.DB_NAME }}" \
+            --set-env-vars "DATASOURCES_DEFAULT_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+            --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.DB_USERNAME }}" \
+            --set-env-vars "AES_KEY=${{ secrets.AES_KEY }}" \
+            --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
+            --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
+            --set-env-vars "OAUTH_CALLBACK_URI"=${{ secrets.OAUTH_CALLBACK_URI }} \
+            --set-env-vars "DIRECTORY_ID=${{ secrets.DIRECTORY_ID }}" \
+            --set-env-vars "TYPE=${{ secrets.SA_KEY_TYPE }}" \
+            --set-env-vars "PROJECT_ID=${{ secrets.RUN_PROJECT }}" \
+            --set-env-vars "PRIVATE_KEY_ID=${{ secrets.SA_PRIVATE_KEY_ID }}" \
+            --set-env-vars "PRIVATE_KEY=${{ secrets.SA_PRIVATE_KEY }}" \
+            --set-env-vars "CLIENT_EMAIL=${{ secrets.SA_CLIENT_EMAIL }}" \
+            --set-env-vars "CLIENT_ID=${{ secrets.SA_CLIENT_ID }}" \
+            --set-env-vars "AUTH_URI=${{ secrets.SA_AUTH_URI }}" \
+            --set-env-vars "TOKEN_URI=${{ secrets.SA_TOKEN_URI }}" \
+            --set-env-vars "AUTH_PROVIDER_X509_CERT_URL=${{ secrets.SA_AUTH_PROVIDER_X509_CERT_URL }}" \
+            --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.SA_CLIENT_X509_CERT_URL }}" \
+            --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
+            --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
+            --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
+            --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
+            --set-env-vars "WEB_ADDRESS=https://checkins-develop-tuvcfzotpq-uc.a.run.app" \
+            --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
+            --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
+            --platform "managed" \
+            --max-instances 4 \
+            --allow-unauthenticated
+      - name: Deploy onboard image to Cloud Run
+        run: |-
+          gcloud run deploy "$SERVICE_NAME-onboard" \
+            --quiet \
+            --region "$RUN_REGION" \
+            --image "gcr.io/$PROJECT_ID/$SERVICE_NAME-onboard:$GITHUB_SHA" \
             --memory 1Gi \
             --add-cloudsql-instances ${{ secrets.DB_CONNECTION_NAME }} \
             --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.DB_CONNECTION_NAME }}" \
