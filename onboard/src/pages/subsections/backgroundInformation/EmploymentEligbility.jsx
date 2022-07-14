@@ -61,6 +61,8 @@ function EmploymentEligbility() {
       }
     } else if (name === "dateOfExpiration") {
       setDateOfExpiration(val);
+      setDateOfExpirationError(false);
+      setDateOfExpirationHelper("");
     } else if (name === "felonyStatus") {
       setFelonyStatus(val);
       setFelonyHelper("");
