@@ -1,2 +1,0 @@
-ALTER TABLE role
-ADD COLUMN description VARCHAR;

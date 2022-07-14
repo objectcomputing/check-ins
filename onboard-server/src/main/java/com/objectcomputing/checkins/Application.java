@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.info.Info;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Check-ins Project",
+                title = "Check-ins Onboarding Project",
                 version = "0.1",
-                description = "This web application is for uploading files and tracking skill set of team members.",
-                contact = @Contact(url = "https://objectcomputing.com", name = "OCI", email = "info@objectcomputing.com")
+                description = "This web application is for onboarding new team members.",
+                contact = @Contact(url = "https://objectcomputing.com", name = "OCI", email = "checkins@objectcomputing.com")
         )
 
 )
