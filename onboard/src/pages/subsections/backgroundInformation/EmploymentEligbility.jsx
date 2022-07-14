@@ -31,7 +31,9 @@ function EmploymentEligbility() {
     "Please select a valid option"
   );
   const [felonyExplanationHelper, setFelonyExplanationHelper] = useState("");
+  const [dateOfExpirationHelper, setDateOfExpirationHelper] = useState("");
 
+  const [dateOfExpirationError, setDateOfExpirationError] = useState("");
   const [felonyExplanationError, setFelonyExplanationError] = useState(false);
 
   function handleChange(event) {
@@ -47,10 +49,15 @@ function EmploymentEligbility() {
       setCitizenHelper("");
     } else if (name === "visaStatus") {
       setVisaStatus(val);
-      if (val.length > 0) {
+      if (val.length > 0 && dateOfExpiration === "") {
         setVisaStatusHelper("");
+        setDateOfExpirationError(true);
+        setDateOfExpirationHelper(
+          "Since you entered in your visa status, please enter in a valid expiratation date"
+        );
       } else {
-        setVisaStatusHelper("Please enter your Visa Status");
+        setDateOfExpirationError(false);
+        setDateOfExpirationHelper("");
       }
     } else if (name === "dateOfExpiration") {
       setDateOfExpiration(val);
@@ -60,14 +67,12 @@ function EmploymentEligbility() {
       if (val === "no") {
         setFelonyExplanationError(false);
         setFelonyExplanationHelper("");
-      }
-      else if (val === "yes")
-      {
+      } else if (val === "yes") {
         setFelonyExplanationError(true);
         setFelonyExplanationHelper(
           "Since you selected yes in the previous question please explain"
         );
-        }
+      }
     } else if (name === "felonyExplaination") {
       setFelonyExplanation(val);
       if (felonyStatus === "yes" && val.length === 0) {
@@ -177,6 +182,8 @@ function EmploymentEligbility() {
               <InputField
                 id="dateOfExpiration"
                 value={dateOfExpiration}
+                error={dateOfExpirationError}
+                helperMessage={dateOfExpirationHelper}
                 onChangeHandler={handleChange}
                 placeholder="dd/mm/yyyy"
                 type="date"
