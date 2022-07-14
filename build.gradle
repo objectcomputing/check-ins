@@ -36,7 +36,6 @@ sonarqube {
 project(":server") {
     assemble {
         dependsOn ":web-ui:assemble"
-        dependsOn ":onboard:assemble"
     }
     sonarqube {
         properties {
@@ -57,6 +56,18 @@ project(":web-ui") {
     }
 }
 
+project(":onboard-server") {
+    assemble {
+        dependsOn ":onboard:assemble"
+    }
+    sonarqube {
+        properties {
+            property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+            property "sonar.cpd.exclusions", "**/*DTO.java"
+        }
+    }
+}
+
 project(":onboard") {
     sonarqube {
         properties {
@@ -68,7 +79,7 @@ project(":onboard") {
     }
 }
 
-project.tasks["sonarqube"].dependsOn ":web-ui:yarn_run_coverage", ":onboard:yarn_run_coverage", ":server:jacocoTestReport"
+project.tasks["sonarqube"].dependsOn ":web-ui:yarn_run_coverage", ":onboard:yarn_run_coverage", ":server:jacocoTestReport", ":onboard-server:jacocoTestReport"
 ////// ################### SONARCLOUD PLUGIN END#########################
 
 
