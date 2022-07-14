@@ -10,6 +10,7 @@ const EmbedRequest = () => {
       <div id="content">
         <iframe
           className="iFrameWrapper"
+          // Use Optional Rendering for this iFrame
           src=""
           title="Test Embedded Sign Request Form"
         ></iframe>
