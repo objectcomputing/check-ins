@@ -34,8 +34,6 @@ function EmploymentEligbility() {
 
   const [felonyExplanationError, setFelonyExplanationError] = useState(false);
 
- 
-
   function handleChange(event) {
     const e = event;
     const val = e.target.value;
@@ -59,6 +57,17 @@ function EmploymentEligbility() {
     } else if (name === "felonyStatus") {
       setFelonyStatus(val);
       setFelonyHelper("");
+      if (val === "no") {
+        setFelonyExplanationError(false);
+        setFelonyExplanationHelper("");
+      }
+      else if (val === "yes")
+      {
+        setFelonyExplanationError(true);
+        setFelonyExplanationHelper(
+          "Since you selected yes in the previous question please explain"
+        );
+        }
     } else if (name === "felonyExplaination") {
       setFelonyExplanation(val);
       if (felonyStatus === "yes" && val.length === 0) {
@@ -79,7 +88,7 @@ function EmploymentEligbility() {
   }
 
   return (
-    <Box sx={{ width: "100%", textAlign: "left"}}>
+    <Box sx={{ width: "100%", textAlign: "left" }}>
       <form autoComplete="off" onSubmit={handleSaveInformation}>
         <Grid
           container
@@ -143,18 +152,6 @@ function EmploymentEligbility() {
                 maxWidth: "500px",
               }}
             >
-              {/* <InputLabel>Visa Status</InputLabel>
-              <Select
-                title="Visa Status:"
-                name="visaStatus"
-                label="Visa Status if applicable"
-                value={visaStatus}
-                onChangeHandler={handleChange}
-              >
-                <MenuItem value={1}> H1</MenuItem>
-                <MenuItem value={2}> H2</MenuItem>
-              </Select> */}
-
               <InputField
                 title="Visa Status:"
                 id="visaStatus"
