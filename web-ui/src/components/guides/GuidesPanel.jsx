@@ -1,6 +1,5 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import PdfIcon from '@mui/icons-material/PictureAsPdf';
-import AddIcon from "@mui/icons-material/Add";
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import List from '@mui/material/List';
@@ -12,8 +11,7 @@ import {selectIsAdmin, selectRoles} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import {UPDATE_TOAST} from "../../context/actions";
 import {
-  CardContent, Collapse,
-  IconButton, Typography
+  CardContent, Collapse, Typography
 } from "@mui/material";
 import "./GuidesPanel.css";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
@@ -100,13 +98,6 @@ const GuidesPanel = ({ role, title }) => {
           title={title}
           onClick={() => setExpanded(!expanded)}
           style={{ cursor: "pointer" }}
-          action={
-            <IconButton onClick={(event) => {
-              event.stopPropagation();
-            }}>
-              <AddIcon/>
-            </IconButton>
-          }
         />
         <Collapse in={expanded} timeout="auto">
           <CardContent style={{ padding: 0 }}>
