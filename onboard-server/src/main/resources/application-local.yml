@@ -27,7 +27,7 @@ micronaut:
         pattern: /**
         http-method: GET
         access:
-          - isANy()
+          - isAuthenticated()
     reject-not-found: false
     redirect:
       prior-to-login: true
