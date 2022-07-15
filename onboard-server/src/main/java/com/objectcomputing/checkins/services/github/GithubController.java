@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 
 
 @Controller("/services/github-issue")
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "github")
 public class GithubController {

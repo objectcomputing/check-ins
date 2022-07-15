@@ -45,11 +45,3 @@ credentials:
       - PDL
     MEMBER:
       - MEMBER
----
-flyway:
-  enabled: enabled
-  datasources:
-    default:
-      locations:
-        - "classpath:db/common"
-        - "classpath:db/dev"

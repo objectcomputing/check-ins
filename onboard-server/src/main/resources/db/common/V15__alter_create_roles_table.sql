@@ -1,5 +1,0 @@
-ALTER TABLE role
-ALTER COLUMN role TYPE VARCHAR;
-
-ALTER TABLE role
-ADD CONSTRAINT available_roles CHECK (role IN ('ADMIN', 'PDL', 'MEMBER') );

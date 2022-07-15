@@ -14,31 +14,6 @@ mail-jet:
   from_address: "someEmail@test.com"
   from_name: "John Doe"
 ---
-credentials:
-  roles:
-    SUPER:
-      - ADMIN
-      - PDL
-      - MEMBER
-    ADMIN:
-      - ADMIN
-      - MEMBER
-    PDL:
-      - PDL
-      - MEMBER
-    MEMBER:
-      - MEMBER
----
-flyway:
-  enabled: enabled
-  datasources:
-    default:
-      locations:
-        - "classpath:db/common"
-      placeholder-replacement: true
-      placeholders:
-        aeskey: BOGUS_TEST_KEY
----
 check-ins:
   web-address: "https://checkins.objectcomputing.com"
 ---
