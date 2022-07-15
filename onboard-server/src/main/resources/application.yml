@@ -1,6 +1,6 @@
 micronaut:
   application:
-    name: check-ins
+    name: onboarding
   server:
     cors:
       enabled: true
@@ -27,24 +27,18 @@ micronaut:
 
   security:
     enabled: true
-    authentication: cookie
+    authentication: idtoken
     token:
-      jwt:
-        enabled: true
-        generator:
-          refresh-token:
-            enabled: true
-            path: /oauth/access_token
-            secret: ${ OAUTH_REFRESH_TOKEN_SECRET:'pleaseChangeThisSecretForANewOne' }
-    oauth2:
-      callback-uri: ${ OAUTH_CALLBACK_URI }
-      clients:
-        google:
-          client-id: ${ OAUTH_CLIENT_ID }
-          client-secret: ${ OAUTH_CLIENT_SECRET }
-          openid:
-            issuer: 'https://accounts.google.com'
+    oauth2.clients.keycloak:
+      grant-type: password
+      client-id: ${keyClientID}
+      client-secret: ${keyClientSecret}
+      token:
+        url: http://localhost:8880/auth/realms/security/protocol/openid-connect/token
+        auth-method: client_secret_post
     endpoints:
+      login:
+        enabled: false
       logout:
         get-allowed: true
     intercept-url-map:
@@ -73,6 +67,10 @@ micronaut:
       event-loops:
         io:
           num-threads: 3
+---
+custom:
+  keycloak:
+    url: http://localhost:8880
 ---
 datasources:
   default:
