@@ -79,16 +79,42 @@ public class RoleDocumentServicesImpl implements RoleDocumentServices {
     }
 
     @Override
-    public RoleDocument update(RoleDocument roleDocument) {
+    public List<DocumentResponseDTO> update(RoleDocument roleDocument) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You are not allowed to do this operation");
         } else if (roleDocumentRepository.findById(roleDocument.getRoleDocumentId()).isEmpty()) {
             throw new BadArgException(String.format("Cannot update role document with nonexistent id %s", roleDocument.getRoleDocumentId()));
-        } else if (roleDocument.getDocumentNumber() < 1) {
-            throw new BadArgException("Document number must be at least 1");
         }
 
-        return roleDocumentRepository.update(roleDocument);
+        // Get all documents for this role
+        List<DocumentResponseDTO> relatedDocuments = roleDocumentRepository.findDocumentsByRoleId(roleDocument.getRoleDocumentId().getRoleId());
+        DocumentResponseDTO reorderedItem = relatedDocuments.stream()
+                .filter(doc -> doc.getId().equals(roleDocument.getRoleDocumentId().getDocumentId()))
+                .findFirst()
+                .orElseThrow(() -> {
+                    throw new BadArgException("Cannot find document associated with this role");
+                });
+
+        // Move the updated role document to its new position
+        relatedDocuments.remove(reorderedItem);
+        relatedDocuments.add(roleDocument.getDocumentNumber() - 1, reorderedItem);
+
+        // Update each document number based on its new index
+        for (int i = 0; i < relatedDocuments.size(); i++) {
+            relatedDocuments.get(i).setDocumentNumber(i + 1);
+        }
+
+        // Update all related role documents
+        List<RoleDocument> updatedRoleDocuments = new ArrayList<>(relatedDocuments.size());
+        relatedDocuments.forEach(doc -> {
+            UUID roleId = roleDocument.getRoleDocumentId().getRoleId();
+            UUID documentId = doc.getId();
+            RoleDocument updatedRoleDocument = new RoleDocument(roleId, documentId, doc.getDocumentNumber());
+            updatedRoleDocuments.add(updatedRoleDocument);
+        });
+        roleDocumentRepository.updateAll(updatedRoleDocuments);
+
+        return relatedDocuments;
     }
 
     @Override

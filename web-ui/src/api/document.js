@@ -69,3 +69,19 @@ export const removeRoleAccessToDocument = async (roleId, documentId, cookie) => 
     headers: { "X-CSRF-Header": cookie }
   });
 };
+
+export const updateRoleDocumentOrder = async (roleId, documentId, documentNumber, cookie) => {
+  return resolve({
+    method: "put",
+    url: roleDocumentsUrl,
+    data: {
+      roleDocumentId: {
+        roleId: roleId,
+        documentId: documentId
+      },
+      documentNumber: documentNumber
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  })
+}

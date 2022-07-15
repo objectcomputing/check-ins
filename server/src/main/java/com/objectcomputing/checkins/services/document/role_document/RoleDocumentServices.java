@@ -12,7 +12,7 @@ public interface RoleDocumentServices {
 
     RoleDocument getById(@NotNull RoleDocumentId roleDocumentId);
 
-    RoleDocument update(RoleDocument roleDocument);
+    List<DocumentResponseDTO> update(RoleDocument roleDocument);
 
     void delete(@NotNull RoleDocumentId id);
 

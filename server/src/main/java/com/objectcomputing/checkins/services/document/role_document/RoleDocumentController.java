@@ -57,10 +57,10 @@ public class RoleDocumentController {
 
     @Put
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<RoleDocument>> update(@Body @Valid RoleDocument roleDocument) {
+    public Mono<HttpResponse<List<DocumentResponseDTO>>> update(@Body @Valid RoleDocument roleDocument) {
         return Mono.fromCallable(() -> roleDocumentServices.update(roleDocument))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(roleDoc -> (HttpResponse<RoleDocument>) HttpResponse.ok(roleDoc))
+                .map(docList -> (HttpResponse<List<DocumentResponseDTO>>) HttpResponse.ok(docList))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
