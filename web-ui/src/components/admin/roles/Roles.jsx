@@ -173,7 +173,7 @@ const Roles = () => {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{`Showing ${selectedRoles.length}/${userRoles.length} roles`}</FormHelperText>
+                <FormHelperText>{`Showing ${selectedRoles.length}/${userRoles?.length} roles`}</FormHelperText>
               </FormControl>
               <TextField
                 className="member-role-search"
