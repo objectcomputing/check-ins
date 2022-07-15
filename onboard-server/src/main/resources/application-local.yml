@@ -12,7 +12,7 @@ micronaut:
     token:
     oauth2.clients.keycloak:
       grant-type: password
-      client-id: ${keyClientID}
+      client-id: ${keyClientId}
       client-secret: ${keyClientSecret}
       token:
         url: http://localhost:8880/auth/realms/security/protocol/openid-connect/token
@@ -27,7 +27,7 @@ micronaut:
         pattern: /**
         http-method: GET
         access:
-          - isAuthenticated()
+          - isANy()
     reject-not-found: false
     redirect:
       prior-to-login: true
