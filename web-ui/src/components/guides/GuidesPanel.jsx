@@ -7,8 +7,8 @@ import List from '@mui/material/List';
 
 import GuideLink from "./GuideLink";
 import PropTypes from "prop-types";
-import {getDocumentsByRole} from "../../api/document";
-import {selectRoles} from "../../context/selectors";
+import {getDocumentsByRole, updateRoleDocumentOrder} from "../../api/document";
+import {selectIsAdmin, selectRoles} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import {UPDATE_TOAST} from "../../context/actions";
 import {
@@ -16,6 +16,8 @@ import {
   IconButton, Typography
 } from "@mui/material";
 import "./GuidesPanel.css";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {DragIndicator} from "@mui/icons-material";
 
 const propTypes = {
   role: PropTypes.oneOf(["ADMIN", "PDL", "MEMBER"]).isRequired,
@@ -29,6 +31,7 @@ const GuidesPanel = ({ role, title }) => {
   const [guides, setGuides] = useState([]);
   const [expanded, setExpanded] = useState(true);
   const allRoles = selectRoles(state);
+  const isAdmin = selectIsAdmin(state);
 
   const loadDocuments = useCallback(async () => {
     if (!role || !allRoles || !csrf) {
@@ -61,6 +64,34 @@ const GuidesPanel = ({ role, title }) => {
     });
   }, [allRoles, loadDocuments]);
 
+  const handleDragEnd = async (result) => {
+    if (!result || !result.destination || result.source.index === result.destination.index) {
+      return;
+    }
+    const originalGuides = [...guides];
+    const items = [...guides]
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setGuides(items);  // Immediately update list to reflect moved item
+
+    const roleId = allRoles.find(r => r.role === role)?.id;
+    const res = await updateRoleDocumentOrder(roleId, reorderedItem.id, result.destination.index + 1, csrf);
+    const reorderedGuides = res && res.payload && res.payload.data && !res.error ? res.payload.data : null;
+
+    if (reorderedGuides) {
+      setGuides(reorderedGuides);  // Adjust state with updated document numbers
+    } else {
+      setGuides(originalGuides);  // If there is a problem saving, revert local state
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to reorder guides"
+        }
+      });
+    }
+  }
+
   return (
     <>
       <Card>
@@ -81,11 +112,31 @@ const GuidesPanel = ({ role, title }) => {
           <CardContent style={{ padding: 0 }}>
             {guides.length > 0
               ? (
-                <List dense style={{ paddingTop: 0 }}>
-                  {guides.map((guide) => (
-                    <GuideLink key={guide.id} document={guide}/>
-                  ))}
-                </List>
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  <Droppable droppableId={`${role}-droppable`}>
+                    {(provided) => (
+                      <List dense {...provided.droppableProps} ref={provided.innerRef} style={{ paddingTop: 0 }}>
+                        {guides.map((guide, index) => (
+                          <Draggable key={guide.id} draggableId={guide.id} index={index}>
+                            {(provided, snapshot) => (
+                              <div className="draggable-guide-container" ref={provided.innerRef} {...provided.draggableProps}>
+                                {isAdmin &&
+                                  <span
+                                    {...provided.dragHandleProps}
+                                    style={{ cursor: snapshot.isDragging ? "grabbing" : "grab", marginLeft: "12px"}}>
+                                    <DragIndicator style={{ color: "gray" }}/>
+                                  </span>
+                                }
+                                <GuideLink document={guide} draggable={isAdmin}/>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </List>
+                    )}
+                  </Droppable>
+                </DragDropContext>
               )
               : (
                 <div className="no-documents-message">

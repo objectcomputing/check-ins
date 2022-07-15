@@ -15,4 +15,16 @@
     text-align: center;
 }
 
+.draggable-guide-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.draggable-guide-container span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
   

@@ -9,10 +9,11 @@ import PropTypes from "prop-types";
 import "./GuideLink.css";
 
 const propTypes = {
-  document: PropTypes.object.isRequired
+  document: PropTypes.object.isRequired,
+  draggable: PropTypes.bool.isRequired
 };
 
-const GuideLink = ({ document }) => {
+const GuideLink = ({ document, draggable }) => {
 
   return (
     <>
@@ -23,7 +24,10 @@ const GuideLink = ({ document }) => {
           component={Link}
           to={document?.url || ""}
           target="_blank">
-          <ListItemText style={{paddingLeft: "1rem"}} primary={document?.name || "Undefined"}/>
+          <ListItemText
+            style={{ paddingLeft: draggable ? 0 : "1rem"}}
+            primary={document?.name || "Undefined"}
+          />
         </ListItemButton>
       </ListItem>
     </>
