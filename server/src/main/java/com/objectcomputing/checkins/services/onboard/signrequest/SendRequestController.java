@@ -23,7 +23,7 @@ public class SendRequestController {
     @Property(name = "signrequest-credentials.signrequest_token")
     private String SIGNREQUEST_TOKEN;
 
-    @Get("/sign-request")
+    @Get("/send-request")
     public String getData(){
 
         JSONObject data = new JSONObject();
@@ -42,16 +42,25 @@ public class SendRequestController {
         data.put("subject", "SignTest - YourTeam API");
         data.put("signers", array);
 
+//        try{
+//            String retrieve = httpClient.toBlocking()
+//                    .retrieve(HttpRequest.POST("/signrequest-quick-create/", data)
+//                            .header("Authorization", SIGNREQUEST_TOKEN));
+//            return retrieve;
+//        }
+//        catch (Exception e){
+//            System.out.println(e);
+//            return null;
+//        }
         try{
             String retrieve = httpClient.toBlocking()
-                    .retrieve(HttpRequest.POST("/signrequest-quick-create/", data)
+                    .retrieve(HttpRequest.GET("/documents/")
                             .header("Authorization", SIGNREQUEST_TOKEN));
             return retrieve;
         }
         catch (Exception e){
             System.out.println(e);
+            return null;
         }
-
-        return data.toString();
     }
 }

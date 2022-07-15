@@ -32,7 +32,6 @@ public class SignRequestController {
 
     @Get("/signrequest-documents")
     public String getData(){
-
         try{
             String retrieve = httpClient.toBlocking()
                     .retrieve(HttpRequest.GET("/documents/")
