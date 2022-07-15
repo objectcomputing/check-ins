@@ -1,6 +1,6 @@
 import { resolve } from "./api";
 
-const signRequestURL = "/signer";
+const signRequestURL = "/send-request";
 
 const getSignRequest = async () => {
   return resolve({
