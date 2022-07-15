@@ -91,54 +91,52 @@ const GuidesPanel = ({ role, title }) => {
   }
 
   return (
-    <>
-      <Card>
-        <CardHeader
-          avatar={<PdfIcon/>}
-          title={title}
-          onClick={() => setExpanded(!expanded)}
-          style={{ cursor: "pointer" }}
-        />
-        <Collapse in={expanded} timeout="auto">
-          <CardContent style={{ padding: 0 }}>
-            {guides.length > 0
-              ? (
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <Droppable droppableId={`${role}-droppable`}>
-                    {(provided) => (
-                      <List dense {...provided.droppableProps} ref={provided.innerRef} style={{ paddingTop: 0 }}>
-                        {guides.map((guide, index) => (
-                          <Draggable key={guide.id} draggableId={guide.id} index={index}>
-                            {(provided, snapshot) => (
-                              <div className="draggable-guide-container" ref={provided.innerRef} {...provided.draggableProps}>
-                                {isAdmin &&
-                                  <span
-                                    {...provided.dragHandleProps}
-                                    style={{ cursor: snapshot.isDragging ? "grabbing" : "grab", marginLeft: "12px"}}>
-                                    <DragIndicator style={{ color: "gray" }}/>
-                                  </span>
-                                }
-                                <GuideLink document={guide} draggable={isAdmin}/>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </List>
-                    )}
-                  </Droppable>
-                </DragDropContext>
-              )
-              : (
-                <div className="no-documents-message">
-                  <Typography fontSize={14}>This section has no documents</Typography>
-                </div>
-              )
-            }
-          </CardContent>
-        </Collapse>
-      </Card>
-    </>
+    <Card>
+      <CardHeader
+        avatar={<PdfIcon/>}
+        title={title}
+        onClick={() => setExpanded(!expanded)}
+        style={{ cursor: "pointer" }}
+      />
+      <Collapse in={expanded} timeout="auto">
+        <CardContent style={{ padding: 0 }}>
+          {guides.length > 0
+            ? (
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId={`${role}-droppable`}>
+                  {(provided) => (
+                    <List dense {...provided.droppableProps} ref={provided.innerRef} style={{ paddingTop: 0 }}>
+                      {guides.map((guide, index) => (
+                        <Draggable key={guide.id} draggableId={guide.id} index={index}>
+                          {(provided, snapshot) => (
+                            <div className="draggable-guide-container" ref={provided.innerRef} {...provided.draggableProps}>
+                              {isAdmin &&
+                                <span
+                                  {...provided.dragHandleProps}
+                                  style={{ cursor: snapshot.isDragging ? "grabbing" : "grab", marginLeft: "12px"}}>
+                                  <DragIndicator style={{ color: "gray" }}/>
+                                </span>
+                              }
+                              <GuideLink document={guide} draggable={isAdmin}/>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </List>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            )
+            : (
+              <div className="no-documents-message">
+                <Typography fontSize={14}>This section has no documents</Typography>
+              </div>
+            )
+          }
+        </CardContent>
+      </Collapse>
+    </Card>
   );
 };
 
