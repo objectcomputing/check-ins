@@ -10,13 +10,15 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 
+
+
 @Introspected
 public class OnboardeeEmploymentEligibilityResponseDTO {
 
     @NotNull
     @Schema(description = "id of the onboardee this profile entry is associated with", required = true)
     private UUID id;
-    
+
     @NotNull
     @Schema(description = "onboardee age", required = true)
     private boolean ageLegal;

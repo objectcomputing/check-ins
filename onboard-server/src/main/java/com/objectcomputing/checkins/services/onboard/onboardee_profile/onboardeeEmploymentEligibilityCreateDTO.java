@@ -89,4 +89,18 @@ public class onboardeeEmploymentEligibilityCreateDTO {
     public void setFelonyExplanation(@NotNull String felonyExplanation){
         this.felonyExplanation = felonyExplanation;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OnboardingProfileCreateDTO that = (OnboardingProfileCreateDTO) o;
+        return Objects.equals(ageLegal, that.ageLegal) &&
+                Objects.equals(usCitizen, that.usCitizen) &&
+                Objects.equals(visaStatus, that.visaStatus) &&
+                Objects.equals(expirationDate, that.expirationDate) &&
+                Objects.equals(felonyStatus, that.felonyStatus) &&
+                Objects.equals(felonyExplanation, that.felonyExplanation);
+               
+    }
 }
