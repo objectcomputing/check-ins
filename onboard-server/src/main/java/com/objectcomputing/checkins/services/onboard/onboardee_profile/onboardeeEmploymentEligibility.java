@@ -84,7 +84,7 @@ public class OnboardeeEmploymentEligibility {
 
     }
 
-    public onboardeeEmploymentEligibility() {
+    public OnboardeeEmploymentEligibility() {
     }
 
     public void setId(UUID id) {
