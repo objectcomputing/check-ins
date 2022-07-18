@@ -1,4 +1,5 @@
 package com.objectcomputing.checkins.services.checkins.onboard;
+
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -6,12 +7,16 @@ import io.micronaut.core.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.UUID;
 
-@Introspected
-public class onboardeeEmploymentEligibilityCreateDTO {
 
+@Introspected
+public class OnboardeeEmploymentEligibilityResponseDTO {
+
+    @NotNull
+    @Schema(description = "id of the onboardee this profile entry is associated with", required = true)
+    private UUID id;
+    
     @NotNull
     @Schema(description = "onboardee age", required = true)
     private boolean ageLegal;
@@ -64,11 +69,11 @@ public class onboardeeEmploymentEligibilityCreateDTO {
     }
 
     @Nullable
-    public LocalDate getExpirationDate() {
+    public LocalDate getVisaExpiryDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(@Nullable LocalDate expirationDate) {
+    public void setVisaExpiry(@Nullable LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -89,4 +94,19 @@ public class onboardeeEmploymentEligibilityCreateDTO {
     public void setFelonyExplanation(@NotNull String felonyExplanation){
         this.felonyExplanation = felonyExplanation;
     }
+
+    @Override
+    public String toString() {
+        return "EmploymentEligibilityDTO {" +
+                "id=" + id +
+                ", ageLegal ='" + ageLegal + '\'' +
+                ", usCitizen='" + usCitizen + '\'' +
+                ", visaStatus=" + visaStatus +  '\'' +
+                ", expirationDate='" + expirationDate +
+                ", felonyStatus='" + felonyStatus +
+                ", felonyExplanation=" + felonyExplanation +  '\'' +
+                '}';
+    }
+
 }
+ 
