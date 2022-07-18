@@ -47,9 +47,9 @@ public class OnboardeeEmploymentEligibility {
     private String visaStatus;
 
     @Nullable
-    @Column(name = "visaExpiration")
+    @Column(name = "expirationDate")
     @Schema(description = "expiration date of visa")
-    private LocalDate visaExpiration;
+    private LocalDate expirationDate;
 
     @NotBlank
     @Column(name = "felonyStatus")
@@ -120,11 +120,11 @@ public class OnboardeeEmploymentEligibility {
     }
 
     public LocalDate getExpirationDate() {
-        return visaExpiration;
+        return expirationDate;
     }
 
-    public void setExpirationDate(LocalDate visaExpiration) {
-        this.visaExpiration = visaExpiration;
+    public void setExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public boolean getFelonyStatus() {
