@@ -32,9 +32,9 @@ public class onboardeeEmploymentEligibility {
     private UUID id;
 
     @NotBlank
-    @Column(name = "age18OrOlder")
+    @Column(name = "ageLegal")
     @Schema(description = "is the new employee 18 years old or older")
-    private boolean age18OrOlder;
+    private boolean ageLegal;
 
     @NotBlank
     @Column(name = "uscitizen")
@@ -47,39 +47,39 @@ public class onboardeeEmploymentEligibility {
     private String visaStatus;
 
     @Nullable
-    @Column(name = "expirationDate")
+    @Column(name = "visaExpiration")
     @Schema(description = "expiration date of visa")
-    private LocalDate expirationDate;
+    private LocalDate visaExpiration;
 
     @NotBlank
-    @Column(name = "felonySatus")
+    @Column(name = "felonyStatus")
     @Schema(description = "has the new employee been convicted of a felony")
-    private boolean felonySatus;
+    private boolean felonyStatus;
 
     @nullable
     @Column(name = "felonyExplanation")
-    @Schema(description = "explation of convicted felony")
+    @Schema(description = "explanation of convicted felony")
     private String felonyExplanation;
 
-    public onboardeeEmploymentEligibility(boolean age18OrOlder, boolean usCitizen, String visaStatus,
-            LocalDate expirationDate, boolean felonySatus, String felonyExplanation) {
-        this.age18OrOlder = age18OrOlder;
+    public onboardeeEmploymentEligibility(boolean ageLegal, boolean usCitizen, String visaStatus,
+            LocalDate expirationDate, boolean felonyStatus, String felonyExplanation) {
+        this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
         this.visaStatus = visaStatus;
         this.expirationDate = expirationDate;
-        this.felonySatus = felonySatus;
+        this.felonyStatus = felonyStatus;
         this.felonyExplanation = felonyExplanation;
 
     }
 
-    public onboardeeEmploymentEligibility(UUID id, boolean age18OrOlder, boolean usCitizen, String visaStatus,
-            LocalDate expirationDate, boolean felonySatus, String felonyExplanation) {
+    public onboardeeEmploymentEligibility(UUID id, boolean ageLegal, boolean usCitizen, String visaStatus,
+            LocalDate expirationDate, boolean felonyStatus, String felonyExplanation) {
         this.id = id;
-        this.age18OrOlder = age18OrOlder;
+        this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
         this.visaStatus = visaStatus;
         this.expirationDate = expirationDate;
-        this.felonySatus = felonySatus;
+        this.felonyStatus = felonyStatus;
         this.felonyExplanation = felonyExplanation;
 
     }
@@ -95,12 +95,12 @@ public class onboardeeEmploymentEligibility {
         return id;
     }
 
-    public boolean getAge18OrOlder() {
-        return age18OrOlder;
+    public boolean getAgeLegal() {
+        return ageLegal;
     }
 
-    public void setAge18OrOlder(String age18OrOlder) {
-        this.age18OrOlder = age18OrOlder;
+    public void setAgeLegal(String ageLegal) {
+        this.ageLegal = ageLegal;
     }
 
     public boolean getUsCitizen() {
@@ -128,11 +128,11 @@ public class onboardeeEmploymentEligibility {
     }
 
     public boolean getFelonyStatus() {
-        return felonySatus;
+        return felonyStatus;
     }
 
-    public void setFelonyStatus(boolean felonySatus) {
-        this.felonySatus = felonySatus;
+    public void setFelonyStatus(boolean felonyStatus) {
+        this.felonyStatus = felonyStatus;
     }
 
     public String getFelonyExplanation() {
