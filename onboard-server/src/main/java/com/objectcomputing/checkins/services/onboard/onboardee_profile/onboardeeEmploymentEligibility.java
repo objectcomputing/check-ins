@@ -115,7 +115,7 @@ public class onboardeeEmploymentEligibility {
         return visaStatus;
     }
 
-    public void setVisaStatus() {
+    public void setVisaStatus(String visaStatus) {
         this.visaStatus = visaStatus;
     }
 
@@ -123,7 +123,7 @@ public class onboardeeEmploymentEligibility {
         return expirationDate;
     }
 
-    public void setExpirationDate(LocalDate expirexpirationDateat) {
+    public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -139,7 +139,7 @@ public class onboardeeEmploymentEligibility {
         return felonyExplanation;
     }
 
-    public void setFelonyExplanation() {
+    public void setFelonyExplanation(string felonyExplanation) {
         this.felonyExplanation = felonyExplanation;
     }
 }
