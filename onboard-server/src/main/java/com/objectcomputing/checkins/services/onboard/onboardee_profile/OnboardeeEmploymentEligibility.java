@@ -27,7 +27,7 @@ public class OnboardeeEmploymentEligibility {
     @Id
     @Column(name = "id")
     @AutoPopulated
-    @TypeDef(type = DataType.String)
+    @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the new employee profile this entry is associated with", required = true)
     private UUID id;
 
@@ -56,7 +56,7 @@ public class OnboardeeEmploymentEligibility {
     @Schema(description = "has the new employee been convicted of a felony")
     private boolean felonyStatus;
 
-    @nullable
+    @Nullable
     @Column(name = "felonyExplanation")
     @Schema(description = "explanation of convicted felony")
     private String felonyExplanation;
@@ -99,7 +99,7 @@ public class OnboardeeEmploymentEligibility {
         return ageLegal;
     }
 
-    public void setAgeLegal(String ageLegal) {
+    public void setAgeLegal(boolean ageLegal) {
         this.ageLegal = ageLegal;
     }
 
@@ -120,11 +120,11 @@ public class OnboardeeEmploymentEligibility {
     }
 
     public LocalDate getExpirationDate() {
-        return expirationDate;
+        return visaExpiration;
     }
 
-    public void setExpirationDate(LocalDate expirationDate) {
-        this.expirationDate = expirationDate;
+    public void setExpirationDate(LocalDate visaExpiration) {
+        this.visaExpiration = visaExpiration;
     }
 
     public boolean getFelonyStatus() {
@@ -139,7 +139,7 @@ public class OnboardeeEmploymentEligibility {
         return felonyExplanation;
     }
 
-    public void setFelonyExplanation(string felonyExplanation) {
+    public void setFelonyExplanation(String felonyExplanation) {
         this.felonyExplanation = felonyExplanation;
     }
 }

@@ -1,4 +1,5 @@
 package com.objectcomputing.checkins.services.checkins.onboard;
+
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -6,11 +7,17 @@ import io.micronaut.core.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.UUID;
 
+
+
+
 @Introspected
-public class onboardeeEmploymentEligibilityCreateDTO {
+public class OnboardeeEmploymentEligibilityResponseDTO {
+
+    @NotNull
+    @Schema(description = "id of the onboardee this profile entry is associated with", required = true)
+    private UUID id;
 
     @NotNull
     @Schema(description = "onboardee age", required = true)
@@ -64,11 +71,11 @@ public class onboardeeEmploymentEligibilityCreateDTO {
     }
 
     @Nullable
-    public LocalDate getExpirationDate() {
+    public LocalDate getVisaExpiryDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(@Nullable LocalDate expirationDate) {
+    public void setVisaExpiry(@Nullable LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -91,16 +98,17 @@ public class onboardeeEmploymentEligibilityCreateDTO {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OnboardingProfileCreateDTO that = (OnboardingProfileCreateDTO) o;
-        return Objects.equals(ageLegal, that.ageLegal) &&
-                Objects.equals(usCitizen, that.usCitizen) &&
-                Objects.equals(visaStatus, that.visaStatus) &&
-                Objects.equals(expirationDate, that.expirationDate) &&
-                Objects.equals(felonyStatus, that.felonyStatus) &&
-                Objects.equals(felonyExplanation, that.felonyExplanation);
-               
+    public String toString() {
+        return "EmploymentEligibilityDTO {" +
+                "id=" + id +
+                ", ageLegal ='" + ageLegal + '\'' +
+                ", usCitizen='" + usCitizen + '\'' +
+                ", visaStatus=" + visaStatus +  '\'' +
+                ", expirationDate='" + expirationDate +
+                ", felonyStatus='" + felonyStatus +
+                ", felonyExplanation=" + felonyExplanation +  '\'' +
+                '}';
     }
+
 }
+ 
