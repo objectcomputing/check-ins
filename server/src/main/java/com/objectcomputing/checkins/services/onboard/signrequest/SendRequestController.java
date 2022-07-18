@@ -42,19 +42,9 @@ public class SendRequestController {
         data.put("subject", "SignTest - YourTeam API");
         data.put("signers", array);
 
-//        try{
-//            String retrieve = httpClient.toBlocking()
-//                    .retrieve(HttpRequest.POST("/signrequest-quick-create/", data)
-//                            .header("Authorization", SIGNREQUEST_TOKEN));
-//            return retrieve;
-//        }
-//        catch (Exception e){
-//            System.out.println(e);
-//            return null;
-//        }
         try{
             String retrieve = httpClient.toBlocking()
-                    .retrieve(HttpRequest.GET("/documents/")
+                    .retrieve(HttpRequest.POST("/signrequest-quick-create/", data)
                             .header("Authorization", SIGNREQUEST_TOKEN));
             return retrieve;
         }
