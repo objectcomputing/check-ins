@@ -23,7 +23,7 @@ import java.util.UUID;
 @Introspected
 @Table(name = "onboard_employment_eligibility")
 
-public class onboardeeEmploymentEligibility {
+public class OnboardeeEmploymentEligibility {
     @Id
     @Column(name = "id")
     @AutoPopulated
@@ -61,7 +61,7 @@ public class onboardeeEmploymentEligibility {
     @Schema(description = "explanation of convicted felony")
     private String felonyExplanation;
 
-    public onboardeeEmploymentEligibility(boolean ageLegal, boolean usCitizen, String visaStatus,
+    public OnboardeeEmploymentEligibility(boolean ageLegal, boolean usCitizen, String visaStatus,
             LocalDate expirationDate, boolean felonyStatus, String felonyExplanation) {
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
@@ -72,7 +72,7 @@ public class onboardeeEmploymentEligibility {
 
     }
 
-    public onboardeeEmploymentEligibility(UUID id, boolean ageLegal, boolean usCitizen, String visaStatus,
+    public OnboardeeEmploymentEligibility(UUID id, boolean ageLegal, boolean usCitizen, String visaStatus,
             LocalDate expirationDate, boolean felonyStatus, String felonyExplanation) {
         this.id = id;
         this.ageLegal = ageLegal;
@@ -84,7 +84,7 @@ public class onboardeeEmploymentEligibility {
 
     }
 
-    public onboardeeEmploymentEligibility() {
+    public OnboardeeEmploymentEligibility() {
     }
 
     public void setId(UUID id) {
@@ -115,7 +115,7 @@ public class onboardeeEmploymentEligibility {
         return visaStatus;
     }
 
-    public void setVisaStatus() {
+    public void setVisaStatus(String visaStatus) {
         this.visaStatus = visaStatus;
     }
 
@@ -123,7 +123,7 @@ public class onboardeeEmploymentEligibility {
         return expirationDate;
     }
 
-    public void setExpirationDate(LocalDate expirexpirationDateat) {
+    public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -139,7 +139,7 @@ public class onboardeeEmploymentEligibility {
         return felonyExplanation;
     }
 
-    public void setFelonyExplanation() {
+    public void setFelonyExplanation(string felonyExplanation) {
         this.felonyExplanation = felonyExplanation;
     }
 }
