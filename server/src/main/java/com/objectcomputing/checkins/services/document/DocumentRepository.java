@@ -22,6 +22,12 @@ public interface DocumentRepository extends CrudRepository<Document, UUID> {
     )
     Optional<Document> findByName(String name);
 
-    @NonNull
-    List<Document> findAll();
+    @Query("SELECT DISTINCT documents.id, " +
+            "PGP_SYM_DECRYPT(cast(documents.name as bytea), '${aes.key}') as name, " +
+            "PGP_SYM_DECRYPT(cast(documents.description as bytea), '${aes.key}') as description, " +
+            "PGP_SYM_DECRYPT(cast(documents.url as bytea), '${aes.key}') as url " +
+            "FROM documents " +
+            "ORDER BY name"
+    )
+    List<Document> getAll();
 }

@@ -136,7 +136,7 @@ public class RoleDocumentServicesImpl implements RoleDocumentServices {
 
         Set<Role> userRoles = roleServices.findUserRoles(currentUserServices.getCurrentUser().getId());
         boolean userHasAccess = userRoles.stream().anyMatch(userRole -> userRole.getId().equals(roleId));
-        if (!userHasAccess) {
+        if (!currentUserServices.isAdmin() && !userHasAccess) {
             throw new PermissionException(String.format("You are not allowed to access documents for role id %s", roleId));
         }
 

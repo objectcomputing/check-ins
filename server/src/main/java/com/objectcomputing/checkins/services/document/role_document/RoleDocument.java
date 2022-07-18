@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import java.util.Objects;
 import java.util.UUID;
 
 @MappedEntity
@@ -42,5 +43,18 @@ public class RoleDocument {
 
     public void setDocumentNumber(int documentNumber) {
         this.documentNumber = documentNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoleDocument that = (RoleDocument) o;
+        return documentNumber == that.documentNumber && Objects.equals(roleDocumentId, that.roleDocumentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roleDocumentId, documentNumber);
     }
 }
