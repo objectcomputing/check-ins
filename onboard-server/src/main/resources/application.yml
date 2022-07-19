@@ -45,14 +45,11 @@ micronaut:
         pattern: /**
         http-method: GET
         access:
-          - isAuthenticated()
+          - isAnonymous()
     reject-not-found: false
     redirect:
       prior-to-login: true
       login-success: /
-      on-rejection: /oauth/login/
-      unauthorized:
-        url: /oauth/login/
       forbidden:
         url: /forbidden
     session:

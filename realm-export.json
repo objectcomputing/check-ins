@@ -433,13 +433,13 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/Security/account/",
+      "baseUrl": "/auth/realms/Security/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/Security/account/*"
+        "/auth/realms/Security/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -466,13 +466,13 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/Security/account/",
+      "baseUrl": "/auth/realms/Security/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/Security/account/*"
+        "/auth/realms/Security/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
