@@ -96,7 +96,7 @@ public class SignRequestController {
             System.out.println(e.getMessage());
             System.out.println(e.getResponse().reason());
             System.out.println(e.getResponse().body());
-            return "Tragic";
+            return data.toString();
         }
     }
 
@@ -122,14 +122,14 @@ public class SignRequestController {
         try {
             String retrieve = httpClient.toBlocking().retrieve(POST("/signrequest-quick-create/", data.toString()).contentType(MediaType.APPLICATION_JSON).header("Authorization", SIGNREQUEST_TOKEN));
             System.out.println("Request Worked");
-            return getEmbedSignRequestURL(retrieve);
+            return retrieve;
         }
         catch (HttpClientResponseException e) {
             System.out.println("We Failed");
             System.out.println(e.getMessage());
             System.out.println(e.getResponse().reason());
             System.out.println(e.getResponse().body());
-            return "Tragic";
+            return data.toString();
         }
     }
 }
