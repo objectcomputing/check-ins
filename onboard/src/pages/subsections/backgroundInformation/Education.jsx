@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import Grid from "@mui/material/Grid";
 import InputField from "../../../components/inputs/InputField";
 import TextField from "../../../components/inputs/TextField";
 import Box from "@mui/material/Box";
-import { FormHelperText } from "@mui/material";
-import { textAlign, width } from "@mui/system";
 
 function Education() {
   const [highestDegree, setHighestDegree] = useState("");
@@ -25,14 +20,14 @@ function Education() {
   const [locationHelper, setLocationHelper] = useState("");
   const [degreeHelper, setDegreeHelper] = useState("");
   const [majorHelper, setMajorHelper] = useState("");
-  const [completionDateHelper, setCompletionDateHelper] = useState("");
+  //const [completionDateHelper, setCompletionDateHelper] = useState("");
 
   const [highestDegreeError, setHighestDegreeError] = useState(false);
   const [institutionError, setInsitutionError] = useState(false);
   const [locationError, setLocationError] = useState(false);
   const [degreeError, setDegreeError] = useState(false);
   const [majorError, setMajorError] = useState(false);
-  const [completionDateError, setcompletionDateError] = useState(false);
+  //const [completionDateError, setcompletionDateError] = useState(false);
 
   function handleSaveInformation(e) {
     e.preventDefault();
@@ -43,6 +38,63 @@ function Education() {
     const e = event;
     const val = e.target.value;
     const name = e.target.name;
+
+    if (name === "highestDegree") {
+      setHighestDegree(val);
+      if (val.length > 0) {
+        setHighestDegreeError(false);
+        setHighestDegreeHelper("");
+      } else {
+        setHighestDegreeError(true);
+        setHighestDegreeHelper("Please enter in your highest degree earned");
+      }
+    } else if (name === "institution") {
+      setInsitution(val);
+      if (val.length > 0) {
+        setInsitutionError(false);
+        setInsitutionHelper("");
+      } else {
+        setInsitutionError(true);
+        setInsitutionHelper(
+          "Please enter in the name of the institution you studied at"
+        );
+      }
+    } else if (name === "locate") {
+      setLocation(val);
+      if (val.length > 0) {
+        setLocationError(false);
+        setLocationHelper("");
+      } else {
+        setLocationError(true);
+        setLocationHelper("Please enter the location of the institution");
+      }
+    } else if (name === "degree") {
+      setDegree(val);
+      if (val.length > 0) {
+        setDegreeError(false);
+        setDegreeHelper("");
+      } else {
+        setDegreeError(true);
+        setDegreeHelper("Please enter your degree");
+      }
+    } else if (name === "major") {
+      setMajor(val);
+      if (val.length > 0) {
+        setMajorError(false);
+        setMajorHelper("");
+      } else {
+        setMajorError(true);
+        setMajorHelper("Please enter in your chosen major");
+      }
+    }
+    else if (name === "completionDate")
+    {
+      setCompletionDate(val);
+    }
+    else if (name === "additionalInformation")
+    {
+      setAdditionalInformation(val);
+      }
   }
 
   return (
@@ -114,7 +166,7 @@ function Education() {
                 label="Location"
                 value={location}
                 error={locationError}
-                helperMessage={institutionHelper}
+                helperMessage={locationHelper}
                 onChangeHandler={handleChange}
                 type={"text"}
               ></InputField>
@@ -153,7 +205,7 @@ function Education() {
               }}
             >
               <InputField
-                title="Major"
+                title="Major / Concentration"
                 id="major"
                 label="=Major"
                 value={major}
@@ -178,14 +230,13 @@ function Education() {
               <InputField
                 id="completionDate"
                 value={completionDate}
-                error={completionDateError}
-                helperMessage={completionDateHelper}
+               // error={completionDateError}
+                //helperMessage={completionDateHelper}
                 onChangeHandler={handleChange}
                 type="date"
               />
             </FormControl>
           </Grid>
-
 
           <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
@@ -205,7 +256,6 @@ function Education() {
               ></TextField>
             </FormControl>
           </Grid>
-
         </Grid>
       </form>
     </Box>
