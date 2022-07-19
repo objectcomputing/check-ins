@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.onboard.signrequest;
 
 import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -13,7 +13,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import reactor.core.publisher.Flux;
 
 import java.util.*;
 
@@ -44,24 +43,29 @@ public class SignRequestController {
         }
     }
 
-    public HttpResponse<Object> sendForm() {
+    @Get("/json-test")
+    public String sendForm() {
 
         JSONObject data = new JSONObject();
         JSONArray array = new JSONArray();
         JSONObject item = new JSONObject();
-        item.put("email", "librandon0706@gmail.com");
+
+        item.put("email", "li.brandon@outlook.com");
         array.put(item);
 
+
         data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
-        //data.put("signers", "email: lib@objectcomputing.com");
+        data.put("name", "demo_document.pdf");
         data.put("from_email", "berkenwalda@objectcomputing.com");
         data.put("message", "Please sign this document");
-        //data.put("needs_to_sign", "true");
+        data.put("needs_to_sign", "true");
+        data.put("who", "o");
         data.put("subject", "SignTest - YourTeam API");
+        data.put("auto_delete_days", "1");
         data.put("signers", array);
 
         try {
-            HttpResponse<Object> retrieve = httpClient.toBlocking().exchange(POST("/signrequest-quick-create/", data).contentType(MediaType.TEXT_JSON_TYPE).header("Authorization", SIGNREQUEST_TOKEN));
+            String retrieve = httpClient.toBlocking().retrieve(POST("/signrequest-quick-create/", data.toString()).contentType(MediaType.APPLICATION_JSON).header("Authorization", SIGNREQUEST_TOKEN));
             System.out.println("Request Worked");
             return retrieve;
         }
@@ -70,9 +74,10 @@ public class SignRequestController {
             System.out.println(e.getMessage());
             System.out.println(e.getResponse().reason());
             System.out.println(e.getResponse().body());
-            return HttpResponse.serverError(e.toString());
+            return data.toString();
         }
     }
+
     @Get("/send-request")
     public String getSignRequest() {
         try {
