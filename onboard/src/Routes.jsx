@@ -13,11 +13,11 @@ export default function Routes() {
         <AccessCodePage />
       </Route>
 
-      <Route path="/testSendRequest">
+      <Route path="/send-request">
         <SendRequestPage />
       </Route>
 
-      <Route path="/testEmbedRequest">
+      <Route path="/embed-request">
         <EmbedRequestPage />
       </Route>
 
