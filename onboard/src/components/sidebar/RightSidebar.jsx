@@ -6,6 +6,7 @@ import Footer from "../footer/Footer";
 import "./RightSidebar.css";
 import { Checkbox } from "@mui/material";
 import { lightBlue } from "@mui/material/colors";
+import { object } from "prop-types";
 
 function RightSidebar({
   handleChange,
@@ -120,7 +121,7 @@ function RightSidebar({
                       <Checkbox
                         align="left"
                         disabled
-                        checked={menuItem.completed}
+                        checked={menuItem.completed || ((currentPageIndex === 6) && menuItem.visited)}
                         {...label}
                         sx={{
                           color: lightBlue[800],
@@ -163,7 +164,7 @@ function RightSidebar({
                   <div className="bodySection">{menuItem.child}</div>
                 </div>
               </div>
-              <Footer handleNextButton={handleNextButton} />
+              {currentPageIndex !== 6 && <Footer handleNextButton={handleNextButton} />}
             </TabPanel>
           );
         })}

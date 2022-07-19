@@ -9,15 +9,13 @@ const Congratulations = () => {
       <center>
         <Typography dispay="block" variant="body1" component={"div"}>
           <br />
-          Thank you for completing your job application.
-          <Typography display="block" variant="body1">
-            You will be receiving information about accessing your ADP account
-            soon from HR via email.
-          </Typography>
-          During your first day you will be awarded with a company t-shirt. We
-          hope you have a great time at Object Computing!
-        </Typography>
-        <img src={cakeImg} alt="Cake" />
+          Thank you for completing Onboarding! 
+          <Typography display="block" variant="body1"> <br />
+            You will receive an email from HR regarding accesing you ADP account within the next 48 hours. 
+          </Typography> <br />
+          Be ready to receive some OCI swag on your first day! We're excited for your arrival and hope you have a great time with us here at OCI!
+        </Typography> 
+        <img src={cakeImg} alt="Cake" class="Cake"/>
       </center>
     </div>
   );
