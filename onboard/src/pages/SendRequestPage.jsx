@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@mui/material";
 
-const SendingRequestPage = () => {
+const SendRequestPage = () => {
   return (
     <div>
       <center>
@@ -23,4 +23,4 @@ const SendingRequestPage = () => {
   }
 };
 
-export default SendingRequestPage;
+export default SendRequestPage;

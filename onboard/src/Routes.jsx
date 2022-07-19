@@ -3,8 +3,8 @@ import { Switch, Route } from "react-router-dom";
 import AccessCodePage from "./pages/AccessCodePage";
 import WebPortal from "./pages/WebPortal";
 
-import SendRequest from "./pages/TestSendRequestPage";
-import EmbedRequest from "./pages/TestEmbeddedSigningPage";
+import SendRequestPage from "./pages/SendRequestPage";
+import EmbedRequestPage from "./pages/EmbedRequestPage";
 
 export default function Routes() {
   return (
@@ -14,11 +14,11 @@ export default function Routes() {
       </Route>
 
       <Route path="/testSendRequest">
-        <SendRequest />
+        <SendRequestPage />
       </Route>
 
       <Route path="/testEmbedRequest">
-        <EmbedRequest />
+        <EmbedRequestPage />
       </Route>
 
       <Route>

@@ -1,7 +1,7 @@
 import React from "react";
-import "./TestEmbeddedSigningPage.css";
+import "./EmbedRequestPage.css";
 
-const EmbedRequest = ({ iframeUrl }) => {
+const EmbedRequestPage = ({ iframeUrl }) => {
   return (
     <div className="wrapContent">
       <center>
@@ -20,4 +20,4 @@ const EmbedRequest = ({ iframeUrl }) => {
   );
 };
 
-export default EmbedRequest;
+export default EmbedRequestPage;
