@@ -6,7 +6,7 @@ import Footer from "../footer/Footer";
 import "./RightSidebar.css";
 import { Checkbox } from "@mui/material";
 import { lightBlue } from "@mui/material/colors";
-import { object } from "prop-types";
+// import { object } from "prop-types";
 
 function RightSidebar({
   handleChange,
