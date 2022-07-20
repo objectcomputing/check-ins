@@ -34,6 +34,12 @@ export const selectIsAdmin = createSelector(
     userProfile && userProfile.role && userProfile.role.includes("ADMIN")
 );
 
+export const selectIsHR = createSelector(
+  selectUserProfile,
+  (userProfile) =>
+  userProfile && userProfile.role && userProfile.role.includes("HR")
+)
+
 export const selectIsPDL = createSelector(
   selectUserProfile,
   (userProfile) =>

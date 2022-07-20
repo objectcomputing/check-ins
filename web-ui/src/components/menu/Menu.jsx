@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
-import { selectCsrfToken, selectIsAdmin } from "../../context/selectors";
+import { selectCsrfToken, selectIsAdmin, selectIsHR } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import { useLocation, Link } from "react-router-dom";
@@ -43,7 +43,7 @@ const classes = {
   subListItem: `${PREFIX}-subListItem`
 };
 
-const Root = styled('div')(({theme}) => ({
+const Root = styled('div')(({ theme }) => ({
   [`&.${classes.root}`]: {
     display: 'flex',
     paddingRight: `${drawerWidth}px`
@@ -105,11 +105,11 @@ const directoryLinks = [
 ];
 
 const getFeedbackLinks = (isAdmin, isPDL) => isAdmin || isPDL ?
-    [
-      ["/feedback/view", "View Feedback"],
-      ["/feedback/received-requests", "Received Requests"]
-    ] :
-    [ ["/feedback/received-requests", "Received Requests"] ];
+  [
+    ["/feedback/view", "View Feedback"],
+    ["/feedback/received-requests", "Received Requests"]
+  ] :
+  [["/feedback/received-requests", "Received Requests"]];
 
 const reportsLinks = [
   ["/annual-review-reports", "Annual Reviews"],
@@ -133,6 +133,7 @@ function Menu() {
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin = selectIsAdmin(state);
+  const isHR = selectIsHR(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
 
@@ -276,8 +277,8 @@ function Menu() {
           isSubLink
             ? undefined
             : () => {
-                closeSubMenus();
-              }
+              closeSubMenus();
+            }
         }
         selected={isLinkSelected(path)}
       >
@@ -340,6 +341,18 @@ function Menu() {
         <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
           {createListJsx(feedbackLinks, true)}
         </Collapse>
+        {isHR && (
+          <React.Fragment>
+            <ListItem
+              button
+              className={classes.listItem}
+            >
+              <ListItemText primary="ONBOARD" />
+            </ListItem>
+            <Collapse>
+            </Collapse>
+          </React.Fragment>
+        )}
         {isAdmin && (
           <React.Fragment>
             <ListItem
@@ -419,7 +432,7 @@ function Menu() {
       </AppBar>
       <nav className={classes.drawer}>
         <Drawer
-          sx={{display: {sm: 'none', xs: 'block'}}}
+          sx={{ display: { sm: 'none', xs: 'block' } }}
           variant="temporary"
           disablePortal
           anchor={theme.direction === "rtl" ? "right" : "left"}
@@ -440,7 +453,7 @@ function Menu() {
           }}
           variant="permanent"
           open
-          sx={{display: { xs: 'none', sm: 'block'}}}
+          sx={{ display: { xs: 'none', sm: 'block' } }}
         >
           {drawer}
         </Drawer>
