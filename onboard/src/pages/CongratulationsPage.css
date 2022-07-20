@@ -5,7 +5,7 @@
   bottom: 5%;
 }
 .Cake {
-  display: block;
   max-width: 100%;
   height:auto;
+  vertical-align: bottom;
 }

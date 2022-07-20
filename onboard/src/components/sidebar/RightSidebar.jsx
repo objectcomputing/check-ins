@@ -121,7 +121,9 @@ function RightSidebar({
                       <Checkbox
                         align="left"
                         disabled
-                        checked={menuItem.completed || ((currentPageIndex === 6) && menuItem.visited)}
+                        checked={
+                          menuItem.completed || (i === 6 && menuItem.visited)
+                        }
                         {...label}
                         sx={{
                           color: lightBlue[800],
@@ -164,7 +166,7 @@ function RightSidebar({
                   <div className="bodySection">{menuItem.child}</div>
                 </div>
               </div>
-              {currentPageIndex !== 6 && <Footer handleNextButton={handleNextButton} />}
+              <Footer index={i} handleNextButton={handleNextButton} />
             </TabPanel>
           );
         })}
