@@ -56,3 +56,16 @@ export const resolve = async (payload) => {
 
   return resolved;
 };
+
+export const send = async () => {
+  const myAxios = await getMyAxios();
+  myAxios
+    .get("/send-signrequest")
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  return myAxios;
+};

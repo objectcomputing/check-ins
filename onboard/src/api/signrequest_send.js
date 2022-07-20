@@ -1,11 +1,10 @@
-import { resolve } from "./api";
+import { send } from "./api";
 
 const signRequestUrl = "/embed-signrequest";
-const sendSignRequest = async () => {
-  return resolve({
-    url: embedUrl,
-    responseType: "String",
+const signRequest = async () => {
+  return send({
+    url: signRequestUrl,
   });
 };
 
-export default sendSignRequest;
+export default signRequest;
