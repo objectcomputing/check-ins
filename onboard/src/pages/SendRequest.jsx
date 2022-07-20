@@ -15,37 +15,32 @@ const SendRequest = () => {
 
   const sendRequest = useCallback(async () => {
     console.log("Sending SignRequest!");
-    // Don't send again while we are sending
+
     if (isSending) {
       return;
     }
 
-    // Update state
     setIsSending(true);
-
-    // Send the actual request
     await signRequest();
-    // Once the request is sent, update state again
 
     if (isMounted.current) {
-      // Only update if we are still mounted
       setIsSending(false);
     }
-  }, [isSending]); // Update the callback if the sate changes
+  }, [isSending]);
 
   return (
     <div>
       <center>
         <h1>Click Button to Send SignRequest Form</h1>
+        <Button
+          variant="contained"
+          size="large"
+          id="submitCode"
+          onClick={sendRequest}
+        >
+          Send SignRequest
+        </Button>
       </center>
-      <Button
-        variant="contained"
-        size="large"
-        id="submitCode"
-        onClick={sendRequest}
-      >
-        Send SignRequest
-      </Button>
     </div>
   );
 };
