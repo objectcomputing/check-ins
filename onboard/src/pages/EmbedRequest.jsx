@@ -1,33 +1,41 @@
 import React, { useState, useEffect } from "react";
-import getEmbeddedURL from "../api/signrequest_embed";
+import getEmbeddedUrl from "../api/signrequest_embed";
 
 const EmbedRequest = () => {
-  const [embedUrl, setEmbedUrl] = useState([]);
+  const [embeddedUrl, setEmbeddedUrl] = useState(false);
 
   useEffect(() => {
+    let ignore = false;
+
     async function getData() {
-      let res = await getEmbeddedURL();
-      let url;
+      let res = await getEmbeddedUrl();
+      let signRequestUrl;
       if (res && res.payload) {
-        url = res?.payload?.data && !res.error ? res.payload.data : undefined;
-        if (url) {
-          setEmbedUrl(url);
+        signRequestUrl =
+          res?.payload?.data && !res.error ? res.payload.data : undefined;
+        if (signRequestUrl) {
+          setEmbeddedUrl(res.payload.data);
         }
       }
     }
-    getData();
-  });
+
+    if (!ignore) {
+      getData();
+    }
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   return (
     <div>
       <center>
-        <h1>Please Sign the Form Below</h1>
+        <h1>Redirecting to the Embedded Form</h1>
       </center>
       <div id="content">
         <iframe
           className="iFrameWrapper"
-          src={embedUrl}
-          //src="https://www.youtube.com/embed/cWDJoK8zw58"
+          src={embeddedUrl}
           title="Test Embedded Sign Request Form"
         ></iframe>
       </div>
