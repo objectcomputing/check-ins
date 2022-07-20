@@ -2,10 +2,10 @@ import React from "react";
 import "./EmbedRequestPage.css";
 import EmbedRequest from "./EmbedRequest.jsx";
 
-const EmbedRequestPage = ({ iframeUrl }) => {
+const EmbedRequestPage = () => {
   return (
     <div>
-      <EmbedRequest></EmbedRequest>
+      <EmbedRequest />
     </div>
   );
 };
