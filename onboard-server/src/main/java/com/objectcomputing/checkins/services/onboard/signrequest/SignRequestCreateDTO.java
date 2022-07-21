@@ -1,4 +1,4 @@
 package com.objectcomputing.checkins.services.onboard.signrequest;
 
-public class SignRequestRequestsCreateDTO {
+public class SignRequestCreateDTO {
 }

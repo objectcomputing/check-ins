@@ -24,7 +24,7 @@ import static io.micronaut.http.HttpRequest.POST;
 @Controller
 public class SignRequestController {
 
-    @Client("https://ocihr.signrequest.com/api/v1/") @Inject HttpClient httpClient;
+    @Client("https://ocitest.signrequest.com/api/v1/") @Inject HttpClient httpClient;
     private Map<String,String> signerInfo = new HashMap<>();
 
     @Property(name = "signrequest-credentials.signrequest_token")
