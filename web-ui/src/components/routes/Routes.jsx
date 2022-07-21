@@ -30,7 +30,7 @@ import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 import EmailPage from "../../pages/EmailPage";
 import DocumentsPage from "../../pages/DocumentsPage";
-
+import OnboardProgressPage from "../../pages/OnboardProgressPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -147,6 +147,10 @@ export default function Routes() {
           </Route>
           <Route path="/feedback/submit">
             <FeedbackSubmitPage />
+          </Route>
+          <Route exact path="/onboard/progress">
+            <Header title="Onboarding Progress" />
+            <OnboardProgressPage />
           </Route>
         </Switch>
       )}
