@@ -20,14 +20,14 @@ function Education() {
   const [locationHelper, setLocationHelper] = useState("");
   const [degreeHelper, setDegreeHelper] = useState("");
   const [majorHelper, setMajorHelper] = useState("");
-  //const [completionDateHelper, setCompletionDateHelper] = useState("");
+  const [completionDateHelper, setCompletionDateHelper] = useState("");
 
   const [highestDegreeError, setHighestDegreeError] = useState(false);
   const [institutionError, setInsitutionError] = useState(false);
   const [locationError, setLocationError] = useState(false);
   const [degreeError, setDegreeError] = useState(false);
   const [majorError, setMajorError] = useState(false);
-  //const [completionDateError, setcompletionDateError] = useState(false);
+  const [completionDateError, setCompletionDateError] = useState(false);
 
   function handleSaveInformation(e) {
     e.preventDefault();
@@ -86,15 +86,18 @@ function Education() {
         setMajorError(true);
         setMajorHelper("Please enter in your chosen major");
       }
-    }
-    else if (name === "completionDate")
-    {
+    } else if (name === "completionDate") {
       setCompletionDate(val);
-    }
-    else if (name === "additionalInformation")
-    {
-      setAdditionalInformation(val);
+      if (val.length > 0) {
+        setCompletionDateError(false);
+        setCompletionDateHelper("");
+      } else {
+        setCompletionDateError(true);
+        setCompletionDateHelper("Please enter in a date");
       }
+    } else if (name === "additionalInformation") {
+      setAdditionalInformation(val);
+    }
   }
 
   return (
@@ -230,8 +233,8 @@ function Education() {
               <InputField
                 id="completionDate"
                 value={completionDate}
-               // error={completionDateError}
-                //helperMessage={completionDateHelper}
+                error={completionDateError}
+                helperMessage={completionDateHelper}
                 onChangeHandler={handleChange}
                 type="date"
               />
