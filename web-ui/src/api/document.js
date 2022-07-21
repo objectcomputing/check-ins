@@ -1,4 +1,4 @@
-import { resolve } from "./api";
+import { resolve } from "./api.js";
 
 const documentUrl = "/services/documents";
 const roleDocumentsUrl = "/services/documents/role-documents";
