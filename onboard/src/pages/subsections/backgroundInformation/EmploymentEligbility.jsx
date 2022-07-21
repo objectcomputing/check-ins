@@ -64,12 +64,10 @@ function EmploymentEligbility() {
       if (val.length > 0) {
         setDateOfExpirationError(false);
         setDateOfExpirationHelper("");
-      }
-      else
-      {
+      } else {
         setDateOfExpirationError(true);
-      setDateOfExpirationHelper("Please enter in an expiration date");
-        }
+        setDateOfExpirationHelper("Please enter in an expiration date");
+      }
     } else if (name === "felonyStatus") {
       setFelonyStatus(val);
       setFelonyHelper("");
