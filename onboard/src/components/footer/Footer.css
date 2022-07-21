@@ -9,3 +9,6 @@
   flex-direction: column;
   height: min-content;
 }
+.finalButton {
+  align-self: center;
+}
