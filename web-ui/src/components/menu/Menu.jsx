@@ -119,6 +119,10 @@ const reportsLinks = [
   ["/team-skills-reports", "Team Skills"],
 ];
 
+const onboardLinks = [
+  ["/progress", "Progress"]
+];
+
 const isCollapsibleListOpen = (linksArr, loc) => {
   for (let i = 0; i < linksArr.length; i++) {
     if (linksArr[i][0] === loc) return true;
@@ -204,6 +208,10 @@ function Menu() {
   const [feedbackOpen, setFeedbackOpen] = useState(
     isCollapsibleListOpen(feedbackLinks, location.pathname)
   )
+  const [onboardOpen, setOnboardOpen] = useState(
+    isCollapsibleListOpen(onboardLinks, location.pathname)
+  );
+
   const anchorRef = useRef(null);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -237,6 +245,10 @@ function Menu() {
 
   const toggleAdmin = () => {
     setAdminOpen(!adminOpen);
+  };
+
+  const toggleOnboard = () => {
+    setOnboardOpen(!onboardOpen);
   };
 
   const closeSubMenus = () => {
@@ -342,16 +354,18 @@ function Menu() {
           {createListJsx(feedbackLinks, true)}
         </Collapse>
         {isHR && (
-          <React.Fragment>
+          <>
             <ListItem
               button
+              onClick={toggleOnboard}
               className={classes.listItem}
             >
               <ListItemText primary="ONBOARD" />
             </ListItem>
-            <Collapse>
+            <Collapse in={onboardOpen} timeout="auto" unmountOnExit>
+              {createListJsx(onboardLinks, true)}
             </Collapse>
-          </React.Fragment>
+          </>
         )}
         {isAdmin && (
           <React.Fragment>
