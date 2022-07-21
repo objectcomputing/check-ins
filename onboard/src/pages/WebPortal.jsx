@@ -88,8 +88,7 @@ function WebPortal() {
           child: obj.child,
           visited: true,
         };
-      } 
-      else if (obj.index === currentPageIndex + 1) {
+      } else if (obj.index === currentPageIndex + 1) {
         return {
           index: currentPageIndex + 1,
           name: obj.name,
