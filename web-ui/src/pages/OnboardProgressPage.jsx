@@ -1,6 +1,6 @@
 import React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-
+import { Link } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
 import FileUploadIcon from "@mui/icons-material/FileUpload"
@@ -33,20 +33,50 @@ export default function OnboardProgressPage() {
 
 
   const columns = [
-    { field: "id", headerName: "ID", width: 90 },
-    { field: "name", headerName: "Name", width: 100 },
+    { field: "id", headerName: "ID", width: 50 },
+    { field: "name", headerName: "Name", width: 130 },
+    { field: "email", headerName: "Email", width: 220 },
+    { field: "hireType", headerName: "Hire Type", width: 150 },
     { field: "progress", headerName: "Progress", width: 150 },
-    { field: "dateAdded", headerName: "Date Added", width: 150 },
-    { field: "openButton", headerName: "Details", width: 150 },
+    { field: "dateAdded", headerName: "Date Added", width: 100 },
+    {
+      field: "Open Progress Details",
+      renderCell: (cellValues) => {
+        return (
+          <Link
+            to={{
+              pathname: `/onboard/progress/${cellValues.row.id}`,
+              state: {
+                name: cellValues.row.name,
+                email: cellValues.row.email,
+                hireType: cellValues.row.hireType,
+              },
+            }}
+          >
+            OPEN
+          </Link>
+        );
+      },
+      width: 200,
+    },
   ];
 
   const rows = [
     {
       id: 1,
       name: "Daniel Ryu",
+      email: "ryud@objectcomputing.com",
+      hireType: "Intern",
       progress: "Incomplete",
       dateAdded: "Jul 15, 2022",
-      openButton: "open",
+    },
+    {
+      id: 2,
+      name: "Brandon Li",
+      email: "brandonli@objectcomputing.com",
+      hireType: "Intern",
+      progress: "Incomplete",
+      dateAdded: "Jul 15, 2022",
     },
   ];
 
@@ -74,7 +104,8 @@ export default function OnboardProgressPage() {
               </InputAdornment>
             ),
           }}
-          variant="standard" />
+          variant="standard"
+        />
 
         <Button onClick={handleOpen} variant="contained" sx={{ ml: "64%" }}>
           Add Onboardee
