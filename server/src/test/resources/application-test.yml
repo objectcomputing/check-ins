@@ -20,6 +20,7 @@ credentials:
       - ADMIN
       - PDL
       - MEMBER
+      - HR
     ADMIN:
       - ADMIN
       - MEMBER
@@ -27,6 +28,9 @@ credentials:
       - PDL
       - MEMBER
     MEMBER:
+      - MEMBER
+    HR: 
+      - HR
       - MEMBER
 ---
 flyway:
