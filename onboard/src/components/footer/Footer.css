@@ -10,6 +10,5 @@
   height: min-content;
 }
 .finalButton {
-  margin-left: auto;
-  margin-right: auto;
+  align-self: center;
 }

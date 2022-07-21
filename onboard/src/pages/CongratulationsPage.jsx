@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Grid, ImageList, ImageListItem } from "@mui/material";
+import { Typography, Grid } from "@mui/material";
 import "./CongratulationsPage.css";
 import cake from "./../assets/img/cake.png";
 
