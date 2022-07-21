@@ -107,9 +107,9 @@ const directoryLinks = [
 const getFeedbackLinks = (isAdmin, isPDL) =>
   isAdmin || isPDL
     ? [
-        ["/feedback/view", "View Feedback"],
-        ["/feedback/received-requests", "Received Requests"],
-      ]
+      ["/feedback/view", "View Feedback"],
+      ["/feedback/received-requests", "Received Requests"],
+    ]
     : [["/feedback/received-requests", "Received Requests"]];
 
 const reportsLinks = [
@@ -251,10 +251,6 @@ function Menu() {
 
   const toggleAdmin = () => {
     setAdminOpen(!adminOpen);
-  };
-
-  const toggleOnboard = () => {
-    setOnboardOpen(!onboardOpen);
   };
 
   const closeSubMenus = () => {

@@ -124,9 +124,11 @@ Array [
   }
 }
 
-@media (min-width:0px) and (orientation: landscape) {
-  .emotion-2 {
-    min-height: 48px;
+@media (min-width:0px) {
+  @media (orientation: landscape) {
+    .emotion-2 {
+      min-height: 48px;
+    }
   }
 }
 
@@ -1085,7 +1087,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -1131,7 +1133,7 @@ Array [
             >
               
               <div
-                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
+                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -1239,7 +1241,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-14"
+          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-14"
           onKeyDown={[Function]}
           role="presentation"
         >
@@ -2058,9 +2060,11 @@ Array [
   }
 }
 
-@media (min-width:0px) and (orientation: landscape) {
-  .emotion-2 {
-    min-height: 48px;
+@media (min-width:0px) {
+  @media (orientation: landscape) {
+    .emotion-2 {
+      min-height: 48px;
+    }
   }
 }
 
@@ -2663,25 +2667,25 @@ Array [
   width: 100%;
 }
 
-.emotion-63 {
+.emotion-59 {
   -webkit-flex: 0 0 auto;
   -ms-flex: 0 0 auto;
   flex: 0 0 auto;
 }
 
 @media (min-width:0px) {
-  .emotion-63 {
+  .emotion-59 {
     display: none;
   }
 }
 
 @media (min-width:600px) {
-  .emotion-63 {
+  .emotion-59 {
     display: block;
   }
 }
 
-.emotion-64 {
+.emotion-60 {
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
@@ -3019,7 +3023,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -3062,7 +3066,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -3118,7 +3122,7 @@ Array [
             >
               
               <div
-                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
+                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -3254,7 +3258,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-16"
+          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-16"
           onKeyDown={[Function]}
           role="presentation"
         >
@@ -3631,44 +3635,6 @@ Array [
                           <span
                             className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-22"
                           >
-                            ONBOARDING
-                          </span>
-                        </div>
-                        
-                        <span
-                          className="MuiTouchRipple-root emotion-5"
-                        />
-                      </div>,
-                    ]
-                    
-                    Array [
-                      "",
-                      <div
-                        className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-20"
-                        onBlur={[Function]}
-                        onClick={[Function]}
-                        onContextMenu={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        role="button"
-                        tabIndex={0}
-                      >
-                        
-                        <div
-                          className="MuiListItemText-root emotion-21"
-                        >
-                          
-                          <span
-                            className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-22"
-                          >
                             FEEDBACK
                           </span>
                         </div>
@@ -3730,13 +3696,13 @@ Array [
       ]
       
       <div
-        className="MuiDrawer-root MuiDrawer-docked emotion-63"
+        className="MuiDrawer-root MuiDrawer-docked emotion-59"
       >
         
         Array [
           "",
           <div
-            className="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 Menu-drawerPaper MuiDrawer-paper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft emotion-64"
+            className="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 Menu-drawerPaper MuiDrawer-paper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft emotion-60"
           >
             <div>
               <div />
@@ -4077,44 +4043,6 @@ Array [
                       <span
                         className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-22"
                       >
-                        ONBOARDING
-                      </span>
-                    </div>
-                    
-                    <span
-                      className="MuiTouchRipple-root emotion-5"
-                    />
-                  </div>,
-                ]
-                
-                Array [
-                  "",
-                  <div
-                    className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-20"
-                    onBlur={[Function]}
-                    onClick={[Function]}
-                    onContextMenu={[Function]}
-                    onDragLeave={[Function]}
-                    onFocus={[Function]}
-                    onKeyDown={[Function]}
-                    onKeyUp={[Function]}
-                    onMouseDown={[Function]}
-                    onMouseLeave={[Function]}
-                    onMouseUp={[Function]}
-                    onTouchEnd={[Function]}
-                    onTouchMove={[Function]}
-                    onTouchStart={[Function]}
-                    role="button"
-                    tabIndex={0}
-                  >
-                    
-                    <div
-                      className="MuiListItemText-root emotion-21"
-                    >
-                      
-                      <span
-                        className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-22"
-                      >
                         FEEDBACK
                       </span>
                     </div>
@@ -4301,9 +4229,11 @@ Array [
   }
 }
 
-@media (min-width:0px) and (orientation: landscape) {
-  .emotion-2 {
-    min-height: 48px;
+@media (min-width:0px) {
+  @media (orientation: landscape) {
+    .emotion-2 {
+      min-height: 48px;
+    }
   }
 }
 
@@ -5262,7 +5192,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5305,7 +5235,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5358,7 +5288,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5401,7 +5331,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5447,7 +5377,7 @@ Array [
             >
               
               <div
-                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
+                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -5555,7 +5485,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-14"
+          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-14"
           onKeyDown={[Function]}
           role="presentation"
         >
@@ -6450,9 +6380,11 @@ Array [
   }
 }
 
-@media (min-width:0px) and (orientation: landscape) {
-  .emotion-2 {
-    min-height: 48px;
+@media (min-width:0px) {
+  @media (orientation: landscape) {
+    .emotion-2 {
+      min-height: 48px;
+    }
   }
 }
 
@@ -7411,7 +7343,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -7454,7 +7386,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -7507,7 +7439,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -7553,7 +7485,7 @@ Array [
             >
               
               <div
-                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
+                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -7661,7 +7593,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-14"
+          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-14"
           onKeyDown={[Function]}
           role="presentation"
         >
