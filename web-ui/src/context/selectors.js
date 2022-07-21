@@ -37,7 +37,7 @@ export const selectIsAdmin = createSelector(
 export const selectIsHR = createSelector(
   selectUserProfile,
   (userProfile) =>
-  userProfile && userProfile.role && userProfile.role.includes("HR")
+    userProfile && userProfile.role && userProfile.role.includes("HR")
 )
 
 export const selectIsPDL = createSelector(
