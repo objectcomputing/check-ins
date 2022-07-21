@@ -142,7 +142,7 @@ function Education() {
               }}
             >
               <InputField
-                title="Institution"
+                title="Institution:"
                 id="institution"
                 label="Institution"
                 value={institution}
@@ -164,7 +164,7 @@ function Education() {
               }}
             >
               <InputField
-                title="Location"
+                title="Location:"
                 id="locate"
                 label="Location"
                 value={location}
@@ -186,7 +186,7 @@ function Education() {
               }}
             >
               <InputField
-                title="Degree"
+                title="Degree:"
                 id="degree"
                 label="Degree"
                 value={degree}
@@ -208,7 +208,7 @@ function Education() {
               }}
             >
               <InputField
-                title="Major / Concentration"
+                title="Major / Concentration:"
                 id="major"
                 label="=Major"
                 value={major}
@@ -229,7 +229,7 @@ function Education() {
                 maxWidth: "500px",
               }}
             >
-              <FormLabel>Completion Date</FormLabel>
+              <FormLabel>Completion Date:</FormLabel>
               <InputField
                 id="completionDate"
                 value={completionDate}
