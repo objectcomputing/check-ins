@@ -21,9 +21,7 @@ export default function OnboardProgressDetailPage() {
       headerName: "Completed",
       width: 100,
     },
-    {field: "completeDate",
-headerName: "Date Completed",
-width: 150}
+    { field: "completeDate", headerName: "Date Completed", width: 150 },
   ];
 
   const rows = [
@@ -32,7 +30,7 @@ width: 150}
       documentName: "Employment Agreement",
       sentDate: "Jul 15th 2022",
       completed: "no",
-      completeDate: "N/A"
+      completeDate: "N/A",
     },
   ];
   return (
@@ -45,7 +43,7 @@ width: 150}
         <h1>Email: {email} </h1>
         <h1>Hire Type: {hireType}</h1>
       </Box>
-      <Box sx={{height:400, width:"45%", mt:"5%"}}>
+      <Box sx={{ height: 400, width: "45%", mt: "5%" }}>
         <h1>Documents/Survey</h1>
         <DataGrid
           rows={rows}
