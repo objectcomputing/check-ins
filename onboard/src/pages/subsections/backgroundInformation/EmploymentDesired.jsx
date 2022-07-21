@@ -101,7 +101,9 @@ function EmploymentDesired() {
       setNonCompeteStatus(val);
       if (val === "yes" && expirationDate === "") {
         setExpirationDateError(true);
-        setExpirationDateHelper("Since you selected yes in the previous question please enter in a valid date");
+        setExpirationDateHelper(
+          "Since you selected yes in the previous question please enter in a valid date"
+        );
       } else {
         setExpirationDateError(false);
         setExpirationDateHelper("");
@@ -110,6 +112,10 @@ function EmploymentDesired() {
     } else if (name === "expirationDate") {
       setExpirationDate(val);
       if (nonCompeteStatus === "yes" && !isDateInTheFuture(val)) {
+        if (val.length === 0) {
+          setExpirationDateError(true);
+          setExpirationDateHelper("Please enter in a valid date");
+        }
         setExpirationDateError(true);
         setExpirationDateHelper("Please enter in a valid date");
       } else {
