@@ -22,7 +22,7 @@ exports[`renders correctly 1`] = `
   align-items: baseline;
 }
 
-.emotion-0 .CheckinsPage-addButton {
+.emotion-0 .undefined {
   height: 3em;
 }
 
@@ -1034,6 +1034,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
           </button>
           <div
             className="MuiFormControl-root MuiTextField-root emotion-13"
+            onClick={[Function]}
             style={
               Object {
                 "width": "18em",
@@ -1043,8 +1044,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
             <label
               className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-14"
               data-shrink={false}
-              htmlFor="mui-1"
-              id="mui-1-label"
+              htmlFor="mui-2"
+              id="mui-2-label"
             >
               Check-In Date
             </label>
@@ -1054,21 +1055,18 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
             >
               <input
                 aria-invalid={false}
-                aria-label="Choose date, selected date is Oct 21, 2020"
-                aria-readonly={true}
                 autoFocus={false}
                 className="MuiOutlinedInput-input MuiInputBase-input emotion-16"
-                id="mui-1"
+                disabled={false}
+                id="mui-2"
                 onAnimationStart={[Function]}
                 onBlur={[Function]}
                 onChange={[Function]}
-                onClick={[Function]}
                 onFocus={[Function]}
-                onKeyDown={[Function]}
-                readOnly={true}
+                placeholder="testing"
                 required={false}
                 type="text"
-                value="10/21/2020 12:00 am"
+                value="No check-in selected"
               />
               <fieldset
                 aria-hidden={true}

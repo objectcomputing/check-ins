@@ -56,7 +56,30 @@ project(":web-ui") {
     }
 }
 
-project.tasks["sonarqube"].dependsOn ":web-ui:yarn_run_coverage", ":server:jacocoTestReport"
+project(":onboard-server") {
+    assemble {
+        dependsOn ":onboard:assemble"
+    }
+    sonarqube {
+        properties {
+            property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+            property "sonar.cpd.exclusions", "**/*DTO.java"
+        }
+    }
+}
+
+project(":onboard") {
+    sonarqube {
+        properties {
+            property "sonar.sources", "src/"
+            property "sonar.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
+            property "sonar.coverage.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
+            property "sonar.javascript.lcov.reportPaths", "coverage/lcov.info"
+        }
+    }
+}
+
+project.tasks["sonarqube"].dependsOn ":web-ui:yarn_run_coverage", ":onboard:yarn_run_coverage", ":server:jacocoTestReport", ":onboard-server:jacocoTestReport"
 ////// ################### SONARCLOUD PLUGIN END#########################
 
 

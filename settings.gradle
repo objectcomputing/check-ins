@@ -1,3 +1,5 @@
 rootProject.name="check-ins"
 include "web-ui"
+include "onboard"
 include "server"
+include "onboard-server"

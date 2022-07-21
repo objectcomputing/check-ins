@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+.emotion-0 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+}
+
+.emotion-1 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  display: block;
+}
+
+<div>
+  <center>
+    <div
+      className="MuiTypography-root MuiTypography-body1 emotion-0"
+      dispay="block"
+    >
+      <br />
+      Thank you for completing your job application.
+      <p
+        className="MuiTypography-root MuiTypography-body1 emotion-1"
+      >
+        You will be receiving information about accessing your ADP account soon from HR via email.
+      </p>
+      During your first day you will be awarded with a company t-shirt. We hope you have a great time at Object Computing!
+    </div>
+    <img
+      alt="Cake"
+      src="cake.png"
+    />
+  </center>
+</div>
+`;
