@@ -93,13 +93,13 @@ export default function OnboardProgressPage() {
                 <Typography id="description" sx={{ mt: 2 }}>
                   Position:
                 </Typography>
-                <Select label="enter postion"></Select>
+                <Select sx={{ width: "75%" }} label="position"></Select>
               </Grid>
               <Grid item xs={6}>
                 <Typography id="description" sx={{ mt: 2 }}>
                   Hire Type:
                 </Typography>
-                <Select></Select>
+                <Select sx={{ width: "75%" }}></Select>
               </Grid>
             </Grid>
             <Grid container space={2}>
@@ -107,13 +107,13 @@ export default function OnboardProgressPage() {
                 <Typography id="description" sx={{ mt: 2 }}>
                   First Name:
                 </Typography>
-                <TextField variant="outlined" />
+                <TextField sx={{ width: "75%" }} variant="outlined" />
               </Grid>
               <Grid item xs={6}>
                 <Typography id="description" sx={{ mt: 2 }}>
                   Last Name:
                 </Typography>
-                <TextField variant="outlined" />
+                <TextField sx={{ width: "75%" }} variant="outlined" />
               </Grid>
             </Grid>
             <Grid container space={3}>
@@ -121,19 +121,19 @@ export default function OnboardProgressPage() {
                 <Typography id="description" sx={{ mt: 2 }}>
                   Email:
                 </Typography>
-                <TextField variant="outlined" />
+                <TextField sx={{ width: "75%" }} variant="outlined" />
               </Grid>
               <Grid item xs={6}>
                 <Typography id="description" sx={{ mt: 2 }}>
                   PDL/Manager:
                 </Typography>
-                <Select></Select>
+                <Select sx={{ width: "75%" }}></Select>
               </Grid>
             </Grid>
             <Divider sx={{ m: 1 }} variant="middle" />
             <Grid container space={1} rowSpacing={3}>
               <Grid item xs={12}>
-                <Typography align="center" id="description" sx={{ mt: 2 }}>
+                <Typography align="center" id="description" sx={{ mt: 2, display: "inline-flex" }}>
                   Offer Letter:
                 </Typography>
                 <IconButton>
@@ -141,7 +141,7 @@ export default function OnboardProgressPage() {
                 </IconButton>
               </Grid>
               <Grid item id="description" xs={12}>
-                <Typography align="center" sx={{ mt: 2 }}>
+                <Typography align="center" id="description" sx={{ mt: 2, display: "inline-flex"}}>
                   Employment Agreement:
                 </Typography>
                 <IconButton>
