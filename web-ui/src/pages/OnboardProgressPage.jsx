@@ -3,10 +3,11 @@ import { DataGrid } from "@mui/x-data-grid";
 
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
+import FileUploadIcon from "@mui/icons-material/FileUpload"
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
-import { Button, Modal, Typography } from "@mui/material";
+import { Button, Modal, Typography, Grid, Divider, Select, IconButton } from "@mui/material";
 import { useState } from "react";
 
 const style = {
@@ -14,13 +15,14 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: '75%',
   backgroundColor: '#fff',
   border: '2px solid #000',
   boxShadow: 24,
   pt: 2,
   px: 4,
   pb: 3,
+  m: 2,
 };
 
 export default function OnboardProgressPage() {
@@ -80,15 +82,73 @@ export default function OnboardProgressPage() {
         <Modal
           open={open}
           onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description">
+          aria-labelledby="title"
+          aria-describedby="description">
           <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Text in a modal
+            <Typography align="center" id="title" variant="h6" component="h2">
+              Add Onboardee:
             </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
+            <Grid container space={2}>
+              <Grid item xs={6}>
+                <Typography id="description" sx={{ mt: 2 }}>
+                  Position:
+                </Typography>
+                <Select label="enter postion"></Select>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography id="description" sx={{ mt: 2 }}>
+                  Hire Type:
+                </Typography>
+                <Select></Select>
+              </Grid>
+            </Grid>
+            <Grid container space={2}>
+              <Grid item xs={6}>
+                <Typography id="description" sx={{ mt: 2 }}>
+                  First Name:
+                </Typography>
+                <TextField variant="outlined" />
+              </Grid>
+              <Grid item xs={6}>
+                <Typography id="description" sx={{ mt: 2 }}>
+                  Last Name:
+                </Typography>
+                <TextField variant="outlined" />
+              </Grid>
+            </Grid>
+            <Grid container space={3}>
+              <Grid item xs={6}>
+                <Typography id="description" sx={{ mt: 2 }}>
+                  Email:
+                </Typography>
+                <TextField variant="outlined" />
+              </Grid>
+              <Grid item xs={6}>
+                <Typography id="description" sx={{ mt: 2 }}>
+                  PDL/Manager:
+                </Typography>
+                <Select></Select>
+              </Grid>
+            </Grid>
+            <Divider sx={{ m: 1 }} variant="middle" />
+            <Grid container space={1} rowSpacing={3}>
+              <Grid item xs={12}>
+                <Typography align="center" id="description" sx={{ mt: 2 }}>
+                  Offer Letter:
+                </Typography>
+                <IconButton>
+                  <FileUploadIcon></FileUploadIcon>
+                </IconButton>
+              </Grid>
+              <Grid item id="description" xs={12}>
+                <Typography align="center" sx={{ mt: 2 }}>
+                  Employment Agreement:
+                </Typography>
+                <IconButton>
+                  <FileUploadIcon></FileUploadIcon>
+                </IconButton>
+              </Grid>
+            </Grid>
           </Box>
 
         </Modal>
