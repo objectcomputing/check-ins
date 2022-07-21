@@ -29,14 +29,18 @@ export default function OnboardProgressPage() {
 
   const columnsNotif = [
     { field: "id", headerName: "#", width: 10 },
-    { field: "notificationMsg", headerName: "Notification Message", width: 1200 },
+    {
+      field: "notificationMsg",
+      headerName: "Notification Message",
+      width: 1200,
+    },
   ];
 
   const rowsNotif = [{ id: 1, notificationMsg: "daniel finished something" }];
 
   return (
     <div className="onboard-page">
-      <Box sx={{ height: 400, width: "60%" ,mt:"5%"}}>
+      <Box sx={{ height: 400, width: "60%", mt: "5%" }}>
         <TextField
           id="input-with-icon-textfield"
           label="Search Onboardees"
@@ -47,9 +51,11 @@ export default function OnboardProgressPage() {
               </InputAdornment>
             ),
           }}
-          variant="standard"
-        />
-        <Button variant="contained" sx={{ml:"64%" }} >Add Onboardee</Button>
+          variant="standard"/>
+
+        <Button variant="contained" sx={{ ml: "64%" }}>
+          Add Onboardee
+        </Button>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -59,7 +65,7 @@ export default function OnboardProgressPage() {
           disableSelectionOnClick
         />
       </Box>
-      <Box sx={{height:400, width: "20%", mt:"3%"}}>
+      <Box sx={{ height: 400, width: "20%", mt: "3%" }}>
         <h1>Notifications</h1>
         <DataGrid
           rows={rowsNotif}
