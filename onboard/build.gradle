@@ -26,3 +26,11 @@ check {
 artifacts {
     'default' file: buildDir, type: 'directory', builtBy: yarn_run_build
 }
+
+dependencies {
+    implementation 'org.mockito:mockito-core:4.6.1'
+}
+
+repositories {
+    mavenCentral()
+}
