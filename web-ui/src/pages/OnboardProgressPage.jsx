@@ -8,7 +8,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import { Button, Modal, Typography, Grid, Divider, Select, IconButton } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const style = {
   position: 'absolute',
@@ -27,10 +27,14 @@ const style = {
 
 export default function OnboardProgressPage() {
   const [open, setOpen] = useState(false);
+  const [empFile, setEmpFile] = useState('temp');
+
+  // useEffect(() => {
+  //   setEmpFile(document.getElementById('empAgreement'));
+  // }, [document.getElementById('empAgreement').name])
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
 
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
@@ -116,7 +120,7 @@ export default function OnboardProgressPage() {
           aria-labelledby="title"
           aria-describedby="description">
           <Box sx={style}>
-            <Typography align="center" id="title" variant="h6" component="h2">
+            <Typography align="center" id="title" variant="h3" component="h2">
               Add Onboardee:
             </Typography>
             <Grid container space={2}>
@@ -161,23 +165,19 @@ export default function OnboardProgressPage() {
                 <Select sx={{ width: "75%" }}></Select>
               </Grid>
             </Grid>
-            <Divider sx={{ m: 1 }} variant="middle" />
-            <Grid container space={1} rowSpacing={3}>
-              <Grid item xs={12}>
-                <Typography align="center" id="description" sx={{ mt: 2, display: "inline-flex" }}>
+            <Divider sx={{ m: 3 }} variant="middle" />
+            <Grid container flexDirection="column" alignItems="center" rowSpacing={3}>
+              <Grid item xs={'auto'}>
+                <Typography align="center" id="description" sx={{ mt: 0, display: "inline-flex" }}>
                   Offer Letter:
                 </Typography>
-                <IconButton>
-                  <FileUploadIcon></FileUploadIcon>
-                </IconButton>
+                  <input accept=".pdf" type="file" id="offerLetter" />         
               </Grid>
-              <Grid item id="description" xs={12}>
-                <Typography align="center" id="description" sx={{ mt: 2, display: "inline-flex"}}>
+              <Grid item id="description" xs={'auto'}>
+                <Typography align="center" id="description" sx={{ mt: 2, display: "inline-flex" }}>
                   Employment Agreement:
                 </Typography>
-                <IconButton>
-                  <FileUploadIcon></FileUploadIcon>
-                </IconButton>
+                  <input accept=".pdf" type="file" id="empAgreement" />
               </Grid>
             </Grid>
           </Box>
