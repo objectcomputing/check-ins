@@ -43,7 +43,7 @@ function PersonalInformation() {
   function isDateValid(date) {
     let dateValid = false;
     let currentDate = new Date();
-    let inputDate = new Date(date.split('-'));
+    let inputDate = new Date(date.split("-"));
     let currentYear = currentDate.getFullYear();
     let inputYear = inputDate.getFullYear();
 
@@ -102,7 +102,7 @@ function PersonalInformation() {
       }
     } else if (name === "dob") {
       setDateOfBirth(val);
-      if (isDateValid(val)) {
+      if (isDateValid(val) && val.length > 0) {
         setDateOfBirthError(false);
         setDateOfBirthHelper("");
       } else {
@@ -154,7 +154,7 @@ function PersonalInformation() {
   }
 
   return (
-    <Box sx={{ width: "100%", textAlign: "left"}}>
+    <Box sx={{ width: "100%", textAlign: "left" }}>
       <form autoComplete="off" onSubmit={handleSaveInformation}>
         <Grid
           container

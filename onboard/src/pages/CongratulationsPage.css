@@ -4,3 +4,8 @@
   left: 5%;
   bottom: 5%;
 }
+.cake {
+  max-width: 100%;
+  height: auto;
+  vertical-align: bottom;
+}

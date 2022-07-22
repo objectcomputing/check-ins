@@ -39,12 +39,15 @@ credentials:
       - ADMIN
       - PDL
       - MEMBER
+      - HR
     ADMIN:
       - ADMIN
     PDL:
       - PDL
     MEMBER:
       - MEMBER
+    HR:
+      - HR
 ---
 flyway:
   enabled: enabled

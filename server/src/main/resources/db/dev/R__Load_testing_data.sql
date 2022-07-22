@@ -136,7 +136,15 @@ INSERT INTO role
 VALUES
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', PGP_SYM_ENCRYPT('is a pdl','${aeskey}'), 'PDL');
 
+INSERT INTO role
+    (id, description, role)
+VALUES
+    ('a27cd40f-154c-4ca9-8162-207194770068', PGP_SYM_ENCRYPT('is an HR', '${aeskey}'), 'HR');
 
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('a27cd40f-154c-4ca9-8162-207194770068', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO member_roles
     (roleid, memberid)

@@ -13,12 +13,13 @@ public class RoleTypeTest {
         assertEquals(RoleType.Constants.PDL_ROLE, RoleType.PDL.name());
         assertEquals(RoleType.Constants.MEMBER_ROLE, RoleType.MEMBER.name());
         assertEquals(RoleType.Constants.ADMIN_ROLE, RoleType.ADMIN.name());
+        assertEquals(RoleType.Constants.HR_ROLE, RoleType.HR.name());
     }
 
     @Test
     void testValues() {
         RoleType[] roles = RoleType.values();
-        assertEquals(roles.length, 3);
+        assertEquals(roles.length, 4);
         for (RoleType roleType : roles) {
             switch (roleType) {
                 case PDL:
@@ -29,6 +30,9 @@ public class RoleTypeTest {
                     break;
                 case MEMBER:
                     assertEquals("MEMBER", roleType.toString());
+                    break;
+                case HR:
+                    assertEquals("HR", roleType.toString());
                     break;
                 default:
                     fail(String.format("%s not supported", roleType.toString()));
