@@ -45,9 +45,7 @@ export default function OnboardProgressPage() {
   };
 
   const posOptions = ['dummy1', 'dummy2', 'dummy3'];
-
   const hireOptions = ['dummy4', 'dummy5', 'dummy6'];
-
   const pdlOptions = ['dummy7', 'dummy8', 'dummy9'];
 
   const columns = [
@@ -151,15 +149,6 @@ export default function OnboardProgressPage() {
                   options={posOptions}
                   sx={{ width: "75%" }}
                   renderInput={(option) => <TextField variant="outlined" {...option} />} />
-                {/* <Select sx={{ width: "75%" }} label="position" value={position} onChange={handlePosition}>
-                  {posOptions?.map(option => {
-                    return (
-                      <MenuItem value={option.id}>
-                        {option.text}
-                      </MenuItem>
-                    );
-                  })}
-                </Select> */}
               </Grid>
               <Grid item xs={6}>
                 <Typography id="description" sx={{ mt: 2 }}>
@@ -177,13 +166,13 @@ export default function OnboardProgressPage() {
                 <Typography id="description" sx={{ mt: 2 }}>
                   First Name:
                 </Typography>
-                <TextField sx={{ width: "75%" }} variant="outlined" />
+                <TextField sx={{ width: "75%" }} id="firstName" variant="outlined" />
               </Grid>
               <Grid item xs={6}>
                 <Typography id="description" sx={{ mt: 2 }}>
                   Last Name:
                 </Typography>
-                <TextField sx={{ width: "75%" }} variant="outlined" />
+                <TextField sx={{ width: "75%" }} id="lastName" variant="outlined" />
               </Grid>
             </Grid>
             <Grid container space={3}>
@@ -191,7 +180,7 @@ export default function OnboardProgressPage() {
                 <Typography id="description" sx={{ mt: 2 }}>
                   Email:
                 </Typography>
-                <TextField sx={{ width: "75%" }} variant="outlined" />
+                <TextField sx={{ width: "75%" }} id="email" variant="outlined" />
               </Grid>
               <Grid item xs={6}>
                 <Typography id="description" sx={{ mt: 2 }}>
@@ -214,7 +203,7 @@ export default function OnboardProgressPage() {
                   <input hidden accept=".pdf" type="file" id="offerLetter" onChange={handleOfferLetter} />
                   <FileUploadIcon />
                 </IconButton>
-                <Typography variant="subtitle2" sx={{ display: "inline-flex" }}>{offer}</Typography>
+                <Typography  sx={{ display: "inline-flex", fontStyle: 'italic', fontSize: 12, marginLeft: 5 }}>{offer}</Typography>
               </Grid>
               <Grid item id="description" xs={'auto'}>
                 <Typography align="center" id="description" sx={{ mt: 2, display: "inline-flex" }}>
@@ -224,7 +213,7 @@ export default function OnboardProgressPage() {
                   <input hidden accept=".pdf" type="file" id="empAgreement" onChange={handleEmployeeAgreement} />
                   <FileUploadIcon />
                 </IconButton>
-                <Typography variant="subtitle2" sx={{ display: "inline-flex" }}>{empFile}</Typography>
+                <Typography sx={{ display: "inline-flex", fontStyle: 'italic', fontSize: 12, marginLeft: 5 }}>{empFile}</Typography>
               </Grid>
             </Grid>
           </Box>
