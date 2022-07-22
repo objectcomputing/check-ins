@@ -7,8 +7,8 @@ import FileUploadIcon from "@mui/icons-material/FileUpload"
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
-import { Button, Modal, Typography, Grid, Divider, Select, IconButton } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Button, Modal, Typography, Grid, Divider, IconButton, Autocomplete } from "@mui/material";
+import { useState } from "react";
 
 const style = {
   position: 'absolute',
@@ -27,14 +27,27 @@ const style = {
 
 export default function OnboardProgressPage() {
   const [open, setOpen] = useState(false);
-  const [empFile, setEmpFile] = useState('temp');
-
-  // useEffect(() => {
-  //   setEmpFile(document.getElementById('empAgreement'));
-  // }, [document.getElementById('empAgreement').name])
+  const [empFile, setEmpFile] = useState(' ');
+  const [offer, setOfferFile] = useState(' ');
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setEmpFile(' ');
+    setOfferFile(' ');
+  };
+  const handleEmployeeAgreement = (e) => {
+    setEmpFile(e.target.value.replace(/^.*[\\/]/, ''));
+  };
+  const handleOfferLetter = (e) => {
+    setOfferFile(e.target.value.replace(/^.*[\\/]/, ''));
+  };
+
+  const posOptions = ['dummy1', 'dummy2', 'dummy3'];
+
+  const hireOptions = ['dummy4', 'dummy5', 'dummy6'];
+
+  const pdlOptions = ['dummy7', 'dummy8', 'dummy9'];
 
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
@@ -128,13 +141,30 @@ export default function OnboardProgressPage() {
                 <Typography id="description" sx={{ mt: 2 }}>
                   Position:
                 </Typography>
-                <Select sx={{ width: "75%" }} label="position"></Select>
+                <Autocomplete
+                  disablePortal
+                  options={posOptions}
+                  sx={{ width: "75%" }}
+                  renderInput={(option) => <TextField variant="outlined" {...option} />} />
+                {/* <Select sx={{ width: "75%" }} label="position" value={position} onChange={handlePosition}>
+                  {posOptions?.map(option => {
+                    return (
+                      <MenuItem value={option.id}>
+                        {option.text}
+                      </MenuItem>
+                    );
+                  })}
+                </Select> */}
               </Grid>
               <Grid item xs={6}>
                 <Typography id="description" sx={{ mt: 2 }}>
                   Hire Type:
                 </Typography>
-                <Select sx={{ width: "75%" }}></Select>
+                <Autocomplete
+                  disablePortal
+                  options={hireOptions}
+                  sx={{ width: "75%" }}
+                  renderInput={(option) => <TextField variant="outlined" {...option} />} />
               </Grid>
             </Grid>
             <Grid container space={2}>
@@ -162,7 +192,11 @@ export default function OnboardProgressPage() {
                 <Typography id="description" sx={{ mt: 2 }}>
                   PDL/Manager:
                 </Typography>
-                <Select sx={{ width: "75%" }}></Select>
+                <Autocomplete
+                  disablePortal
+                  options={pdlOptions}
+                  sx={{ width: "75%" }}
+                  renderInput={(option) => <TextField variant="outlined" {...option} />} />
               </Grid>
             </Grid>
             <Divider sx={{ m: 3 }} variant="middle" />
@@ -171,13 +205,21 @@ export default function OnboardProgressPage() {
                 <Typography align="center" id="description" sx={{ mt: 0, display: "inline-flex" }}>
                   Offer Letter:
                 </Typography>
-                  <input accept=".pdf" type="file" id="offerLetter" />         
+                <IconButton component="label">
+                  <input hidden accept=".pdf" type="file" id="offerLetter" onChange={handleOfferLetter} />
+                  <FileUploadIcon />
+                </IconButton>
+                <Typography variant="subtitle2" sx={{ display: "inline-flex" }}>{offer}</Typography>
               </Grid>
               <Grid item id="description" xs={'auto'}>
                 <Typography align="center" id="description" sx={{ mt: 2, display: "inline-flex" }}>
                   Employment Agreement:
                 </Typography>
-                  <input accept=".pdf" type="file" id="empAgreement" />
+                <IconButton component="label">
+                  <input hidden accept=".pdf" type="file" id="empAgreement" onChange={handleEmployeeAgreement} />
+                  <FileUploadIcon />
+                </IconButton>
+                <Typography variant="subtitle2" sx={{ display: "inline-flex" }}>{empFile}</Typography>
               </Grid>
             </Grid>
           </Box>
