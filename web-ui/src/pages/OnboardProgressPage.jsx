@@ -7,6 +7,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
+import ProgressIndicator from "../components/onboard_progress/ProgressIndicator";
 
 export default function OnboardProgressPage() {
   const columns = [
@@ -14,7 +15,13 @@ export default function OnboardProgressPage() {
     { field: "name", headerName: "Name", width: 130 },
     { field: "email", headerName: "Email", width: 220 },
     { field: "hireType", headerName: "Hire Type", width: 150 },
-    { field: "progress", headerName: "Progress", width: 150 },
+    {
+      field: "progress",
+      renderCell: (cellValues) => {
+        return <ProgressIndicator />;
+      },
+      width: 150,
+    },
     { field: "dateAdded", headerName: "Date Added", width: 100 },
     {
       field: "Open Progress Details",
@@ -44,7 +51,6 @@ export default function OnboardProgressPage() {
       name: "Daniel Ryu",
       email: "ryud@objectcomputing.com",
       hireType: "Intern",
-      progress: "Incomplete",
       dateAdded: "Jul 15, 2022",
     },
     {
@@ -52,7 +58,6 @@ export default function OnboardProgressPage() {
       name: "Brandon Li",
       email: "brandonli@objectcomputing.com",
       hireType: "Intern",
-      progress: "Incomplete",
       dateAdded: "Jul 15, 2022",
     },
   ];
