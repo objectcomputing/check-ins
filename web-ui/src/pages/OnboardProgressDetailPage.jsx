@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
 import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { Link } from "react-router-dom";
 import "./OnboardProgressDetailPage.css";
 
 export default function OnboardProgressDetailPage() {
@@ -55,14 +54,10 @@ export default function OnboardProgressDetailPage() {
         />
       </Box>
       <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
-      <Link
-            to={{
-              pathname: `/onboard/progress`,
+        <Button variant="contained" href="/onboard/progress">
+          Back
+        </Button>
         
-            }}
-          >
-            Back
-          </Link>
       </Box>
     </div>
   );
