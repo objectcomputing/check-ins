@@ -72,8 +72,26 @@ function EmploymentHistory() {
       }
     } else if (name === "startDate") {
       setStartDate(val);
+      if (val.length === 0) {
+        setStartDateError(true);
+        setStartDateHelper("Please enter in the start date of your previous job");
+      }
+      else
+      {
+        setStartDateError(false);
+        setStartDateHelper("");
+        }
     } else if (name === "endDate") {
       setEndDate(val);
+      if (val.length === 0) {
+        setEndDateError(true);
+        setEndDateHelper("Please enter in the end date of your previous job");
+      }
+      else
+      {
+        setEndDateError(false);
+        setEndDateHelper("");
+        }
     } else if (name === "reason") {
       setReason(val);
       if (val.length > 0) {
@@ -202,7 +220,7 @@ function EmploymentHistory() {
                 value={endDate}
                 error={endDateError}
                 onChangeHandler={handleChnage}
-                helperMessage={endDateError}
+                helperMessage={endDateHelper}
                 label="End Date"
                 type="date"
               ></InputField>
