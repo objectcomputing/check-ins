@@ -43,7 +43,7 @@ export default function OnboardProgressDetailPage() {
         <Button onClick={()=>setShow(true)} variant="contained" sx={{ fontSize: "1vw" }}>
           Personal Information
         </Button>
-        <Modal title="My Modal" onClose={() => setShow(false)} show={show}>
+        <Modal title="Personal Information" onClose={() => setShow(false)} show={show}>
         <p>This is modal body</p>
       </Modal>
         <h1>Name: {name}</h1>
