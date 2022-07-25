@@ -29,7 +29,7 @@ const Congratulations = () => {
           marginLeft={30}
           marginRight={30}
         >
-          You will receive an email from HR regarding accesing your ADP account
+          You will receive an email from HR regarding accessing your ADP account
           within the next 48 hours.
         </Typography>
         <Typography
@@ -38,7 +38,7 @@ const Congratulations = () => {
           marginLeft={30}
           marginRight={30}
         >
-          Be ready to receive some OCI swag on your first day! We're excited for
+          Be ready to receive some OCI swag once you start! We're excited for
           your arrival and hope you have a great time with us here at OCI!
         </Typography>
       </Grid>
