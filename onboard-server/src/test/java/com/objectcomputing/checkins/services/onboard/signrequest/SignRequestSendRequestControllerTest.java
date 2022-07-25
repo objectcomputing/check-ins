@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.onboard.signrequest;
 
-import com.objectcomputing.checkins.services.onboard.signrequest.SignRequestCreateDTO;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MutableHttpRequest;
@@ -10,20 +9,30 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.util.Map;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @MicronautTest
 public class SignRequestSendRequestControllerTest {
 
     @Inject
     @Client("/send-signrequest")
-    HttpClient client;
+    private HttpClient client;
+
+    @Test
+    public void testVerifyBasicInteractions() {
+        SignRequestCreateDTO request = new SignRequestCreateDTO();
+        request.setEmail("test");
+        String a = request.getEmail();
+        assertEquals("test", a);
+        //verify(request, times(1)).setEmail("test");
+    }
+
 
     @Test
     public void testBadRequestExceptionThrownWithBlankEmail() {

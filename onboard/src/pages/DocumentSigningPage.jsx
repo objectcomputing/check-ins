@@ -40,4 +40,5 @@ const DocumentSigningPage = () => {
     window.location.href = "http://localhost:3000/embed-request";
   }
 };
+
 export default DocumentSigningPage;
