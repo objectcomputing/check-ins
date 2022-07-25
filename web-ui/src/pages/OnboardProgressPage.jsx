@@ -203,7 +203,7 @@ export default function OnboardProgressPage() {
                   <input hidden accept=".pdf" type="file" id="offerLetter" onChange={handleOfferLetter} />
                   <FileUploadIcon />
                 </IconButton>
-                <Typography  sx={{ display: "inline-flex", fontStyle: 'italic', fontSize: 12, marginLeft: 5 }}>{offer}</Typography>
+                <Typography sx={{ display: "inline-flex", fontStyle: 'italic', fontSize: 12, marginLeft: 5 }}>{offer}</Typography>
               </Grid>
               <Grid item id="description" xs={'auto'}>
                 <Typography align="center" id="description" sx={{ mt: 2, display: "inline-flex" }}>
@@ -214,6 +214,14 @@ export default function OnboardProgressPage() {
                   <FileUploadIcon />
                 </IconButton>
                 <Typography sx={{ display: "inline-flex", fontStyle: 'italic', fontSize: 12, marginLeft: 5 }}>{empFile}</Typography>
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item xs={6} style={{display: "flex", justifyContent: "flex-start"}}>
+              <Button variant="contained" onClick={handleClose} >Cancel</Button>
+              </Grid>
+              <Grid item xs={6} style={{display: "flex", justifyContent: "flex-end"}}>
+                <Button variant="contained">Submit</Button>
               </Grid>
             </Grid>
           </Box>
@@ -227,7 +235,7 @@ export default function OnboardProgressPage() {
           checkboxSelection
           disableSelectionOnClick
         />
-      </Box>
+      </Box >
       <Box sx={{ height: 400, width: "20%", mt: "3%" }}>
         <h1>Notifications</h1>
         <DataGrid
@@ -237,6 +245,6 @@ export default function OnboardProgressPage() {
           rowsPerPageOptions={[10]}
         />
       </Box>
-    </div>
+    </div >
   );
 }
