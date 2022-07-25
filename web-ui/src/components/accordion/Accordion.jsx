@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import  "./Accordion.css";
+import "./Accordion.css";
 
 function Accordion({ title, open, index, content }) {
   const [isActive, setIsActive] = useState(open ? true : false);
@@ -48,7 +48,7 @@ function Accordion({ title, open, index, content }) {
             mt: 1,
           }}
         >
-          <Box sx={{ width: "100%"}}>{content}</Box>
+          <Box sx={{ width: "100%" }}>{content}</Box>
         </Box>
       )}
     </Grid>
