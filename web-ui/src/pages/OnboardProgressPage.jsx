@@ -87,14 +87,14 @@ export default function OnboardProgressPage() {
     {
       id: 1,
       name: "Daniel Ryu",
-      email: "ryud@objectcomputing.com",
+      email: "d97shryu@gmail.com",
       hireType: "Intern",
       dateAdded: "Jul 15, 2022",
     },
     {
       id: 2,
       name: "Brandon Li",
-      email: "brandonli@objectcomputing.com",
+      email: "li.brandon@outlook.com",
       hireType: "Intern",
       dateAdded: "Jul 15, 2022",
     },
