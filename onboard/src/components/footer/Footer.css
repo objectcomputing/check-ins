@@ -9,6 +9,9 @@
   flex-direction: column;
   height: min-content;
 }
+.nextButton {
+  align-self: flex-end;
+}
 .finalButton {
   align-self: center;
 }
