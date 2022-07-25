@@ -8,6 +8,7 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.security.annotation.Secured;
@@ -20,12 +21,13 @@ import java.util.*;
 
 import static io.micronaut.http.HttpRequest.POST;
 
+@Controller()
 @Secured(SecurityRule.IS_ANONYMOUS)
-@Controller
+@Produces(MediaType.APPLICATION_JSON)
+@Tag(name = "signrequest")
 public class SignRequestController {
 
     @Client("https://ocitest.signrequest.com/api/v1/") @Inject HttpClient httpClient;
-    private Map<String,String> signerInfo = new HashMap<>();
 
     @Property(name = "signrequest-credentials.signrequest_token")
     private String SIGNREQUEST_TOKEN;
@@ -44,38 +46,38 @@ public class SignRequestController {
         }
     }
 
-    @Get("/send-signrequest")
-    public String sendSignRequest() {
-        JSONObject data = new JSONObject();
-        JSONArray array = new JSONArray();
-        JSONObject item = new JSONObject();
-
-        item.put("email", "li.brandon@outlook.com");
-        array.put(item);
-
-        data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
-        data.put("name", "demo_document.pdf");
-        data.put("from_email", "librandon0706@gmail.com");
-        data.put("message", "Please sign this document");
-        data.put("needs_to_sign", "true");
-        data.put("who", "o");
-        data.put("subject", "SignTest - YourTeam API");
-        data.put("auto_delete_days", "1");
-        data.put("signers", array);
-
-        try {
-            String retrieve = httpClient.toBlocking().retrieve(POST("/signrequest-quick-create/", data.toString()).contentType(MediaType.APPLICATION_JSON).header("Authorization", SIGNREQUEST_TOKEN));
-            System.out.println("Request Worked");
-            return retrieve;
-        }
-        catch (HttpClientResponseException e) {
-            System.out.println("We Failed");
-            System.out.println(e.getMessage());
-            System.out.println(e.getResponse().reason());
-            System.out.println(e.getResponse().body());
-            return data.toString();
-        }
-    }
+//    @Get("/send-signrequest")
+//    public String sendSignRequest() {
+//        JSONObject data = new JSONObject();
+//        JSONArray array = new JSONArray();
+//        JSONObject item = new JSONObject();
+//
+//        item.put("email", "li.brandon@outlook.com");
+//        array.put(item);
+//
+//        data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
+//        data.put("name", "demo_document.pdf");
+//        data.put("from_email", "librandon0706@gmail.com");
+//        data.put("message", "Please sign this document");
+//        data.put("needs_to_sign", "true");
+//        data.put("who", "o");
+//        data.put("subject", "SignTest - YourTeam API");
+//        data.put("auto_delete_days", "1");
+//        data.put("signers", array);
+//
+//        try {
+//            String retrieve = httpClient.toBlocking().retrieve(POST("/signrequest-quick-create/", data.toString()).contentType(MediaType.APPLICATION_JSON).header("Authorization", SIGNREQUEST_TOKEN));
+//            System.out.println("Request Worked");
+//            return retrieve;
+//        }
+//        catch (HttpClientResponseException e) {
+//            System.out.println("We Failed");
+//            System.out.println(e.getMessage());
+//            System.out.println(e.getResponse().reason());
+//            System.out.println(e.getResponse().body());
+//            return data.toString();
+//        }
+//    }
 
     @Get("/embed-signrequest")
     public String embedSignRequest() {
