@@ -11,7 +11,7 @@ import { Button, Modal, Typography, Grid, Divider, IconButton, Autocomplete } fr
 import { useState } from "react";
 import ProgressIndicator from "../components/onboard_progress/ProgressIndicator";
 
-const style = {
+const modalBoxStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -135,7 +135,7 @@ export default function OnboardProgressPage() {
           onClose={handleClose}
           aria-labelledby="title"
           aria-describedby="description">
-          <Box sx={style}>
+          <Box sx={modalBoxStyle}>
             <Typography align="center" id="title" variant="h3" component="h2">
               Add Onboardee:
             </Typography>
@@ -217,15 +217,14 @@ export default function OnboardProgressPage() {
               </Grid>
             </Grid>
             <Grid container>
-              <Grid item xs={6} style={{display: "flex", justifyContent: "flex-start"}}>
-              <Button variant="contained" onClick={handleClose} >Cancel</Button>
+              <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-start" }}>
+                <Button variant="contained" onClick={handleClose} >Cancel</Button>
               </Grid>
-              <Grid item xs={6} style={{display: "flex", justifyContent: "flex-end"}}>
+              <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button variant="contained">Submit</Button>
               </Grid>
             </Grid>
           </Box>
-
         </Modal>
         <DataGrid
           rows={rows}
@@ -235,7 +234,7 @@ export default function OnboardProgressPage() {
           checkboxSelection
           disableSelectionOnClick
         />
-      </Box >
+      </Box>
       <Box sx={{ height: 400, width: "20%", mt: "3%" }}>
         <h1>Notifications</h1>
         <DataGrid
@@ -245,6 +244,6 @@ export default function OnboardProgressPage() {
           rowsPerPageOptions={[10]}
         />
       </Box>
-    </div >
+    </div>
   );
 }
