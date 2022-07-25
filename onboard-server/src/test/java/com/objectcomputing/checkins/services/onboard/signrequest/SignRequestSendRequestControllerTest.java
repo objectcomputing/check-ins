@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.onboard.signrequest;
+package com.objectcomputing.checkins.services.onboard.signrequest;
 
 import com.objectcomputing.checkins.services.onboard.signrequest.SignRequestCreateDTO;
 import io.micronaut.http.HttpRequest;
@@ -18,7 +18,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@MicronautTest(packages="onboard.signrequest")
+@MicronautTest
 public class SignRequestSendRequestControllerTest {
 
     @Inject
