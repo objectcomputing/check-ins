@@ -60,6 +60,12 @@ export default function OnboardProgressDetailPage() {
           disableSelectionOnClick
         />
       </Box>
+      <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
+        <Button variant="contained" href="/onboard/progress">
+          Back
+        </Button>
+        
+      </Box>
     </div>
   );
 }
