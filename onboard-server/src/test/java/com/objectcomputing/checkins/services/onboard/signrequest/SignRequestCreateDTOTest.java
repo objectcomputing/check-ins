@@ -45,6 +45,37 @@ public class SignRequestCreateDTOTest {
         }
     }
 
+    @Test
+    void testPopulatedDTO() {
+        SignRequestCreateDTO dto = new SignRequestCreateDTO();
 
+        dto.setEmail("some.file.email");
+        assertEquals(dto.getEmail(), "some.file.email");
+
+        dto.setFile("some.file.file");
+        assertEquals(dto.getFile(), "some.file.file");
+
+        dto.setName("some.file.name");
+        assertEquals(dto.getName(), "some.file.name");
+
+        dto.setFromEmail("some.file.from.email");
+        assertEquals(dto.getFromEmail(), "some.file.from.email");
+
+        dto.setMessage("some.file.message");
+        assertEquals(dto.getMessage(), "some.file.message");
+
+        dto.setSigningStatus("some.file.signing.status");
+        assertEquals(dto.getSigningStatus(), "some.file.signing.status");
+
+        dto.setSubject("some.file.subject");
+        assertEquals(dto.getSubject(), "some.file.subject");
+
+        dto.setDeleteDays("some.file.delete.days");
+        assertEquals(dto.getDeleteDays(), "some.file.delete.days");
+
+        String[] signers = {"test"};
+        dto.setSigners(signers);
+        assertEquals(dto.getSigners(), signers);
+    }
 
 }
