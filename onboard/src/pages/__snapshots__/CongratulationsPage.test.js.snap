@@ -146,12 +146,12 @@ exports[`renders correctly 1`] = `
     <p
       className="MuiTypography-root MuiTypography-body1 emotion-3"
     >
-      You will receive an email from HR regarding accesing your ADP account within the next 48 hours.
+      You will receive an email from HR regarding accessing your ADP account within the next 48 hours.
     </p>
     <p
       className="MuiTypography-root MuiTypography-body1 emotion-4"
     >
-      Be ready to receive some OCI swag on your first day! We're excited for your arrival and hope you have a great time with us here at OCI!
+      Be ready to receive some OCI swag once you start! We're excited for your arrival and hope you have a great time with us here at OCI!
     </p>
   </div>
   <div

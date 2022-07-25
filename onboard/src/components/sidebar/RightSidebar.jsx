@@ -12,6 +12,7 @@ function RightSidebar({
   data,
   currentPageIndex,
   handleNextButton,
+  handleBackButton,
 }) {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
