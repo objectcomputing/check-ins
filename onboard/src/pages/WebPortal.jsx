@@ -21,7 +21,7 @@ const menuList = [
   },
   {
     index: 1,
-    name: "About You Survey",
+    name: "Background Information",
     title: "Please enter in your background information:",
     completed: false,
     child: <BackgroundInformationPage />,
@@ -53,7 +53,7 @@ const menuList = [
   },
   {
     index: 5,
-    name: "Check-Ins Skills",
+    name: "About You",
     title: "You Know About Us Now! Tell Us About You!",
     completed: false,
     child: <IntroductionSurveyPage />,

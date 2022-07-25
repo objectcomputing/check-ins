@@ -6,6 +6,7 @@ export default function Footer({ handleNextButton, handleFinalButton, index }) {
     <div className="wrapFooter">
       {index < 6 ? (
         <Button
+          className="nextButton"
           variant="contained"
           color="success"
           size="large"
