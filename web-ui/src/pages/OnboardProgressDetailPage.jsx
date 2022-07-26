@@ -3,17 +3,16 @@ import { useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
 import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import "./../components/modal/Modal";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
 import Accordion from "../components/accordion/Accordion";
 import { isArrayPresent } from "../utils/helperFunction";
 import Modal from '@mui/material/Modal';
 
-
 const modalStyle = {
   position: 'absolute',
   top: '50%',
+  overflow: 'auto',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 800,
@@ -44,27 +43,33 @@ export default function OnboardProgressDetailPage() {
   // get user info from OnboardProgressPage
   const location = useLocation();
   const { name, email, hireType } = location.state;
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const accordionArr = [
     {
       title: "Personal Information",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
     },
     {
       title: "Employment Eligbility",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
     },
     {
       title: "Employment Desired and Availability",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
     },
     {
       title: "Education",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
     },
     {
       title: "Employment History",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
     },
     {
       title: "Referral Type and Signature",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
     },
   ];
   const columns = [
