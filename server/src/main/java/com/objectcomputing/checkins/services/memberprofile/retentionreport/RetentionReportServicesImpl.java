@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class RetentionReportServicesImpl implements RetentionReportServices {
 
@@ -24,9 +26,9 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
 
     @Override
     public RetentionReportResponseDTO report(RetentionReportDTO request) {
-        if (!currentUserServices.isAdmin()) {
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("Requires admin privileges");
-        }
+        });
 
         RetentionReportResponseDTO response;
         List<MemberProfile> memberProfiles = memberProfileServices.findAll();
@@ -271,8 +273,9 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
             if (mp.getExcluded() == null || !mp.getExcluded()) {
                 if (mp.getTerminationDate() != null && mp.getTerminationDate().isAfter(beginningDate) &&
                         (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    if (mp.getVoluntary() != null && mp.getVoluntary())
-                    numberOfTerms += 1;
+                    if (mp.getVoluntary() != null && mp.getVoluntary()) {
+                        numberOfTerms += 1;
+                    }
                 }
             }
         }

@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
 
@@ -42,33 +44,36 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
 
     @Override
     public QuestionCategory saveQuestionCategory(QuestionCategory questionCategory) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
-        }
 
-        if (questionCategory.getId() != null) {
-            throw new BadArgException(String.format("Found unexpected id %s for category, please try updating instead.",
-                    questionCategory.getId()));
-        } else if (questionCategoryRepository.findByName(questionCategory.getName()).isPresent()) {
-            throw new AlreadyExistsException(String.format("Category %s already exists. ", questionCategory.getName()));
-        }
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
+            throw new PermissionException("You do not have permission to access this resource");
+        });
+        validate(questionCategory.getId() == null).orElseThrow(() -> {
+            throw new BadArgException("Found unexpected id %s for category, please try updating instead.", questionCategory.getId());
+        });
+        validate(questionCategoryRepository.findByName(questionCategory.getName()).isEmpty()).orElseThrow(() -> {
+            throw new AlreadyExistsException("Category %s already exists. ", questionCategory.getName());
+        });
+
         return questionCategoryRepository.save(questionCategory);
     }
 
     @Override
     public QuestionCategory findById(@NotNull UUID id) {
-        return questionCategoryRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(String.format("No question category for id %s", id)));
+        return questionCategoryRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException(String.format("No question category for id %s", id));
+        });
     }
 
     @Override
     public QuestionCategory findByName(String name) {
-        if (name != null) {
-            return questionCategoryRepository.findByName(name).orElseThrow(() ->
-                    new NotFoundException(String.format("No question category for name %s", name)));
-        } else {
+        validate(name != null).orElseThrow(() -> {
             throw new BadArgException("Name must not be null");
-        }
+        });
+
+        return questionCategoryRepository.findByName(name).orElseThrow(() -> {
+            throw new NotFoundException(String.format("No question category for name %s", name));
+        });
     }
 
     @Override
@@ -77,34 +82,33 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
         if (questionCategory.getId() != null) {
             updatedQuestionCategory = getById(questionCategory.getId());
         }
-        if (updatedQuestionCategory != null) {
-            if (!currentUserServices.isAdmin()) {
-                throw new PermissionException("You do not have permission to access this resource");
-            }
-            return questionCategoryRepository.update(questionCategory);
-        } else {
+
+        validate(updatedQuestionCategory != null).orElseThrow(() -> {
             throw new BadArgException("This question category does not exist");
-        }
+        });
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
+            throw new PermissionException("You do not have permission to access this resource");
+        });
+
+        return questionCategoryRepository.update(questionCategory);
     }
 
     @Override
     public Boolean delete(@NotNull UUID id) {
-        final Optional<QuestionCategory> questionCategory = questionCategoryRepository.findById(id);
-        if (questionCategory.isEmpty()) {
+        final QuestionCategory questionCategory = questionCategoryRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("No question category with id " + id);
-        }
-        if (!currentUserServices.isAdmin()) {
+        });
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("You do not have permission to access this resource");
-        }
+        });
+
         questionCategoryRepository.deleteById(id);
         return true;
     }
 
     protected QuestionCategory getById(@NotNull UUID id) {
-        final Optional<QuestionCategory> questionCategory = questionCategoryRepository.findById(id);
-        if (questionCategory.isEmpty()) {
-            throw new NotFoundException("No category with id " + id);
-        }
-        return questionCategory.get();
+        return questionCategoryRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("No category with id %s", id);
+        });
     }
 }

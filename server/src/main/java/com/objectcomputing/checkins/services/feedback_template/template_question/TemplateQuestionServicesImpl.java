@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
@@ -31,61 +33,67 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
     @Override
     public TemplateQuestion save(TemplateQuestion templateQuestion) {
-        if (templateQuestion == null) {
+
+        validate(templateQuestion != null).orElseThrow(() -> {
             throw new BadArgException("Attempted to save null template question");
-        } else if (templateQuestion.getId() != null) {
+        });
+        validate(templateQuestion.getId() == null).orElseThrow(() -> {
             throw new BadArgException("Attempted to save question with non-auto-populated ID");
-        } else if (templateQuestion.getTemplateId() == null) {
+        });
+        validate(templateQuestion.getTemplateId() != null).orElseThrow(() -> {
             throw new BadArgException("Attempted to save question with no template ID");
-        } else if (templateQuestion.getInputType() == null) {
+        });
+        validate(templateQuestion.getInputType() != null).orElseThrow(() -> {
             throw new BadArgException("Attempted to save question with input type not specified");
-        }
+        });
 
         Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.getTemplateId());
-        if (feedbackTemplate.isEmpty()) {
-            throw new NotFoundException("Template ID " + templateQuestion.getTemplateId() + " does not exist");
-        }
+        validate(feedbackTemplate.isPresent()).orElseThrow(() -> {
+            throw new NotFoundException("Template ID %s does not exist", templateQuestion.getTemplateId());
+        });
 
         // For a given template ID, each question number must be unique
         List<TemplateQuestion> conflictingQuestions = templateQuestionRepository.search(Util.nullSafeUUIDToString(templateQuestion.getTemplateId()), templateQuestion.getQuestionNumber());
-        if (!conflictingQuestions.isEmpty()) {
-            throw new BadArgException("Attempted to save question on template " + templateQuestion.getTemplateId() + " with duplicate question number " + templateQuestion.getQuestionNumber());
-        }
+        validate(conflictingQuestions.isEmpty()).orElseThrow(() -> {
+            throw new BadArgException("Attempted to save question on template %s with duplicate question number %s", templateQuestion.getTemplateId(), templateQuestion.getQuestionNumber());
+        });
 
-        if (!createIsPermitted(feedbackTemplate.get().getCreatorId())) {
+        validate(createIsPermitted(feedbackTemplate.get().getCreatorId())).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
         return templateQuestionRepository.save(templateQuestion);
     }
 
     @Override
     public TemplateQuestion update(TemplateQuestion templateQuestion) {
-        if (templateQuestion == null) {
+        validate(templateQuestion != null).orElseThrow(() -> {
             throw new BadArgException("Attempted to save null template question");
-        } else if (templateQuestion.getId() == null) {
+        });
+        validate(templateQuestion.getId() != null).orElseThrow(() -> {
             throw new BadArgException("Attempted to save question with null ID");
-        } else if (templateQuestion.getInputType() == null) {
+        });
+        validate(templateQuestion.getInputType() != null).orElseThrow(() -> {
             throw new BadArgException("Attempted to update question with input type not specified");
-        }
+        });
 
         TemplateQuestion oldTemplateQuestion = getById(templateQuestion.getId());
         templateQuestion.setTemplateId(oldTemplateQuestion.getTemplateId());
         Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.getTemplateId());
 
-        if (feedbackTemplate.isEmpty()) {
-            throw new NotFoundException("Could not find feedback template with ID " + templateQuestion.getTemplateId());
-        }
+        validate(feedbackTemplate.isPresent()).orElseThrow(() -> {
+            throw new NotFoundException("Could not find feedback template with ID %s", templateQuestion.getTemplateId());
+        });
 
         // For a given template ID, each question number must be unique
         List<TemplateQuestion> conflictingQuestions = templateQuestionRepository.search(Util.nullSafeUUIDToString(templateQuestion.getTemplateId()), templateQuestion.getQuestionNumber());
-        if (!conflictingQuestions.isEmpty()) {
-            throw new BadArgException("Attempted to update question on template " + templateQuestion.getTemplateId() + " with duplicate question number " + templateQuestion.getQuestionNumber());
-        }
+        validate(conflictingQuestions.isEmpty()).orElseThrow(() -> {
+            throw new BadArgException("Attempted to update question on template %s with duplicate question number %s", templateQuestion.getTemplateId(), templateQuestion.getQuestionNumber());
+        });
 
-        if (!updateIsPermitted(feedbackTemplate.get().getCreatorId())) {
+        validate(updateIsPermitted(feedbackTemplate.get().getCreatorId())).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
         return templateQuestionRepository.update(templateQuestion);
     }
@@ -93,18 +101,20 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     @Override
     public Boolean delete(UUID id) {
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
-        if (templateQuestion.isEmpty()) {
-            throw new NotFoundException("Could not find template question with ID " + id);
-        } else if (templateQuestion.get().getTemplateId() == null) {
-            throw new BadArgException("Attempted to delete question with null template ID");
-        }
 
-        Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.get().getTemplateId());
-        if (feedbackTemplate.isEmpty()) {
-            throw new NotFoundException("Could not find feedback template with ID " + templateQuestion.get().getTemplateId());
-        } else if (!deleteIsPermitted(feedbackTemplate.get().getCreatorId())) {
+        validate(templateQuestion.isPresent()).orElseThrow(() -> {
+            throw new NotFoundException("Could not find template question with ID %s", id);
+        });
+        validate(templateQuestion.get().getTemplateId() != null).orElseThrow(() -> {
+            throw new BadArgException("Attempted to delete question with null template ID");
+        });
+
+        FeedbackTemplate feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.get().getTemplateId()).orElseThrow(() -> {
+            throw new NotFoundException("Could not find feedback template with ID %s", templateQuestion.get().getTemplateId());
+        });
+        validate(deleteIsPermitted(feedbackTemplate.getCreatorId())).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
         // Delete the question
         templateQuestionRepository.deleteById(id);
@@ -113,25 +123,23 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
     @Override
     public TemplateQuestion getById(UUID id) {
-        final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
-        if (!getIsPermitted()) {
+        validate(getIsPermitted()).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
-        if (templateQuestion.isEmpty()) {
-            throw new NotFoundException("No feedback question with ID " + id);
-        }
-
-        return templateQuestion.get();
+        return templateQuestionRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("No feedback question with ID %s", id);
+        });
     }
 
     @Override
     public List<TemplateQuestion> findByFields(UUID templateId) {
-        if (templateId == null) {
+        validate(templateId != null).orElseThrow(() -> {
             throw new BadArgException("Cannot find template questions for null template ID");
-        } else if (!getIsPermitted()) {
+        });
+        validate(getIsPermitted()).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
         return new ArrayList<>(templateQuestionRepository.findByTemplateId(Util.nullSafeUUIDToString(templateId)));
     }

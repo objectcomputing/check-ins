@@ -11,6 +11,8 @@ import jakarta.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
@@ -40,14 +42,14 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     @Override
     public FeedbackTemplate update(FeedbackTemplate feedbackTemplate) {
 
-       if (feedbackTemplate.getId() == null) {
-            throw new BadArgException("Attempted to update template with null ID");
-        }
+       validate(feedbackTemplate.getId() != null).orElseThrow(() -> {
+           throw new BadArgException("Attempted to update template with null ID");
+       });
 
         Optional<FeedbackTemplate> originalTemplate = feedbackTemplateRepository.findById(feedbackTemplate.getId());
-        if (originalTemplate.isEmpty()) {
-            throw new NotFoundException("Could not update template with nonexistent ID " + feedbackTemplate.getId());
-        }
+        validate(originalTemplate.isPresent()).orElseThrow(() -> {
+            throw new NotFoundException("Could not update template with nonexistent ID %s", feedbackTemplate.getId());
+        });
 
         feedbackTemplate.setCreatorId(originalTemplate.get().getCreatorId());
         feedbackTemplate.setTitle(originalTemplate.get().getTitle());
@@ -67,9 +69,9 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     public Boolean delete(UUID id) {
         final FeedbackTemplate template = getById(id);
 
-        if (!deleteIsPermitted(template.getCreatorId())) {
+        validate(deleteIsPermitted(template.getCreatorId())).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
         // delete the template itself
         feedbackTemplateRepository.softDeleteById(Util.nullSafeUUIDToString(id));
@@ -78,12 +80,9 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
     @Override
     public FeedbackTemplate getById(UUID id) {
-        final Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepository.findById(id);
-        if (feedbackTemplate.isEmpty()) {
-            throw new NotFoundException("No feedback template with ID " + id);
-        }
-
-        return feedbackTemplate.get();
+        return feedbackTemplateRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("No feedback template with ID %s", id);
+        });
     }
 
     @Override
@@ -99,9 +98,10 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
     @Override
     public Boolean setAdHocInactiveByCreator(@Nullable UUID creatorId) {
-        if (!updateIsPermitted(creatorId)) {
+        validate(updateIsPermitted(creatorId)).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
+
         feedbackTemplateRepository.setAdHocInactiveByCreator(Util.nullSafeUUIDToString(creatorId));
         return true;
     }

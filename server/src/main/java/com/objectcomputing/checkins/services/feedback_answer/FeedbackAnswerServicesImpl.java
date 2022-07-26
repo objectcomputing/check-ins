@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
@@ -40,11 +42,13 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         templateQuestionServices.getById(feedbackAnswer.getQuestionId());
 
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
-        if (!createIsPermitted(relatedFeedbackRequest)) {
+        validate(createIsPermitted(relatedFeedbackRequest)).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        } else if (relatedFeedbackRequest.getStatus().equals("canceled")) {
+        });
+        validate(!relatedFeedbackRequest.getStatus().equals("canceled")).orElseThrow(() -> {
             throw new BadArgException("Attempted to save an answer for a canceled feedback request");
-        }
+        });
+
         if (feedbackAnswer.getId() != null) {
             return update(feedbackAnswer);
         }
@@ -54,44 +58,39 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
     @Override
     public FeedbackAnswer update(FeedbackAnswer feedbackAnswer) {
-        FeedbackAnswer updatedFeedbackAnswer;
-
-        if (feedbackAnswer.getId() != null) {
-            updatedFeedbackAnswer = getById(feedbackAnswer.getId());
-        } else {
+        validate(feedbackAnswer.getId() != null).orElseThrow(() -> {
             throw new BadArgException("Feedback answer does not exist; cannot update");
-        }
+        });
+        FeedbackAnswer updatedFeedbackAnswer = getById(feedbackAnswer.getId());
 
         feedbackAnswer.setQuestionId(updatedFeedbackAnswer.getQuestionId());
         feedbackAnswer.setRequestId(updatedFeedbackAnswer.getRequestId());
 
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
-        if (!updateIsPermitted(relatedFeedbackRequest)) {
+        validate(updateIsPermitted(relatedFeedbackRequest)).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
         return feedbackAnswerRepository.update(feedbackAnswer);
     }
 
     @Override
     public FeedbackAnswer getById(UUID id) {
-        final Optional<FeedbackAnswer> feedbackAnswer = feedbackAnswerRepository.findById(id);
-        if (feedbackAnswer.isEmpty()) {
-            throw new NotFoundException("No feedback answer with id " + id);
-        }
+        FeedbackAnswer feedbackAnswer = feedbackAnswerRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("No feedback answer with id %s", id);
+        });
 
-        FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer.get());
+        FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
 
-        if (getIsPermitted(relatedFeedbackRequest)) {
-            return feedbackAnswer.get();
-        } else {
+        validate(getIsPermitted(relatedFeedbackRequest)).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation :(");
-        }
+        });
+
+        return feedbackAnswer;
     }
 
     @Override
     public List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
-        List<FeedbackAnswer> response = new ArrayList<>();
         FeedbackRequest feedbackRequest;
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         try {
@@ -99,13 +98,15 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         } catch (NotFoundException e) {
             throw new NotFoundException("Cannot find attached request for search");
         }
-        if (currentUserId.equals(feedbackRequest.getCreatorId()) || currentUserId.equals(feedbackRequest.getRecipientId()) || currentUserServices.isAdmin()) {
-            response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
-            return response;
-        }
 
-        throw new PermissionException("You are not authorized to do that operation");
+        boolean isCreator = currentUserId.equals(feedbackRequest.getCreatorId());
+        boolean isRecipient = currentUserId.equals(feedbackRequest.getRecipientId());
+        boolean isAdmin = currentUserServices.isAdmin();
+        validate(isCreator || isRecipient || isAdmin).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to do that operation");
+        });
 
+        return new ArrayList<>(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
     }
 
     public FeedbackRequest getRelatedFeedbackRequest(FeedbackAnswer feedbackAnswer) {

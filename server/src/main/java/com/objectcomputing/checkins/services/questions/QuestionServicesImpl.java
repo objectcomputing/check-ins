@@ -6,9 +6,10 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 
 import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
 
 @Singleton
 public class QuestionServicesImpl implements QuestionServices {
@@ -20,13 +21,13 @@ public class QuestionServicesImpl implements QuestionServices {
     }
 
     public Question saveQuestion(Question question) {
-
         Set<Question> returnedList = findByValue(question.getText());
-        if (returnedList.size() >= 1) {
-            throw new AlreadyExistsException("Already exists");
-        }
-        return questionRepository.save(question);
 
+        validate(returnedList.isEmpty()).orElseThrow(() -> {
+            throw new AlreadyExistsException("Already exists");
+        });
+
+        return questionRepository.save(question);
     }
 
     public Set<Question> readAllQuestions() {
@@ -34,7 +35,9 @@ public class QuestionServicesImpl implements QuestionServices {
     }
 
     public Question findById(@NotNull UUID id) {
-        return questionRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("No question for id %s", id)));
+        return questionRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException(String.format("No question for id %s", id));
+        });
     }
 
     protected Set<Question> findByValue(String text) {
@@ -48,22 +51,17 @@ public class QuestionServicesImpl implements QuestionServices {
 
     public Set<Question> findByText(String text) {
         String wildcard = "%" + text + "%";
-        Set<Question> skillList = questionRepository.findByTextIlike(wildcard);
-
-        return skillList;
+        return questionRepository.findByTextIlike(wildcard);
     }
 
     public Question update(Question question) {
-        Question returned = null;
         try {
             findById(question.getId());
         } catch (NotFoundException qnfe) {
             throw new BadArgException("No question found for this id");
         }
-        returned = questionRepository.update(question);
 
-        return returned;
-
+        return questionRepository.update(question);
     }
 
     public Set<Question> findByCategoryId(@NotNull UUID categoryId) {

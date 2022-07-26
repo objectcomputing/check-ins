@@ -2,13 +2,15 @@ package com.objectcomputing.checkins.services.tags;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
 import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
 
 
 @Singleton
@@ -16,31 +18,32 @@ public class TagServicesImpl implements TagServices {
 
     private final TagRepository tagRepository;
     private final CurrentUserServices currentUserServices;
-    private final PermissionsValidation permissionsValidation;
 
-    public TagServicesImpl(TagRepository tagRepository, CurrentUserServices currentUserServices, PermissionsValidation permissionsValidation) {
+    public TagServicesImpl(TagRepository tagRepository, CurrentUserServices currentUserServices) {
         this.tagRepository = tagRepository;
         this.currentUserServices = currentUserServices;
-        this.permissionsValidation = permissionsValidation;
     }
 
     public Tag save(Tag tag) {
 
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        validate(isAdmin).orElseThrow(() -> {
+            throw new PermissionException("User is unauthorized to do this operation");
+        });
 
         Tag tagToReturn = null;
         if (tag != null) {
-            if (tag.getId() != null) {
-                    throw new BadArgException(String.format("Found unexpected id %s for tag", tag.getId()));
-            } else if (!tagRepository.findByNameIlike(tag.getName()).isEmpty()) {
-                    throw new AlreadyExistsException(String.format("A tag named %s already exists.", tag.getName()));
-            }
+            validate(tag.getId() == null).orElseThrow(() -> {
+                throw new BadArgException("Found unexpected id %s for tag", tag.getId());
+            });
+            validate(tagRepository.findByNameIlike(tag.getName()).isEmpty()).orElseThrow(() -> {
+                throw new AlreadyExistsException("A tag named %s already exists.", tag.getName());
+            });
 
-                tagToReturn = tagRepository.save(tag);
+            tagToReturn = tagRepository.save(tag);
         }
-            return tagToReturn;
 
+        return tagToReturn;
     }
 
     public Tag read(@NotNull UUID uuid) {
@@ -54,24 +57,23 @@ public class TagServicesImpl implements TagServices {
     public Tag update(@NotNull Tag tag) {
 
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        validate(isAdmin).orElseThrow(() -> {
+            throw new PermissionException("User is unauthorized to do this operation");
+        });
 
-        Tag newTag = null;
+        validate(tag.getId() != null && tagRepository.findById(tag.getId()).isPresent()).orElseThrow(() -> {
+            throw new BadArgException("tag %s does not exist, cannot update", tag.getId());
+        });
 
-        if (tag.getId() != null && tagRepository.findById(tag.getId()).isPresent()) {
-            newTag = tagRepository.update(tag);
-        } else {
-            throw new BadArgException(String.format("tag %s does not exist, cannot update", tag.getId()));
-        }
-
-        return newTag;
-
+        return tagRepository.update(tag);
     }
 
     public void delete(@NotNull UUID id) {
 
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        validate(isAdmin).orElseThrow(() -> {
+            throw new PermissionException("User is unauthorized to do this operation");
+        });
 
         tagRepository.deleteById(id);
     }

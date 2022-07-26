@@ -5,6 +5,8 @@ import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
@@ -28,6 +30,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
 
 @Singleton
 public class FileServicesImpl implements FileServices {
@@ -59,19 +63,25 @@ public class FileServicesImpl implements FileServices {
     public Set<FileInfoDTO> findFiles(@Nullable UUID checkInID) {
 
         boolean isAdmin = currentUserServices.isAdmin();
-        validate(checkInID == null && !isAdmin, "You are not authorized to perform this operation");
+        validate(checkInID != null && isAdmin).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
 
         try {
             Set<FileInfoDTO> result = new HashSet<>();
             Drive drive = googleApiAccess.getDrive();
-            validate(drive == null, "Unable to access Google Drive");
+            validate(drive != null).orElseThrow(() -> {
+                throw new FileRetrievalException("Unable to access Google Drive");
+            });
 
             String rootDirId = googleServiceConfiguration.getDirectory_id();
-            validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
+            validate(rootDirId != null).orElseThrow(() -> {
+                throw new FileRetrievalException("No destination folder has been configured. Contact your administrator for assistance.");
+            });
 
             if (checkInID == null && isAdmin) {
                 FileList driveIndex = getFoldersInRoot(drive, rootDirId);
-                driveIndex.getFiles().stream().forEach(folder -> {
+                driveIndex.getFiles().forEach(folder -> {
                     try {
                         //find all
                         FileList fileList = drive.files().list().setSupportsAllDrives(true)
@@ -80,16 +90,16 @@ public class FileServicesImpl implements FileServices {
                                 .setSpaces("drive")
                                 .setFields("files(id, name, parents, size)")
                                 .execute();
-                        fileList.getFiles().stream()
-                                .forEach(file -> result.add(setFileInfo(file, null)));
+                        fileList.getFiles().forEach(file -> result.add(setFileInfo(file, null)));
                     } catch (IOException ioe) {
                         LOG.error("Error occurred while retrieving files from Google Drive.", ioe);
                         throw new FileRetrievalException(ioe.getMessage());
                     }
                 });
             } else if (checkInID != null) {
-                validate(!checkInServices.accessGranted(checkInID, currentUserServices.getCurrentUser().getId()),
-                        "You are not authorized to perform this operation");
+                validate(checkInServices.accessGranted(checkInID, currentUserServices.getCurrentUser().getId())).orElseThrow(() -> {
+                    throw new PermissionException("You are not authorized to perform this operation");
+                });
 
                 Set<CheckinDocument> checkinDocuments = checkinDocumentServices.read(checkInID);
                 for (CheckinDocument cd : checkinDocuments) {
@@ -112,13 +122,18 @@ public class FileServicesImpl implements FileServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         CheckinDocument cd = checkinDocumentServices.getFindByUploadDocId(uploadDocId);
-        validate(cd == null, String.format("Unable to find record with id %s", uploadDocId));
+        validate(cd != null).orElseThrow(() -> {
+            throw new FileRetrievalException("Unable to find record with id %s", uploadDocId);
+        });
 
         CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
 
-        if(!isAdmin) {
-            validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), "You are not authorized to perform this operation");
-        }
+        boolean isTeamMember = currentUser.getId().equals(associatedCheckin.getTeamMemberId());
+        boolean isPdl = currentUser.getId().equals(associatedCheckin.getPdlId());
+        validate(isAdmin || isTeamMember || isPdl).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
+
         try {
             java.io.File file = java.io.File.createTempFile("tmp", ".txt");
             file.deleteOnExit();
@@ -126,7 +141,9 @@ public class FileServicesImpl implements FileServices {
                 FileOutputStream myWriter = new FileOutputStream(file)
             ) {
                 Drive drive = googleApiAccess.getDrive();
-                validate(drive == null, "Unable to access Google Drive");
+                validate(drive != null).orElseThrow(() -> {
+                    throw new FileRetrievalException("Unable to access Google Drive");
+                });
 
                 drive.files().get(uploadDocId).setSupportsAllDrives(true).executeMediaAndDownloadTo(myWriter);
                 myWriter.close();
@@ -147,13 +164,24 @@ public class FileServicesImpl implements FileServices {
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-        validate((file.getFilename() == null || file.getFilename().equals("")), "Please select a valid file before uploading.");
+        validate(file.getFilename() != null && !file.getFilename().equals("")).orElseThrow(() -> {
+            throw new BadArgException("Please select a valid file before uploading.");
+        });
 
         CheckIn checkIn = checkInServices.read(checkInID);
-        validate(checkIn == null, "Unable to find checkin record with id %s", checkInID);
+        validate(checkIn != null).orElseThrow(() -> {
+            throw new BadArgException("Unable to find checkin record with id %s", checkInID);
+        });
+
         if(!isAdmin) {
-            validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
-            validate(checkIn.isCompleted(), "You are not authorized to perform this operation");
+            boolean isTeamMember = currentUser.getId().equals(checkIn.getTeamMemberId());
+            boolean isPdl = currentUser.getId().equals(checkIn.getPdlId());
+            validate(isTeamMember || isPdl).orElseThrow(() -> {
+                throw new PermissionException("You are not authorized to perform this operation");
+            });
+            validate(!checkIn.isCompleted()).orElseThrow(() -> {
+                throw new PermissionException("You are not authorized to perform this operation");
+            });
         }
 
         // create folder for each team member
@@ -161,10 +189,14 @@ public class FileServicesImpl implements FileServices {
 
         try {
             Drive drive = googleApiAccess.getDrive();
-            validate(drive == null, "Unable to access Google Drive");
+            validate(drive != null).orElseThrow(() -> {
+                throw new FileRetrievalException("Unable to access Google Drive");
+            });
 
             String rootDirId = googleServiceConfiguration.getDirectory_id();
-            validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
+            validate(rootDirId != null).orElseThrow(() -> {
+                throw new FileRetrievalException("No destination folder has been configured. Contact your administrator for assistance.");
+            });
 
             // Check if folder already exists on google drive. If exists, return folderId and name
             FileList driveIndex = getFoldersInRoot(drive, rootDirId);
@@ -230,16 +262,22 @@ public class FileServicesImpl implements FileServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         CheckinDocument cd = checkinDocumentServices.getFindByUploadDocId(uploadDocId);
-        validate(cd == null, String.format("Unable to find record with id %s", uploadDocId));
+        validate(cd != null).orElseThrow(() -> {
+            throw new FileRetrievalException("Unable to find record with id %s", uploadDocId);
+        });
 
         CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
-        if(!isAdmin) {
-            validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), "You are not authorized to perform this operation");
-        }
+        boolean isPdl = currentUser.getId().equals(associatedCheckin.getTeamMemberId());
+        boolean isTeamMember = currentUser.getId().equals(associatedCheckin.getPdlId());
+        validate(isAdmin || isPdl || isTeamMember).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
 
         try {
             Drive drive = googleApiAccess.getDrive();
-            validate(drive == null, "Unable to access Google Drive");
+            validate(drive != null).orElseThrow(() -> {
+                throw new FileRetrievalException("Unable to access Google Drive");
+            });
             File file = new File().setTrashed(true);
             drive.files().update(uploadDocId, file).setSupportsAllDrives(true).execute();
             checkinDocumentServices.deleteByUploadDocId(uploadDocId);
@@ -247,12 +285,6 @@ public class FileServicesImpl implements FileServices {
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
             throw new FileRetrievalException(e.getMessage());
-        }
-    }
-
-    private void validate(boolean isError, String message, Object... args) {
-        if(isError) {
-            throw new FileRetrievalException(String.format(message, args));
         }
     }
 

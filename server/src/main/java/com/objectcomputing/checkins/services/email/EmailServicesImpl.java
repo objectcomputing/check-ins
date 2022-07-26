@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class EmailServicesImpl implements EmailServices {
 
@@ -53,9 +55,9 @@ public class EmailServicesImpl implements EmailServices {
 
         List<Email> sentEmails = new ArrayList<>();
 
-        if (!currentUserServices.isAdmin()) {
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
         LocalDateTime sendDate = LocalDateTime.now();
         boolean status;

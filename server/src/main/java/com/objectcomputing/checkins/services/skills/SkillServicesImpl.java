@@ -9,6 +9,8 @@ import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class SkillServicesImpl implements SkillServices {
 
@@ -25,12 +27,12 @@ public class SkillServicesImpl implements SkillServices {
         Skill newSkill = null;
         if (skill != null) {
 
-            if (skill.getId() != null) {
-                throw new BadArgException(String.format("Found unexpected id %s for skill, please try updating instead.",
-                        skill.getId()));
-            } else if (skillRepository.findByName(skill.getName()).isPresent()) {
-                throw new AlreadyExistsException(String.format("Skill %s already exists. ", skill.getName()));
-            }
+            validate(skill.getId() == null).orElseThrow(() -> {
+                throw new BadArgException("Found unexpected id %s for skill, please try updating instead.", skill.getId());
+            });
+            validate(skillRepository.findByName(skill.getName()).isEmpty()).orElseThrow(() -> {
+                throw new AlreadyExistsException("Skill %s already exists. ", skill.getName());
+            });
 
             newSkill = skillRepository.save(skill);
         }
@@ -60,9 +62,10 @@ public class SkillServicesImpl implements SkillServices {
     }
 
     public void delete(@NotNull UUID id) {
-        if (!currentUserServices.isAdmin()) {
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("You do not have permission to access this resource");
-        }
+        });
+
         skillRepository.deleteById(id);
     }
 
@@ -72,15 +75,14 @@ public class SkillServicesImpl implements SkillServices {
     }
 
     public Skill update(@NotNull Skill skill) {
-        if (!currentUserServices.isAdmin()) {
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("You do not have permission to access this resource");
-        }
+        });
+        validate(skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()).orElseThrow(() -> {
+            throw new BadArgException("Skill %s does not exist, cannot update", skill.getId());
+        });
 
-        if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
-            return skillRepository.update(skill);
-        } else {
-            throw new BadArgException(String.format("Skill %s does not exist, cannot update", skill.getId()));
-        }
+        return skillRepository.update(skill);
     }
 
 }

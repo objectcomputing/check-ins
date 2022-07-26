@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService {
 
@@ -42,9 +44,9 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
         UUID currentUserId = currentUser.getId();
         MemberProfile suggestFor = memberProfileServices.getById(id);
 
-        if (currentUserId == null) {
+        validate(currentUserId != null).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
         List<FeedbackSuggestionDTO> suggestions = new LinkedList<>();
         if(suggestFor.getSupervisorid() != null && !suggestFor.getSupervisorid().equals(currentUser.getId())) {
@@ -59,7 +61,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
 
         for(TeamMember currentMembership: teamMemberships){
             Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamId(), null, null);
-            Set<TeamMember> leads = teamMembers.stream().filter((member)-> member.isLead()).collect(Collectors.toSet());
+            Set<TeamMember> leads = teamMembers.stream().filter(TeamMember::isLead).collect(Collectors.toSet());
             for(TeamMember lead: leads) {
                 if(suggestions.size() < maxSuggestions && !lead.getMemberId().equals(id) && !lead.getMemberId().equals(currentUserId)) {
                     suggestions.add(new FeedbackSuggestionDTO("Team lead for requestee", lead.getMemberId()));

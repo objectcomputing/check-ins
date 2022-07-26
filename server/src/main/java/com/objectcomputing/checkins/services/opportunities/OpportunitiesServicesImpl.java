@@ -1,47 +1,48 @@
 package com.objectcomputing.checkins.services.opportunities;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
 import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
+
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
 
 @Singleton
 public class OpportunitiesServicesImpl implements OpportunitiesService {
 
     private final OpportunitiesRepository opportunitiesResponseRepo;
     private final MemberProfileRepository memberRepo;
-    private final PermissionsValidation permissionsValidation;
     private final CurrentUserServices currentUserServices;
 
     public OpportunitiesServicesImpl(OpportunitiesRepository opportunitiesResponseRepo,
-                              MemberProfileRepository memberRepo,
-                              PermissionsValidation permissionsValidation,
-                              CurrentUserServices currentUserServices) {
+                                     MemberProfileRepository memberRepo,
+                                     CurrentUserServices currentUserServices) {
         this.opportunitiesResponseRepo = opportunitiesResponseRepo;
         this.memberRepo = memberRepo;
-        this.permissionsValidation = permissionsValidation;
         this.currentUserServices = currentUserServices;
     }
 
     @Override
     public Opportunities save(Opportunities opportunitiesResponse) {
         Opportunities opportunitiesResponseRet = null;
-        if(opportunitiesResponse!=null){
+        if (opportunitiesResponse!=null){
             MemberProfile member = currentUserServices.getCurrentUser();
-            if(member!=null) {
+            if (member != null) {
                 opportunitiesResponse.setSubmittedBy(member.getId());
                 opportunitiesResponse.setSubmittedOn(LocalDate.now());
             }
-            if(opportunitiesResponse.getId()!=null){
-                throw new BadArgException(String.format("Found unexpected id for opportunities %s", opportunitiesResponse.getId()));
-            }
+
+            validate(opportunitiesResponse.getId() == null).orElseThrow(() -> {
+                throw new BadArgException("Found unexpected id for opportunities %s", opportunitiesResponse.getId());
+            });
+
             opportunitiesResponseRet = opportunitiesResponseRepo.save(opportunitiesResponse);
         }
         return opportunitiesResponseRet ;
@@ -50,21 +51,25 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     @Override
     public Opportunities update(Opportunities opportunitiesResponse) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        validate(isAdmin).orElseThrow(() -> {
+            throw new PermissionException("User is unauthorized to do this operation");
+        });
+
         Opportunities opportunitiesResponseRet = null;
-        if(opportunitiesResponse!=null){
+        if (opportunitiesResponse != null){
             final UUID id = opportunitiesResponse.getId();
             final UUID memberId = opportunitiesResponse.getSubmittedBy();
             LocalDate surSubDate = opportunitiesResponse.getSubmittedOn();
-            if(id==null||opportunitiesResponseRepo.findById(id).isEmpty()){
-                throw new BadArgException(String.format("Unable to find opportunities record with id %s", opportunitiesResponse.getId()));
-            }else if(memberRepo.findById(memberId).isEmpty()){
-                throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-            } else if(memberId==null) {
-                throw new BadArgException(String.format("Invalid opportunities %s", opportunitiesResponse));
-            } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for opportunities submission date %s",memberId));
-            }
+
+            validate(id != null && opportunitiesResponseRepo.findById(id).isPresent()).orElseThrow(() -> {
+                throw new BadArgException("Unable to find opportunities record with id %s", opportunitiesResponse.getId());
+            });
+            validate(memberRepo.findById(memberId).isPresent()).orElseThrow(() -> {
+                throw new BadArgException("Member %s doesn't exist", memberId);
+            });
+            validate(surSubDate.isAfter(LocalDate.EPOCH) && surSubDate.isBefore(LocalDate.MAX)).orElseThrow(() -> {
+                throw new BadArgException("Invalid date for opportunities submission date %s",memberId);
+            });
 
             opportunitiesResponseRet = opportunitiesResponseRepo.update(opportunitiesResponse);
         }
@@ -74,7 +79,9 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     @Override
     public void delete(@NotNull UUID id) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        validate(isAdmin).orElseThrow(() -> {
+            throw new PermissionException("User is unauthorized to do this operation");
+        });
         opportunitiesResponseRepo.deleteById(id);
     }
 

@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class MemberSkillServiceImpl implements MemberSkillServices {
 
@@ -31,18 +33,22 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
         if (memberSkill != null) {
             final UUID memberId = memberSkill.getMemberid();
             final UUID skillId = memberSkill.getSkillid();
-            if (skillId == null || memberId == null) {
-                throw new BadArgException(String.format("Invalid member skill %s", memberSkill));
-            } else if (memberSkill.getId() != null) {
-                throw new BadArgException(String.format("Found unexpected id %s for member skill", memberSkill.getId()));
-            } else if (memberProfileRepository.findById(memberId).isEmpty()) {
-                throw new BadArgException(String.format("Member Profile %s doesn't exist", memberId));
-            } else if (skillRepository.findById(skillId).isEmpty()) {
-                throw new BadArgException(String.format("Skill %s doesn't exist", skillId));
-            } else if (memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(),
-                    memberSkill.getSkillid()).isPresent()) {
-                throw new AlreadyExistsException(String.format("Member %s already has this skill %s", memberId, skillId));
-            }
+
+            validate(skillId != null && memberId != null).orElseThrow(() -> {
+                throw new BadArgException("Invalid member skill %s", memberSkill);
+            });
+            validate(memberSkill.getId() == null).orElseThrow(() -> {
+                throw new BadArgException("Found unexpected id %s for member skill", memberSkill.getId());
+            });
+            validate(memberProfileRepository.findById(memberId).isPresent()).orElseThrow(() -> {
+                throw new BadArgException("Member Profile %s doesn't exist", memberId);
+            });
+            validate(skillRepository.findById(skillId).isEmpty()).orElseThrow(() -> {
+                throw new BadArgException("Skill %s doesn't exist", skillId);
+            });
+            validate(memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(), memberSkill.getSkillid()).isPresent()).orElseThrow(() -> {
+                throw new AlreadyExistsException("Member %s already has this skill %s", memberId, skillId);
+            });
 
             memberSkillRet = memberSkillRepository.save(memberSkill);
         }
@@ -70,18 +76,16 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
 
     public MemberSkill update(@NotNull MemberSkill memberSkill) {
 
-        MemberSkill newSkill = null;
+        MemberSkill newSkill;
 
-        if (memberSkill.getId() != null && memberSkillRepository.findById(memberSkill.getId()).isPresent()) {
-            newSkill = memberSkillRepository.update(memberSkill);
-        } else {
-            throw new BadArgException(String.format("MemberSkill %s does not exist, cannot update", memberSkill.getId()));
-        }
+        validate(memberSkill.getId() != null && memberSkillRepository.findById(memberSkill.getId()).isPresent()).orElseThrow(() -> {
+            throw new BadArgException("MemberSkill %s does not exist, cannot update", memberSkill.getId());
+        });
+
+        newSkill = memberSkillRepository.update(memberSkill);
 
         return newSkill;
-
     }
-
 
     public void delete(@NotNull UUID id) {
         memberSkillRepository.deleteById(id);

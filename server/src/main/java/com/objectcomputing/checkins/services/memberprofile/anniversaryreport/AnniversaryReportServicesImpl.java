@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class AnniversaryReportServicesImpl implements AnniversaryServices {
     private static final Logger LOG = LoggerFactory.getLogger(AnniversaryReportServicesImpl.class);
@@ -31,9 +33,10 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
 
     @Override
     public List<AnniversaryReportResponseDTO> findByValue(@Nullable String[] months) {
-        if (!currentUserServices.isAdmin()) {
+
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("You do not have permission to access this resource.");
-        }
+        });
 
         List<MemberProfile> memberProfileAll = new ArrayList<>();
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);

@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
 
 @Singleton
 public class MemberProfileServicesImpl implements MemberProfileServices {
@@ -50,11 +51,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public MemberProfile getById(@NotNull UUID id) {
-        Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
-        if (memberProfile.isEmpty()) {
-            throw new NotFoundException("No member profile for id " + id);
-        }
-        return memberProfile.get();
+        return memberProfileRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("No member profile for id %s", id);
+        });
     }
 
     @Override
@@ -75,10 +74,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile saveProfile(MemberProfile memberProfile) {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
 
-        if (emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
-            throw new AlreadyExistsException(String.format("Email %s already exists in database",
-                    memberProfile.getWorkEmail()));
-        }
+        validate(emailProfile == null || emailProfile.getId() == null || Objects.equals(memberProfile.getId(), emailProfile.getId())).orElseThrow(() -> {
+            throw new AlreadyExistsException("Email %s already exists in database", memberProfile.getWorkEmail());
+        });
 
         if (memberProfile.getId() == null) {
             return memberProfileRepository.save(memberProfile);
@@ -89,23 +87,28 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public Boolean deleteProfile(@NotNull UUID id) {
-        if (!currentUserServices.isAdmin()) {
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("Requires admin privileges");
-        }
+        });
+
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
         Set<Role> userRoles = (memberProfile != null) ? roleServices.findUserRoles(memberProfile.getId()) : Collections.emptySet();
 
-        if (memberProfile == null) {
+        validate(memberProfile == null).orElseThrow(() -> {
             throw new NotFoundException("No member profile for id");
-        } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
-        } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
-        } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
-        } else if (!userRoles.isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile)));
-        }
+        });
+        validate(!checkInServices.findByFields(id, null, null).isEmpty()).orElseThrow(() -> {
+            throw new BadArgException("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile));
+        });
+        validate(!memberSkillServices.findByFields(id, null).isEmpty()).orElseThrow(() -> {
+            throw new BadArgException("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile));
+        });
+        validate(!teamMemberServices.findByFields(null, id, null).isEmpty()).orElseThrow(() -> {
+            throw new BadArgException("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile));
+        });
+        validate(!userRoles.isEmpty()).orElseThrow(() -> {
+            throw new BadArgException("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile));
+        });
 
         // Update PDL ID for all associated members before termination
         List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, null,
@@ -122,9 +125,11 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile findByName(@NotNull String firstName, @NotNull String lastName) {
         List<MemberProfile> searchResult = memberProfileRepository.search(firstName, null, lastName,
                 null, null, null, null, null, null);
-        if (searchResult.size() != 1) {
-            throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
-        }
+
+        validate(searchResult.size() == 1).orElseThrow(() -> {
+            throw new BadArgException("Expected exactly 1 result. Found %s", searchResult.size());
+        });
+
         return searchResult.get(0);
     }
 

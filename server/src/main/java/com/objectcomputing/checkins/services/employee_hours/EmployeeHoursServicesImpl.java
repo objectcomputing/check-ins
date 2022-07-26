@@ -1,8 +1,7 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
-import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.memberprofile.memberphoto.MemberPhotoServiceImpl;
 import io.micronaut.http.multipart.CompletedFileUpload;
@@ -10,45 +9,42 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
+
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
 
 @Singleton
 public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
-    private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
-    private final EmployeeHoursRepository employeehourRepo;
+    private final EmployeeHoursRepository employeeHourRepo;
     private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
 
 
 
-    public EmployeeHoursServicesImpl(MemberProfileRepository memberRepo,
-                                     CurrentUserServices currentUserServices,
-                                     EmployeeHoursRepository employeehourRepo) {
-        this.memberRepo = memberRepo;
+    public EmployeeHoursServicesImpl(CurrentUserServices currentUserServices,
+                                     EmployeeHoursRepository employeeHourRepo) {
         this.currentUserServices = currentUserServices;
-        this.employeehourRepo = employeehourRepo;
+        this.employeeHourRepo = employeeHourRepo;
     }
 
 
     @Override
     public EmployeeHoursResponseDTO save(CompletedFileUpload file) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-        List<EmployeeHours> employeeHoursList = new ArrayList<>();
-        Set<EmployeeHours> employeeHours = new HashSet<>();
+        List<EmployeeHours> employeeHoursList;
         EmployeeHoursResponseDTO responseDTO = new EmployeeHoursResponseDTO();
-        validate(!isAdmin, "You are not authorized to perform this operation");
-        responseDTO.setRecordCountDeleted(employeehourRepo.count());
-        employeehourRepo.deleteAll();
+        validate(isAdmin).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
+
+        responseDTO.setRecordCountDeleted(employeeHourRepo.count());
+        employeeHourRepo.deleteAll();
         try {
            employeeHoursList = EmployeeaHoursCSVHelper.employeeHrsCsv(file.getInputStream());
-            employeehourRepo.saveAll(employeeHoursList);
-            for(EmployeeHours hours: employeeHoursList) {
-                employeeHours.add(hours);
-            }
+            employeeHourRepo.saveAll(employeeHoursList);
+            Set<EmployeeHours> employeeHours = new HashSet<>(employeeHoursList);
             responseDTO.setRecordCountInserted(employeeHours.size());
             responseDTO.setEmployeehoursSet(employeeHours);
         } catch (IOException e) {
@@ -60,9 +56,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
     @Override
     public EmployeeHours read(UUID id) {
-        EmployeeHours result = employeehourRepo.findById(id).orElse(null);
-
-        return result;
+        return employeeHourRepo.findById(id).orElse(null);
     }
 
     @Override
@@ -70,26 +64,23 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        Set<EmployeeHours> employeeHours = new HashSet<>();
-        employeehourRepo.findAll().forEach(employeeHours::add);
+        Set<EmployeeHours> employeeHours = new HashSet<>(employeeHourRepo.findAll());
 
-        if(employeeId !=null) {
-            validate((!isAdmin && currentUser!=null&& !currentUser.getEmployeeId().equals(employeeId)),
-                       "You are not authorized to perform this operation");
-            employeeHours.retainAll(employeehourRepo.findByEmployeeId(employeeId));
+        if (employeeId != null) {
+            validate(isAdmin || (currentUser != null
+                    && currentUser.getEmployeeId() != null
+                    && currentUser.getEmployeeId().equals(employeeId))).orElseThrow(() -> {
+                throw new PermissionException("You are not authorized to perform this operation");
+            });
+
+            employeeHours.retainAll(employeeHourRepo.findByEmployeeId(employeeId));
         } else {
-            validate(!isAdmin, "You are not authorized to perform this operation");
+            validate(isAdmin).orElseThrow(() -> {
+                throw new PermissionException("You are not authorized to perform this operation");
+            });
         }
-
 
         return employeeHours;
-    }
-
-
-    private void validate(boolean isError, String message, Object... args) {
-        if (isError) {
-            throw new BadArgException(String.format(message, args));
-        }
     }
 
 }

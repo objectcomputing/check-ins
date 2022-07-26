@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
 
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.logging.RequestLoggingInterceptor;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
@@ -11,13 +10,12 @@ import com.objectcomputing.checkins.services.feedback_template.template_question
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
 
 @Singleton
 public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices {
@@ -39,9 +37,10 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
     @Override
     public List<Tuple> getAllQuestionsAndAnswers(UUID requestId) {
         FeedbackRequest feedbackRequest = feedbackRequestServices.getById(requestId);
-        if (!getIsPermitted(feedbackRequest)) {
+        validate(getIsPermitted(feedbackRequest)).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
+
         List<TemplateQuestion> templateQuestions = templateQuestionServices.findByFields(feedbackRequest.getTemplateId());
         List<FeedbackAnswer> answerList = feedbackAnswerServices.findByValues(null, requestId);
 
@@ -74,9 +73,9 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         TemplateQuestion question = new TemplateQuestion();
         FeedbackRequest feedbackRequest = feedbackRequestServices.getById(requestId);
 
-        if (!getIsPermitted(feedbackRequest)) {
+        validate(getIsPermitted(feedbackRequest)).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
-        }
+        });
 
         if (questionId != null) {
             question = templateQuestionServices.getById(questionId);

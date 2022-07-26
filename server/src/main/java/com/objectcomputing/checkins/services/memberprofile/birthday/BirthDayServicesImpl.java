@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class BirthDayServicesImpl implements BirthDayServices{
 
@@ -25,9 +27,11 @@ public class BirthDayServicesImpl implements BirthDayServices{
 
     @Override
     public List<BirthDayResponseDTO> findByValue(String[] months) {
-        if (!currentUserServices.isAdmin()) {
+
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("You do not have permission to access this resource.");
-        }
+        });
+
         List<MemberProfile> memberProfileAll = new ArrayList<>();
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
         if (months != null) {

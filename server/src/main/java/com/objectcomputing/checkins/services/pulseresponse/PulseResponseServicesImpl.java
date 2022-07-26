@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
+
 @Singleton
 public class PulseResponseServicesImpl implements PulseResponseService {
 
@@ -25,22 +27,28 @@ public class PulseResponseServicesImpl implements PulseResponseService {
     @Override
     public PulseResponse save(PulseResponse pulseResponse) {
         PulseResponse pulseResponseRet = null;
-        if(pulseResponse!=null){
+        if (pulseResponse != null) {
             final UUID memberId = pulseResponse.getTeamMemberId();
             LocalDate pulseSubDate = pulseResponse.getSubmissionDate();
             LocalDate pulseUpDate = pulseResponse.getUpdatedDate();
-            if(pulseResponse.getId()!=null){
-            throw new BadArgException(String.format("Found unexpected id for pulseresponse %s", pulseResponse.getId()));
-        } else if(!memberRepo.findById(memberId).isPresent()){
-            throw new BadArgException(String.format("Member %s doesn't exists", memberId));
-        } else if(pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
-            throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s",memberId));
-        } else if(pulseUpDate.isBefore(LocalDate.EPOCH) || pulseUpDate.isAfter(LocalDate.MAX)) {
-            throw new BadArgException(String.format("Invalid date for pulseresponse updated date %s",memberId));
+
+            validate(pulseResponse.getId() == null).orElseThrow(() -> {
+                throw new BadArgException("Found unexpected id for pulseresponse %s", pulseResponse.getId());
+            });
+            validate(memberRepo.findById(memberId).isPresent()).orElseThrow(() -> {
+                throw new BadArgException("Member %s doesn't exists", memberId);
+            });
+            validate(pulseSubDate.isAfter(LocalDate.EPOCH) && pulseSubDate.isBefore(LocalDate.MAX)).orElseThrow(() -> {
+                throw new BadArgException("Invalid date for pulseresponse submission date %s",memberId);
+            });
+            validate(pulseUpDate.isAfter(LocalDate.EPOCH) && pulseUpDate.isBefore(LocalDate.MAX)).orElseThrow(() -> {
+                throw new BadArgException("Invalid date for pulseresponse updated date %s",memberId);
+            });
+
+            pulseResponseRet = pulseResponseRepo.save(pulseResponse);
         }
-        pulseResponseRet = pulseResponseRepo.save(pulseResponse);
-        }
-            return pulseResponseRet ;
+
+        return pulseResponseRet;
     }
 
 
@@ -52,25 +60,27 @@ public class PulseResponseServicesImpl implements PulseResponseService {
     @Override
     public PulseResponse update(PulseResponse pulseResponse) {
         PulseResponse pulseResponseRet = null;
-        if(pulseResponse!=null){
-        final UUID id = pulseResponse.getId();
-        final UUID memberId = pulseResponse.getTeamMemberId();
-        LocalDate pulseSubDate = pulseResponse.getSubmissionDate();
-        LocalDate pulseUpDate = pulseResponse.getUpdatedDate();
-        if(id==null||!pulseResponseRepo.findById(id).isPresent()){
-            throw new BadArgException(String.format("Unable to find pulseresponse record with id %s", pulseResponse.getId()));
-        }else if(!memberRepo.findById(memberId).isPresent()){
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if(memberId==null) {
-            throw new BadArgException(String.format("Invalid pulseresponse %s", pulseResponse));
-        } else if(pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
-            throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s",memberId));
-        } else if(pulseUpDate.isBefore(LocalDate.EPOCH) || pulseUpDate.isAfter(LocalDate.MAX)) {
-            throw new BadArgException(String.format("Invalid date for pulseresponse %s",memberId));
-        }
+        if (pulseResponse != null) {
+            final UUID id = pulseResponse.getId();
+            final UUID memberId = pulseResponse.getTeamMemberId();
+            LocalDate pulseSubDate = pulseResponse.getSubmissionDate();
+            LocalDate pulseUpDate = pulseResponse.getUpdatedDate();
 
-        pulseResponseRet = pulseResponseRepo.update(pulseResponse);
-        }        
+            validate(id != null && pulseResponseRepo.findById(id).isPresent()).orElseThrow(() -> {
+                throw new BadArgException("Unable to find pulseresponse record with id %s", pulseResponse.getId());
+            });
+            validate(memberRepo.findById(memberId).isPresent()).orElseThrow(() -> {
+                throw new BadArgException("Member %s doesn't exist", memberId);
+            });
+            validate(pulseSubDate.isAfter(LocalDate.EPOCH) && pulseSubDate.isBefore(LocalDate.MAX)).orElseThrow(() -> {
+                throw new BadArgException("Invalid date for pulseresponse submission date %s",memberId);
+            });
+            validate(pulseUpDate.isAfter(LocalDate.EPOCH) && pulseUpDate.isBefore(LocalDate.MAX)).orElseThrow(() -> {
+                throw new BadArgException("Invalid date for pulseresponse %s",memberId);
+            });
+
+            pulseResponseRet = pulseResponseRepo.update(pulseResponse);
+        }
         return pulseResponseRet;
     }
 
@@ -78,9 +88,9 @@ public class PulseResponseServicesImpl implements PulseResponseService {
     public Set<PulseResponse> findByFields(UUID teamMemberId, LocalDate dateFrom, LocalDate dateTo) {
         Set<PulseResponse> pulseResponse = new HashSet<>();
         pulseResponseRepo.findAll().forEach(pulseResponse::add);
-        if(teamMemberId!=null){
+        if (teamMemberId != null) {
             pulseResponse.retainAll(pulseResponseRepo.findByTeamMemberId(teamMemberId));
-        } else if(dateFrom!=null && dateTo!=null) {
+        } else if (dateFrom != null && dateTo != null) {
             pulseResponse.retainAll(pulseResponseRepo.findBySubmissionDateBetween(dateFrom, dateTo));
         }
         return pulseResponse;

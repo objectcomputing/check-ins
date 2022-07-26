@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
 
 @Singleton
 public class DemographicsServicesImpl implements DemographicsServices{
@@ -29,12 +30,12 @@ public class DemographicsServicesImpl implements DemographicsServices{
     @Override
     public Demographics getById(UUID id) {
         Demographics demographics = demographicsRepository.findById(id).orElse(null);
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
-        if (!currentUserServices.isAdmin() &&
-                (demographics!= null && demographics.getMemberId() != null &&
-                        !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId()))) {
+        validate(currentUserServices.isAdmin() ||
+                (demographics != null && demographics.getMemberId() != null && demographics.getMemberId().equals(currentUserId))).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to access this Demographics");
-        }
+        });
 
         return demographics;
     }
@@ -49,9 +50,9 @@ public class DemographicsServicesImpl implements DemographicsServices{
                                           @Nullable Integer militaryTenure,
                                           @Nullable String militaryBranch) {
 
-        if (!currentUserServices.isAdmin()) {
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("Requires admin privileges");
-        }
+        });
 
         return new ArrayList<>(demographicsRepository.searchByValues(nullSafeUUIDToString(memberId),
                 gender,
@@ -65,64 +66,62 @@ public class DemographicsServicesImpl implements DemographicsServices{
 
     @Override
     public Demographics updateDemographics(Demographics demographics) {
-        if (!currentUserServices.isAdmin() &&
-                (demographics.getMemberId() != null &&
-                        !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId()))) {
+
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+
+        validate(currentUserServices.isAdmin()
+                || (demographics.getMemberId() != null && demographics.getMemberId().equals(currentUserId))).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to update this demographic");
-        }
+        });
 
-        Demographics newDemographics;
-        if (demographics.getId() != null && demographicsRepository.findById(demographics.getId()).isPresent()) {
-            newDemographics = demographicsRepository.update(demographics);
-        } else {
-            throw new BadArgException((String.format("Demographics %s does not exist, cannot update", demographics.getId())));
-        }
+        validate(demographics.getId() != null && demographicsRepository.findById(demographics.getId()).isPresent()).orElseThrow(() -> {
+            throw new BadArgException("Demographics %s does not exist, cannot update", demographics.getId());
+        });
 
-        return newDemographics;
+        return demographicsRepository.update(demographics);
     }
 
     @Override
     public Demographics saveDemographics(@NotNull Demographics demographics) {
-        if (!currentUserServices.isAdmin() &&
-                (demographics.getMemberId() != null &&
-                        !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId()))) {
+
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+
+        validate(currentUserServices.isAdmin()
+                || demographics.getMemberId().equals(currentUserId)).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to create this Demographic");
-        }
+        });
 
-        Demographics demographicsRet;
+        validate(demographics.getMemberId() != null).orElseThrow(() -> {
+            throw new BadArgException("Invalid member id %s", demographics.getId());
+        });
+        validate(memberProfileServices.getById(demographics.getMemberId()) != null).orElseThrow(() -> {
+            throw new BadArgException("Member Profile %s doesn't exist", demographics.getMemberId());
+        });
+        validate(demographics.getId() == null).orElseThrow(() -> {
+            throw new AlreadyExistsException("Demographics %s already exists", demographics.getId());
+        });
 
-        if (demographics.getMemberId() == null) {
-            throw new BadArgException(String.format("Invalid member id %s", demographics.getId()));
-        } else if (memberProfileServices.getById(demographics.getMemberId()) == null) {
-            throw new BadArgException(String.format("Member Profile %s doesn't exist", demographics.getMemberId()));
-        } else if (demographics.getId() != null) {
-            throw new AlreadyExistsException(String.format("Demographics %s already exists", demographics.getId()));
-        }
-
-        demographicsRet = demographicsRepository.save(demographics);
-
-
-        return demographicsRet;
+        return demographicsRepository.save(demographics);
     }
 
     @Override
     public List<Demographics> findAll() {
-        if (!currentUserServices.isAdmin()) {
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("Requires admin privileges");
-        }
+        });
 
         return demographicsRepository.findAll();
     }
 
     @Override
     public Boolean deleteDemographics(@NotNull UUID id) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("Requires admin privileges");
-        }
 
-        if (demographicsRepository.findById(id).isEmpty()) {
-            throw new NotFoundException(String.format("Demographic id %s was not found", id));
-        }
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
+            throw new PermissionException("Requires admin privileges");
+        });
+        validate(demographicsRepository.findById(id).isPresent()).orElseThrow(() -> {
+            throw new NotFoundException("Demographic id %s was not found", id);
+        });
 
         demographicsRepository.deleteById(id);
         return true;
