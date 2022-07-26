@@ -6,10 +6,23 @@ import { DataGrid } from "@mui/x-data-grid";
 import "./../components/modal/Modal";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
-import Modal from "./../components/modal/Modal";
+//import Modal from "./../components/modal/Modal";
 import Accordion from "../components/accordion/Accordion";
 import { isArrayPresent } from "../utils/helperFunction";
-import { useState } from "react";
+import Modal from '@mui/material/Modal';
+
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  backgroundColor: 'white',
+  border: '2px solid #000',
+  boxShadow: 50,
+  p: 4,
+};
 
 export default function OnboardProgressDetailPage() {
   // get document info from signrequest API
@@ -32,7 +45,9 @@ export default function OnboardProgressDetailPage() {
   // get user info from OnboardProgressPage
   const location = useLocation();
   const { name, email, hireType } = location.state;
-  const [show, setShow] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const accordionArr = [
     {
       title: "Personal Information",
@@ -94,17 +109,17 @@ export default function OnboardProgressDetailPage() {
     <div className="detail-onboard">
       <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
         <Button
-          onClick={() => setShow(true)}
+          onClick={handleOpen}
           variant="contained"
           sx={{ fontSize: "1vw" }}
         >
           Personal Information
         </Button>
         <Modal
-          title="Personal Information"
-          onClose={() => setShow(false)}
-          show={show}
+          open={open}
+          onClose={handleClose}
         >
+          <Box sx={modalStyle}>
           <div>
             {isArrayPresent(accordionArr) &&
               accordionArr.map((arr, i) => {
@@ -119,6 +134,7 @@ export default function OnboardProgressDetailPage() {
                 );
               })}
           </div>
+          </Box>
         </Modal>
         <h1>Name: {name}</h1>
         <h1>Email: {email} </h1>
