@@ -7,4 +7,8 @@ public class FileRetrievalException extends RuntimeException {
     public FileRetrievalException(String message) {
         super(message);
     }
+
+    public FileRetrievalException(String message, Object... args) {
+        super(String.format(message, args));
+    }
 }
