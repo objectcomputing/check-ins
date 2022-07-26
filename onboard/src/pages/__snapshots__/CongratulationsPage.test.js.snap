@@ -2,21 +2,95 @@
 
 exports[`renders correctly 1`] = `
 .emotion-0 {
-  margin: 0;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
-  font-weight: 300;
-  font-size: 6rem;
-  line-height: 1.167;
-  letter-spacing: -0.01562em;
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  width: 100%;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  height: 100%;
 }
 
 .emotion-1 {
+  box-sizing: border-box;
   margin: 0;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.5;
-  letter-spacing: 0.00938em;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+  flex-basis: 100%;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  max-width: 100%;
+}
+
+@media (min-width:600px) {
+  .emotion-1 {
+    -webkit-flex-basis: 100%;
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+}
+
+@media (min-width:900px) {
+  .emotion-1 {
+    -webkit-flex-basis: 100%;
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+}
+
+@media (min-width:1200px) {
+  .emotion-1 {
+    -webkit-flex-basis: 100%;
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+}
+
+@media (min-width:1536px) {
+  .emotion-1 {
+    -webkit-flex-basis: 100%;
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    -webkit-box-flex: 0;
+    -webkit-flex-grow: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    max-width: 100%;
+  }
 }
 
 .emotion-2 {
@@ -26,33 +100,69 @@ exports[`renders correctly 1`] = `
   font-size: 1rem;
   line-height: 1.5;
   letter-spacing: 0.00938em;
-  display: block;
+  margin-left: 240px;
+  margin-right: 240px;
+  padding: 10px;
+  font-size: 20px;
 }
 
-<div>
-  <center>
-    <h1
-      className="MuiTypography-root MuiTypography-h1 emotion-0"
-    >
-      Congratulations!
-    </h1>
+.emotion-3 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  display: block;
+  margin-left: 240px;
+  margin-right: 240px;
+  padding: 5px;
+}
+
+.emotion-4 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  display: block;
+  margin-left: 240px;
+  margin-right: 240px;
+}
+
+<div
+  className="MuiGrid-root MuiGrid-container emotion-0"
+>
+  <div
+    className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 emotion-1"
+  >
     <div
-      className="MuiTypography-root MuiTypography-body1 emotion-1"
+      className="MuiTypography-root MuiTypography-body1 emotion-2"
       dispay="block"
     >
-      <br />
-      Thank you for completing your job application.
-      <p
-        className="MuiTypography-root MuiTypography-body1 emotion-2"
-      >
-        You will be receiving information about accessing your ADP account soon from HR via email.
-      </p>
-      During your first day you will be awarded with a company t-shirt. We hope you have a great time at Object Computing!
+      Thank you for completing Onboarding!
     </div>
+    <p
+      className="MuiTypography-root MuiTypography-body1 emotion-3"
+    >
+      You will receive an email from HR regarding accessing your ADP account within the next 48 hours.
+    </p>
+    <p
+      className="MuiTypography-root MuiTypography-body1 emotion-4"
+    >
+      Be ready to receive some OCI swag once you start! We're excited for your arrival and hope you have a great time with us here at OCI!
+    </p>
+  </div>
+  <div
+    className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 emotion-1"
+  >
     <img
       alt="Cake"
+      class="cake"
+      padding={30}
       src="cake.png"
     />
-  </center>
+  </div>
 </div>
 `;

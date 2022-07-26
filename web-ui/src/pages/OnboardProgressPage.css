@@ -1,0 +1,5 @@
+.onboard-page {
+  display: flex;
+  justify-content: center;
+  column-gap: 5%;
+}
