@@ -5,12 +5,11 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.*;
-import static reactor.core.publisher.Mono.when;
 
 @MicronautTest
 public class SignRequestControllerTest {
@@ -24,8 +23,15 @@ public class SignRequestControllerTest {
         SignRequestController mockController = mock(SignRequestController.class);
 
         // Tests for basic verification that methods were called
-        mockController.getData();
-        verify(mockController).getData();
+        //mockController.getData();
+        //verify(mockController).getData();
+
+
+        when(mockController.getData()).thenReturn("done");
+        assertEquals("done", mockController.getData());
+
+        verify(mockController, times(1)).getData();
+
     }
 
     @Test
