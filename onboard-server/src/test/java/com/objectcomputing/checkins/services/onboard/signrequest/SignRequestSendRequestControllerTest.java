@@ -33,7 +33,6 @@ public class SignRequestSendRequestControllerTest {
         //verify(request, times(1)).setEmail("test");
     }
 
-
     @Test
     public void testBadRequestExceptionThrownWithBlankEmail() {
         SignRequestCreateDTO signRequest = new SignRequestCreateDTO();

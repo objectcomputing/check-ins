@@ -8,10 +8,8 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.reactivestreams.Publisher;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Controller("/send-signrequest")
@@ -25,7 +23,7 @@ public class SignRequestSendRequestController {
     public SignRequestSendRequestController(SignRequestClient signrequestClient) { this.signrequestClient = signrequestClient; }
 
     @Post
-    Publisher<SignRequestResponseDTO> sendRequest(@Body @Valid @NotNull SignRequestCreateDTO request) {
+    public String sendRequest(@Body @Valid @NotNull SignRequestCreateDTO request) {
         return signrequestClient.sendRequest(request);
     }
 
