@@ -9,8 +9,7 @@ import javax.validation.ConstraintViolation;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
 public class SignRequestCreateDTOTest {
@@ -76,6 +75,9 @@ public class SignRequestCreateDTOTest {
         String[] signers = {"test"};
         dto.setSigners(signers);
         assertEquals(dto.getSigners(), signers);
+
+        Set<ConstraintViolation<SignRequestCreateDTO>> violations = validator.validate(dto);
+        assertTrue(violations.isEmpty());
     }
 
 }
