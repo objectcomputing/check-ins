@@ -20,14 +20,6 @@ public class SignRequestControllerTest {
     HttpClient client;
 
     @Test
-    public void testVerifyBasicInteractions() {
-        SignRequestCreateDTO request = new SignRequestCreateDTO();
-        request.setEmail("test");
-        String a = request.getEmail();
-        assertEquals("test", a);
-    }
-
-    @Test
     public void testGetDocumentsRequest() {
         SignRequestController mockController = mock(SignRequestController.class);
 
