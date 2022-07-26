@@ -6,7 +6,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import "./../components/modal/Modal";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
-//import Modal from "./../components/modal/Modal";
 import Accordion from "../components/accordion/Accordion";
 import { isArrayPresent } from "../utils/helperFunction";
 import Modal from '@mui/material/Modal';
