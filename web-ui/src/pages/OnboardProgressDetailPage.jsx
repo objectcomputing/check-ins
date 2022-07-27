@@ -6,6 +6,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
 import Accordion from "../components/accordion/Accordion";
+import EditOnboardee from "./EditOnboardee";
 import { isArrayPresent } from "../utils/helperFunction";
 import Modal from "@mui/material/Modal";
 import ProgressIndicator from "../components/onboard_progress/ProgressIndicator";
@@ -26,10 +27,9 @@ const modalStyle = {
 export default function OnboardProgressDetailPage() {
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
-  // get user info from OnboardProgressPage
   const location = useLocation();
   const { name, email, hireType } = location.state;
-
+  
   useEffect(() => {
     async function getData() {
       let res = await getDocuments();
@@ -48,6 +48,9 @@ export default function OnboardProgressDetailPage() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const handleOpenEdit = () => setOpenEdit(true);
+  const handleCloseEdit = () => setOpenEdit(false);
   const accordionArr = [
     {
       title: "Personal Information",
@@ -208,6 +211,7 @@ export default function OnboardProgressDetailPage() {
             </div>
           </Box>
         </Modal>
+
         <h1>Name: {name}</h1>
         <h1>Email: {email} </h1>
         <h1>Hire Type: {hireType}</h1>
@@ -233,6 +237,16 @@ export default function OnboardProgressDetailPage() {
           rowsPerPageOptions={[5]}
           disableSelectionOnClick
         />
+      </Box>
+
+      <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
+        <Button
+          variant="contained"
+          onClick={handleOpenEdit}
+          sx={{ fontSize: "1vw" }}
+        >
+          Edit Ondoardee
+        </Button>
       </Box>
 
       <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
