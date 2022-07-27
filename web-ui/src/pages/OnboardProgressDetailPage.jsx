@@ -6,6 +6,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
 import Accordion from "../components/accordion/Accordion";
+import EditOnboardee from "./EditOnboardee";
 import { isArrayPresent } from "../utils/helperFunction";
 import Modal from "@mui/material/Modal";
 
@@ -25,9 +26,6 @@ const modalStyle = {
 export default function OnboardProgressDetailPage() {
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
-  // get user info from OnboardProgressPage
-  const location = useLocation();
-  const { name, email, hireType } = location.state;
 
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
   useEffect(() => {
@@ -48,6 +46,9 @@ export default function OnboardProgressDetailPage() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const handleOpenEdit = () => setOpenEdit(true);
+  const handleCloseEdit = () => setOpenEdit(false);
   const accordionArr = [
     {
       title: "Personal Information",
@@ -182,9 +183,35 @@ export default function OnboardProgressDetailPage() {
                     />
                   );
                 })}
+              <div>
+                <Button
+                  variant="contained"
+                  onClick={handleClose}
+                  sx={{ fontSize: "1vw" }}
+                >
+                  Close
+                </Button>
+              </div>
             </div>
           </Box>
         </Modal>
+        <Modal open={openEdit} onClose={handleCloseEdit}>
+          <Box sx={modalStyle}>
+            <div>
+              <EditOnboardee />
+              <div>
+                <Button
+                  variant="contained"
+                  onClick={handleCloseEdit}
+                  sx={{ fontSize: "1vw" }}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </Box>
+        </Modal>
+
         <h1>Name: {name}</h1>
         <h1>Email: {email} </h1>
         <h1>Hire Type: {hireType}</h1>
@@ -208,22 +235,19 @@ export default function OnboardProgressDetailPage() {
           disableSelectionOnClick
         />
       </Box>
-
-      <Box
-        sx={{
-          height: 50,
-          width: "30%",
-          mt: "5%",
-          ml: "5%",
-          display: "flex",
-          flexDirection: "row",
-          columnGap: "10px",
-        }}
-      >
+      <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
+        <Button
+          variant="contained"
+          onClick={handleOpenEdit}
+          sx={{ fontSize: "1vw" }}
+        >
+          Edit Ondoardee
+        </Button>
+      </Box>
+      <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
         <Button variant="contained" href="/onboard/progress">
           Back
         </Button>
-        <Button variant="contained">Edit</Button>
         <Button variant="contained">Finish Onboarding</Button>
         <Button variant="contained">Delete</Button>
       </Box>
