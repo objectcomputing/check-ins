@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboarding_profile;
+package com.objectcomputing.checkins.services.onboardingprofile;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
@@ -18,7 +18,9 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.hateoas.Resource;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -26,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.objectcomputing.checkins.services.onboarding_profile.OnboardingProfileTestUtil.*;
+import static com.objectcomputing.checkins.services.onboardingprofile.OnboardingProfileTestUtil.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
@@ -36,8 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OnboardingProfileControllerTest extends TestContainersSuite implements
         MemberProfileFixture, OnboardingFixture, RoleFixture {
+    private static final Logger LOG = LoggerFactory.getLogger(OnboardingProfileControllerTest.class);
 
-        @Inject
+    @Inject
         @Client("/services/onboardee-profiles")
         private HttpClient client;
 
@@ -200,7 +203,7 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
                 JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
                 JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-                assertEquals(4, errors.size());
+                assertEquals(8, errors.size());
                 assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
         }
 
@@ -210,9 +213,10 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
               testOnboardeeProfile.setId(null);
               HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("", testOnboardeeProfile)
                      .basicAuth(MEMBER_ROLE, MEMBER_ROLE)));
+              LOG.info(thrown.getResponse().getBody(JsonNode.class).toString());
               JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
               JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
-              assertEquals("onboardee Profile.id: must not be null", error.asText());
+              assertEquals("onboardeeProfile.id: must not be null", error.asText());
               assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
         }
 
@@ -243,6 +247,6 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 
         assertEquals(request.getPath(), href);
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-        assertEquals("No onboardee profile for id " + onboardingProfile.getId(), error);
+        assertEquals("No new employee profile for " + onboardingProfile.getId(), error);
     }
 }

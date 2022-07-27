@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboarding_profile;
+package com.objectcomputing.checkins.services.onboardingprofile;
 
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileCreateDTO;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileDTO;
@@ -26,6 +26,7 @@ public class OnboardingProfileTestUtil {
     public static OnboardingProfileDTO mkUpdateOnboardeeProfileDTO() {
         OnboardingProfileDTO dto = new OnboardingProfileDTO();
         dto.setFirstName("TestFirstName");
+        dto.setMiddleName("TestMiddleName");
         dto.setLastName("TestLastName");
         dto.setSocialSecurityNumber("TestSocialSecurityNumber");
         dto.setBirthDate(LocalDate.of(2000,12,25));
