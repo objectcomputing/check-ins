@@ -242,7 +242,7 @@ export default function OnboardProgressDetailPage() {
           onClick={handleOpenEdit}
           sx={{ fontSize: "1vw" }}
         >
-          Edit Ondoardee
+          Edit Onboardee
         </Button>
       </Box>
       <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
