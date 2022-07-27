@@ -4,6 +4,9 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { FormControl, Autocomplete, TextField } from "@mui/material";
 import InputField from "../components/inputs/InputField";
+import IconButton from "@mui/material/IconButton";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import Stack from "@mui/material/Stack";
 
 function EditOnboardee() {
   const [firstName, setFirstName] = useState("");
@@ -180,6 +183,56 @@ function EditOnboardee() {
                   <TextField variant="outlined" {...option} />
                 )}
               />
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Box variant="contained" component="label">
+                  Offer Letter
+                </Box>
+                <IconButton
+                  color="primary"
+                  aria-label="upload picture"
+                  component="label"
+                >
+                  <input hidden accept="documents/*" type="file" />
+                  <AddBoxIcon />
+                </IconButton>
+              </Stack>
+            </FormControl>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Box variant="contained" component="label">
+                  Employee Agreement
+                </Box>
+                <IconButton
+                  color="primary"
+                  aria-label="upload picture"
+                  component="label"
+                >
+                  <input hidden accept="documents/*" type="file" />
+                  <AddBoxIcon />
+                </IconButton>
+              </Stack>
             </FormControl>
           </Grid>
         </Grid>
