@@ -22,7 +22,7 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
     public OnboardingProfile getById(@NotNull UUID id) {
         Optional<OnboardingProfile> onboardingProfile = onboardingProfileRepository.findById(id);
         if (onboardingProfile.isEmpty()) {
-            throw new NotFoundException("No new employee profile for id" + id);
+            throw new NotFoundException("No new employee profile for id " + id);
         }
         return onboardingProfile.get();
     }

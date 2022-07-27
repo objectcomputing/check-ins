@@ -27,10 +27,12 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.objectcomputing.checkins.services.onboardingprofile.OnboardingProfileTestUtil.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -61,7 +63,10 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 
                 OnboardingProfile onboardingProfile = createADefaultOnboardeeProfile();
                 OnboardingProfile onboardingProfile2 = createSecondOnboardeeProfile();
-//                List<OnboardingProfile> onboardees= new ArrayList<>(2);
+                List<OnboardingProfile> onboardees= new ArrayList<>();
+                onboardees.add(onboardingProfile);
+                onboardees.add(onboardingProfile2);
+                AtomicInteger count = new AtomicInteger();
 
                 final HttpRequest<Object> request = HttpRequest.
                         GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -73,7 +78,8 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
                 assertEquals(2, results.size());
 
                 results.stream().forEach((OnboardingProfileDTO current)->{
-                        assertTrue(current.getId().equals(onboardingProfile.getId()) || current.getId().equals(onboardingProfile.getId()));
+                        assertEquals(current.getFirstName(), onboardees.get(count.get()).getFirstName());
+                        count.getAndIncrement();
                         }
                 );
 
@@ -143,7 +149,7 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 
                 profileUpdateDTO.setFirstName("Sally");
 
-                final HttpRequest<OnboardingProfileDTO> request = HttpRequest.PUT("", profileUpdateDTO)
+                final HttpRequest<OnboardingProfileDTO> request = HttpRequest.PUT("/", profileUpdateDTO)
                         .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
                 final HttpResponse<OnboardingProfileDTO> response = client.toBlocking().exchange(request, OnboardingProfileDTO.class);
 
@@ -247,6 +253,6 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 
         assertEquals(request.getPath(), href);
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-        assertEquals("No new employee profile for " + onboardingProfile.getId(), error);
+        assertEquals("No new employee profile for id " + onboardingProfile.getId(), error);
     }
 }

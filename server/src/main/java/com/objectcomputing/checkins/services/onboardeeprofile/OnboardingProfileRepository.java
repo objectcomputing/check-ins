@@ -15,16 +15,16 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
 
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
-            "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName," +
-            "PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') as lastName," +
-            "PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea),'${aes.key}') as socialSecurityNumber," +
-            "PGP_SYM_DECRYPT(cast(mp.birthDate as bytea),'${aes.key}') as birthDate," +
-            "PGP_SYM_DECRYPT(cast(mp.currentAddress as bytea),'${aes.key}') as currentAddress," +
-            "PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') as previousAddress," +
-            "PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') as phoneNumber," +
-            "PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber," +
-            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail," +
-            "FROM \"onboarding_profile\" mp " +
+            "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName, " +
+            "PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') as lastName, " +
+            "PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea),'${aes.key}') as socialSecurityNumber, " +
+            "PGP_SYM_DECRYPT(cast(mp.birthDate as bytea),'${aes.key}') as birthDate, " +
+            "PGP_SYM_DECRYPT(cast(mp.currentAddress as bytea),'${aes.key}') as currentAddress, " +
+            "PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') as previousAddress, " +
+            "PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') as phoneNumber, " +
+            "PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber, " +
+            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail " +
+            "FROM \"onboard_profile\" mp " +
             "WHERE  (:socialSecurityNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea), '${aes.key}') = :socialSecurityNumber) ",
             nativeQuery = true)
     Optional<OnboardingProfile> findBySocial(@NotNull String socialSecurityNumber);
@@ -39,19 +39,18 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
             "PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') as previousAddress," +
             "PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') as phoneNumber," +
             "PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber," +
-            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail," +
-            "FROM \"onboarding_profile\" mp " +
+            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail " +
+            "FROM \"onboard_profile\" mp " +
             "WHERE  (:socialSecurityNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea), '${aes.key}') = :socialSecurityNumber) " +
-            "AND  (:firstName IS NULL OR PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') = :firstName, " +
-                    "AND  (:middleName IS NULL OR PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') = : middleName," +
-                    "AND  (:lastName IS NULL OR PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') = : lastName," +
-                    "AND  (:socialSecurityNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea),'${aes.key}') = :socialSecurityNumber)" +
-                    "AND  (:birthDate IS NULL OR PGP_SYM_DECRYPT(cast(mp.birthDate as bytea),'${aes.key}') = : birthDate," +
-                    "AND  (:currentAddress IS NULL OR PGP_SYM_DECRYPT(cast(mp.currentAddress as bytea),'${aes.key}') = : currentAddress," +
-                    "AND  (:previousAddress IS NULL OR PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') = : previousAddress," +
-                    "AND  (:phoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') =: phoneNumber," +
-                    "AND  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber," +
-                    "OR  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail," ,
+                    "AND  (:firstName IS NULL OR PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') = :firstName) " +
+                    "AND  (:middleName IS NULL OR PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') = :middleName) " +
+                    "AND  (:lastName IS NULL OR PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') = :lastName) " +
+                    "AND  (CAST(:birthDate as date) IS NULL OR CAST(PGP_SYM_DECRYPT(cast(mp.birthDate as bytea),'${aes.key}') as date) = :birthDate) " +
+                    "AND  (:currentAddress IS NULL OR PGP_SYM_DECRYPT(cast(mp.currentAddress as bytea),'${aes.key}') = :currentAddress) " +
+                    "AND  (:previousAddress IS NULL OR PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') = :previousAddress) " +
+                    "AND  (:phoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') = :phoneNumber) " +
+                    "AND  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') = :secondPhoneNumber) " +
+                    "AND  (:personalEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') = :personalEmail) " ,
             nativeQuery = true)
     List<OnboardingProfile> search(
             @Nullable String id,

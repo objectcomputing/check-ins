@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Introspected
@@ -20,7 +21,7 @@ public class OnboardingProfileDTO {
     @Schema(description = "first name of the new onboardee")
     private String firstName;
 
-    @NotBlank //the below field, middleName, is not allowed to be blank on submission
+    @Nullable
     @Schema(description = "middle name of the new onboardee")
     private String middleName;
 
@@ -162,5 +163,18 @@ public class OnboardingProfileDTO {
                 ", secondPhoneNumber='" + secondPhoneNumber +
                 ", personalEmail=" + personalEmail +  '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OnboardingProfileDTO that = (OnboardingProfileDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(middleName, that.middleName) && Objects.equals(lastName, that.lastName) && Objects.equals(socialSecurityNumber, that.socialSecurityNumber) && Objects.equals(birthDate, that.birthDate) && Objects.equals(currentAddress, that.currentAddress) && Objects.equals(previousAddress, that.previousAddress) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(secondPhoneNumber, that.secondPhoneNumber) && Objects.equals(personalEmail, that.personalEmail);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail);
     }
 }

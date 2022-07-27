@@ -329,6 +329,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     public void testPOSTCreateAMemberProfile() {
 
         MemberProfileUpdateDTO dto = mkUpdateMemberProfileDTO();
+        LOG.info(dto.toString());
 
         final HttpRequest<?> request = HttpRequest.
                 POST("/", dto).basicAuth(MEMBER_ROLE, MEMBER_ROLE);

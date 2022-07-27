@@ -52,18 +52,18 @@ public class OnboardingProfileController {
      * @return {@link OnboardingProfileDTO } Returned onboardee profiles
      */
 
-    @Get()
-    public Mono<HttpResponse<List<OnboardingProfileDTO>>> findAll() {
-
-        return Mono.fromCallable(() -> onboardingProfileServices.findAll())
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(profile -> {
-                    List <OnboardingProfileDTO> dtoList = profile.stream()
-                            .map (this::fromEntity).collect(Collectors.toList());
-                    return (HttpResponse<List<OnboardingProfileDTO>>) HttpResponse
-                            .ok(dtoList);
-                }) .subscribeOn(scheduler);
-    }
+//    @Get("/")
+//    public Mono<HttpResponse<List<OnboardingProfileDTO>>> findAll() {
+//
+//        return Mono.fromCallable(() -> onboardingProfileServices.findAll())
+//                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+//                .map(profile -> {
+//                    List <OnboardingProfileDTO> dtoList = profile.stream()
+//                            .map (this::fromEntity).collect(Collectors.toList());
+//                    return (HttpResponse<List<OnboardingProfileDTO>>) HttpResponse
+//                            .ok(dtoList);
+//                }) .subscribeOn(scheduler);
+//    }
 
     /**
      * Find onboardee profile by id.
@@ -86,13 +86,15 @@ public class OnboardingProfileController {
      * Find onboarding profile by or find all.
      *
      * @param id                   {@link UUID} ID of the onboardee
+     * @param firstName            {@link String} Find onboardees with the given first name
      * @param lastName             {@link String} Find onboardees with the given last name
      * @param socialSecurityNumber {@link String} Find onboardee
      * @param birthDate            {@link LocalDate} birth date of the onboardee
      * @param phoneNumber          {@link String} Onboardee's phone number
+     * @param personalEmail        {@link String} Onboardee's personal email
      * @return {@link List< OnboardingProfileDTO >} List of Onboardees that match the input parameters
      */
-    @Get("/{?id,firstName,lastName,socialSecurityNumber,birthDate,phoneNumber}")
+    @Get("/{?id,firstName,lastName,socialSecurityNumber,birthDate,phoneNumber,personalEmail}")
     public Mono<HttpResponse<List<OnboardingProfileDTO>>> findByValue(@Nullable UUID id,
                                                                       @Nullable String firstName,
                                                                       @Nullable String lastName,
@@ -102,8 +104,8 @@ public class OnboardingProfileController {
                                                                       @Nullable String personalEmail) {
         return Mono.fromCallable(() -> onboardingProfileServices.findByValues(id, firstName, lastName, socialSecurityNumber, birthDate, phoneNumber, personalEmail))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(Onboarding_profile -> {
-                    List<OnboardingProfileDTO> dtoList = Onboarding_profile.stream()
+                .map(Onboardingprofile -> {
+                    List<OnboardingProfileDTO> dtoList = Onboardingprofile.stream()
                             .map(this::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<OnboardingProfileDTO>>) HttpResponse
                             .ok(dtoList);
@@ -138,7 +140,7 @@ public class OnboardingProfileController {
      */
     @Put()
     public Mono<HttpResponse<OnboardingProfileDTO>> update(@Body @Valid OnboardingProfileDTO onboardeeProfile) {
-
+        LOG.info(":)");
         return Mono.fromCallable(() -> onboardingProfileServices.saveProfile(fromDTO(onboardeeProfile)))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> {
@@ -170,6 +172,7 @@ public class OnboardingProfileController {
     }
     private OnboardingProfileDTO fromEntity(OnboardingProfile entity) {
         OnboardingProfileDTO dto = new OnboardingProfileDTO();
+        dto.setId(entity.getId());
         dto.setFirstName(entity.getFirstName());
         dto.setMiddleName(entity.getMiddleName());
         dto.setLastName(entity.getLastName());
