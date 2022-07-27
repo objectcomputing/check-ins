@@ -26,7 +26,8 @@ const modalStyle = {
 export default function OnboardProgressDetailPage() {
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
-
+  const location = useLocation();
+  const { name, email, hireType } = location.state;
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
   useEffect(() => {
     async function getData() {
