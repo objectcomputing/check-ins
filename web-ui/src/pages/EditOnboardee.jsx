@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { FormControl, Autocomplete, TextField } from "@mui/material";
 import InputField from "../components/inputs/InputField";
 import IconButton from "@mui/material/IconButton";
-import AddBoxIcon from "@mui/icons-material/AddBox";
+import UploadIcon from '@mui/icons-material/Upload';
 import Stack from "@mui/material/Stack";
 
 function EditOnboardee() {
@@ -196,7 +196,7 @@ function EditOnboardee() {
                   component="label"
                 >
                   <input hidden accept="documents/*" type="file" />
-                  <AddBoxIcon />
+                  <UploadIcon />
                 </IconButton>
               </Stack>
             </FormControl>
@@ -221,7 +221,7 @@ function EditOnboardee() {
                   component="label"
                 >
                   <input hidden accept="documents/*" type="file" />
-                  <AddBoxIcon />
+                  <UploadIcon />
                 </IconButton>
               </Stack>
             </FormControl>
