@@ -180,6 +180,31 @@ export default function OnboardProgressDetailPage() {
                     />
                   );
                 })}
+              <div>
+                <Button
+                  variant="contained"
+                  onClick={handleClose}
+                  sx={{ fontSize: "1vw" }}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </Box>
+        </Modal>
+        <Modal open={openEdit} onClose={handleCloseEdit}>
+          <Box sx={modalStyle}>
+            <div>
+              <EditOnboardee />
+              <div>
+                <Button
+                  variant="contained"
+                  onClick={handleCloseEdit}
+                  sx={{ fontSize: "1vw" }}
+                >
+                  Close
+                </Button>
+              </div>
             </div>
           </Box>
         </Modal>
