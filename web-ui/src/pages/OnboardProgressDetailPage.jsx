@@ -29,7 +29,7 @@ export default function OnboardProgressDetailPage() {
   const [documentArr, setDocumentArr] = useState([]);
   const location = useLocation();
   const { name, email, hireType } = location.state;
-  
+
   useEffect(() => {
     async function getData() {
       let res = await getDocuments();
@@ -220,7 +220,10 @@ export default function OnboardProgressDetailPage() {
       <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
         <div style={{ display: "flex" }}>
           <h1>Documents/Surveys</h1>
-          <ProgressIndicator dataDocument={documentRows} dataSurvey={surveyRows}/>
+          <ProgressIndicator
+            dataDocument={documentRows}
+            dataSurvey={surveyRows}
+          />
         </div>
 
         <DataGrid
