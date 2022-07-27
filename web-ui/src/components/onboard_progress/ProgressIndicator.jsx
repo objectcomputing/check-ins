@@ -6,8 +6,8 @@ import Box from "@mui/material/Box";
 
 function CircularProgressWithLabel(props) {
   return (
-    <Box sx={{ position: "relative", display: "inline-flex" }}>
-      <CircularProgress variant="determinate" {...props} />
+    <Box sx={{position: "relative", display: "inline-flex" }}>
+      <CircularProgress sx={{marginTop:"20px"}} variant="determinate" {...props} />
       <Box
         sx={{
           top: 0,
@@ -37,19 +37,15 @@ CircularProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function ProgressIndicator() {
-  const [progress, setProgress] = React.useState(10);
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prevProgress) =>
-        prevProgress >= 100 ? 0 : prevProgress + 10
-      );
-    }, 800);
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
-
-  return <CircularProgressWithLabel value={progress} />;
+export default function ProgressIndicator(props) {
+  let completedDocument = props.dataDocument.reduce((total, current) => {
+    if (current.completed === "Yes") total += 1;
+    return total;
+  }, 0);
+  let completedSurvey = props.dataSurvey.reduce((total, current) => {
+    if (current.completed === "Yes") total += 1;
+    return total;
+  }, 0);
+  let currentProgress = ((completedDocument+completedSurvey) / (props.dataDocument.length + props.dataSurvey.length)) * 100;
+  return <CircularProgressWithLabel value={currentProgress} />;
 }

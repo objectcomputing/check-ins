@@ -9,7 +9,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import { Button, Modal, Typography, Grid, Divider, IconButton, Autocomplete } from "@mui/material";
 import { useState } from "react";
-import ProgressIndicator from "../components/onboard_progress/ProgressIndicator";
 
 const modalBoxStyle = {
   position: 'absolute',
@@ -65,10 +64,8 @@ export default function OnboardProgressPage() {
     { field: "email", headerName: "Email", width: 220 },
     { field: "hireType", headerName: "Hire Type", width: 150 },
     {
-      field: "progress",
-      renderCell: (cellValues) => {
-        return <ProgressIndicator />;
-      },
+      field: "completed",
+      headerName: "Completed",
       width: 150,
     },
     { field: "dateAdded", headerName: "Date Added", width: 100 },
@@ -100,6 +97,7 @@ export default function OnboardProgressPage() {
       name: "Daniel Ryu",
       email: "d97shryu@gmail.com",
       hireType: "Intern",
+      completed: "No",
       dateAdded: "Jul 15, 2022",
     },
     {
@@ -107,6 +105,7 @@ export default function OnboardProgressPage() {
       name: "Brandon Li",
       email: "li.brandon@outlook.com",
       hireType: "Intern",
+      completed: "No",
       dateAdded: "Jul 15, 2022",
     },
   ];

@@ -7,17 +7,18 @@ import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
 import Accordion from "../components/accordion/Accordion";
 import { isArrayPresent } from "../utils/helperFunction";
-import Modal from '@mui/material/Modal';
+import Modal from "@mui/material/Modal";
+import ProgressIndicator from "../components/onboard_progress/ProgressIndicator";
 
 const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  overflow: 'auto',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  overflow: "auto",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 800,
-  backgroundColor: 'white',
-  border: '2px solid #000',
+  backgroundColor: "white",
+  border: "2px solid #000",
   boxShadow: 50,
   p: 4,
 };
@@ -50,37 +51,43 @@ export default function OnboardProgressDetailPage() {
   const accordionArr = [
     {
       title: "Personal Information",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem.",
     },
     {
       title: "Employment Eligbility",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem.",
     },
     {
       title: "Employment Desired and Availability",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem.",
     },
     {
       title: "Education",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem.",
     },
     {
       title: "Employment History",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem.",
     },
     {
       title: "Referral Type and Signature",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem.",
     },
   ];
   const documentColumns = [
     { field: "id", headerName: "#", width: 50, hide: true },
     { field: "documentName", headerName: "Document Name", width: 300 },
-    { field: "viewCheck", headerName: "Viewed", width: 100 },
+    { field: "viewCheck", headerName: "Viewed", width: 60 },
     {
       field: "completed",
       headerName: "Completed",
-      width: 100,
+      width: 80,
     },
     { field: "completeDate", headerName: "Date Completed", width: 150 },
     {
@@ -93,7 +100,7 @@ export default function OnboardProgressDetailPage() {
         }).file_from_url;
 
         if (fileLink === null) {
-          return <p>File Unable to Open</p>;
+          return <p>Cannot Open</p>;
         }
         return (
           <a href={fileLink} target="_blank" rel="noreferrer">
@@ -134,12 +141,12 @@ export default function OnboardProgressDetailPage() {
     {
       id: 1,
       surveyName: "Personal Information",
-      completed: "No",
+      completed: "Yes",
     },
     {
       id: 2,
       surveyName: "IT Equipment Page",
-      completed: "No",
+      completed: "Yes",
     },
     {
       id: 3,
@@ -158,25 +165,22 @@ export default function OnboardProgressDetailPage() {
         >
           Personal Information
         </Button>
-        <Modal
-          open={open}
-          onClose={handleClose}
-        >
+        <Modal open={open} onClose={handleClose}>
           <Box sx={modalStyle}>
-          <div>
-            {isArrayPresent(accordionArr) &&
-              accordionArr.map((arr, i) => {
-                return (
-                  <Accordion
-                    key={i}
-                    title={arr.title}
-                    open={i === 0 ? true : false}
-                    index={i}
-                    content={arr.content}
-                  />
-                );
-              })}
-          </div>
+            <div>
+              {isArrayPresent(accordionArr) &&
+                accordionArr.map((arr, i) => {
+                  return (
+                    <Accordion
+                      key={i}
+                      title={arr.title}
+                      open={i === 0 ? true : false}
+                      index={i}
+                      content={arr.content}
+                    />
+                  );
+                })}
+            </div>
           </Box>
         </Modal>
         <h1>Name: {name}</h1>
@@ -184,8 +188,12 @@ export default function OnboardProgressDetailPage() {
         <h1>Hire Type: {hireType}</h1>
       </Box>
 
-      <Box sx={{ height: 300, width: "80%", mt: "5%" }}>
-        <h1>Documents</h1>
+      <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
+        <div style={{ display: "flex" }}>
+          <h1>Documents/Surveys</h1>
+          <ProgressIndicator dataDocument={documentRows} dataSurvey={surveyRows}/>
+        </div>
+
         <DataGrid
           rows={documentRows}
           columns={documentColumns}
@@ -193,7 +201,6 @@ export default function OnboardProgressDetailPage() {
           rowsPerPageOptions={[5]}
           disableSelectionOnClick
         />
-        <h1>Survey</h1>
         <DataGrid
           rows={surveyRows}
           columns={surveyColumns}
