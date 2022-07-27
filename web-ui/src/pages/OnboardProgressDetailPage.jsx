@@ -5,6 +5,22 @@ import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
+import Accordion from "../components/accordion/Accordion";
+import { isArrayPresent } from "../utils/helperFunction";
+import Modal from '@mui/material/Modal';
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  overflow: 'auto',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  backgroundColor: 'white',
+  border: '2px solid #000',
+  boxShadow: 50,
+  p: 4,
+};
 
 export default function OnboardProgressDetailPage() {
   // get document info from signrequest API
@@ -28,6 +44,38 @@ export default function OnboardProgressDetailPage() {
     getData();
   }, []);
 
+  // get user info from OnboardProgressPage
+  const location = useLocation();
+  const { name, email, hireType } = location.state;
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const accordionArr = [
+    {
+      title: "Personal Information",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+    },
+    {
+      title: "Employment Eligbility",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+    },
+    {
+      title: "Employment Desired and Availability",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+    },
+    {
+      title: "Education",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+    },
+    {
+      title: "Employment History",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+    },
+    {
+      title: "Referral Type and Signature",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et leo duis ut diam quam nulla. Et netus et malesuada fames ac turpis egestas maecenas. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Lacus suspendisse faucibus interdum posuere lorem."
+    },
+  ];
   const documentColumns = [
     { field: "id", headerName: "#", width: 50, hide: true },
     { field: "documentName", headerName: "Document Name", width: 300 },
@@ -106,9 +154,34 @@ export default function OnboardProgressDetailPage() {
   return (
     <div className="detail-onboard">
       <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
-        <Button variant="contained" sx={{ fontSize: "1vw" }}>
+        <Button
+          onClick={handleOpen}
+          variant="contained"
+          sx={{ fontSize: "1vw" }}
+        >
           Personal Information
         </Button>
+        <Modal
+          open={open}
+          onClose={handleClose}
+        >
+          <Box sx={modalStyle}>
+          <div>
+            {isArrayPresent(accordionArr) &&
+              accordionArr.map((arr, i) => {
+                return (
+                  <Accordion
+                    key={i}
+                    title={arr.title}
+                    open={i === 0 ? true : false}
+                    index={i}
+                    content={arr.content}
+                  />
+                );
+              })}
+          </div>
+          </Box>
+        </Modal>
         <h1>Name: {name}</h1>
         <h1>Email: {email} </h1>
         <h1>Hire Type: {hireType}</h1>
