@@ -4,9 +4,10 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -14,38 +15,35 @@ import static org.mockito.Mockito.*;
 @MicronautTest
 public class SignRequestControllerTest {
 
-    @Inject
-    @Client("/services/signrequest")
-    HttpClient client;
+    // Class to be tested
+    private SignRequestController mockController;
+
+    @BeforeEach
+    public void init() {
+        mockController = mock(SignRequestController.class);
+    }
 
     @Test
     public void testGetDocumentsRequest() {
-        SignRequestController mockController = mock(SignRequestController.class);
-
-        // Tests for basic verification that methods were called
-        //mockController.getData();
-        //verify(mockController).getData();
-
-
         when(mockController.getData()).thenReturn("done");
         assertEquals("done", mockController.getData());
 
         verify(mockController, times(1)).getData();
+    }
+
+    @Test
+    public void emptyGetDocuments() {
 
     }
 
     @Test
     public void testSendRequest() {
-        SignRequestController mockController = mock(SignRequestController.class);
-
         mockController.sendSignRequest();
         verify(mockController).sendSignRequest();
     }
 
     @Test
     public void testEmbedRequest() {
-        SignRequestController mockController = mock(SignRequestController.class);
-
         mockController.embedSignRequest();
         verify(mockController).embedSignRequest();
     }
