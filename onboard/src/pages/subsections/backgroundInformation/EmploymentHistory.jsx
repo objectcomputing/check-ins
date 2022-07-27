@@ -7,20 +7,20 @@ import Box from "@mui/material/Box";
 
 function EmploymentHistory() {
   const [company, setCompany] = useState("");
-  const [comapanyAddress, setCompanyAddress] = useState("");
-  const [jobTitle, setJobIitle] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [reason, setReason] = useState("");
 
   const [companyHelper, setCompanyHelper] = useState("");
   const [companyAddressHelper, setCompanyAddressHelper] = useState("");
-  const [jobTitleHelper, setJobIitleHelper] = useState("");
+  const [jobTitleHelper, setJobTitleHelper] = useState("");
   const [startDateHelper, setStartDateHelper] = useState("");
   const [endDateHelper, setEndDateHelper] = useState("");
   const [reasonHelper, setReasonHelper] = useState("");
 
-  const [companyError, setComapnyError] = useState(false);
+  const [companyError, setCompanyError] = useState(false);
   const [companyAddressError, setCompanyAddressError] = useState(false);
   const [jobTitleError, setJobTitleError] = useState(false);
   const [startDateError, setStartDateError] = useState(false);
@@ -32,7 +32,7 @@ function EmploymentHistory() {
     // console.log("TODO: Submit data to backend!");
   }
 
-  function handleChnage(event) {
+  function handleChange(event) {
     const e = event;
     const val = e.target.value;
     const name = e.target.name;
@@ -40,10 +40,10 @@ function EmploymentHistory() {
     if (name === "company") {
       setCompany(val);
       if (val.length > 0) {
-        setComapnyError(false);
+        setCompanyError(false);
         setCompanyHelper("");
       } else {
-        setComapnyError(true);
+        setCompanyError(true);
         setCompanyHelper(
           "Please enter in the name of the company you previously worked for"
         );
@@ -60,13 +60,13 @@ function EmploymentHistory() {
         );
       }
     } else if (name === "jobTitle") {
-      setJobIitle(val);
+      setJobTitle(val);
       if (val.length > 0) {
         setJobTitleError(false);
-        setJobIitleHelper("");
+        setJobTitleHelper("");
       } else {
         setJobTitleError(true);
-        setJobIitleHelper(
+        setJobTitleHelper(
           "Please enter in the title of the job you had previously"
         );
       }
@@ -131,7 +131,7 @@ function EmploymentHistory() {
                 value={company}
                 autoFocus={true}
                 error={companyError}
-                onChangeHandler={handleChnage}
+                onChangeHandler={handleChange}
                 helperMessage={companyHelper}
                 label="Company"
                 type="text"
@@ -151,9 +151,9 @@ function EmploymentHistory() {
               <InputField
                 title={"Company Address"}
                 id="companyAddress"
-                value={comapanyAddress}
+                value={companyAddress}
                 error={companyAddressError}
-                onChangeHandler={handleChnage}
+                onChangeHandler={handleChange}
                 helperMessage={companyAddressHelper}
                 label="Company Address"
                 type="text"
@@ -175,7 +175,7 @@ function EmploymentHistory() {
                 id="jobTitle"
                 value={jobTitle}
                 error={jobTitleError}
-                onChangeHandler={handleChnage}
+                onChangeHandler={handleChange}
                 helperMessage={jobTitleHelper}
                 label="Job Title"
                 type="text"
@@ -197,7 +197,7 @@ function EmploymentHistory() {
                 id="startDate"
                 value={startDate}
                 error={startDateError}
-                onChangeHandler={handleChnage}
+                onChangeHandler={handleChange}
                 helperMessage={startDateHelper}
                 label="Start Date"
                 type="date"
@@ -219,7 +219,7 @@ function EmploymentHistory() {
                 id="endDate"
                 value={endDate}
                 error={endDateError}
-                onChangeHandler={handleChnage}
+                onChangeHandler={handleChange}
                 helperMessage={endDateHelper}
                 label="End Date"
                 type="date"
@@ -241,7 +241,7 @@ function EmploymentHistory() {
                 id="reason"
                 value={reason}
                 error={reasonError}
-                onChangeHandler={handleChnage}
+                onChangeHandler={handleChange}
                 helperMessage={reasonHelper}
                 label="Reason For Leaving"
                 type="text"
