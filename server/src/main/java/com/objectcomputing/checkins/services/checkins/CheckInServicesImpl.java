@@ -64,7 +64,7 @@ public class CheckInServicesImpl implements CheckInServices {
             grantAccess = true;
         } else {
             MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
-                throw new NotFoundException(String.format("Team member not found %s not found", checkinRecord.getTeamMemberId()));
+                throw new NotFoundException("Team member not found %s not found", checkinRecord.getTeamMemberId());
             });
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
 
@@ -106,7 +106,7 @@ public class CheckInServicesImpl implements CheckInServices {
             throw new BadArgException("PDL %s is not associated with member %s", pdlId, memberId);
         });
         validate(chkInDate.isAfter(Util.MIN) && chkInDate.isBefore(Util.MAX)).orElseThrow(() -> {
-            throw new BadArgException("Invalid date for checkin %s");
+            throw new BadArgException("Invalid date for checkin %s", checkIn.getTeamMemberId());
         });
 
         boolean isTeamMember = currentUser.getId().equals(checkIn.getTeamMemberId());
@@ -148,7 +148,7 @@ public class CheckInServicesImpl implements CheckInServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         validate(id != null).orElseThrow(() -> {
-            throw new BadArgException("Unable to find checkin record with id %s");
+            throw new BadArgException("Unable to find checkin record with id %s", id);
         });
 
         CheckIn associatedCheckin = checkinRepo.findById(id).orElseThrow(() -> {

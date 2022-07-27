@@ -43,10 +43,10 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
             validate(memberProfileRepository.findById(memberId).isPresent()).orElseThrow(() -> {
                 throw new BadArgException("Member Profile %s doesn't exist", memberId);
             });
-            validate(skillRepository.findById(skillId).isEmpty()).orElseThrow(() -> {
+            validate(skillRepository.findById(skillId).isPresent()).orElseThrow(() -> {
                 throw new BadArgException("Skill %s doesn't exist", skillId);
             });
-            validate(memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(), memberSkill.getSkillid()).isPresent()).orElseThrow(() -> {
+            validate(memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(), memberSkill.getSkillid()).isEmpty()).orElseThrow(() -> {
                 throw new AlreadyExistsException("Member %s already has this skill %s", memberId, skillId);
             });
 

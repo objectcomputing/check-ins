@@ -63,7 +63,8 @@ public class FileServicesImpl implements FileServices {
     public Set<FileInfoDTO> findFiles(@Nullable UUID checkInID) {
 
         boolean isAdmin = currentUserServices.isAdmin();
-        validate(checkInID != null && isAdmin).orElseThrow(() -> {
+
+        validate(checkInID != null || isAdmin).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to perform this operation");
         });
 
@@ -128,11 +129,13 @@ public class FileServicesImpl implements FileServices {
 
         CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
 
-        boolean isTeamMember = currentUser.getId().equals(associatedCheckin.getTeamMemberId());
-        boolean isPdl = currentUser.getId().equals(associatedCheckin.getPdlId());
-        validate(isAdmin || isTeamMember || isPdl).orElseThrow(() -> {
-            throw new PermissionException("You are not authorized to perform this operation");
-        });
+        if (!isAdmin) {
+            boolean isTeamMember = currentUser.getId().equals(associatedCheckin.getTeamMemberId());
+            boolean isPdl = currentUser.getId().equals(associatedCheckin.getPdlId());
+            validate(isTeamMember || isPdl).orElseThrow(() -> {
+                throw new PermissionException("You are not authorized to perform this operation");
+            });
+        }
 
         try {
             java.io.File file = java.io.File.createTempFile("tmp", ".txt");
@@ -267,11 +270,13 @@ public class FileServicesImpl implements FileServices {
         });
 
         CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
-        boolean isPdl = currentUser.getId().equals(associatedCheckin.getTeamMemberId());
-        boolean isTeamMember = currentUser.getId().equals(associatedCheckin.getPdlId());
-        validate(isAdmin || isPdl || isTeamMember).orElseThrow(() -> {
-            throw new PermissionException("You are not authorized to perform this operation");
-        });
+        if (!isAdmin) {
+            boolean isPdl = currentUser.getId().equals(associatedCheckin.getTeamMemberId());
+            boolean isTeamMember = currentUser.getId().equals(associatedCheckin.getPdlId());
+            validate(isPdl || isTeamMember).orElseThrow(() -> {
+                throw new PermissionException("You are not authorized to perform this operation");
+            });
+        }
 
         try {
             Drive drive = googleApiAccess.getDrive();

@@ -66,8 +66,8 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new AlreadyExistsException("Member %s already exists in team %s", memberId, teamId);
         });
 
-        boolean isTeamLead = teamLeads.size() > 0 && teamLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
-        validate(isAdmin || isTeamLead).orElseThrow(() -> {
+        boolean isTeamLead = teamLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
+        validate(isAdmin || teamLeads.isEmpty() || isTeamLead).orElseThrow(() -> {
             throw new BadArgException("You are not authorized to perform this operation");
         });
 

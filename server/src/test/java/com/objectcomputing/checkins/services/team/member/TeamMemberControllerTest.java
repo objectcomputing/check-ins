@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import jakarta.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -42,8 +43,8 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth("test@test.com", ADMIN_ROLE);
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
-        TeamMember teamMember = response.body();
-
+        assertTrue(response.getBody().isPresent());
+        TeamMember teamMember = response.getBody().get();
         assertEquals(teamMemberCreateDTO.getMemberId(), teamMember.getMemberId());
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), teamMember.getId()), response.getHeaders().get("location"));
@@ -63,8 +64,8 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth(memberProfileOfTeamLead.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
-        TeamMember teamMember = response.body();
-
+        assertTrue(response.getBody().isPresent());
+        TeamMember teamMember = response.getBody().get();
         assertEquals(teamMemberCreateDTO.getMemberId(), teamMember.getMemberId());
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), teamMember.getId()), response.getHeaders().get("location"));
@@ -105,8 +106,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
+        List<String> errorList = Stream
+                .of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+                .sorted()
+                .collect(Collectors.toList());
         assertEquals("teamMember.memberId: must not be null", errorList.get(0));
         assertEquals("teamMember.teamId: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
@@ -132,7 +135,6 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testCreateATeamMemberWithNonExistingTeam() {
 
-        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO teamMemberResponseDTO = new TeamMemberCreateDTO(UUID.randomUUID(), memberProfile.getId(), false);
@@ -153,7 +155,6 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     void testCreateATeamMemberWithNonExistingMember() {
 
         Team team = createDefaultTeam();
-        MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO requestDTO = new TeamMemberCreateDTO(team.getId(), UUID.randomUUID(), false);
 
@@ -352,7 +353,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         assertEquals(request.getPath(), href);
         assertEquals("You are not authorized to perform this operation", error);
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test
@@ -371,8 +372,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
+        List<String> errorList = Stream
+                .of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+                .sorted()
+                .collect(Collectors.toList());
         assertEquals("teamMember.memberId: must not be null", errorList.get(0));
         assertEquals("teamMember.teamId: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
@@ -506,7 +509,6 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         MemberProfile leadMemberProfile = createAnUnrelatedUser();
 
         TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
-        TeamMember teamLead = createLeadTeamMember(team, leadMemberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", teamMember.getId())).basicAuth(leadMemberProfile.getWorkEmail(), MEMBER_ROLE);
@@ -552,8 +554,8 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth(memberProfileOfTeamLead.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
-        TeamMember teamMember = response.body();
-
+        assertTrue(response.getBody().isPresent());
+        TeamMember teamMember = response.getBody().get();
 
         assertEquals(numHistoryRows + 1, getMemberHistoryRepository().count());
 

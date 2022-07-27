@@ -121,7 +121,7 @@ public class GuildServicesImpl implements GuildServices {
         boolean isGuildLead = currentUser != null &&
                 !guildMemberServices.findByFields(guildDTO.getId(), currentUser.getId(), true).isEmpty();
         validate(isAdmin || isGuildLead).orElseThrow(() -> {
-            throw new PermissionException("you are not authorized to do this operation");
+            throw new PermissionException("You are not authorized to perform this operation");
         });
 
         // Guild newGuildEntity = null;
@@ -134,14 +134,9 @@ public class GuildServicesImpl implements GuildServices {
             });
 
             validate(guildDTO.getGuildMembers() != null &&
-                    guildDTO.getGuildMembers().stream().noneMatch(GuildUpdateDTO.GuildMemberUpdateDTO::getLead)).orElseThrow(() -> {
+                    guildDTO.getGuildMembers().stream().anyMatch(GuildUpdateDTO.GuildMemberUpdateDTO::getLead)).orElseThrow(() -> {
                 throw new BadArgException("Guild must include at least one guild lead");
             });
-
-            if (guildDTO.getGuildMembers() == null ||
-                    guildDTO.getGuildMembers().stream().noneMatch(GuildUpdateDTO.GuildMemberUpdateDTO::getLead)) {
-                throw new BadArgException("Guild must include at least one guild lead");
-            }
 
             String link = guildDTO.getLink();
             validateLink(link);

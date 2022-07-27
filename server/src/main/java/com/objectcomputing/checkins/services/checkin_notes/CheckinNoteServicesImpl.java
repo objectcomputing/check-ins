@@ -88,7 +88,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         if (!isAdmin) {
             CheckIn checkinRecord = checkinRepo.findById(checkInNoteResult.getCheckinid()).orElse(null);
 
-            validate(checkinRecord == null).orElseThrow(() -> {
+            validate(checkinRecord != null).orElseThrow(() -> {
                 throw new NotFoundException("CheckIn %s doesn't exist", checkInNoteResult.getCheckinid());
             });
             validate(checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())).orElseThrow(() -> {

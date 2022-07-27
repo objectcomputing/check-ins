@@ -24,9 +24,7 @@ import java.io.File;
 import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EmployeeHoursControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, EmployeeHoursFixture {
 
@@ -87,7 +85,7 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test
@@ -131,7 +129,6 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals("You are not authorized to perform this operation", error);
 
@@ -141,7 +138,7 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
     public void testGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+                GET(String.format("/%s", UUID.randomUUID())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));

@@ -80,22 +80,20 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     public PrivateNote read(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-        PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
-
-        validate(privateNoteResult == null).orElseThrow(() -> {
-            throw new NotFoundException("Invalid private not id %s", id);
+        PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("Invalid private note id %s", id);
         });
 
         if (!isAdmin) {
             CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
 
-            validate(checkinRecord == null).orElseThrow(() -> {
+            validate(checkinRecord != null).orElseThrow(() -> {
                 throw new NotFoundException("CheckIn %s doesn't exist", privateNoteResult.getCheckinid());
             });
-            validate(!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())).orElseThrow(() -> {
+            validate(checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())).orElseThrow(() -> {
                 throw new PermissionException("User is unauthorized to do this operation");
             });
-            validate(currentUser.getId().equals(checkinRecord.getTeamMemberId())).orElseThrow(() -> {
+            validate(!currentUser.getId().equals(checkinRecord.getTeamMemberId())).orElseThrow(() -> {
                 throw new PermissionException("User is unauthorized to do this operation");
             });
         }
