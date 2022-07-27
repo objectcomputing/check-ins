@@ -11,10 +11,7 @@ import Stack from "@mui/material/Stack";
 function EditOnboardee() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  //const [position, setPosition] = useState("");
-  //const [hireType, setHireType] = useState("");
   const [email, setEmail] = useState("");
-  //const [pdl, setPdl] = useState("");
 
   const posOptions = ["dummy1", "dummy2", "dummy3"];
   const hireOptions = ["dummy4", "dummy5", "dummy6"];
@@ -30,14 +27,8 @@ function EditOnboardee() {
       setFirstName(val);
     } else if (name === "lastName") {
       setLastName(val);
-      // } else if (name === "position") {
-      //   setPosition(val);
-      // } else if (name === "hireType") {
-      //   setHireType(val);
     } else if (name === "email") {
       setEmail(val);
-      // } else if (name === "pdl") {
-      //   setPdl(val);
     }
   }
 
