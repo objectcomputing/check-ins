@@ -44,9 +44,6 @@ export default function OnboardProgressDetailPage() {
     getData();
   }, []);
 
-  // get user info from OnboardProgressPage
-  const location = useLocation();
-  const { name, email, hireType } = location.state;
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
