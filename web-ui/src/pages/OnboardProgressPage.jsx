@@ -1,6 +1,6 @@
 import React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
 import FileUploadIcon from "@mui/icons-material/FileUpload"
@@ -48,6 +48,17 @@ export default function OnboardProgressPage() {
   const hireOptions = ['dummy4', 'dummy5', 'dummy6'];
   const pdlOptions = ['dummy7', 'dummy8', 'dummy9'];
 
+  const history = useHistory();
+  const handleRowClick = (name, email, hireType, userID) => {
+    history.push({
+      pathname: `/onboard/progress/${userID}`, state: {
+        name: name,
+        email: email,
+        hireType: hireType,
+      }
+    });
+  }
+
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     { field: "name", headerName: "Name", width: 130 },
@@ -87,14 +98,14 @@ export default function OnboardProgressPage() {
     {
       id: 1,
       name: "Daniel Ryu",
-      email: "ryud@objectcomputing.com",
+      email: "d97shryu@gmail.com",
       hireType: "Intern",
       dateAdded: "Jul 15, 2022",
     },
     {
       id: 2,
       name: "Brandon Li",
-      email: "brandonli@objectcomputing.com",
+      email: "li.brandon@outlook.com",
       hireType: "Intern",
       dateAdded: "Jul 15, 2022",
     },
@@ -105,11 +116,13 @@ export default function OnboardProgressPage() {
     {
       field: "notificationMsg",
       headerName: "Notification Message",
-      width: 1200,
+      width: 400,
     },
   ];
 
-  const rowsNotif = [{ id: 1, notificationMsg: "daniel finished something" }];
+  const rowsNotif = [{ id: 1, notificationMsg: "daniel finished something.", userID: 1, name: "Daniel Ryu", email: "ryud@objectcomputing.com", hireType: "Intern" },
+  { id: 2, notificationMsg: "Brandon did something.", userID: 2, name: "Brandon", email: "lib@objectcomputing.com", hireType: "Intern" },
+  { id: 3, notificationMsg: "Daniel did something else.", userID: 1, name: "Daniel Ryu", email: "ryud@objectcomputing.com", hireType: "Intern" }];
 
   return (
     <div className="onboard-page">
@@ -242,6 +255,11 @@ export default function OnboardProgressPage() {
           columns={columnsNotif}
           pageSize={5}
           rowsPerPageOptions={[10]}
+          onRowClick={(params, event) => {
+            if (!event.ignore) {
+              handleRowClick(params.row.name, params.row.email, params.row.hireType, params.row.userID);
+            }
+          }}
         />
       </Box>
     </div>
