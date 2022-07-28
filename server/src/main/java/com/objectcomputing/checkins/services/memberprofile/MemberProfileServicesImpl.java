@@ -94,19 +94,19 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
         Set<Role> userRoles = (memberProfile != null) ? roleServices.findUserRoles(memberProfile.getId()) : Collections.emptySet();
 
-        validate(memberProfile == null).orElseThrow(() -> {
+        validate(memberProfile != null).orElseThrow(() -> {
             throw new NotFoundException("No member profile for id");
         });
-        validate(!checkInServices.findByFields(id, null, null).isEmpty()).orElseThrow(() -> {
+        validate(checkInServices.findByFields(id, null, null).isEmpty()).orElseThrow(() -> {
             throw new BadArgException("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile));
         });
-        validate(!memberSkillServices.findByFields(id, null).isEmpty()).orElseThrow(() -> {
+        validate(memberSkillServices.findByFields(id, null).isEmpty()).orElseThrow(() -> {
             throw new BadArgException("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile));
         });
-        validate(!teamMemberServices.findByFields(null, id, null).isEmpty()).orElseThrow(() -> {
+        validate(teamMemberServices.findByFields(null, id, null).isEmpty()).orElseThrow(() -> {
             throw new BadArgException("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile));
         });
-        validate(!userRoles.isEmpty()).orElseThrow(() -> {
+        validate(userRoles.isEmpty()).orElseThrow(() -> {
             throw new BadArgException("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile));
         });
 

@@ -19,9 +19,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.Validation.validate;
 
 @Singleton
 public class GuildMemberServicesImpl implements GuildMemberServices {
@@ -59,32 +60,35 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     public GuildMember save(@Valid @NotNull GuildMember guildMember) {
         final UUID guildId = guildMember.getGuildId();
         final UUID memberId = guildMember.getMemberId();
-        Optional<Guild> guild = guildRepo.findById(guildId);
+        Guild guild = guildRepo.findById(guildId).orElseThrow(() -> {
+            throw new BadArgException("Guild %s doesn't exist", guildId);
+        });
         MemberProfile currentUser = currentUserServices.getCurrentUser();
 
         Set<GuildMember> guildLeads = this.findByFields(guildMember.getGuildId(), null, true);
         boolean isLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
 
-        if (guild.isEmpty()) {
-            throw new BadArgException(String.format("Guild %s doesn't exist", guildId));
-        } else if (guildMember.getId() != null) {
-            throw new BadArgException(String.format("Found unexpected id %s for Guild member", guildMember.getId()));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isPresent()) {
-            throw new BadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
-        }
+        validate(guildMember.getId() == null).orElseThrow(() -> {
+            throw new BadArgException("Found unexpected id %s for Guild member", guildMember.getId());
+        });
+        memberRepo.findById(memberId).orElseThrow(() -> {
+            throw new BadArgException("Member %s doesn't exist", memberId);
+        });
+        validate(guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isEmpty()).orElseThrow(() -> {
+            throw new BadArgException("Member %s already exists in guild %s", memberId, guildId);
+        });
+
         // only allow admins to create guild leads
-        else if (!currentUserServices.isAdmin() && guildMember.isLead()) {
-            throw new BadArgException("You are not authorized to perform this operation");
-        }
-        // only admins and leads can add members to guilds unless a user adds themself
-        else if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead){
+        validate(currentUserServices.isAdmin() || !guildMember.isLead()).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to perform this operation");
-        }
+        });
+        // only admins and leads can add members to guilds unless a user adds themself
+        validate(currentUserServices.isAdmin() || guildMember.getMemberId().equals(currentUser.getId()) || isLead).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
 
         emailSender
-                .sendEmail("Membership changes have been made to the " + guild.get().getName() + " guild",
+                .sendEmail("Membership changes have been made to the " + guild.getName() + " guild",
                         constructEmailContent(guildMember, true),
                         getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
                 );
@@ -105,23 +109,26 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         final UUID id = guildMember.getId();
         final UUID guildId = guildMember.getGuildId();
         final UUID memberId = guildMember.getMemberId();
-        Optional<Guild> guild = guildRepo.findById(guildId);
-
-        if (guild.isEmpty()) {
-            throw new BadArgException(String.format("Guild %s doesn't exist", guildId));
-        }
+        guildRepo.findById(guildId).orElseThrow(() -> {
+            throw new BadArgException("Guild %s doesn't exist", guildId);
+        });
 
         Set<GuildMember> guildLeads = this.findByFields(guildId, null, true);
 
-        if (id == null || guildMemberRepo.findById(id).isEmpty()) {
-            throw new BadArgException(String.format("Unable to locate guildMember to update with id %s", id));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isEmpty()) {
-            throw new BadArgException(String.format("Member %s is not part of guild %s", memberId, guildId));
-        } else if (!isAdmin && guildLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
-            throw new BadArgException("You are not authorized to perform this operation");
-        }
+        validate(id != null && guildMemberRepo.findById(id).isPresent()).orElseThrow(() -> {
+            throw new BadArgException("Unable to locate guildMember to update with id %s", id);
+        });
+        memberRepo.findById(memberId).orElseThrow(() -> {
+            throw new BadArgException("Member %s doesn't exist", memberId);
+        });
+        guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).orElseThrow(() -> {
+            throw new BadArgException("Member %s is not part of guild %s", memberId, guildId);
+        });
+
+        validate(isAdmin || guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()))).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
+
         GuildMember guildMemberUpdate = guildMemberRepo.update(guildMember);
         guildMemberHistoryRepository.save(buildGuildMemberHistory(guildId,memberId,"Updated", LocalDateTime.now()));
         return guildMemberUpdate;
@@ -146,24 +153,26 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     public void delete(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        GuildMember guildMember = guildMemberRepo.findById(id).orElse(null);
-
-        if (guildMember == null) throw new NotFoundException(String.format("Unable to locate guildMember with id %s", id));
+        GuildMember guildMember = guildMemberRepo.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("Unable to locate guildMember with id %s", id);
+        });
 
         Set<GuildMember> guildLeads = this.findByFields(guildMember.getGuildId(), null, true);
         boolean currentUserIsLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
 
         // don't allow guild lead to be removed if they are the only lead
-        if (guildMember.isLead() && guildLeads.size() == 1){
+        validate(!guildMember.isLead() || guildLeads.size() > 1).orElseThrow(() -> {
             throw new BadArgException("At least one guild lead must be present in the guild at all times");
-        }
-        // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild -> don't delete
-        if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !currentUserIsLead) {
-            throw new PermissionException("You are not authorized to perform this operation");
-        }
+        });
 
-        Guild guild = guildRepo.findById(guildMember.getGuildId())
-                .orElseThrow(() -> new NotFoundException("No Guild found with id " + guildMember.getGuildId()));
+        // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild -> don't delete
+        validate(currentUserServices.isAdmin() || guildMember.getMemberId().equals(currentUser.getId()) || currentUserIsLead).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
+
+        Guild guild = guildRepo.findById(guildMember.getGuildId()).orElseThrow(() -> {
+            throw new NotFoundException("No Guild found with id %s", guildMember.getGuildId());
+        });
 
         emailSender
                 .sendEmail("Membership Changes have been made to the " + guild.getName() + " guild",

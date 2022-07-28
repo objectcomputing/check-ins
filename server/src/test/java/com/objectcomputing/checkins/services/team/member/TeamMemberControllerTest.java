@@ -509,6 +509,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         MemberProfile leadMemberProfile = createAnUnrelatedUser();
 
         TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
+        createLeadTeamMember(team, leadMemberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", teamMember.getId())).basicAuth(leadMemberProfile.getWorkEmail(), MEMBER_ROLE);

@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
@@ -83,26 +84,25 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     public ActionItem read(@NotNull UUID id) {
 
-        ActionItem actionItem = actionItemRepo.findById(id).orElse(null);
+        ActionItem actionItem = actionItemRepo.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("Could not find action item with id %s", id);
+        });
 
-        if (actionItem != null) {
+        CheckIn checkInRecord = checkInServices.read(actionItem.getCheckinid());
 
-            CheckIn checkInRecord = checkInServices.read(actionItem.getCheckinid());
+        validate(checkInRecord != null).orElseThrow(() -> {
+            throw new BadArgException("CheckIn %s doesn't exist", actionItem.getCheckinid());
+        });
+        validate(memberProfileServices.getById(actionItem.getCreatedbyid()) != null).orElseThrow(() -> {
+            throw new BadArgException("Member %s doesn't exist", actionItem.getCreatedbyid());
+        });
 
-            validate(checkInRecord != null).orElseThrow(() -> {
-                throw new BadArgException("CheckIn %s doesn't exist", actionItem.getCheckinid());
-            });
-            validate(memberProfileServices.getById(actionItem.getCreatedbyid()) != null).orElseThrow(() -> {
-                throw new BadArgException("Member %s doesn't exist", actionItem.getCreatedbyid());
-            });
-
-            boolean isAdmin = currentUserServices.isAdmin();
-            boolean isPdl = currentUserServices.getCurrentUser().getId().equals(checkInRecord.getPdlId());
-            boolean isCreator = currentUserServices.getCurrentUser().getId().equals(checkInRecord.getTeamMemberId());
-            validate(isAdmin || isPdl || isCreator).orElseThrow(() -> {
-                throw new PermissionException("User is unauthorized to do this operation");
-            });
-        }
+        boolean isAdmin = currentUserServices.isAdmin();
+        boolean isPdl = currentUserServices.getCurrentUser().getId().equals(checkInRecord.getPdlId());
+        boolean isCreator = currentUserServices.getCurrentUser().getId().equals(checkInRecord.getTeamMemberId());
+        validate(isAdmin || isPdl || isCreator).orElseThrow(() -> {
+            throw new PermissionException("User is unauthorized to do this operation");
+        });
 
         return actionItem;
 

@@ -435,12 +435,11 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = body.get("_embedded").get("errors").get(0).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
         assertEquals(request.getPath(), href);
-        assertEquals("actionItem: must not be null", error);
-
+        assertEquals(String.format("Could not find action item with id %s", randomCheckinID), responseException.getMessage());
     }
 
     @Test

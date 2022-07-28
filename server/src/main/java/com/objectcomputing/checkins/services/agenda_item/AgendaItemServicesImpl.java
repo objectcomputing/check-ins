@@ -75,7 +75,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
             if (isCompleted) {
                 validate(isAdmin).orElseThrow(() -> {
-                    throw new PermissionException("You are not authorized to perform this operation");
+                    throw new PermissionException("User is unauthorized to do this operation");
                 });
             } else {
                 boolean isPdl = currentUser.getId().equals(pdlId);
