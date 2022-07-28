@@ -30,6 +30,8 @@ export default function OnboardProgressDetailPage() {
   const location = useLocation();
   const { name, email, hireType } = location.state;
 
+  // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
+
   useEffect(() => {
     async function getData() {
       let res = await getDocuments();
@@ -96,6 +98,8 @@ export default function OnboardProgressDetailPage() {
     {
       field: "viewFile",
       headerName: "View File",
+      // gets the uuid of the document from reading the same row cell value, and then finds the document with the same uuid,
+      // then returns the url of the file. Note that you can only open google drive documents from this page currently.
       renderCell: (cellValues) => {
         let documentId = cellValues.row.id;
         let fileLink = documentArr.find((e) => {
@@ -121,9 +125,9 @@ export default function OnboardProgressDetailPage() {
       id: filteredE.uuid,
       documentName: filteredE.name,
       viewCheck:
-        filteredE.signrequest.signers[1].viewed === false ? "No" : "Yes",
+        filteredE.signrequest.signers[1].viewed === false ? "No" : "Yes", //we check the element at index 1 of the signers array because it is the recipient's index.
       completed:
-        filteredE.status === "sd" || filteredE.status === "si" ? "Yes" : "No",
+        filteredE.status === "sd" || filteredE.status === "si" ? "Yes" : "No", // si stands for signed, sd stands for signed and downloaded.
       completeDate:
         filteredE.signrequest.signers[1].signed === false
           ? "N/A"
@@ -241,21 +245,21 @@ export default function OnboardProgressDetailPage() {
           disableSelectionOnClick
         />
       </Box>
-
       <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
         <Button
           variant="contained"
           onClick={handleOpenEdit}
           sx={{ fontSize: "1vw" }}
         >
-          Edit Ondoardee
+          Edit Onboardee
         </Button>
       </Box>
-
       <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
         <Button variant="contained" href="/onboard/progress">
           Back
         </Button>
+        <Button variant="contained">Finish Onboarding</Button>
+        <Button variant="contained">Delete</Button>
       </Box>
     </div>
   );
