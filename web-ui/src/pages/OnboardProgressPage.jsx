@@ -41,8 +41,8 @@ export default function OnboardProgressPage() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    setEmpFile(" ");
-    setOfferFile(" ");
+    setEmpFile("");
+    setOfferFile("");
   };
   const handleEmployeeAgreement = (e) => {
     setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
