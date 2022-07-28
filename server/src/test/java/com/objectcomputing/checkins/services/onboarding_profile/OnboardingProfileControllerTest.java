@@ -135,12 +135,13 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 
         @Test
         public void testPUTUpdateOnboardeeProfile() {
-                OnboardingProfile firstProfile= createADefaultOnboardeeProfile();
+                OnboardingProfile firstProfile = createADefaultOnboardeeProfile();
                 OnboardingProfileDTO profileUpdateDTO = toDto(firstProfile);
+
 
                 profileUpdateDTO.setFirstName("Sally");
 
-                final HttpRequest<OnboardingProfileDTO> request = HttpRequest.PUT("", profileUpdateDTO)
+                final HttpRequest<OnboardingProfileDTO> request = HttpRequest.PUT("/", profileUpdateDTO)
                         .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
                 final HttpResponse<OnboardingProfileDTO> response = client.toBlocking().exchange(request, OnboardingProfileDTO.class);
 

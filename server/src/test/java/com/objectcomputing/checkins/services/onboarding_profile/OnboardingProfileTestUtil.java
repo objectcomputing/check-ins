@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileC
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileDTO;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OnboardingProfileTestUtil {
@@ -25,6 +26,7 @@ public class OnboardingProfileTestUtil {
     //ResponseDTO here is used as an UpdateDTO
     public static OnboardingProfileDTO mkUpdateOnboardeeProfileDTO() {
         OnboardingProfileDTO dto = new OnboardingProfileDTO();
+        dto.setId(UUID.fromString("e134d349-cf02-9a58-b9d3-42cc48375628"));
         dto.setFirstName("TestFirstName");
         dto.setLastName("TestLastName");
         dto.setSocialSecurityNumber("TestSocialSecurityNumber");
