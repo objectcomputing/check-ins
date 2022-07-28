@@ -39,7 +39,7 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
         MemberProfileFixture, OnboardingFixture, RoleFixture {
     private static final Logger LOG = LoggerFactory.getLogger(OnboardingProfileControllerTest.class);
 
-    @Inject
+        @Inject
         @Client("/services/onboardee-profiles")
         private HttpClient client;
 
@@ -58,8 +58,8 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
         @Test
         public void testGETAllOnboardees() {
 
-                OnboardingProfile onboardingProfile = createADefaultOnboardeeProfile();
-                OnboardingProfile onboardingProfile2 = createSecondOnboardeeProfile();
+                createADefaultOnboardeeProfile();
+                createSecondOnboardeeProfile();
 
                 final HttpRequest<Object> request = HttpRequest.
                         GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE);

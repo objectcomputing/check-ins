@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.fixture;
+package com.objectcomputing.onboard.services.fixture;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
 import java.time.LocalDate;
 

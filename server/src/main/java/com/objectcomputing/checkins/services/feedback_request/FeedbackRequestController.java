@@ -126,12 +126,12 @@ public class FeedbackRequestController {
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(feedbackReqs -> {
                     List<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
-                            .map(FeedbackRequestController::fromEntity).collect(Collectors.toList());
+                            .map(this::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<FeedbackRequestResponseDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(Schedulers.fromExecutor(executorService));
     }
 
-    private static FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
+    private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
         FeedbackRequestResponseDTO dto = new FeedbackRequestResponseDTO();
         dto.setId(feedbackRequest.getId());
         dto.setCreatorId(feedbackRequest.getCreatorId());
