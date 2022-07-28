@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.memberprofile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.*;
-import com.objectcomputing.checkins.services.onboardingprofile.OnboardingProfileControllerTest;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.team.Team;
@@ -18,8 +17,6 @@ import io.micronaut.http.hateoas.Resource;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -36,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MemberProfileControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture,
         SkillFixture, MemberSkillFixture, TeamFixture, TeamMemberFixture, RoleFixture {
-    private static final Logger LOG = LoggerFactory.getLogger(OnboardingProfileControllerTest.class);
 
     @Inject
     @Client("/services/member-profiles")
@@ -329,7 +325,6 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     public void testPOSTCreateAMemberProfile() {
 
         MemberProfileUpdateDTO dto = mkUpdateMemberProfileDTO();
-        LOG.info(dto.toString());
 
         final HttpRequest<?> request = HttpRequest.
                 POST("/", dto).basicAuth(MEMBER_ROLE, MEMBER_ROLE);

@@ -27,16 +27,13 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.objectcomputing.checkins.services.onboardingprofile.OnboardingProfileTestUtil.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OnboardingProfileControllerTest extends TestContainersSuite implements
         MemberProfileFixture, OnboardingFixture, RoleFixture {
@@ -63,10 +60,6 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 
                 OnboardingProfile onboardingProfile = createADefaultOnboardeeProfile();
                 OnboardingProfile onboardingProfile2 = createSecondOnboardeeProfile();
-                List<OnboardingProfile> onboardees= new ArrayList<>();
-                onboardees.add(onboardingProfile);
-                onboardees.add(onboardingProfile2);
-                AtomicInteger count = new AtomicInteger();
 
                 final HttpRequest<Object> request = HttpRequest.
                         GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -76,12 +69,6 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 
                 assertEquals(HttpStatus.OK, response.getStatus());
                 assertEquals(2, results.size());
-
-                results.stream().forEach((OnboardingProfileDTO current)->{
-                        assertEquals(current.getFirstName(), onboardees.get(count.get()).getFirstName());
-                        count.getAndIncrement();
-                        }
-                );
 
         }
         @Test
@@ -209,7 +196,7 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
                 JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
                 JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-                assertEquals(8, errors.size());
+                assertEquals(7, errors.size());
                 assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
         }
 

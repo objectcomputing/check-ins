@@ -47,25 +47,6 @@ public class OnboardingProfileController {
     }
 
     /**
-     * Find all onboardee profiles.
-     *
-     * @return {@link OnboardingProfileDTO } Returned onboardee profiles
-     */
-
-//    @Get("/")
-//    public Mono<HttpResponse<List<OnboardingProfileDTO>>> findAll() {
-//
-//        return Mono.fromCallable(() -> onboardingProfileServices.findAll())
-//                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-//                .map(profile -> {
-//                    List <OnboardingProfileDTO> dtoList = profile.stream()
-//                            .map (this::fromEntity).collect(Collectors.toList());
-//                    return (HttpResponse<List<OnboardingProfileDTO>>) HttpResponse
-//                            .ok(dtoList);
-//                }) .subscribeOn(scheduler);
-//    }
-
-    /**
      * Find onboardee profile by id.
      *
      * @param id {@link UUID} ID of the onboardee profile
