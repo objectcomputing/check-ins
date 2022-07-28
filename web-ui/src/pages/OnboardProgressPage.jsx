@@ -1,5 +1,5 @@
 import React from "react";
-import { DataGrid,GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Link, useHistory } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
