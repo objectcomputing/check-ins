@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -40,7 +42,7 @@ public class CheckinDocumentServiceImplTest {
 
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
@@ -86,7 +88,7 @@ public class CheckinDocumentServiceImplTest {
 
         String id = "some.id";
         when(checkinDocumentRepository.findByUploadDocId(any(String.class))).thenReturn(Optional.empty());
-        BadArgException exception = assertThrows(BadArgException.class, () -> services.getFindByUploadDocId(id));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> services.getFindByUploadDocId(id));
         assertEquals(String.format("CheckinDocument with document id %s does not exist", id), exception.getMessage());
         verify(checkinDocumentRepository, times(1)).findByUploadDocId(any(String.class));
     }
@@ -168,7 +170,7 @@ public class CheckinDocumentServiceImplTest {
         when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.of(checkin));
         when(checkinDocumentRepository.findByUploadDocId(eq(cd.getUploadDocId()))).thenReturn(Optional.of(cd));
 
-        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
+        AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () -> services.save(cd));
         assertEquals(String.format("CheckinDocument with document ID %s already exists", cd.getUploadDocId()), exception.getMessage());
 
         verify(checkinDocumentRepository, never()).save(any(CheckinDocument.class));

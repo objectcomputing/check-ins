@@ -86,7 +86,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         validate(feedbackRequest.getId() == null).orElseThrow(() -> {
             throw new BadArgException("Attempted to save feedback request with non-auto-populated ID");
         });
-        validate(feedbackRequest.getDueDate() == null || feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())).orElseThrow(() -> {
+        validate(feedbackRequest.getDueDate() == null || feedbackRequest.getSendDate().isBefore(feedbackRequest.getDueDate())).orElseThrow(() -> {
             throw new BadArgException("Send date of feedback request must be before the due date.");
         });
 
