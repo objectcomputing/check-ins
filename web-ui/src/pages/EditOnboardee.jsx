@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import { Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { FormControl, Autocomplete, TextField } from "@mui/material";
 import InputField from "../components/inputs/InputField";
 import IconButton from "@mui/material/IconButton";
-import UploadIcon from '@mui/icons-material/Upload';
+import UploadIcon from "@mui/icons-material/Upload";
 import Stack from "@mui/material/Stack";
 
 function EditOnboardee() {
@@ -17,6 +18,8 @@ function EditOnboardee() {
   const hireOptions = ["dummy4", "dummy5", "dummy6"];
   const pdlOptions = ["dummy7", "dummy8", "dummy9"];
 
+  const [visible, setVisible] = useState("hidden");
+
   function handleChange(event) {
     const e = event;
     const val = e.target.value;
@@ -25,10 +28,13 @@ function EditOnboardee() {
     // Event handler for the fields
     if (name === "firstName") {
       setFirstName(val);
+      setVisible("visible");
     } else if (name === "lastName") {
       setLastName(val);
+      setVisible("visible");
     } else if (name === "email") {
       setEmail(val);
+      setVisible("visible");
     }
   }
 
@@ -200,9 +206,9 @@ function EditOnboardee() {
                 </IconButton>
               </Stack>
             </FormControl>
-                  </Grid>
-                  
-                  <Grid item xs={12} sm={12} md={12} lg={6}>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <FormControl
               sx={{
                 my: 1,
@@ -226,6 +232,13 @@ function EditOnboardee() {
               </Stack>
             </FormControl>
           </Grid>
+          <Button
+            variant="contained"
+            style={{ visibility: visible }}
+            sx={{ fontSize: "1vw" }}
+          >
+            Save Changes
+          </Button>
         </Grid>
       </form>
     </Box>
