@@ -1,11 +1,9 @@
 import React from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Link, useHistory } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import {
   Button,
@@ -158,19 +156,6 @@ export default function OnboardProgressPage() {
   return (
     <div className="onboard-page">
       <Box sx={{ height: 400, width: "60%", mt: "5%" }}>
-        <TextField
-          id="input-with-icon-textfield"
-          label="Search Onboardees"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          variant="standard"
-        />
-
         <Button onClick={handleOpen} variant="contained" sx={{ ml: "64%" }}>
           Add Onboardee
         </Button>
@@ -352,6 +337,13 @@ export default function OnboardProgressPage() {
           rowsPerPageOptions={[5]}
           checkboxSelection
           disableSelectionOnClick
+          components={{ Toolbar: GridToolbar }}
+          componentsProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500 },
+            },
+          }}
         />
       </Box>
       <Box sx={{ height: 400, width: "20%", mt: "3%" }}>
