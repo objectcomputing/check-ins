@@ -357,6 +357,7 @@ export default function OnboardProgressPage() {
       <Box sx={{ height: 400, width: "20%", mt: "3%" }}>
         <h1>Notifications</h1>
         <DataGrid
+          sx={{ cursor: "pointer" }}
           rows={rowsNotif}
           columns={columnsNotif}
           pageSize={5}
