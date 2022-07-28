@@ -33,22 +33,16 @@ function EditOnboardee() {
     } else if (name === "email") {
       setEmail(val);
       setVisible("visible");
-    }
-    else if (name === "position")
-    {
+    } else if (name === "position") {
       setPosition(val);
       setVisible("visible");
-    }
-    else if (name === "hireType")
-    {
+    } else if (name === "hireType") {
       setHireType(val);
       setVisible("visible");
-    }
-    else if (name === "pdl")
-    {
+    } else if (name === "pdl") {
       setPdl(val);
       setVisible("visible");
-      }
+    }
   }
 
   function handleSaveInformation(e) {
@@ -78,7 +72,6 @@ function EditOnboardee() {
               }}
             >
               <InputField
-                
                 title="Position: "
                 id="position"
                 value={position}
@@ -99,7 +92,6 @@ function EditOnboardee() {
               }}
             >
               <InputField
-                
                 title="Hire Type: "
                 id="hireType"
                 value={hireType}
@@ -234,13 +226,42 @@ function EditOnboardee() {
               </Stack>
             </FormControl>
           </Grid>
-          <Button
-            variant="contained"
-            style={{ visibility: visible }}
-            sx={{ fontSize: "1vw" }}
-          >
-            Save Changes
-          </Button>
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <Button
+                variant="contained"
+                style={{ visibility: visible }}
+                sx={{ fontSize: "1vw" }}
+              >
+                Save Changes
+              </Button>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <Button
+                variant="contained"
+                style={{ visibility: visible }}
+                sx={{ fontSize: "1vw" }}
+              >
+                Reset Onboardee
+              </Button>
+            </FormControl>
+          </Grid>
         </Grid>
       </form>
     </Box>
