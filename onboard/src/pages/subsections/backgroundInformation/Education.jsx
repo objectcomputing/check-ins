@@ -13,7 +13,7 @@ function Education() {
   const [degree, setDegree] = useState("");
   const [major, setMajor] = useState("");
   const [completionDate, setCompletionDate] = useState("");
-  const [additionalInformation, setAdditionalInformation] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
 
   const [highestDegreeHelper, setHighestDegreeHelper] = useState("");
   const [institutionHelper, setInsitutionHelper] = useState("");
@@ -96,7 +96,7 @@ function Education() {
         setCompletionDateHelper("Please enter in a date");
       }
     } else if (name === "additionalInformation") {
-      setAdditionalInformation(val);
+      setAdditionalInfo(val);
     }
   }
 
@@ -253,7 +253,7 @@ function Education() {
               <TextField
                 title="Additional Research, Coursework, and Certification:"
                 id="additionalInformation"
-                value={additionalInformation}
+                value={additionalInfo}
                 onChangeHandler={handleChange}
                 type={"text"}
               ></TextField>

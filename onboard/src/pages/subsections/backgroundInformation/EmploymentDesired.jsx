@@ -14,7 +14,7 @@ function EmploymentDesired() {
   const [startDate, setStartDate] = useState("");
   const [desiredSalary, setDesiredSalary] = useState("");
   const [employmentStatus, setEmploymentStatus] = useState("");
-  const [contactCurrentEmployer, setContactCurrentEmployer] = useState("");
+  const [contactEmployer, setContactEmployer] = useState("");
   const [employedAtOCI, setEmployedAtOCI] = useState("");
   const [nonCompeteStatus, setNonCompeteStatus] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
@@ -89,7 +89,7 @@ function EmploymentDesired() {
         setDesiredSalaryError(true);
       }
     } else if (name === "contactCurrentEmployer") {
-      setContactCurrentEmployer(val);
+      setContactEmployer(val);
       setContactCurrentEmployerHelper("");
     } else if (name === "employmentStatus") {
       setEmploymentStatus(val);
@@ -239,7 +239,7 @@ function EmploymentDesired() {
               </FormLabel>
               <RadioGroup
                 name="contactCurrentEmployer"
-                value={contactCurrentEmployer}
+                value={contactEmployer}
                 onChange={handleChange}
               >
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
