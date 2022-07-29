@@ -1,0 +1,17 @@
+.wrapFooter {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-content: flex-end;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  height: min-content;
+}
+.nextButton {
+  align-self: flex-end;
+}
+.finalButton {
+  align-self: center;
+}

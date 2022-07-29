@@ -67,7 +67,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "PUBLIC_URL='/onboard' react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "coverage": "yarn test --coverage",
     "eject": "react-scripts eject",

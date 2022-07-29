@@ -124,9 +124,11 @@ Array [
   }
 }
 
-@media (min-width:0px) and (orientation: landscape) {
-  .emotion-2 {
-    min-height: 48px;
+@media (min-width:0px) {
+  @media (orientation: landscape) {
+    .emotion-2 {
+      min-height: 48px;
+    }
   }
 }
 
@@ -1085,7 +1087,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -1131,7 +1133,7 @@ Array [
             >
               
               <div
-                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
+                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -1239,7 +1241,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-14"
+          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-14"
           onKeyDown={[Function]}
           role="presentation"
         >
@@ -2058,9 +2060,11 @@ Array [
   }
 }
 
-@media (min-width:0px) and (orientation: landscape) {
-  .emotion-2 {
-    min-height: 48px;
+@media (min-width:0px) {
+  @media (orientation: landscape) {
+    .emotion-2 {
+      min-height: 48px;
+    }
   }
 }
 
@@ -3019,7 +3023,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -3062,7 +3066,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -3118,7 +3122,7 @@ Array [
             >
               
               <div
-                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
+                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -3254,7 +3258,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-16"
+          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-16"
           onKeyDown={[Function]}
           role="presentation"
         >
@@ -4101,6 +4105,2157 @@ Array [
 ]
 `;
 
+exports[`<Menu /> renders correctly for hr 1`] = `
+Array [
+  "",
+  .emotion-0.Menu-root {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding-right: 150px;
+}
+
+@media (min-width:600px) {
+  .emotion-0 .Menu-drawer {
+    width: 150px;
+    -webkit-flex-shrink: 0;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+  }
+}
+
+.emotion-0 .Menu-appBar {
+  background-color: #e4e3e4;
+}
+
+@media (min-width:600px) {
+  .emotion-0 .Menu-appBar {
+    width: calc(100% - 150px);
+    margin-left: 150px;
+  }
+}
+
+.emotion-0 .Menu-menuButton {
+  margin-right: 16px;
+}
+
+@media (min-width:600px) {
+  .emotion-0 .Menu-menuButton {
+    display: none;
+  }
+}
+
+.emotion-0 .Menu-drawerPaper {
+  width: 150px;
+  background-color: #a5a4a8;
+}
+
+.emotion-0 .Menu-content {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  padding: 24px;
+}
+
+.emotion-0 .Menu-listStyle {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: white;
+  text-align: left;
+}
+
+.emotion-0 .Menu-nested {
+  padding-left: 32px;
+}
+
+.emotion-0 .Menu-subListItem {
+  font-size: 0.9rem;
+}
+
+.emotion-1 {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  position: fixed;
+  z-index: 1100;
+  top: 0;
+  left: auto;
+  right: 0;
+  background-color: #1976d2;
+  color: #fff;
+}
+
+@media print {
+  .emotion-1 {
+    position: absolute;
+  }
+}
+
+.emotion-2 {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-left: 16px;
+  padding-right: 16px;
+  min-height: 56px;
+}
+
+@media (min-width:600px) {
+  .emotion-2 {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (min-width:0px) {
+  @media (orientation: landscape) {
+    .emotion-2 {
+      min-height: 48px;
+    }
+  }
+}
+
+@media (min-width:600px) {
+  .emotion-2 {
+    min-height: 64px;
+  }
+}
+
+.emotion-3 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  -webkit-flex: 0 0 auto;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  font-size: 1.5rem;
+  padding: 8px;
+  border-radius: 50%;
+  overflow: visible;
+  color: rgba(0, 0, 0, 0.54);
+  -webkit-transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  margin-left: -12px;
+  color: inherit;
+  padding: 12px;
+  font-size: 1.75rem;
+}
+
+.emotion-3::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-3.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-3 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-3:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+@media (hover: none) {
+  .emotion-3:hover {
+    background-color: transparent;
+  }
+}
+
+.emotion-3.Mui-disabled {
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.26);
+}
+
+.emotion-4 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  fill: currentColor;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  font-size: 1.5rem;
+}
+
+.emotion-5 {
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+}
+
+.emotion-6 {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-7 {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  object-fit: cover;
+  color: transparent;
+  text-indent: 10000px;
+}
+
+.emotion-8 {
+  position: fixed;
+  z-index: 1300;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+}
+
+.emotion-9 {
+  position: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  -webkit-tap-highlight-color: transparent;
+  z-index: -1;
+}
+
+.emotion-10 {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
+  max-height: calc(100% - 96px);
+  -webkit-overflow-scrolling: touch;
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12);
+  position: absolute;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 16px;
+  min-height: 16px;
+  max-width: calc(100% - 32px);
+  max-height: calc(100% - 32px);
+  outline: 0;
+}
+
+.emotion-11 {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  outline: 0;
+}
+
+.emotion-12 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  min-height: 48px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.emotion-12::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-12.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-12 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-12:hover {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+@media (hover: none) {
+  .emotion-12:hover {
+    background-color: transparent;
+  }
+}
+
+.emotion-12.Mui-selected {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+.emotion-12.Mui-selected.Mui-focusVisible {
+  background-color: rgba(25, 118, 210, 0.2);
+}
+
+.emotion-12.Mui-selected:hover {
+  background-color: rgba(25, 118, 210, 0.12);
+}
+
+@media (hover: none) {
+  .emotion-12.Mui-selected:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+  }
+}
+
+.emotion-12.Mui-focusVisible {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.emotion-12.Mui-disabled {
+  opacity: 0.38;
+}
+
+.emotion-12+.MuiDivider-root {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.emotion-12+.MuiDivider-inset {
+  margin-left: 52px;
+}
+
+.emotion-12 .MuiListItemText-root {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.emotion-12 .MuiListItemText-inset {
+  padding-left: 36px;
+}
+
+.emotion-12 .MuiListItemIcon-root {
+  min-width: 36px;
+}
+
+@media (min-width:600px) {
+  .emotion-12 {
+    min-height: auto;
+  }
+}
+
+.emotion-14 {
+  position: fixed;
+  z-index: 1300;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  z-index: 1200;
+}
+
+@media (min-width:0px) {
+  .emotion-14 {
+    display: block;
+  }
+}
+
+@media (min-width:600px) {
+  .emotion-14 {
+    display: none;
+  }
+}
+
+.emotion-15 {
+  position: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-tap-highlight-color: transparent;
+  z-index: -1;
+}
+
+.emotion-16 {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  box-shadow: 0px 8px 10px -5px rgba(0,0,0,0.2),0px 16px 24px 2px rgba(0,0,0,0.14),0px 6px 30px 5px rgba(0,0,0,0.12);
+  overflow-y: auto;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  height: 100%;
+  -webkit-flex: 1 0 auto;
+  -ms-flex: 1 0 auto;
+  flex: 1 0 auto;
+  z-index: 1200;
+  -webkit-overflow-scrolling: touch;
+  position: fixed;
+  top: 0;
+  outline: 0;
+  left: 0;
+}
+
+.emotion-17 {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.emotion-18 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+  -webkit-transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-18::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-18.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-18 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-18.Mui-focusVisible {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.emotion-18.Mui-selected {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+.emotion-18.Mui-selected.Mui-focusVisible {
+  background-color: rgba(25, 118, 210, 0.2);
+}
+
+.emotion-18.Mui-disabled {
+  opacity: 0.38;
+}
+
+.emotion-18:hover {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+@media (hover: none) {
+  .emotion-18:hover {
+    background-color: transparent;
+  }
+}
+
+.emotion-18.Mui-selected:hover {
+  background-color: rgba(25, 118, 210, 0.12);
+}
+
+@media (hover: none) {
+  .emotion-18.Mui-selected:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+  }
+}
+
+.emotion-19 {
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.emotion-20 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  display: block;
+}
+
+.emotion-30 {
+  height: auto;
+  overflow: visible;
+  -webkit-transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.emotion-31 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+}
+
+.emotion-32 {
+  width: 100%;
+}
+
+.emotion-53 {
+  -webkit-flex: 0 0 auto;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+}
+
+@media (min-width:0px) {
+  .emotion-53 {
+    display: none;
+  }
+}
+
+@media (min-width:600px) {
+  .emotion-53 {
+    display: block;
+  }
+}
+
+.emotion-54 {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  box-shadow: none;
+  overflow-y: auto;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  height: 100%;
+  -webkit-flex: 1 0 auto;
+  -ms-flex: 1 0 auto;
+  flex: 1 0 auto;
+  z-index: 1200;
+  -webkit-overflow-scrolling: touch;
+  position: fixed;
+  top: 0;
+  outline: 0;
+  left: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+<div
+    className="Menu-root emotion-0"
+  >
+    
+    Array [
+      "",
+      <header
+        className="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed Menu-appBar mui-fixed emotion-1"
+      >
+        
+        <div
+          className="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular emotion-2"
+        >
+          
+          Array [
+            "",
+            <button
+              aria-label="open drawer"
+              className="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeLarge Menu-menuButton emotion-3"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onContextMenu={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-4"
+                data-testid="MenuIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+                />
+              </svg>
+              
+              <span
+                className="MuiTouchRipple-root emotion-5"
+              />
+            </button>,
+          ]
+        </div>
+        <div
+          aria-haspopup="true"
+          onClick={[Function]}
+        >
+          
+          <div
+            className="MuiAvatar-root MuiAvatar-circular emotion-6"
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+                "position": "absolute",
+                "right": "5px",
+                "textDecoration": "none",
+                "top": "10px",
+              }
+            }
+          >
+            
+            <img
+              className="MuiAvatar-img emotion-7"
+              src="http://localhost:8080/services/member-profiles/member-photos/test%40tester.com"
+            />
+          </div>
+          
+          Array [
+            "",
+            <Portal
+              containerInfo={
+                .emotion-0 {
+  position: fixed;
+  z-index: 1300;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+}
+
+.emotion-1 {
+  position: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  -webkit-tap-highlight-color: transparent;
+  z-index: -1;
+}
+
+.emotion-2 {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
+  max-height: calc(100% - 96px);
+  -webkit-overflow-scrolling: touch;
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12);
+  position: absolute;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 16px;
+  min-height: 16px;
+  max-width: calc(100% - 32px);
+  max-height: calc(100% - 32px);
+  outline: 0;
+}
+
+.emotion-3 {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  outline: 0;
+}
+
+.emotion-4 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  color: inherit;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  min-height: 48px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.emotion-4::-moz-focus-inner {
+  border-style: none;
+}
+
+.emotion-4.Mui-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+@media print {
+  .emotion-4 {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+.emotion-4:hover {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+@media (hover: none) {
+  .emotion-4:hover {
+    background-color: transparent;
+  }
+}
+
+.emotion-4.Mui-selected {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+.emotion-4.Mui-selected.Mui-focusVisible {
+  background-color: rgba(25, 118, 210, 0.2);
+}
+
+.emotion-4.Mui-selected:hover {
+  background-color: rgba(25, 118, 210, 0.12);
+}
+
+@media (hover: none) {
+  .emotion-4.Mui-selected:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+  }
+}
+
+.emotion-4.Mui-focusVisible {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.emotion-4.Mui-disabled {
+  opacity: 0.38;
+}
+
+.emotion-4+.MuiDivider-root {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.emotion-4+.MuiDivider-inset {
+  margin-left: 52px;
+}
+
+.emotion-4 .MuiListItemText-root {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.emotion-4 .MuiListItemText-inset {
+  padding-left: 36px;
+}
+
+.emotion-4 .MuiListItemIcon-root {
+  min-width: 36px;
+}
+
+@media (min-width:600px) {
+  .emotion-4 {
+    min-height: auto;
+  }
+}
+
+.emotion-5 {
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+}
+
+<body>
+                  <div
+                    aria-hidden="true"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    id="simple-menu"
+                    role="presentation"
+                  >
+                    <div
+                      aria-hidden="true"
+                      class="MuiBackdrop-root MuiBackdrop-invisible emotion-1"
+                      style="opacity: 0; visibility: hidden;"
+                    />
+                    <div
+                      data-test="sentinelStart"
+                      tabindex="0"
+                    />
+                    <div
+                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiMenu-paper MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 MuiPopover-paper emotion-2"
+                      style="opacity: 0; transform: scale(0.75, 0.5625); visibility: hidden;"
+                      tabindex="-1"
+                    >
+                      <ul
+                        class="MuiList-root MuiList-padding MuiMenu-list emotion-3"
+                        role="menu"
+                        tabindex="-1"
+                      >
+                        <a
+                          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root emotion-4"
+                          href="/profile/undefined"
+                          role="menuitem"
+                          tabindex="0"
+                        >
+                          Profile
+                          <span
+                            class="MuiTouchRipple-root emotion-5"
+                          />
+                        </a>
+                      </ul>
+                    </div>
+                    <div
+                      data-test="sentinelEnd"
+                      tabindex="0"
+                    />
+                  </div>
+                  <div
+                    aria-hidden="true"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    id="simple-menu"
+                    role="presentation"
+                  >
+                    <div
+                      aria-hidden="true"
+                      class="MuiBackdrop-root MuiBackdrop-invisible emotion-1"
+                      style="opacity: 0; visibility: hidden;"
+                    />
+                    <div
+                      data-test="sentinelStart"
+                      tabindex="0"
+                    />
+                    <div
+                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiMenu-paper MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 MuiPopover-paper emotion-2"
+                      style="opacity: 0; transform: scale(0.75, 0.5625); visibility: hidden;"
+                      tabindex="-1"
+                    >
+                      <ul
+                        class="MuiList-root MuiList-padding MuiMenu-list emotion-3"
+                        role="menu"
+                        tabindex="-1"
+                      >
+                        <a
+                          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root emotion-4"
+                          href="/profile/undefined"
+                          role="menuitem"
+                          tabindex="0"
+                        >
+                          Profile
+                          <span
+                            class="MuiTouchRipple-root emotion-5"
+                          />
+                        </a>
+                        <li
+                          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root emotion-4"
+                          role="menuitem"
+                          tabindex="-1"
+                        >
+                          Upload Hours
+                          <span
+                            class="MuiTouchRipple-root emotion-5"
+                          />
+                        </li>
+                      </ul>
+                    </div>
+                    <div
+                      data-test="sentinelEnd"
+                      tabindex="0"
+                    />
+                  </div>
+                  <div
+                    aria-hidden="true"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    id="simple-menu"
+                    role="presentation"
+                  >
+                    <div
+                      aria-hidden="true"
+                      class="MuiBackdrop-root MuiBackdrop-invisible emotion-1"
+                      style="opacity: 0; visibility: hidden;"
+                    />
+                    <div
+                      data-test="sentinelStart"
+                      tabindex="0"
+                    />
+                    <div
+                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiMenu-paper MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 MuiPopover-paper emotion-2"
+                      style="opacity: 0; transform: scale(0.75, 0.5625); visibility: hidden;"
+                      tabindex="-1"
+                    >
+                      <ul
+                        class="MuiList-root MuiList-padding MuiMenu-list emotion-3"
+                        role="menu"
+                        tabindex="-1"
+                      >
+                        <a
+                          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root emotion-4"
+                          href="/profile/undefined"
+                          role="menuitem"
+                          tabindex="0"
+                        >
+                          Profile
+                          <span
+                            class="MuiTouchRipple-root emotion-5"
+                          />
+                        </a>
+                      </ul>
+                    </div>
+                    <div
+                      data-test="sentinelEnd"
+                      tabindex="0"
+                    />
+                  </div>
+                  <div
+                    aria-hidden="true"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    id="simple-menu"
+                    role="presentation"
+                  >
+                    <div
+                      aria-hidden="true"
+                      class="MuiBackdrop-root MuiBackdrop-invisible emotion-1"
+                      style="opacity: 0; visibility: hidden;"
+                    />
+                    <div
+                      data-test="sentinelStart"
+                      tabindex="0"
+                    />
+                    <div
+                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiMenu-paper MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 MuiPopover-paper emotion-2"
+                      style="opacity: 0; transform: scale(0.75, 0.5625); visibility: hidden;"
+                      tabindex="-1"
+                    >
+                      <ul
+                        class="MuiList-root MuiList-padding MuiMenu-list emotion-3"
+                        role="menu"
+                        tabindex="-1"
+                      >
+                        <a
+                          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root emotion-4"
+                          href="/profile/undefined"
+                          role="menuitem"
+                          tabindex="0"
+                        >
+                          Profile
+                          <span
+                            class="MuiTouchRipple-root emotion-5"
+                          />
+                        </a>
+                      </ul>
+                    </div>
+                    <div
+                      data-test="sentinelEnd"
+                      tabindex="0"
+                    />
+                  </div>
+                </body>
+              }
+            >
+              
+              <div
+                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
+                id="simple-menu"
+                onKeyDown={[Function]}
+                role="presentation"
+              >
+                
+                Array [
+                  "",
+                  <div
+                    aria-hidden={true}
+                    className="MuiBackdrop-root MuiBackdrop-invisible emotion-9"
+                    onClick={[Function]}
+                    style={
+                      Object {
+                        "opacity": 0,
+                        "visibility": "hidden",
+                      }
+                    }
+                  />,
+                ]
+                <div
+                  data-test="sentinelStart"
+                  onFocus={[Function]}
+                  tabIndex={0}
+                />
+                Array [
+                  "",
+                  Array [
+                    "",
+                    Array [
+                      "",
+                      Array [
+                        "",
+                        <div
+                          className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiMenu-paper MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 MuiPopover-paper emotion-10"
+                          onFocus={[Function]}
+                          style={
+                            Object {
+                              "opacity": 0,
+                              "transform": "scale(0.75, 0.5625)",
+                              "visibility": "hidden",
+                            }
+                          }
+                          tabIndex="-1"
+                        >
+                          
+                          Array [
+                            "",
+                            <ul
+                              className="MuiList-root MuiList-padding MuiMenu-list emotion-11"
+                              onKeyDown={[Function]}
+                              role="menu"
+                              tabIndex={-1}
+                            >
+                              
+                              Array [
+                                "",
+                                <a
+                                  className="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root emotion-12"
+                                  href="/profile/undefined"
+                                  onBlur={[Function]}
+                                  onClick={[Function]}
+                                  onContextMenu={[Function]}
+                                  onDragLeave={[Function]}
+                                  onFocus={[Function]}
+                                  onKeyDown={[Function]}
+                                  onKeyUp={[Function]}
+                                  onMouseDown={[Function]}
+                                  onMouseLeave={[Function]}
+                                  onMouseUp={[Function]}
+                                  onTouchEnd={[Function]}
+                                  onTouchMove={[Function]}
+                                  onTouchStart={[Function]}
+                                  role="menuitem"
+                                  tabIndex={0}
+                                >
+                                  Profile
+                                  
+                                  <span
+                                    className="MuiTouchRipple-root emotion-5"
+                                  />
+                                </a>,
+                              ]
+                            </ul>,
+                          ]
+                        </div>,
+                      ],
+                    ],
+                  ],
+                ]
+                <div
+                  data-test="sentinelEnd"
+                  onFocus={[Function]}
+                  tabIndex={0}
+                />
+              </div>
+            </Portal>,
+          ]
+        </div>
+      </header>,
+    ]
+    <nav
+      className="Menu-drawer"
+    >
+      
+      Array [
+        "",
+        <div
+          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-14"
+          onKeyDown={[Function]}
+          role="presentation"
+        >
+          
+          Array [
+            "",
+            <div
+              aria-hidden={true}
+              className="MuiBackdrop-root emotion-15"
+              onClick={[Function]}
+              style={
+                Object {
+                  "opacity": 0,
+                  "visibility": "hidden",
+                }
+              }
+            />,
+          ]
+          <div
+            data-test="sentinelStart"
+            onFocus={[Function]}
+            tabIndex={0}
+          />
+          Array [
+            "",
+            Array [
+              "",
+              <div
+                className="MuiPaper-root MuiPaper-elevation MuiPaper-elevation16 Menu-drawerPaper MuiDrawer-paper MuiDrawer-paperAnchorLeft emotion-16"
+                onFocus={[Function]}
+                style={
+                  Object {
+                    "visibility": "hidden",
+                  }
+                }
+                tabIndex="-1"
+              >
+                <div>
+                  <div />
+                  <div
+                    style={
+                      Object {
+                        "display": "flex",
+                        "justifyContent": "center",
+                      }
+                    }
+                  >
+                    <img
+                      alt="Object Computing, Inc."
+                      src="/img/ocicube-white.png"
+                      style={
+                        Object {
+                          "width": "50%",
+                        }
+                      }
+                    />
+                  </div>
+                  
+                  <nav
+                    className="MuiList-root MuiList-padding Menu-listStyle emotion-17"
+                  >
+                    
+                    Array [
+                      "",
+                      <a
+                        className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                        href="/"
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                        onDragLeave={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        onKeyUp={[Function]}
+                        onMouseDown={[Function]}
+                        onMouseLeave={[Function]}
+                        onMouseUp={[Function]}
+                        onTouchEnd={[Function]}
+                        onTouchMove={[Function]}
+                        onTouchStart={[Function]}
+                        tabIndex={0}
+                      >
+                        
+                        <div
+                          className="MuiListItemText-root emotion-19"
+                        >
+                          
+                          <span
+                            className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                          >
+                            HOME
+                          </span>
+                        </div>
+                        
+                        <span
+                          className="MuiTouchRipple-root emotion-5"
+                        />
+                      </a>,
+                    ]
+                    
+                    Array [
+                      "",
+                      <a
+                        className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                        href="/checkins"
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                        onDragLeave={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        onKeyUp={[Function]}
+                        onMouseDown={[Function]}
+                        onMouseLeave={[Function]}
+                        onMouseUp={[Function]}
+                        onTouchEnd={[Function]}
+                        onTouchMove={[Function]}
+                        onTouchStart={[Function]}
+                        tabIndex={0}
+                      >
+                        
+                        <div
+                          className="MuiListItemText-root emotion-19"
+                        >
+                          
+                          <span
+                            className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                          >
+                            CHECK-INS
+                          </span>
+                        </div>
+                        
+                        <span
+                          className="MuiTouchRipple-root emotion-5"
+                        />
+                      </a>,
+                    ]
+                    
+                    Array [
+                      "",
+                      <div
+                        className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                        onDragLeave={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        onKeyUp={[Function]}
+                        onMouseDown={[Function]}
+                        onMouseLeave={[Function]}
+                        onMouseUp={[Function]}
+                        onTouchEnd={[Function]}
+                        onTouchMove={[Function]}
+                        onTouchStart={[Function]}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        
+                        <div
+                          className="MuiListItemText-root emotion-19"
+                        >
+                          
+                          <span
+                            className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                          >
+                            DIRECTORY
+                          </span>
+                        </div>
+                        
+                        <span
+                          className="MuiTouchRipple-root emotion-5"
+                        />
+                      </div>,
+                    ]
+                    
+                    <div
+                      className="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered emotion-30"
+                      style={
+                        Object {
+                          "minHeight": "0px",
+                        }
+                      }
+                    >
+                      
+                      <div
+                        className="MuiCollapse-wrapper MuiCollapse-vertical emotion-31"
+                      >
+                        
+                        <div
+                          className="MuiCollapse-wrapperInner MuiCollapse-vertical emotion-32"
+                        >
+                          
+                          Array [
+                            "",
+                            <a
+                              className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Mui-selected Menu-nested emotion-18"
+                              href="/guilds"
+                              onBlur={[Function]}
+                              onClick={[Function]}
+                              onContextMenu={[Function]}
+                              onDragLeave={[Function]}
+                              onFocus={[Function]}
+                              onKeyDown={[Function]}
+                              onKeyUp={[Function]}
+                              onMouseDown={[Function]}
+                              onMouseLeave={[Function]}
+                              onMouseUp={[Function]}
+                              onTouchEnd={[Function]}
+                              onTouchMove={[Function]}
+                              onTouchStart={[Function]}
+                              tabIndex={0}
+                            >
+                              
+                              <div
+                                className="MuiListItemText-root emotion-19"
+                              >
+                                
+                                <span
+                                  className="MuiTypography-root MuiTypography-body1 Menu-subListItem MuiListItemText-primary emotion-20"
+                                >
+                                  Guilds
+                                </span>
+                              </div>
+                              
+                              <span
+                                className="MuiTouchRipple-root emotion-5"
+                              />
+                            </a>,
+                          ]
+                          
+                          Array [
+                            "",
+                            <a
+                              className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested emotion-18"
+                              href="/people"
+                              onBlur={[Function]}
+                              onClick={[Function]}
+                              onContextMenu={[Function]}
+                              onDragLeave={[Function]}
+                              onFocus={[Function]}
+                              onKeyDown={[Function]}
+                              onKeyUp={[Function]}
+                              onMouseDown={[Function]}
+                              onMouseLeave={[Function]}
+                              onMouseUp={[Function]}
+                              onTouchEnd={[Function]}
+                              onTouchMove={[Function]}
+                              onTouchStart={[Function]}
+                              tabIndex={0}
+                            >
+                              
+                              <div
+                                className="MuiListItemText-root emotion-19"
+                              >
+                                
+                                <span
+                                  className="MuiTypography-root MuiTypography-body1 Menu-subListItem MuiListItemText-primary emotion-20"
+                                >
+                                  People
+                                </span>
+                              </div>
+                              
+                              <span
+                                className="MuiTouchRipple-root emotion-5"
+                              />
+                            </a>,
+                          ]
+                          
+                          Array [
+                            "",
+                            <a
+                              className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested emotion-18"
+                              href="/teams"
+                              onBlur={[Function]}
+                              onClick={[Function]}
+                              onContextMenu={[Function]}
+                              onDragLeave={[Function]}
+                              onFocus={[Function]}
+                              onKeyDown={[Function]}
+                              onKeyUp={[Function]}
+                              onMouseDown={[Function]}
+                              onMouseLeave={[Function]}
+                              onMouseUp={[Function]}
+                              onTouchEnd={[Function]}
+                              onTouchMove={[Function]}
+                              onTouchStart={[Function]}
+                              tabIndex={0}
+                            >
+                              
+                              <div
+                                className="MuiListItemText-root emotion-19"
+                              >
+                                
+                                <span
+                                  className="MuiTypography-root MuiTypography-body1 Menu-subListItem MuiListItemText-primary emotion-20"
+                                >
+                                  Teams
+                                </span>
+                              </div>
+                              
+                              <span
+                                className="MuiTouchRipple-root emotion-5"
+                              />
+                            </a>,
+                          ]
+                        </div>
+                      </div>
+                    </div>
+                    
+                    Array [
+                      "",
+                      <div
+                        className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                        onDragLeave={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        onKeyUp={[Function]}
+                        onMouseDown={[Function]}
+                        onMouseLeave={[Function]}
+                        onMouseUp={[Function]}
+                        onTouchEnd={[Function]}
+                        onTouchMove={[Function]}
+                        onTouchStart={[Function]}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        
+                        <div
+                          className="MuiListItemText-root emotion-19"
+                        >
+                          
+                          <span
+                            className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                          >
+                            FEEDBACK
+                          </span>
+                        </div>
+                        
+                        <span
+                          className="MuiTouchRipple-root emotion-5"
+                        />
+                      </div>,
+                    ]
+                    
+                    Array [
+                      "",
+                      <div
+                        className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                        onDragLeave={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        onKeyUp={[Function]}
+                        onMouseDown={[Function]}
+                        onMouseLeave={[Function]}
+                        onMouseUp={[Function]}
+                        onTouchEnd={[Function]}
+                        onTouchMove={[Function]}
+                        onTouchStart={[Function]}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        
+                        <div
+                          className="MuiListItemText-root emotion-19"
+                        >
+                          
+                          <span
+                            className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                          >
+                            ONBOARD
+                          </span>
+                        </div>
+                        
+                        <span
+                          className="MuiTouchRipple-root emotion-5"
+                        />
+                      </div>,
+                    ]
+                  </nav>
+                </div>
+              </div>,
+            ],
+          ]
+          <div
+            data-test="sentinelEnd"
+            onFocus={[Function]}
+            tabIndex={0}
+          />
+        </div>,
+      ]
+      
+      <div
+        className="MuiDrawer-root MuiDrawer-docked emotion-53"
+      >
+        
+        Array [
+          "",
+          <div
+            className="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 Menu-drawerPaper MuiDrawer-paper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft emotion-54"
+          >
+            <div>
+              <div />
+              <div
+                style={
+                  Object {
+                    "display": "flex",
+                    "justifyContent": "center",
+                  }
+                }
+              >
+                <img
+                  alt="Object Computing, Inc."
+                  src="/img/ocicube-white.png"
+                  style={
+                    Object {
+                      "width": "50%",
+                    }
+                  }
+                />
+              </div>
+              
+              <nav
+                className="MuiList-root MuiList-padding Menu-listStyle emotion-17"
+              >
+                
+                Array [
+                  "",
+                  <a
+                    className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                    href="/"
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onContextMenu={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    tabIndex={0}
+                  >
+                    
+                    <div
+                      className="MuiListItemText-root emotion-19"
+                    >
+                      
+                      <span
+                        className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                      >
+                        HOME
+                      </span>
+                    </div>
+                    
+                    <span
+                      className="MuiTouchRipple-root emotion-5"
+                    />
+                  </a>,
+                ]
+                
+                Array [
+                  "",
+                  <a
+                    className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                    href="/checkins"
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onContextMenu={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    tabIndex={0}
+                  >
+                    
+                    <div
+                      className="MuiListItemText-root emotion-19"
+                    >
+                      
+                      <span
+                        className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                      >
+                        CHECK-INS
+                      </span>
+                    </div>
+                    
+                    <span
+                      className="MuiTouchRipple-root emotion-5"
+                    />
+                  </a>,
+                ]
+                
+                Array [
+                  "",
+                  <div
+                    className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onContextMenu={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    
+                    <div
+                      className="MuiListItemText-root emotion-19"
+                    >
+                      
+                      <span
+                        className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                      >
+                        DIRECTORY
+                      </span>
+                    </div>
+                    
+                    <span
+                      className="MuiTouchRipple-root emotion-5"
+                    />
+                  </div>,
+                ]
+                
+                <div
+                  className="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered emotion-30"
+                  style={
+                    Object {
+                      "minHeight": "0px",
+                    }
+                  }
+                >
+                  
+                  <div
+                    className="MuiCollapse-wrapper MuiCollapse-vertical emotion-31"
+                  >
+                    
+                    <div
+                      className="MuiCollapse-wrapperInner MuiCollapse-vertical emotion-32"
+                    >
+                      
+                      Array [
+                        "",
+                        <a
+                          className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Mui-selected Menu-nested emotion-18"
+                          href="/guilds"
+                          onBlur={[Function]}
+                          onClick={[Function]}
+                          onContextMenu={[Function]}
+                          onDragLeave={[Function]}
+                          onFocus={[Function]}
+                          onKeyDown={[Function]}
+                          onKeyUp={[Function]}
+                          onMouseDown={[Function]}
+                          onMouseLeave={[Function]}
+                          onMouseUp={[Function]}
+                          onTouchEnd={[Function]}
+                          onTouchMove={[Function]}
+                          onTouchStart={[Function]}
+                          tabIndex={0}
+                        >
+                          
+                          <div
+                            className="MuiListItemText-root emotion-19"
+                          >
+                            
+                            <span
+                              className="MuiTypography-root MuiTypography-body1 Menu-subListItem MuiListItemText-primary emotion-20"
+                            >
+                              Guilds
+                            </span>
+                          </div>
+                          
+                          <span
+                            className="MuiTouchRipple-root emotion-5"
+                          />
+                        </a>,
+                      ]
+                      
+                      Array [
+                        "",
+                        <a
+                          className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested emotion-18"
+                          href="/people"
+                          onBlur={[Function]}
+                          onClick={[Function]}
+                          onContextMenu={[Function]}
+                          onDragLeave={[Function]}
+                          onFocus={[Function]}
+                          onKeyDown={[Function]}
+                          onKeyUp={[Function]}
+                          onMouseDown={[Function]}
+                          onMouseLeave={[Function]}
+                          onMouseUp={[Function]}
+                          onTouchEnd={[Function]}
+                          onTouchMove={[Function]}
+                          onTouchStart={[Function]}
+                          tabIndex={0}
+                        >
+                          
+                          <div
+                            className="MuiListItemText-root emotion-19"
+                          >
+                            
+                            <span
+                              className="MuiTypography-root MuiTypography-body1 Menu-subListItem MuiListItemText-primary emotion-20"
+                            >
+                              People
+                            </span>
+                          </div>
+                          
+                          <span
+                            className="MuiTouchRipple-root emotion-5"
+                          />
+                        </a>,
+                      ]
+                      
+                      Array [
+                        "",
+                        <a
+                          className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested emotion-18"
+                          href="/teams"
+                          onBlur={[Function]}
+                          onClick={[Function]}
+                          onContextMenu={[Function]}
+                          onDragLeave={[Function]}
+                          onFocus={[Function]}
+                          onKeyDown={[Function]}
+                          onKeyUp={[Function]}
+                          onMouseDown={[Function]}
+                          onMouseLeave={[Function]}
+                          onMouseUp={[Function]}
+                          onTouchEnd={[Function]}
+                          onTouchMove={[Function]}
+                          onTouchStart={[Function]}
+                          tabIndex={0}
+                        >
+                          
+                          <div
+                            className="MuiListItemText-root emotion-19"
+                          >
+                            
+                            <span
+                              className="MuiTypography-root MuiTypography-body1 Menu-subListItem MuiListItemText-primary emotion-20"
+                            >
+                              Teams
+                            </span>
+                          </div>
+                          
+                          <span
+                            className="MuiTouchRipple-root emotion-5"
+                          />
+                        </a>,
+                      ]
+                    </div>
+                  </div>
+                </div>
+                
+                Array [
+                  "",
+                  <div
+                    className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onContextMenu={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    
+                    <div
+                      className="MuiListItemText-root emotion-19"
+                    >
+                      
+                      <span
+                        className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                      >
+                        FEEDBACK
+                      </span>
+                    </div>
+                    
+                    <span
+                      className="MuiTouchRipple-root emotion-5"
+                    />
+                  </div>,
+                ]
+                
+                Array [
+                  "",
+                  <div
+                    className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button emotion-18"
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onContextMenu={[Function]}
+                    onDragLeave={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onKeyUp={[Function]}
+                    onMouseDown={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseUp={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchMove={[Function]}
+                    onTouchStart={[Function]}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    
+                    <div
+                      className="MuiListItemText-root emotion-19"
+                    >
+                      
+                      <span
+                        className="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-20"
+                      >
+                        ONBOARD
+                      </span>
+                    </div>
+                    
+                    <span
+                      className="MuiTouchRipple-root emotion-5"
+                    />
+                  </div>,
+                ]
+              </nav>
+            </div>
+          </div>,
+        ]
+      </div>
+    </nav>
+    <main
+      className="Menu-content"
+    >
+      <div />
+    </main>
+  </div>,
+]
+`;
+
 exports[`<Menu /> renders correctly for pdl 1`] = `
 Array [
   "",
@@ -4225,9 +6380,11 @@ Array [
   }
 }
 
-@media (min-width:0px) and (orientation: landscape) {
-  .emotion-2 {
-    min-height: 48px;
+@media (min-width:0px) {
+  @media (orientation: landscape) {
+    .emotion-2 {
+      min-height: 48px;
+    }
   }
 }
 
@@ -5186,7 +7343,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5229,7 +7386,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5282,7 +7439,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
+                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5328,7 +7485,7 @@ Array [
             >
               
               <div
-                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
+                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -5436,7 +7593,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-14"
+          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-14"
           onKeyDown={[Function]}
           role="presentation"
         >

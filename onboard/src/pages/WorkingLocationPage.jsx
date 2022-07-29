@@ -7,9 +7,6 @@ const WorkingLocationPage = () => {
   return (
     <div>
       <div id="workOption">
-        <center>
-          <h1>Where would you PREFER to work?</h1>
-        </center>
         <ButtonGroup variant="outlined" aria-label="outlined button group">
           <Button>Office</Button>
           <Button>Remote</Button>
