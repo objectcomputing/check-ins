@@ -182,7 +182,7 @@ export default function OnboardProgressPage() {
         >
           <Box sx={modalBoxStyle}>
             <Typography align="center" id="title" variant="h3" component="h2">
-              Add Onboardee:
+              Add Onboardee
             </Typography>
             <Grid container space={2}>
               <Grid item xs={6}>

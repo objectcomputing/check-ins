@@ -14,14 +14,16 @@ import ProgressIndicator from "../components/onboard_progress/ProgressIndicator"
 const modalStyle = {
   position: "absolute",
   top: "50%",
-  overflow: "auto",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 800,
-  backgroundColor: "white",
+  width: "75%",
+  backgroundColor: "#fff",
   border: "2px solid #000",
-  boxShadow: 50,
-  p: 4,
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+  m: 2,
 };
 
 export default function OnboardProgressDetailPage() {
@@ -200,19 +202,15 @@ export default function OnboardProgressDetailPage() {
         </Modal>
         <Modal open={openEdit} onClose={handleCloseEdit}>
           <Box sx={modalStyle}>
-            <div>
-              <EditOnboardee />
-              <div>
-                <Button
-                  variant="contained"
-                  onClick={handleCloseEdit}
-                  sx={{ fontSize: "1vw" }}
-                >
-                  Close
-                </Button>
-                
-              </div>
-            </div>
+            <EditOnboardee />
+
+            <Button
+              variant="contained"
+              onClick={handleCloseEdit}
+              sx={{ fontSize: "1vw" }}
+            >
+              Close
+            </Button>
           </Box>
         </Modal>
 
