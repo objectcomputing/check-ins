@@ -161,7 +161,6 @@ export default function OnboardProgressDetailPage() {
       completed: "No",
     },
   ];
-  //const [visible, setVisible] = useState(false);
   return (
     <div className="detail-onboard">
       <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
