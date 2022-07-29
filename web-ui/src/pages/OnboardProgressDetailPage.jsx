@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
-import { Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
@@ -165,100 +165,110 @@ export default function OnboardProgressDetailPage() {
   ];
   return (
     <div className="detail-onboard">
-      <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
-        <Button
-          onClick={handleOpen}
-          variant="contained"
-          sx={{ fontSize: "1vw" }}
-        >
-          Personal Information
-        </Button>
-        <Modal open={open} onClose={handleClose}>
-          <Box sx={modalStyle}>
-            <div>
-              {isArrayPresent(accordionArr) &&
-                accordionArr.map((arr, i) => {
-                  return (
-                    <Accordion
-                      key={i}
-                      title={arr.title}
-                      open={i === 0 ? true : false}
-                      index={i}
-                      content={arr.content}
-                    />
-                  );
-                })}
-              <div>
-                <Button
-                  variant="contained"
-                  onClick={handleClose}
-                  sx={{ fontSize: "1vw" }}
-                >
-                  Close
-                </Button>
-              </div>
-            </div>
-          </Box>
-        </Modal>
-        <Modal open={openEdit} onClose={handleCloseEdit}>
-          <Box sx={modalStyle}>
-            <EditOnboardee />
-
+      <Grid container >
+        <Grid item xs={5}>
+          <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
             <Button
+              onClick={handleOpen}
               variant="contained"
-              onClick={handleCloseEdit}
               sx={{ fontSize: "1vw" }}
             >
-              Close
+              Personal Information
             </Button>
+            <Modal open={open} onClose={handleClose}>
+              <Box sx={modalStyle}>
+                <div>
+                  {isArrayPresent(accordionArr) &&
+                    accordionArr.map((arr, i) => {
+                      return (
+                        <Accordion
+                          key={i}
+                          title={arr.title}
+                          open={i === 0 ? true : false}
+                          index={i}
+                          content={arr.content}
+                        />
+                      );
+                    })}
+                  <div>
+                    <Button
+                      variant="contained"
+                      onClick={handleClose}
+                      sx={{ fontSize: "1vw" }}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </Box>
+            </Modal>
+            <Modal open={openEdit} onClose={handleCloseEdit}>
+              <Box sx={modalStyle}>
+                <div>
+                  <EditOnboardee />
+                  <div>
+                    <Button
+                      variant="contained"
+                      onClick={handleCloseEdit}
+                      sx={{ fontSize: "1vw" }}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </Box>
+            </Modal>
+
+            <h1>Name: {name}</h1>
+            <h1>Email: {email} </h1>
+            <h1>Hire Type: {hireType}</h1>
           </Box>
-        </Modal>
+        </Grid>
 
-        <h1>Name: {name}</h1>
-        <h1>Email: {email} </h1>
-        <h1>Hire Type: {hireType}</h1>
-      </Box>
+        <Grid item xs={7} sx={{ height: 650 }}>
+          <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
+            <div style={{ display: "flex" }}>
+              <h1>Documents/Surveys</h1>
+              <ProgressIndicator
+                dataDocument={documentRows}
+                dataSurvey={surveyRows}
+              />
+            </div>
 
-      <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
-        <div style={{ display: "flex" }}>
-          <h1>Documents/Surveys</h1>
-          <ProgressIndicator
-            dataDocument={documentRows}
-            dataSurvey={surveyRows}
-          />
-        </div>
+            <DataGrid
+              rows={documentRows}
+              columns={documentColumns}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              disableSelectionOnClick
+            />
+            <DataGrid
+              rows={surveyRows}
+              columns={surveyColumns}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              disableSelectionOnClick
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={6}>
+          <Button variant="contained" href="/onboard/progress">
+            Back
+          </Button>
+        </Grid>
+        <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end"}}>
+          <Button
+            variant="contained"
+            onClick={handleOpenEdit}
+            sx={{ fontSize: "1vw" }}
+          >
+            Edit Onboardee
+          </Button>
 
-        <DataGrid
-          rows={documentRows}
-          columns={documentColumns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          disableSelectionOnClick
-        />
-        <DataGrid
-          rows={surveyRows}
-          columns={surveyColumns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          disableSelectionOnClick
-        />
-      </Box>
-      <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
-        <Button
-          variant="contained"
-          onClick={handleOpenEdit}
-          sx={{ fontSize: "1vw" }}
-        >
-          Edit Onboardee
-        </Button>
-      </Box>
-      <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
-        <Button variant="contained" href="/onboard/progress">
-          Back
-        </Button>
-        <Button variant="contained">Finish Onboarding</Button>
-        <Button variant="contained">Delete</Button>
-      </Box>
+          <Button variant="contained">Finish Onboarding</Button>
+          <Button variant="contained">Delete</Button>
+        </Grid>
+      </Grid>
     </div>
   );
 }
