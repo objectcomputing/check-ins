@@ -23,7 +23,7 @@ public class MailJetNotificationController {
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
 
-    public MailJetNotificationController(EmailSender emailSender,
+    public MailJetNotificationController(@Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                          EventLoopGroup eventLoopGroup,
                                          @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.emailSender = emailSender;

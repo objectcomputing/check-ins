@@ -9,6 +9,7 @@ import Accordion from "../components/accordion/Accordion";
 import EditOnboardee from "./EditOnboardee";
 import { isArrayPresent } from "../utils/helperFunction";
 import Modal from "@mui/material/Modal";
+import ProgressIndicator from "../components/onboard_progress/ProgressIndicator";
 
 const modalStyle = {
   position: "absolute",
@@ -28,7 +29,9 @@ export default function OnboardProgressDetailPage() {
   const [documentArr, setDocumentArr] = useState([]);
   const location = useLocation();
   const { name, email, hireType } = location.state;
+
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
+
   useEffect(() => {
     async function getData() {
       let res = await getDocuments();
@@ -85,11 +88,11 @@ export default function OnboardProgressDetailPage() {
   const documentColumns = [
     { field: "id", headerName: "#", width: 50, hide: true },
     { field: "documentName", headerName: "Document Name", width: 300 },
-    { field: "viewCheck", headerName: "Viewed", width: 100 },
+    { field: "viewCheck", headerName: "Viewed", width: 60 },
     {
       field: "completed",
       headerName: "Completed",
-      width: 100,
+      width: 80,
     },
     { field: "completeDate", headerName: "Date Completed", width: 150 },
     {
@@ -104,7 +107,7 @@ export default function OnboardProgressDetailPage() {
         }).file_from_url;
 
         if (fileLink === null) {
-          return <p>File Unable to Open</p>;
+          return <p>Cannot Open</p>;
         }
         return (
           <a href={fileLink} target="_blank" rel="noreferrer">
@@ -145,12 +148,12 @@ export default function OnboardProgressDetailPage() {
     {
       id: 1,
       surveyName: "Personal Information",
-      completed: "No",
+      completed: "Yes",
     },
     {
       id: 2,
       surveyName: "IT Equipment Page",
-      completed: "No",
+      completed: "Yes",
     },
     {
       id: 3,
@@ -218,8 +221,15 @@ export default function OnboardProgressDetailPage() {
         <h1>Hire Type: {hireType}</h1>
       </Box>
 
-      <Box sx={{ height: 300, width: "80%", mt: "5%" }}>
-        <h1>Documents</h1>
+      <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
+        <div style={{ display: "flex" }}>
+          <h1>Documents/Surveys</h1>
+          <ProgressIndicator
+            dataDocument={documentRows}
+            dataSurvey={surveyRows}
+          />
+        </div>
+
         <DataGrid
           rows={documentRows}
           columns={documentColumns}
@@ -227,7 +237,6 @@ export default function OnboardProgressDetailPage() {
           rowsPerPageOptions={[5]}
           disableSelectionOnClick
         />
-        <h1>Survey</h1>
         <DataGrid
           rows={surveyRows}
           columns={surveyColumns}
