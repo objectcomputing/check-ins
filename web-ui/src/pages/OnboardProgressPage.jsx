@@ -8,7 +8,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import ThumbsUp from "../assets/thumb.png";
 
 import {
   Button,
