@@ -1,0 +1,92 @@
+[
+  {
+    "title": "Email (Required)*",
+    "id": "email",
+    "autoFocus": true,
+    "label": "Email (Required)*",
+    "placeholder": "",
+    "type": "email",
+    "autocomplete": "email"
+  },
+  {
+    "title": "Password (Required)*",
+    "id": "password",
+    "autoFocus": false,
+    "label": "Password (Required)*",
+    "placeholder": "",
+    "type": "password",
+    "autocomplete": "password"
+  },
+  {
+    "title": "Confirm Password (Required)*",
+    "id": "confirmPassword",
+    "autoFocus": false,
+    "label": "Confirm Password (Required)*",
+    "placeholder": "",
+    "type": "password",
+    "autocomplete": "confirm-password"
+  },
+  {
+    "title": "Handle (Required)*",
+    "id": "handle",
+    "autoFocus": false,
+    "label": "Handle (Required)*",
+    "placeholder": "",
+    "type": "string",
+    "autocomplete": "handle"
+  },
+  {
+    "title": "Phone (Required)*",
+    "id": "phone",
+    "autoFocus": false,
+    "label": "Phone (Required)*",
+    "placeholder": "",
+    "type": "string",
+    "autocomplete": "phone"
+  },
+  {
+    "title": "Workspace (Required)*",
+    "id": "workspace",
+    "autoFocus": false,
+    "label": "Workspace (Required)*",
+    "placeholder": "",
+    "type": "string",
+    "autocomplete": "workspace"
+  },
+  {
+    "title": "Title (Required)*",
+    "id": "title",
+    "autoFocus": false,
+    "label": "Title (Required)*",
+    "placeholder": "",
+    "type": "string",
+    "autocomplete": "title"
+  },
+  {
+    "title": "First Name (Required)*",
+    "id": "firstName",
+    "autoFocus": false,
+    "label": "First Name (Required)*",
+    "placeholder": "",
+    "type": "string",
+    "autocomplete": "firstName"
+  },
+  {
+    "title": "Last Name (Required)*",
+    "id": "lastName",
+    "autoFocus": false,
+    "label": "Last Name (Required)*",
+    "placeholder": "",
+    "type": "string",
+    "autocomplete": "lastName"
+  },
+  {
+    "title": "Description (Required)*",
+    "id": "description",
+    "autoFocus": false,
+    "label": "Description (Required)*",
+    "placeholder": "",
+    "type": "string",
+    "autocomplete": "description"
+  }
+]

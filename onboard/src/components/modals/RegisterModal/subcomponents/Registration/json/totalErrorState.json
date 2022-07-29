@@ -1,0 +1,12 @@
+{
+  "email": true,
+  "password": true,
+  "confirmPassword": true,
+  "handle": true,
+  "phone": true,
+  "workspace": true,
+  "title": true,
+  "firstName": true,
+  "lastName": true,
+  "description": true
+}
