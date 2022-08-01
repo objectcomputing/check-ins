@@ -6,7 +6,6 @@ import RequireAuth from "./../../auth/requireAuth";
 import Login from "./../login/Login";
 import PageNotFound from "./PageNotFound";
 
-import AccessCodePage from "./../../pages/AccessCodePage";
 import WebPortal from "./../../pages/WebPortal";
 
 // This is our base page routing for the app.
@@ -47,7 +46,6 @@ function BasePage() {
           <Route path="*" element={<Login />} />
         </>
       )}
-      {/* <Route path="/accesscode" element={<RequireAuth><AccessCodePage /></RequireAuth>} /> */}
       <Route
         path="/"
         element={
