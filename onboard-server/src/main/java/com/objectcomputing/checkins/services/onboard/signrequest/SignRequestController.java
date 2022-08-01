@@ -29,8 +29,6 @@ import static io.micronaut.http.HttpRequest.POST;
 @Tag(name = "signrequest")
 public class SignRequestController {
 
-    private SignRequestClient signRequestClient;
-
     @Client("https://ocitest.signrequest.com/api/v1/") @Inject HttpClient httpClient;
 
     @Property(name = "signrequest-credentials.signrequest_token")
