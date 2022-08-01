@@ -36,20 +36,6 @@ public class SignRequestController {
     @Property(name = "signrequest-credentials.signrequest_token")
     private String SIGNREQUEST_TOKEN;
 
-    @Get("/signrequest-documents")
-    public String getData(){
-        try{
-            String retrieve = httpClient.toBlocking()
-                    .retrieve(HttpRequest.GET("/documents/")
-                            .header("Authorization", SIGNREQUEST_TOKEN));
-            return retrieve;
-        }
-        catch (Exception e){
-            System.out.println(e);
-            return null;
-        }
-    }
-
     // Make this a POST request
     @Get("/send-signrequest")
     public String sendSignRequest() {
@@ -122,7 +108,7 @@ public class SignRequestController {
         }
     }
 
-        public String getEmbedSignRequestURL(String signRequestJSON) {
+    public String getEmbedSignRequestURL(String signRequestJSON) {
         JSONObject signRequestJSONObject = new JSONObject(signRequestJSON);
 
         String embedSignRequestURL = "";

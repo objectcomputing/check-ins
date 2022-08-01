@@ -23,13 +23,13 @@ public class SignRequestControllerTest {
         mockController = mock(SignRequestController.class);
     }
 
-    @Test
-    public void testGetDocumentsRequest() {
-        when(mockController.getData()).thenReturn("done");
-        assertEquals("done", mockController.getData());
-
-        verify(mockController, times(1)).getData();
-    }
+//    @Test
+//    public void testGetDocumentsRequest() {
+//        when(mockController.getData()).thenReturn("done");
+//        assertEquals("done", mockController.getData());
+//
+//        verify(mockController, times(1)).getData();
+//    }
 
     @Test
     public void emptyGetDocuments() {
