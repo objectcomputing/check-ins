@@ -1,18 +1,15 @@
 import React from "react";
-import { createBrowserHistory } from "history";
 
 import { BrowserRouter } from "react-router-dom";
-import { ProvideAuth } from "auth/useAuth";
+import { ProvideAuth } from "./auth/useAuth";
 
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import BasePage from './components/base/BasePage';
 
 import "./App.css";
 import { indigo } from "@mui/material/colors";
-
-const customHistory = createBrowserHistory();
 
 const theme = createTheme({
   palette: {
@@ -40,11 +37,12 @@ function App() {
   return (
     <ProvideAuth>
       <ThemeProvider theme={theme}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <BrowserRouter history={customHistory}>
+        {/* The Localization provider is NOT working. */}
+        {/* <LocalizationProvider dateAdapter={AdapterDateFns}> */}
+          <BrowserRouter>
             <BasePage />
           </BrowserRouter>
-        </LocalizationProvider>
+        {/* </LocalizationProvider> */}
       </ThemeProvider>
     </ProvideAuth>
   );

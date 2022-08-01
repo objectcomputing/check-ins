@@ -21,18 +21,6 @@ export const getEnvSpecificAPIURI = () => {
 export const isArrayPresent = (array) => Array.isArray(array) && array.length;
 
 /**
- * Allows text to appear only after 500 ms
- * @param text - a string
- * @returns the text string after 500 ms
- */
-
-export const appearingText = (text) => {
-  setTimeout(() => {
-    return text;
-  }, 500);
-};
-
-/**
  * Converts a non-negative bigint to a hexadecimal string
  * @param a - a non negative bigint
  * @returns hexadecimal representation of the input bigint

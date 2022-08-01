@@ -1,4 +1,4 @@
-import { ACTIONS } from 'redux/reducers/login';
+import { ACTIONS } from './../redux/reducers/login';
 import axios from 'axios';
 import { SRPClientSession, SRPParameters, SRPRoutines } from 'tssrp6a';
 import { bigintToHex, getEnvSpecificAPIURI } from './../utils/helperFunctions';

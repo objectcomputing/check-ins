@@ -1,31 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { ACTIONS } from 'redux/reducers/login';
-import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import LoadingButton from '@mui/lab/LoadingButton';
-import Typography from '@mui/material/Typography';
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { ACTIONS } from "../../../../../redux/reducers/login";
+import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import LoadingButton from "@mui/lab/LoadingButton";
+import Typography from "@mui/material/Typography";
 
-import InputField from '../../../../inputs/InputField';
-import PasswordModule from './modules/PasswordModule';
-import RequestAccess from '../../sharedModules/RequestAccess';
+import InputField from "../../../../inputs/InputField";
+import PasswordModule from "./modules/PasswordModule";
+import RequestAccess from "../../sharedModules/RequestAccess";
 
-import registerUser from 'actions/registerUser';
-import './modules/request.scss';
+import registerUser from "../../../../../api/registerUser";
+import "./modules/request.scss";
 
-import initialState from './json/initialState.json';
-import initialErrorState from './json/initialErrorState.json';
-import fullErrorState from './json/totalErrorState.json';
-import formMessages from './json/formMessages.json';
-import formErrorMessages from './json/formErrorMessages';
-import inputArray from './json/inputArray.json';
+import initialState from "./json/initialState.json";
+import initialErrorState from "./json/initialErrorState.json";
+import fullErrorState from "./json/totalErrorState.json";
+import formMessages from "./json/formMessages.json";
+import formErrorMessages from "./json/formErrorMessages";
+import inputArray from "./json/inputArray.json";
+import { isArrayPresent } from "../../../../../utils/helperFunctions";
 
 function Registration({
   onClose,
   errorState,
   setErrorState,
   registering,
-  setRegistering
+  setRegistering,
 }) {
   const dispatch = useDispatch();
   const loginData = useSelector((state) => state.login);
@@ -36,21 +37,21 @@ function Registration({
   function handleStateChange(id, val) {
     setState({
       ...state,
-      [id]: val
+      [id]: val,
     });
   }
 
   function handleErrorChange(id, val) {
     setErrorState({
       ...errorState,
-      [id]: val
+      [id]: val,
     });
   }
 
   function handleHelperMessageChange(id, val) {
     setHelperMessageState({
       ...helperMessageState,
-      [id]: val
+      [id]: val,
     });
   }
 
@@ -59,46 +60,30 @@ function Registration({
     const val = e.target.value;
     setState({
       ...state,
-      [e.target.name]: val
+      [e.target.name]: val,
     });
-    if (e.target.name === 'email') {
+    if (e.target.name === "email") {
       if (passesEmailCheck(val) && val.length >= 5) {
-        handleErrorChange('email', false);
-        handleHelperMessageChange('email', formMessages.email);
+        handleErrorChange("email", false);
+        handleHelperMessageChange("email", formMessages.email);
       } else {
-        handleErrorChange('email', true);
-        handleHelperMessageChange('email', 'Email not valid.');
+        handleErrorChange("email", true);
+        handleHelperMessageChange("email", "Email not valid.");
       }
-    } else if (e.target.name === 'password') {
+    } else if (e.target.name === "password") {
       if (val.length >= 12) {
-        handleErrorChange('password', false);
-        handleHelperMessageChange('password', formMessages.password);
+        handleErrorChange("password", false);
+        handleHelperMessageChange("password", formMessages.password);
       }
-    } else if (e.target.name === 'confirmPassword') {
+    } else if (e.target.name === "confirmPassword") {
       if (val.length >= 12) {
-        handleErrorChange('confirmPassword', false);
+        handleErrorChange("confirmPassword", false);
         handleHelperMessageChange(
-          'confirmPassword',
+          "confirmPassword",
           formMessages.confirmPassword
         );
       }
-    } else if (e.target.name === 'firstName') {
-      if (val.length >= 2) {
-        handleErrorChange('firstName', false);
-        handleHelperMessageChange('firstName', formMessages.firstName);
-      } else {
-        handleErrorChange('firstName', true);
-        handleHelperMessageChange('firstName', 'First name not valid.');
-      }
-    } else if (e.target.name === 'lastName') {
-      if (val.length >= 2) {
-        handleErrorChange('lastName', false);
-        handleHelperMessageChange('lastName', formMessages.lastName);
-      } else {
-        handleErrorChange('lastName', true);
-        handleHelperMessageChange('lastName', 'Last name not valid.');
-      }
-    } 
+    }
   }
 
   const EMAIL_RE = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
@@ -118,7 +103,7 @@ function Registration({
   // In the event that the password is totally cleared out, also clear out the password confirm
   useEffect(() => {
     if (!state.password) {
-      handleStateChange('confirmPassword', '');
+      handleStateChange("confirmPassword", "");
     }
   }, [state.password]);
 
@@ -134,13 +119,9 @@ function Registration({
     errorState.email ||
     errorState.password ||
     errorState.confirmPassword ||
-    errorState.firstName ||
-    errorState.lastName ||
     !state.email ||
     !state.password ||
-    !state.confirmPassword ||
-    !state.firstName ||
-    !state.lastName;
+    !state.confirmPassword;
 
   let invalidFirstPasswordCheck =
     !hasLength || !containsUppercase || !containsNumber || !containsSymbol;
@@ -152,16 +133,11 @@ function Registration({
 
   function handleSignInClick(e) {
     e.preventDefault();
-    dispatch({type: ACTIONS.RESET_USER});
+    dispatch({ type: ACTIONS.RESET_USER });
     setRegistering(true);
 
     dispatch(
-      registerUser(
-        state.email,
-        state.password,
-        state.firstName,
-        state.lastName,
-      )
+      registerUser(state.email, state.password, state.firstName, state.lastName)
     );
   }
 
@@ -172,7 +148,7 @@ function Registration({
   };
 
   useEffect(() => {
-    if (loginData?.status === 'error') {
+    if (loginData?.status === "error") {
       setErrorState(fullErrorState);
       setHelperMessageState(formErrorMessages);
     }
@@ -185,7 +161,7 @@ function Registration({
         ...input,
         value: state[input.id],
         error: errorState[input.id],
-        helperMessage: helperMessageState[input.id]
+        helperMessage: helperMessageState[input.id],
       });
     });
     return fullInputArray;
@@ -195,26 +171,26 @@ function Registration({
 
   return (
     <>
-      <Typography children={'Register Account'} variant={'h3'} />
+      <Typography children={"Register Account"} variant={"h3"} />
       <Typography
         sx={{ marginTop: 3 }}
         children={
-          'Please enter your information in the fields below to register your account.'
+          "Please enter your information in the fields below to register your account."
         }
-        variant={'h4'}
+        variant={"h4"}
       />
       <form autoComplete="off" onSubmit={handleSignInClick}>
-        {fullArray.map((arr, index) => {
-          return (
-            <FormControl
-              key={index}
-              sx={
-                index === 0
-                  ? { marginTop: 3, marginBottom: 1, minWidth: '100%' }
-                  : { my: 1, minWidth: '100%' }
-              }
-            >
-              {arr.id !== 'password' && ar.id !== 'confirmPassword' && (
+        {isArrayPresent(fullArray) &&
+          fullArray.map((arr, index) => {
+            return (
+              <FormControl
+                key={index}
+                sx={
+                  index === 0
+                    ? { marginTop: 3, marginBottom: 1, minWidth: "100%" }
+                    : { my: 1, minWidth: "100%" }
+                }
+              >
                 <InputField
                   title={arr.title}
                   id={arr.id}
@@ -228,28 +204,27 @@ function Registration({
                   autocomplete={arr.autocomplete}
                   helperMessage={arr.helperMessage}
                 />
-              )}
-              {arr.id === 'password' && (
-                <PasswordModule
-                  invalidFirstPasswordCheck={invalidFirstPasswordCheck}
-                  hasLength={hasLength}
-                  containsUppercase={containsUppercase}
-                  containsNumber={containsNumber}
-                  containsSymbol={containsSymbol}
-                  minLength={MIN_LENGTH}
-                  password={state.password}
-                />
-              )}
-              {arr.id === 'confirmPassword' && !matches && (
-                <div className="password-reset-form">
-                  <div className="criteria-line">
-                    <span className="criteria">matches</span>
+                {arr?.id === "password" && (
+                  <PasswordModule
+                    invalidFirstPasswordCheck={invalidFirstPasswordCheck}
+                    hasLength={hasLength}
+                    containsUppercase={containsUppercase}
+                    containsNumber={containsNumber}
+                    containsSymbol={containsSymbol}
+                    minLength={MIN_LENGTH}
+                    password={state.password}
+                  />
+                )}
+                {arr?.id === "confirmPassword" && !matches && (
+                  <div className="password-reset-form">
+                    <div className="criteria-line">
+                      <span className="criteria">matches</span>
+                    </div>
                   </div>
-                </div>
-              )}
-            </FormControl>
-          );
-        })}
+                )}
+              </FormControl>
+            );
+          })}
         <LoadingButton
           disabled={formIsNotValid || registering}
           loading={registering}

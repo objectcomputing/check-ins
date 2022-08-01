@@ -1,12 +1,5 @@
 {
   "email": false,
   "password": false,
-  "confirmPassword": false,
-  "handle": false,
-  "phone": false,
-  "workspace": false,
-  "title": false,
-  "firstName": false,
-  "lastName": false,
-  "description": false
+  "confirmPassword": false
 }

@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { ACTIONS } from '../redux/reducers/login';
-import { loginHelper } from '../utils/loginHelper';
+import { ACTIONS } from './../redux/reducers/login';
+import { loginHelper } from './../utils/loginHelper';
 import postLogout from './postLogout';
 import { getEnvSpecificAPIURI } from './../utils/helperFunctions';
 
-const fetchToken = (setIsLoading) => {
+const fetchToken = () => {
   return async (dispatch, getState) => {
     try {
       const baseURL = getEnvSpecificAPIURI();
@@ -34,7 +34,6 @@ const fetchToken = (setIsLoading) => {
       });
     } catch (error) {
       console.error(error);
-      setIsLoading(false);
       console.log('Logging user out because session not present');
       dispatch(postLogout());
     }

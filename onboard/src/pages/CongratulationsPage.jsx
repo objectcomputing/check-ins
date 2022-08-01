@@ -43,7 +43,7 @@ const Congratulations = () => {
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <img src={cake} alt="Cake" class="cake" padding={30} />
+        <img src={cake} alt="Cake" className="cake" padding={30} />
       </Grid>
     </Grid>
   );

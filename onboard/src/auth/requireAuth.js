@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from 'auth/useAuth.js';
+import { useAuth } from './useAuth.js';
 
 function RequireAuth({ children }) {
   let auth = useAuth();

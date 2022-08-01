@@ -6,14 +6,11 @@ import React, {
   createContext,
 } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { loggedInCheck } from "../utils/loggedInCheck";
-import { isArrayPresent } from "../utils/helperFunctions";
-import { loggedInCheck } from "../utils/loggedInCheck";
-import { isArrayPresent } from "../utils/helperFunctions";
+import { loggedInCheck } from "./../utils/loggedInCheck";
+import { isArrayPresent } from "./../utils/helperFunctions";
 
-import fetchProfile from "../api/fetchProfile";
-import postLogout from "../api/postLogout";
-import fetchToken from "../api/fetchToken";
+import fetchProfile from "./../api/fetchProfile";
+import fetchToken from "./../api/fetchToken";
 
 const authContext = createContext();
 
@@ -34,50 +31,38 @@ export const useAuth = () => {
 function useProvideAuth() {
   const initialRender = useRef(true);
   const firstLoad = useRef(true);
-  const appsRender = useRef(true);
   const dispatch = useDispatch();
 
   const loginData = useSelector((state) => state.login);
   const profileData = useSelector((state) => state.profile);
-  const newData = useSelector((state) => state.layers);
+  const newData = useSelector((state) => state.data);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
 
   let accessTokenPresent = loginData?.accessToken !== "";
   let loginCheck = loggedInCheck(loginData);
 
   useEffect(() => {
-    if (!firstLoad.current) {
-      // console.log('not first load');
-    } else {
+    if (firstLoad.current) {
       firstLoad.current = false;
       // console.log('first load... must sync token!');
-      setIsLoading(true);
-      dispatch(fetchToken(setIsLoading));
+      dispatch(fetchToken());
     }
   }, []);
 
   useEffect(() => {
     // Check for Login status upon change of LoginData
-    // setIsLoggedIn(loginCheck);
+    setIsLoggedIn(loginCheck);
     // console.log('This is loginCheck from loginData useEffect: ' + loginCheck);
-    if (!initialRender.current && accessTokenPresent) {
-      // console.log('Access token is present but it is not the initial render');
-      setIsLoading(false);
-    } else {
-      // console.log('First render for loginData change');
-      // console.log('Whether access token is present: ' + accessTokenPresent);
+    if (initialRender.current) {
       initialRender.current = false;
     }
   }, [loginData]);
 
   useEffect(() => {
     if (accessTokenPresent) {
-      if (accountAccess) {
-        if (!isArrayPresent(profileData)) {
-          console.log("Fetch user profile");
-          dispatch(fetchProfile(loginData.accessToken));
-        }
+      if (!isArrayPresent(profileData)) {
+        // console.log("Fetch user profile");
+        dispatch(fetchProfile(loginData.accessToken));
       }
 
       // THIS IS WHERE ALL FIRST TIME CALLS TO LOAD DATA FROM THE BACKEND SHOULD GO!
@@ -91,14 +76,7 @@ function useProvideAuth() {
     }
   }, [accessTokenPresent]);
 
-  const signOut = () => {
-    console.log("Posting logout from auth...");
-    dispatch(postLogout());
-  };
-
   return {
     isLoggedIn,
-    appsLoading,
-    signOut,
   };
 }

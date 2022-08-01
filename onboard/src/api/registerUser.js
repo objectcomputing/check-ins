@@ -1,4 +1,4 @@
-import { ACTIONS } from 'redux/reducers/login';
+import { ACTIONS } from './../redux/reducers/login';
 import axios from 'axios';
 import postUser from './postUser';
 import { bigintToHex, getEnvSpecificAPIURI } from './../utils/helperFunctions';
@@ -14,7 +14,7 @@ const registerUser = (
   return async (dispatch, getState) => {
     try {
       const baseURL = getEnvSpecificAPIURI();
-      const url = `${baseURL}/api/administration/organization/${workspace}/addMember`;
+      const url = `${baseURL}/api/administration/addMember`;
 
       const srp6aNimbusRoutines = new SRPRoutines(
         new SRPParameters(SRPParameters.PrimeGroup[512])
@@ -45,7 +45,7 @@ const registerUser = (
       });
 
       console.log('Registration succeeded');
-      dispatch(postUser(email, workspace, password));
+      dispatch(postUser(email, password));
     } catch (error) {
       console.error(error);
       dispatch({

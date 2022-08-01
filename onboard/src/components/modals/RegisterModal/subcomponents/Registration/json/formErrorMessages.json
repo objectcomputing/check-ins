@@ -1,12 +1,5 @@
 {
   "email": "User cannot be created. Please check your inputs and try again.",
   "password": "User cannot be created. Please check your inputs and try again.",
-  "confirmPassword": "User cannot be created. Please check your inputs and try again.",
-  "handle": "User cannot be created. Please check your inputs and try again.",
-  "phone": "User cannot be created. Please check your inputs and try again.",
-  "workspace": "User cannot be created. Please check your inputs and try again.",
-  "title": "User cannot be created. Please check your inputs and try again.",
-  "firstName": "User cannot be created. Please check your inputs and try again.",
-  "lastName": "User cannot be created. Please check your inputs and try again.",
-  "description": "User cannot be created. Please check your inputs and try again."
+  "confirmPassword": "User cannot be created. Please check your inputs and try again."
 }

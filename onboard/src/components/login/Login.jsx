@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ACTIONS } from '../../redux/reducers/login';
+import { ACTIONS } from './../../redux/reducers/login';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -13,13 +13,13 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 
-import RegisterModal from '../modals/RegisterModal/RegisterModal.jsx';
+import RegisterModal from './../modals/RegisterModal/RegisterModal.jsx';
 
-import postUser from '../../actions/postUser';
+import postUser from './../../api/postUser';
 import styled from 'styled-components';
 
-import LogoDisplay from '../../assets/LogoDisplay.jsx';
-import backgroundImageLogin from '../../assets/img/background-img.jpg';
+import LogoDisplay from './../../assets/LogoDisplay.jsx';
+import backgroundImageLogin from './../../assets/img/background-img.jpg';
 
 const LoggedOutRoot = styled.div`
   display: block;
@@ -192,7 +192,7 @@ function Login(props) {
                       <LogoDisplay width="120px" height="120px" />
                     </div>
                     <Typography
-                      children={'GeoAI'}
+                      children={'Onboarding'}
                       variant={'h4'}
                       sx={{ fontWeight: 400, textAlign: 'center' }}
                     />
@@ -202,7 +202,7 @@ function Login(props) {
                         marginBottom: 2,
                         textAlign: 'center'
                       }}
-                      children={'GEOSPATIAL DATA PLATFORM'}
+                      children={'OCI Onboarding Portal'}
                       variant={'h6'}
                     />
                     <form autoComplete="off" onSubmit={handleSignInClick}>

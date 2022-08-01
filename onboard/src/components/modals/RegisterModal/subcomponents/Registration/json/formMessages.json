@@ -1,12 +1,5 @@
 {
   "email": "Enter your pre-authorized, valid email address.",
   "password": "Enter a strong password. Must be at least 12 characters.",
-  "confirmPassword": "Enter the same password again to confirm.",
-  "handle": "Enter an alphanumeric handle or alias.",
-  "phone": "Enter a phone number.",
-  "workspace": "Enter your pre-authorized workspace code.",
-  "title": "Enter your title.",
-  "firstName": "Enter your first name.",
-  "lastName": "Enter your last name.",
-  "description": "Enter a short bio. 200 character max."
+  "confirmPassword": "Enter the same password again to confirm."
 }

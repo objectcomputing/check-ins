@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { PROFILE_ACTIONS } from '../redux/reducers/profile';
+import { PROFILE_ACTIONS } from './../redux/reducers/profile';
 import { getEnvSpecificAPIURI } from './../utils/helperFunctions';
 
 const fetchProfile = (accessToken) => {
   return async (dispatch, getState) => {
     try {
       const baseURL = getEnvSpecificAPIURI();
-      const url = `${baseURL}/api/account/profile`;
+      const url = `${baseURL}/services/onboardee-profiles`;
 
       console.log('Pulling account profile...');
       const response = await axios.get(url, {
