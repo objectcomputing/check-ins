@@ -1,5 +1,5 @@
 import React from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Link, useHistory } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
@@ -19,7 +19,6 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { useState } from "react";
-import ProgressIndicator from "../components/onboard_progress/ProgressIndicator";
 
 const modalBoxStyle = {
   position: "absolute",
@@ -99,10 +98,8 @@ export default function OnboardProgressPage() {
     { field: "email", headerName: "Email", width: 220 },
     { field: "hireType", headerName: "Hire Type", width: 150 },
     {
-      field: "progress",
-      renderCell: (cellValues) => {
-        return <ProgressIndicator />;
-      },
+      field: "completed",
+      headerName: "Completed",
       width: 150,
     },
     { field: "dateAdded", headerName: "Date Added", width: 100 },
@@ -134,6 +131,7 @@ export default function OnboardProgressPage() {
       name: "Daniel Ryu",
       email: "d97shryu@gmail.com",
       hireType: "Intern",
+      completed: "No",
       dateAdded: "Jul 15, 2022",
     },
     {
@@ -141,6 +139,7 @@ export default function OnboardProgressPage() {
       name: "Brandon Li",
       email: "li.brandon@outlook.com",
       hireType: "Intern",
+      completed: "No",
       dateAdded: "Jul 15, 2022",
     },
   ];
@@ -404,11 +403,19 @@ export default function OnboardProgressPage() {
           rowsPerPageOptions={[5]}
           checkboxSelection
           disableSelectionOnClick
+          components={{ Toolbar: GridToolbar }}
+          componentsProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500 },
+            },
+          }}
         />
       </Box>
       <Box sx={{ height: 400, width: "20%", mt: "3%" }}>
         <h1>Notifications</h1>
         <DataGrid
+          sx={{ cursor: "pointer" }}
           rows={rowsNotif}
           columns={columnsNotif}
           pageSize={5}
