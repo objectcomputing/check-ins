@@ -75,6 +75,15 @@ public class EmploymentHistory {
         this.reason = reason;
     }
 
+    public EmploymentHistory(String company, String companyAddress, String jobTitle, LocalDate startDate, LocalDate endDate, @Nullable String reason) {
+        this.company = company;
+        this.companyAddress = companyAddress;
+        this.jobTitle = jobTitle;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.reason = reason;
+    }
+
     public UUID getId() {
         return id;
     }
