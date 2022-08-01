@@ -3,13 +3,13 @@ import axios from 'axios';
 import { SRPClientSession, SRPParameters, SRPRoutines } from 'tssrp6a';
 import { bigintToHex, getEnvSpecificAPIURI } from './../utils/helperFunctions';
 
-const postUser = (email, workspace, secret) => {
+const postUser = (email, secret) => {
   return async (dispatch, getState) => {
 
     try {
       const baseURL = getEnvSpecificAPIURI();
       const url = `${baseURL}/api/challenge`;
-      const loginData = { scope: workspace, identity: email };
+      const loginData = { identity: email };
 
       const response = await axios
         .post(url, loginData, {
