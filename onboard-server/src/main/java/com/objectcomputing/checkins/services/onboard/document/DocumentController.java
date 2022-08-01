@@ -69,7 +69,7 @@ public class DocumentController {
         fos.close();
     }
 
-    @Get("/createDocument")
+    @Post
     //@Post
     public String completedFileUpload() throws IOException {
         // Create document's JSONObject
