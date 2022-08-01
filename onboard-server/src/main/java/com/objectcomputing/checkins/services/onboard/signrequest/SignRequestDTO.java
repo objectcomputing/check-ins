@@ -6,15 +6,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 
 @Introspected
-public class SignRequestCreateDTO {
+public class SignRequestDTO {
 
     @NotBlank
     @Schema(title = "The email the SignRequest is being sent to", required = true)
     private String email;
 
     @NotBlank
-    @Schema(title = "The file that is being used to generate the SignRequest", required = true)
-    private String file_from_url;
+    @Schema(title = "The SignRequest document's URL", required = true)
+    private String document;
 
     @NotBlank
     @Schema(title = "The name of the SignRequest", required = true)
@@ -48,9 +48,9 @@ public class SignRequestCreateDTO {
 
     public void setEmail(String email) { this.email = email; }
 
-    public String getFile() { return file_from_url; }
+    public String getDocument() { return document; }
 
-    public void setFile(String file_from_url) { this.file_from_url = file_from_url; }
+    public void setDocument() { this.document = document; }
 
     public String getName() { return name; }
 

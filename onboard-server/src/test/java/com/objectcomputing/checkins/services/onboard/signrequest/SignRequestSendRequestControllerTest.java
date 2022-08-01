@@ -26,7 +26,7 @@ public class SignRequestSendRequestControllerTest {
 
     @Test
     public void testVerifyBasicInteractions() {
-        SignRequestCreateDTO request = new SignRequestCreateDTO();
+        SignRequestDTO request = new SignRequestDTO();
         request.setEmail("test");
         String a = request.getEmail();
         assertEquals("test", a);
@@ -35,10 +35,10 @@ public class SignRequestSendRequestControllerTest {
 
     @Test
     public void testBadRequestExceptionThrownWithBlankEmail() {
-        SignRequestCreateDTO signRequest = new SignRequestCreateDTO();
+        SignRequestDTO signRequest = new SignRequestDTO();
         signRequest.setEmail("");
 
-        MutableHttpRequest<SignRequestCreateDTO> request = HttpRequest.POST("", signRequest).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        MutableHttpRequest<SignRequestDTO> request = HttpRequest.POST("", signRequest).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());

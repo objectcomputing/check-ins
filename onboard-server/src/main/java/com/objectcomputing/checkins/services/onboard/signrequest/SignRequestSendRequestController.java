@@ -23,7 +23,7 @@ public class SignRequestSendRequestController {
     public SignRequestSendRequestController(SignRequestClient signrequestClient) { this.signrequestClient = signrequestClient; }
 
     @Post
-    public String sendRequest(@Body @Valid @NotNull SignRequestCreateDTO request) {
+    public String sendRequest(@Body @Valid @NotNull SignRequestDTO request) {
         return signrequestClient.sendRequest(request);
     }
 

@@ -39,7 +39,7 @@ public class SignRequestClient {
         }
     }
 
-    public String sendRequest(SignRequestCreateDTO requestDTO) {
+    public String sendRequest(SignRequestDTO requestDTO) {
         JSONObject jsonObj = new JSONObject(requestDTO);
 
         try {

@@ -19,7 +19,7 @@ public class SignRequestCreateDTOTest {
 
     @Test
     void testDTOInstantiation() {
-        SignRequestCreateDTO dto = new SignRequestCreateDTO();
+        SignRequestDTO dto = new SignRequestDTO();
 
         assertNull(dto.getEmail());
         assertNull(dto.getFile());
@@ -34,19 +34,19 @@ public class SignRequestCreateDTOTest {
 
     @Test
     void testConstraintViolation() {
-        SignRequestCreateDTO dto = new SignRequestCreateDTO();
+        SignRequestDTO dto = new SignRequestDTO();
 
-        Set<ConstraintViolation<SignRequestCreateDTO>> violations = validator.validate(dto);
+        Set<ConstraintViolation<SignRequestDTO>> violations = validator.validate(dto);
         // Think this should be 9, not 4
         assertEquals(violations.size(), 4);
-        for (ConstraintViolation<SignRequestCreateDTO> violation: violations) {
+        for (ConstraintViolation<SignRequestDTO> violation: violations) {
             assertEquals(violation.getMessage(), "must not be blank");
         }
     }
 
     @Test
     void testPopulatedDTO() {
-        SignRequestCreateDTO dto = new SignRequestCreateDTO();
+        SignRequestDTO dto = new SignRequestDTO();
 
         dto.setEmail("some.file.email");
         assertEquals(dto.getEmail(), "some.file.email");
@@ -76,7 +76,7 @@ public class SignRequestCreateDTOTest {
         dto.setSigners(signers);
         assertEquals(dto.getSigners(), signers);
 
-        Set<ConstraintViolation<SignRequestCreateDTO>> violations = validator.validate(dto);
+        Set<ConstraintViolation<SignRequestDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
     }
 
