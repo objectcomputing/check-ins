@@ -42,10 +42,10 @@ public class SignRequestControllerTest {
         verify(mockController).sendSignRequest();
     }
 
-    @Test
-    public void testEmbedRequest() {
-        mockController.embedSignRequest();
-        verify(mockController).embedSignRequest();
-    }
+//    @Test
+//    public void testEmbedRequest() {
+//        mockController.embedSignRequest();
+//        verify(mockController).embedSignRequest();
+//    }
 
 }

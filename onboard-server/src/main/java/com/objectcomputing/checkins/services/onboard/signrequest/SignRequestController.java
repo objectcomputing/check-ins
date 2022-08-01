@@ -35,39 +35,58 @@ public class SignRequestController {
     private String SIGNREQUEST_TOKEN;
 
     @Post
-
-    @Get("/send-signrequest")
     public String sendSignRequest() {
+        // 1) Get necessary SignRequestDTO information
+        SignRequestDTO request = new SignRequestDTO();
+        request.setDocument("https://s29.q4cdn.com/816090369/files/doc_downloads/test.pdf");
+        request.setFromEmail("librandon0706@gmail.com");
+        request.setMessage("Please sign this document. \n\nThanks!");
+        String [] signers = {"li.brandon@outlook.com"};
+        request.setSigners(signers);
 
-        JSONObject data = new JSONObject();
-        JSONArray array = new JSONArray();
-        JSONObject item = new JSONObject();
+        // 2) Construct appropriate JSON file
 
-        item.put("email", "li.brandon@outlook.com"); // Pass in
-        array.put(item);
+        // 3) Send out the SignRequest
 
-        data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
-        data.put("name", "demo_document.pdf"); // Pass in
-        data.put("from_email", "librandon0706@gmail.com"); // Current user in the system
-        data.put("message", "Please sign this document"); // Pass in
-        data.put("needs_to_sign", "true");
-        data.put("subject", "SignTest - YourTeam API"); // Pass in
-        data.put("auto_delete_days", "1"); // Hardcode to 30 days
-        data.put("signers", array); // Pass in
+        // 4) Get the SignRequest ID & Return Status
 
-        try {
-            String retrieve = httpClient.toBlocking().retrieve(POST("/signrequest-quick-create/", data.toString()).contentType(MediaType.APPLICATION_JSON).header("Authorization", SIGNREQUEST_TOKEN));
-            System.out.println("Request Worked");
-            return retrieve;
-        }
-        catch (HttpClientResponseException e) {
-            System.out.println("We Failed");
-            System.out.println(e.getMessage());
-            System.out.println(e.getResponse().reason());
-            System.out.println(e.getResponse().body());
-            return data.toString();
-        }
+        // 5) return
+
+        return "";
     }
+
+//    @Get("/send-signrequest")
+//    public String sendSignRequest() {
+//
+//        JSONObject data = new JSONObject();
+//        JSONArray array = new JSONArray();
+//        JSONObject item = new JSONObject();
+//
+//        item.put("email", "li.brandon@outlook.com"); // Pass in
+//        array.put(item);
+//
+//        data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
+//        data.put("name", "demo_document.pdf"); // Pass in
+//        data.put("from_email", "librandon0706@gmail.com"); // Current user in the system
+//        data.put("message", "Please sign this document"); // Pass in
+//        data.put("needs_to_sign", "true");
+//        data.put("subject", "SignTest - YourTeam API"); // Pass in
+//        data.put("auto_delete_days", "1"); // Hardcode to 30 days
+//        data.put("signers", array); // Pass in
+//
+//        try {
+//            String retrieve = httpClient.toBlocking().retrieve(POST("/signrequest-quick-create/", data.toString()).contentType(MediaType.APPLICATION_JSON).header("Authorization", SIGNREQUEST_TOKEN));
+//            System.out.println("Request Worked");
+//            return retrieve;
+//        }
+//        catch (HttpClientResponseException e) {
+//            System.out.println("We Failed");
+//            System.out.println(e.getMessage());
+//            System.out.println(e.getResponse().reason());
+//            System.out.println(e.getResponse().body());
+//            return data.toString();
+//        }
+//    }
 
 //    @Get("/embed-signrequest")
 //    public String embedSignRequest() {
