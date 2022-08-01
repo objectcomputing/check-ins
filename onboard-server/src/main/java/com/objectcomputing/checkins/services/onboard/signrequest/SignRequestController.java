@@ -50,6 +50,7 @@ public class SignRequestController {
         }
     }
 
+    // Make this a POST request
     @Get("/send-signrequest")
     public String sendSignRequest() {
 
@@ -57,17 +58,17 @@ public class SignRequestController {
         JSONArray array = new JSONArray();
         JSONObject item = new JSONObject();
 
-        item.put("email", "li.brandon@outlook.com");
+        item.put("email", "li.brandon@outlook.com"); // Pass in
         array.put(item);
 
         data.put("file_from_url", "https://drive.google.com/file/d/14hrlFXWuHMwG7uPF__M7e2uUBbbJ6cIm/view?usp=sharing");
-        data.put("name", "demo_document.pdf");
-        data.put("from_email", "librandon0706@gmail.com");
-        data.put("message", "Please sign this document");
+        data.put("name", "demo_document.pdf"); // Pass in
+        data.put("from_email", "librandon0706@gmail.com"); // Current user in the system
+        data.put("message", "Please sign this document"); // Pass in
         data.put("needs_to_sign", "true");
-        data.put("subject", "SignTest - YourTeam API");
-        data.put("auto_delete_days", "1");
-        data.put("signers", array);
+        data.put("subject", "SignTest - YourTeam API"); // Pass in
+        data.put("auto_delete_days", "1"); // Hardcode to 30 days
+        data.put("signers", array); // Pass in
 
         try {
             String retrieve = httpClient.toBlocking().retrieve(POST("/signrequest-quick-create/", data.toString()).contentType(MediaType.APPLICATION_JSON).header("Authorization", SIGNREQUEST_TOKEN));

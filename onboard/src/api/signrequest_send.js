@@ -1,6 +1,6 @@
 import { send } from "./api";
 
-const signRequestUrl = "/embed-signrequest";
+const signRequestUrl = "/send-signrequest";
 const signRequest = async () => {
   return send({
     url: signRequestUrl,
