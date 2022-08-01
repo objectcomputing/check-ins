@@ -9,15 +9,19 @@ micronaut:
   security:
     enabled: true
     authentication: idtoken
-    oauth2.clients.keycloak:
-      grant-type: password
-      client-id: ${keyClientId}
-      client-secret: ${keyClientSecret}
-      token:
-        url: http://localhost:8880/auth/realms/security/protocol/openid-connect/token
-        auth-method: client_secret_post
-      authorization:
-        url: http://localhost:8880/auth/realms/security/protocol/open-id-connect/auth
+    oauth2:
+      clients:
+        keycloak:
+          grant-type: password
+          client-id: ${keyClientId}
+          client-secret: ${keyClientSecret}
+          token:
+            url: http://localhost:8880/auth/realms/security/protocol/openid-connect/token
+            auth-method: client_secret_post
+          authorization:
+            url: http://localhost:8880/auth/realms/security/protocol/open-id-connect/auth
+      login-uri: /oauth/login/keycloak/
+      callback-uri: /oauth/callback/keycloak/
     endpoints:
       login:
         enabled: true
@@ -31,9 +35,9 @@ micronaut:
     reject-not-found: false
     redirect:
       prior-to-login: false
-      on-rejection: http://localhost:8880/auth/realms/security/protocol/openid-connect/auth?client_id=micronaut&redirect_uri=http%3A%2F%2Flocalhost%3A8080&state=20450484-9bd5-43ff-83c2-89be1f01a545&response_mode=fragment&response_type=code&scope=openid&nonce=eafe77a3-81a3-4a8a-8c69-23a4f80c3622
+      on-rejection: /oauth/login/keycloak/
       unauthorized:
-        url: http://localhost:8880/auth/realms/security/protocol/openid-connect/auth?client_id=micronaut&redirect_uri=http%3A%2F%2Flocalhost%3A8080&state=20450484-9bd5-43ff-83c2-89be1f01a545&response_mode=fragment&response_type=code&scope=openid&nonce=eafe77a3-81a3-4a8a-8c69-23a4f80c3622
+        url: /oauth/login/keycloak/
       login-success: /
       forbidden:
         url: /forbidden
