@@ -1,0 +1,28 @@
+{
+    "env": {
+      "browser": true,
+      "es2020": true
+    },
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "globals": {
+      "expect": "readonly",
+      "process": "readonly",
+      "test": "readonly"
+    },
+    "parser": "@babel/eslint-parser",
+    "plugins": ["react", "react-hooks"],
+    "rules": {
+      "no-unused-vars": "off",
+      "react/jsx-uses-vars": "error",
+      "react/jsx-uses-react": "error",
+      "react/no-children-prop": "off",
+      "react/no-unescaped-entities": 0,
+      "react/prop-types": "off"
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    }
+  }
+  

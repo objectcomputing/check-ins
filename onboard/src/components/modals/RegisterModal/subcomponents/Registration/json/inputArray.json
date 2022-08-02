@@ -1,0 +1,29 @@
+[
+  {
+    "title": "Email (Required)*",
+    "id": "email",
+    "autoFocus": true,
+    "label": "Email (Required)*",
+    "placeholder": "",
+    "type": "email",
+    "autocomplete": "email"
+  },
+  {
+    "title": "Password (Required)*",
+    "id": "password",
+    "autoFocus": false,
+    "label": "Password (Required)*",
+    "placeholder": "",
+    "type": "password",
+    "autocomplete": "password"
+  },
+  {
+    "title": "Confirm Password (Required)*",
+    "id": "confirmPassword",
+    "autoFocus": false,
+    "label": "Confirm Password (Required)*",
+    "placeholder": "",
+    "type": "password",
+    "autocomplete": "confirm-password"
+  }
+]

@@ -1,0 +1,5 @@
+{
+  "email": "Enter your pre-authorized, valid email address.",
+  "password": "Enter a strong password. Must be at least 12 characters.",
+  "confirmPassword": "Enter the same password again to confirm."
+}
