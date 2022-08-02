@@ -22,7 +22,7 @@ import java.util.UUID;
 @Entity
 @Introspected
 @Table(name = "edit_onboardee_profile")
-public class EditOnboardeeProfile {
+public class OnboardeeProfile {
     @Id // indicates this member field below is the primary key of the current entity
     @Column(name = "id") // indicates this value is stored under a column in the database with the name
     // "id"
@@ -71,7 +71,7 @@ public class EditOnboardeeProfile {
     @Schema(description = "The pdl of the new employee")
     private String pdl;
 
-    public EditOnboardeeProfile(String firstName, String lastName, String position, String hireType, String email,
+    public OnboardeeProfile(String firstName, String lastName, String position, String hireType, String email,
             String pdl) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -81,7 +81,7 @@ public class EditOnboardeeProfile {
         this.pdl = pdl;
     }
 
-    public EditOnboardeeProfile(UUID id, String firstName, String lastName, String position, String hireType,
+    public OnboardeeProfile(UUID id, String firstName, String lastName, String position, String hireType,
             String email, String pdl) {
         this.id = id;
         this.firstName = firstName;
@@ -92,7 +92,7 @@ public class EditOnboardeeProfile {
         this.pdl = pdl;
     }
 
-    public EditOnboardeeProfile() {
+    public OnboardeeProfile() {
     }
 
     public void setId(UUID id) {
@@ -157,7 +157,7 @@ public class EditOnboardeeProfile {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        EditOnboardeeProfile that = (EditOnboardeeProfile) o;
+        OnboardeeProfile that = (OnboardeeProfile) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&

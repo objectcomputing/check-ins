@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Tag(name = "edit onboardee profiles")
-public class EditOnboardeeProfileController {
+@Tag(name = "onboardee profiles")
+public class OnboardeeProfileController {
     // private static final Logger LOG = LoggerFactory.getLogger(EditOnboardeeProfileController.class);
     // private final EditOnboardeeProfileServices editOnboardeeProfileServices;
     // private final EventLoopGroup eventLoopGroup;

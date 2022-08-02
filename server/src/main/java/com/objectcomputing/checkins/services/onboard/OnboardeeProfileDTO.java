@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class EditOnboardeeProfileDTO {
+public class OnboardeeProfileDTO {
     @NotNull
     @Schema(description = "id of the onboardee this profile entry is associated with", required = true)
     private UUID id;
@@ -95,7 +95,7 @@ public class EditOnboardeeProfileDTO {
 
     @Override
     public String toString() {
-        return "EditOnboardeeProfileDTO{" +
+        return "OnboardeeProfileDTO{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' + 
                 ", lastName='" + lastName +'\'' +
