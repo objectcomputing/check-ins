@@ -1,13 +1,11 @@
 package com.objectcomputing.checkins.services.employmenthistory;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -36,15 +34,21 @@ public class EmploymentHistoryController {
     private final EventLoopGroup eventLoopGroup;
     private final Scheduler scheduler;
 
-    private static final Logger LOG = LoggerFactory.getLogger(EmploymentHistoryController.class);
-
-
     public EmploymentHistoryController(EmploymentHistoryServices employmentHistoryServices,
             EventLoopGroup eventLoopGroup,
             @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.employmentHistoryServices = employmentHistoryServices;
         this.eventLoopGroup = eventLoopGroup;
         this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
+    }
+
+    @Get("/{id}")
+    public Mono<HttpResponse<EmploymentHistoryDTO>> getById(UUID id) {
+        return Mono.fromCallable(() -> employmentHistoryServices.getById(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(profile -> (HttpResponse<EmploymentHistoryDTO>) HttpResponse.ok(fromEntity(profile))
+                        .headers(headers -> headers.location(location(profile.getId()))))
+                .subscribeOn(scheduler);
     }
 
     @Get("/{?id,company,companyAddress,jobTitle,startDate,endDate,reason}")
@@ -65,7 +69,11 @@ public class EmploymentHistoryController {
                 }).subscribeOn(scheduler);
     }
 
-    private EmploymentHistoryDTO fromEntity(EmploymentHistory entity){
+    protected URI location(UUID id) {
+        return URI.create("/employment_history/" + id);
+    }
+
+    private EmploymentHistoryDTO fromEntity(EmploymentHistory entity) {
         EmploymentHistoryDTO dto = new EmploymentHistoryDTO();
         dto.setId(entity.getId());
         dto.setCompany(entity.getCompany());
@@ -76,6 +84,7 @@ public class EmploymentHistoryController {
         dto.setReason(entity.getReason());
         return dto;
     }
+
     private EmploymentHistory fromDTO(EmploymentHistoryDTO dto) {
         return new EmploymentHistory(dto.getId(), dto.getCompany(), dto.getCompanyAddress(), dto.getJobTitle(),
                 dto.getStartDate(), dto.getEndDate(), dto.getReason());

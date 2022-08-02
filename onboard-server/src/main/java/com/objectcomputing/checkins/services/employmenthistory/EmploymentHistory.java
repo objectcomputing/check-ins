@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.employmenthistory;
 
+import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
@@ -25,6 +26,7 @@ public class EmploymentHistory {
 
     @Id
     @Column(name = "id")
+    @AutoPopulated
     @TypeDef(type = DataType.STRING)
     @Schema(description = "private key id")
     private UUID id;
@@ -36,7 +38,7 @@ public class EmploymentHistory {
     private String company;
 
     @NotBlank
-    @Column(name = "companyAddress ")
+    @Column(name = "companyaddress")
     @ColumnTransformer(read = "pgp_sym_decrypt(companyAddress::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
     @Schema(description = "address of previous employer")
     private String companyAddress;
@@ -83,6 +85,8 @@ public class EmploymentHistory {
         this.endDate = endDate;
         this.reason = reason;
     }
+
+    public EmploymentHistory(){}
 
     public UUID getId() {
         return id;
