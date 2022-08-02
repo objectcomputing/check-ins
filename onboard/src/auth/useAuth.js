@@ -51,7 +51,7 @@ function useProvideAuth() {
 
   useEffect(() => {
     // Check for Login status upon change of LoginData
-    setIsLoggedIn(loginCheck);
+//    setIsLoggedIn(loginCheck);
     // console.log('This is loginCheck from loginData useEffect: ' + loginCheck);
     if (initialRender.current) {
       initialRender.current = false;
