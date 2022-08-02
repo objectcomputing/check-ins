@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
-import { selectCsrfToken, selectIsAdmin } from "../../context/selectors";
+import { selectCsrfToken, selectIsAdmin, selectIsHR } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import { useLocation, Link } from "react-router-dom";
@@ -108,9 +108,9 @@ const directoryLinks = [
 const getFeedbackLinks = (isAdmin, isPDL) =>
   isAdmin || isPDL
     ? [
-        ["/feedback/view", "View Feedback"],
-        ["/feedback/received-requests", "Received Requests"],
-      ]
+      ["/feedback/view", "View Feedback"],
+      ["/feedback/received-requests", "Received Requests"],
+    ]
     : [["/feedback/received-requests", "Received Requests"]];
 
 const reportsLinks = [
@@ -120,6 +120,7 @@ const reportsLinks = [
   ["/skills-reports", "Skills"],
   ["/team-skills-reports", "Team Skills"],
 ];
+
 
 //Onboard page
 const onboardingLinks = [["/onboard/progress", "Progress"]];
@@ -138,6 +139,7 @@ function Menu() {
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin = selectIsAdmin(state);
+  const isHR = selectIsHR(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
 
@@ -212,6 +214,7 @@ function Menu() {
   const [onboardOpen, setOnboardOpen] = useState(
     isCollapsibleListOpen(onboardingLinks, location.pathname)
   );
+
   const anchorRef = useRef(null);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -289,8 +292,8 @@ function Menu() {
           isSubLink
             ? undefined
             : () => {
-                closeSubMenus();
-              }
+              closeSubMenus();
+            }
         }
         selected={isLinkSelected(path)}
       >
@@ -344,28 +347,26 @@ function Menu() {
           {createListJsx(directoryLinks, true)}
         </Collapse>
 
-        {/* onboarding */}
-        {isAdmin && (
-          <React.Fragment>
-            <ListItem
-              button
-              onClick={toggleOnboarding}
-              className={classes.listItem}
-            >
-              <ListItemText primary="ONBOARDING" />
-            </ListItem>
-            <Collapse in={onboardOpen} timeout="auto" unmountOnExit>
-              {createListJsx(onboardingLinks, true)}
-            </Collapse>
-          </React.Fragment>
-        )}
-
         <ListItem button onClick={toggleFeedback} className={classes.listItem}>
           <ListItemText primary="FEEDBACK" />
         </ListItem>
         <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
           {createListJsx(feedbackLinks, true)}
         </Collapse>
+        {isHR && (
+          <>
+            <ListItem
+              button
+              onClick={toggleOnboarding}
+              className={classes.listItem}
+            >
+              <ListItemText primary="ONBOARD" />
+            </ListItem>
+            <Collapse in={onboardOpen} timeout="auto" unmountOnExit>
+              {createListJsx(onboardingLinks, true)}
+            </Collapse>
+          </>
+        )}
         {isAdmin && (
           <React.Fragment>
             <ListItem

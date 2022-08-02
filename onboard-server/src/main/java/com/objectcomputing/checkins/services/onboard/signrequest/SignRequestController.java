@@ -1,9 +1,6 @@
 package com.objectcomputing.checkins.services.onboard.signrequest;
 
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -11,11 +8,7 @@ import jakarta.inject.Inject;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.security.authentication.Authentication;
 
-import javax.print.attribute.standard.Media;
-import java.util.Arrays;
-import java.util.StringTokenizer;
 import java.util.*;
 
 @Secured(SecurityRule.IS_ANONYMOUS)
@@ -32,7 +25,6 @@ public class SignRequestController {
 
     @Get("/signrequest-documents")
     public String getData(){
-
         try{
             String retrieve = httpClient.toBlocking()
                     .retrieve(HttpRequest.GET("/documents/")

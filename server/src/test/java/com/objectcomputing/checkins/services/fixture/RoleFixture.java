@@ -45,6 +45,10 @@ public interface RoleFixture extends RepositoryFixture, PermissionFixture, Membe
         return getRoleRepository().findById(uuid).orElse(null);
     }
 
+    default Role assignHrRole(MemberProfile memberProfile) {
+        return assignRoleToMemberProfile(RoleType.HR, memberProfile);
+    }
+
     default Role assignAdminRole(MemberProfile memberProfile) {
         return assignRoleToMemberProfile(RoleType.ADMIN, memberProfile);
     }

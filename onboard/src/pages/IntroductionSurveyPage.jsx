@@ -8,9 +8,8 @@ const IntroductionSurveyPage = () => {
     <Grid
       container
       justifyContent="center"
-      alingItems="center"
+      alignItems="center"
       direction="row"
-      xs={12}
     >
       <Grid item xs={8}>
         <Typography variant="h6">
