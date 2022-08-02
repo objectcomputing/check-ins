@@ -1,12 +1,33 @@
 micronaut:
   application:
-    name: check-ins
+    name: onboardserver
   server:
     cors:
       enabled: true
     max-request-size: 100MB
     multipart:
       max-file-size: 100MB
+  session:
+    http:
+      cookie: true
+      header: true
+      remember-me: true   
+  security:
+    enabled: true
+    token:
+      jwt:
+        enabled: true
+        bearer:
+          enabled: true
+        cookie:
+          enabled: true
+      propagation:
+        header:
+          enabled: true
+          headerName: "Authorization"
+          prefix: "Bearer "
+        uri-regex: ".*(geoai\\.app\\/api).*"
+        enabled: true
   caches:
     photo-cache:
       expire-after-write: 86400
@@ -26,23 +47,38 @@ micronaut:
 
   security:
     enabled: true
-    authentication: cookie
     token:
       jwt:
-        enabled: true
-        generator:
-          refresh-token:
+        issuer: https://onboardserver.app
+        lease: 36000
+        signatures:
+          secret:
             enabled: true
-            path: /oauth/access_token
-            secret: ${ OAUTH_REFRESH_TOKEN_SECRET:'pleaseChangeThisSecretForANewOne' }
-    oauth2:
-      callback-uri: ${ OAUTH_CALLBACK_URI }
-      clients:
-        google:
-          client-id: ${ OAUTH_CLIENT_ID }
-          client-secret: ${ OAUTH_CLIENT_SECRET }
-          openid:
-            issuer: 'https://accounts.google.com'
+            secret: 123456789
+            algorithm: HS256
+            base64: false
+    authentication:
+      srp6:
+        encryption:
+          algorithm: SHA-512
+          bitSize: 512
+      claims:
+        accessorId: accessorId
+        accessorSource: accessorSource
+  clients:
+    auth:
+      url: https://onboardserver.app
+      read-timeout: 500ms
+      retry:
+        attempts: 1
+        delay: 5s
+      endpoints:
+        system-challenge:
+          path: /api/system/challenge
+        system-auth:
+          path: /api/system/authenticate
+        token-renew:
+          path: /api/token/renew
     endpoints:
       logout:
         get-allowed: true
@@ -52,15 +88,6 @@ micronaut:
         http-method: GET
         access:
           - isAnonymous()
-    reject-not-found: false
-    redirect:
-      prior-to-login: true
-      login-success: /
-      on-rejection: /oauth/login/google
-      unauthorized:
-        url: /oauth/login/google
-      forbidden:
-        url: /forbidden
     session:
       enabled: true
     netty:

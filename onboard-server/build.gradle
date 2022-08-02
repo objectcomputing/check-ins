@@ -51,6 +51,7 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.postgresql:postgresql")
+    implementation('com.nimbusds:srp6a:2.1.0')
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:testcontainers")
@@ -92,8 +93,10 @@ dependencies {
     //implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion", {
     //    exclude group: 'io.micronaut', module: 'micronaut-jdbc'
     //}
-    //implementation  'org.postgresql:postgresql:42.2.12'
-    implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
+    implementation('org.postgresql:postgresql:42.2.12')
+    implementation("io.micronaut.data:micronaut-data-r2dbc")
+    implementation('org.postgresql:r2dbc-postgresql:0.9.1.RELEASE')
+    implementation 'com.google.cloud.sql:postgres-socket-factory:1.6.1'
 
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation('io.projectreactor.addons:reactor-adapter:3.4.8')

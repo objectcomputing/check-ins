@@ -6,26 +6,6 @@ micronaut:
         web:
           allowedOrigins:
             - ^http(|s):\/\/localhost:.*$
-  security:
-    authentication: cookie
-    oauth2:
-      enabled: false
-    token:
-      jwt:
-        enabled: true
-        generator:
-          refresh-token:
-            enabled: true
-            path: /oauth/access_token
-            secret: ihaveChangedThisSecretForANewOne
-          access-token:
-            expiration: 60000
-          secret: ihaveChangedThisSecretForANewOne
-    intercept-url-map:
-      - pattern: /swagger-ui/**
-        http-method: GET
-        access:
-          - isAnonymous()
 ---
 datasources:
   default:
