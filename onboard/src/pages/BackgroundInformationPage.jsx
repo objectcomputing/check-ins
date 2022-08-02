@@ -19,7 +19,7 @@ const accordionArr = [
     content: <EmploymentEligbility />,
   },
   {
-    title: "Employment Desired and Avaiablity",
+    title: "Employment Desired and Availability",
     content: <EmploymentDesired />,
   },
   {
@@ -43,6 +43,7 @@ const BackgroundInformationPage = () => {
         accordionArr.map((arr, i) => {
           return (
             <Accordion
+              key={i}
               title={arr.title}
               open={i === 0 ? true : false}
               index={i}

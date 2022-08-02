@@ -1,0 +1,40 @@
+.create-account-dialog {
+  h4 {
+    margin-bottom: 1rem;
+  }
+}
+
+.criteria {
+  --size: 1rem;
+  border-radius: calc(var(--size));
+  background-color: white;
+  color: gray;
+  display: inline-block;
+  font-size: 0.625rem;
+  height: var(--size);
+  line-height: var(--size);
+  padding: 0 0.4rem;
+  text-transform: uppercase;
+  &:not(.satisfied)::before {
+    content: "✖";
+    margin-right: 0.2rem;
+  }
+  &.satisfied {
+    background-color: var(--primary-color);
+    color: white;
+    &::before {
+      content: "✔";
+      margin-right: 0.2rem;
+    }
+  }
+}
+
+.criteria-line {
+  margin: 0.5rem 0 0 0.4rem;
+}
+
+.password-reset-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}

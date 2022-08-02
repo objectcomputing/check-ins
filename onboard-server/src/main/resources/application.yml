@@ -10,7 +10,6 @@ micronaut:
   caches:
     photo-cache:
       expire-after-write: 86400
-
   router:
     static-resources:
       swagger:
@@ -49,15 +48,10 @@ micronaut:
         get-allowed: true
     intercept-url-map:
       -
-        pattern: /onboard/**
-        http-method: GET
-        access:
-          - isAnonymous()
-      -
         pattern: /**
         http-method: GET
         access:
-          - isAuthenticated()
+          - isAnonymous()
     reject-not-found: false
     redirect:
       prior-to-login: true
@@ -85,46 +79,7 @@ datasources:
 check-ins:
   application:
     name: "OCI Check-ins"
-    google-api:
-      delegated-user: ${ GSUITE_SUPER_ADMIN }
-      scopes:
-        scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
-        scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
-    feedback:
-      max-suggestions: 6
-      notifications:
-        subject: "Feedback request"
-        content: "You have received a feedback request. Please go to the "
   web-address: ${ WEB_ADDRESS }
----
-flyway:
-  enabled: enabled
-  datasources:
-    default:
-      locations: "classpath:db/common"
-      placeholder-replacement: true
-      placeholders:
-        aeskey: ${ AES_KEY }
----
-service-account-credentials:
-  directory_id: ${ DIRECTORY_ID }
-  type: ${ TYPE }
-  project_id: ${ PROJECT_ID }
-  private_key_id: ${ PRIVATE_KEY_ID }
-  private_key: ${ PRIVATE_KEY }
-  client_email: ${ CLIENT_EMAIL }
-  client_id: ${ CLIENT_ID }
-  auth_uri: ${ AUTH_URI }
-  token_uri: ${ TOKEN_URI }
-  auth_provider_x509_cert_url: ${ AUTH_PROVIDER_X509_CERT_URL }
-  client_x509_cert_url: ${ CLIENT_X509_CERT_URL }
-  oauth_client_id: ${ OAUTH_CLIENT_ID }
-  oauth_client_secret: ${ OAUTH_CLIENT_SECRET }
----
-ehcache:
-  caches:
-    photo-cache:
-      enabled: true
 ---
 mail-jet:
   from_address: ${ FROM_ADDRESS }

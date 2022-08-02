@@ -34,7 +34,7 @@ public class HomeController {
      * Forwards any unmapped paths (except those containing a period) to the client {@code index.html}.
      * @return forward to client {@code index.html}.
      */
-    @Get("/{path:^(?!onboard)[^\\.]*}")
+    @Get("/{path:[^\\.]*}")
     public Optional<StreamedFile> forward(String path) {
         return environment.getResource("public/index.html").map(StreamedFile::new);
     }
