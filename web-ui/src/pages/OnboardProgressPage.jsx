@@ -4,7 +4,11 @@ import { Link, useHistory } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+
 import {
   Button,
   Modal,
@@ -31,16 +35,39 @@ const modalBoxStyle = {
   m: 2,
 };
 
+const modalBoxStyleMini = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "25%",
+  backgroundColor: "#fff",
+  border: "2px solid #000",
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+  m: 2,
+};
+
 export default function OnboardProgressPage() {
   const [open, setOpen] = useState(false);
   const [empFile, setEmpFile] = useState(" ");
   const [offer, setOfferFile] = useState(" ");
+  const [addOnboardeeModal, setAddOnboardeeModal] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    setEmpFile("");
-    setOfferFile("");
+    setEmpFile(" ");
+    setOfferFile(" ");
+  };
+  const handleSubmitClose = () => {
+    setOpen(false);
+    setAddOnboardeeModal(true);
+  };
+  const handleMsgModalClose = () => {
+    setAddOnboardeeModal(false);
   };
   const handleEmployeeAgreement = (e) => {
     setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
@@ -156,7 +183,25 @@ export default function OnboardProgressPage() {
   return (
     <div className="onboard-page">
       <Box sx={{ height: 400, width: "60%", mt: "5%" }}>
-        <Button onClick={handleOpen} variant="contained" sx={{ ml: "64%" }}>
+        <TextField
+          id="input-with-icon-textfield"
+          label="Search Onboardees"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          variant="standard"
+        />
+
+        <Button
+          onClick={handleOpen}
+          variant="contained"
+          sx={{ ml: "64%" }}
+          startIcon={<PersonAddIcon />}
+        >
           Add Onboardee
         </Button>
         <Modal
@@ -325,9 +370,30 @@ export default function OnboardProgressPage() {
                 xs={6}
                 style={{ display: "flex", justifyContent: "flex-end" }}
               >
-                <Button variant="contained">Submit</Button>
+                <Button variant="contained" onClick={handleSubmitClose}>
+                  Submit
+                </Button>
               </Grid>
             </Grid>
+          </Box>
+        </Modal>
+        <Modal
+          open={addOnboardeeModal}
+          onClose={handleClose}
+          aria-labelledby="title"
+          aria-describedby="description"
+        >
+          <Box sx={modalBoxStyleMini}>
+            <div style={{textAlign:"center",marginLeft:"auto", marginRight:"auto", marginTop:"auto", marginBottom:"auto"}}>
+              <Typography variant="p" component="h3">
+                Onboardee added!
+              </Typography>
+            </div>
+            <div >
+              <Button variant="contained" onClick={handleMsgModalClose} style={{display:"flex", justifyContent:"centered", gap:"10px"}}>
+                Okay
+              </Button>
+            </div>
           </Box>
         </Modal>
         <DataGrid

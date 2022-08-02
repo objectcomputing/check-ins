@@ -1,0 +1,5 @@
+{
+  "email": true,
+  "password": true,
+  "confirmPassword": true
+}
