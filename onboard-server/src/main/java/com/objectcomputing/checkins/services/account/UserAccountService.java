@@ -15,36 +15,36 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Random;
 
-import static com.objectcomputing.geoai.platform.account.model.UserAuthorizationCode.DEFAULT_TIME_TO_LIVE;
+import static com.objectcomputing.checkins.services.model.LoginAuthorizationCode.DEFAULT_TIME_TO_LIVE;
 
 @Singleton
 public class UserAccountService {
     private static final long CODE_LENGTH = 5;
 
-    private final UserAccountRepository userAccountRepository;
+    private final LoginAccountRepository loginAccountRepository;
     private final LocalUserCredentialsRepository localUserCredentialsRepository;
     private final Srp6ClientSecretsFactory secretsFactory;
-    private final UserAuthorizationCodeRepository userAuthorizationCodeRepository;
+    private final LoginAuthorizationCodeRepository loginAuthorizationCodeRepository;
     private final AccountInitializationServices accountInitializationServices;
     private final AccountCommunicationService accountCommunicationService;
 
-    public UserAccountService(UserAccountRepository userAccountRepository,
+    public UserAccountService(LoginAccountRepository loginAccountRepository,
                               LocalUserCredentialsRepository localUserCredentialsRepository,
                               Srp6ClientSecretsFactory secretsFactory,
-                              UserAuthorizationCodeRepository userAuthorizationCodeRepository,
+                              LoginAuthorizationCodeRepository loginAuthorizationCodeRepository,
                               AccountInitializationServices accountInitializationServices,
                               AccountCommunicationService accountCommunicationService) {
 
-        this.userAccountRepository = userAccountRepository;
+        this.loginAccountRepository = loginAccountRepository;
         this.localUserCredentialsRepository = localUserCredentialsRepository;
         this.secretsFactory = secretsFactory;
-        this.userAuthorizationCodeRepository = userAuthorizationCodeRepository;
+        this.loginAuthorizationCodeRepository = loginAuthorizationCodeRepository;
         this.accountInitializationServices = accountInitializationServices;
         this.accountCommunicationService = accountCommunicationService;
     }
 
     public Mono<UserAccount> createUserAccountWithCredentials(LoginConfig loginConfig, Organization organization) {
-        return userAccountRepository.save(
+        return loginAccountRepository.save(
                 new UserAccount(organization, loginConfig.getEmailAddress(), AccountState.Active, AccountRole.OrganizationOwner, Instant.now()))
 
                 .flatMap(userAccount -> saveUserAccountCredentials(loginConfig, userAccount)
@@ -59,11 +59,11 @@ public class UserAccountService {
     }
 
     public Mono<Boolean> checkEmailAddressInUse(Organization organization, String emailAddress) {
-        return userAccountRepository.isEmailAddressInUse(organization.getId(), emailAddress);
+        return loginAccountRepository.isEmailAddressInUse(organization.getId(), emailAddress);
     }
 
     public Mono<UserAccount> createUserAccountWithoutCredentials(LoginConfig loginConfig, Organization organization) {
-        return userAccountRepository.save(createUserAccount(loginConfig, organization))
+        return loginAccountRepository.save(createUserAccount(loginConfig, organization))
                 .flatMap(userAccount -> {
                     return createActivationCodeAndNotification(userAccount)
                             .thenReturn(userAccount);
@@ -77,7 +77,7 @@ public class UserAccountService {
 
     public Mono<Object> createActivationCodeAndNotification(UserAccount userAccount) {
         return Mono.just(generateUserAuthorizationCode(userAccount))
-                .flatMap(activationCodeInputs -> userAuthorizationCodeRepository.save(activationCodeInputs.getT1())
+                .flatMap(activationCodeInputs -> loginAuthorizationCodeRepository.save(activationCodeInputs.getT1())
                         .flatMap(activationCode -> sendUserAccountNotification(userAccount, activationCodeInputs.getT2())));
     }
 
@@ -120,7 +120,7 @@ public class UserAccountService {
     public Mono<UserAccount> activateUserAccount(UserAccount userAccount, LoginConfig loginConfig) {
         return saveUserAccountCredentials(loginConfig, userAccount)
                 .flatMap(credentials ->
-                        userAuthorizationCodeRepository.consumeAuthorizationCodes(userAccount.getId(), LoginAuthorizationPurpose.Activation))
+                        loginAuthorizationCodeRepository.consumeAuthorizationCodes(userAccount.getId(), LoginAuthorizationPurpose.Activation))
                 .flatMap(updateCount -> accountInitializationServices.initializeAccount(userAccount, loginConfig))
                 .thenReturn(userAccount);
     }

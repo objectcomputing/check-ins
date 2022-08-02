@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.security.authentication.srp6.client;
 
 import com.nimbusds.srp6.*;
-import com.objectcomputing.geoai.security.authentication.srp6.Srp6Challenge;
-import com.objectcomputing.geoai.security.authentication.srp6.config.Srp6EncryptionConfiguration;
+import com.objectcomputing.checkins.security.authentication.srp6.Srp6Challenge;
+import com.objectcomputing.checkins.security.authentication.srp6.config.Srp6EncryptionConfiguration;
 import io.micronaut.context.annotation.Factory;
 
 import java.util.Optional;

@@ -14,42 +14,42 @@ import java.util.UUID;
 @Controller("/platform/api/administration/account")
 public class AdministrationAccountController {
 
-    private final UserAccountRepository userAccountRepository;
-    private final UserAuthorizationCodeRepository userAuthorizationCodeRepository;
+    private final LoginAccountRepository loginAccountRepository;
+    private final LoginAuthorizationCodeRepository loginAuthorizationCodeRepository;
     private final UserAccountConverter userAccountConverter;
 
-    public AdministrationAccountController(UserAccountRepository userAccountRepository,
-                                           UserAuthorizationCodeRepository userAuthorizationCodeRepository,
+    public AdministrationAccountController(LoginAccountRepository loginAccountRepository,
+                                           LoginAuthorizationCodeRepository loginAuthorizationCodeRepository,
                                            UserAccountConverter userAccountConverter) {
-        this.userAccountRepository = userAccountRepository;
-        this.userAuthorizationCodeRepository = userAuthorizationCodeRepository;
+        this.loginAccountRepository = loginAccountRepository;
+        this.loginAuthorizationCodeRepository = loginAuthorizationCodeRepository;
         this.userAccountConverter = userAccountConverter;
     }
 
     @Get("/{userAccountId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Mono<SharableLoginAccount> get(UUID userAccountId) {
-        return userAccountRepository.findById(userAccountId).flatMap(userAccountConverter::convert);
+        return loginAccountRepository.findById(userAccountId).flatMap(userAccountConverter::convert);
     }
 
     @Get("/organization")
     @Produces(MediaType.APPLICATION_JSON)
     public Flux<Organization> getOrganizationsByQuery(@QueryValue("emailAddress") String emailAddress) {
-        return userAccountRepository.findByEmailAddress(emailAddress)
+        return loginAccountRepository.findByEmailAddress(emailAddress)
                 .map(UserAccount::getOrganization);
     }
 
     @Get("/{emailAddress}}/organization")
     @Produces(MediaType.APPLICATION_JSON)
     public Flux<Organization> getOrganizations(String emailAddress) {
-        return userAccountRepository.findByEmailAddress(emailAddress)
+        return loginAccountRepository.findByEmailAddress(emailAddress)
                 .map(UserAccount::getOrganization);
     }
 
     @Get("/{userAccountId}/authorizations")
     @Produces(MediaType.APPLICATION_JSON)
     public Flux<LoginAuthorizationCode> getAuthorizationCodes(UUID userAccountId) {
-        return userAuthorizationCodeRepository.findAllByUserAccountId(userAccountId);
+        return loginAuthorizationCodeRepository.findAllByUserAccountId(userAccountId);
     }
 
     @Get("/{userAccountId}/authorizations/active")
@@ -59,9 +59,9 @@ public class AdministrationAccountController {
 
         if(purposeString.isPresent()) {
             LoginAuthorizationPurpose purpose = LoginAuthorizationPurpose.valueOf(purposeString.get());
-            return userAuthorizationCodeRepository.findActiveUserAuthorizationCodesByUserAccountIdAndPurpose(userAccountId, purpose);
+            return loginAuthorizationCodeRepository.findActiveUserAuthorizationCodesByUserAccountIdAndPurpose(userAccountId, purpose);
         } else {
-            return userAuthorizationCodeRepository.findAllActiveUserAuthorizationCodesByUserAccountId(userAccountId);
+            return loginAuthorizationCodeRepository.findAllActiveUserAuthorizationCodesByUserAccountId(userAccountId);
         }
     }
 
@@ -71,7 +71,7 @@ public class AdministrationAccountController {
                                                               @QueryValue("purpose") String purposeString) {
         LoginAuthorizationPurpose purpose = LoginAuthorizationPurpose.valueOf(purposeString);
 
-        return userAuthorizationCodeRepository
+        return loginAuthorizationCodeRepository
                 .hasAnActiveUserAuthorizationCodesByUserAccountIdAndPurpose(userAccountId, purpose);
     }
 }
