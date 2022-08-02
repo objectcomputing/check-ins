@@ -45,7 +45,6 @@ public class EmploymentHistoryControllerTest extends TestContainersSuite
         final HttpResponse<EmploymentHistoryDTO> response = client.toBlocking().exchange(request,
                 EmploymentHistoryDTO.class);
 
-        LOG.info(response.body().toString());
         assertHistoryEqual(employmentHistory, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
     }

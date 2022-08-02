@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.employmenthistory;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +42,15 @@ public class EmploymentHistoryController {
         this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
+    @Get("/{id}")
+    public Mono<HttpResponse<EmploymentHistoryDTO>> getById(UUID id) {
+        return Mono.fromCallable(() -> employmentHistoryServices.getById(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(profile -> (HttpResponse<EmploymentHistoryDTO>) HttpResponse.ok(fromEntity(profile))
+                        .headers(headers -> headers.location(location(profile.getId()))))
+                .subscribeOn(scheduler);
+    }
+
     @Get("/{?id,company,companyAddress,jobTitle,startDate,endDate,reason}")
     public Mono<HttpResponse<List<EmploymentHistoryDTO>>> findByValue(@Nullable UUID id,
             @Nullable String company,
@@ -59,7 +69,11 @@ public class EmploymentHistoryController {
                 }).subscribeOn(scheduler);
     }
 
-    private EmploymentHistoryDTO fromEntity(EmploymentHistory entity){
+    protected URI location(UUID id) {
+        return URI.create("/employment_history/" + id);
+    }
+
+    private EmploymentHistoryDTO fromEntity(EmploymentHistory entity) {
         EmploymentHistoryDTO dto = new EmploymentHistoryDTO();
         dto.setId(entity.getId());
         dto.setCompany(entity.getCompany());
@@ -70,6 +84,7 @@ public class EmploymentHistoryController {
         dto.setReason(entity.getReason());
         return dto;
     }
+
     private EmploymentHistory fromDTO(EmploymentHistoryDTO dto) {
         return new EmploymentHistory(dto.getId(), dto.getCompany(), dto.getCompanyAddress(), dto.getJobTitle(),
                 dto.getStartDate(), dto.getEndDate(), dto.getReason());
