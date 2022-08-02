@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.demographics.DemographicsRepository;
+import com.objectcomputing.checkins.services.education.EducationRepository;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionRepository;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
@@ -177,5 +178,9 @@ public interface RepositoryFixture {
 
     default OnboardingProfileRepository getOnboardingProfileRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(OnboardingProfileRepository.class);
+    }
+
+    default EducationRepository getEducationRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(EducationRepository.class);
     }
 }
