@@ -13,9 +13,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.mortbay.util.ajax.JSON;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -70,7 +68,6 @@ public class DocumentController {
     }
 
     @Post
-    //@Post
     public String completedFileUpload() throws IOException {
         // Create document's JSONObject
         JSONObject data = new JSONObject();
@@ -100,7 +97,7 @@ public class DocumentController {
 //        fos.flush();
 //        fos.close();
 
-        data.put("file_from_url", "https://s29.q4cdn.com/816090369/files/doc_downloads/test.pdf");
+          data.put("file_from_url", "https://s29.q4cdn.com/816090369/files/doc_downloads/test.pdf");
 //        data.put("file_from_content", "pdf_encoded_base64");
 //        data.put("file_from_content_name", filePath+newFileName);
 //        data.put("name", newFileName);

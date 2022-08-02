@@ -26,13 +26,14 @@ micronaut {
     }
 }
 
-configurations {
+configurations.all {
     // for dependencies that are needed for development only
     developmentOnly
     publicResources
 }
 
 dependencies {
+    implementation("io.micronaut.serde:micronaut-serde-jsonp:1.1.2-SNAPSHOT")
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")

@@ -1,27 +1,16 @@
 package com.objectcomputing.checkins.services.onboard.signrequest;
 
-import com.nimbusds.jose.shaded.json.parser.JSONParser;
-import io.micronaut.http.HttpRequest;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.MutableHttpRequest;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Inject;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.mortbay.util.ajax.JSON;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.*;
-
-import static io.micronaut.http.HttpRequest.POST;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Inject;
 
 @Controller()
 @Secured(SecurityRule.IS_ANONYMOUS)
@@ -43,6 +32,8 @@ public class SignRequestController {
         request.setMessage("Please sign this document. \n\nThanks!");
         String [] signers = {"li.brandon@outlook.com"};
         request.setSigners(signers);
+
+        // 1.5) Convert DTO to JSON
 
         // 2) Construct appropriate JSON file
 

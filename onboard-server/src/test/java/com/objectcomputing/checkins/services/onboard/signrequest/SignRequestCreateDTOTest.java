@@ -22,7 +22,7 @@ public class SignRequestCreateDTOTest {
         SignRequestDTO dto = new SignRequestDTO();
 
         assertNull(dto.getEmail());
-        assertNull(dto.getFile());
+        assertNull(dto.getDocument());
         assertNull(dto.getName());
         assertNull(dto.getFromEmail());
         assertNull(dto.getMessage());
@@ -51,8 +51,8 @@ public class SignRequestCreateDTOTest {
         dto.setEmail("some.file.email");
         assertEquals(dto.getEmail(), "some.file.email");
 
-        dto.setFile("some.file.file");
-        assertEquals(dto.getFile(), "some.file.file");
+        dto.setDocument("some.file.file");
+        assertEquals(dto.getDocument(), "some.file.file");
 
         dto.setName("some.file.name");
         assertEquals(dto.getName(), "some.file.name");
