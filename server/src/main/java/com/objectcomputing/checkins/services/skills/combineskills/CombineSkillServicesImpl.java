@@ -1,38 +1,39 @@
 package com.objectcomputing.checkins.services.skills.combineskills;
 
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillServices;
-import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
 import jakarta.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
+import static com.objectcomputing.checkins.util.Validation.validate;
+
 @Singleton
 public class CombineSkillServicesImpl implements CombineSkillServices {
 
     private final SkillServices skillServices;
     private final MemberSkillServices memberSkillServices;
-    private final PermissionsValidation permissionsValidation;
     private final CurrentUserServices currentUserServices;
 
     public CombineSkillServicesImpl(SkillServices skillServices,
                                     MemberSkillServices memberSkillServices,
-                                    PermissionsValidation permissionsValidation,
                                     CurrentUserServices currentUserServices) {
         this.skillServices = skillServices;
         this.memberSkillServices = memberSkillServices;
-        this.permissionsValidation = permissionsValidation;
         this.currentUserServices = currentUserServices;
     }
 
     public Skill combine(@NotNull @Valid CombineSkillsDTO skillDTO) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        validate(isAdmin).orElseThrow(() -> {
+            throw new PermissionException("User is unauthorized to do this operation");
+        });
 
         Set<Skill> existingSkills = skillServices.findByValue(skillDTO.getName(), null);
         for (Skill existingSkill : existingSkills) {

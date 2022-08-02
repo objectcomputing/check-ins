@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.validate.Validation.validate;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class CheckInServicesImpl implements CheckInServices {

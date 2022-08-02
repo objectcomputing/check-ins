@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
-import static com.objectcomputing.checkins.services.validate.Validation.validate;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class TeamServicesImpl implements TeamServices {

@@ -12,7 +12,7 @@ import jakarta.inject.Singleton;
 import java.io.IOException;
 import java.util.*;
 
-import static com.objectcomputing.checkins.services.validate.Validation.validate;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class EmployeeHoursServicesImpl implements EmployeeHoursServices{

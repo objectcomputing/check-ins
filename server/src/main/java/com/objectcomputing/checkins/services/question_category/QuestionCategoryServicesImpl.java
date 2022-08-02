@@ -9,11 +9,10 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.validate.Validation.validate;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class QuestionCategoryServicesImpl implements QuestionCategoryServices {

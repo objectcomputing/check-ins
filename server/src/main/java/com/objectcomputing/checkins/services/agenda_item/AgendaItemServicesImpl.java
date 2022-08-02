@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
-import static com.objectcomputing.checkins.services.validate.Validation.validate;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class AgendaItemServicesImpl implements AgendaItemServices {

@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.validate.Validation.validate;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class SurveyServicesImpl implements SurveyService {

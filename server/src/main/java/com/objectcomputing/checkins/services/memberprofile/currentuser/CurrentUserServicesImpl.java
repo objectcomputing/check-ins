@@ -15,7 +15,7 @@ import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-import static com.objectcomputing.checkins.services.validate.Validation.validate;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {

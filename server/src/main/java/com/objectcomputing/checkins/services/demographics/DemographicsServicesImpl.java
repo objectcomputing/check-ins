@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
-import static com.objectcomputing.checkins.services.validate.Validation.validate;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class DemographicsServicesImpl implements DemographicsServices{

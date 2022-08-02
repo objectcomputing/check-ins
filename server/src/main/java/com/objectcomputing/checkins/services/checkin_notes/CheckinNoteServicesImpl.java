@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
-import static com.objectcomputing.checkins.services.validate.Validation.validate;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class CheckinNoteServicesImpl implements CheckinNoteServices {
@@ -51,13 +51,12 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
 
-        if (checkinRecord == null) {
-            throw new NotFoundException(String.format("CheckIn %s doesn't exist", checkinId));
-        }
-
-        if (!checkinServices.accessGranted(checkinId, currentUser.getId())) {
+        validate(checkinRecord != null).orElseThrow(() -> {
+            throw new NotFoundException("CheckIn %s doesn't exist", checkinId);
+        });
+        validate(checkinServices.accessGranted(checkinId, currentUser.getId())).orElseThrow(() -> {
             throw new PermissionException("You do not have permission to access this resource");
-        }
+        });
 
         validate(createById != null).orElseThrow(() -> {
             throw new BadArgException("Invalid checkin note %s", checkinNote);

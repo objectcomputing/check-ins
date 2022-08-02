@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.validate;
+package com.objectcomputing.checkins.util;
 
 import jakarta.inject.Singleton;
 
