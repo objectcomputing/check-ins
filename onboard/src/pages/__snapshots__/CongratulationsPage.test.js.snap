@@ -159,7 +159,7 @@ exports[`renders correctly 1`] = `
   >
     <img
       alt="Cake"
-      class="cake"
+      className="cake"
       padding={30}
       src="cake.png"
     />
