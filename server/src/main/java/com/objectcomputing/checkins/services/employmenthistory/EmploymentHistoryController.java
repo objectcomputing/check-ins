@@ -6,9 +6,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Consumes;
@@ -35,9 +32,6 @@ public class EmploymentHistoryController {
     private final EmploymentHistoryServices employmentHistoryServices;
     private final EventLoopGroup eventLoopGroup;
     private final Scheduler scheduler;
-
-    private static final Logger LOG = LoggerFactory.getLogger(EmploymentHistoryController.class);
-
 
     public EmploymentHistoryController(EmploymentHistoryServices employmentHistoryServices,
             EventLoopGroup eventLoopGroup,
