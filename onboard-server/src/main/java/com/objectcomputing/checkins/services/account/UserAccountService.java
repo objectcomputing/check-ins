@@ -43,26 +43,26 @@ public class UserAccountService {
         this.accountCommunicationService = accountCommunicationService;
     }
 
-    public Mono<UserAccount> createUserAccountWithCredentials(LoginConfig loginConfig, Organization organization) {
+    public Mono<LoginAccount> createUserAccountWithCredentials(LoginConfig loginConfig) {
         return loginAccountRepository.save(
-                new UserAccount(organization, loginConfig.getEmailAddress(), AccountState.Active, AccountRole.OrganizationOwner, Instant.now()))
+                new LoginAccount( loginConfig.getEmailAddress(), AccountState.Active, AccountRole.OrganizationOwner, Instant.now()))
 
                 .flatMap(userAccount -> saveUserAccountCredentials(loginConfig, userAccount)
                             .flatMap(credentials -> accountInitializationServices.initializeAccount(userAccount, loginConfig))
                             .flatMap(unknown -> Mono.just(userAccount)));
     }
 
-    private Mono<LocalUserCredentials> saveUserAccountCredentials(loginConfig loginConfig, UserAccount userAccount) {
+    private Mono<LocalUserCredentials> saveUserAccountCredentials(LoginConfig loginConfig, LoginAccount userAccount) {
         return localUserCredentialsRepository.save(
                 new LocalUserCredentials(
                         userAccount, loginConfig.getSalt(), loginConfig.getPrimaryVerifier()));
     }
 
-    public Mono<Boolean> checkEmailAddressInUse(Organization organization, String emailAddress) {
+    public Mono<Boolean> checkEmailAddressInUse(String emailAddress) {
         return loginAccountRepository.isEmailAddressInUse(organization.getId(), emailAddress);
     }
 
-    public Mono<UserAccount> createUserAccountWithoutCredentials(LoginConfig loginConfig, Organization organization) {
+    public Mono<LoginAccount> createUserAccountWithoutCredentials(LoginConfig loginConfig, Organization organization) {
         return loginAccountRepository.save(createUserAccount(loginConfig, organization))
                 .flatMap(userAccount -> {
                     return createActivationCodeAndNotification(userAccount)
@@ -70,29 +70,29 @@ public class UserAccountService {
                 });
     }
 
-    private UserAccount createUserAccount(LoginConfig loginConfig, Organization organization) {
-        return new UserAccount(
+    private LoginAccount createUserAccount(LoginConfig loginConfig, Organization organization) {
+        return new LoginAccount(
                 organization, loginConfig.getEmailAddress(), AccountState.Pending, AccountRole.OrganizationMember, Instant.now());
     }
 
-    public Mono<Object> createActivationCodeAndNotification(UserAccount userAccount) {
+    public Mono<Object> createActivationCodeAndNotification(LoginAccount userAccount) {
         return Mono.just(generateUserAuthorizationCode(userAccount))
                 .flatMap(activationCodeInputs -> loginAuthorizationCodeRepository.save(activationCodeInputs.getT1())
                         .flatMap(activationCode -> sendUserAccountNotification(userAccount, activationCodeInputs.getT2())));
     }
 
-    private Mono<Object> sendUserAccountNotification(UserAccount userAccount, String code) {
+    private Mono<Object> sendUserAccountNotification(LoginAccount userAccount, String code) {
         return accountCommunicationService.sendEmail(
                 "GeoAI Account Invitation", List.of(userAccount.getEmailAddress()),
                 "You are invited to join GeoAI workspace " + userAccount.getOrganization().getWorkspace()
                         + ".geoai.app.  You have 15 minutes to activate your account.  Your code is " + code) ;
     }
 
-    private Mono<Object> initializeAccount(LoginConfig loginConfig, UserAccount inviteeUserAccount) {
+    private Mono<Object> initializeAccount(LoginConfig loginConfig, LoginAccount inviteeUserAccount) {
         return accountInitializationServices.initializeAccount(inviteeUserAccount, loginConfig);
     }
 
-    private Tuple2<LoginAuthorizationCode,String> generateUserAuthorizationCode(UserAccount userAccount) {
+    private Tuple2<LoginAuthorizationCode,String> generateUserAuthorizationCode(LoginAccount userAccount) {
         final String code = generateActivationCode();
 
         final Srp6Secrets secrets = secretsFactory.generateSecrets(userAccount.getEmailAddress(), code);
@@ -112,12 +112,12 @@ public class UserAccountService {
                 .toString();
     }
 
-    private LoginAuthorizationCode createUserAuthorizationCode(UserAccount userAccount, String salt, String verifier) {
+    private LoginAuthorizationCode createUserAuthorizationCode(LoginAccount userAccount, String salt, String verifier) {
         return new LoginAuthorizationCode(userAccount, salt, verifier, LoginAuthorizationPurpose.Activation,
                 LoginAuthorizationSource.WorkspaceInvitation, Instant.now(), DEFAULT_TIME_TO_LIVE);
     }
 
-    public Mono<UserAccount> activateUserAccount(UserAccount userAccount, LoginConfig loginConfig) {
+    public Mono<LoginAccount> activateUserAccount(LoginAccount userAccount, LoginConfig loginConfig) {
         return saveUserAccountCredentials(loginConfig, userAccount)
                 .flatMap(credentials ->
                         loginAuthorizationCodeRepository.consumeAuthorizationCodes(userAccount.getId(), LoginAuthorizationPurpose.Activation))
