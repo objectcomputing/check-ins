@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
@@ -47,12 +47,25 @@ export default function OnboardProgressDetailPage() {
     getData();
   }, []);
 
+  const history = useHistory();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [openEdit, setOpenEdit] = useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
+  const [openDel, setOpenDel] = useState(false);
+  const handleDel = () => setOpenDel(!openDel);
+  const [openDelConf, setOpenDelConf] = useState(false);
+  const handleReturn = () => {
+    history.push({ pathname: `/onboard/progress` })
+  };
+  //handleDelSubmit will do more when the back-end is set-up
+  //Will need it to delete user data and notifications
+  const handleDelSubmit = () => {
+    setOpenDel(!openDel);
+    setOpenDelConf(!openDelConf);
+  };
   const accordionArr = [
     {
       title: "Personal Information",
@@ -217,6 +230,44 @@ export default function OnboardProgressDetailPage() {
                 </div>
               </Box>
             </Modal>
+            <Modal open={openDel}>
+              <Box sx={modalStyle}>
+                <div>
+                  <Typography sx={{ textAlign: 'center' }}>
+                    Warning! If you confirm, this user WILL be deleted and their information will be removed from "Onboarding".
+                    This action is permanent and cannot be undone. Continue?
+                  </Typography>
+                  <Grid container sx={{ mt: 5 }}>
+                    <Grid item xs={6}>
+                      <Button variant="contained" onClick={handleDel}>
+                        Cancel
+                      </Button>
+                    </Grid>
+                    <Grid item xs={6} display="flex" justifyContent="flex-end" alignItems="flex-end">
+                      <Button variant="contained" onClick={handleDelSubmit}>
+                        Confirm
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </div>
+              </Box>
+            </Modal>
+            <Modal open={openDelConf}>
+              <Box sx={modalStyle}>
+                <div>
+                  <Typography align="center" fontSize={32}>
+                    Onboard deleted.
+                  </Typography>
+                  <Grid container sx={{ mt: 5 }}>
+                    <Grid item xs={12} align="center">
+                      <Button variant="contained" onClick={handleReturn}>
+                        Return
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </div>
+              </Box>
+            </Modal>
 
             <h1>Name: {name}</h1>
             <h1>Email: {email} </h1>
@@ -251,11 +302,11 @@ export default function OnboardProgressDetailPage() {
           </Box>
         </Grid>
         <Grid item xs={6}>
-          <Button variant="contained" href="/onboard/progress">
+          <Button variant="contained" onClick={handleReturn}>
             Back
           </Button>
         </Grid>
-        <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end"}}>
+        <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
             variant="contained"
             onClick={handleOpenEdit}
@@ -265,7 +316,7 @@ export default function OnboardProgressDetailPage() {
           </Button>
 
           <Button variant="contained">Finish Onboarding</Button>
-          <Button variant="contained">Delete</Button>
+          <Button variant="contained" onClick={handleDel}>Delete</Button>
         </Grid>
       </Grid>
     </div>
