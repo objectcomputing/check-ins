@@ -5,8 +5,8 @@ import {
   selectOrderedMemberFirstName,
   selectCurrentMembers,
 } from "../../context/selectors";
-
-import { Modal, TextField } from "@mui/material";
+import { Grid, Typography, Box, Divider } from "@mui/material";
+import { Modal, TextField, IconButton } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import DatePicker from "@mui/lab/DatePicker";
 import { format } from "date-fns";
@@ -14,6 +14,21 @@ import { Button } from "@mui/material";
 import { UPDATE_TOAST } from "../../context/actions";
 import { createOnboardee } from "../../api/onboardeeMember";
 import { useCallback } from "react";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+const modalBoxStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "75%",
+  backgroundColor: "#fff",
+  border: "2px solid #000",
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+  m: 2,
+};
 
 const emptyOnboardee = {
   employeeId: "",
@@ -25,16 +40,23 @@ const emptyOnboardee = {
   pdl: "",
 };
 
-const OnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
+const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
   const { state, dispatch } = useContext(AppContext);
-  const onboardeeProfiles = selectCurrentOnboardee(state);
+  const onboardeeProfiles = selectCurrentMembers(state);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const sortedPdls = selectOrderedPdls(state);
+  const [empFile, setEmpFile] = useState(" ");
   const [isNewOnboardee, setIsNewOnboardee] = useState(
-    Object.keys(member).length === 0 ? true : false
+    Object.keys(onboardee).length === 0 ? true : false
   );
-  const sortedOnboardees = selectOrderedOnboardeeFirstName(state);
-
+  const handleEmployeeAgreement = (e) => {
+    setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
+  };
+  const sortedOnboardees = selectOrderedMemberFirstName(state);
+  const[offer, setOfferFile] = useState(" ");
+  const handleOfferLetter = (e) => {
+    setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
+  };
   const submitOnboardeeClick = useCallback(async () => {
     onSave(editedOnboardee).then(() => {
       if (isNewOnboardee.current) {
@@ -213,10 +235,11 @@ const OnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="contained" onClock={submitOnboardeeClick}>Submit</Button>
+            <Button variant="contained" onClick={submitOnboardeeClick}>Submit</Button>
           </Grid>
         </Grid>
       </Box>
     </Modal>
   );
 };
+export default AddOnboardeeModal;
