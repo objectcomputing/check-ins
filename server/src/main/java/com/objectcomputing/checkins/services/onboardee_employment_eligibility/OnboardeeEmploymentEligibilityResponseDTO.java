@@ -106,13 +106,13 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
 
     @Override
     public String toString() {
-        return "EmploymentEligibilityDTO {" +
+        return "OnboardeeEmploymentEligibilityResponseDTO {" +
                 "id=" + id +
                 ", ageLegal ='" + ageLegal + '\'' +
                 ", usCitizen='" + usCitizen + '\'' +
                 ", visaStatus=" + visaStatus +  '\'' +
                 ", expirationDate='" + expirationDate +
-                ", felonyStatus='" + felonyStatus +
+                ", felonyStatus='" + felonyStatus + '\'' +
                 ", felonyExplanation=" + felonyExplanation +  '\'' +
                 '}';
     }

@@ -23,7 +23,7 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
     private String visaStatus;
 
     @Nullable
-    @Schema(description = "onboarde visa expiry date", nullable = true)
+    @Schema(description = "onboardee visa expiry date", nullable = true)
     private LocalDate expirationDate;
 
     @NotNull

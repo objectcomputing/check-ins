@@ -4,10 +4,14 @@ import com.objectcomputing.checkins.services.onboardee_employment_eligibility.On
 
 import java.time.LocalDate;
 
-public interface OnboardeeEmploymentEligibilityFixture extends RepositoryFixture{
+public interface OnboardeeEmploymentEligibilityFixture extends RepositoryFixture {
 
     default OnboardeeEmploymentEligibility createADefaultOnboardeeEmploymentEligibility() {
-        return getOnboardeeEmploymentEligibilityRepository().save(new OnboardeeEmploymentEligibility(true,true,"F-1",LocalDate.now(),false,""));
+
+        return getOnboardeeEmploymentEligibilityRepository().save(new OnboardeeEmploymentEligibility(true, true, "F-1", LocalDate.now(), false, "nope"));
     }
 
+    default OnboardeeEmploymentEligibility createADefaultOnboardeeEmploymentEligibility2() {
+        return getOnboardeeEmploymentEligibilityRepository().save(new OnboardeeEmploymentEligibility(true,true,"F-1",LocalDate.now(),true,"Yes felony"));
+    }
 }

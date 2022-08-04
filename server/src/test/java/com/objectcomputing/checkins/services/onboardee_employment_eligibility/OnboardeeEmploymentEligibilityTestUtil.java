@@ -25,7 +25,7 @@ public class OnboardeeEmploymentEligibilityTestUtil {
         dto.setAge(true);
         dto.setUsCitizen(true);
         dto.setVisaStatus("F-1");
-        dto.setVisaExpiry(LocalDate.now());
+        dto.setVisaExpiry(LocalDate.of(2025,02,12));
         dto.setFelonyStatus(false);
         dto.setFelonyExplanation("Say No to Felony");
         return dto;

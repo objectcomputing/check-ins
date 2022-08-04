@@ -59,11 +59,11 @@ public class OnboardeeEmploymentEligibilityController {
 
     @Get("/{?id,ageLegal,usCitizen,visaStatus,expirationDate,felonyStatus,felonyExplanation}")
     public Mono<HttpResponse<List<OnboardeeEmploymentEligibilityResponseDTO>>> findByValue(@Nullable UUID id,
-                                                                                           Boolean ageLegal,
-                                                                                           Boolean usCitizen,
+                                                                                           @Nullable Boolean ageLegal,
+                                                                                           @Nullable Boolean usCitizen,
                                                                                            @Nullable String visaStatus,
                                                                                            @Nullable LocalDate expirationDate,
-                                                                                           Boolean felonyStatus,
+                                                                                           @Nullable Boolean felonyStatus,
                                                                                            @Nullable String felonyExplanation) {
         return Mono.fromCallable(() -> onboardeeEmploymentEligibilityServices.findByValues(id, ageLegal, usCitizen, visaStatus, expirationDate, felonyStatus, felonyExplanation))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))

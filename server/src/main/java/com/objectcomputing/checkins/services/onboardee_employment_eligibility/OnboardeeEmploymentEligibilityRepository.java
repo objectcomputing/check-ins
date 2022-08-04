@@ -14,28 +14,29 @@ import java.util.UUID;
 public interface OnboardeeEmploymentEligibilityRepository extends CrudRepository<OnboardeeEmploymentEligibility, UUID> {
 
     List<OnboardeeEmploymentEligibility> findAll();
+
     @Query(value = "SELECT id, " +
-    "PGP_SYM_DECRYPT(cast(mp.ageLegal as bytea),'${aes.key}') as ageLegal, " +
-    "PGP_SYM_DECRYPT(cast(mp.usCitizen as bytea),'${aes.key}') as usCitizen, " +
-    "PGP_SYM_DECRYPT(cast(mp.visaStatus as bytea),'${aes.key}') as visaStatus, " +
-    "PGP_SYM_DECRYPT(cast(mp.expirationDate as bytea),'${aes.key}') as expirationDate, " +
-    "PGP_SYM_DECRYPT(cast(mp.felonyStatus as bytea),'${aes.key}') as felonyStatus, " +
-    "PGP_SYM_DECRYPT(cast(mp.felonyExplanation as bytea),'${aes.key}') as felonyExplanation " +
-    "FROM \"onboardee-employment-eligibility\" mp " +
-    "WHERE (:ageLegal IS NULL OR PGP_SYM_DECRYPT(cast(mp.ageLegal as bytea), '${aes.key}') = :ageLegal) " +
-            "AND  (:usCitizen IS NULL OR PGP_SYM_DECRYPT(cast(mp.usCitizen as bytea), '${aes.key}') = :usCitizen) " +
+            "ageLegal, " +
+            "usCitizen, " +
+            "PGP_SYM_DECRYPT(cast(mp.visaStatus as bytea),'${aes.key}') as visaStatus, " +
+            "PGP_SYM_DECRYPT(cast(mp.expirationDate as bytea),'${aes.key}') as expirationDate, " +
+            "felonyStatus, " +
+            "PGP_SYM_DECRYPT(cast(mp.felonyExplanation as bytea),'${aes.key}') as felonyExplanation " +
+            "FROM \"onboardee_employment_eligibility\" mp " +
+            "WHERE (:ageLegal IS NULL OR ageLegal = :ageLegal) " +
+            "AND  (:usCitizen IS NULL OR usCitizen = :usCitizen) " +
             "AND  (:visaStatus IS NULL OR PGP_SYM_DECRYPT(cast(mp.visaStatus as bytea), '${aes.key}') = :visaStatus) " +
-            "AND  (:expirationDate IS NULL OR PGP_SYM_DECRYPT(cast(mp.expirationDate as bytea), '${aes.key}') = :expirationDate) " +
-            "AND  (:felonyStatus IS NULL OR PGP_SYM_DECRYPT(cast(mp.felonyStatus as bytea), '${aes.key}') = :felonyStatus) " +
+            "AND  (CAST(:expirationDate as date) IS NULL OR CAST(PGP_SYM_DECRYPT(cast(mp.expirationDate as bytea),'${aes.key}') as date) = :expirationDate) " +
+            "AND  (:felonyStatus IS NULL OR felonyStatus = :felonyStatus) " +
             "AND  (:felonyExplanation IS NULL OR PGP_SYM_DECRYPT(cast(mp.felonyExplanation as bytea), '${aes.key}') = :felonyExplanation) ",
-    nativeQuery = true)
+            nativeQuery = true)
     List<OnboardeeEmploymentEligibility> search(
             @Nullable String id,
-            Boolean ageLegal,
-            Boolean usCitizen,
+            @Nullable Boolean ageLegal,
+            @Nullable Boolean usCitizen,
             @Nullable String visaStatus,
             @Nullable LocalDate expirationDate,
-            Boolean felonyStatus,
+            @Nullable Boolean felonyStatus,
             @Nullable String felonyExplanation
     );
 }

@@ -4,6 +4,7 @@ import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -12,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -25,40 +25,52 @@ public class OnboardeeEmploymentEligibility {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the new employee profile this entry is associated with", required = true)
+    @Schema(description = "id of the new employee profile this entry is associated with")
     private UUID id;
 
     @NotBlank
-    @Column(name = "ageLegal")
-    @Schema(description = "is the new employee 18 years old or older", required = true)
+    @Column(name = "agelegal")
+    @Schema(description = "is the new employee 18 years old or older")
     private Boolean ageLegal;
 
     @NotBlank
-    @Column(name = "usCitizen")
-    @Schema(description = "is the new employee a US citizen", required = true)
+    @Column(name = "uscitizen")
+    @Schema(description = "is the new employee a US citizen")
     private Boolean usCitizen;
 
     @Nullable
-    @Column(name = "visaStatus")
+    @Column(name = "visastatus")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(visaStatus::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Schema(description = "new employee's visa status")
     private String visaStatus;
 
     @Nullable
-    @Column(name = "expirationDate")
+    @Column(name = "expirationdate")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(expirationDate::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Schema(description = "expiration date of visa")
     private LocalDate expirationDate;
 
     @NotBlank
-    @Column(name = "felonyStatus")
-    @Schema(description = "has the new employee been convicted of a felony", required = true)
+    @Column(name = "felonystatus")
+    @Schema(description = "has the new employee been convicted of a felony")
     private Boolean felonyStatus;
 
     @Nullable
-    @Column(name = "felonyExplanation")
+    @Column(name = "felonyexplanation")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(felonyExplanation::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Schema(description = "explanation of convicted felony")
     private String felonyExplanation;
 
-    public OnboardeeEmploymentEligibility(Boolean ageLegal, Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
+    public OnboardeeEmploymentEligibility(@Nullable Boolean ageLegal, @Nullable Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, @Nullable Boolean felonyStatus, @Nullable String felonyExplanation) {
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
         this.visaStatus = visaStatus;
@@ -68,7 +80,7 @@ public class OnboardeeEmploymentEligibility {
 
     }
 
-    public OnboardeeEmploymentEligibility(UUID id, Boolean ageLegal, Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
+    public OnboardeeEmploymentEligibility(UUID id, @Nullable Boolean ageLegal, @Nullable Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, @Nullable Boolean felonyStatus, @Nullable String felonyExplanation) {
         this.id = id;
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
@@ -87,6 +99,7 @@ public class OnboardeeEmploymentEligibility {
         return id;
     }
 
+    @Nullable
     public Boolean getAgeLegal() {
         return ageLegal;
     }

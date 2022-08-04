@@ -33,11 +33,11 @@ public class OnboardeeEmploymentEligibilityServicesImpl implements OnboardeeEmpl
     @Override
     public Set<OnboardeeEmploymentEligibility> findByValues(
             @Nullable UUID id,
-            Boolean ageLegal,
-            Boolean usCitizen,
+            @Nullable Boolean ageLegal,
+            @Nullable Boolean usCitizen,
             @Nullable String visaStatus,
             @Nullable LocalDate expirationDate,
-            Boolean felonyStatus,
+            @Nullable Boolean felonyStatus,
             @Nullable String felonyExplanation) {
         HashSet<OnboardeeEmploymentEligibility> onboardee_employment_eligibility = new HashSet<>(onboardeeEmploymentEligibilityRepository.search((nullSafeUUIDToString(id)), ageLegal,
                 usCitizen, null, null, felonyStatus, null));
