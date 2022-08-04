@@ -149,7 +149,7 @@ export default function OnboardProgressPage() {
     {
       field: "notificationMsg",
       headerName: "Notification Message",
-      width: "auto",
+      flex: 1
     },
   ];
 
