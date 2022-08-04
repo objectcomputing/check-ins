@@ -1,2 +1,4 @@
-package com.objectcomputing.checkins.services.WorkPreference;public class WorkPreferenceServicesImpl {
+package com.objectcomputing.checkins.services.WorkPreference;
+
+public class WorkPreferenceServicesImpl {
 }

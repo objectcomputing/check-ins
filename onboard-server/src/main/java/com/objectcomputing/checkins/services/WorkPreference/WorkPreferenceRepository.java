@@ -1,4 +1,4 @@
 package com.objectcomputing.checkins.services.WorkPreference;
 
-public interface WorkPreferencesRepository {
+public interface WorkPreferenceRepository {
 }

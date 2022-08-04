@@ -1,2 +1,4 @@
-package com.objectcomputing.checkins.services.WorkPreference;public class WorkPreferenceResponseDTO {
+package com.objectcomputing.checkins.services.WorkPreference;
+
+public class WorkPreferenceResponseDTO {
 }
