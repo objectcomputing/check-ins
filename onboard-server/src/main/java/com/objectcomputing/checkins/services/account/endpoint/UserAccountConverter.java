@@ -1,7 +1,7 @@
-package com.objectcomputing.geoai.platform.account.endpoint;
+package com.objectcomputing.checkins.services.account.endpoint;
 
-import com.objectcomputing.geoai.platform.account.commons.SharableUserAccount;
-import com.objectcomputing.geoai.platform.account.model.UserAccount;
+import com.objectcomputing.checkins.services.commons.SharableLoginAccount;
+import com.objectcomputing.checkins.services.model.LoginAccount;
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Mono;
 
@@ -10,10 +10,10 @@ import java.util.Date;
 @Singleton
 public class UserAccountConverter {
 
-    public Mono<SharableUserAccount> convert(UserAccount userAccount) {
-        return Mono.defer(() -> Mono.just(new SharableUserAccount(
-                userAccount.getId(), userAccount.getOrganization(), userAccount.getEmailAddress(),
+    public Mono<SharableLoginAccount> convert(LoginAccount userAccount) {
+        return Mono.defer(() -> Mono.just(new SharableLoginAccount(
+                userAccount.getId(), userAccount.getEmailAddress(),
                 new Date(userAccount.getCreatedInstant().toEpochMilli()), userAccount.getState(),
-                userAccount.getRole(), userAccount.getAuthenticationMethod(), userAccount.getMemberships())));
+                userAccount.getRole())));
     }
 }

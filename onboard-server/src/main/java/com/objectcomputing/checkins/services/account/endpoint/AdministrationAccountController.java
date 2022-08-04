@@ -1,6 +1,10 @@
-package com.objectcomputing.geoai.platform.account.endpoint;
+package com.objectcomputing.checkins.services.account.endpoint;
 
-import com.objectcomputing.geoai.platform.account.commons.SharableUserAccount;
+import com.objectcomputing.checkins.services.model.LoginAccountRepository;
+import com.objectcomputing.checkins.services.model.LoginAuthorizationCode;
+import com.objectcomputing.checkins.services.model.LoginAuthorizationCodeRepository;
+import com.objectcomputing.checkins.services.commons.SharableLoginAccount;
+import com.objectcomputing.checkins.services.model.LoginAuthorizationPurpose;
 import com.objectcomputing.geoai.platform.account.model.*;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -14,12 +18,12 @@ import java.util.UUID;
 @Controller("/platform/api/administration/account")
 public class AdministrationAccountController {
 
-    private final UserAccountRepository userAccountRepository;
-    private final UserAuthorizationCodeRepository userAuthorizationCodeRepository;
+    private final LoginAccountRepository userAccountRepository;
+    private final LoginAuthorizationCodeRepository userAuthorizationCodeRepository;
     private final UserAccountConverter userAccountConverter;
 
-    public AdministrationAccountController(UserAccountRepository userAccountRepository,
-                                           UserAuthorizationCodeRepository userAuthorizationCodeRepository,
+    public AdministrationAccountController(LoginAccountRepository userAccountRepository,
+                                           LoginAuthorizationCodeRepository userAuthorizationCodeRepository,
                                            UserAccountConverter userAccountConverter) {
         this.userAccountRepository = userAccountRepository;
         this.userAuthorizationCodeRepository = userAuthorizationCodeRepository;
@@ -28,37 +32,23 @@ public class AdministrationAccountController {
 
     @Get("/{userAccountId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Mono<SharableUserAccount> get(UUID userAccountId) {
+    public Mono<SharableLoginAccount> get(UUID userAccountId) {
         return userAccountRepository.findById(userAccountId).flatMap(userAccountConverter::convert);
-    }
-
-    @Get("/organization")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Flux<Organization> getOrganizationsByQuery(@QueryValue("emailAddress") String emailAddress) {
-        return userAccountRepository.findByEmailAddress(emailAddress)
-                .map(UserAccount::getOrganization);
-    }
-
-    @Get("/{emailAddress}}/organization")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Flux<Organization> getOrganizations(String emailAddress) {
-        return userAccountRepository.findByEmailAddress(emailAddress)
-                .map(UserAccount::getOrganization);
     }
 
     @Get("/{userAccountId}/authorizations")
     @Produces(MediaType.APPLICATION_JSON)
-    public Flux<UserAuthorizationCode> getAuthorizationCodes(UUID userAccountId) {
+    public Flux<LoginAuthorizationCode> getAuthorizationCodes(UUID userAccountId) {
         return userAuthorizationCodeRepository.findAllByUserAccountId(userAccountId);
     }
 
     @Get("/{userAccountId}/authorizations/active")
     @Produces(MediaType.APPLICATION_JSON)
-    public Publisher<UserAuthorizationCode> getActiveAuthorizationCodes(UUID userAccountId,
+    public Publisher<LoginAuthorizationCode> getActiveAuthorizationCodes(UUID userAccountId,
                                                                         @QueryValue("purpose") Optional<String> purposeString) {
 
         if(purposeString.isPresent()) {
-            UserAuthorizationPurpose purpose = UserAuthorizationPurpose.valueOf(purposeString.get());
+            LoginAuthorizationPurpose purpose = LoginAuthorizationPurpose.valueOf(purposeString.get());
             return userAuthorizationCodeRepository.findActiveUserAuthorizationCodesByUserAccountIdAndPurpose(userAccountId, purpose);
         } else {
             return userAuthorizationCodeRepository.findAllActiveUserAuthorizationCodesByUserAccountId(userAccountId);
@@ -69,7 +59,7 @@ public class AdministrationAccountController {
     @Produces(MediaType.APPLICATION_JSON)
     public Mono<Boolean> hasActiveActivationAuthorizationCode(UUID userAccountId,
                                                               @QueryValue("purpose") String purposeString) {
-        UserAuthorizationPurpose purpose = UserAuthorizationPurpose.valueOf(purposeString);
+        LoginAuthorizationPurpose purpose = LoginAuthorizationPurpose.valueOf(purposeString);
 
         return userAuthorizationCodeRepository
                 .hasAnActiveUserAuthorizationCodesByUserAccountIdAndPurpose(userAccountId, purpose);

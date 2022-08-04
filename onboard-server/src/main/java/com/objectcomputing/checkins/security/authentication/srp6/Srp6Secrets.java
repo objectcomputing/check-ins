@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.security.authentication.srp6;
 
-import lombok.Data;
 
 import java.util.Objects;
 

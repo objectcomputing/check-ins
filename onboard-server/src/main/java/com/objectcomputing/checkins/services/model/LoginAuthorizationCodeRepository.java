@@ -11,9 +11,9 @@ import java.time.Instant;
 import java.util.UUID;
 
 @R2dbcRepository(dialect = Dialect.POSTGRES)
-public interface LoginAuthorizationCodeRepository extends ReactorCrudRepository<UserAuthorizationCode, UUID> {
+public interface LoginAuthorizationCodeRepository extends ReactorCrudRepository<LoginAuthorizationCode, UUID> {
 
-    Flux<UserAuthorizationCode> findAllByUserAccountId(UUID userAccountId);
+    Flux<LoginAuthorizationCode> findAllByUserAccountId(UUID userAccountId);
 
     @SuppressWarnings("SqlResolve")
     @Query(value = "SELECT uac.user_authorization_code_id, uac.user_account_id, uac.salt, uac.verifier, uac.purpose, uac.source, uac.issued_instant, uac.time_to_live, uac.consumed_instant " +
@@ -25,7 +25,7 @@ public interface LoginAuthorizationCodeRepository extends ReactorCrudRepository<
             " AND " +
             "((uac.issued_instant + (uac.time_to_live * cast('1 millisecond' as interval))) >= now())" +
             ")", nativeQuery = true)
-    Flux<UserAuthorizationCode> findAllActiveUserAuthorizationCodesByUserAccountId(UUID userAccountId);
+    Flux<LoginAuthorizationCode> findAllActiveUserAuthorizationCodesByUserAccountId(UUID userAccountId);
 
     @SuppressWarnings("SqlResolve")
     @Query(value = "SELECT uac.user_authorization_code_id, uac.user_account_id, uac.salt, uac.verifier, uac.purpose, uac.source, uac.issued_instant, uac.time_to_live, uac.consumed_instant " +
@@ -39,7 +39,7 @@ public interface LoginAuthorizationCodeRepository extends ReactorCrudRepository<
             ") " +
             "ORDER BY uac.issued_instant " +
             "LIMIT 1", nativeQuery = true)
-    Mono<UserAuthorizationCode> findActiveUserAuthorizationCodesByUserAccountIdAndPurpose(UUID userAccountId, UserAuthorizationPurpose purpose);
+    Mono<LoginAuthorizationCode> findActiveUserAuthorizationCodesByUserAccountIdAndPurpose(UUID userAccountId, LoginAuthorizationPurpose purpose);
 
     @SuppressWarnings("SqlResolve")
     @Query(value = "SELECT exists(SELECT 1 " +
@@ -51,7 +51,7 @@ public interface LoginAuthorizationCodeRepository extends ReactorCrudRepository<
             " AND " +
             "((uac.issued_instant + (uac.time_to_live * cast('1 millisecond' as interval))) >= now())" +
             "))", nativeQuery = true)
-    Mono<Boolean> hasAnActiveUserAuthorizationCodesByUserAccountIdAndPurpose(UUID userAccountId, UserAuthorizationPurpose purpose);
+    Mono<Boolean> hasAnActiveUserAuthorizationCodesByUserAccountIdAndPurpose(UUID userAccountId, LoginAuthorizationPurpose purpose);
 
     @SuppressWarnings("SqlResolve")
     @Query(value = "SELECT exists(SELECT 1 " +
@@ -63,7 +63,7 @@ public interface LoginAuthorizationCodeRepository extends ReactorCrudRepository<
             " AND " +
             "((uac.issued_instant + (uac.time_to_live * cast('1 millisecond' as interval))) < now())" +
             "))", nativeQuery = true)
-    Mono<Boolean> hasAnInactiveUserAuthorizationCodesByUserAccountIdAndPurpose(UUID userAccountId, UserAuthorizationPurpose purpose);
+    Mono<Boolean> hasAnInactiveUserAuthorizationCodesByUserAccountIdAndPurpose(UUID userAccountId, LoginAuthorizationPurpose purpose);
 
     @SuppressWarnings("SqlResolve")
     @Query(value = "SELECT count( * ) " +
@@ -75,7 +75,7 @@ public interface LoginAuthorizationCodeRepository extends ReactorCrudRepository<
             " AND " +
             "((uac.issued_instant + (uac.time_to_live * cast('1 millisecond' as interval))) < now())" +
             ")", nativeQuery = true)
-    Mono<Long> countInactiveUserAuthorizationCodesByUserAccountIdAndPurpose(UUID userAccountId, UserAuthorizationPurpose purpose);
+    Mono<Long> countInactiveUserAuthorizationCodesByUserAccountIdAndPurpose(UUID userAccountId, LoginAuthorizationPurpose purpose);
 
     @SuppressWarnings("SqlResolve")
     @Query(value = "UPDATE user_authorization_code " +
@@ -87,9 +87,9 @@ public interface LoginAuthorizationCodeRepository extends ReactorCrudRepository<
             " AND " +
             "consumed_instant is null" +
             ")", nativeQuery = true)
-    Mono<Long> consumeAuthorizationCodes(UUID userAccountId, UserAuthorizationPurpose purpose, Instant consumedInstant);
+    Mono<Long> consumeAuthorizationCodes(UUID userAccountId, LoginAuthorizationPurpose purpose, Instant consumedInstant);
 
-    default Mono<Long> consumeAuthorizationCodes(UUID userAccountId, UserAuthorizationPurpose purpose) {
+    default Mono<Long> consumeAuthorizationCodes(UUID userAccountId, LoginAuthorizationPurpose purpose) {
         return consumeAuthorizationCodes(userAccountId, purpose, Instant.now());
     }
 }
