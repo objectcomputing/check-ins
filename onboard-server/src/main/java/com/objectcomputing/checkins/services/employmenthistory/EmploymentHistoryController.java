@@ -7,12 +7,19 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.http.MediaType;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
@@ -67,6 +74,39 @@ public class EmploymentHistoryController {
                             .collect(Collectors.toList());
                     return (HttpResponse<List<EmploymentHistoryDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(scheduler);
+    }
+
+    @Post()
+    public Mono<HttpResponse<EmploymentHistoryDTO>> save(@Body @Valid EmploymentHistoryCreateDTO employmentHistory) {
+        return Mono.fromCallable(() -> employmentHistoryServices.saveHistory(fromDTO(employmentHistory)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(savedHistory -> (HttpResponse<EmploymentHistoryDTO>) HttpResponse
+                        .created(fromEntity(savedHistory))
+                        .headers(headers -> headers.location(location(savedHistory.getId()))))
+                .subscribeOn(scheduler);
+    }
+
+    @Put()
+    public Mono<HttpResponse<EmploymentHistoryDTO>> update(@Body @Valid EmploymentHistoryDTO employmentHistory) {
+        return Mono.fromCallable(() -> employmentHistoryServices.saveHistory(fromDTO(employmentHistory)))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(savedHistory -> {
+                    EmploymentHistoryDTO updatedEmploymentHistory = fromEntity(savedHistory);
+                    return (HttpResponse<EmploymentHistoryDTO>) HttpResponse
+                            .ok()
+                            .headers(headers -> headers.location(location(updatedEmploymentHistory.getId())))
+                            .body(updatedEmploymentHistory);
+                })
+                .subscribeOn(scheduler);
+
+    }
+
+    @Delete("/{id}")
+    public Mono<? extends HttpResponse<?>> delete(@NotNull UUID id) {
+        return Mono.fromCallable(() -> employmentHistoryServices.deleteHistory(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(successFlag -> (HttpResponse<?>) HttpResponse.ok())
+                .subscribeOn(scheduler);
     }
 
     protected URI location(UUID id) {
