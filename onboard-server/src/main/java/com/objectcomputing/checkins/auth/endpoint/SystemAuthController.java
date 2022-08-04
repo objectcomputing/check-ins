@@ -1,17 +1,18 @@
 package com.objectcomputing.checkins.auth.endpoint;
 
-import com.objectcomputing.geoai.core.accessor.AccessorSource;
-import com.objectcomputing.geoai.platform.account.model.UserAuthorizationCodeRepository;
-import com.objectcomputing.geoai.platform.auth.AuthSettings;
-import com.objectcomputing.geoai.platform.auth.commons.AuthenticationRequest;
-import com.objectcomputing.geoai.platform.auth.commons.ChallengeRequest;
-import com.objectcomputing.geoai.platform.auth.exceptions.AuthenticationError;
-import com.objectcomputing.geoai.platform.auth.operations.*;
+import com.objectcomputing.checkins.auth.AuthSettings;
+import com.objectcomputing.checkins.auth.commons.AuthenticationRequest;
+import com.objectcomputing.checkins.auth.commons.ChallengeRequest;
+import com.objectcomputing.checkins.auth.exceptions.AuthenticationError;
+import com.objectcomputing.checkins.auth.operations.*;
+import com.objectcomputing.checkins.security.authentication.srp6.Srp6Challenge;
+import com.objectcomputing.checkins.security.authentication.srp6.Srp6Credentials;
+import com.objectcomputing.checkins.security.authentication.token.commons.AuthorizationToken;
+import com.objectcomputing.checkins.services.commons.accessor.AccessorSource;
+import com.objectcomputing.checkins.services.model.LoginAuthorizationCodeRepository;
 import com.objectcomputing.geoai.platform.system.model.SystemAccount;
 import com.objectcomputing.geoai.platform.system.model.SystemAccountRepository;
-import com.objectcomputing.geoai.platform.token.commons.AuthorizationToken;
-import com.objectcomputing.geoai.security.authentication.srp6.Srp6Challenge;
-import com.objectcomputing.geoai.security.authentication.srp6.Srp6Credentials;
+
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.session.Session;
@@ -33,7 +34,7 @@ public class SystemAuthController {
     private final AuthSessionHandler authSessionHelper;
 
     public SystemAuthController(SystemAccountRepository systemAccountRepository,
-                                UserAuthorizationCodeRepository userAuthorizationCodeRepository,
+                                LoginAuthorizationCodeRepository userAuthorizationCodeRepository,
                                 ChallengeOperation challengeOperation,
                                 AuthenticationOperation authenticationOperation,
                                 ActivationOperation activationOperation,

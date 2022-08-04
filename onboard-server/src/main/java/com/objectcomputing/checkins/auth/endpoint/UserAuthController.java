@@ -1,16 +1,18 @@
 package com.objectcomputing.checkins.auth.endpoint;
 
+import com.objectcomputing.checkins.auth.AuthErrorCodes;
+import com.objectcomputing.checkins.auth.AuthSettings;
+import com.objectcomputing.checkins.security.authentication.token.commons.AuthorizationToken;
 import com.objectcomputing.checkins.services.commons.accessor.AccessorSource;
 import com.objectcomputing.checkins.services.commons.account.AccountState;
 import com.objectcomputing.checkins.services.account.UserAccountService;
-import com.objectcomputing.geoai.platform.account.model.*;
-import com.objectcomputing.geoai.platform.auth.AuthErrorCodes;
-import com.objectcomputing.geoai.platform.auth.AuthSettings;
-import com.objectcomputing.geoai.platform.auth.commons.*;
-import com.objectcomputing.geoai.platform.auth.exceptions.ActivationError;
-import com.objectcomputing.geoai.platform.auth.exceptions.AuthenticationError;
-import com.objectcomputing.geoai.platform.auth.operations.*;
-import com.objectcomputing.geoai.platform.token.commons.AuthorizationToken;
+import com.objectcomputing.checkins.services.model.LoginAccountRepository;
+import com.objectcomputing.checkins.services.model.LoginAuthorizationCodeRepository;
+import com.objectcomputing.checkins.services.model.*;
+import com.objectcomputing.checkins.auth.commons.*;
+import com.objectcomputing.checkins.auth.exceptions.ActivationError;
+import com.objectcomputing.checkins.auth.exceptions.AuthenticationError;
+import com.objectcomputing.checkins.auth.operations.*;
 import com.objectcomputing.checkins.security.authentication.srp6.Srp6Challenge;
 import com.objectcomputing.checkins.security.authentication.srp6.Srp6Credentials;
 import io.micronaut.http.MediaType;
@@ -28,16 +30,16 @@ public class UserAuthController {
 
     protected static final String DEFAULT_AUTH_FAILURE_MESSAGE = "Authentication failed. Credentials do not match.";
 
-    private final UserAccountRepository userAccountRepository;
-    private final UserAuthorizationCodeRepository userAuthorizationCodeRepository;
+    private final LoginAccountRepository userAccountRepository;
+    private final LoginAuthorizationCodeRepository userAuthorizationCodeRepository;
     private final UserAccountService userAccountService;
     private final ChallengeOperation challengeOperation;
     private final AuthenticationOperation authenticationOperation;
     private final AuthSessionHandler authSessionHelper;
     private final ActivationOperation activationOperation;
 
-    public UserAuthController(UserAccountRepository userAccountRepository,
-                              UserAuthorizationCodeRepository userAuthorizationCodeRepository,
+    public UserAuthController(LoginAccountRepository userAccountRepository,
+                              LoginAuthorizationCodeRepository userAuthorizationCodeRepository,
                               UserAccountService userAccountService,
                               ChallengeOperation challengeOperation,
                               AuthenticationOperation authenticationOperation,
@@ -136,12 +138,12 @@ public class UserAuthController {
         return Mono.just(LogoutResponse.success());
     }
 
-    private Mono<AuthenticatableAccount> asAuthenticatableAccount(UserAccount account) {
+    private Mono<AuthenticatableAccount> asAuthenticatableAccount(LoginAccount account) {
         return Mono.just(new AuthenticatableAccount(
                 account.getId(), AccessorSource.User, account.getIdentity(), account.getState(), account.getRole()));
     }
 
-    private Mono<ChallengeAccount> asAuthenticationChallengeAccount(UserAccount account) {
+    private Mono<ChallengeAccount> asAuthenticationChallengeAccount(LoginAccount account) {
         return Mono.just(new ChallengeAccount(
                 account.getId(), AccessorSource.User, account.getState(),
                 new Srp6Credentials(
@@ -150,9 +152,9 @@ public class UserAuthController {
                         account.getLocalUserCredentials().getPrimaryVerifier())));
     }
 
-    private Mono<ChallengeAccount> asActivationChallengeAccount(UserAccount account) {
+    private Mono<ChallengeAccount> asActivationChallengeAccount(LoginAccount account) {
         return userAuthorizationCodeRepository
-                .findActiveUserAuthorizationCodesByUserAccountIdAndPurpose(account.getId(), UserAuthorizationPurpose.Activation)
+                .findActiveUserAuthorizationCodesByUserAccountIdAndPurpose(account.getId(), LoginAuthorizationPurpose.Activation)
                 .flatMap(userAuthorizationCode ->
                         Mono.just(new ChallengeAccount(account.getId(), AccessorSource.User, account.getState(),
                                 new Srp6Credentials(
@@ -169,8 +171,8 @@ public class UserAuthController {
 
     }
 
-    private Mono<Boolean> hasInactiveAuthorizations(UserAccount account) {
-        return userAuthorizationCodeRepository.hasAnInactiveUserAuthorizationCodesByUserAccountIdAndPurpose(account.getId(), UserAuthorizationPurpose.Activation);
+    private Mono<Boolean> hasInactiveAuthorizations(LoginAccount account) {
+        return userAuthorizationCodeRepository.hasAnInactiveUserAuthorizationCodesByUserAccountIdAndPurpose(account.getId(), LoginAuthorizationPurpose.Activation);
     }
 
     private <T> Mono<T> fromOptional(Callable<Optional<T>> callable) {

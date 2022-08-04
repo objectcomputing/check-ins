@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.services.model.LoginAuthorizationCode;
 import com.objectcomputing.checkins.services.model.LoginAuthorizationCodeRepository;
 import com.objectcomputing.checkins.services.commons.SharableLoginAccount;
 import com.objectcomputing.checkins.services.model.LoginAuthorizationPurpose;
-import com.objectcomputing.geoai.platform.account.model.*;
+//import platform.account.model.*;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import org.reactivestreams.Publisher;

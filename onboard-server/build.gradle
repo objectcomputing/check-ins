@@ -11,7 +11,7 @@ rewrite {
 }
 
 version "0.6.0"
-group "com.objectcomputing.checkins.onboard"
+group "com.objectcomputing.checkins.onboard-server"
 
 repositories {
     mavenCentral()
@@ -45,6 +45,7 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security:2.5.0")
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.security:micronaut-security-oauth2")
+    implementation("io.micronaut:micronaut-session")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.micronaut.views:micronaut-views-thymeleaf")
     implementation("io.swagger.core.v3:swagger-annotations")
@@ -137,7 +138,7 @@ dependencies {
     //testImplementation "org.testcontainers:junit-jupiter:1.15.1"
     //testImplementation("org.testcontainers:postgresql")
 
-    publicResources project(':onboard')
+    publicResources project(':onboard-server')
 
     rewrite('org.openrewrite.recipe:rewrite-micronaut:1.10.0')
 }

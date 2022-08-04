@@ -10,7 +10,7 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import reactor.core.publisher.Mono;
 
-import javax.mail.Session;
+import io.micronaut.session.Session;
 
 @Singleton
 public class ChallengeOperation {

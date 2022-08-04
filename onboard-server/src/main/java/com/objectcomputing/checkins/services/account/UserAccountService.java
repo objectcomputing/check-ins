@@ -1,24 +1,20 @@
 package com.objectcomputing.checkins.services.account;
 
 import com.objectcomputing.checkins.services.account.endpoint.UserAccountConfig;
-import com.objectcomputing.checkins.account.model.*;
 import com.objectcomputing.checkins.services.commons.account.AccountRole;
+import com.objectcomputing.checkins.services.model.*;
 import com.objectcomputing.checkins.services.commons.account.AccountState;
 import com.objectcomputing.checkins.security.authentication.srp6.Srp6Secrets;
 import com.objectcomputing.checkins.security.authentication.srp6.client.Srp6ClientSecretsFactory;
-import com.objectcomputing.checkins.services.model.*;
 import jakarta.inject.Singleton;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import static com.objectcomputing.checkins.services.account.model.UserAuthorizationCode.DEFAULT_TIME_TO_LIVE;
+import static com.objectcomputing.checkins.services.model.LoginAuthorizationCode.DEFAULT_TIME_TO_LIVE;
 
 @Singleton
 public class UserAccountService {
@@ -48,7 +44,7 @@ public class UserAccountService {
 
     public Mono<LoginAccount> createUserAccountWithCredentials(UserAccountConfig userAccountConfig) {
         return userAccountRepository.save(
-                new LoginAccount( userAccountConfig.getEmailAddress(), AccountState.Active, Instant.now()))
+                new LoginAccount( userAccountConfig.getEmailAddress(), AccountState.Active, AccountRole.Account, Instant.now()))
 
                 .flatMap(userAccount -> saveUserAccountCredentials(userAccountConfig, userAccount)
                             .flatMap(credentials -> accountInitializationServices.initializeAccount(userAccount, userAccountConfig))
@@ -61,10 +57,6 @@ public class UserAccountService {
                         userAccount, userAccountConfig.getSalt(), userAccountConfig.getPrimaryVerifier()));
     }
 
-    public Mono<Boolean> checkEmailAddressInUse(String emailAddress) {
-        return userAccountRepository.isEmailAddressInUse(emailAddress);
-    }
-
     public Mono<LoginAccount> createUserAccountWithoutCredentials(UserAccountConfig userAccountConfig) {
         return userAccountRepository.save(createUserAccount(userAccountConfig))
                 .flatMap(userAccount -> {
@@ -75,7 +67,7 @@ public class UserAccountService {
 
     private LoginAccount createUserAccount(UserAccountConfig userAccountConfig) {
         return new LoginAccount(
-                userAccountConfig.getEmailAddress(), AccountState.Pending, Instant.now());
+                userAccountConfig.getEmailAddress(), AccountState.Pending, AccountRole.Account, Instant.now());
     }
 
     public Mono<Object> createActivationCodeAndNotification(LoginAccount userAccount) {
