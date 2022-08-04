@@ -30,6 +30,7 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.http.hateoas.Resource;
 import jakarta.inject.Inject;
 
 public class EmploymentHistoryControllerTest extends TestContainersSuite
@@ -70,6 +71,20 @@ public class EmploymentHistoryControllerTest extends TestContainersSuite
     }
 
     @Test
+    public void testPostWithNullCompany() {
+
+        EmploymentHistoryCreateDTO requestBody = mkCreateEmploymentHistoryDTO();
+        requestBody.setCompany(null);
+
+        final HttpRequest<EmploymentHistoryCreateDTO> request = HttpRequest.POST("", requestBody)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    }
+
+    @Test
     public void testPOSTCreateAnEmploymentHistory(){
         EmploymentHistoryDTO dto = mkUpdateEmploymentHistoryDTO();
 
@@ -81,6 +96,20 @@ public class EmploymentHistoryControllerTest extends TestContainersSuite
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(dto.getCompany(), response.body().getCompany());
         assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), "/services" + response.getHeaders().get("location"));
+    }
+
+    @Test
+    public void testPutValidationFailures() {
+
+        final HttpRequest<EmploymentHistoryDTO> request = HttpRequest.PUT("", new EmploymentHistoryDTO())
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
+
+        assertEquals(4, errors.size());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
     @Test
@@ -97,6 +126,31 @@ public class EmploymentHistoryControllerTest extends TestContainersSuite
         assertEquals(employmentHistoryDTO, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), employmentHistoryDTO.getId()), "/services" + response.getHeaders().get("location"));
+    }
+
+    @Test
+    public void testPutUpdateForEmptyInput(){
+        EmploymentHistoryDTO testEmploymentHistory = mkUpdateEmploymentHistoryDTO();
+        testEmploymentHistory.setId(null);
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("", testEmploymentHistory)
+                     .basicAuth(MEMBER_ROLE, MEMBER_ROLE)));
+
+        JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
+        assertEquals("employmentHistory.id: must not be null", error.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    }
+
+    @Test
+    public void testPUTUpdateNullEmploymentHistory() {
+
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
