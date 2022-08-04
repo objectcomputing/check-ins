@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.security.authentication.token.jwt.config;
 
-import com.objectcomputing.geoai.security.token.config.TokenConfigurationProperties;
+import com.objectcomputing.checkins.security.config.TokenConfigurationProperties;
 import io.micronaut.context.annotation.ConfigurationProperties;
 
 @ConfigurationProperties(JsonWebTokenConfigurationProperties.PREFIX)

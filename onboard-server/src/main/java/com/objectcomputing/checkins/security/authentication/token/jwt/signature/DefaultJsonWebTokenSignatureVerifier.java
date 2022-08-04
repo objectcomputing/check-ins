@@ -1,10 +1,10 @@
 package com.objectcomputing.checkins.security.authentication.token.jwt.signature;
 
 import com.nimbusds.jose.crypto.utils.ConstantTimeUtils;
-import com.objectcomputing.geoai.security.token.jwt.JsonWebTokenHeader;
-import com.objectcomputing.geoai.security.token.jwt.JsonWebTokenSignature;
-import com.objectcomputing.geoai.security.token.signature.SignatureException;
-import com.objectcomputing.geoai.security.token.signature.SignatureVerifier;
+import com.objectcomputing.checkins.security.authentication.token.jwt.JsonWebTokenHeader;
+import com.objectcomputing.checkins.security.authentication.token.jwt.JsonWebTokenSignature;
+import com.objectcomputing.checkins.security.authentication.token.jwt.signature.SignatureException;
+import com.objectcomputing.checkins.security.authentication.token.jwt.signature.SignatureVerifier;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;

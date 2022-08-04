@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.auth.filters;
 
-import com.objectcomputing.geoai.security.filters.config.SecurityFilterConfigurationProperties;
-import com.objectcomputing.geoai.security.token.jwt.SignedJsonWebToken;
-import com.objectcomputing.geoai.security.token.jwt.signature.SignedJsonWebTokenSignatureVerifier;
+import com.objectcomputing.checkins.security.filters.config.SecurityFilterConfigurationProperties;
+import com.objectcomputing.checkins.security.authentication.token.jwt.SignedJsonWebToken;
+import com.objectcomputing.checkins.security.authentication.token.jwt.signature.SignedJsonWebTokenSignatureVerifier;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
