@@ -149,7 +149,7 @@ export default function OnboardProgressPage() {
     {
       field: "notificationMsg",
       headerName: "Notification Message",
-      width: 400,
+      width: "auto",
     },
   ];
 
@@ -384,15 +384,19 @@ export default function OnboardProgressPage() {
           aria-describedby="description"
         >
           <Box sx={modalBoxStyleMini}>
-            <div style={{textAlign:"center",marginLeft:"auto", marginRight:"auto", marginTop:"auto", marginBottom:"auto"}}>
+            <div style={{ textAlign: "center", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto" }}>
               <Typography variant="p" component="h3">
                 Onboardee added!
               </Typography>
             </div>
             <div >
-              <Button variant="contained" onClick={handleMsgModalClose} style={{display:"flex", justifyContent:"centered", gap:"10px"}}>
-                Okay
-              </Button>
+              <Grid container sx={{ mt: 5 }}>
+                <Grid item xs={12} align="center">
+                  <Button variant="contained" onClick={handleMsgModalClose} style={{ display: "flex", justifyContent: "centered", gap: "10px" }}>
+                    Okay
+                  </Button>
+                </Grid>
+              </Grid>
             </div>
           </Box>
         </Modal>

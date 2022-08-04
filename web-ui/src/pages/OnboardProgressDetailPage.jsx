@@ -302,7 +302,7 @@ export default function OnboardProgressDetailPage() {
           </Box>
         </Grid>
         <Grid item xs={6}>
-          <Button variant="contained" onClick={handleReturn}>
+          <Button variant="contained" sx={{ fontSize: "1vw" }} onClick={handleReturn}>
             Back
           </Button>
         </Grid>
@@ -315,8 +315,8 @@ export default function OnboardProgressDetailPage() {
             Edit Onboardee
           </Button>
 
-          <Button variant="contained">Finish Onboarding</Button>
-          <Button variant="contained" onClick={handleDel}>Delete</Button>
+          <Button variant="contained" sx={{ fontSize: "1vw" }} >Finish Onboarding</Button>
+          <Button variant="contained" sx={{ fontSize: "1vw" }} onClick={handleDel}>Delete</Button>
         </Grid>
       </Grid>
     </div>
