@@ -70,7 +70,7 @@ public class EmploymentHistoryController {
     }
 
     protected URI location(UUID id) {
-        return URI.create("/employment_history/" + id);
+        return URI.create("/employment-history/" + id);
     }
 
     private EmploymentHistoryDTO fromEntity(EmploymentHistory entity) {

@@ -46,4 +46,18 @@ public class EmploymentHistoryServicesImpl implements EmploymentHistoryServices 
         return employment_history;
     }
 
+	@Override
+	public EmploymentHistory saveHistory(EmploymentHistory employmentHistory) {
+        if (employmentHistory.getId() == null) {
+            return employmentHistoryRepository.save(employmentHistory);
+        }
+        return employmentHistoryRepository.update(employmentHistory);
+	}
+
+	@Override
+	public Object deleteHistory(@NotNull UUID id) {
+		employmentHistoryRepository.deleteById(id);
+        return true;
+	}
+
 }
