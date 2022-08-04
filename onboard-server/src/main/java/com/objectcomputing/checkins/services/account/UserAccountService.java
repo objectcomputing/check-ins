@@ -1,11 +1,12 @@
 package com.objectcomputing.checkins.services.account;
 
-import com.objectcomputing.geoai.platform.account.endpoint.UserAccountConfig;
-import com.objectcomputing.geoai.platform.account.model.*;
-import com.objectcomputing.geoai.core.account.AccountRole;
-import com.objectcomputing.geoai.core.account.AccountState;
-import com.objectcomputing.geoai.security.authentication.srp6.Srp6Secrets;
-import com.objectcomputing.geoai.security.authentication.srp6.client.Srp6ClientSecretsFactory;
+import com.objectcomputing.checkins.services.account.endpoint.UserAccountConfig;
+import com.objectcomputing.checkins.account.model.*;
+import com.objectcomputing.checkins.services.commons.account.AccountRole;
+import com.objectcomputing.checkins.services.commons.account.AccountState;
+import com.objectcomputing.checkins.security.authentication.srp6.Srp6Secrets;
+import com.objectcomputing.checkins.security.authentication.srp6.client.Srp6ClientSecretsFactory;
+import com.objectcomputing.checkins.services.model.LocalUserCredentialsRepository;
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static com.objectcomputing.geoai.platform.account.model.UserAuthorizationCode.DEFAULT_TIME_TO_LIVE;
+import static com.objectcomputing.checkins.services.account.model.UserAuthorizationCode.DEFAULT_TIME_TO_LIVE;
 
 @Singleton
 public class UserAccountService {

@@ -1,15 +1,16 @@
 package com.objectcomputing.checkins.auth.operations;
 
 import com.nimbusds.srp6.SRP6ServerSession;
-import com.objectcomputing.geoai.core.account.AccountState;
-import com.objectcomputing.geoai.platform.auth.AuthSettings;
-import com.objectcomputing.geoai.security.authentication.srp6.Srp6Challenge;
-import com.objectcomputing.geoai.security.authentication.srp6.server.Srp6AuthenticationChallengeFactory;
-import com.objectcomputing.geoai.security.authentication.srp6.server.Srp6ServerSessionFactory;
-import io.micronaut.session.Session;
+import com.objectcomputing.checkins.services.commons.account.AccountState;
+import com.objectcomputing.checkins.auth.AuthSettings;
+import com.objectcomputing.checkins.security.authentication.srp6.Srp6Challenge;
+import com.objectcomputing.checkins.security.authentication.srp6.server.Srp6AuthenticationChallengeFactory;
+import com.objectcomputing.checkins.security.authentication.srp6.server.Srp6ServerSessionFactory;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import reactor.core.publisher.Mono;
+
+import javax.mail.Session;
 
 @Singleton
 public class ChallengeOperation {

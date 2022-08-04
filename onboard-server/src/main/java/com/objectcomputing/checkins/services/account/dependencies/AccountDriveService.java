@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.account.dependencies;
 
-import com.objectcomputing.geoai.core.http.HttpRequestUtilities;
-import com.objectcomputing.geoai.core.util.BuildableHashMap;
-import com.objectcomputing.geoai.platform.account.model.UserAccount;
+import com.objectcomputing.checkins.services.model.LoginAccount;
+import com.objectcomputing.checkins.http.HttpRequestUtilities;
+import com.objectcomputing.checkins.util.BuildableHashMap;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
@@ -23,10 +23,9 @@ public class AccountDriveService {
         this.httpClient = httpClient;
     }
 
-    public Mono<Object> initialize(UserAccount userAccount) {
+    public Mono<Object> initialize(LoginAccount userAccount) {
         Map<String, Object> profileData = new BuildableHashMap<String, Object>()
-                .build("accountId", userAccount.getId())
-                .build("organizationId", userAccount.getOrganization().getId());
+                .build("accountId", userAccount.getId());
 
         MutableHttpRequest<?> createProfileReq = HttpRequestUtilities.POST(initDrivePath, profileData);
 

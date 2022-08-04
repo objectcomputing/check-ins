@@ -1,13 +1,10 @@
 package com.objectcomputing.checkins.services.account.dependencies;
 
 import com.objectcomputing.checkins.services.model.LoginAccount;
-import com.objectcomputing.geoai.core.http.HttpRequestUtilities;
-import com.objectcomputing.geoai.core.util.BuildableHashMap;
-import com.objectcomputing.geoai.platform.account.endpoint.UserAccountConfig;
-import com.objectcomputing.geoai.platform.account.model.Organization;
-import com.objectcomputing.geoai.platform.account.model.UserAccount;
+import com.objectcomputing.checkins.http.HttpRequestUtilities;
+import com.objectcomputing.checkins.util.BuildableHashMap;
+import com.objectcomputing.checkins.services.account.endpoint.UserAccountConfig;
 import io.micronaut.context.annotation.Value;
-import io.micronaut.core.type.Argument;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;

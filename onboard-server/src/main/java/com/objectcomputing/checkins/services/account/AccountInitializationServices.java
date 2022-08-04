@@ -3,8 +3,7 @@ package com.objectcomputing.checkins.services.account;
 import com.objectcomputing.checkins.services.model.LoginAccount;
 import com.objectcomputing.checkins.services.account.dependencies.AccountDriveService;
 import com.objectcomputing.checkins.services.account.dependencies.AccountProfileService;
-import com.objectcomputing.geoai.platform.account.endpoint.UserAccountConfig;
-import com.objectcomputing.checkins.services.model.LoginAccount;
+import com.objectcomputing.checkins.services.account.endpoint.UserAccountConfig;
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Mono;
 
