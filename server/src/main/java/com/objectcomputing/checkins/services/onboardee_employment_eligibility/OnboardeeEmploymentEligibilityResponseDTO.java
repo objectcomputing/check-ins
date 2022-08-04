@@ -111,7 +111,7 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
                 ", ageLegal ='" + ageLegal + '\'' +
                 ", usCitizen='" + usCitizen + '\'' +
                 ", visaStatus=" + visaStatus +  '\'' +
-                ", expirationDate='" + expirationDate +
+                ", expirationDate=" + expirationDate +
                 ", felonyStatus='" + felonyStatus + '\'' +
                 ", felonyExplanation=" + felonyExplanation +  '\'' +
                 '}';
