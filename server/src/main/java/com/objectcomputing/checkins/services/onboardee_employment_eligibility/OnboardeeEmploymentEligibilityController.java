@@ -115,22 +115,22 @@ public class OnboardeeEmploymentEligibilityController {
     private OnboardeeEmploymentEligibilityResponseDTO fromEntity(OnboardeeEmploymentEligibility entity) {
         OnboardeeEmploymentEligibilityResponseDTO dto = new OnboardeeEmploymentEligibilityResponseDTO();
         dto.setId(entity.getId());
-        dto.setAge(entity.getAgeLegal());
+        dto.setAgeLegal(entity.getAgeLegal());
         dto.setUsCitizen(entity.getUsCitizen());
         dto.setVisaStatus(entity.getVisaStatus());
-        dto.setVisaExpiry(entity.getExpirationDate());
+        dto.setExpirationDate(entity.getExpirationDate());
         dto.setFelonyStatus(entity.getFelonyStatus());
         dto.setFelonyExplanation(entity.getFelonyExplanation());
         return dto;
     }
 
     private OnboardeeEmploymentEligibility fromDTO(OnboardeeEmploymentEligibilityResponseDTO dto) {
-        return new OnboardeeEmploymentEligibility(dto.getId(), dto.getAge(), dto.getUsCitizen(), dto.getVisaStatus(),
-                dto.getVisaExpiryDate(), dto.getFelonyStatus(), dto.getFelonyExplanation());
+        return new OnboardeeEmploymentEligibility(dto.getId(), dto.getAgeLegal(), dto.getUsCitizen(), dto.getVisaStatus(),
+                dto.getExpirationDate(), dto.getFelonyStatus(), dto.getFelonyExplanation());
     }
 
     private OnboardeeEmploymentEligibility fromDTO(OnboardeeEmploymentEligibilityCreateDTO dto) {
-        return new OnboardeeEmploymentEligibility(dto.getAge(), dto.getUsCitizen(), dto.getVisaStatus(),
+        return new OnboardeeEmploymentEligibility(dto.getAgeLegal(), dto.getUsCitizen(), dto.getVisaStatus(),
                 dto.getExpirationDate(), dto.getFelonyStatus(), dto.getFelonyExplanation());
     }
 }

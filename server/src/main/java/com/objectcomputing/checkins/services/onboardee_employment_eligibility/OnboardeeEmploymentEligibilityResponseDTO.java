@@ -51,11 +51,11 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
     }
 
     @NotNull
-    public Boolean getAge() {
+    public Boolean getAgeLegal() {
         return ageLegal;
     }
 
-    public void setAge(@NotNull Boolean ageLegal) {
+    public void setAgeLegal(@NotNull Boolean ageLegal) {
         this.ageLegal = ageLegal;
     }
 
@@ -78,11 +78,11 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
     }
 
     @Nullable
-    public LocalDate getVisaExpiryDate() {
+    public LocalDate getExpirationDate() {
         return expirationDate;
     }
 
-    public void setVisaExpiry(@Nullable LocalDate expirationDate) {
+    public void setExpirationDate(@Nullable LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -106,12 +106,12 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
 
     @Override
     public String toString() {
-        return "OnboardeeEmploymentEligibilityResponseDTO {" +
+        return "OnboardeeEmploymentEligibilityResponseDTO{" +
                 "id=" + id +
                 ", ageLegal ='" + ageLegal + '\'' +
                 ", usCitizen='" + usCitizen + '\'' +
-                ", visaStatus=" + visaStatus +  '\'' +
-                ", expirationDate=" + expirationDate +
+                ", visaStatus='" + visaStatus +  '\'' +
+                ", expirationDate='" + expirationDate +
                 ", felonyStatus='" + felonyStatus + '\'' +
                 ", felonyExplanation=" + felonyExplanation +  '\'' +
                 '}';

@@ -70,7 +70,7 @@ public class OnboardeeEmploymentEligibility {
     @Schema(description = "explanation of convicted felony")
     private String felonyExplanation;
 
-    public OnboardeeEmploymentEligibility(@Nullable Boolean ageLegal, @Nullable Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, @Nullable Boolean felonyStatus, @Nullable String felonyExplanation) {
+    public OnboardeeEmploymentEligibility(Boolean ageLegal,Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
         this.visaStatus = visaStatus;
@@ -80,7 +80,7 @@ public class OnboardeeEmploymentEligibility {
 
     }
 
-    public OnboardeeEmploymentEligibility(UUID id, @Nullable Boolean ageLegal, @Nullable Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, @Nullable Boolean felonyStatus, @Nullable String felonyExplanation) {
+    public OnboardeeEmploymentEligibility(UUID id, Boolean ageLegal, Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
         this.id = id;
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
@@ -99,7 +99,7 @@ public class OnboardeeEmploymentEligibility {
         return id;
     }
 
-    @Nullable
+
     public Boolean getAgeLegal() {
         return ageLegal;
     }

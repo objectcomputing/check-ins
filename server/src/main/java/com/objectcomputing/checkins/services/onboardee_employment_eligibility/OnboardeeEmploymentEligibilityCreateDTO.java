@@ -35,11 +35,11 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
     private String felonyExplanation;
 
     @NotNull
-    public Boolean getAge() {
+    public Boolean getAgeLegal() {
         return ageLegal;
     }
 
-    public void setAge(@NotNull Boolean ageLegal) {
+    public void setAgeLegal(@NotNull Boolean ageLegal) {
         this.ageLegal = ageLegal;
     }
 

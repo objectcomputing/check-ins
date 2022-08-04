@@ -9,15 +9,19 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OnboardeeEmploymentEligibilityControllerTest extends TestContainersSuite implements
         OnboardeeEmploymentEligibilityFixture, RoleFixture {
@@ -40,6 +44,32 @@ public class OnboardeeEmploymentEligibilityControllerTest extends TestContainers
     }
 
     @Test
+    public void testGETGetByIdNotFound() {
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+    }
+
+    @Test
+    public void testPOSTCreateANullOnboardeeProfile() {
+
+        OnboardeeEmploymentEligibilityCreateDTO onboardeeProfileCreateDTO = new OnboardeeEmploymentEligibilityCreateDTO();
+
+        final HttpRequest<OnboardeeEmploymentEligibilityCreateDTO> request = HttpRequest.
+                POST("/", onboardeeProfileCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+    @Test
     public void testPOSTCreateAOnboardeeEmploymentEligibility() {
 
         OnboardeeEmploymentEligibilityResponseDTO dto = mkUpdateOnboardeeEmploymentEligibilityResponseDTO();
@@ -50,7 +80,7 @@ public class OnboardeeEmploymentEligibilityControllerTest extends TestContainers
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(dto.getAge(), response.body().getAgeLegal());
+        assertEquals(dto.getAgeLegal(), response.body().getAgeLegal());
         assertEquals(dto.getUsCitizen(), response.body().getUsCitizen());
         assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), "/services" + response.getHeaders().get("location"));
     }
