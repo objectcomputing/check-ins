@@ -18,4 +18,8 @@ public interface EducationServices {
             @Nullable String major,
             @Nullable LocalDate completionDate,
             @Nullable String additionalInfo);
+
+    Education saveEducation(Education education);
+
+    Boolean deleteEducation(UUID id);
 }

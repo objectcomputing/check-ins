@@ -36,4 +36,18 @@ public class EducationServicesImpl implements EducationServices {
         return education;
     }
 
+	@Override
+	public Education saveEducation(Education education) {
+        if(education.getId() == null) {
+            return educationRepository.save(education);
+        }
+        return educationRepository.update(education);
+	}
+
+	@Override
+	public Boolean deleteEducation(UUID id) {
+		educationRepository.deleteById(id);
+		return true;
+	}
+
 }

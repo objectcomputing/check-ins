@@ -95,8 +95,7 @@ public class Education {
         this.additionalInfo = additionalInfo;
     }
 
-    public Education() {
-    }
+    public Education() {}
 
     public UUID getId() {
         return id;
