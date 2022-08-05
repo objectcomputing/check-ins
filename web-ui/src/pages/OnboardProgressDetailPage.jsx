@@ -244,8 +244,6 @@ export default function OnboardProgressDetailPage(onboardee){
                 }
               }}
             />
-           
-      
             <Modal open={openDel}>
               <Box sx={modalStyle}>
                 <div>
