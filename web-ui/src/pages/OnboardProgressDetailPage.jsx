@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
 import { Button, Grid } from "@mui/material";
@@ -6,10 +6,13 @@ import { DataGrid } from "@mui/x-data-grid";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
 import Accordion from "../components/accordion/Accordion";
-import EditOnboardee from "./EditOnboardee";
+import EditOnboardModal from "../components/modal/EditOnboardeeModal";
 import { isArrayPresent } from "../utils/helperFunction";
 import Modal from "@mui/material/Modal";
 import ProgressIndicator from "../components/onboard_progress/ProgressIndicator";
+import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
+import { updateOnboardee } from "../api/onboardeeMember";
+import { AppContext } from "../context/AppContext";
 
 const modalStyle = {
   position: "absolute",
@@ -26,12 +29,13 @@ const modalStyle = {
   m: 2,
 };
 
-export default function OnboardProgressDetailPage() {
+export default function OnboardProgressDetailPage(onboardee){
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
   const location = useLocation();
+  const { state, dispatch } = useContext(AppContext);
+  const { csrf , onboardeeProfiles} = state;
   const { name, email, hireType } = location.state;
-
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
 
   useEffect(() => {
@@ -49,6 +53,7 @@ export default function OnboardProgressDetailPage() {
     getData();
   }, []);
 
+  
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -202,22 +207,33 @@ export default function OnboardProgressDetailPage() {
                 </div>
               </Box>
             </Modal>
-            <Modal open={openEdit} onClose={handleCloseEdit}>
-              <Box sx={modalStyle}>
-                <div>
-                  <EditOnboardee />
-                  <div>
-                    <Button
-                      variant="contained"
-                      onClick={handleCloseEdit}
-                      sx={{ fontSize: "1vw" }}
-                    >
-                      Close
-                    </Button>
-                  </div>
-                </div>
-              </Box>
-            </Modal>
+
+            <EditOnboardModal
+              onboardee={onboardee}
+              open={openEdit}
+              onClose={handleCloseEdit}
+              onSave={async (onboardee) => {
+                let res = await updateOnboardee(onboardee, csrf);
+                let data =
+                  res.payload && res.payload.data && !res.error
+                    ? res.payload.data
+                    : null;
+                if (data) {
+                  const copy = [...onboardeeProfiles];
+                  const index = copy.findIndex(
+                    (profile) => profile.id === data.id
+                  );
+                  copy[index] = data;
+                  dispatch({
+                    type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
+                    payload: copy,
+                  });
+                  handleClose();
+                }
+              }}
+            />
+           
+      
 
             <h1>Name: {name}</h1>
             <h1>Email: {email} </h1>

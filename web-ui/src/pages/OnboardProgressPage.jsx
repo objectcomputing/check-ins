@@ -22,6 +22,7 @@ import {
 import { useState, useContext} from "react";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 import { createOnboardee } from "../api/onboardeeMember";
+import EditOnboardee from "./EditOnboardee";
 
 const modalBoxStyle = {
   position: "absolute",
