@@ -46,7 +46,7 @@ public class OnboardingProfileController {
         this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
-    /**
+    /** 
      * Find onboardee profile by id.
      *
      * @param id {@link UUID} ID of the onboardee profile
