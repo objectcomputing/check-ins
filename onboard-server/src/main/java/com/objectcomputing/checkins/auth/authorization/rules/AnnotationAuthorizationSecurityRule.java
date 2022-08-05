@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.auth.authorization.rules;
 
+import com.objectcomputing.checkins.auth.authorization.rules.annotation.AnnotationAuthorizationRuleProcessor;
+import com.objectcomputing.checkins.security.authentication.AuthenticatedActor;
+import com.objectcomputing.checkins.security.rules.config.SecurityRuleConfigurationProperties;
 import com.objectcomputing.geoai.security.authentication.AuthenticatedActor;
 import com.objectcomputing.geoai.security.authorization.Authorization;
 import com.objectcomputing.geoai.security.authorization.rules.annotation.AnnotationAuthorizationRuleProcessor;

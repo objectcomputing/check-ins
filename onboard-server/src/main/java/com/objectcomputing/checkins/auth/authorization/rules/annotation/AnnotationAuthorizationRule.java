@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.auth.authorization.rules.annotation;
 
-import com.objectcomputing.geoai.security.authentication.AuthenticatedActor;
+import com.objectcomputing.checkins.security.authentication.AuthenticatedActor;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.order.Ordered;
 import io.micronaut.http.HttpRequest;

@@ -1,18 +1,14 @@
 package com.objectcomputing.checkins.security.authentication;
 
+import com.objectcomputing.checkins.security.authentication.token.TokenAuthenticatedActorFactory;
+import com.objectcomputing.checkins.security.authentication.token.jwt.JsonWebTokenClaims;
+import com.objectcomputing.checkins.security.authentication.token.model.Token;
 import com.objectcomputing.checkins.security.authentication.token.model.TokenAuthorizationRepository;
 import com.objectcomputing.checkins.security.authentication.token.model.TokenRepository;
 import com.objectcomputing.checkins.security.config.ClaimsConfiguration;
+import com.objectcomputing.checkins.services.commons.accessor.AccessorSource;
+import com.objectcomputing.checkins.services.system.model.SystemAccount;
 import com.objectcomputing.checkins.services.system.model.SystemAccountRepository;
-import com.objectcomputing.geoai.core.accessor.AccessorSource;
-import com.objectcomputing.geoai.platform.system.model.SystemAccount;
-import com.objectcomputing.geoai.platform.system.model.SystemAccountRepository;
-import com.objectcomputing.geoai.platform.token.model.Token;
-import com.objectcomputing.geoai.platform.token.model.TokenAuthorizationRepository;
-import com.objectcomputing.geoai.platform.token.model.TokenRepository;
-import com.objectcomputing.geoai.security.authentication.config.ClaimsConfiguration;
-import com.objectcomputing.geoai.security.token.TokenAuthenticatedActorFactory;
-import com.objectcomputing.geoai.security.token.jwt.JsonWebTokenClaims;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

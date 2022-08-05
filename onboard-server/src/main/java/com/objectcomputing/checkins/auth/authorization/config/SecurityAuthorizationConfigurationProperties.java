@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.auth.authorization.config;
 
-import com.objectcomputing.geoai.security.config.SecurityConfigurationProperties;
+import com.objectcomputing.checkins.security.config.SecurityConfigurationProperties;
 
 public class SecurityAuthorizationConfigurationProperties implements SecurityAuthorizationConfiguration {
 

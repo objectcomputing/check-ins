@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.security.authentication.token.jwt.signature;
 
-import com.objectcomputing.geoai.security.token.TokenSignature;
+import com.objectcomputing.checkins.security.authentication.token.TokenSignature;
 import io.micronaut.core.order.Ordered;
 
 import java.security.InvalidKeyException;

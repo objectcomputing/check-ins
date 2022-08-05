@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.security.authentication.token.jwt.validator;
 
+import com.objectcomputing.checkins.security.authentication.token.jwt.SignedJsonWebToken;
+import com.objectcomputing.checkins.security.authentication.token.jwt.signature.SignedJsonWebTokenSignatureVerifier;
 import com.objectcomputing.geoai.security.authentication.AuthenticationException;
 import com.objectcomputing.geoai.security.token.TokenValidator;
 import com.objectcomputing.geoai.security.token.jwt.SignedJsonWebToken;
