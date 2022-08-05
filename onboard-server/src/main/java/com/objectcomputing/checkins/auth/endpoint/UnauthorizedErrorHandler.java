@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.auth.endpoint;
 
-import com.objectcomputing.geoai.platform.auth.exceptions.UnauthorizedError;
+import com.objectcomputing.checkins.auth.exceptions.UnauthorizedError;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;

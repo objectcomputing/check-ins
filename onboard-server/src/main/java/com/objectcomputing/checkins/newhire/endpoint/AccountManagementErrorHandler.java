@@ -1,6 +1,6 @@
-package com.objectcomputing.checkins.auth.endpoint;
+package com.objectcomputing.checkins.newhire.endpoint;
 
-import com.objectcomputing.checkins.auth.exceptions.ActivationError;
+import com.objectcomputing.geoai.platform.account.exceptions.AccountManagementError;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -14,14 +14,14 @@ import java.util.Map;
 
 @Produces
 @Singleton
-@Requires(classes = {ActivationError.class, ExceptionHandler.class})
-public class ActivationErrorHandler implements ExceptionHandler<ActivationError, HttpResponse> {
+@Requires(classes = {AccountManagementError.class, ExceptionHandler.class})
+public class AccountManagementErrorHandler  implements ExceptionHandler<AccountManagementError, HttpResponse> {
     @Override
-    public HttpResponse handle(HttpRequest request, ActivationError exception) {
+    public HttpResponse handle(HttpRequest request, AccountManagementError exception) {
         return HttpResponse.status(HttpStatus.FAILED_DEPENDENCY)
                 .body(Map.of("success", Boolean.FALSE,
-                             "code",    exception.getCode(),
-                             "reason",  exception.getMessage()))
+                        "code",    exception.getCode(),
+                        "reason",  exception.getMessage()))
                 .contentType(MediaType.APPLICATION_JSON);
     }
 }

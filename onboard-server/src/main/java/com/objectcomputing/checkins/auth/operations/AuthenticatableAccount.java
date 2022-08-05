@@ -2,10 +2,10 @@ package com.objectcomputing.checkins.auth.operations;
 
 import com.objectcomputing.checkins.services.commons.accessor.Accessor;
 import com.objectcomputing.checkins.services.commons.accessor.AccessorSource;
-import com.objectcomputing.checkins.services.commons.account.Account;
-import com.objectcomputing.checkins.services.commons.account.AccountRole;
-import com.objectcomputing.checkins.services.commons.account.AccountState;
-import com.objectcomputing.checkins.services.commons.account.Identifiable;
+import com.objectcomputing.checkins.newhire.model.Account;
+import com.objectcomputing.checkins.newhire.model.AccountRole;
+import com.objectcomputing.checkins.newhire.model.AccountState;
+import com.objectcomputing.checkins.newhire.model.Identifiable;
 
 
 import java.util.UUID;

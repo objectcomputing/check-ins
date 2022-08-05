@@ -1,13 +1,10 @@
 package com.objectcomputing.checkins.security.authentication;
 
-import com.objectcomputing.checkins.services.commons.account.Account;
+import com.objectcomputing.checkins.newhire.model.Identifiable;
 
-import java.security.Principal;
-
-public interface AuthenticatedActor<C extends Claims, A extends Account, T extends AuthenticationTicket> extends Principal {
-    AuthenticatedActor EMPTY = null;
-
-    C getClaims();
-    A getAccount();
-    T getTicket();
+public class AuthenticatedActor implements Identifiable {
+    @Override
+    public String getIdentity() {
+        return null;
+    }
 }

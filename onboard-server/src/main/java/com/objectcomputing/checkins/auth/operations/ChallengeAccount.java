@@ -1,22 +1,26 @@
 package com.objectcomputing.checkins.auth.operations;
 
-import com.objectcomputing.geoai.core.accessor.Accessor;
-import com.objectcomputing.geoai.core.accessor.AccessorSource;
-import com.objectcomputing.geoai.core.account.AccountState;
-import com.objectcomputing.geoai.core.identity.Identifiable;
-import com.objectcomputing.geoai.security.authentication.srp6.Srp6Credentials;
+import com.objectcomputing.checkins.security.authentication.srp6.Srp6Credentials;
+import com.objectcomputing.checkins.newhire.model.AccountState;
+import com.objectcomputing.checkins.newhire.model.Identifiable;
 
 import java.util.UUID;
 
-public class ChallengeAccount extends Accessor implements Identifiable {
+public class ChallengeAccount implements Identifiable {
+
+    private final UUID id;
 
     private final AccountState state;
     private final Srp6Credentials credentials;
 
-    public ChallengeAccount(UUID id, AccessorSource source, AccountState state, Srp6Credentials credentials) {
-        super(id, source);
+    public ChallengeAccount(UUID id, AccountState state, Srp6Credentials credentials) {
+        this.id = id;
         this.state = state;
         this.credentials = credentials;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public AccountState getState() {

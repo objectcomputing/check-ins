@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.auth.exceptions;
 
-import com.objectcomputing.checkins.auth.authorization.AuthorizationException;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;

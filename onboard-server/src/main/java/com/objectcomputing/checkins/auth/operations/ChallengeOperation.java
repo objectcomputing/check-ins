@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.auth.operations;
 
 import com.nimbusds.srp6.SRP6ServerSession;
-import com.objectcomputing.checkins.services.commons.account.AccountState;
+import com.objectcomputing.checkins.newhire.model.AccountState;
 import com.objectcomputing.checkins.auth.AuthSettings;
 import com.objectcomputing.checkins.security.authentication.srp6.Srp6Challenge;
 import com.objectcomputing.checkins.security.authentication.srp6.server.Srp6AuthenticationChallengeFactory;

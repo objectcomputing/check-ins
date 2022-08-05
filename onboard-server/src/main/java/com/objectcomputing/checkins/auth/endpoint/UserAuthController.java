@@ -2,13 +2,12 @@ package com.objectcomputing.checkins.auth.endpoint;
 
 import com.objectcomputing.checkins.auth.AuthErrorCodes;
 import com.objectcomputing.checkins.auth.AuthSettings;
-import com.objectcomputing.checkins.security.authentication.token.commons.AuthorizationToken;
-import com.objectcomputing.checkins.services.commons.accessor.AccessorSource;
-import com.objectcomputing.checkins.services.commons.account.AccountState;
-import com.objectcomputing.checkins.services.account.UserAccountService;
-import com.objectcomputing.checkins.services.model.LoginAccountRepository;
-import com.objectcomputing.checkins.services.model.LoginAuthorizationCodeRepository;
-import com.objectcomputing.checkins.services.model.*;
+import com.objectcomputing.checkins.newhire.model.LoginAccount;
+import com.objectcomputing.checkins.newhire.model.LoginAuthorizationPurpose;
+import com.objectcomputing.checkins.newhire.model.AccountState;
+import com.objectcomputing.checkins.auth.LoginAccountService;
+import com.objectcomputing.checkins.newhire.model.LoginAccountRepository;
+import com.objectcomputing.checkins.newhire.model.LoginAuthorizationCodeRepository;
 import com.objectcomputing.checkins.auth.commons.*;
 import com.objectcomputing.checkins.auth.exceptions.ActivationError;
 import com.objectcomputing.checkins.auth.exceptions.AuthenticationError;
@@ -32,7 +31,7 @@ public class UserAuthController {
 
     private final LoginAccountRepository userAccountRepository;
     private final LoginAuthorizationCodeRepository userAuthorizationCodeRepository;
-    private final UserAccountService userAccountService;
+    private final LoginAccountService loginAccountService;
     private final ChallengeOperation challengeOperation;
     private final AuthenticationOperation authenticationOperation;
     private final AuthSessionHandler authSessionHelper;
@@ -40,14 +39,14 @@ public class UserAuthController {
 
     public UserAuthController(LoginAccountRepository userAccountRepository,
                               LoginAuthorizationCodeRepository userAuthorizationCodeRepository,
-                              UserAccountService userAccountService,
+                              LoginAccountService loginAccountService,
                               ChallengeOperation challengeOperation,
                               AuthenticationOperation authenticationOperation,
                               ActivationOperation activationOperation,
                               AuthSessionHandler authSessionHandler) {
         this.userAccountRepository = userAccountRepository;
         this.userAuthorizationCodeRepository = userAuthorizationCodeRepository;
-        this.userAccountService = userAccountService;
+        this.loginAccountService = loginAccountService;
         this.challengeOperation = challengeOperation;
         this.authenticationOperation = authenticationOperation;
         this.activationOperation = activationOperation;
@@ -59,7 +58,7 @@ public class UserAuthController {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     public Mono<Srp6Challenge> authenticateChallenge(Session session, @Body ChallengeRequest challengeRequest) {
         return userAccountRepository.findByEmailAddressWithLocalCredentials(
-                challengeRequest.getScope(), challengeRequest.getIdentity())
+                challengeRequest.getIdentity())
                 .flatMap(this::asAuthenticationChallengeAccount)
                 .flatMap(challengeAccount -> challengeOperation.challenge(session, challengeAccount));
     }
@@ -87,7 +86,7 @@ public class UserAuthController {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     public Mono<Srp6Challenge> activateChallenge(Session session, @Body ChallengeRequest challengeRequest) {
         return userAccountRepository.findByEmailAddressWithLocalCredentials(
-                        challengeRequest.getScope(), challengeRequest.getIdentity())
+                        challengeRequest.getIdentity())
                 .flatMap(this::asActivationChallengeAccount)
                 .flatMap(challengeAccount -> challengeOperation.challenge(session, challengeAccount));
     }
@@ -119,11 +118,11 @@ public class UserAuthController {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     public Mono<Srp6Challenge> extendActivation(Session session, @Body ChallengeRequest challengeRequest) {
         return userAccountRepository.findByEmailAddressWithLocalCredentials(
-                        challengeRequest.getScope(), challengeRequest.getIdentity())
+                        challengeRequest.getIdentity())
                 .flatMap(account -> hasInactiveAuthorizations(account)
                         .flatMap(inactivesFound -> {
                             if(inactivesFound) {
-                                return userAccountService.createActivationCodeAndNotification(account)
+                                return loginAccountService.createActivationCodeAndNotification(account)
                                         .thenReturn(account);
                             }
                             return Mono.error(new ActivationError(AuthErrorCodes.ACTIVATION_CODE_NOT_FOUND, "no activation code found"));
@@ -140,12 +139,12 @@ public class UserAuthController {
 
     private Mono<AuthenticatableAccount> asAuthenticatableAccount(LoginAccount account) {
         return Mono.just(new AuthenticatableAccount(
-                account.getId(), AccessorSource.User, account.getIdentity(), account.getState(), account.getRole()));
+                account.getId(), account.getIdentity(), account.getState(), account.getRole()));
     }
 
     private Mono<ChallengeAccount> asAuthenticationChallengeAccount(LoginAccount account) {
         return Mono.just(new ChallengeAccount(
-                account.getId(), AccessorSource.User, account.getState(),
+                account.getId(), account.getState(),
                 new Srp6Credentials(
                         account.getIdentity(),
                         account.getLocalUserCredentials().getSalt(),
@@ -156,7 +155,7 @@ public class UserAuthController {
         return userAuthorizationCodeRepository
                 .findActiveUserAuthorizationCodesByUserAccountIdAndPurpose(account.getId(), LoginAuthorizationPurpose.Activation)
                 .flatMap(userAuthorizationCode ->
-                        Mono.just(new ChallengeAccount(account.getId(), AccessorSource.User, account.getState(),
+                        Mono.just(new ChallengeAccount(account.getId(), account.getState(),
                                 new Srp6Credentials(
                                         account.getIdentity(),
                                         userAuthorizationCode.getSalt(),

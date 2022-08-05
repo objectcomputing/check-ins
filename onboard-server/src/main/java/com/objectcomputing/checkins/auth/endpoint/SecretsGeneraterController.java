@@ -1,12 +1,12 @@
 package com.objectcomputing.checkins.auth.endpoint;
 
 import com.nimbusds.srp6.SRP6ClientCredentials;
-import com.objectcomputing.geoai.platform.auth.commons.ChallengeEncodingRequest;
-import com.objectcomputing.geoai.platform.auth.commons.SecretsRequest;
-import com.objectcomputing.geoai.security.authentication.srp6.Srp6Challenge;
-import com.objectcomputing.geoai.security.authentication.srp6.Srp6Secrets;
-import com.objectcomputing.geoai.security.authentication.srp6.client.Srp6ClientCredentialsFactory;
-import com.objectcomputing.geoai.security.authentication.srp6.client.Srp6ClientSecretsFactory;
+import com.objectcomputing.checkins.auth.commons.ChallengeEncodingRequest;
+import com.objectcomputing.checkins.auth.commons.SecretsRequest;
+import com.objectcomputing.checkins.security.authentication.srp6.Srp6Challenge;
+import com.objectcomputing.checkins.security.authentication.srp6.Srp6Secrets;
+import com.objectcomputing.checkins.security.authentication.srp6.client.Srp6ClientCredentialsFactory;
+import com.objectcomputing.checkins.security.authentication.srp6.client.Srp6ClientSecretsFactory;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
