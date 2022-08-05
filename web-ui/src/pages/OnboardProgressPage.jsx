@@ -3,12 +3,13 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Link, useHistory } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
+import { AppContext } from "../context/AppContext";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-
+import AddOnboardModal from "../components/modal/AddOnboardeeModal";
 import {
   Button,
   Modal,
@@ -18,7 +19,10 @@ import {
   IconButton,
   Autocomplete,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useContext} from "react";
+import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
+import { createOnboardee } from "../api/onboardeeMember";
+import EditOnboardee from "./EditOnboardee";
 
 const modalBoxStyle = {
   position: "absolute",
@@ -50,11 +54,13 @@ const modalBoxStyleMini = {
   m: 2,
 };
 
-export default function OnboardProgressPage() {
+export default function OnboardProgressPage(onboardee){
   const [open, setOpen] = useState(false);
   const [empFile, setEmpFile] = useState(" ");
   const [offer, setOfferFile] = useState(" ");
   const [addOnboardeeModal, setAddOnboardeeModal] = useState(false);
+  const { state, dispatch } = useContext(AppContext);
+  const { csrf , onboardeeProfiles, onboardeeProfile} = state;
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -204,7 +210,7 @@ export default function OnboardProgressPage() {
         >
           Add Onboardee
         </Button>
-        <Modal
+        {/* <Modal
           open={open}
           onClose={handleClose}
           aria-labelledby="title"
@@ -212,7 +218,7 @@ export default function OnboardProgressPage() {
         >
           <Box sx={modalBoxStyle}>
             <Typography align="center" id="title" variant="h3" component="h2">
-              Add Onboardee:
+              Add Onboardee
             </Typography>
             <Grid container space={2}>
               <Grid item xs={6}>
@@ -376,7 +382,33 @@ export default function OnboardProgressPage() {
               </Grid>
             </Grid>
           </Box>
-        </Modal>
+        </Modal> */}
+         <AddOnboardModal
+              onboardee={{}}
+              open={open}
+              onClose={handleClose}
+              onSave={async (onboardee) => {
+                if (
+                  onboardee.firstName &&
+                  onboardee.lastName &&
+                  onboardee.position &&
+                  onboardee.email &&
+                  onboardee.hireType &&
+                  onboardee.pdl &&
+                  csrf
+                )
+                {
+                  let res = await createOnboardee(onboardee, csrf);
+                  let data = res.payload && res.payload.data && !res.error ? res.payload.data : null;
+                  if (data) {
+                    dispatch({
+                      type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
+                      payload: [...onboardeeProfiles, data],
+                    });
+                  }
+                  }
+              }}
+            />
         <Modal
           open={addOnboardeeModal}
           onClose={handleClose}
