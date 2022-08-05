@@ -1,10 +1,11 @@
 package com.objectcomputing.checkins.services.system.endpoint;
 
 
-import com.objectcomputing.geoai.core.account.AccountRole;
-import com.objectcomputing.geoai.core.account.AccountState;
-import com.objectcomputing.geoai.platform.system.model.SystemAccount;
-import com.objectcomputing.geoai.platform.system.model.SystemAccountRepository;
+import com.objectcomputing.checkins.services.commons.account.AccountRole;
+import com.objectcomputing.checkins.services.commons.account.AccountState;
+import com.objectcomputing.checkins.services.system.model.SystemAccount;
+import com.objectcomputing.checkins.services.system.model.SystemAccountRepository;
+
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -29,7 +30,7 @@ public class SystemAccountController {
     @Produces(MediaType.APPLICATION_JSON)
     public Mono<Map<String, Object>> register(@Body SystemAccountConfig systemAccountConfig) {
         AccountRole role = systemAccountConfig.getAdministrator() ?
-                AccountRole.PlatformAdministrator : AccountRole.PlatformAccount;
+                AccountRole.Administrator(true, true),: AccountRole.Account;
 
         SystemAccount systemAccount = new SystemAccount(
                 systemAccountConfig.getIdentity(), systemAccountConfig.getSalt(), systemAccountConfig.getVerifier(),

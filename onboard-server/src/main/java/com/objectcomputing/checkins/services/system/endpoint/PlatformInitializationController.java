@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.system.endpoint;
 
+import com.objectcomputing.checkins.services.system.model.SystemAccount;
+import com.objectcomputing.checkins.services.system.model.SystemAccountRepository;
 import com.objectcomputing.geoai.core.account.AccountRole;
 import com.objectcomputing.geoai.core.account.AccountState;
 import com.objectcomputing.geoai.platform.system.model.SystemAccount;
@@ -27,7 +29,7 @@ public class PlatformInitializationController {
     @Produces(MediaType.APPLICATION_JSON)
     public Mono<Map<String, Object>> initialize(@Body InitializationConfig config) {
 
-        if(systemAccountRepository.hasSuperAdministratorAccountBeenCreated()) {
+        if(systemAccountRepository.hasAdministratorAccountBeenCreated()) {
             return Mono.just(Map.of("success", Boolean.FALSE));
         }
 

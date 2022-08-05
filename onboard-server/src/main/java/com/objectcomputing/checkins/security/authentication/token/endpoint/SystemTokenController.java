@@ -1,5 +1,9 @@
 package com.objectcomputing.checkins.security.authentication.token.endpoint;
 
+import com.objectcomputing.checkins.security.authentication.token.TokenService;
+import com.objectcomputing.checkins.security.authentication.token.commons.AuthorizationToken;
+import com.objectcomputing.checkins.security.authentication.token.commons.AuthorizationTokenBuilder;
+import com.objectcomputing.checkins.services.commons.accessor.Accessor;
 import com.objectcomputing.geoai.core.accessor.Accessor;
 import com.objectcomputing.geoai.platform.security.authentication.PlatformAuthenticatedActor;
 import com.objectcomputing.geoai.platform.token.TokenService;

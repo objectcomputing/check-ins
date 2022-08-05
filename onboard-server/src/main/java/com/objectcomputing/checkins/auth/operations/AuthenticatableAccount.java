@@ -1,11 +1,12 @@
 package com.objectcomputing.checkins.auth.operations;
 
-import com.objectcomputing.geoai.core.accessor.Accessor;
-import com.objectcomputing.geoai.core.accessor.AccessorSource;
-import com.objectcomputing.geoai.core.account.Account;
-import com.objectcomputing.geoai.core.account.AccountRole;
-import com.objectcomputing.geoai.core.account.AccountState;
-import com.objectcomputing.geoai.core.identity.Identifiable;
+import com.objectcomputing.checkins.services.commons.accessor.Accessor;
+import com.objectcomputing.checkins.services.commons.accessor.AccessorSource;
+import com.objectcomputing.checkins.services.commons.account.Account;
+import com.objectcomputing.checkins.services.commons.account.AccountRole;
+import com.objectcomputing.checkins.services.commons.account.AccountState;
+import com.objectcomputing.checkins.services.commons.account.Identifiable;
+
 
 import java.util.UUID;
 

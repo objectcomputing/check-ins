@@ -10,8 +10,8 @@ import com.objectcomputing.checkins.security.authentication.srp6.Srp6Credentials
 import com.objectcomputing.checkins.security.authentication.token.commons.AuthorizationToken;
 import com.objectcomputing.checkins.services.commons.accessor.AccessorSource;
 import com.objectcomputing.checkins.services.model.LoginAuthorizationCodeRepository;
-import com.objectcomputing.geoai.platform.system.model.SystemAccount;
-import com.objectcomputing.geoai.platform.system.model.SystemAccountRepository;
+import com.objectcomputing.checkins.services.system.model.SystemAccount;
+import com.objectcomputing.checkins.services.system.model.SystemAccountRepository;
 
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
