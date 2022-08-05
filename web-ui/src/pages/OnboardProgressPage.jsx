@@ -4,7 +4,6 @@ import { Link, useHistory } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
 import { AppContext } from "../context/AppContext";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
@@ -13,31 +12,12 @@ import AddOnboardModal from "../components/modal/AddOnboardeeModal";
 import {
   Button,
   Modal,
-  Typography,
-  Grid,
-  Divider,
-  IconButton,
-  Autocomplete,
+  Typography
 } from "@mui/material";
 import { useState, useContext} from "react";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 import { createOnboardee } from "../api/onboardeeMember";
-import EditOnboardee from "./EditOnboardee";
 
-const modalBoxStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "75%",
-  backgroundColor: "#fff",
-  border: "2px solid #000",
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-  m: 2,
-};
 
 const modalBoxStyleMini = {
   position: "absolute",
@@ -56,35 +36,31 @@ const modalBoxStyleMini = {
 
 export default function OnboardProgressPage(onboardee){
   const [open, setOpen] = useState(false);
-  const [empFile, setEmpFile] = useState(" ");
-  const [offer, setOfferFile] = useState(" ");
+  //const [empFile, setEmpFile] = useState(" ");
+  //const [offer, setOfferFile] = useState(" ");
   const [addOnboardeeModal, setAddOnboardeeModal] = useState(false);
   const { state, dispatch } = useContext(AppContext);
-  const { csrf , onboardeeProfiles, onboardeeProfile} = state;
+  const { csrf , onboardeeProfiles} = state;
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    setEmpFile(" ");
-    setOfferFile(" ");
+    //setEmpFile(" ");
+    //setOfferFile(" ");
   };
-  const handleSubmitClose = () => {
-    setOpen(false);
-    setAddOnboardeeModal(true);
-  };
+  // const handleSubmitClose = () => {
+  //   setOpen(false);
+  //   setAddOnboardeeModal(true);
+  // };
   const handleMsgModalClose = () => {
     setAddOnboardeeModal(false);
   };
-  const handleEmployeeAgreement = (e) => {
-    setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
-  };
-  const handleOfferLetter = (e) => {
-    setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
-  };
-
-  const posOptions = ["dummy1", "dummy2", "dummy3"];
-  const hireOptions = ["dummy4", "dummy5", "dummy6"];
-  const pdlOptions = ["dummy7", "dummy8", "dummy9"];
+  // const handleEmployeeAgreement = (e) => {
+  //   //setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
+  // };
+  // const handleOfferLetter = (e) => {
+  //   //setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
+  // };
 
   const history = useHistory();
   const handleRowClick = (name, email, hireType, userID) => {

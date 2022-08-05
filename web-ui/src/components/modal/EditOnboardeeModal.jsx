@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import { AppContext } from "../../context/AppContext";
+import React, { useState } from "react";
 import { Grid, Typography, Box, Divider } from "@mui/material";
 import { Modal, TextField, IconButton } from "@mui/material";
 import { Button } from "@mui/material";
@@ -30,7 +29,6 @@ const emptyOnboardee = {
 };
 
 const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
-  const { dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const [empFile, setEmpFile] = useState(" ");
   const [isNewOnboardee, setIsNewOnboardee] = useState(
@@ -50,7 +48,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
         setIsNewOnboardee(true);
       }
     });
-  }, [onSave, dispatch, editedOnboardee, isNewOnboardee]);
+  }, [onSave, editedOnboardee, isNewOnboardee]);
 
   return (
     <Modal open={open} onClose={onClose}>
