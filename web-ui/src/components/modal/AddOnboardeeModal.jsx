@@ -1,18 +1,7 @@
-import React, { useContext, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import {
-  selectOrderedPdls,
-  selectOrderedMemberFirstName,
-  selectCurrentMembers,
-} from "../../context/selectors";
+import React, { useState } from "react";
 import { Grid, Typography, Box, Divider } from "@mui/material";
 import { Modal, TextField, IconButton } from "@mui/material";
-import Autocomplete from "@mui/material/Autocomplete";
-import DatePicker from "@mui/lab/DatePicker";
-import { format } from "date-fns";
 import { Button } from "@mui/material";
-import { UPDATE_TOAST } from "../../context/actions";
-import { createOnboardee } from "../../api/onboardeeMember";
 import { useCallback } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 const modalBoxStyle = {
@@ -41,10 +30,7 @@ const emptyOnboardee = {
 };
 
 const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
-  const { state, dispatch } = useContext(AppContext);
-  const onboardeeProfiles = selectCurrentMembers(state);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
-  const sortedPdls = selectOrderedPdls(state);
   const [empFile, setEmpFile] = useState(" ");
   const [isNewOnboardee, setIsNewOnboardee] = useState(
     Object.keys(onboardee).length === 0 ? true : false
@@ -52,7 +38,6 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
   const handleEmployeeAgreement = (e) => {
     setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
   };
-  const sortedOnboardees = selectOrderedMemberFirstName(state);
   const[offer, setOfferFile] = useState(" ");
   const handleOfferLetter = (e) => {
     setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
@@ -64,7 +49,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
         setIsNewOnboardee(true);
       }
     });
-  }, [onSave, dispatch, editedOnboardee, isNewOnboardee]);
+  }, [onSave, editedOnboardee, isNewOnboardee]);
 
   return (
     <Modal open={open} onClose={onClose}>
