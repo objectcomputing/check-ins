@@ -183,6 +183,7 @@ public interface RepositoryFixture {
 
     default EducationRepository getEducationRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EducationRepository.class);
+    }
 
     default OnboardeeEmploymentEligibilityRepository getOnboardeeEmploymentEligibilityRepository(){
         return getEmbeddedServer().getApplicationContext().getBean(OnboardeeEmploymentEligibilityRepository.class);
