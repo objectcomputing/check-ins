@@ -166,19 +166,6 @@ export default function OnboardProgressPage(onboardee){
   return (
     <div className="onboard-page">
       <Box sx={{ height: 400, width: "60%", mt: "5%" }}>
-        <TextField
-          id="input-with-icon-textfield"
-          label="Search Onboardees"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          variant="standard"
-        />
-
         <Button
           onClick={handleOpen}
           variant="contained"
