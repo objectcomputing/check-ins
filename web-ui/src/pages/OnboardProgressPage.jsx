@@ -4,9 +4,6 @@ import { Link, useHistory } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
 import { AppContext } from "../context/AppContext";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddOnboardModal from "../components/modal/AddOnboardeeModal";
 import {
