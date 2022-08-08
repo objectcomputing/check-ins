@@ -154,6 +154,7 @@ public class WorkPreferenceController {
     private WorkPreferenceResponseDTO fromEntity(WorkPreference entity) {
         WorkPreferenceResponseDTO dto = new WorkPreferenceResponseDTO();
 
+        dto.
     }
 
 }

@@ -173,6 +173,13 @@ public class WorkPreference {
 
     public WorkPreference() {}
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+    public UUID getId() {
+        return id;
+    }
+
     public void setDesiredPosition(String desiredPosition) { this.desiredPosition = desiredPosition; }
 
     public String getDesiredPosition() { return desiredPosition; }
