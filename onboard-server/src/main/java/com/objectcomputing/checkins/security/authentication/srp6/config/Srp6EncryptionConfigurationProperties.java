@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.security.authentication.srp6.config;
 
+import com.objectcomputing.checkins.security.authentication.config.AuthenticationConfigurationProperties;
 import io.micronaut.context.annotation.ConfigurationProperties;
 
 @ConfigurationProperties(Srp6EncryptionConfigurationProperties.PREFIX)

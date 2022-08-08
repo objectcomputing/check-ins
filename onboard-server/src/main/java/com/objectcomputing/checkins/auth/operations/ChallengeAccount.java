@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.auth.operations;
 
 import com.objectcomputing.checkins.security.authentication.srp6.Srp6Credentials;
-import com.objectcomputing.checkins.newhire.model.AccountState;
-import com.objectcomputing.checkins.newhire.model.Identifiable;
+import com.objectcomputing.checkins.commons.AccountState;
+import com.objectcomputing.checkins.commons.Identifiable;
 
 import java.util.UUID;
 
@@ -31,7 +31,7 @@ public class ChallengeAccount implements Identifiable {
         return credentials;
     }
 
-    public String getIdentity() {
-        return credentials.getIdentity();
+    public String getEmailAddress() {
+        return credentials.getEmailAddress();
     }
 }

@@ -1,31 +1,30 @@
 package com.objectcomputing.checkins.auth.operations;
 
-import com.objectcomputing.checkins.services.commons.accessor.Accessor;
-import com.objectcomputing.checkins.services.commons.accessor.AccessorSource;
-import com.objectcomputing.checkins.newhire.model.Account;
-import com.objectcomputing.checkins.newhire.model.AccountRole;
-import com.objectcomputing.checkins.newhire.model.AccountState;
-import com.objectcomputing.checkins.newhire.model.Identifiable;
+import com.objectcomputing.checkins.commons.Account;
+import com.objectcomputing.checkins.commons.AccountState;
+import com.objectcomputing.checkins.commons.Identifiable;
 
-
+import java.util.Objects;
 import java.util.UUID;
 
-public class AuthenticatableAccount extends Accessor implements Account, Identifiable {
+public class AuthenticatableAccount implements Account, Identifiable {
 
-    private final String identity;
+    private final UUID id;
+    private final String emailAddress;
     private final AccountState state;
-    private final AccountRole role;
 
-    public AuthenticatableAccount(UUID id, AccessorSource source, String identity, AccountState state, AccountRole role) {
-        super(id, source);
-        this.identity = identity;
+    public AuthenticatableAccount(UUID id, String emailAddress, AccountState state) {
+        this.id = id;
+        this.emailAddress = emailAddress;
         this.state = state;
-        this.role = role;
     }
 
-    @Override
-    public String getIdentity() {
-        return identity;
+    public UUID getId() {
+        return id;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
     @Override
@@ -34,12 +33,15 @@ public class AuthenticatableAccount extends Accessor implements Account, Identif
     }
 
     @Override
-    public AccountRole getRole() {
-        return role;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AuthenticatableAccount that = (AuthenticatableAccount) o;
+        return Objects.equals(id, that.id) && Objects.equals(emailAddress, that.emailAddress) && state == that.state;
     }
 
     @Override
-    public Accessor asAccessor() {
-        return null;
+    public int hashCode() {
+        return Objects.hash(id, emailAddress, state);
     }
 }

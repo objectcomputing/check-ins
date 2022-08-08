@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.auth.operations;
 
 import com.nimbusds.srp6.SRP6ServerSession;
-import com.objectcomputing.checkins.newhire.model.AccountState;
+import com.objectcomputing.checkins.commons.AccountState;
 import com.objectcomputing.checkins.auth.AuthSettings;
 import com.objectcomputing.checkins.security.authentication.srp6.Srp6Challenge;
 import com.objectcomputing.checkins.security.authentication.srp6.server.Srp6AuthenticationChallengeFactory;
@@ -18,15 +18,15 @@ public class ChallengeOperation {
 
     private final Srp6ServerSessionFactory srp6ServerSessionFactory;
     private final Srp6AuthenticationChallengeFactory srp6AuthenticationChallengeGeneratorFactory;
-    private final AuthSessionHandler authSessionHandler;
+    private final AuthenticationSessionHandler authenticationSessionHandler;
 
     public ChallengeOperation(Srp6ServerSessionFactory srp6ServerSessionFactory,
                               Srp6AuthenticationChallengeFactory srp6AuthenticationChallengeGeneratorFactory,
-                              AuthSessionHandler authSessionHandler) {
+                              AuthenticationSessionHandler authenticationSessionHandler) {
 
         this.srp6ServerSessionFactory = srp6ServerSessionFactory;
         this.srp6AuthenticationChallengeGeneratorFactory = srp6AuthenticationChallengeGeneratorFactory;
-        this.authSessionHandler = authSessionHandler;
+        this.authenticationSessionHandler = authenticationSessionHandler;
     }
 
     public Mono<Srp6Challenge> challenge(Session session, ChallengeAccount challengeAccount) {
@@ -36,10 +36,10 @@ public class ChallengeOperation {
                         try {
                             return Mono.just(srp6ServerSessionFactory.create())
                                     .flatMap(srp6Session -> generateChallengeResponse(challengedAccount, srp6Session)
-                                            .doFinally((st) -> authSessionHandler.initialize(session, srp6Session, challengedAccount)));
+                                            .doFinally((st) -> authenticationSessionHandler.initialize(session, srp6Session, challengedAccount)));
                         } catch (Throwable fatalError) {
                             AUTH_LOG.warn("Failed to generate challenge due malformed account ({}}) with error message: {}}",
-                                    challengeAccount.getIdentity(), fatalError.getMessage());
+                                    challengeAccount.getEmailAddress(), fatalError.getMessage());
                         }
                     }
                     return Mono.empty();
@@ -54,7 +54,7 @@ public class ChallengeOperation {
 
     private Mono<Srp6Challenge> generateFakeChallengeResponse(ChallengeAccount challengeAccount) {
         return Mono.just(srp6AuthenticationChallengeGeneratorFactory.createFake(
-                challengeAccount.getIdentity()));
+                challengeAccount.getEmailAddress()));
     }
 
     private boolean canBeChallenged(ChallengeAccount challengedAccount) {

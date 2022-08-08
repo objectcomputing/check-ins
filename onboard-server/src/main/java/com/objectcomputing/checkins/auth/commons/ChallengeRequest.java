@@ -3,14 +3,14 @@ package com.objectcomputing.checkins.auth.commons;
 import java.util.Objects;
 
 public class ChallengeRequest {
-    private String identity;
+    private String emailAddress;
 
-    public String getIdentity() {
-        return identity;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setIdentity(String identity) {
-        this.identity = identity;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     @Override
@@ -18,11 +18,11 @@ public class ChallengeRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChallengeRequest that = (ChallengeRequest) o;
-        return Objects.equals(identity, that.identity);
+        return Objects.equals(emailAddress, that.emailAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identity);
+        return Objects.hash(emailAddress);
     }
 }

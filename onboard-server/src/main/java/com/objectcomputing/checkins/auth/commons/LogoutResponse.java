@@ -1,10 +1,7 @@
 package com.objectcomputing.checkins.auth.commons;
 
-import lombok.Data;
-
-@Data
 public class LogoutResponse {
-    private Boolean success;
+    private final Boolean success;
 
     public LogoutResponse(Boolean success) {
         this.success = success;
@@ -16,5 +13,9 @@ public class LogoutResponse {
 
     public static LogoutResponse failure() {
         return new LogoutResponse(false);
+    }
+
+    public Boolean getSuccess() {
+        return success;
     }
 }

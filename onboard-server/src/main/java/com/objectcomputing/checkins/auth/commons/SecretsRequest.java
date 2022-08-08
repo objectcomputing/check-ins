@@ -4,15 +4,15 @@ package com.objectcomputing.checkins.auth.commons;
 import java.util.Objects;
 
 public class SecretsRequest {
-    private String identity;
+    private String emailAddress;
     private String secret;
 
-    public String getIdentity() {
-        return identity;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setIdentity(String identity) {
-        this.identity = identity;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public String getSecret() {
@@ -28,11 +28,11 @@ public class SecretsRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SecretsRequest that = (SecretsRequest) o;
-        return Objects.equals(identity, that.identity) && Objects.equals(secret, that.secret);
+        return Objects.equals(emailAddress, that.emailAddress) && Objects.equals(secret, that.secret);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identity, secret);
+        return Objects.hash(emailAddress, secret);
     }
 }

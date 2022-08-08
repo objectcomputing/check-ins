@@ -25,7 +25,7 @@ public class Srp6AuthenticationChallengeFactory {
     }
 
     public Srp6Challenge create(SRP6ServerSession session, Srp6Credentials credentials) {
-        BigInteger B = session.step1(credentials.getIdentity(), fromHex(credentials.getSalt()), fromHex(credentials.getVerifier()));
+        BigInteger B = session.step1(credentials.getEmailAddress(), fromHex(credentials.getSalt()), fromHex(credentials.getVerifier()));
 
         if(B != null) {
             return new Srp6Challenge(credentials.getSalt(), toHex(B));

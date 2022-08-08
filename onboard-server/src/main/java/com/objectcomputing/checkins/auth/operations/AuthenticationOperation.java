@@ -1,14 +1,13 @@
 package com.objectcomputing.checkins.auth.operations;
 
 import com.nimbusds.srp6.SRP6ServerSession;
-import com.objectcomputing.geoai.core.accessor.Accessor;
-import com.objectcomputing.geoai.core.account.AccountState;
-import com.objectcomputing.geoai.platform.auth.AuthSettings;
-import com.objectcomputing.geoai.platform.auth.exceptions.AuthenticationError;
-import com.objectcomputing.geoai.platform.token.TokenService;
-import com.objectcomputing.geoai.platform.token.commons.AuthorizationToken;
-import com.objectcomputing.geoai.platform.token.commons.AuthorizationTokenBuilder;
-import com.objectcomputing.geoai.security.authentication.srp6.server.Srp6CredentialAuthenticator;
+import com.objectcomputing.checkins.auth.AuthSettings;
+import com.objectcomputing.checkins.auth.exceptions.AuthenticationError;
+import com.objectcomputing.checkins.commons.AccountState;
+import com.objectcomputing.checkins.commons.Identifiable;
+import com.objectcomputing.checkins.security.authentication.srp6.server.Srp6CredentialAuthenticator;
+import com.objectcomputing.checkins.security.authorization.AuthorizationToken;
+import com.objectcomputing.checkins.security.token.AuthorizationTokenBuilder;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.session.Session;
 import jakarta.inject.Singleton;
@@ -26,15 +25,12 @@ public class AuthenticationOperation {
 
     protected static final String DEFAULT_AUTH_FAILURE_MESSAGE = "Authentication failed. Credentials do not match.";
 
-    private final AuthSessionHandler authSessionHandler;
-    private final TokenService tokenService;
+    private final AuthenticationSessionHandler authenticationSessionHandler;
     private final AuthorizationTokenBuilder authorizationTokenBuilder;
 
-    public AuthenticationOperation(AuthSessionHandler authSessionHandler,
-                                   TokenService tokenService,
+    public AuthenticationOperation(AuthenticationSessionHandler authenticationSessionHandler,
                                    AuthorizationTokenBuilder authorizationTokenBuilder) {
-        this.authSessionHandler = authSessionHandler;
-        this.tokenService = tokenService;
+        this.authenticationSessionHandler = authenticationSessionHandler;
         this.authorizationTokenBuilder = authorizationTokenBuilder;
     }
 
@@ -44,13 +40,13 @@ public class AuthenticationOperation {
                 .flatMap(sessionAttributes -> {
 
                     if (AccountState.Active != authenticatableAccount.getState()) {
-                        AUTH_LOG.warn("No active account found for ({})", authenticatableAccount.getIdentity());
+                        AUTH_LOG.warn("No active account found for ({})", authenticatableAccount.getEmailAddress());
 
                         return Mono.error(new AuthenticationError(DEFAULT_AUTH_FAILURE_MESSAGE));
                     }
 
                     if (StringUtils.isEmpty(secret)) {
-                        AUTH_LOG.warn("Invalid secret specified for authorization request of ({})", authenticatableAccount.getIdentity());
+                        AUTH_LOG.warn("Invalid secret specified for authorization request of ({})", authenticatableAccount.getEmailAddress());
 
                         return Mono.error(new AuthenticationError(DEFAULT_AUTH_FAILURE_MESSAGE));
                     }
@@ -59,35 +55,33 @@ public class AuthenticationOperation {
                             .flatMap(authenticator -> {
                                 try {
                                     if (authenticator.authenticate(secret)) {
-                                        return tokenService.getOrCreateTokenAuthorizationFor(authenticatableAccount)
-                                                .flatMap(tokenAuthorization ->
-                                                        Mono.just(authorizationTokenBuilder.build(authenticatableAccount, tokenAuthorization)));
+                                        return Mono.just(authorizationTokenBuilder.build(authenticatableAccount));
                                     }
                                 } catch (Throwable fatalError) {
                                     AUTH_LOG.error("Failed to authenticate due malformed identity ({}) with error message: {}",
-                                            authenticatableAccount.getIdentity(), fatalError.getMessage());
+                                            authenticatableAccount.getEmailAddress(), fatalError.getMessage());
                                 }
 
-                                AUTH_LOG.warn("Fatal authorization error.  Missing login credentials for ({})", authenticatableAccount.getIdentity());
+                                AUTH_LOG.warn("Fatal authorization error.  Missing login credentials for ({})", authenticatableAccount.getEmailAddress());
 
                                 return Mono.error(new AuthenticationError(DEFAULT_AUTH_FAILURE_MESSAGE));
                             });
                 }).doOnSuccess(authorizationToken -> {
                     AUTH_LOG.debug("Adding Auth Token to SESSION");
-                    authSessionHandler.registerAuthToken(session, authorizationToken);
+                    authenticationSessionHandler.registerAuthToken(session, authorizationToken);
                 })
                 .switchIfEmpty(Mono.defer(() -> {
-                    AUTH_LOG.error("No session attributes present for ({}).  HINT: Execute the challenge first.", authenticatableAccount.getIdentity());
+                    AUTH_LOG.error("No session attributes present for ({}).  HINT: Execute the challenge first.", authenticatableAccount.getEmailAddress());
 
                     return Mono.error(new AuthenticationError(DEFAULT_AUTH_FAILURE_MESSAGE));
                 }));
     }
 
-    private Mono<Tuple2<Accessor, SRP6ServerSession>> getSessionAttributes(Session session) {
-        return fromOptional(() -> authSessionHandler.getAccessor(session))
-                .flatMap(accessor ->
-                        fromOptional(() -> authSessionHandler.getSrp6Session(session))
-                                .flatMap(srp6Session -> Mono.just(Tuples.of(accessor, srp6Session))));
+    private Mono<Tuple2<Identifiable, SRP6ServerSession>> getSessionAttributes(Session session) {
+        return fromOptional(() -> authenticationSessionHandler.getNewHireIdentifiable(session))
+                .flatMap(identifiable ->
+                        fromOptional(() -> authenticationSessionHandler.getSrp6Session(session))
+                                .flatMap(srp6Session -> Mono.just(Tuples.of(identifiable, srp6Session))));
     }
 
     private <T> Mono<T> fromOptional(Callable<Optional<T>> callable) {

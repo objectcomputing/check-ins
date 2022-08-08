@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.newhire.endpoint;
 
-import com.objectcomputing.geoai.platform.account.exceptions.AccountManagementError;
+import com.objectcomputing.checkins.auth.exceptions.AccountManagementError;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;

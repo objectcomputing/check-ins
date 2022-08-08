@@ -1,17 +1,17 @@
 package com.objectcomputing.checkins.auth.commons;
 
 public class ChallengeEncodingRequest {
-    private String identity;
+    private String emailAddress;
     private String secret;
     private String salt;
     private String b;
 
-    public String getIdentity() {
-        return identity;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setIdentity(String identity) {
-        this.identity = identity;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public String getSecret() {

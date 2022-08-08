@@ -3,15 +3,18 @@ package com.objectcomputing.checkins.auth.commons;
 import java.util.Objects;
 
 public class ActivationRequest {
-    private String identity;
+    private String emailAddress;
     private String secret;
 
-    public String getIdentity() {
-        return identity;
+    public ActivationRequest() {
     }
 
-    public void setIdentity(String identity) {
-        this.identity = identity;
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public String getSecret() {
@@ -27,11 +30,11 @@ public class ActivationRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ActivationRequest that = (ActivationRequest) o;
-        return Objects.equals(identity, that.identity) && Objects.equals(secret, that.secret);
+        return Objects.equals(emailAddress, that.emailAddress) && Objects.equals(secret, that.secret);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identity, secret);
+        return Objects.hash(emailAddress, secret);
     }
 }

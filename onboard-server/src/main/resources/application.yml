@@ -14,6 +14,7 @@ micronaut:
       remember-me: true   
   security:
     enabled: true
+    rejectNotFound: false
     token:
       jwt:
         enabled: true
@@ -21,6 +22,10 @@ micronaut:
           enabled: true
         cookie:
           enabled: true
+        signatures:
+          secret:
+            generator:
+              secret: 1234567890123456789012345678901234567890123456789012345678901234
       propagation:
         header:
           enabled: true
@@ -28,6 +33,11 @@ micronaut:
           prefix: "Bearer "
         uri-regex: ".*(geoai\\.app\\/api).*"
         enabled: true
+    authentication:
+      srp6:
+        encryption:
+          algorithm: SHA-512
+          bitSize: 512
   caches:
     photo-cache:
       expire-after-write: 86400
@@ -117,3 +127,10 @@ github-credentials:
 ---
 signrequest-credentials:
   signrequest_token: ${SIGNREQUEST_AUTH_TOKEN}
+---
+onboard:
+  authentication:
+    srp6:
+      encryption:
+        algorithm: SHA-512
+        bitSize: 512
