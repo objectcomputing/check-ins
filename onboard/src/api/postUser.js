@@ -8,7 +8,7 @@ const postUser = (email, secret) => {
 
     try {
       const baseURL = getEnvSpecificAPIURI();
-      const url = `${baseURL}/api/challenge`;
+      const url = `${baseURL}/api/auth/challenge`;
       const loginData = { identity: email };
 
       const response = await axios
@@ -20,7 +20,7 @@ const postUser = (email, secret) => {
           }
         });
 
-      const url2 = `${baseURL}/api/authenticate`;
+      const url2 = `${baseURL}/api/auth/authenticate`;
 
       const srp6aNimbusRoutines = new SRPRoutines(
         new SRPParameters(SRPParameters.PrimeGroup[512])
