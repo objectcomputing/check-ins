@@ -121,7 +121,15 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             <Typography id="description" sx={{ mt: 2 }}>
               Email:
             </Typography>
-            <TextField sx={{ width: "75%" }} id="email" variant="outlined" />
+            <TextField
+              sx={{ width: "75%" }}
+              id="email"
+              variant="outlined"
+              value={editedOnboardee.email ? editedOnboardee.email : ""}
+              onChange={(e) =>
+                setOnboardee({ ...editedOnboardee, email: e.target.value })
+              }
+            />
           </Grid>
           <Grid item xs={6}>
             <Typography id="description" sx={{ mt: 2 }}>
