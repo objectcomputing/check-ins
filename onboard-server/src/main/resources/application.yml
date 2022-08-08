@@ -22,22 +22,35 @@ micronaut:
           enabled: true
         cookie:
           enabled: true
+        issuer: https://onboardserver.app
+        lease: 36000
         signatures:
           secret:
+#            enabled: true
             generator:
               secret: 1234567890123456789012345678901234567890123456789012345678901234
+#            algorithm: HS256
+#            base64: false
       propagation:
         header:
           enabled: true
           headerName: "Authorization"
           prefix: "Bearer "
-        uri-regex: ".*(geoai\\.app\\/api).*"
         enabled: true
-    authentication:
-      srp6:
-        encryption:
-          algorithm: SHA-512
-          bitSize: 512
+    endpoints:
+      logout:
+        get-allowed: true
+    intercept-url-map:
+      - pattern: /**
+        http-method: GET
+        access:
+          - isAnonymous()
+    session:
+      enabled: true
+    netty:
+      event-loops:
+        io:
+          num-threads: 3
   caches:
     photo-cache:
       expire-after-write: 86400
@@ -53,57 +66,7 @@ micronaut:
         enabled: true
         mapping: "/**"
         paths:
-          - "classpath:public" 
-
-  security:
-    enabled: true
-    token:
-      jwt:
-        issuer: https://onboardserver.app
-        lease: 36000
-        signatures:
-          secret:
-            enabled: true
-            secret: 123456789
-            algorithm: HS256
-            base64: false
-    authentication:
-      srp6:
-        encryption:
-          algorithm: SHA-512
-          bitSize: 512
-      claims:
-        accessorId: accessorId
-        accessorSource: accessorSource
-  clients:
-    auth:
-      url: https://onboardserver.app
-      read-timeout: 500ms
-      retry:
-        attempts: 1
-        delay: 5s
-      endpoints:
-        system-challenge:
-          path: /api/system/challenge
-        system-auth:
-          path: /api/system/authenticate
-        token-renew:
-          path: /api/token/renew
-    endpoints:
-      logout:
-        get-allowed: true
-    intercept-url-map:
-      -
-        pattern: /**
-        http-method: GET
-        access:
-          - isAnonymous()
-    session:
-      enabled: true
-    netty:
-      event-loops:
-        io:
-          num-threads: 3
+          - "classpath:public"
 ---
 datasources:
   default:
