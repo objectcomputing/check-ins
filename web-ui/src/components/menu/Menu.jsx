@@ -353,7 +353,7 @@ function Menu() {
         <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
           {createListJsx(feedbackLinks, true)}
         </Collapse>
-        {isHR && (
+        {(isHR || isAdmin) && (
           <>
             <ListItem
               button
