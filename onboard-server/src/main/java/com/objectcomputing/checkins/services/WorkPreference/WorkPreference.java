@@ -171,6 +171,25 @@ public class WorkPreference {
         this.referralTypeOther = referralTypeOther;
     }
 
+    public WorkPreference(UUID id, String desiredPosition, LocalDate desiredStartDate, String desiredSalary, Boolean currentlyEmployed, Boolean contactCurrentEmployer, Boolean previousEmploymentOCI, Boolean noncompeteAgreement, LocalDate noncompeteExpirationDate, String discoveredOpportunity, String referredBy, String referrerEmail, String referrerJobSite, String referralTypeOther) {
+        this.id = id;
+        this.desiredPosition = desiredPosition;
+        this.desiredStartDate = desiredStartDate;
+        this.desiredSalary = desiredSalary;
+        this.currentlyEmployed = currentlyEmployed;
+        this.contactCurrentEmployer = contactCurrentEmployer;
+        this.previousEmploymentOCI = previousEmploymentOCI;
+        this.noncompeteAgreement = noncompeteAgreement;
+        this.noncompeteExpirationDate = noncompeteExpirationDate;
+
+        // Referral Type
+        this.discoveredOpportunity = discoveredOpportunity;
+        this.referredBy = referredBy;
+        this.referrerEmail = referrerEmail;
+        this.referrerJobSite = referrerJobSite;
+        this.referralTypeOther = referralTypeOther;
+    }
+
     public WorkPreference() {}
 
     public void setId(UUID id) {

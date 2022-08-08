@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.WorkPreference;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
+@Singleton
 public class WorkPreferenceServicesImpl implements WorkPreferenceServices {
 
     private final WorkPreferenceRepository workPreferenceRepository;

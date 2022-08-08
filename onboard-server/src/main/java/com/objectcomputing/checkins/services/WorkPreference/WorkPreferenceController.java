@@ -154,7 +154,35 @@ public class WorkPreferenceController {
     private WorkPreferenceResponseDTO fromEntity(WorkPreference entity) {
         WorkPreferenceResponseDTO dto = new WorkPreferenceResponseDTO();
 
-        dto.
+        dto.setId(entity.getId());
+        dto.setDesiredPosition(entity.getDesiredPosition());
+        dto.setDesiredStartDate(entity.getDesiredStartDate());
+        dto.setDesiredSalary(entity.getDesiredSalary());
+        dto.setCurrentlyEmployed(entity.getCurrentlyEmployed());
+        dto.setContactCurrentEmployer(entity.getContactCurrentEmployer());
+        dto.setPreviousEmploymentOCI(entity.getPreviousEmploymentOCI());
+        dto.setNoncompeteAgreement(entity.getNoncompeteAgreement());
+        dto.setNoncompeteExpirationDate(entity.getNoncompeteExpirationDate());
+        dto.setDiscoveredOpportunity(entity.getDiscoveredOpportunity());
+        dto.setReferredBy(entity.getReferredBy());
+        dto.setReferrerEmail(entity.getReferrerEmail());
+        dto.setReferrerJobSite(entity.getReferrerJobSite());
+        dto.setReferralTypeOther(entity.getReferralTypeOther());
+        return dto;
+    }
+
+    private WorkPreference fromDTO(WorkPreferenceResponseDTO dto) {
+        return new WorkPreference(dto.getId(), dto.getDesiredPosition(), dto.getDesiredStartDate(), dto.getDesiredSalary(),
+                dto.getCurrentlyEmployed(), dto.getContactCurrentEmployer(), dto.getPreviousEmploymentOCI(), dto.getNoncompeteAgreement(),
+                dto.getNoncompeteExpirationDate(), dto.getDiscoveredOpportunity(), dto.getReferredBy(), dto.getReferrerEmail(), dto.getReferrerJobSite(),
+                dto.getReferralTypeOther());
+    }
+
+    private WorkPreference fromDTO(WorkPreferenceCreateDTO dto) {
+        return new WorkPreference(dto.getDesiredPosition(), dto.getDesiredStartDate(), dto.getDesiredSalary(),
+                dto.getCurrentlyEmployed(), dto.getContactCurrentEmployer(), dto.getPreviousEmploymentOCI(), dto.getNoncompeteAgreement(),
+                dto.getNoncompeteExpirationDate(), dto.getDiscoveredOpportunity(), dto.getReferredBy(), dto.getReferrerEmail(), dto.getReferrerJobSite(),
+                dto.getReferralTypeOther());
     }
 
 }
