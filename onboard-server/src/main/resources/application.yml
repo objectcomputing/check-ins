@@ -1,7 +1,8 @@
 micronaut:
   application:
-    name: onboardserver
+    name: check-ins
   server:
+    port: 8081
     cors:
       enabled: true
     max-request-size: 100MB
@@ -68,13 +69,21 @@ micronaut:
         paths:
           - "classpath:public"
 ---
-datasources:
+r2dbc:
+  datasources:
+    default:
+      url: r2dbc:postgresql://localhost:5432/checkinsdb
+      driver: postgresql
+      username: postgres
+      password: postgres
+      dialect: POSTGRES
+
+---
+datasource:
   default:
-    url: ${JDBC_URL:`jdbc:postgresql:///`}
-    driver-class-name: org.postgresql.Driver
-    dialect: POSTGRES
-    schema-generate: NONE
-    maximum-pool-size: 10
+    url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/checkinsdb`}
+    username: postgres
+    password: postgres
 ---
 check-ins:
   application:

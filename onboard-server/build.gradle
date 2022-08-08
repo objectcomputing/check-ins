@@ -97,7 +97,7 @@ dependencies {
     implementation('org.postgresql:postgresql:42.2.12')
     implementation("io.micronaut.data:micronaut-data-r2dbc")
     implementation('org.postgresql:r2dbc-postgresql:0.9.1.RELEASE')
-    implementation 'com.google.cloud.sql:postgres-socket-factory:1.6.1'
+    implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
 
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation('io.projectreactor.addons:reactor-adapter:3.4.8')
@@ -182,4 +182,4 @@ java {
 }
 
 run.classpath += configurations.developmentOnly
-run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Xdebug',"-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n")
+run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Xdebug',"-Xrunjdwp:transport=dt_socket,address=8001,server=y,suspend=n")

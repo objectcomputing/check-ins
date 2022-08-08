@@ -6,15 +6,7 @@ micronaut:
         web:
           allowedOrigins:
             - ^http(|s):\/\/localhost:.*$
----
-r2dbc:
-datasources:
-  default:
-    url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/checkinsdb`}
-    driver: postgresql
-    username: postgres
-    password: "postgres"
-    dialect: POSTGRES
+
 ---
 credentials:
   roles:
