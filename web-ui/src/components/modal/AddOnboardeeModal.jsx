@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Grid, Typography, Box, Divider } from "@mui/material";
 import { Modal, TextField, IconButton } from "@mui/material";
 import { Button } from "@mui/material";
+import OnboardeeAddedModal from "./OnboardeeAddedModal";
 import { useCallback } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 const modalBoxStyle = {
@@ -38,6 +39,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
   const handleEmployeeAgreement = (e) => {
     setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
   };
+
   const[offer, setOfferFile] = useState(" ");
   const handleOfferLetter = (e) => {
     setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
@@ -228,9 +230,10 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="contained" onClick={submitOnboardeeClick}>Submit</Button>
+            <Button variant="contained" onClick={submitOnboardeeClick}><OnboardeeAddedModal/></Button>
           </Grid>
         </Grid>
+        
       </Box>
     </Modal>
   );

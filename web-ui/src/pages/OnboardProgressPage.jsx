@@ -6,6 +6,7 @@ import { Box } from "@mui/system";
 import { AppContext } from "../context/AppContext";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddOnboardModal from "../components/modal/AddOnboardeeModal";
+import OnboardeeAddedModal from "../components/modal/OnboardeeAddedModal";
 import {
   Grid,
   Button,
@@ -39,6 +40,9 @@ export default function OnboardProgressPage(onboardee){
   const [addOnboardeeModal, setAddOnboardeeModal] = useState(false);
   const { state, dispatch } = useContext(AppContext);
   const { csrf , onboardeeProfiles} = state;
+
+  const handleAddModalClose = () => setOpen(false);
+  const handleAddModalOpen = () => setOpen(true);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -347,7 +351,7 @@ export default function OnboardProgressPage(onboardee){
          <AddOnboardModal
               onboardee={{}}
               open={open}
-              onClose={handleClose}
+              onClose={handleAddModalClose}
               onSave={async (onboardee) => {
                 if (
                   onboardee.firstName &&
@@ -370,29 +374,6 @@ export default function OnboardProgressPage(onboardee){
                   }
               }}
             />
-        <Modal
-          open={addOnboardeeModal}
-          onClose={handleClose}
-          aria-labelledby="title"
-          aria-describedby="description"
-        >
-          <Box sx={modalBoxStyleMini}>
-            <div style={{ textAlign: "center", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto" }}>
-              <Typography variant="p" component="h3">
-                Onboardee added!
-              </Typography>
-            </div>
-            <div >
-              <Grid container sx={{ mt: 5 }}>
-                <Grid item xs={12} align="center">
-                  <Button variant="contained" onClick={handleMsgModalClose} style={{ display: "flex", justifyContent: "centered", gap: "10px" }}>
-                    Okay
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-          </Box>
-        </Modal>
         <DataGrid
           rows={rows}
           columns={columns}
