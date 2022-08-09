@@ -5,7 +5,14 @@ import {
   selectOrderedMemberFirstName,
   selectCurrentMembers,
 } from "../../context/selectors";
-import { Grid, TextField, Typography, Box, Divider, Modal } from "@mui/material";
+import {
+  Grid,
+  TextField,
+  Typography,
+  Box,
+  Divider,
+  Modal,
+} from "@mui/material";
 import { Modal, TextField, IconButton } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import DatePicker from "@mui/lab/DatePicker";
@@ -47,44 +54,21 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
   const sortedPdls = selectOrderedPdls(state);
   const [empFile, setEmpFile] = useState(" ");
   const sortedOnboardees = selectOrderedOnboardeeFirstName(state);
-    
+
   const [isNewOnboardee, setIsNewOnboardee] = useState(
     Object.keys(onboardee).length === 0 ? true : false
   );
   const handleEmployeeAgreement = (e) => {
     setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
   };
-  const[offer, setOfferFile] = useState(" ");
+  const [offer, setOfferFile] = useState(" ");
   const handleOfferLetter = (e) => {
     setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
   };
-  
-  const submitOnboardeeClick = useCallback(async () => {
-
-//    onSave(editedOnboardee).then(() => {
-//      if (isNewOnboardee.current) {
-//        setOnboardee({ emptyOnboardee });
-//        setIsNewOnboardee(true);
-//      }
-let required = validateRequiredInputsPresent();
-
-    let inputsFeasible = validateInputs();
-    if (!required) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast:
-            "One or more required fields are empty. Check starred input fields",
-        },
-      });
-    } else if (required && inputsFeasible) {
-    }
-   }, [validateRequiredInputsPresent, onSave, dispatch, editedOnboardee, isNewOnboardee]);
-
 
   const validateInputs = useCallback(() => {
-    let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ // eslint-disable-line
+    let regEmail =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!regEmail.test(editedOnboardee.email)) {
       dispatch({
         type: UPDATE_TOAST,
@@ -95,6 +79,7 @@ let required = validateRequiredInputsPresent();
       });
       return false;
     }
+  });
   const validateRequiredInputsPresent = useCallback(() => {
     return (
       editedOnboardee.firstName?.length > 0 &&
@@ -124,7 +109,7 @@ let required = validateRequiredInputsPresent();
       onSave(editedOnboardee).then(() => {
         if (isNewOnboardee.current) {
           setOnboardee({ emptyOnboardee });
-          setIsNewOnboardee(true)
+          setIsNewOnboardee(true);
         }
       });
     }
@@ -134,9 +119,8 @@ let required = validateRequiredInputsPresent();
     dispatch,
     validateInputs,
     editedOnboardee,
-    isNewOnboardee
+    isNewOnboardee,
   ]);
-
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -150,13 +134,17 @@ let required = validateRequiredInputsPresent();
               Position:
             </Typography>
             <Autocomplete
-                  disablePortal
-                  options={posOptions}
+              disablePortal
+              options={posOptions}
+              sx={{ width: "75%" }}
+              renderInput={(option) => (
+                <TextField
+                  variant="outlined"
+                  {...option}
                   sx={{ width: "75%" }}
-                  renderInput={(option) => (
-                    <TextField variant="outlined" {...option} sx={{ width: "75%" }} id="position" />
-                  )}
-
+                  id="position"
+                />
+              )}
               value={editedOnboardee.position ? editedOnboardee.position : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, position: e.target.value })
@@ -169,12 +157,17 @@ let required = validateRequiredInputsPresent();
             </Typography>
 
             <Autocomplete
-            disablePortal
-            options={hireOptions}
-            sx={{ width: "75%" }}
-            renderInput={(option) => (
-              <TextField variant="outlined" {...option} sx={{ width: "75%" }} id="hireType"/>
-            )}
+              disablePortal
+              options={hireOptions}
+              sx={{ width: "75%" }}
+              renderInput={(option) => (
+                <TextField
+                  variant="outlined"
+                  {...option}
+                  sx={{ width: "75%" }}
+                  id="hireType"
+                />
+              )}
               value={editedOnboardee.hireType ? editedOnboardee.hireType : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, hireType: e.target.value })
@@ -324,8 +317,9 @@ let required = validateRequiredInputsPresent();
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="contained" onClick={submitOnboardeeClick}>Submit</Button>
-
+            <Button variant="contained" onClick={submitOnboardeeClick}>
+              Submit
+            </Button>
           </Grid>
         </Grid>
       </Box>
