@@ -19,13 +19,16 @@ public class SurveyServicesImpl implements SurveyService {
 
     private final SurveyRepository surveyResponseRepo;
     private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
 
     public SurveyServicesImpl(SurveyRepository surveyResponseRepo,
                               MemberProfileRepository memberRepo,
+                              MemberProfileRetrievalServices memberProfileRetrievalServices,
                               CurrentUserServices currentUserServices) {
         this.surveyResponseRepo = surveyResponseRepo;
         this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
     }
 

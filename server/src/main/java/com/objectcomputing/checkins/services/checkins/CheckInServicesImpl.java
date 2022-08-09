@@ -4,7 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -29,15 +29,16 @@ public class CheckInServicesImpl implements CheckInServices {
     public static final Logger LOG = LoggerFactory.getLogger(CheckInServicesImpl.class);
 
     private final CheckInRepository checkinRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final RoleServices roleServices;
 
     public CheckInServicesImpl(CheckInRepository checkinRepo,
-                               MemberProfileRepository memberRepo,
-                               CurrentUserServices currentUserServices, RoleServices roleServices) {
+                               MemberProfileRetrievalServices memberProfileRetrievalServices,
+                               CurrentUserServices currentUserServices,
+                               RoleServices roleServices) {
         this.checkinRepo = checkinRepo;
-        this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
     }
@@ -46,11 +47,11 @@ public class CheckInServicesImpl implements CheckInServices {
     public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
         boolean grantAccess = false;
 
-        MemberProfile memberTryingToGainAccess = memberRepo.findById(memberId).orElseThrow(() -> {
-            throw new NotFoundException(String.format("Member %s not found", memberId));
+        MemberProfile memberTryingToGainAccess = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
+            throw new BadArgException("Member %s does not exist", memberId);
         });
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> {
-            throw new NotFoundException(String.format("Checkin %s not found", checkinId));
+            throw new NotFoundException("Checkin %s not found", checkinId);
         });
 
         boolean isAdmin = false;
@@ -91,7 +92,9 @@ public class CheckInServicesImpl implements CheckInServices {
         final UUID memberId = checkIn.getTeamMemberId();
         final UUID pdlId = checkIn.getPdlId();
         LocalDateTime chkInDate = checkIn.getCheckInDate();
-        Optional<MemberProfile> memberProfileOfTeamMember = memberRepo.findById(memberId);
+        MemberProfile memberProfileOfTeamMember = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
+            throw new BadArgException("Member %s does not exist", memberId);
+        });
 
         validate(checkIn.getId() == null).orElseThrow(() -> {
             throw new BadArgException("Found unexpected id for checkin %s", checkIn.getId());
@@ -144,7 +147,9 @@ public class CheckInServicesImpl implements CheckInServices {
         LocalDateTime chkInDate = checkIn.getCheckInDate();
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        Optional<MemberProfile> memberProfileOfTeamMember = memberRepo.findById(memberId);
+        MemberProfile memberProfileOfTeamMember = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
+            throw new BadArgException("Member %s does not exist", memberId);
+        });
         boolean isAdmin = currentUserServices.isAdmin();
 
         validate(id != null).orElseThrow(() -> {
@@ -182,8 +187,10 @@ public class CheckInServicesImpl implements CheckInServices {
         Set<CheckIn> checkIn = new HashSet<>(checkinRepo.findAll());
 
         if (teamMemberId != null) {
-            Optional<MemberProfile> memberToSearch = memberRepo.findById(teamMemberId);
-            if (memberToSearch.isPresent()) {
+            MemberProfile memberToSearch = memberProfileRetrievalServices.getById(teamMemberId).orElseThrow(() -> {
+                throw new BadArgException("Member %s does not exist", teamMemberId);
+            });
+            if (memberToSearch != null) {
                 // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
                 boolean isTeamMember = currentUser.getId().equals(teamMemberId);
                 boolean isPdl = currentUser.getId().equals(memberToSearch.get().getPdlId());

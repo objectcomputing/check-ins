@@ -16,6 +16,7 @@ import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServ
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -102,7 +103,7 @@ public class FileServicesImplTest {
     private CurrentUserServices currentUserServices;
 
     @Mock
-    private MemberProfileServices memberProfileServices;
+    private MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     @Mock
     private CompletedFileUpload completedFileUpload;
@@ -148,7 +149,7 @@ public class FileServicesImplTest {
         Mockito.reset(checkinDocumentServices);
         Mockito.reset(mockGoogleApiAccess);
         Mockito.reset(currentUserServices);
-        Mockito.reset(memberProfileServices);
+        Mockito.reset(memberProfileRetrievalServices);
         Mockito.reset(completedFileUpload);
         Mockito.reset(googleServiceConfiguration);
 
@@ -641,7 +642,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testCheckIn.isCompleted()).thenReturn(false);
-        when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(memberProfileRetrievalServices.getById(any(UUID.class))).thenReturn(Optional.of(testMemberProfile));
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
@@ -672,7 +673,7 @@ public class FileServicesImplTest {
         assertNotNull(result);
         assertEquals(fileToUpload.getFilename(), result.getName());
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(memberProfileServices, times(1)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
         verify(mockGoogleApiAccess, times(1)).getDrive();
         verify(checkinDocumentServices, times(1)).save(any(CheckinDocument.class));
     }
@@ -701,7 +702,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testCheckIn.isCompleted()).thenReturn(false);
-        when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(memberProfileRetrievalServices.getById(any(UUID.class))).thenReturn(Optional.of(testMemberProfile));
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
@@ -728,7 +729,7 @@ public class FileServicesImplTest {
         assertNotNull(result);
         assertEquals(fileToUpload.getFilename(), result.getName());
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(memberProfileServices, times(1)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
         verify(mockGoogleApiAccess, times(1)).getDrive();
         verify(checkinDocumentServices, times(1)).save(any(CheckinDocument.class));
     }
@@ -757,7 +758,7 @@ public class FileServicesImplTest {
 
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
-        when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(memberProfileRetrievalServices.getById(any(UUID.class))).thenReturn(Optional.of(testMemberProfile));
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
 
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
@@ -782,7 +783,7 @@ public class FileServicesImplTest {
         assertNotNull(result);
         assertEquals(fileToUpload.getFilename(), result.getName());
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(memberProfileServices, times(1)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
         verify(mockGoogleApiAccess, times(1)).getDrive();
         verify(checkinDocumentServices, times(1)).save(any(CheckinDocument.class));
     }
@@ -827,7 +828,7 @@ public class FileServicesImplTest {
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(memberProfileServices, times(0)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(0)).getById(any(UUID.class));
         verify(mockGoogleApiAccess, times(0)).getDrive();
         verify(checkinDocumentServices, times(0)).save(any());
     }
@@ -850,7 +851,7 @@ public class FileServicesImplTest {
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(memberProfileServices, times(0)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(0)).getById(any(UUID.class));
         verify(mockGoogleApiAccess, times(0)).getDrive();
         verify(checkinDocumentServices, times(0)).save(any());
     }
@@ -865,7 +866,7 @@ public class FileServicesImplTest {
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
-        when(memberProfileServices.getById(testMemberId)).thenReturn(testMemberProfile);
+        when(memberProfileRetrievalServices.getById(testMemberId)).thenReturn(Optional.of(testMemberProfile));
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn("test.name");
         when(mockGoogleApiAccess.getDrive()).thenReturn(null);
 
@@ -874,7 +875,7 @@ public class FileServicesImplTest {
 
         assertEquals("Unable to access Google Drive", responseException.getMessage());
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(memberProfileServices, times(1)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
         verify(mockGoogleApiAccess, times(1)).getDrive();
         verify(checkinDocumentServices, times(0)).save(any());
     }
@@ -890,7 +891,7 @@ public class FileServicesImplTest {
 
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
-        when(memberProfileServices.getById(testMemberId)).thenReturn(testMemberProfile);
+        when(memberProfileRetrievalServices.getById(testMemberId)).thenReturn(Optional.of(testMemberProfile));
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn("test.name");
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
@@ -904,7 +905,7 @@ public class FileServicesImplTest {
 
         assertThrows(FileRetrievalException.class, () -> services.uploadFile(testCheckinId, fileToUpload));
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(memberProfileServices, times(1)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
         verify(mockGoogleApiAccess, times(1)).getDrive();
         verify(checkinDocumentServices, times(0)).save(any());
     }
@@ -922,7 +923,7 @@ public class FileServicesImplTest {
 
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
-        when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(memberProfileRetrievalServices.getById(any(UUID.class))).thenReturn(Optional.of(testMemberProfile));
         when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
 
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
@@ -943,7 +944,7 @@ public class FileServicesImplTest {
         assertEquals(testException.getMessage(), responseException.getMessage());
         verify(mockGoogleApiAccess, times(1)).getDrive();
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(memberProfileServices, times(1)).getById(any());
+        verify(memberProfileRetrievalServices, times(1)).getById(any());
         verify(checkinDocumentServices, times(0)).save(any());
     }
 }

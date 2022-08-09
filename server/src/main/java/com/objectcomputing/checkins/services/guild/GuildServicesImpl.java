@@ -8,7 +8,7 @@ import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.guild.member.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
@@ -29,7 +29,7 @@ public class GuildServicesImpl implements GuildServices {
     private final GuildRepository guildsRepo;
     private final GuildMemberRepository guildMemberRepo;
     private final CurrentUserServices currentUserServices;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final GuildMemberServices guildMemberServices;
     private EmailSender emailSender;
     private final Environment environment;
@@ -39,7 +39,7 @@ public class GuildServicesImpl implements GuildServices {
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo,
                              CurrentUserServices currentUserServices,
-                             MemberProfileServices memberProfileServices,
+                             MemberProfileRetrievalServices memberProfileRetrievalServices,
                              GuildMemberServices guildMemberServices,
                              @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                              Environment environment,
@@ -48,7 +48,7 @@ public class GuildServicesImpl implements GuildServices {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
         this.currentUserServices = currentUserServices;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.guildMemberServices = guildMemberServices;
         this.emailSender = emailSender;
         this.webAddress = webAddress;
@@ -105,11 +105,15 @@ public class GuildServicesImpl implements GuildServices {
                 .findByGuildId(guildId)
                 .stream()
                 .filter(guildMember -> {
-                    LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
+                    LocalDate terminationDate = memberProfileRetrievalServices.getById(guildMember.getMemberId()).orElseThrow(() -> {
+                        throw new BadArgException("Guild member %s does not exist", guildMember.getMemberId());
+                    }).getTerminationDate();
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(guildMember ->
-                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()))).collect(Collectors.toList());
+                        fromMemberEntity(guildMember, memberProfileRetrievalServices.getById(guildMember.getMemberId()).orElseThrow(() -> {
+                            throw new BadArgException("Guild member %s does not exist", guildMember.getMemberId());
+                        }))).collect(Collectors.toList());
 
         return fromEntity(foundGuild, guildMembers);
     }
@@ -190,12 +194,16 @@ public class GuildServicesImpl implements GuildServices {
         //TODO: revisit this in a way that will allow joins.
         for (GuildResponseDTO foundGuild : foundGuilds) {
             Set<GuildMember> foundMembers = guildMemberRepo.findByGuildId(foundGuild.getId()).stream().filter(guildMember -> {
-                LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
+                LocalDate terminationDate = memberProfileRetrievalServices.getById(guildMember.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Guild member %s does not exist", guildMember.getMemberId());
+                }).getTerminationDate();
                 return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
             }).collect(Collectors.toSet());
 
             for (GuildMember foundMember : foundMembers) {
-                foundGuild.getGuildMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
+                foundGuild.getGuildMembers().add(fromMemberEntity(foundMember, memberProfileRetrievalServices.getById(foundMember.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Guild member %s does not exist", foundMember.getMemberId());
+                })));
             }
         }
         return foundGuilds;

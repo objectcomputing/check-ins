@@ -36,7 +36,7 @@ public class QuestionServicesImpl implements QuestionServices {
 
     public Question findById(@NotNull UUID id) {
         return questionRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException(String.format("No question for id %s", id));
+            throw new NotFoundException("No question for id %s", id);
         });
     }
 

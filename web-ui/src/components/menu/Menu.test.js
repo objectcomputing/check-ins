@@ -53,6 +53,22 @@ const pdlState = {
   },
 };
 
+const hrState = {
+  state: {
+    userProfile: {
+      name: "holmes",
+      memberProfile: {
+        pdlId: "",
+        title: "Tester",
+        workEmail: "test@tester.com",
+      },
+      role: ["MEMBER","HR"],
+      imageUrl:
+        "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
+    },
+  },
+};
+
 describe('<Menu />', () => {
   expect.addSnapshotSerializer(createSerializer({mode: 'deep'}));
 
@@ -81,6 +97,17 @@ describe('<Menu />', () => {
   it('renders correctly for pdl', () => {
     const component = mount(
       <AppContextProvider value={pdlState}>
+        <MemoryRouter initialEntries={['/guilds']} keyLength={0}>
+          <Menu />
+        </MemoryRouter>
+      </AppContextProvider>
+    );
+    expect(component).toMatchSnapshot();
+  });
+
+  it('renders correctly for hr', () => {
+    const component = mount(
+      <AppContextProvider value={hrState}>
         <MemoryRouter initialEntries={['/guilds']} keyLength={0}>
           <Menu />
         </MemoryRouter>

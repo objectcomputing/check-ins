@@ -206,5 +206,4 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         agendaItemRepository.deleteById(id);
     }
 
-
 }

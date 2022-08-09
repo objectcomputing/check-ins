@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 
 import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -16,12 +16,12 @@ import static com.objectcomputing.checkins.util.Validation.validate;
 public class PulseResponseServicesImpl implements PulseResponseService {
 
     private final PulseResponseRepository pulseResponseRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     public PulseResponseServicesImpl(PulseResponseRepository pulseResponseRepo,
-                                     MemberProfileRepository memberRepo) {
+                                     MemberProfileRetrievalServices memberProfileRetrievalServices) {
         this.pulseResponseRepo = pulseResponseRepo;
-        this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
     }
     
     @Override

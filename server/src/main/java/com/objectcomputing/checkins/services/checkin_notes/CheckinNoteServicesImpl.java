@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +29,15 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     private final CheckInRepository checkinRepo;
     private final CheckInServices checkinServices;
     private final CheckinNoteRepository checkinNoteRepository;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
 
     public CheckinNoteServicesImpl(CheckInRepository checkinRepo, CheckInServices checkinServices, CheckinNoteRepository checkinNoteRepository,
-                                   MemberProfileRepository memberRepo, CurrentUserServices currentUserServices) {
+                                   MemberProfileRetrievalServices memberProfileRetrievalServices, CurrentUserServices currentUserServices) {
         this.checkinRepo = checkinRepo;
         this.checkinServices = checkinServices;
         this.checkinNoteRepository = checkinNoteRepository;
-        this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
     }
 
@@ -159,6 +159,5 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
         return checkinNoteRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
     }
-
 
 }

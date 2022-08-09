@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.member.*;
 
@@ -24,16 +24,16 @@ public class TeamServicesImpl implements TeamServices {
     private final TeamRepository teamsRepo;
     private final TeamMemberServices teamMemberServices;
     private final CurrentUserServices currentUserServices;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     public TeamServicesImpl(TeamRepository teamsRepo,
                             TeamMemberServices teamMemberServices,
                             CurrentUserServices currentUserServices,
-                            MemberProfileServices memberProfileServices) {
+                            MemberProfileRetrievalServices memberProfileRetrievalServices) {
         this.teamsRepo = teamsRepo;
         this.teamMemberServices = teamMemberServices;
         this.currentUserServices = currentUserServices;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
     }
 
     public TeamResponseDTO save(TeamCreateDTO teamDTO) {
@@ -67,11 +67,15 @@ public class TeamServicesImpl implements TeamServices {
                 .findByFields(teamId, null, null)
                 .stream()
                 .filter(teamMember -> {
-                    LocalDate terminationDate = memberProfileServices.getById(teamMember.getMemberId()).getTerminationDate();
+                    LocalDate terminationDate = memberProfileRetrievalServices.getById(teamMember.getMemberId()).orElseThrow(() -> {
+                        throw new BadArgException("Team member %s does not exist", teamMember.getMemberId());
+                    }).getTerminationDate();
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(teamMember ->
-                        fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberId()))).collect(Collectors.toList());
+                        fromMemberEntity(teamMember, memberProfileRetrievalServices.getById(teamMember.getMemberId()).orElseThrow(() -> {
+                            throw new BadArgException("Team member %s does not exist", teamMember.getMemberId());
+                        }))).collect(Collectors.toList());
 
         return fromEntity(foundTeam, teamMembers);
     }
@@ -126,12 +130,16 @@ public class TeamServicesImpl implements TeamServices {
         //TODO: revisit this in a way that will allow joins.
         for (TeamResponseDTO foundTeam : foundTeams) {
             Set<TeamMember> foundMembers = teamMemberServices.findByFields(foundTeam.getId(), null, null).stream().filter(teamMember -> {
-                LocalDate terminationDate = memberProfileServices.getById(teamMember.getMemberId()).getTerminationDate();
+                LocalDate terminationDate = memberProfileRetrievalServices.getById(teamMember.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Team member %s does not exist", teamMember.getMemberId());
+                }).getTerminationDate();
                 return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
             }).collect(Collectors.toSet());
 
             for (TeamMember foundMember : foundMembers) {
-                foundTeam.getTeamMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
+                foundTeam.getTeamMembers().add(fromMemberEntity(foundMember, memberProfileRetrievalServices.getById(foundMember.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Team member %s does not exist", foundMember.getMemberId());
+                })));
             }
         }
         return foundTeams;

@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -20,15 +21,16 @@ import static com.objectcomputing.checkins.util.Validation.validate;
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
 
-    private final MemberProfileRepository memberProfileRepo;
+    private final MemberProfileRepository memberProfileRepository;
     private final SecurityService securityService;
     private final RoleServices roleServices;
     private final MemberRoleServices memberRoleServices;
 
     public CurrentUserServicesImpl(MemberProfileRepository memberProfileRepository,
                                    RoleServices roleServices,
-                                   SecurityService securityService, MemberRoleServices memberRoleServices) {
-        this.memberProfileRepo = memberProfileRepository;
+                                   SecurityService securityService,
+                                   MemberRoleServices memberRoleServices) {
+        this.memberProfileRepository = memberProfileRepository;
         this.roleServices = roleServices;
         this.securityService = securityService;
         this.memberRoleServices = memberRoleServices;
@@ -73,7 +75,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
             throw new AlreadyExistsException("Email %s already exists in database", workEmail);
         });
 
-        MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
+        MemberProfile createdMember = memberProfileRepository.save(new MemberProfile(firstName, null, lastName, null, "", null,
                 "", workEmail, "", null, "", null, null, null, null, null));
 
         Optional<Role> role = roleServices.findByRole("MEMBER");

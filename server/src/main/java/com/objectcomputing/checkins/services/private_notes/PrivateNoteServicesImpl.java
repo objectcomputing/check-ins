@@ -5,8 +5,7 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.exceptions.BadArgException;
@@ -26,8 +25,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     private final CheckInServices checkinServices;
     private final PrivateNoteRepository privateNoteRepository;
-    private final MemberProfileRepository memberRepo;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     final String unauthorizedErrorMessage ="User is unauthorized to do this operation";
 
@@ -36,8 +34,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
                                    CurrentUserServices currentUserServices) {
         this.checkinServices = checkinServices;
         this.privateNoteRepository = privateNoteRepository;
-        this.memberRepo = memberRepo;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
     }
 
@@ -154,7 +151,9 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
             if (!checkinServices.accessGranted(checkinid, currentUser.getId()))
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
+            MemberProfile memberRecord = memberProfileRetrievalServices.getById(createbyid).orElseThrow(() -> {
+                throw new BadArgException("Member who created the private note does not exist");
+            });
             if (!currentUser.getId().equals(memberRecord.getId()) && !isAdmin)
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (!isAdmin) {

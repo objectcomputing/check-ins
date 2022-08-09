@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 
@@ -24,18 +24,18 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
     private final TeamRepository teamRepo;
     private final TeamMemberRepository teamMemberRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final MemberHistoryRepository memberHistoryRepository;
 
     public TeamMemberServicesImpl(TeamRepository teamRepo,
                                   TeamMemberRepository teamMemberRepo,
-                                  MemberProfileRepository memberRepo,
+                                  MemberProfileRetrievalServices memberProfileRetrievalServices,
                                   CurrentUserServices currentUserServices,
                                   MemberHistoryRepository memberHistoryRepository) {
         this.teamRepo = teamRepo;
         this.teamMemberRepo = teamMemberRepo;
-        this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.memberHistoryRepository = memberHistoryRepository;
     }

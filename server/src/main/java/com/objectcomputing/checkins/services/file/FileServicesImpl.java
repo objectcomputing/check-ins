@@ -13,8 +13,8 @@ import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServ
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.http.MediaType;
@@ -41,20 +41,20 @@ public class FileServicesImpl implements FileServices {
     private final GoogleApiAccess googleApiAccess;
     private final CheckInServices checkInServices;
     private final CheckinDocumentServices checkinDocumentServices;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final GoogleServiceConfiguration googleServiceConfiguration;
 
     public FileServicesImpl(GoogleApiAccess googleApiAccess,
                             CheckInServices checkInServices,
                             CheckinDocumentServices checkinDocumentServices,
-                            MemberProfileServices memberProfileServices,
+                            MemberProfileRetrievalServices memberProfileRetrievalServices,
                             CurrentUserServices currentUserServices,
                             GoogleServiceConfiguration googleServiceConfiguration) {
         this.googleApiAccess = googleApiAccess;
         this.checkInServices = checkInServices;
         this.checkinDocumentServices = checkinDocumentServices;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.googleServiceConfiguration = googleServiceConfiguration;
     }
@@ -188,7 +188,9 @@ public class FileServicesImpl implements FileServices {
         }
 
         // create folder for each team member
-        final String directoryName = MemberProfileUtils.getFullName(memberProfileServices.getById(checkIn.getTeamMemberId()));
+        final String directoryName = MemberProfileUtils.getFullName(memberProfileRetrievalServices.getById(checkIn.getTeamMemberId()).orElseThrow(() -> {
+            throw new BadArgException("Cannot create directory for nonexistent member %s", checkIn.getTeamMemberId());
+        }));
 
         try {
             Drive drive = googleApiAccess.getDrive();

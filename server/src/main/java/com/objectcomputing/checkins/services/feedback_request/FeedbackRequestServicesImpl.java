@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
@@ -27,14 +27,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     public static final String WEB_UI_URL = "check-ins.web-address";
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private EmailSender emailSender;
     private final String notificationSubject;
     private final String webURL;
 
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
-                                       MemberProfileServices memberProfileServices,
+                                       MemberProfileRetrievalServices memberProfileRetrievalServices,
                                        @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
                                        @Property(name = WEB_UI_URL) String webURL
@@ -42,7 +42,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.emailSender = emailSender;
         this.notificationSubject = notificationSubject;
         this.webURL = webURL;
@@ -53,23 +53,17 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private void validateMembers(FeedbackRequest feedbackRequest) {
-        try {
-            memberProfileServices.getById(feedbackRequest.getCreatorId());
-        } catch (NotFoundException e) {
+        memberProfileRetrievalServices.getById(feedbackRequest.getCreatorId()).orElseThrow(() -> {
             throw new BadArgException("Cannot save feedback request with invalid creator ID");
-        }
+        });
 
-        try {
-            memberProfileServices.getById(feedbackRequest.getRecipientId());
-        } catch (NotFoundException e) {
+        memberProfileRetrievalServices.getById(feedbackRequest.getRecipientId()).orElseThrow(() -> {
             throw new BadArgException("Cannot save feedback request with invalid recipient ID");
-        }
+        });
 
-        try {
-            memberProfileServices.getById(feedbackRequest.getRequesteeId());
-        } catch (NotFoundException e) {
+        memberProfileRetrievalServices.getById(feedbackRequest.getRequesteeId()).orElseThrow(() -> {
             throw new BadArgException("Cannot save feedback request with invalid requestee ID");
-        }
+        });
 
         validate(!feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())).orElseThrow(() -> {
             throw new BadArgException("The requestee must not be the same person as the recipient");
@@ -91,8 +85,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         });
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
-        MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
-        MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+        MemberProfile creator = memberProfileRetrievalServices.getById(storedRequest.getCreatorId()).orElseThrow(() -> {
+            throw new BadArgException("The creator of the feedback request does not exist");
+        });
+        MemberProfile requestee = memberProfileRetrievalServices.getById(storedRequest.getRequesteeId()).orElseThrow(() -> {
+            throw new BadArgException("The requestee of the feedback request does not exist");
+        });
         String newContent = "<h1>You have received a feedback request.</h1>" + 
         "<p><b>" + creator.getFirstName() + " " + creator.getLastName() + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
         if (storedRequest.getDueDate() != null) {
@@ -100,7 +98,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
         newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
-        emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        emailSender.sendEmail(notificationSubject, newContent, memberProfileRetrievalServices.getById(storedRequest.getRecipientId()).orElseThrow(() -> {
+            throw new BadArgException("Email recipient %s does not exist", storedRequest.getRecipientId());
+        }).getWorkEmail());
         return storedRequest;
     }
 
@@ -145,16 +145,17 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         // Send email if the feedback request has been reopened for edits
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
-            MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
-            MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+            MemberProfile creator = memberProfileRetrievalServices.getById(storedRequest.getCreatorId()).orElseThrow();
+            MemberProfile requestee = memberProfileRetrievalServices.getById(storedRequest.getRequesteeId()).orElseThrow();
+            MemberProfile recipient = memberProfileRetrievalServices.getById(storedRequest.getRecipientId()).orElseThrow();
             String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
                     "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
                     "</b> has reopened the feedback request on <b>" +
-                    requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
+                    requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you. " +
                     "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
             newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
-            emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+            emailSender.sendEmail(notificationSubject, newContent, recipient.getWorkEmail());
         }
 
         return storedRequest;
@@ -210,7 +211,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean createIsPermitted(UUID requesteeId) {
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
+        final UUID requesteePDL = memberProfileRetrievalServices.getById(requesteeId).orElseThrow(() -> {
+            throw new BadArgException("Requestee with member ID %s does not exist", requesteeId);
+        }).getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
         return isAdmin || currentUserId.equals(requesteePDL);

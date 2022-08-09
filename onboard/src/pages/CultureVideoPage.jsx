@@ -11,7 +11,7 @@ function CultureVideoPage(props) {
           min-height="360"
           width="1080"
           height="720"
-          src="https://www.youtube.com/embed/D7Ka15wQL5U"
+          src="https://www.youtube-nocookie.com/embed/D7Ka15wQL5U"
           title="YouTube video player"
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

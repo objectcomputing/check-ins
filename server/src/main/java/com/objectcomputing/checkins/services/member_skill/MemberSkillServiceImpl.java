@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.member_skill;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
 import jakarta.inject.Singleton;
@@ -17,14 +17,14 @@ import static com.objectcomputing.checkins.util.Validation.validate;
 public class MemberSkillServiceImpl implements MemberSkillServices {
 
     private final MemberSkillRepository memberSkillRepository;
-    private final MemberProfileRepository memberProfileRepository;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final SkillRepository skillRepository;
 
     public MemberSkillServiceImpl(MemberSkillRepository memberSkillRepository,
-                                  MemberProfileRepository memberProfileRepository,
+                                  MemberProfileRetrievalServices memberProfileRetrievalServices,
                                   SkillRepository skillRepository) {
         this.memberSkillRepository = memberSkillRepository;
-        this.memberProfileRepository = memberProfileRepository;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.skillRepository = skillRepository;
     }
 
