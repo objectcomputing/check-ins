@@ -29,22 +29,14 @@ const menuList = [
   },
   {
     index: 2,
-    name: "Work Preference",
-    title: "Where would you PREFER to work?",
-    completed: false,
-    child: <WorkingLocationPage />,
-    visited: false,
-  },
-  {
-    index: 3,
-    name: "Computer and Prefrences",
-    title: "Computer and Accessories & Work Preference",
+    name: "Computer & Work Preferences",
+    title: "Computer & Work Preference",
     completed: false,
     child: <EquipmentPage />,
     visited: false,
   },
   {
-    index: 4,
+    index: 3,
     name: "Internal Document Signing",
     title: "Internal Document Signing",
     completed: false,
@@ -52,7 +44,7 @@ const menuList = [
     visited: false,
   },
   {
-    index: 5,
+    index: 4,
     name: "About You",
     title: "You Know About Us Now! Tell Us About You!",
     completed: false,
@@ -60,7 +52,7 @@ const menuList = [
     visited: false,
   },
   {
-    index: 6,
+    index: 5,
     name: "Cake!",
     title: "Congratulations!",
     completed: false,
