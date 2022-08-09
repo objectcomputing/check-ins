@@ -1,7 +1,7 @@
-CREATE TABLE new_hire_account(
-    new_hire_account_id varchar PRIMARY KEY,
-    state varchar,
-    email_address varchar(255),
-    created_instant timestamp,
-    changed_instant timestamp
+CREATE TABLE IF NOT EXISTS NEW_HIRE_ACCOUNT (
+    NEW_HIRE_ACCOUNT_ID UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    EMAIL_ADDRESS VARCHAR(256) NOT NULL,
+    CREATED_INSTANT TIMESTAMP NOT NULL,
+    CHANGED_INSTANT TIMESTAMP NOT NULL,
+    STATE VARCHAR(128) NOT NULL
 );
