@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.commons.Account;
 import com.objectcomputing.checkins.commons.AccountState;
 import com.objectcomputing.checkins.commons.Identifiable;
 import io.micronaut.data.annotation.*;
+import io.micronaut.data.model.DataType;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -18,6 +19,7 @@ public class NewHireAccountEntity implements Identifiable, Account {
     @Id
     @Column(name="new_hire_account_id")
     @AutoPopulated
+    @TypeDef(type = DataType.STRING)
     @GeneratedValue(GeneratedValue.Type.AUTO)
     private UUID id;
 

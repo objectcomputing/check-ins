@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.newhire.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.data.annotation.*;
+import io.micronaut.data.model.DataType;
 
 import javax.persistence.Column;
 import java.util.Objects;
@@ -14,6 +15,7 @@ public class NewHireCredentialsEntity {
     @Id
     @Column(name="new_hire_credentials_id")
     @AutoPopulated
+    @TypeDef(type= DataType.STRING)
     @GeneratedValue(GeneratedValue.Type.AUTO)
     private UUID id;
 

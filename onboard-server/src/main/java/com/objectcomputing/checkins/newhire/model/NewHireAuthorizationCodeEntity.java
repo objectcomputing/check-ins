@@ -22,6 +22,7 @@ public class NewHireAuthorizationCodeEntity {
     @Id
     @Column(name="new_hire_authorization_code_id")
     @AutoPopulated
+    @TypeDef(type=DataType.STRING)
     @GeneratedValue(GeneratedValue.Type.AUTO)
     private UUID id;
 
