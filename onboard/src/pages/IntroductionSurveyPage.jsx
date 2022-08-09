@@ -1,43 +1,36 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
+import { Grid, Typography } from "@mui/material";
 import "./IntroductionSurveyPage.css";
 
 const IntroductionSurveyPage = () => {
   return (
-    <div>
-      <center>
-        <h1>You Know About Us Now! Tell Us About You!</h1>
-      </center>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      direction="row"
+    >
+      <Grid item xs={8}>
+        <Typography variant="h6">
+          1. Please give us a short introduction about yourself
+        </Typography>
+        <TextField label="" variant="outlined" />
 
-      <div class="aboutYourself" id="shortIntro">
-        <strong>1.</strong> Please give us a short introduction about yourself
-        <div class="aboutYouInput">
-          <TextField id="outlined-basic" label="" variant="outlined" />
-        </div>
-      </div>
+        <Typography variant="h6">2. What are some of your hobbies?</Typography>
+        <TextField label="" variant="outlined" />
 
-      <div class="aboutYourself" id="hobbies">
-        <strong>2.</strong> What are some of your hobbies?
-        <div class="aboutYouInput">
-          <TextField id="outlined-basic" label="" variant="outlined" />
-        </div>
-      </div>
+        <Typography variant="h6">
+          3. Can you tell us a fun fact about yourself?
+        </Typography>
+        <TextField label="" variant="outlined" />
 
-      <div class="aboutYourself" id="funFact">
-        <strong>3.</strong> Can you tell us a fun fact about yourself?
-        <div class="aboutYouInput">
-          <TextField id="outlined-basic" label="" variant="outlined" />
-        </div>
-      </div>
-
-      <div class="aboutYourself" id="specialCertificates">
-        <strong>4.</strong> Are there any special certificates we would need to
-        know?
-        <div class="aboutYouInput">
-          <TextField id="outlined-basic" label="" variant="outlined" />
-        </div>
-      </div>
-    </div>
+        <Typography variant="h6">
+          4. Are there any special certificates we would need to know?
+        </Typography>
+        <TextField label="" variant="outlined" />
+      </Grid>
+    </Grid>
   );
 };
 

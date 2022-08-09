@@ -1,0 +1,24 @@
+micronaut:
+  security:
+    enabled: true
+    reject-not-found: false
+    oauth2:
+      enabled: false
+---
+datasources:
+  default:
+    url:  jdbc:tc:postgresql:11.16:///
+    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
+---
+mail-jet:
+  from_address: "someEmail@test.com"
+  from_name: "John Doe"
+---
+check-ins:
+  web-address: "https://checkins.objectcomputing.com"
+---
+aes:
+  key: BOGUS_TEST_KEY
+---
+github-credentials:
+  github_token: "test github token"
