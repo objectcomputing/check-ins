@@ -10,7 +10,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import NotStartedIcon from '@mui/icons-material/NotStarted';
 
 import ReactCodeInput from 'react-verification-code-input';
-import RequestAccess from '../../sharedModules/RequestAccess';
 
 // This is the Activation dialog.
 function Activation({ activating, setActivating }) {
@@ -206,7 +205,6 @@ function Activation({ activating, setActivating }) {
           </form>
         </>
       )}
-      <RequestAccess />
     </Box>
   );
 }
