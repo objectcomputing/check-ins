@@ -1,0 +1,47 @@
+micronaut:
+  server:
+    cors:
+      enabled: true
+      configurations:
+        web:
+          allowedOrigins:
+            - ^http(|s):\/\/localhost:.*$
+  security:
+    authentication: cookie
+    oauth2:
+      enabled: false
+    token:
+      jwt:
+        enabled: true
+        generator:
+          refresh-token:
+            enabled: true
+            path: /oauth/access_token
+            secret: ihaveChangedThisSecretForANewOne
+          access-token:
+            expiration: 60000
+          secret: ihaveChangedThisSecretForANewOne
+    intercept-url-map:
+      - pattern: /swagger-ui/**
+        http-method: GET
+        access:
+          - isAnonymous()
+---
+datasources:
+  default:
+    url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/checkinsdb`}
+    username: postgres
+    password: "postgres"
+---
+credentials:
+  roles:
+    SUPER:
+      - ADMIN
+      - PDL
+      - MEMBER
+    ADMIN:
+      - ADMIN
+    PDL:
+      - PDL
+    MEMBER:
+      - MEMBER

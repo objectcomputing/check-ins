@@ -16,6 +16,8 @@ import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepo
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityRepository;
+import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
@@ -172,5 +174,13 @@ public interface RepositoryFixture {
 
     default EmailRepository getEmailRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EmailRepository.class);
+    }
+
+    default OnboardingProfileRepository getOnboardingProfileRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(OnboardingProfileRepository.class);
+    }
+
+    default OnboardeeEmploymentEligibilityRepository getOnboardeeEmploymentEligibilityRepository(){
+        return getEmbeddedServer().getApplicationContext().getBean(OnboardeeEmploymentEligibilityRepository.class);
     }
 }

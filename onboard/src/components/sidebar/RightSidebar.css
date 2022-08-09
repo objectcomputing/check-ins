@@ -1,7 +1,47 @@
 .wrapPanel {
-  width: 100%;
+  width: calc(100% - 300px);
 }
 
 .sidebar__item {
   display: flex;
+}
+
+.wrapTabPane {
+  display: flex;
+  width: 100%;
+  overflow-y: scroll;
+  max-height: calc(100vh - 120px);
+  background-color: #f7f7f7;
+  border-radius: 15px;
+  box-shadow: #80808059 0px 0px 10px;
+  min-height: calc(100vh - 120px);
+}
+
+.tabInterior {
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 2rem;
+}
+
+.titleSection {
+  position: relative;
+  display: flex;
+  height: 10%;
+  clear: both;
+  width: 100%;
+  justify-content: center;
+  border-bottom: 1px solid #80808059;
+  margin-bottom: 2rem;
+}
+
+.bodySection {
+  position: relative;
+  display: flex;
+  height: 90%;
+  clear: both;
+  width: 100%;
+  justify-content: center;
 }

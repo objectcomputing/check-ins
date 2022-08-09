@@ -2,10 +2,9 @@ package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
@@ -16,17 +15,14 @@ import java.util.*;
 @Singleton
 public class SkillsReportServicesImpl implements SkillsReportServices {
     private final MemberSkillRepository memberSkillRepo;
-    private final MemberProfileRepository memberProfileRepo;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final SkillRepository skillRepo;
 
     public SkillsReportServicesImpl(MemberSkillRepository memberSkillRepo,
-                                    MemberProfileRepository memberProfileRepo,
-                                    MemberProfileServices memberProfileServices,
+                                    MemberProfileRetrievalServices memberProfileRetrievalServices,
                                     SkillRepository skillRepo) {
         this.memberSkillRepo = memberSkillRepo;
-        this.memberProfileRepo = memberProfileRepo;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.skillRepo = skillRepo;
     }
 
@@ -40,14 +36,14 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
 
             for (SkillLevelDTO skill : skills) {
                 if (!skillRepo.existsById(skill.getId())) {
-                    throw new BadArgException(String.format("Invalid skill ID %s", skill.getId()));
+                    throw new BadArgException("Invalid skill ID %s", skill.getId());
                 }
             }
 
             if (members != null) {
                 for (UUID member : members) {
-                    if (!memberProfileRepo.existsById(member)) {
-                        throw new BadArgException(String.format("Invalid member profile ID %s", member));
+                    if (!memberProfileRetrievalServices.existsById(member)) {
+                        throw new BadArgException("Invalid member profile ID %s", member);
                     }
                 }
             }
@@ -116,7 +112,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
                 final TeamMemberSkillDTO dto = new TeamMemberSkillDTO();
                 dto.setId(memberId);
 
-                final MemberProfile memProfile = memberProfileServices.getById(memberId);
+                final MemberProfile memProfile = memberProfileRetrievalServices.getById(memberId).orElse(null);
                 final String memberName = MemberProfileUtils.getFullName(memProfile);
                 dto.setName(memberName);
 
