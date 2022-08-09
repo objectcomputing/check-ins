@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Entity //specifies that the class is an entity and is mapped to a database table
 @Introspected //indicates a type should produce a BeanIntrospection
-@Table(name="work_preference") //specifies the name of the database table to be used for mapping
+@Table(name="employment_desired_availability") //specifies the name of the database table to be used for mapping
 //see the file path ...src/resources/db/common to create the table schema from above with the name from above
 public class EmploymentDesiredAvailability {
 
