@@ -44,7 +44,7 @@ const postUser = (email, secret) => {
       let encodedSecret = hexedM1 + ':' + hexedA;
 
       const loginData2 = {
-        identity: email,
+        emailAddress: email,
         secret: encodedSecret
       };
 
@@ -61,8 +61,6 @@ const postUser = (email, secret) => {
         type: ACTIONS.LOAD_USER,
         payload: {
           email: email,
-          firstName: '',
-          lastName: '',
           accessToken: response2?.data?.token,
           status: response2?.status,
           expiration: response2?.data?.expirationTime
