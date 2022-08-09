@@ -6,12 +6,8 @@ import { Box } from "@mui/system";
 import { AppContext } from "../context/AppContext";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddOnboardModal from "../components/modal/AddOnboardeeModal";
-import OnboardeeAddedModal from "../components/modal/OnboardeeAddedModal";
 import {
-  Grid,
-  Button,
-  Modal,
-  Typography
+  Button
 } from "@mui/material";
 import { useState, useContext} from "react";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
@@ -45,18 +41,18 @@ export default function OnboardProgressPage(onboardee){
   const handleAddModalOpen = () => setOpen(true);
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    //setEmpFile(" ");
-    //setOfferFile(" ");
-  };
+  // const handleClose = () => {
+  //   setOpen(false);
+  //   //setEmpFile(" ");
+  //   //setOfferFile(" ");
+  // };
   // const handleSubmitClose = () => {
   //   setOpen(false);
   //   setAddOnboardeeModal(true);
   // };
-  const handleMsgModalClose = () => {
-    setAddOnboardeeModal(false);
-  };
+  // const handleMsgModalClose = () => {
+  //   setAddOnboardeeModal(false);
+  // };
   // const handleEmployeeAgreement = (e) => {
   //   //setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
   // };

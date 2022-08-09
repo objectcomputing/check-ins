@@ -26,7 +26,7 @@ const OnboardeeAddedModal = () => {
   };
     return (
         <React.Fragment>
-      <Button onClick={handleOpen}> Submit</Button>
+      <Button onClick={handleOpen}>Submit</Button>
     <Modal
       open={open}
       onClose={handleClose}

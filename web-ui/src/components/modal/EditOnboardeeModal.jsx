@@ -53,39 +53,10 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={modalBoxStyle}>
+
         <Typography align="center" id="title" variant="h3" component="h2">
           Edit Onboardee
         </Typography>
-        <Grid container space={2}>
-          <Grid item xs={6}>
-            <Typography id="description" sx={{ mt: 2 }}>
-              Position:
-            </Typography>
-            <TextField
-              sx={{ width: "75%" }}
-              id="position"
-              variant="outlined"
-              value={editedOnboardee.position ? editedOnboardee.position : ""}
-              onChange={(e) =>
-                setOnboardee({ ...editedOnboardee, position: e.target.value })
-              }
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <Typography id="description" sx={{ mt: 2 }}>
-              Hire Type:
-            </Typography>
-            <TextField
-              sx={{ width: "75%" }}
-              id="hireType"
-              variant="outlined"
-              value={editedOnboardee.hireType ? editedOnboardee.hireType : ""}
-              onChange={(e) =>
-                setOnboardee({ ...editedOnboardee, hireType: e.target.value })
-              }
-            />
-          </Grid>
-        </Grid>
         <Grid container space={2}>
           <Grid item xs={6}>
             <Typography id="description" sx={{ mt: 2 }}>
@@ -94,7 +65,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             <TextField
               sx={{ width: "75%" }}
               id="firstName"
-              variant="outlined"
+              variant="standard"
               value={editedOnboardee.firstName ? editedOnboardee.firstName : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, firstName: e.target.value })
@@ -108,7 +79,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             <TextField
               sx={{ width: "75%" }}
               id="lastName"
-              variant="outlined"
+              variant="standard"
               value={editedOnboardee.lastName ? editedOnboardee.lastName : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, lastName: e.target.value })
@@ -116,15 +87,45 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             />
           </Grid>
         </Grid>
+        <Grid container space={2}>
+          <Grid item xs={6}>
+            <Typography id="description" sx={{ mt: 2 }}>
+              Position:
+            </Typography>
+            <TextField
+              sx={{ width: "75%" }}
+              id="position"
+              variant="standard"
+              value={editedOnboardee.position ? editedOnboardee.position : ""}
+              onChange={(e) =>
+                setOnboardee({ ...editedOnboardee, position: e.target.value })
+              }
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography id="description" sx={{ mt: 2 }}>
+              Hire Type:
+            </Typography>
+            <TextField
+              sx={{ width: "75%" }}
+              id="hireType"
+              variant="standard"
+              value={editedOnboardee.hireType ? editedOnboardee.hireType : ""}
+              onChange={(e) =>
+                setOnboardee({ ...editedOnboardee, hireType: e.target.value })
+              }
+            />
+          </Grid>
+        </Grid>
         <Grid container space={3}>
           <Grid item xs={6}>
             <Typography id="description" sx={{ mt: 2 }}>
-              Email:
+              External Email:
             </Typography>
             <TextField
               sx={{ width: "75%" }}
               id="email"
-              variant="outlined"
+              variant="standard"
               value={editedOnboardee.email ? editedOnboardee.email : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, email: e.target.value })
@@ -133,12 +134,12 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
           </Grid>
           <Grid item xs={6}>
             <Typography id="description" sx={{ mt: 2 }}>
-              PDL/Manager:
+              Manager:
             </Typography>
             <TextField
               sx={{ width: "75%" }}
               id="pdl"
-              variant="outlined"
+              variant="standard"
               value={editedOnboardee.pdl ? editedOnboardee.pdl : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, pdl: e.target.value })
