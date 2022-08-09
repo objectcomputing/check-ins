@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity //specifies that the class is an entity and is mapped to a database table
@@ -172,4 +173,25 @@ public class EmploymentDesiredAvailability {
 
     @Nullable
     public LocalDate getNoncompeteExpirationDate() { return noncompeteExpirationDate; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmploymentDesiredAvailability that = (EmploymentDesiredAvailability) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(desiredPosition, that.desiredPosition) &&
+                Objects.equals(desiredStartDate, that.desiredStartDate) &&
+                Objects.equals(desiredSalary, that.desiredSalary) &&
+                Objects.equals(currentlyEmployed, that.currentlyEmployed) &&
+                Objects.equals(contactCurrentEmployer, that.contactCurrentEmployer) &&
+                Objects.equals(previousEmploymentOCI, that.previousEmploymentOCI) &&
+                Objects.equals(noncompeteAgreement, that.noncompeteAgreement) &&
+                Objects.equals(noncompeteExpirationDate, that.noncompeteExpirationDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, desiredPosition, desiredStartDate, desiredSalary, currentlyEmployed, contactCurrentEmployer, previousEmploymentOCI, noncompeteAgreement, noncompeteExpirationDate);
+    }
 }
