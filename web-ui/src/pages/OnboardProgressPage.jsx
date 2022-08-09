@@ -65,7 +65,6 @@ export default function OnboardProgressPage(onboardee){
 
   const history = useHistory();
   const handleRowClick = (name, email, hireType, userID, title) => {
-    console.log(hireType);
     history.push({
       pathname: `/onboard/progress/${userID}`,
       state: {
