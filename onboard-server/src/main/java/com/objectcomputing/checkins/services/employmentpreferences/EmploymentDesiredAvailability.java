@@ -107,8 +107,7 @@ public class EmploymentDesiredAvailability {
     // Begin of Referral Type
 
     public EmploymentDesiredAvailability(String desiredPosition, LocalDate desiredStartDate, String desiredSalary, Boolean currentlyEmployed,
-                          @Nullable Boolean contactCurrentEmployer, Boolean previousEmploymentOCI, Boolean noncompeteAgreement, @Nullable LocalDate noncompeteExpirationDate,
-                          @Nullable String discoveredOpportunity, @Nullable String referredBy, @Nullable String referrerEmail, @Nullable String referrerJobSite, @Nullable String referralTypeOther) {
+                          @Nullable Boolean contactCurrentEmployer, Boolean previousEmploymentOCI, Boolean noncompeteAgreement, @Nullable LocalDate noncompeteExpirationDate) {
         this.desiredPosition = desiredPosition;
         this.desiredStartDate = desiredStartDate;
         this.desiredSalary = desiredSalary;
@@ -119,7 +118,7 @@ public class EmploymentDesiredAvailability {
         this.noncompeteExpirationDate = noncompeteExpirationDate;
     }
 
-    public EmploymentDesiredAvailability(UUID id, String desiredPosition, LocalDate desiredStartDate, String desiredSalary, Boolean currentlyEmployed, Boolean contactCurrentEmployer, Boolean previousEmploymentOCI, Boolean noncompeteAgreement, LocalDate noncompeteExpirationDate, String discoveredOpportunity, String referredBy, String referrerEmail, String referrerJobSite, String referralTypeOther) {
+    public EmploymentDesiredAvailability(UUID id, String desiredPosition, LocalDate desiredStartDate, String desiredSalary, Boolean currentlyEmployed, Boolean contactCurrentEmployer, Boolean previousEmploymentOCI, Boolean noncompeteAgreement, LocalDate noncompeteExpirationDate) {
         this.id = id;
         this.desiredPosition = desiredPosition;
         this.desiredStartDate = desiredStartDate;

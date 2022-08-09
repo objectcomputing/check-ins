@@ -168,7 +168,7 @@ public class EmploymentDesiredAvailabilityController {
     }
 
     private EmploymentDesiredAvailability fromDTO(EmploymentDesiredAvailabilityCreateDTO dto) {
-        return new WorkPreference(dto.getDesiredPosition(), dto.getDesiredStartDate(), dto.getDesiredSalary(),
+        return new EmploymentDesiredAvailability(dto.getDesiredPosition(), dto.getDesiredStartDate(), dto.getDesiredSalary(),
                 dto.getCurrentlyEmployed(), dto.getContactCurrentEmployer(), dto.getPreviousEmploymentOCI(), dto.getNoncompeteAgreement(),
                 dto.getNoncompeteExpirationDate());
     }
