@@ -10,6 +10,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddOnboardeeModal from "../components/modal/AddOnboardeeModal";
 import { AppContext } from "../../../context/AppContext";
 import { createOnboardee } from "../api/onboardeeMember";
+import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 
 import { Button, Modal, Typography } from "@mui/material";
 import { useState } from "react";
@@ -193,7 +194,7 @@ export default function OnboardProgressPage() {
                   : null;
               if (data) {
                 dispatch({
-                  type: UPDATE_ONBOARDEE_PROFILES,
+                  type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
                   payload: [...onboardeeProfiles, data],
                 });
               }
