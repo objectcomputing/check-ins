@@ -37,8 +37,8 @@ const menuList = [
   },
   {
     index: 3,
-    name: "Computer and Accessories",
-    title: "Computer and Accessories",
+    name: "Computer and Prefrences",
+    title: "Computer and Accessories & Work Preference",
     completed: false,
     child: <EquipmentPage />,
     visited: false,
