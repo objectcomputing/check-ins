@@ -5,6 +5,8 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -23,16 +25,16 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     private final ActionItemRepository actionItemRepo;
     private final CheckInServices checkInServices;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
 
     public ActionItemServicesImpl(ActionItemRepository actionItemRepo,
                                   CheckInServices checkInServices,
-                                  MemberProfileServices memberProfileServices,
+                                  MemberProfileRetrievalServices memberProfileRetrievalServices,
                                   CurrentUserServices currentUserServices) {
         this.actionItemRepo = actionItemRepo;
         this.checkInServices = checkInServices;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
     }
 
@@ -48,7 +50,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         validate(checkInRecord != null).orElseThrow(() -> {
             throw new BadArgException("CheckIn %s doesn't exist", actionItem.getCheckinid());
         });
-        validate(memberProfileServices.getById(actionItem.getCreatedbyid()) != null).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(actionItem.getCreatedbyid())).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", actionItem.getCreatedbyid());
         });
 
@@ -92,7 +94,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         validate(checkInRecord != null).orElseThrow(() -> {
             throw new BadArgException("CheckIn %s doesn't exist", actionItem.getCheckinid());
         });
-        validate(memberProfileServices.getById(actionItem.getCreatedbyid()) != null).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(actionItem.getCreatedbyid())).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", actionItem.getCreatedbyid());
         });
 
@@ -122,7 +124,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         validate(checkInRecord != null).orElseThrow(() -> {
             throw new BadArgException("CheckIn %s doesn't exist", checkInId);
         });
-        validate(memberProfileServices.getById(createdById) != null).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(createdById)).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", createdById);
         });
 
@@ -151,7 +153,10 @@ public class ActionItemServicesImpl implements ActionItemServices {
                 throw new PermissionException("User is unauthorized to do this operation");
             });
         } else if (createdbyid != null) {
-            boolean isCreator = memberProfileServices.getById(createdbyid).getId().equals(currentUserId);
+            MemberProfile creator = memberProfileRetrievalServices.getById(createdbyid).orElseThrow(() -> {
+                throw new BadArgException("Member does not exist");
+            });
+            boolean isCreator = creator.getId().equals(currentUserId);
             validate(isAdmin || isCreator).orElseThrow(() -> {
                 throw new PermissionException("User is unauthorized to do this operation");
             });
@@ -182,7 +187,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         validate(checkInRecord != null).orElseThrow(() -> {
             throw new BadArgException("CheckIn %s doesn't exist", checkInId);
         });
-        validate(memberProfileServices.getById(creatorId) != null).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(creatorId)).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", creatorId);
         });
 

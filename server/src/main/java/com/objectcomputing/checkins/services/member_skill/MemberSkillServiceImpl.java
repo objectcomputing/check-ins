@@ -40,7 +40,7 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
             validate(memberSkill.getId() == null).orElseThrow(() -> {
                 throw new BadArgException("Found unexpected id %s for member skill", memberSkill.getId());
             });
-            validate(memberProfileRepository.findById(memberId).isPresent()).orElseThrow(() -> {
+            memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
                 throw new BadArgException("Member Profile %s doesn't exist", memberId);
             });
             validate(skillRepository.findById(skillId).isPresent()).orElseThrow(() -> {

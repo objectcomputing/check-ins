@@ -4,7 +4,7 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,18 +27,18 @@ public class EmailServicesImpl implements EmailServices {
     private EmailSender htmlEmailSender;
     private EmailSender textEmailSender;
     private final CurrentUserServices currentUserServices;
-    private final MemberProfileRepository memberProfileRepository;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final EmailRepository emailRepository;
 
     public EmailServicesImpl(@Named(MailJetConfig.HTML_FORMAT) EmailSender htmlEmailSender,
                              @Named(MailJetConfig.TEXT_FORMAT) EmailSender textEmailSender,
                              CurrentUserServices currentUserServices,
-                             MemberProfileRepository memberProfileRepository,
+                             MemberProfileRetrievalServices memberProfileRetrievalServices,
                              EmailRepository emailRepository) {
         this.htmlEmailSender = htmlEmailSender;
         this.textEmailSender = textEmailSender;
         this.currentUserServices = currentUserServices;
-        this.memberProfileRepository = memberProfileRepository;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.emailRepository = emailRepository;
     }
 
@@ -71,7 +71,7 @@ public class EmailServicesImpl implements EmailServices {
 
         if (status) {
             for (String recipientEmail : recipients) {
-                Optional<MemberProfile> recipient = memberProfileRepository.findByWorkEmail(recipientEmail);
+                Optional<MemberProfile> recipient = memberProfileRetrievalServices.findByWorkEmail(recipientEmail);
                 if (recipient.isPresent()) {
                     // Only send emails to unterminated members
                     LocalDate terminationDate = recipient.get().getTerminationDate();

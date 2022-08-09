@@ -94,7 +94,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
         validate(demographics.getMemberId() != null).orElseThrow(() -> {
             throw new BadArgException("Invalid member id %s", demographics.getId());
         });
-        validate(memberProfileServices.getById(demographics.getMemberId()) != null).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(demographics.getMemberId())).orElseThrow(() -> {
             throw new BadArgException("Member Profile %s doesn't exist", demographics.getMemberId());
         });
         validate(demographics.getId() == null).orElseThrow(() -> {

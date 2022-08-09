@@ -64,7 +64,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         validate(checkinNote.getId() == null).orElseThrow(() -> {
             throw new BadArgException("Found unexpected id %s for check in note", checkinNote.getId());
         });
-        validate(createById != null && memberRepo.findById(createById).isPresent()).orElseThrow(() -> {
+        validate(createById != null && memberProfileRetrievalServices.existsById(createById)).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", createById);
         });
         validate(isAdmin || !isCompleted).orElseThrow(() -> {
@@ -123,7 +123,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         validate(id != null && checkinNoteRepository.findById(id).isPresent()).orElseThrow(() -> {
             throw new BadArgException("Unable to locate checkin note to update with id %s", checkinNote.getId());
         });
-        validate(memberRepo.findById(createById).isPresent()).orElseThrow(() -> {
+        memberProfileRetrievalServices.getById(createById).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", createById);
         });
 
@@ -147,7 +147,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
                 throw new PermissionException("User is unauthorized to do this operation");
             });
         } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
+            MemberProfile memberRecord = memberProfileRetrievalServices.getById(createbyid).orElseThrow();
             validate(currentUser.getId().equals(memberRecord.getId()) || isAdmin).orElseThrow(() -> {
                 throw new PermissionException("User is unauthorized to do this operation");
             });
