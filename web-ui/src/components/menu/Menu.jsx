@@ -120,10 +120,6 @@ const reportsLinks = [
   ["/team-skills-reports", "Team Skills"],
 ];
 
-
-//Onboard page
-const onboardingLinks = [["/onboard/progress", "Progress"]];
-
 const isCollapsibleListOpen = (linksArr, loc) => {
   for (let i = 0; i < linksArr.length; i++) {
     if (linksArr[i][0] === loc) return true;
@@ -210,10 +206,6 @@ function Menu() {
     isCollapsibleListOpen(feedbackLinks, location.pathname)
   );
 
-  const [onboardOpen, setOnboardOpen] = useState(
-    isCollapsibleListOpen(onboardingLinks, location.pathname)
-  );
-
   const anchorRef = useRef(null);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -243,10 +235,6 @@ function Menu() {
 
   const toggleDirectory = () => {
     setDirectoryOpen(!directoryOpen);
-  };
-
-  const toggleOnboarding = () => {
-    setOnboardOpen(!onboardOpen);
   };
 
   const toggleAdmin = () => {
@@ -354,16 +342,7 @@ function Menu() {
         </Collapse>
         {(isHR || isAdmin) && (
           <>
-            <ListItem
-              button
-              onClick={toggleOnboarding}
-              className={classes.listItem}
-            >
-              <ListItemText primary="ONBOARD" />
-            </ListItem>
-            <Collapse in={onboardOpen} timeout="auto" unmountOnExit>
-              {createListJsx(onboardingLinks, true)}
-            </Collapse>
+          {createLinkJsx("/onboard/progress", "ONBOARDING", false)}
           </>
         )}
         {isAdmin && (
