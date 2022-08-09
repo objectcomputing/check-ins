@@ -5,15 +5,30 @@ import {
   selectOrderedMemberFirstName,
   selectCurrentMembers,
 } from "../../context/selectors";
-
-import { Modal, TextField } from "@mui/material";
+import { Grid, TextField, Typography, Box, Divider, Modal } from "@mui/material";
+import { Modal, TextField, IconButton } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import DatePicker from "@mui/lab/DatePicker";
 import { format } from "date-fns";
-import { Button } from "@mui/material";
 import { UPDATE_TOAST } from "../../context/actions";
 import { createOnboardee } from "../../api/onboardeeMember";
+import { Button } from "@mui/material";
 import { useCallback } from "react";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+const modalBoxStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "75%",
+  backgroundColor: "#fff",
+  border: "2px solid #000",
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+  m: 2,
+};
 
 const emptyOnboardee = {
   employeeId: "",
@@ -25,18 +40,33 @@ const emptyOnboardee = {
   pdl: "",
 };
 
-const OnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
+const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
   const { state, dispatch } = useContext(AppContext);
   const onboardeeProfiles = selectCurrentOnboardee(state);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const sortedPdls = selectOrderedPdls(state);
-  const [isNewOnboardee, setIsNewOnboardee] = useState(
-    Object.keys(member).length === 0 ? true : false
-  );
+  const [empFile, setEmpFile] = useState(" ");
   const sortedOnboardees = selectOrderedOnboardeeFirstName(state);
-
+    
+  const [isNewOnboardee, setIsNewOnboardee] = useState(
+    Object.keys(onboardee).length === 0 ? true : false
+  );
+  const handleEmployeeAgreement = (e) => {
+    setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
+  };
+  const[offer, setOfferFile] = useState(" ");
+  const handleOfferLetter = (e) => {
+    setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
+  };
+  
   const submitOnboardeeClick = useCallback(async () => {
-    let required = validateRequiredInputsPresent();
+
+//    onSave(editedOnboardee).then(() => {
+//      if (isNewOnboardee.current) {
+//        setOnboardee({ emptyOnboardee });
+//        setIsNewOnboardee(true);
+//      }
+let required = validateRequiredInputsPresent();
 
     let inputsFeasible = validateInputs();
     if (!required) {
@@ -49,14 +79,9 @@ const OnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
         },
       });
     } else if (required && inputsFeasible) {
-    onSave(editedOnboardee).then(() => {
-      if (isNewOnboardee.current) {
-        setOnboardee({ emptyOnboardee });
-        setIsNewOnboardee(true);
-      }
-    });
-  }
-  }, [validateRequiredInputsPresent, onSave, dispatch, editedOnboardee, isNewOnboardee]);
+    }
+   }, [validateRequiredInputsPresent, onSave, dispatch, editedOnboardee, isNewOnboardee]);
+
 
   const validateInputs = useCallback(() => {
     let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ // eslint-disable-line
@@ -112,6 +137,7 @@ const OnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
     isNewOnboardee
   ]);
 
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={modalBoxStyle}>
@@ -128,8 +154,9 @@ const OnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
                   options={posOptions}
                   sx={{ width: "75%" }}
                   renderInput={(option) => (
-                    <TextField variant="outlined" {...option} />
+                    <TextField variant="outlined" {...option} sx={{ width: "75%" }} id="position" />
                   )}
+
               value={editedOnboardee.position ? editedOnboardee.position : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, position: e.target.value })
@@ -140,12 +167,13 @@ const OnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             <Typography id="description" sx={{ mt: 2 }}>
               Hire Type:
             </Typography>
+
             <Autocomplete
             disablePortal
             options={hireOptions}
             sx={{ width: "75%" }}
             renderInput={(option) => (
-              <TextField variant="outlined" {...option} />
+              <TextField variant="outlined" {...option} sx={{ width: "75%" }} id="hireType"/>
             )}
               value={editedOnboardee.hireType ? editedOnboardee.hireType : ""}
               onChange={(e) =>
@@ -189,7 +217,16 @@ const OnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             <Typography id="description" sx={{ mt: 2 }}>
               Email:
             </Typography>
-            <TextField sx={{ width: "75%" }} id="email" variant="outlined" />
+
+            <TextField
+              sx={{ width: "75%" }}
+              id="email"
+              variant="outlined"
+              value={editedOnboardee.email ? editedOnboardee.email : ""}
+              onChange={(e) =>
+                setOnboardee({ ...editedOnboardee, email: e.target.value })
+              }
+            />
           </Grid>
           <Grid item xs={6}>
             <Typography id="description" sx={{ mt: 2 }}>
@@ -287,10 +324,13 @@ const OnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="contained" onClock={submitOnboardeeClick}>Submit</Button>
+            <Button variant="contained" onClick={submitOnboardeeClick}>Submit</Button>
+
           </Grid>
         </Grid>
       </Box>
     </Modal>
   );
 };
+
+export default AddOnboardeeModal;

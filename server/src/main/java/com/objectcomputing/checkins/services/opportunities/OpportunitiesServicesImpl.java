@@ -40,7 +40,7 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
                 opportunitiesResponse.setSubmittedOn(LocalDate.now());
             }
             if(opportunitiesResponse.getId()!=null){
-                throw new BadArgException(String.format("Found unexpected id for opportunities %s", opportunitiesResponse.getId()));
+                throw new BadArgException("Found unexpected id for opportunities %s", opportunitiesResponse.getId());
             }
             opportunitiesResponseRet = opportunitiesResponseRepo.save(opportunitiesResponse);
         }
@@ -57,13 +57,13 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
             final UUID memberId = opportunitiesResponse.getSubmittedBy();
             LocalDate surSubDate = opportunitiesResponse.getSubmittedOn();
             if(id==null||opportunitiesResponseRepo.findById(id).isEmpty()){
-                throw new BadArgException(String.format("Unable to find opportunities record with id %s", opportunitiesResponse.getId()));
+                throw new BadArgException("Unable to find opportunities record with id %s", opportunitiesResponse.getId());
             }else if(memberRepo.findById(memberId).isEmpty()){
-                throw new BadArgException(String.format("Member %s doesn't exist", memberId));
+                throw new BadArgException("Member %s doesn't exist", memberId);
             } else if(memberId==null) {
-                throw new BadArgException(String.format("Invalid opportunities %s", opportunitiesResponse));
+                throw new BadArgException("Invalid opportunities %s", opportunitiesResponse);
             } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for opportunities submission date %s",memberId));
+                throw new BadArgException("Invalid date for opportunities submission date %s",memberId);
             }
 
             opportunitiesResponseRet = opportunitiesResponseRepo.update(opportunitiesResponse);
