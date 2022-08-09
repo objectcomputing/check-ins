@@ -1,4 +1,4 @@
 package com.objectcomputing.checkins.services.employmentpreferences;
 
-public class EmploymentDesiredDTO {
+public class EmploymentDesiredAvailabilityDTO {
 }
