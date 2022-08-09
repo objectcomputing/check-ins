@@ -48,7 +48,7 @@ const EquipmentPage = () => {
     >
       <Grid item xs={8}>
       <h2 style={{ marginTop: "1rem" }}>
-          Please select were you would perfer to work:
+          Please select where you would perfer to work:
         </h2>
         <ToggleButtonGroup
           size="medium"
