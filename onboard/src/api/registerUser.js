@@ -7,9 +7,7 @@ import { createVerifierAndSalt, SRPParameters, SRPRoutines } from 'tssrp6a';
 
 const registerUser = (
   email,
-  password,
-  firstName,
-  lastName,
+  password
 ) => {
   return async (dispatch, getState) => {
     try {
@@ -31,8 +29,6 @@ const registerUser = (
 
       const loginData = {
         emailAddress: email,
-        firstName: firstName,
-        lastName: lastName,
         salt: convertedSaltBigIntToHex,
         primaryVerifier: convertedVerifierBigIntToHex
       };

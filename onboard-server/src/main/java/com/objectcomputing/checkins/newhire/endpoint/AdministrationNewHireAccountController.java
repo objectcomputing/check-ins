@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("/platform/api/administration/account")
+@Controller("/auth/api/administration/account")
 public class AdministrationNewHireAccountController {
 
     private final NewHireAccountRepository userAccountRepository;

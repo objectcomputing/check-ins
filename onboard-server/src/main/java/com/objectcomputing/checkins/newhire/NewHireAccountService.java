@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.newhire;
 
 import com.objectcomputing.checkins.newhire.commons.NewHireAccountConfig;
+import com.objectcomputing.checkins.newhire.commons.SharableNewHireAccount;
 import com.objectcomputing.checkins.newhire.model.*;
 import com.objectcomputing.checkins.commons.AccountState;
 import com.objectcomputing.checkins.security.authentication.srp6.Srp6Secrets;
@@ -47,23 +48,23 @@ public class NewHireAccountService {
                             .flatMap(unknown -> Mono.just(userAccount)));
     }
 
-    private Mono<NewHireCredentialsEntity> saveUserAccountCredentials(NewHireAccountConfig newHireAccountConfig, NewHireAccountEntity newHireAccount) {
+    public Mono<NewHireCredentialsEntity> saveUserAccountCredentials(NewHireAccountConfig newHireAccountConfig, NewHireAccountEntity newHireAccount) {
         return newHireCredentialsRepository.save(
                 new NewHireCredentialsEntity(
                         newHireAccount, newHireAccountConfig.getSalt(), newHireAccountConfig.getPrimaryVerifier()));
     }
 
-    public Mono<NewHireAccountEntity> createUserAccountWithoutCredentials(NewHireAccountConfig newHireAccountConfig) {
-        return userAccountRepository.save(createUserAccount(newHireAccountConfig))
+    public Mono<NewHireAccountEntity> createUserAccountWithoutCredentials(SharableNewHireAccount sharableNewHireAccount) {
+        return userAccountRepository.save(createUserAccount(sharableNewHireAccount))
                 .flatMap(userAccount -> {
                     return createActivationCodeAndNotification(userAccount)
                             .thenReturn(userAccount);
                 });
     }
 
-    private NewHireAccountEntity createUserAccount(NewHireAccountConfig newHireAccountConfig) {
+    private NewHireAccountEntity createUserAccount(SharableNewHireAccount sharableNewHireAccount) {
         return new NewHireAccountEntity(
-                newHireAccountConfig.getEmailAddress(), AccountState.Pending, Instant.now());
+                sharableNewHireAccount.getEmailAddress(), AccountState.Pending, Instant.now());
     }
 
     public Mono<Object> createActivationCodeAndNotification(NewHireAccountEntity userAccount) {

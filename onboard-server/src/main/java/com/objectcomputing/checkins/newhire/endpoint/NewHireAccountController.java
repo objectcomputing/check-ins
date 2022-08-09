@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.newhire.NewHireAccountService;
 import com.objectcomputing.checkins.auth.exceptions.NoRecordFoundError;
 import com.objectcomputing.checkins.newhire.commons.SharableNewHireAccount;
 import com.objectcomputing.checkins.newhire.commons.NewHireAccountConfig;
+import com.objectcomputing.checkins.newhire.model.NewHireAccountEntity;
 import com.objectcomputing.checkins.newhire.model.NewHireAccountRepository;
 import com.objectcomputing.checkins.security.authentication.AuthenticatedActor;
 import io.micronaut.http.MediaType;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("/platform/api/account")
+@Controller("/auth/api/account")
 public class NewHireAccountController {
 
     private final NewHireAccountRepository userAccountRepository;
@@ -39,6 +40,20 @@ public class NewHireAccountController {
     public Mono<SharableNewHireAccount> get(AuthenticatedActor actor) {
         return userAccountRepository.findByEmailAddress(actor.getEmailAddress())
                 .flatMap(userAccountConverter::convert);
+    }
+
+    @Post("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Mono<Map<String, Object>> createUserAccountWithoutCredentials(@Body SharableNewHireAccount sharableNewHireAccount) {
+        return userAccountService.createUserAccountWithoutCredentials(sharableNewHireAccount)
+                .flatMap(userAccount -> Mono.just(Map.of("success", Boolean.TRUE)));
+    }
+
+    @Post("/addCredentials") // we want to use this endpoint to add credentials for a user
+    @Produces(MediaType.APPLICATION_JSON)
+    public Mono<Map<String, Object>> addCredentialsToAccount(@Body NewHireAccountConfig newHireAccountConfig, @Body NewHireAccountEntity newHireAccountEntity) {
+        return userAccountService.saveUserAccountCredentials(newHireAccountConfig, newHireAccountEntity)
+                .flatMap(userAccount -> Mono.just(Map.of("success", Boolean.TRUE)));
     }
 
     @Put("/")
