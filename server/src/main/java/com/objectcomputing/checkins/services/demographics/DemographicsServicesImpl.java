@@ -4,7 +4,7 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
 
@@ -17,12 +17,12 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class DemographicsServicesImpl implements DemographicsServices{
     private final DemographicsRepository demographicsRepository;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
 
-    public DemographicsServicesImpl(DemographicsRepository demographicsRepository, MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
+    public DemographicsServicesImpl(DemographicsRepository demographicsRepository, MemberProfileRetrievalServices memberProfileRetrievalServices, CurrentUserServices currentUserServices) {
         this.demographicsRepository = demographicsRepository;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
     }
 
@@ -92,11 +92,11 @@ public class DemographicsServicesImpl implements DemographicsServices{
         Demographics demographicsRet;
 
         if (demographics.getMemberId() == null) {
-            throw new BadArgException(String.format("Invalid member id %s", demographics.getId()));
-        } else if (memberProfileServices.getById(demographics.getMemberId()) == null) {
-            throw new BadArgException(String.format("Member Profile %s doesn't exist", demographics.getMemberId()));
+            throw new BadArgException("Invalid member id %s", demographics.getId());
+        } else if (memberProfileRetrievalServices.getById(demographics.getMemberId()).isEmpty()) {
+            throw new BadArgException("Member Profile %s doesn't exist", demographics.getMemberId());
         } else if (demographics.getId() != null) {
-            throw new AlreadyExistsException(String.format("Demographics %s already exists", demographics.getId()));
+            throw new AlreadyExistsException("Demographics %s already exists", demographics.getId());
         }
 
         demographicsRet = demographicsRepository.save(demographics);
@@ -121,7 +121,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
         }
 
         if (demographicsRepository.findById(id).isEmpty()) {
-            throw new NotFoundException(String.format("Demographic id %s was not found", id));
+            throw new NotFoundException("Demographic id %s was not found", id);
         }
 
         demographicsRepository.deleteById(id);
