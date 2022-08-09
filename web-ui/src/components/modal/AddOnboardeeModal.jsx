@@ -1,10 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
-import {
-  selectOrderedPdls,
-  selectOrderedMemberFirstName,
-  selectCurrentMembers,
-} from "../../context/selectors";
+import { selectOrderedPdls } from "../../context/selectors";
 import {
   Grid,
   TextField,
@@ -15,10 +11,7 @@ import {
 } from "@mui/material";
 import { Modal, TextField, IconButton } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import DatePicker from "@mui/lab/DatePicker";
-import { format } from "date-fns";
 import { UPDATE_TOAST } from "../../context/actions";
-import { createOnboardee } from "../../api/onboardeeMember";
 import { Button } from "@mui/material";
 import { useCallback } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
@@ -47,13 +40,15 @@ const emptyOnboardee = {
   pdl: "",
 };
 
+const posOptions = ["dummy1", "dummy2", "dummy3"];
+const hireOptions = ["dummy4", "dummy5", "dummy6"];
+const pdlOptions = ["dummy7", "dummy8", "dummy9"];
+
 const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
   const { state, dispatch } = useContext(AppContext);
-  const onboardeeProfiles = selectCurrentOnboardee(state);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const sortedPdls = selectOrderedPdls(state);
   const [empFile, setEmpFile] = useState(" ");
-  const sortedOnboardees = selectOrderedOnboardeeFirstName(state);
 
   const [isNewOnboardee, setIsNewOnboardee] = useState(
     Object.keys(onboardee).length === 0 ? true : false
@@ -225,10 +220,18 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             <Typography id="description" sx={{ mt: 2 }}>
               PDL/Manager:
             </Typography>
-            <TextField
+            <Autocomplete
+              disablePortal
+              options={pdlOptions}
               sx={{ width: "75%" }}
-              id="pdl"
-              variant="outlined"
+              renderInput={(option) => (
+                <TextField
+                  variant="outlined"
+                  {...option}
+                  sx={{ width: "75%" }}
+                  id="pdl"
+                />
+              )}
               value={editedOnboardee.pdl ? editedOnboardee.pdl : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, pdl: e.target.value })
