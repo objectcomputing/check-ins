@@ -1,10 +1,10 @@
-CREATE TABLE IF NOT EXISTS NEW_HIRE_CREDENTIALS (
-    NEW_HIRE_CREDENTIALS_ID varchar PRIMARY KEY,
-    NEW_HIRE_ACCOUNT_ID varchar,
-    SALT varchar(256),
-    VERIFIER VARCHAR(256),
-    CONSTRAINT FK_NEW_HIRE
-        FOREIGN KEY(NEW_HIRE_ACCOUNT_ID)
-        REFERENCES NEW_HIRE_ACCOUNT(NEW_HIRE_ACCOUNT_ID)
+CREATE TABLE IF NOT EXISTS new_hire_credentials (
+    new_hire_credentials_id varchar PRIMARY KEY,
+    new_hire_account_id varchar,
+    salt varchar(256),
+    verifier VARCHAR(256),
+    CONSTRAINT fk_new_hire
+        FOREIGN KEY(new_hire_account_id)
+        REFERENCES new_hire_account(new_hire_account_id)
         ON DELETE CASCADE
 );

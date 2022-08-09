@@ -1,15 +1,15 @@
-CREATE TABLE IF NOT EXISTS NEW_HIRE_AUTHORIZATION_CODE (
-    NEW_HIRE_AUTHORIZATION_CODE_ID varchar PRIMARY KEY,
-    NEW_HIRE_ACCOUNT_ID varchar,
-    SALT varchar(256),
-    VERIFIER varchar(256),
-    PURPOSE varchar(128),
-    SOURCE varchar(128),
-    ISSUED_INSTANT timestamp,
-    TIME_TO_LIVE bigint,
-    CONSUMED_INSTANT timestamp,
-    CONSTRAINT FK_NEW_HIRE
-        FOREIGN KEY(NEW_HIRE_ACCOUNT_ID)
-        REFERENCES NEW_HIRE_ACCOUNT(NEW_HIRE_ACCOUNT_ID)
+CREATE TABLE IF NOT EXISTS new_hire_authorization_code (
+    new_hire_authorization_code_id varchar PRIMARY KEY,
+    new_hire_account_id varchar,
+    salt varchar(256),
+    verifier varchar(256),
+    purpose varchar(128),
+    source varchar(128),
+    issued_instant timestamp,
+    time_to_live bigint,
+    consumed_instant timestamp,
+    CONSTRAINT fk_new_hire
+        FOREIGN KEY(new_hire_account_id)
+        REFERENCES new_hire_account(new_hire_account_id)
         ON DELETE CASCADE
 );
