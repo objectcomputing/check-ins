@@ -4,6 +4,9 @@ import { Modal, TextField, IconButton } from "@mui/material";
 import { Button } from "@mui/material";
 import { useCallback } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+
 const modalBoxStyle = {
   position: "absolute",
   top: "50%",
@@ -106,15 +109,21 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             <Typography id="description" sx={{ mt: 2 }}>
               Hire Type:
             </Typography>
-            <TextField
+            <Select
               sx={{ width: "75%" }}
               id="hireType"
               variant="standard"
               value={editedOnboardee.hireType ? editedOnboardee.hireType : ""}
-              onChange={(e) =>
-                setOnboardee({ ...editedOnboardee, hireType: e.target.value })
+              onChange={(e) => {
+
+                setOnboardee({ ...editedOnboardee, hireType: e.target.value });
               }
-            />
+              }
+            >
+              <MenuItem value={"hourly"}>Hourly</MenuItem>
+              <MenuItem value={"fulltime"}>FullTime</MenuItem>
+              <MenuItem value={"contract"}>Contract</MenuItem>
+            </Select>
           </Grid>
         </Grid>
         <Grid container space={3}>
@@ -136,7 +145,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             <Typography id="description" sx={{ mt: 2 }}>
               Manager:
             </Typography>
-            <TextField
+            <Select
               sx={{ width: "75%" }}
               id="pdl"
               variant="standard"
@@ -144,7 +153,12 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, pdl: e.target.value })
               }
-            />
+            >
+              <MenuItem value={"dummy1"}>dummy1</MenuItem>
+              <MenuItem value={"dummy2"}>dummy2</MenuItem>
+              <MenuItem value={"dummy3"}>dummy3</MenuItem>
+
+            </Select>
           </Grid>
         </Grid>
         <Divider sx={{ m: 3 }} variant="middle" />
