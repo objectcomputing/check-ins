@@ -13,7 +13,6 @@ import { createOnboardee } from "../api/onboardeeMember";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 
 import { Button, Modal, Typography } from "@mui/material";
-import { useState } from "react";
 
 const modalBoxStyleMini = {
   position: "absolute",
