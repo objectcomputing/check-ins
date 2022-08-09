@@ -3,37 +3,19 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Link, useHistory } from "react-router-dom";
 import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
+import { AppContext } from "../context/AppContext";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-
+import AddOnboardModal from "../components/modal/AddOnboardeeModal";
 import {
+  Grid,
   Button,
   Modal,
-  Typography,
-  Grid,
-  Divider,
-  IconButton,
-  Autocomplete,
+  Typography
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useContext} from "react";
+import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
+import { createOnboardee } from "../api/onboardeeMember";
 
-const modalBoxStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "75%",
-  backgroundColor: "#fff",
-  border: "2px solid #000",
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-  m: 2,
-};
 
 const modalBoxStyleMini = {
   position: "absolute",
@@ -50,35 +32,33 @@ const modalBoxStyleMini = {
   m: 2,
 };
 
-export default function OnboardProgressPage() {
+export default function OnboardProgressPage(onboardee){
   const [open, setOpen] = useState(false);
-  const [empFile, setEmpFile] = useState(" ");
-  const [offer, setOfferFile] = useState(" ");
+  //const [empFile, setEmpFile] = useState(" ");
+  //const [offer, setOfferFile] = useState(" ");
   const [addOnboardeeModal, setAddOnboardeeModal] = useState(false);
+  const { state, dispatch } = useContext(AppContext);
+  const { csrf , onboardeeProfiles} = state;
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    setEmpFile(" ");
-    setOfferFile(" ");
+    //setEmpFile(" ");
+    //setOfferFile(" ");
   };
-  const handleSubmitClose = () => {
-    setOpen(false);
-    setAddOnboardeeModal(true);
-  };
+  // const handleSubmitClose = () => {
+  //   setOpen(false);
+  //   setAddOnboardeeModal(true);
+  // };
   const handleMsgModalClose = () => {
     setAddOnboardeeModal(false);
   };
-  const handleEmployeeAgreement = (e) => {
-    setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
-  };
-  const handleOfferLetter = (e) => {
-    setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
-  };
-
-  const posOptions = ["dummy1", "dummy2", "dummy3"];
-  const hireOptions = ["dummy4", "dummy5", "dummy6"];
-  const pdlOptions = ["dummy7", "dummy8", "dummy9"];
+  // const handleEmployeeAgreement = (e) => {
+  //   //setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
+  // };
+  // const handleOfferLetter = (e) => {
+  //   //setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
+  // };
 
   const history = useHistory();
   const handleRowClick = (name, email, hireType, userID) => {
@@ -149,7 +129,7 @@ export default function OnboardProgressPage() {
     {
       field: "notificationMsg",
       headerName: "Notification Message",
-      width: 400,
+      flex: 1
     },
   ];
 
@@ -183,19 +163,6 @@ export default function OnboardProgressPage() {
   return (
     <div className="onboard-page">
       <Box sx={{ height: 400, width: "60%", mt: "5%" }}>
-        <TextField
-          id="input-with-icon-textfield"
-          label="Search Onboardees"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          variant="standard"
-        />
-
         <Button
           onClick={handleOpen}
           variant="contained"
@@ -204,7 +171,7 @@ export default function OnboardProgressPage() {
         >
           Add Onboardee
         </Button>
-        <Modal
+        {/* <Modal
           open={open}
           onClose={handleClose}
           aria-labelledby="title"
@@ -212,7 +179,7 @@ export default function OnboardProgressPage() {
         >
           <Box sx={modalBoxStyle}>
             <Typography align="center" id="title" variant="h3" component="h2">
-              Add Onboardee:
+              Add Onboardee
             </Typography>
             <Grid container space={2}>
               <Grid item xs={6}>
@@ -376,7 +343,33 @@ export default function OnboardProgressPage() {
               </Grid>
             </Grid>
           </Box>
-        </Modal>
+        </Modal> */}
+         <AddOnboardModal
+              onboardee={{}}
+              open={open}
+              onClose={handleClose}
+              onSave={async (onboardee) => {
+                if (
+                  onboardee.firstName &&
+                  onboardee.lastName &&
+                  onboardee.position &&
+                  onboardee.email &&
+                  onboardee.hireType &&
+                  onboardee.pdl &&
+                  csrf
+                )
+                {
+                  let res = await createOnboardee(onboardee, csrf);
+                  let data = res.payload && res.payload.data && !res.error ? res.payload.data : null;
+                  if (data) {
+                    dispatch({
+                      type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
+                      payload: [...onboardeeProfiles, data],
+                    });
+                  }
+                  }
+              }}
+            />
         <Modal
           open={addOnboardeeModal}
           onClose={handleClose}
@@ -384,15 +377,19 @@ export default function OnboardProgressPage() {
           aria-describedby="description"
         >
           <Box sx={modalBoxStyleMini}>
-            <div style={{textAlign:"center",marginLeft:"auto", marginRight:"auto", marginTop:"auto", marginBottom:"auto"}}>
+            <div style={{ textAlign: "center", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto" }}>
               <Typography variant="p" component="h3">
                 Onboardee added!
               </Typography>
             </div>
             <div >
-              <Button variant="contained" onClick={handleMsgModalClose} style={{display:"flex", justifyContent:"centered", gap:"10px"}}>
-                Okay
-              </Button>
+              <Grid container sx={{ mt: 5 }}>
+                <Grid item xs={12} align="center">
+                  <Button variant="contained" onClick={handleMsgModalClose} style={{ display: "flex", justifyContent: "centered", gap: "10px" }}>
+                    Okay
+                  </Button>
+                </Grid>
+              </Grid>
             </div>
           </Box>
         </Modal>
