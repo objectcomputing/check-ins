@@ -171,7 +171,6 @@ export default function OnboardProgressPage(onboardee) {
                   payload: [...onboardeeProfiles, data],
                 });
               }
-              handleSubmitClose();
             }
           }}
         />

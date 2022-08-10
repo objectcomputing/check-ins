@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Grid,
   TextField,
@@ -10,6 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import OnboardeeAddedModal from "./OnboardeeAddedModal";
+import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
 import { useCallback } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
@@ -42,6 +43,7 @@ const emptyOnboardee = {
 };
 
 const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
+  const { state, dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const [emptyFile, setEmptyFile] = useState(" ");
 
