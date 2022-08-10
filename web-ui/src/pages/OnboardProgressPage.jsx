@@ -51,7 +51,16 @@ export default function OnboardProgressPage(onboardee){
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     { field: "name", headerName: "Name", width: 130 },
-    { field: "email", headerName: "Email", width: 220 },
+    { 
+      field: "email", 
+      headerName: "Email",
+      renderCell: (cellValues) =>{
+        return(
+        <a href={"mailto:" + cellValues.row.email}>{cellValues.row.email}</a>
+        );
+      },
+      width: 220 
+    },
     { field: "hireType", headerName: "Hire Type", width: 150 },
     {
       field: "completed",
