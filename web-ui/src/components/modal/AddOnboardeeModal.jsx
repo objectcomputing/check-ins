@@ -10,7 +10,6 @@ import {
   Button,
 } from "@mui/material";
 import OnboardeeAddedModal from "./OnboardeeAddedModal";
-import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
 import { useCallback } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
@@ -43,7 +42,7 @@ const emptyOnboardee = {
 };
 
 const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
-  const { dispatch } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const [emptyFile, setEmptyFile] = useState(" ");
 
