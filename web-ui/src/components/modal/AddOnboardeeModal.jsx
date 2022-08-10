@@ -1,6 +1,4 @@
-import React, { useContext, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import { selectOrderedPdls } from "../../context/selectors";
+import React, { useState } from "react";
 import {
   Grid,
   TextField,
@@ -45,15 +43,14 @@ const hireOptions = ["dummy4", "dummy5", "dummy6"];
 const pdlOptions = ["dummy7", "dummy8", "dummy9"];
 
 const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
-  const { state, dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
-  const [empFile, setEmpFile] = useState(" ");
+  const [emptyFile, setEmptyFile] = useState(" ");
 
   const [isNewOnboardee, setIsNewOnboardee] = useState(
     Object.keys(onboardee).length === 0 ? true : false
   );
   const handleEmployeeAgreement = (e) => {
-    setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
+    setEmptyFile(e.target.value.replace(/^.*[\\/]/, ""));
   };
   const [offer, setOfferFile] = useState(" ");
   const handleOfferLetter = (e) => {
@@ -73,7 +70,8 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
       });
       return false;
     }
-  }, []);
+    return true;
+  }, [editedOnboardee, dispatch]);
   const validateRequiredInputsPresent = useCallback(() => {
     return (
       editedOnboardee.firstName?.length > 0 &&
@@ -300,7 +298,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
                 marginLeft: 5,
               }}
             >
-              {empFile}
+              {emptyFile}
             </Typography>
           </Grid>
         </Grid>
