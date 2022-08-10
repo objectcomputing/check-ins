@@ -21,13 +21,14 @@ export default function OnboardProgressPage(onboardee){
   const handleOpen = () => setOpen(true);
 
   const history = useHistory();
-  const handleRowClick = (name, email, hireType, userID) => {
+  const handleRowClick = (name, email, hireType, userID, title) => {
     history.push({
       pathname: `/onboard/progress/${userID}`,
       state: {
         name: name,
         email: email,
         hireType: hireType,
+        title: title
       },
     });
   };
@@ -45,6 +46,7 @@ export default function OnboardProgressPage(onboardee){
       },
       width: 220 
     },
+    { field: "title", headerName: "Title", width: 150 },
     { field: "hireType", headerName: "Hire Type", width: 150 },
     {
       field: "completed",
@@ -63,6 +65,7 @@ export default function OnboardProgressPage(onboardee){
                 name: cellValues.row.name,
                 email: cellValues.row.email,
                 hireType: cellValues.row.hireType,
+                title: cellValues.row.title
               },
             }}
           >
@@ -79,17 +82,19 @@ export default function OnboardProgressPage(onboardee){
       id: 1,
       name: "Daniel Ryu",
       email: "d97shryu@gmail.com",
-      hireType: "Intern",
+      title: "Intern",
       completed: "No",
       dateAdded: "Jul 15, 2022",
+      hireType: "Hourly"
     },
     {
       id: 2,
       name: "Brandon Li",
       email: "li.brandon@outlook.com",
-      hireType: "Intern",
+      title: "Intern",
       completed: "No",
       dateAdded: "Jul 15, 2022",
+      hireType: "Hourly"
     },
   ];
 
@@ -109,7 +114,8 @@ export default function OnboardProgressPage(onboardee){
       userID: 1,
       name: "Daniel Ryu",
       email: "ryud@objectcomputing.com",
-      hireType: "Intern",
+      title: "Intern",
+      hireType: "Hourly"
     },
     {
       id: 2,
@@ -117,7 +123,8 @@ export default function OnboardProgressPage(onboardee){
       userID: 2,
       name: "Brandon",
       email: "lib@objectcomputing.com",
-      hireType: "Intern",
+      title: "Intern",
+      hireType: "Hourly"
     },
     {
       id: 3,
@@ -125,7 +132,8 @@ export default function OnboardProgressPage(onboardee){
       userID: 1,
       name: "Daniel Ryu",
       email: "ryud@objectcomputing.com",
-      hireType: "Intern",
+      title: "Intern",
+      hireType: "Hourly"
     },
   ];
 
@@ -196,7 +204,8 @@ export default function OnboardProgressPage(onboardee){
                 params.row.name,
                 params.row.email,
                 params.row.hireType,
-                params.row.userID
+                params.row.userID,
+                params.row.title
               );
             }
           }}
