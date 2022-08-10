@@ -124,11 +124,9 @@ Array [
   }
 }
 
-@media (min-width:0px) {
-  @media (orientation: landscape) {
-    .emotion-2 {
-      min-height: 48px;
-    }
+@media (min-width:0px) and (orientation: landscape) {
+  .emotion-2 {
+    min-height: 48px;
   }
 }
 
@@ -1087,7 +1085,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -1133,7 +1131,7 @@ Array [
             >
               
               <div
-                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
+                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -1241,7 +1239,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-14"
+          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-14"
           onKeyDown={[Function]}
           role="presentation"
         >
@@ -2060,11 +2058,9 @@ Array [
   }
 }
 
-@media (min-width:0px) {
-  @media (orientation: landscape) {
-    .emotion-2 {
-      min-height: 48px;
-    }
+@media (min-width:0px) and (orientation: landscape) {
+  .emotion-2 {
+    min-height: 48px;
   }
 }
 
@@ -3023,7 +3019,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -3066,7 +3062,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -3122,7 +3118,7 @@ Array [
             >
               
               <div
-                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
+                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -3258,7 +3254,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-16"
+          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-16"
           onKeyDown={[Function]}
           role="presentation"
         >
@@ -4305,11 +4301,9 @@ Array [
   }
 }
 
-@media (min-width:0px) {
-  @media (orientation: landscape) {
-    .emotion-2 {
-      min-height: 48px;
-    }
+@media (min-width:0px) and (orientation: landscape) {
+  .emotion-2 {
+    min-height: 48px;
   }
 }
 
@@ -5268,7 +5262,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5311,7 +5305,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5364,7 +5358,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5407,7 +5401,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -5453,7 +5447,7 @@ Array [
             >
               
               <div
-                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
+                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -5561,7 +5555,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-14"
+          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-14"
           onKeyDown={[Function]}
           role="presentation"
         >
@@ -6456,11 +6450,9 @@ Array [
   }
 }
 
-@media (min-width:0px) {
-  @media (orientation: landscape) {
-    .emotion-2 {
-      min-height: 48px;
-    }
+@media (min-width:0px) and (orientation: landscape) {
+  .emotion-2 {
+    min-height: 48px;
   }
 }
 
@@ -7419,7 +7411,7 @@ Array [
 <body>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -7462,7 +7454,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -7515,7 +7507,7 @@ Array [
                   </div>
                   <div
                     aria-hidden="true"
-                    class="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-0"
+                    class="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-0"
                     id="simple-menu"
                     role="presentation"
                   >
@@ -7561,7 +7553,7 @@ Array [
             >
               
               <div
-                className="MuiPopover-root MuiMenu-root MuiModal-root MuiModal-hidden emotion-8"
+                className="MuiModal-root MuiModal-hidden MuiPopover-root MuiMenu-root emotion-8"
                 id="simple-menu"
                 onKeyDown={[Function]}
                 role="presentation"
@@ -7669,7 +7661,7 @@ Array [
       Array [
         "",
         <div
-          className="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden emotion-14"
+          className="MuiModal-root MuiModal-hidden MuiDrawer-root MuiDrawer-modal emotion-14"
           onKeyDown={[Function]}
           role="presentation"
         >
