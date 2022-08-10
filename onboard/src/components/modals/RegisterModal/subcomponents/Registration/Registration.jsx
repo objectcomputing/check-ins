@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 
 import InputField from "../../../../inputs/InputField";
 import PasswordModule from "./modules/PasswordModule";
-import RequestAccess from "../../sharedModules/RequestAccess";
 
 import registerUser from "../../../../../api/registerUser";
 import "./modules/request.scss";
@@ -244,7 +243,6 @@ function Registration({
           Cancel
         </Button>
       </form>
-      <RequestAccess />
     </>
   );
 }

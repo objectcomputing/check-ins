@@ -79,7 +79,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
                 "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
                 "</b> has reopened the feedback request on <b>" +
-                requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
+                requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you. " +
                 "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
         newContent += "<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
         return newContent;
@@ -955,7 +955,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipient = createADefaultRecipient();
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        feedbackReq.setStatus("complete");
+        feedbackReq.setStatus(FeedbackRequestStatus.SUBMITTED);
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -975,7 +975,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipient = createADefaultRecipient();
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        feedbackReq.setStatus("canceled");
+        feedbackReq.setStatus(FeedbackRequestStatus.CANCELED);
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -995,7 +995,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipient = createADefaultRecipient();
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdl, requestee, recipient);
-        feedbackReq.setStatus("complete");
+        feedbackReq.setStatus(FeedbackRequestStatus.SUBMITTED);
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -1065,12 +1065,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         // Save feedback request that has already been submitted
         final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
         feedbackReq.setSubmitDate(LocalDate.now());
-        feedbackReq.setStatus("submitted");
+        feedbackReq.setStatus(FeedbackRequestStatus.SUBMITTED);
         getFeedbackRequestRepository().save(feedbackReq);
 
         // The PDL attempts to enable edits on the request
         feedbackReq.setSubmitDate(null);
-        feedbackReq.setStatus("sent");
+        feedbackReq.setStatus(FeedbackRequestStatus.SENT);
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -1090,7 +1090,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipient = createADefaultRecipient();
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        feedbackReq.setStatus("complete");
+        feedbackReq.setStatus(FeedbackRequestStatus.SUBMITTED);
         feedbackReq.setDueDate(LocalDate.now());
         feedbackReq.setSubmitDate(LocalDate.now());
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
@@ -1112,7 +1112,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assignAdminRole(admin);
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        feedbackReq.setStatus("complete");
+        feedbackReq.setStatus(FeedbackRequestStatus.SUBMITTED);
         feedbackReq.setDueDate(LocalDate.now());
         feedbackReq.setSubmitDate(LocalDate.now());
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
@@ -1135,7 +1135,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assignAdminRole(admin);
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        feedbackReq.setStatus("canceled");
+        feedbackReq.setStatus(FeedbackRequestStatus.CANCELED);
         feedbackReq.setDueDate(null);
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
@@ -1155,7 +1155,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipient = createADefaultRecipient();
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        feedbackReq.setStatus("canceled");
+        feedbackReq.setStatus(FeedbackRequestStatus.CANCELED);
         feedbackReq.setDueDate(null);
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
@@ -1176,9 +1176,9 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         FeedbackTemplate template = createFeedbackTemplate(pdlMemberProfile.getId());
         getFeedbackTemplateRepository().save(template);
-        final FeedbackRequest submittedFeedbackRequest = saveSampleFeedbackRequestWithStatus(pdlMemberProfile, employeeMemberProfile, recipient, template.getId(), "submitted");
+        final FeedbackRequest submittedFeedbackRequest = saveSampleFeedbackRequestWithStatus(pdlMemberProfile, employeeMemberProfile, recipient, template.getId(), FeedbackRequestStatus.SUBMITTED);
 
-        submittedFeedbackRequest.setStatus("canceled");
+        submittedFeedbackRequest.setStatus(FeedbackRequestStatus.CANCELED);
         submittedFeedbackRequest.setDueDate(null);
         final FeedbackRequestUpdateDTO dto = updateDTO(submittedFeedbackRequest);
 
@@ -1198,7 +1198,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipient = createADefaultRecipient();
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        feedbackReq.setStatus("canceled");
+        feedbackReq.setStatus(FeedbackRequestStatus.CANCELED);
         feedbackReq.setDueDate(null);
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 

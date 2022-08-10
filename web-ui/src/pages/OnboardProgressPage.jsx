@@ -7,58 +7,18 @@ import { AppContext } from "../context/AppContext";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddOnboardModal from "../components/modal/AddOnboardeeModal";
 import {
-  Grid,
-  Button,
-  Modal,
-  Typography
+  Button
 } from "@mui/material";
 import { useState, useContext} from "react";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 import { createOnboardee } from "../api/onboardeeMember";
 
-
-const modalBoxStyleMini = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "25%",
-  backgroundColor: "#fff",
-  border: "2px solid #000",
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-  m: 2,
-};
-
 export default function OnboardProgressPage(onboardee){
   const [open, setOpen] = useState(false);
-  //const [empFile, setEmpFile] = useState(" ");
-  //const [offer, setOfferFile] = useState(" ");
-  const [addOnboardeeModal, setAddOnboardeeModal] = useState(false);
   const { state, dispatch } = useContext(AppContext);
   const { csrf , onboardeeProfiles} = state;
-
+  const handleAddModalClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    //setEmpFile(" ");
-    //setOfferFile(" ");
-  };
-  // const handleSubmitClose = () => {
-  //   setOpen(false);
-  //   setAddOnboardeeModal(true);
-  // };
-  const handleMsgModalClose = () => {
-    setAddOnboardeeModal(false);
-  };
-  // const handleEmployeeAgreement = (e) => {
-  //   //setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
-  // };
-  // const handleOfferLetter = (e) => {
-  //   //setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
-  // };
 
   const history = useHistory();
   const handleRowClick = (name, email, hireType, userID) => {
@@ -75,7 +35,16 @@ export default function OnboardProgressPage(onboardee){
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     { field: "name", headerName: "Name", width: 130 },
-    { field: "email", headerName: "Email", width: 220 },
+    { 
+      field: "email", 
+      headerName: "Email",
+      renderCell: (cellValues) =>{
+        return(
+        <a href={"mailto:" + cellValues.row.email}>{cellValues.row.email}</a>
+        );
+      },
+      width: 220 
+    },
     { field: "hireType", headerName: "Hire Type", width: 150 },
     {
       field: "completed",
@@ -171,183 +140,10 @@ export default function OnboardProgressPage(onboardee){
         >
           Add Onboardee
         </Button>
-        {/* <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="title"
-          aria-describedby="description"
-        >
-          <Box sx={modalBoxStyle}>
-            <Typography align="center" id="title" variant="h3" component="h2">
-              Add Onboardee
-            </Typography>
-            <Grid container space={2}>
-              <Grid item xs={6}>
-                <Typography id="description" sx={{ mt: 2 }}>
-                  Position:
-                </Typography>
-                <Autocomplete
-                  disablePortal
-                  options={posOptions}
-                  sx={{ width: "75%" }}
-                  renderInput={(option) => (
-                    <TextField variant="outlined" {...option} />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography id="description" sx={{ mt: 2 }}>
-                  Hire Type:
-                </Typography>
-                <Autocomplete
-                  disablePortal
-                  options={hireOptions}
-                  sx={{ width: "75%" }}
-                  renderInput={(option) => (
-                    <TextField variant="outlined" {...option} />
-                  )}
-                />
-              </Grid>
-            </Grid>
-            <Grid container space={2}>
-              <Grid item xs={6}>
-                <Typography id="description" sx={{ mt: 2 }}>
-                  First Name:
-                </Typography>
-                <TextField
-                  sx={{ width: "75%" }}
-                  id="firstName"
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography id="description" sx={{ mt: 2 }}>
-                  Last Name:
-                </Typography>
-                <TextField
-                  sx={{ width: "75%" }}
-                  id="lastName"
-                  variant="outlined"
-                />
-              </Grid>
-            </Grid>
-            <Grid container space={3}>
-              <Grid item xs={6}>
-                <Typography id="description" sx={{ mt: 2 }}>
-                  Email:
-                </Typography>
-                <TextField
-                  sx={{ width: "75%" }}
-                  id="email"
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography id="description" sx={{ mt: 2 }}>
-                  PDL/Manager:
-                </Typography>
-                <Autocomplete
-                  disablePortal
-                  options={pdlOptions}
-                  sx={{ width: "75%" }}
-                  renderInput={(option) => (
-                    <TextField variant="outlined" {...option} />
-                  )}
-                />
-              </Grid>
-            </Grid>
-            <Divider sx={{ m: 3 }} variant="middle" />
-            <Grid
-              container
-              flexDirection="column"
-              alignItems="center"
-              rowSpacing={3}
-            >
-              <Grid item xs={"auto"}>
-                <Typography
-                  align="center"
-                  id="description"
-                  sx={{ mt: 0, display: "inline-flex" }}
-                >
-                  Offer Letter:
-                </Typography>
-                <IconButton component="label">
-                  <input
-                    hidden
-                    accept=".pdf"
-                    type="file"
-                    id="offerLetter"
-                    onChange={handleOfferLetter}
-                  />
-                  <FileUploadIcon />
-                </IconButton>
-                <Typography
-                  sx={{
-                    display: "inline-flex",
-                    fontStyle: "italic",
-                    fontSize: 12,
-                    marginLeft: 5,
-                  }}
-                >
-                  {offer}
-                </Typography>
-              </Grid>
-              <Grid item id="description" xs={"auto"}>
-                <Typography
-                  align="center"
-                  id="description"
-                  sx={{ mt: 2, display: "inline-flex" }}
-                >
-                  Employment Agreement:
-                </Typography>
-                <IconButton component="label">
-                  <input
-                    hidden
-                    accept=".pdf"
-                    type="file"
-                    id="empAgreement"
-                    onChange={handleEmployeeAgreement}
-                  />
-                  <FileUploadIcon />
-                </IconButton>
-                <Typography
-                  sx={{
-                    display: "inline-flex",
-                    fontStyle: "italic",
-                    fontSize: 12,
-                    marginLeft: 5,
-                  }}
-                >
-                  {empFile}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid container>
-              <Grid
-                item
-                xs={6}
-                style={{ display: "flex", justifyContent: "flex-start" }}
-              >
-                <Button variant="contained" onClick={handleClose}>
-                  Cancel
-                </Button>
-              </Grid>
-              <Grid
-                item
-                xs={6}
-                style={{ display: "flex", justifyContent: "flex-end" }}
-              >
-                <Button variant="contained" onClick={handleSubmitClose}>
-                  Submit
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
-        </Modal> */}
          <AddOnboardModal
               onboardee={{}}
               open={open}
-              onClose={handleClose}
+              onClose={handleAddModalClose}
               onSave={async (onboardee) => {
                 if (
                   onboardee.firstName &&
@@ -370,29 +166,6 @@ export default function OnboardProgressPage(onboardee){
                   }
               }}
             />
-        <Modal
-          open={addOnboardeeModal}
-          onClose={handleClose}
-          aria-labelledby="title"
-          aria-describedby="description"
-        >
-          <Box sx={modalBoxStyleMini}>
-            <div style={{ textAlign: "center", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto" }}>
-              <Typography variant="p" component="h3">
-                Onboardee added!
-              </Typography>
-            </div>
-            <div >
-              <Grid container sx={{ mt: 5 }}>
-                <Grid item xs={12} align="center">
-                  <Button variant="contained" onClick={handleMsgModalClose} style={{ display: "flex", justifyContent: "centered", gap: "10px" }}>
-                    Okay
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-          </Box>
-        </Modal>
         <DataGrid
           rows={rows}
           columns={columns}
