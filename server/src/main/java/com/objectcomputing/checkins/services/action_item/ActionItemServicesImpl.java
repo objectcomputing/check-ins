@@ -7,7 +7,6 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import jakarta.inject.Singleton;

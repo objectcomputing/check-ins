@@ -59,7 +59,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         validate(teamMember.getId() == null).orElseThrow(() -> {
             throw new BadArgException("Found unexpected id %s for team member", teamMember.getId());
         });
-        memberRepo.findById(memberId).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(memberId)).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", memberId);
         });
         validate(teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isEmpty()).orElseThrow(() -> {
@@ -97,7 +97,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         validate(id != null && teamMemberRepo.findById(id).isPresent()).orElseThrow(() -> {
             throw new BadArgException("Unable to locate teamMember to update with id %s", id);
         });
-        memberRepo.findById(memberId).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(memberId)).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", memberId);
         });
         teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).orElseThrow(() -> {

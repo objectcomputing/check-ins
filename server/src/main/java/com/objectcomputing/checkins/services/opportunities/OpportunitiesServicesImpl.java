@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.opportunities;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import jakarta.inject.Singleton;
@@ -18,14 +18,14 @@ import static com.objectcomputing.checkins.util.Validation.validate;
 public class OpportunitiesServicesImpl implements OpportunitiesService {
 
     private final OpportunitiesRepository opportunitiesResponseRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
 
     public OpportunitiesServicesImpl(OpportunitiesRepository opportunitiesResponseRepo,
-                                     MemberProfileRepository memberRepo,
+                                     MemberProfileRetrievalServices memberProfileRetrievalServices,
                                      CurrentUserServices currentUserServices) {
         this.opportunitiesResponseRepo = opportunitiesResponseRepo;
-        this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
     }
 
@@ -64,7 +64,7 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
             validate(id != null && opportunitiesResponseRepo.findById(id).isPresent()).orElseThrow(() -> {
                 throw new BadArgException("Unable to find opportunities record with id %s", opportunitiesResponse.getId());
             });
-            validate(memberRepo.findById(memberId).isPresent()).orElseThrow(() -> {
+            validate(memberProfileRetrievalServices.existsById(memberId)).orElseThrow(() -> {
                 throw new BadArgException("Member %s doesn't exist", memberId);
             });
             validate(surSubDate.isAfter(LocalDate.EPOCH) && surSubDate.isBefore(LocalDate.MAX)).orElseThrow(() -> {

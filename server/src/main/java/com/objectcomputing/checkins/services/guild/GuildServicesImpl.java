@@ -90,7 +90,9 @@ public class GuildServicesImpl implements GuildServices {
 
             newGuildEntity = guildsRepo.save(fromDTO(guildDTO));
             for (GuildCreateDTO.GuildMemberCreateDTO memberDTO : guildDTO.getGuildMembers()) {
-                MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberId());
+                MemberProfile existingMember = memberProfileRetrievalServices.getById(memberDTO.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Member %s does not exist", memberDTO.getMemberId());
+                });
                 newMembers.add(fromMemberEntity(guildMemberRepo.save(fromMemberDTO(memberDTO, newGuildEntity.getId())), existingMember));
             }
         }
@@ -153,7 +155,12 @@ public class GuildServicesImpl implements GuildServices {
             Set<String> emailsOfGuildLeads = guildMemberServices.findByFields(guildDTO.getId(), null, true)
                     .stream()
                     .filter(lead -> currentUser != null && !lead.getMemberId().equals(currentUser.getId()))
-                    .map(lead -> memberProfileServices.getById(lead.getMemberId()).getWorkEmail())
+                    .map(lead -> {
+                        MemberProfile leadProfile = memberProfileRetrievalServices.getById(lead.getMemberId()).orElseThrow(() -> {
+                            throw new BadArgException("Member %s does not exist", lead.getMemberId());
+                        });
+                        return leadProfile.getWorkEmail();
+                    })
                     .collect(Collectors.toSet());
 
             Guild newGuildEntity  = guildsRepo.update(fromDTO(guildDTO));
@@ -162,7 +169,7 @@ public class GuildServicesImpl implements GuildServices {
             //add new members to the guild
             guildDTO.getGuildMembers().forEach((updatedMember) -> {
                 Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
-                MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
+                MemberProfile existingMember = memberProfileRetrievalServices.getById(updatedMember.getMemberId()).orElseThrow();
                 if (first.isEmpty()) {
                     newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                     addedMembers.add(existingMember);
@@ -175,7 +182,10 @@ public class GuildServicesImpl implements GuildServices {
             existingGuildMembers.forEach((existingMember) -> {
                 if (guildDTO.getGuildMembers().stream().noneMatch((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId()))) {
                     guildMemberServices.delete(existingMember.getId());
-                    removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()));
+                    MemberProfile existingProfile = memberProfileRetrievalServices.getById(existingMember.getMemberId()).orElseThrow(() -> {
+                        throw new BadArgException("Member %s does not exist", existingMember.getMemberId());
+                    });
+                    removedMembers.add(existingProfile);
                 }
             });
             updated = fromEntity(newGuildEntity, newMembers);

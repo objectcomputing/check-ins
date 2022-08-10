@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import io.micronaut.core.annotation.Nullable;
@@ -23,18 +23,18 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
     private final CheckInRepository checkinRepo;
     private final AgendaItemRepository agendaItemRepository;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final CheckInServices checkInServices;
 
     public AgendaItemServicesImpl(CheckInRepository checkinRepo,
                                   AgendaItemRepository agendaItemRepository,
-                                  MemberProfileRepository memberRepo,
+                                  MemberProfileRetrievalServices memberProfileRetrievalServices,
                                   CurrentUserServices currentUserServices,
                                   CheckInServices checkInServices) {
         this.checkinRepo = checkinRepo;
         this.agendaItemRepository = agendaItemRepository;
-        this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.checkInServices = checkInServices;
     }
@@ -69,7 +69,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             validate(agendaItem.getId() == null).orElseThrow(() -> {
                 throw new BadArgException("Found unexpected id %s for agenda item", agendaItem.getId());
             });
-            validate(memberRepo.findById(createById).isPresent()).orElseThrow(() -> {
+            validate(memberProfileRetrievalServices.existsById(createById)).orElseThrow(() -> {
                 throw new BadArgException("Member %s doesn't exist", createById);
             });
 
@@ -134,7 +134,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             validate(id != null && agendaItemRepository.findById(id).isPresent()).orElseThrow(() -> {
                 throw new BadArgException("Unable to locate agenda item to update with id %s", agendaItem.getId());
             });
-            memberRepo.findById(createById).orElseThrow(() -> {
+            validate(memberProfileRetrievalServices.existsById(createById)).orElseThrow(() -> {
                 throw new BadArgException("Member %s doesn't exist", createById);
             });
 
@@ -165,7 +165,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
                 throw new PermissionException("User is unauthorized to do this operation");
             });
         } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
+            MemberProfile memberRecord = memberProfileRetrievalServices.getById(createbyid).orElseThrow();
             validate(isAdmin || currentUser.getId().equals(memberRecord.getId())).orElseThrow(() -> {
                 throw new PermissionException("User is unauthorized to do this operation");
             });

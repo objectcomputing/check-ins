@@ -32,8 +32,11 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
 
-    public CheckinNoteServicesImpl(CheckInRepository checkinRepo, CheckInServices checkinServices, CheckinNoteRepository checkinNoteRepository,
-                                   MemberProfileRetrievalServices memberProfileRetrievalServices, CurrentUserServices currentUserServices) {
+    public CheckinNoteServicesImpl(CheckInRepository checkinRepo,
+                                   CheckInServices checkinServices,
+                                   CheckinNoteRepository checkinNoteRepository,
+                                   MemberProfileRetrievalServices memberProfileRetrievalServices,
+                                   CurrentUserServices currentUserServices) {
         this.checkinRepo = checkinRepo;
         this.checkinServices = checkinServices;
         this.checkinNoteRepository = checkinNoteRepository;

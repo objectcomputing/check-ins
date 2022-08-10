@@ -27,10 +27,11 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     private final PrivateNoteRepository privateNoteRepository;
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
-    final String unauthorizedErrorMessage ="User is unauthorized to do this operation";
+    final String unauthorizedErrorMessage = "User is unauthorized to do this operation";
 
-    public PrivateNoteServicesImpl(CheckInServices checkinServices, PrivateNoteRepository privateNoteRepository,
-                                   MemberProfileRepository memberRepo, MemberProfileServices memberProfileServices,
+    public PrivateNoteServicesImpl(CheckInServices checkinServices,
+                                   PrivateNoteRepository privateNoteRepository,
+                                   MemberProfileRetrievalServices memberProfileRetrievalServices,
                                    CurrentUserServices currentUserServices) {
         this.checkinServices = checkinServices;
         this.privateNoteRepository = privateNoteRepository;
@@ -57,7 +58,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(checkinRecord != null).orElseThrow(() -> {
             throw new BadArgException("Checkin doesn't exits for given checkin Id");
         });
-        validate(memberProfileServices.getById(createdById) != null).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(createdById)).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", createdById);
         });
 
@@ -121,11 +122,9 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(checkinRecord != null).orElseThrow(() -> {
             throw new BadArgException("Checkin doesn't exits for given checkin Id");
         });
-        validate(memberProfileServices.getById(createdById) != null).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(createdById)).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", createdById);
         });
-
-        Optional<?> t = checkinRecord != null ? Optional.of(true) : Optional.empty();
 
         if (!isAdmin) {
 

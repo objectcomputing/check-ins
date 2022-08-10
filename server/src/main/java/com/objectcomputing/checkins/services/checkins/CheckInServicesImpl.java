@@ -16,7 +16,6 @@ import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -64,7 +63,7 @@ public class CheckInServicesImpl implements CheckInServices {
         if(isAdmin){
             grantAccess = true;
         } else {
-            MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
+            MemberProfile teamMemberOnCheckin = memberProfileRetrievalServices.getById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
                 throw new NotFoundException("Team member not found %s not found", checkinRecord.getTeamMemberId());
             });
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
@@ -102,10 +101,7 @@ public class CheckInServicesImpl implements CheckInServices {
         validate(!memberId.equals(pdlId)).orElseThrow(() -> {
             throw new BadArgException("Team member id %s can't be same as PDL id", checkIn.getTeamMemberId());
         });
-        validate(memberProfileOfTeamMember.isPresent()).orElseThrow(() -> {
-            throw new BadArgException("Member %s doesn't exist", memberId);
-        });
-        validate(pdlId.equals(memberProfileOfTeamMember.get().getPdlId())).orElseThrow(() -> {
+        validate(pdlId.equals(memberProfileOfTeamMember.getPdlId())).orElseThrow(() -> {
             throw new BadArgException("PDL %s is not associated with member %s", pdlId, memberId);
         });
         validate(chkInDate.isAfter(Util.MIN) && chkInDate.isBefore(Util.MAX)).orElseThrow(() -> {
@@ -159,10 +155,7 @@ public class CheckInServicesImpl implements CheckInServices {
         CheckIn associatedCheckin = checkinRepo.findById(id).orElseThrow(() -> {
             throw new BadArgException("Checkin %s doesn't exist", id);
         });
-        validate(memberProfileOfTeamMember.isPresent()).orElseThrow(() -> {
-            throw new BadArgException("Member %s doesn't exist", memberId);
-        });
-        validate(pdlId.equals(memberProfileOfTeamMember.get().getPdlId())).orElseThrow(() -> {
+        validate(pdlId.equals(memberProfileOfTeamMember.getPdlId())).orElseThrow(() -> {
             throw new BadArgException("PDL %s is not associated with member %s", pdlId, memberId);
         });
         validate(chkInDate.isAfter(Util.MIN) && chkInDate.isBefore(Util.MAX)).orElseThrow(() -> {
@@ -193,7 +186,7 @@ public class CheckInServicesImpl implements CheckInServices {
             if (memberToSearch != null) {
                 // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
                 boolean isTeamMember = currentUser.getId().equals(teamMemberId);
-                boolean isPdl = currentUser.getId().equals(memberToSearch.get().getPdlId());
+                boolean isPdl = currentUser.getId().equals(memberToSearch.getPdlId());
                 validate(isAdmin || isTeamMember || isPdl).orElseThrow(() -> {
                     throw new PermissionException("You are not authorized to perform this operation");
                 });

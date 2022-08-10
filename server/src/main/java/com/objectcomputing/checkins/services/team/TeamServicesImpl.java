@@ -50,7 +50,9 @@ public class TeamServicesImpl implements TeamServices {
 
             newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
             for (TeamCreateDTO.TeamMemberCreateDTO memberDTO : teamDTO.getTeamMembers()) {
-                MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberId());
+                MemberProfile existingMember = memberProfileRetrievalServices.getById(memberDTO.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Member %s does not exist", memberDTO.getMemberId());
+                });
                 newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO, newTeamEntity.getId())), existingMember));
             }
         }
@@ -106,7 +108,9 @@ public class TeamServicesImpl implements TeamServices {
             //add any new members & updates
             teamDTO.getTeamMembers().forEach((updatedMember) -> {
                 Optional<TeamMember> first = existingTeamMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
-                MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
+                MemberProfile existingMember = memberProfileRetrievalServices.getById(updatedMember.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Member %s does not exist", updatedMember.getMemberId());
+                });
                 if (first.isEmpty()) {
                     newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updatedMember, newTeamEntity.getId())), existingMember));
                 } else {

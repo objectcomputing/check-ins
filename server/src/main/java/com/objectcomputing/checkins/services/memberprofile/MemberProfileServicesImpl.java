@@ -28,29 +28,24 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     private final CheckInServices checkInServices;
     private final MemberSkillServices memberSkillServices;
     private final TeamMemberServices teamMemberServices;
-    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository,
                                      CurrentUserServices currentUserServices,
                                      RoleServices roleServices,
                                      CheckInServices checkInServices,
                                      MemberSkillServices memberSkillServices,
-                                     TeamMemberServices teamMemberServices,
-                                     MemberProfileRetrievalServices memberProfileRetrievalServices) {
+                                     TeamMemberServices teamMemberServices) {
         this.memberProfileRepository = memberProfileRepository;
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
         this.checkInServices = checkInServices;
         this.memberSkillServices = memberSkillServices;
         this.teamMemberServices = teamMemberServices;
-        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
     }
 
     @Override
-    public MemberProfile getById(@NotNull UUID id) {
-        return memberProfileRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("No member profile for id %s", id);
-        });
+    public Optional<MemberProfile> getById(@NotNull UUID id) {
+        return memberProfileRepository.findById(id);
     }
 
     @Override
@@ -132,7 +127,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public Optional<MemberProfile> findByWorkEmail(@NotNull String workEmail) {
-        return memberProfileRetrievalServices.findByWorkEmail(workEmail);
+        return memberProfileRepository.findByWorkEmail(workEmail);
     }
 
     @Override

@@ -35,7 +35,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             validate(pulseResponse.getId() == null).orElseThrow(() -> {
                 throw new BadArgException("Found unexpected id for pulseresponse %s", pulseResponse.getId());
             });
-            validate(memberRepo.findById(memberId).isPresent()).orElseThrow(() -> {
+            validate(memberProfileRetrievalServices.existsById(memberId)).orElseThrow(() -> {
                 throw new BadArgException("Member %s doesn't exists", memberId);
             });
             validate(pulseSubDate.isAfter(LocalDate.EPOCH) && pulseSubDate.isBefore(LocalDate.MAX)).orElseThrow(() -> {
@@ -69,7 +69,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             validate(id != null && pulseResponseRepo.findById(id).isPresent()).orElseThrow(() -> {
                 throw new BadArgException("Unable to find pulseresponse record with id %s", pulseResponse.getId());
             });
-            validate(memberRepo.findById(memberId).isPresent()).orElseThrow(() -> {
+            validate(memberProfileRetrievalServices.existsById(memberId)).orElseThrow(() -> {
                 throw new BadArgException("Member %s doesn't exist", memberId);
             });
             validate(pulseSubDate.isAfter(LocalDate.EPOCH) && pulseSubDate.isBefore(LocalDate.MAX)).orElseThrow(() -> {

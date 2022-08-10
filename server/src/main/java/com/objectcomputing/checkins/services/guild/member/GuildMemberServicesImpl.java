@@ -71,7 +71,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         validate(guildMember.getId() == null).orElseThrow(() -> {
             throw new BadArgException("Found unexpected id %s for Guild member", guildMember.getId());
         });
-        memberRepo.findById(memberId).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(memberId)).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", memberId);
         });
         validate(guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isEmpty()).orElseThrow(() -> {
@@ -118,7 +118,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         validate(id != null && guildMemberRepo.findById(id).isPresent()).orElseThrow(() -> {
             throw new BadArgException("Unable to locate guildMember to update with id %s", id);
         });
-        memberRepo.findById(memberId).orElseThrow(() -> {
+        validate(memberProfileRetrievalServices.existsById(memberId)).orElseThrow(() -> {
             throw new BadArgException("Member %s doesn't exist", memberId);
         });
         guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).orElseThrow(() -> {
