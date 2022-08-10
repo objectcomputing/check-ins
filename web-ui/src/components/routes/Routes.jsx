@@ -30,7 +30,9 @@ import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 import ProtectedRoute from "../protected_route/ProtectedRoute";
 import EmailPage from "../../pages/EmailPage";
-
+import PermissionsPage from "../../pages/PermissionsPage";
+import OnboardProgressPage from "../../pages/OnboardProgressPage";
+import OnboardProgressDetailPage from "../../pages/OnboardProgressDetailPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -119,6 +121,10 @@ export default function Routes() {
             <Header title="Roles"></Header>
             <Roles />
           </Route>
+          <Route path="/admin/permissions">
+            <Header title="Permissions" />
+            <PermissionsPage />
+          </Route>
           <Route path="/admin/users">
             <Header title="Users"></Header>
             <Users />
@@ -144,6 +150,13 @@ export default function Routes() {
           </Route>
           <Route path="/feedback/submit">
             <FeedbackSubmitPage />
+          </Route>
+          <Route exact path="/onboard/progress">
+            <Header title="Onboarding Progress" />
+            <OnboardProgressPage />
+          </Route>
+          <Route path="/onboard/progress/:onboardId?">
+            <OnboardProgressDetailPage />
           </Route>
         </Switch>
       )}

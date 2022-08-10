@@ -1,0 +1,5 @@
+.detail-onboard {
+  display: flex;
+  justify-content: center;
+  column-gap: 5%;
+}

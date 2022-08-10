@@ -132,3 +132,6 @@ mail-jet:
 ---
 github-credentials:
   github_token: ${ GITHUB_TOKEN }
+---
+signrequest-credentials:
+  signrequest_token: ${SIGNREQUEST_AUTH_TOKEN}

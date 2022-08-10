@@ -1,8 +1,9 @@
 package com.objectcomputing.checkins.services.feedback.suggestions;
 
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
@@ -20,17 +21,17 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
 
     public static final String MAX_SUGGESTIONS = "check-ins.application.feedback.max-suggestions";
 
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final TeamMemberServices teamMemberServices;
     private final Integer maxSuggestions;
 
 
-    public FeedbackSuggestionServiceImpl(MemberProfileServices memberProfileServices,
+    public FeedbackSuggestionServiceImpl(MemberProfileRetrievalServices memberProfileRetrievalServices,
                                          CurrentUserServices currentUserServices,
                                          TeamMemberServices teamMemberServices,
                                          @Property(name = MAX_SUGGESTIONS) Integer maxSuggestions) {
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.teamMemberServices = teamMemberServices;
         this.maxSuggestions = maxSuggestions;
@@ -40,7 +41,9 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
     public List<FeedbackSuggestionDTO> getSuggestionsByProfileId(UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
-        MemberProfile suggestFor = memberProfileServices.getById(id);
+        MemberProfile suggestFor = memberProfileRetrievalServices.getById(id).orElseThrow(() -> {
+            throw new BadArgException("Cannot retrieve suggestions for nonexistent member %s", id);
+        });
 
         if (currentUserId == null) {
             throw new PermissionException("You are not authorized to do this operation");

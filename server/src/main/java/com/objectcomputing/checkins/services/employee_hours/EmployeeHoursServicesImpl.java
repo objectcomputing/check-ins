@@ -88,7 +88,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
     private void validate(boolean isError, String message, Object... args) {
         if (isError) {
-            throw new BadArgException(String.format(message, args));
+            throw new BadArgException(message, args);
         }
     }
 

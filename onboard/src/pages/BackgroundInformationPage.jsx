@@ -1,5 +1,4 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
 import Accordion from "../components/Accordion";
 import PersonalInformation from "./subsections/backgroundInformation/Personalnformation";
 import Education from "./subsections/backgroundInformation/Education";
@@ -20,7 +19,7 @@ const accordionArr = [
     content: <EmploymentEligbility />,
   },
   {
-    title: "Employment Desired and Avaiablity",
+    title: "Employment Desired and Availability",
     content: <EmploymentDesired />,
   },
   {
@@ -40,15 +39,11 @@ const accordionArr = [
 const BackgroundInformationPage = () => {
   return (
     <div>
-      <center>
-        <Typography variant="h3">
-          Please enter in your background information
-        </Typography>
-      </center>
       {isArrayPresent(accordionArr) &&
         accordionArr.map((arr, i) => {
           return (
             <Accordion
+              key={i}
               title={arr.title}
               open={i === 0 ? true : false}
               index={i}

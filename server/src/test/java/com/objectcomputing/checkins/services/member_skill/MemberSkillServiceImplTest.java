@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.member_skill;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -30,7 +30,7 @@ class MemberSkillServiceImplTest {
     private MemberSkillRepository memberSkillRepository;
 
     @Mock
-    private MemberProfileRepository memberProfileRepository;
+    private MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     @Mock
     private SkillRepository skillRepository;
@@ -45,7 +45,7 @@ class MemberSkillServiceImplTest {
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(memberSkillRepository, skillRepository, memberProfileRepository);
+        Mockito.reset(memberSkillRepository, skillRepository, memberProfileRetrievalServices);
     }
 
     @Test
@@ -72,13 +72,13 @@ class MemberSkillServiceImplTest {
         Skill skill = new Skill();
 
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(skill));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRetrievalServices.getById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
         when(memberSkillRepository.save(eq(memberSkill))).thenReturn(memberSkill);
 
         assertEquals(memberSkill, memberSkillsServices.save(memberSkill));
 
         verify(skillRepository, times(1)).findById(any(UUID.class));
-        verify(memberProfileRepository, times(1)).findById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
         verify(memberSkillRepository, times(1)).save(any(MemberSkill.class));
     }
 
@@ -91,7 +91,7 @@ class MemberSkillServiceImplTest {
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
         verify(skillRepository, never()).findById(any(UUID.class));
-        verify(memberProfileRepository, never()).findById(any(UUID.class));
+        verify(memberProfileRetrievalServices, never()).getById(any(UUID.class));
     }
 
     @Test
@@ -103,7 +103,7 @@ class MemberSkillServiceImplTest {
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
         verify(skillRepository, never()).findById(any(UUID.class));
-        verify(memberProfileRepository, never()).findById(any(UUID.class));
+        verify(memberProfileRetrievalServices, never()).getById(any(UUID.class));
     }
 
     @Test
@@ -115,7 +115,7 @@ class MemberSkillServiceImplTest {
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
         verify(skillRepository, never()).findById(any(UUID.class));
-        verify(memberProfileRepository, never()).findById(any(UUID.class));
+        verify(memberProfileRetrievalServices, never()).getById(any(UUID.class));
     }
 
     @Test
@@ -124,7 +124,7 @@ class MemberSkillServiceImplTest {
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
         verify(skillRepository, never()).findById(any(UUID.class));
-        verify(memberProfileRepository, never()).findById(any(UUID.class));
+        verify(memberProfileRetrievalServices, never()).getById(any(UUID.class));
     }
 
     @Test
@@ -132,7 +132,7 @@ class MemberSkillServiceImplTest {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRetrievalServices.getById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
         when(memberSkillRepository.findByMemberidAndSkillid(eq(memberSkill.getMemberid()), eq(memberSkill.getSkillid())))
         .thenReturn(Optional.of(memberSkill));
 
@@ -142,7 +142,7 @@ class MemberSkillServiceImplTest {
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
         verify(skillRepository, times(1)).findById(any(UUID.class));
-        verify(memberProfileRepository, times(1)).findById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
         verify(memberSkillRepository, times(1)).findByMemberidAndSkillid(any(UUID.class), any(UUID.class));
     }
 
@@ -151,14 +151,14 @@ class MemberSkillServiceImplTest {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.empty());
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRetrievalServices.getById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
 
         BadArgException exception = assertThrows(BadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Skill %s doesn't exist", memberSkill.getSkillid()), exception.getMessage());
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
         verify(skillRepository, times(1)).findById(any(UUID.class));
-        verify(memberProfileRepository, times(1)).findById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
     }
 
     @Test
@@ -166,14 +166,14 @@ class MemberSkillServiceImplTest {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.empty());
+        when(memberProfileRetrievalServices.getById(eq(memberSkill.getMemberid()))).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Member Profile %s doesn't exist", memberSkill.getMemberid()), exception.getMessage());
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
         verify(skillRepository, never()).findById(any(UUID.class));
-        verify(memberProfileRepository, times(1)).findById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
     }
 
     @Test

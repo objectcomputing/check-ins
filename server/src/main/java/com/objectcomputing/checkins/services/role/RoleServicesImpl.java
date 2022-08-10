@@ -26,11 +26,11 @@ public class RoleServicesImpl implements RoleServices {
         final String roleType = role.getRole();
 
         if (roleType == null) {
-            throw new BadArgException(String.format("Invalid role %s", role));
+            throw new BadArgException("Invalid role %s", role);
         } else if (role.getId() != null) {
-            throw new BadArgException(String.format("Found unexpected id %s for role", role.getId()));
+            throw new BadArgException("Found unexpected id %s for role", role.getId());
         } else if (roleRepo.findByRole(roleType).isPresent()){
-            throw new BadArgException(String.format("Role with name %s already exists in database", role.getRole()));
+            throw new BadArgException("Role with name %s already exists in database", role.getRole());
         }
 
         return roleRepo.save(role);
@@ -45,9 +45,9 @@ public class RoleServicesImpl implements RoleServices {
         final String roleType = role.getRole();
 
         if (roleType == null) {
-            throw new BadArgException(String.format("Invalid role %s", role));
+            throw new BadArgException("Invalid role %s", role);
         } else if (id == null || roleRepo.findById(id).isEmpty()) {
-            throw new BadArgException(String.format("Unable to locate role to update with id %s", id));
+            throw new BadArgException("Unable to locate role to update with id %s", id);
         }
 
         return roleRepo.update(role);

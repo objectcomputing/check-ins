@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
-import { selectCsrfToken, selectIsAdmin } from "../../context/selectors";
+import { selectCsrfToken, selectIsAdmin, selectIsHR } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import { useLocation, Link } from "react-router-dom";
@@ -31,7 +31,7 @@ import "./Menu.css";
 import {userHasPermissionForRoute} from "../../context/routePermissions";
 
 const drawerWidth = 150;
-const PREFIX = 'Menu';
+const PREFIX = "Menu";
 const classes = {
   root: `${PREFIX}-root`,
   drawer: `${PREFIX}-drawer`,
@@ -41,13 +41,13 @@ const classes = {
   content: `${PREFIX}-content`,
   listStyle: `${PREFIX}-listStyle`,
   nested: `${PREFIX}-nested`,
-  subListItem: `${PREFIX}-subListItem`
+  subListItem: `${PREFIX}-subListItem`,
 };
 
-const Root = styled('div')(({theme}) => ({
+const Root = styled("div")(({ theme }) => ({
   [`&.${classes.root}`]: {
-    display: 'flex',
-    paddingRight: `${drawerWidth}px`
+    display: "flex",
+    paddingRight: `${drawerWidth}px`,
   },
   [`& .${classes.drawer}`]: {
     [theme.breakpoints.up("sm")]: {
@@ -88,12 +88,12 @@ const Root = styled('div')(({theme}) => ({
   },
   [`& .${classes.subListItem}`]: {
     fontSize: "0.9rem",
-  }
+  },
 }));
 
 const adminLinks = [
-  // ["/admin/permissions", "Permissions"],
   ["/admin/roles", "Roles"],
+  ["/admin/permissions", "Permissions"],
   ["/admin/users", "Users"],
   ["/admin/email", "Send Email"],
   ["/admin/edit-skills", "Skills"],
@@ -105,12 +105,13 @@ const directoryLinks = [
   ["/teams", "Teams"],
 ];
 
-const getFeedbackLinks = (isAdmin, isPDL) => isAdmin || isPDL ?
-    [
+const getFeedbackLinks = (isAdmin, isPDL) =>
+  isAdmin || isPDL
+    ? [
       ["/feedback/view", "View Feedback"],
-      ["/feedback/received-requests", "Received Requests"]
-    ] :
-    [ ["/feedback/received-requests", "Received Requests"] ];
+      ["/feedback/received-requests", "Received Requests"],
+    ]
+    : [["/feedback/received-requests", "Received Requests"]];
 
 const reportsLinks = [
   ["/annual-review-reports", "Annual Reviews"],
@@ -134,6 +135,7 @@ function Menu() {
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin = selectIsAdmin(state);
+  const isHR = selectIsHR(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
   const { userPermissions } = state;
@@ -204,7 +206,8 @@ function Menu() {
   );
   const [feedbackOpen, setFeedbackOpen] = useState(
     isCollapsibleListOpen(feedbackLinks, location.pathname)
-  )
+  );
+
   const anchorRef = useRef(null);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -230,7 +233,7 @@ function Menu() {
 
   const toggleFeedback = () => {
     setFeedbackOpen(!feedbackOpen);
-  }
+  };
 
   const toggleDirectory = () => {
     setDirectoryOpen(!directoryOpen);
@@ -283,8 +286,8 @@ function Menu() {
           isSubLink
             ? undefined
             : () => {
-                closeSubMenus();
-              }
+              closeSubMenus();
+            }
         }
         selected={isLinkSelected(path)}
       >
@@ -360,6 +363,9 @@ function Menu() {
             </Collapse>
           </>
         }
+        {(isHR || isAdmin) && (
+          createLinkJsx("/onboard/progress", "ONBOARDING", false)
+        )}
         {isAdmin && listHasSublinks(reportsLinks) && (
           <React.Fragment>
             <ListItem
@@ -389,7 +395,8 @@ function Menu() {
             edge="start"
             onClick={handleDrawerToggle}
             className={classes.menuButton}
-            size="large">
+            size="large"
+          >
             <MenuIcon />
           </IconButton>
         </Toolbar>
@@ -439,7 +446,7 @@ function Menu() {
       </AppBar>
       <nav className={classes.drawer}>
         <Drawer
-          sx={{display: {sm: 'none', xs: 'block'}}}
+          sx={{ display: { sm: "none", xs: "block" } }}
           variant="temporary"
           disablePortal
           anchor={theme.direction === "rtl" ? "right" : "left"}
@@ -460,7 +467,7 @@ function Menu() {
           }}
           variant="permanent"
           open
-          sx={{display: { xs: 'none', sm: 'block'}}}
+          sx={{ display: { xs: "none", sm: "block" } }}
         >
           {drawer}
         </Drawer>

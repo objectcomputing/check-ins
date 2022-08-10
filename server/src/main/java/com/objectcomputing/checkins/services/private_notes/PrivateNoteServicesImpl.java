@@ -3,11 +3,9 @@ package com.objectcomputing.checkins.services.private_notes;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
-import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.exceptions.BadArgException;
@@ -24,21 +22,18 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     private final CheckInServices checkinServices;
-    private final CheckInRepository checkinRepo;
     private final PrivateNoteRepository privateNoteRepository;
-    private final MemberProfileRepository memberRepo;
-    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     final String unauthorizedErrorMessage ="User is unauthorized to do this operation";
 
-    public PrivateNoteServicesImpl(CheckInServices checkinServices, CheckInRepository checkinRepo, PrivateNoteRepository privateNoteRepository,
-                                   MemberProfileRepository memberRepo, MemberProfileServices memberProfileServices,
+    public PrivateNoteServicesImpl(CheckInServices checkinServices,
+                                   PrivateNoteRepository privateNoteRepository,
+                                   MemberProfileRetrievalServices memberProfileRetrievalServices,
                                    CurrentUserServices currentUserServices) {
         this.checkinServices = checkinServices;
-        this.checkinRepo = checkinRepo;
         this.privateNoteRepository = privateNoteRepository;
-        this.memberRepo = memberRepo;
-        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
     }
 
@@ -56,7 +51,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(privateNote.getId() != null, "Found unexpected id %s for private note", privateNote.getId());
         validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
-        validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
+        validate(memberProfileRetrievalServices.getById(createdById).isEmpty(), "Member %s doesn't exist", createdById);
 
         if (!isAdmin) {
 
@@ -80,13 +75,13 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
 
         if (privateNoteResult == null) {
-            throw new NotFoundException(String.format("Invalid private note id %s", id));
+            throw new NotFoundException("Invalid private note id %s", id);
         }
 
         if (!isAdmin) {
             CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
             if (checkinRecord == null) {
-                throw new NotFoundException(String.format("CheckIn %s doesn't exist", privateNoteResult.getCheckinid()));
+                throw new NotFoundException("CheckIn %s doesn't exist", privateNoteResult.getCheckinid());
             }
 
             if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
@@ -116,7 +111,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate((isAdmin && !isPdl) || isCompleted , unauthorizedErrorMessage);
         validate(privateNote.getId() == null, "No private note id %s found for updating", privateNote.getId());
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
-        validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
+        validate(memberProfileRetrievalServices.getById(createdById).isEmpty(), "Member %s doesn't exist", createdById);
 
         if (!isAdmin) {
 
@@ -142,7 +137,9 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
             if (!checkinServices.accessGranted(checkinid, currentUser.getId()))
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
+            MemberProfile memberRecord = memberProfileRetrievalServices.getById(createbyid).orElseThrow(() -> {
+                throw new BadArgException("Member who created the private note does not exist");
+            });
             if (!currentUser.getId().equals(memberRecord.getId()) && !isAdmin)
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (!isAdmin) {
@@ -154,7 +151,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     private void validate(boolean isError, String message, Object... args) {
         if (isError) {
-            throw new BadArgException(String.format(message, args));
+            throw new BadArgException(message, args);
         }
     }
 }

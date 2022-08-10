@@ -31,3 +31,4 @@ export const UPDATE_USER_BIO = "@@check-ins/update_bio";
 export const UPDATE_FEEEDBACK_SUGGESTIONS = "@@check-ins/update_feedback_suggestions"
 export const UPDATE_PEOPLE_LOADING = "@@check-ins/update_people_loading"
 export const UPDATE_TEAMS_LOADING = "@@check-ins/update_teams_loading"
+export const UPDATE_ONBOARDEE_MEMBER_PROFILES = "@@check-ins/update_onboardee_member_profiles";
