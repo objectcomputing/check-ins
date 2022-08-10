@@ -55,6 +55,8 @@ dependencies {
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:testcontainers")
     implementation("io.micronaut:micronaut-validation")
+    implementation("io.micronaut.data:micronaut-data-r2dbc")
+    implementation('org.postgresql:r2dbc-postgresql:0.9.1.RELEASE')
 
     testImplementation("org.hamcrest:hamcrest")
 
