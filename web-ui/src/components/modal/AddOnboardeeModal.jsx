@@ -47,7 +47,6 @@ const pdlOptions = ["dummy7", "dummy8", "dummy9"];
 const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
   const { state, dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
-  const sortedPdls = selectOrderedPdls(state);
   const [empFile, setEmpFile] = useState(" ");
 
   const [isNewOnboardee, setIsNewOnboardee] = useState(
@@ -74,7 +73,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
       });
       return false;
     }
-  });
+  }, []);
   const validateRequiredInputsPresent = useCallback(() => {
     return (
       editedOnboardee.firstName?.length > 0 &&
