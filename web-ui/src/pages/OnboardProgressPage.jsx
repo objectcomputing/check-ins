@@ -8,7 +8,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddOnboardeeModal from "../components/modal/AddOnboardeeModal";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "/Users/sodgerelm/Documents/GitHub/check-ins/web-ui/src/context/AppContext.js";
 import { createOnboardee } from "../api/onboardeeMember";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 
