@@ -29,6 +29,7 @@ import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/Feedback
 import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 import EmailPage from "../../pages/EmailPage";
+import PermissionsPage from "../../pages/PermissionsPage";
 import OnboardProgressPage from "../../pages/OnboardProgressPage";
 import OnboardProgressDetailPage from "../../pages/OnboardProgressDetailPage";
 
@@ -118,6 +119,10 @@ export default function Routes() {
           <Route path="/admin/roles">
             <Header title="Roles"></Header>
             <Roles />
+          </Route>
+          <Route path="/admin/permissions">
+            <Header title="Permissions" />
+            <PermissionsPage />
           </Route>
           <Route path="/admin/users">
             <Header title="Users"></Header>
