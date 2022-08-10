@@ -13,22 +13,6 @@ import { useState, useContext} from "react";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 import { createOnboardee } from "../api/onboardeeMember";
 
-
-const modalBoxStyleMini = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "25%",
-  backgroundColor: "#fff",
-  border: "2px solid #000",
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-  m: 2,
-};
-
 export default function OnboardProgressPage(onboardee){
   const [open, setOpen] = useState(false);
   const { state, dispatch } = useContext(AppContext);
