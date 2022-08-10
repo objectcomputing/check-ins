@@ -42,11 +42,11 @@ public class EntityTagServicesImpl implements EntityTagServices {
             final UUID entityId = entityTag.getEntityId();
             final UUID tagId = entityTag.getTagId();
             if (entityId == null || tagId == null) {
-                throw new BadArgException(String.format("Invalid entity tag %s", entityTag));
+                throw new BadArgException("Invalid entity tag %s", entityTag);
             } else if (entityTag.getId() != null) {
-                throw new BadArgException(String.format("Found unexpected id %s for entity tag", entityTag.getId()));
+                throw new BadArgException("Found unexpected id %s for entity tag", entityTag.getId());
             } else if (tagRepository.findById(tagId).isEmpty()) {
-                throw new BadArgException(String.format("Tag %s doesn't exist", tagId));
+                throw new BadArgException("Tag %s doesn't exist", tagId);
             }
 
             entityTagToReturn = entityTagRepository.save(entityTag);
@@ -73,7 +73,7 @@ public class EntityTagServicesImpl implements EntityTagServices {
         if (entityTag.getId() != null && entityTagRepository.findById(entityTag.getId()).isPresent()) {
             newEntityTag = entityTagRepository.update(entityTag);
         } else {
-            throw new BadArgException(String.format("Entity tag %s does not exist, cannot update", entityTag.getId()));
+            throw new BadArgException("Entity tag %s does not exist, cannot update", entityTag.getId());
         }
 
         return newEntityTag;

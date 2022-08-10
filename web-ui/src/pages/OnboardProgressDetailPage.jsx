@@ -165,7 +165,7 @@ export default function OnboardProgressDetailPage(onboardee){
   ];
 
   const documentRows = documentArr
-    .filter((e) => e.signrequest.signers[1].email === email)
+    .filter((e) => e.signrequest !== null && e.signrequest.signers[1].email === email)
     .map((filteredE, i) => ({
       id: filteredE.uuid,
       documentName: filteredE.name,

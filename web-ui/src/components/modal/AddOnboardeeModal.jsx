@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { Grid, Typography, Box, Divider } from "@mui/material";
 import { Modal, TextField, IconButton } from "@mui/material";
 import { Button } from "@mui/material";
+import OnboardeeAddedModal from "./OnboardeeAddedModal";
 import { useCallback } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+
 const modalBoxStyle = {
   position: "absolute",
   top: "50%",
@@ -38,6 +42,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
   const handleEmployeeAgreement = (e) => {
     setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
   };
+
   const[offer, setOfferFile] = useState(" ");
   const handleOfferLetter = (e) => {
     setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
@@ -58,35 +63,6 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
           Add Onboardee
         </Typography>
         <Grid container space={2}>
-          <Grid item xs={6}>
-            <Typography id="description" sx={{ mt: 2 }}>
-              Position:
-            </Typography>
-            <TextField
-              sx={{ width: "75%" }}
-              id="position"
-              variant="outlined"
-              value={editedOnboardee.position ? editedOnboardee.position : ""}
-              onChange={(e) =>
-                setOnboardee({ ...editedOnboardee, position: e.target.value })
-              }
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <Typography id="description" sx={{ mt: 2 }}>
-              Hire Type:
-            </Typography>
-            <TextField
-              sx={{ width: "75%" }}
-              id="hireType"
-              variant="outlined"
-              value={editedOnboardee.hireType ? editedOnboardee.hireType : ""}
-              onChange={(e) =>
-                setOnboardee({ ...editedOnboardee, hireType: e.target.value })
-              }
-            />
-          </Grid>
-        </Grid>
         <Grid container space={2}>
           <Grid item xs={6}>
             <Typography id="description" sx={{ mt: 2 }}>
@@ -95,7 +71,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             <TextField
               sx={{ width: "75%" }}
               id="firstName"
-              variant="outlined"
+              variant="standard"
               value={editedOnboardee.firstName ? editedOnboardee.firstName : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, firstName: e.target.value })
@@ -109,7 +85,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             <TextField
               sx={{ width: "75%" }}
               id="lastName"
-              variant="outlined"
+              variant="standard"
               value={editedOnboardee.lastName ? editedOnboardee.lastName : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, lastName: e.target.value })
@@ -117,26 +93,74 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             />
           </Grid>
         </Grid>
-        <Grid container space={3}>
           <Grid item xs={6}>
             <Typography id="description" sx={{ mt: 2 }}>
-              Email:
-            </Typography>
-            <TextField sx={{ width: "75%" }} id="email" variant="outlined" />
-          </Grid>
-          <Grid item xs={6}>
-            <Typography id="description" sx={{ mt: 2 }}>
-              PDL/Manager:
+              Position:
             </Typography>
             <TextField
               sx={{ width: "75%" }}
+              id="position"
+              variant="standard"
+              value={editedOnboardee.position ? editedOnboardee.position : ""}
+              onChange={(e) =>
+                setOnboardee({ ...editedOnboardee, position: e.target.value })
+              }
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography id="description" sx={{ mt: 2 }}>
+              Hire Type:
+            </Typography>
+            <Select
+              sx={{ width: "75%" }}
+              id="hireType"
+              variant="standard"
+              value={editedOnboardee.hireType ? editedOnboardee.hireType : ""}
+              onChange={(e) => {
+
+                setOnboardee({ ...editedOnboardee, hireType: e.target.value });
+              }
+              }
+            >
+              <MenuItem value={"hourly"}>Hourly</MenuItem>
+              <MenuItem value={"fulltime"}>FullTime</MenuItem>
+              <MenuItem value={"contract"}>Contract</MenuItem>
+            </Select>
+          </Grid>
+        </Grid>
+        <Grid container space={3}>
+          <Grid item xs={6}>
+            <Typography id="description" sx={{ mt: 2 }}>
+              External Email:
+            </Typography>
+            <TextField
+              sx={{ width: "75%" }}
+              id="email"
+              variant="standard"
+              value={editedOnboardee.email ? editedOnboardee.email : ""}
+              onChange={(e) =>
+                setOnboardee({ ...editedOnboardee, email: e.target.value })
+              }
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography id="description" sx={{ mt: 2 }}>
+              Manager:
+            </Typography>
+            <Select
+              sx={{ width: "75%" }}
               id="pdl"
-              variant="outlined"
+              variant="standard"
               value={editedOnboardee.pdl ? editedOnboardee.pdl : ""}
               onChange={(e) =>
                 setOnboardee({ ...editedOnboardee, pdl: e.target.value })
               }
-            />
+            >
+              <MenuItem value={"dummy1"}>dummy1</MenuItem>
+              <MenuItem value={"dummy2"}>dummy2</MenuItem>
+              <MenuItem value={"dummy3"}>dummy3</MenuItem>
+
+            </Select>
           </Grid>
         </Grid>
         <Divider sx={{ m: 3 }} variant="middle" />
@@ -220,9 +244,10 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="contained" onClick={submitOnboardeeClick}>Submit</Button>
+            <Button variant="contained" onClick={submitOnboardeeClick}><OnboardeeAddedModal/></Button>
           </Grid>
         </Grid>
+        
       </Box>
     </Modal>
   );
