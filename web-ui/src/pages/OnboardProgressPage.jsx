@@ -31,7 +31,7 @@ const modalBoxStyleMini = {
 
 export default function OnboardProgressPage() {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf } = state;
+  const { csrf, onboardeeMemberProfiles } = state;
   const [open, setOpen] = useState(false);
   const [AddOnboardeeModalBool, setAddOnboardeeModalBool] = useState(false);
 
@@ -194,7 +194,7 @@ export default function OnboardProgressPage() {
               if (data) {
                 dispatch({
                   type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
-                  payload: [...onboardeeProfiles, data],
+                  payload: [...onboardeeMemberProfiles, data],
                 });
               }
               handleSubmitClose();

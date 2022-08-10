@@ -29,12 +29,12 @@ const modalStyle = {
   m: 2,
 };
 
-export default function OnboardProgressDetailPage(onboardee){
+export default function OnboardProgressDetailPage(onboardee) {
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
   const location = useLocation();
   const { state, dispatch } = useContext(AppContext);
-  const { csrf , onboardeeProfiles} = state;
+  const { csrf, onboardeeMemberProfiles } = state;
   const { name, email, hireType } = location.state;
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
 
@@ -64,7 +64,7 @@ export default function OnboardProgressDetailPage(onboardee){
   const handleDel = () => setOpenDel(!openDel);
   const [openDelConf, setOpenDelConf] = useState(false);
   const handleReturn = () => {
-    history.push({ pathname: `/onboard/progress` })
+    history.push({ pathname: `/onboard/progress` });
   };
   //handleDelSubmit will do more when the back-end is set-up
   //Will need it to delete user data and notifications
@@ -139,7 +139,9 @@ export default function OnboardProgressDetailPage(onboardee){
   ];
 
   const documentRows = documentArr
-    .filter((e) => e.signrequest !== null && e.signrequest.signers[1].email === email)
+    .filter(
+      (e) => e.signrequest !== null && e.signrequest.signers[1].email === email
+    )
     .map((filteredE, i) => ({
       id: filteredE.uuid,
       documentName: filteredE.name,
@@ -182,7 +184,7 @@ export default function OnboardProgressDetailPage(onboardee){
   ];
   return (
     <div className="detail-onboard">
-      <Grid container >
+      <Grid container>
         <Grid item xs={5}>
           <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
             <Button
@@ -231,7 +233,7 @@ export default function OnboardProgressDetailPage(onboardee){
                     ? res.payload.data
                     : null;
                 if (data) {
-                  const copy = [...onboardeeProfiles];
+                  const copy = [...onboardeeMemberProfiles];
                   const index = copy.findIndex(
                     (profile) => profile.id === data.id
                   );
@@ -247,9 +249,10 @@ export default function OnboardProgressDetailPage(onboardee){
             <Modal open={openDel}>
               <Box sx={modalStyle}>
                 <div>
-                  <Typography sx={{ textAlign: 'center' }}>
-                    Warning! If you confirm, this user WILL be deleted and their information will be removed from "Onboarding".
-                    This action is permanent and cannot be undone. Continue?
+                  <Typography sx={{ textAlign: "center" }}>
+                    Warning! If you confirm, this user WILL be deleted and their
+                    information will be removed from "Onboarding". This action
+                    is permanent and cannot be undone. Continue?
                   </Typography>
                   <Grid container sx={{ mt: 5 }}>
                     <Grid item xs={6}>
@@ -257,7 +260,13 @@ export default function OnboardProgressDetailPage(onboardee){
                         Cancel
                       </Button>
                     </Grid>
-                    <Grid item xs={6} display="flex" justifyContent="flex-end" alignItems="flex-end">
+                    <Grid
+                      item
+                      xs={6}
+                      display="flex"
+                      justifyContent="flex-end"
+                      alignItems="flex-end"
+                    >
                       <Button variant="contained" onClick={handleDelSubmit}>
                         Confirm
                       </Button>
@@ -316,11 +325,19 @@ export default function OnboardProgressDetailPage(onboardee){
           </Box>
         </Grid>
         <Grid item xs={6}>
-          <Button variant="contained" sx={{ fontSize: "1vw" }} onClick={handleReturn}>
+          <Button
+            variant="contained"
+            sx={{ fontSize: "1vw" }}
+            onClick={handleReturn}
+          >
             Back
           </Button>
         </Grid>
-        <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Grid
+          item
+          xs={6}
+          style={{ display: "flex", justifyContent: "flex-end" }}
+        >
           <Button
             variant="contained"
             onClick={handleOpenEdit}
@@ -329,8 +346,16 @@ export default function OnboardProgressDetailPage(onboardee){
             Edit Onboardee
           </Button>
 
-          <Button variant="contained" sx={{ fontSize: "1vw" }} >Finish Onboarding</Button>
-          <Button variant="contained" sx={{ fontSize: "1vw" }} onClick={handleDel}>Delete</Button>
+          <Button variant="contained" sx={{ fontSize: "1vw" }}>
+            Finish Onboarding
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ fontSize: "1vw" }}
+            onClick={handleDel}
+          >
+            Delete
+          </Button>
         </Grid>
       </Grid>
     </div>
