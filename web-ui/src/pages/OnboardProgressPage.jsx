@@ -31,25 +31,10 @@ const modalBoxStyleMini = {
 
 export default function OnboardProgressPage(onboardee){
   const [open, setOpen] = useState(false);
-  //const [empFile, setEmpFile] = useState(" ");
-  //const [offer, setOfferFile] = useState(" ");
   const { state, dispatch } = useContext(AppContext);
   const { csrf , onboardeeProfiles} = state;
   const handleAddModalClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
-  // const handleSubmitClose = () => {
-  //   setOpen(false);
-  //   setAddOnboardeeModal(true);
-  // };
-  // const handleMsgModalClose = () => {
-  //   setAddOnboardeeModal(false);
-  // };
-  // const handleEmployeeAgreement = (e) => {
-  //   //setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
-  // };
-  // const handleOfferLetter = (e) => {
-  //   //setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
-  // };
 
   const history = useHistory();
   const handleRowClick = (name, email, hireType, userID) => {

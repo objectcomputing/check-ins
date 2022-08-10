@@ -24,49 +24,49 @@ const OnboardeeAddedModal = () => {
   const handleClose = () => {
     setOpen(false);
   };
-    return (
-        <React.Fragment>
+  return (
+    <React.Fragment>
       <Button onClick={handleOpen}>Submit</Button>
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="title"
-      aria-describedby="description"
-    >
-      <Box sx={modalBoxStyleMini}>
-        <div
-          style={{
-            textAlign: "center",
-            marginLeft: "auto",
-            marginRight: "auto",
-            marginTop: "auto",
-            marginBottom: "auto",
-          }}
-        >
-          <Typography variant="p" component="h3">
-            Onboardee added!
-          </Typography>
-        </div>
-        <div>
-          <Grid container sx={{ mt: 5 }}>
-            <Grid item xs={12} align="center">
-              <Button
-                variant="contained"
-                onClick={handleClose}
-                style={{
-                  display: "flex",
-                  justifyContent: "centered",
-                  gap: "10px",
-                }}
-              >
-                Okay
-              </Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="title"
+        aria-describedby="description"
+      >
+        <Box sx={modalBoxStyleMini}>
+          <div
+            style={{
+              textAlign: "center",
+              marginLeft: "auto",
+              marginRight: "auto",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          >
+            <Typography variant="p" component="h3">
+              Onboardee added!
+            </Typography>
+          </div>
+          <div>
+            <Grid container sx={{ mt: 5 }}>
+              <Grid item xs={12} align="center">
+                <Button
+                  variant="contained"
+                  onClick={handleClose}
+                  style={{
+                    display: "flex",
+                    justifyContent: "centered",
+                    gap: "10px",
+                  }}
+                >
+                  Okay
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </div>
-      </Box>
-            </Modal>
-        </React.Fragment>
+          </div>
+        </Box>
+      </Modal>
+    </React.Fragment>
   );
 };
 export default OnboardeeAddedModal;
