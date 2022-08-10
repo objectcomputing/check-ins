@@ -28,8 +28,8 @@ const menuList = [
   },
   {
     index: 2,
-    name: "Computer & Work Environment",
-    title: "Computer & Work Environment",
+    name: "Working Environment",
+    title: "Working Environment",
     completed: false,
     child: <EquipmentPage />,
     visited: false,
