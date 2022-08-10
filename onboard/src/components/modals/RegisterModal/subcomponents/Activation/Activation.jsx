@@ -8,7 +8,6 @@ import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import LoadingButton from "@mui/lab/LoadingButton";
 import NotStartedIcon from "@mui/icons-material/NotStarted";
-
 import ReactCodeInput from "react-verification-code-input";
 import RequestAccess from "../../sharedModules/RequestAccess";
 import postCode from "../../../../../api/postCode";
@@ -234,7 +233,6 @@ function Activation({ activating, setActivating }) {
           </form>
         </>
       )}
-      <RequestAccess />
     </Box>
   );
 }
