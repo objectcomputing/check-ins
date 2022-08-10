@@ -28,14 +28,14 @@ const LoggedOutRoot = styled.div`
   background-color: rgb(248, 248, 248);
   background-image: url(${backgroundImageLogin});
   background-size: cover;
-  overflow: scroll;
+  overflow: auto;
 `;
 
 const ApplicationWrap = styled.div`
   margin: 0 auto;
   width: 100%;
   min-height: 100vh;
-  overflow: scroll;
+  overflow: auto;
 `;
 
 const LoginBox = styled.div`

@@ -11,10 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 
-const RoleUserCards = ({ roleMembers, onRemove }) => {
+const RoleUserCards = ({ roleMembers, onRemove, memberQuery }) => {
   roleMembers.sort((a, b) => a.name.localeCompare(b.name));
   return roleMembers.map((member) =>
-    member && (
+    member &&
+    ((memberQuery && memberQuery.trim())
+      ? member.name.toLowerCase().includes(memberQuery.trim().toLowerCase())
+      : true) && (
       <div key={member.id}>
         <ListItem className="roles-list-item">
           <ListItemAvatar>
