@@ -4,7 +4,6 @@ import RightSidebar from "./../components/sidebar/RightSidebar";
 import CultureVideoPage from "./CultureVideoPage";
 import BackgroundInformationPage from "./BackgroundInformationPage";
 import IntroductionSurveyPage from "./IntroductionSurveyPage";
-import WorkingLocationPage from "./WorkingLocationPage";
 import EquipmentPage from "./EquipmentPage";
 import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
@@ -29,8 +28,8 @@ const menuList = [
   },
   {
     index: 2,
-    name: "Computer & Work Preferences",
-    title: "Computer & Work Preference",
+    name: "Computer & Work Environment",
+    title: "Computer & Work Environment",
     completed: false,
     child: <EquipmentPage />,
     visited: false,
