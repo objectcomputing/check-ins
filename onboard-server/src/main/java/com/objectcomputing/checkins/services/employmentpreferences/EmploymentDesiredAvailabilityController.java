@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.employmentpreferences;
 
-import com.objectcomputing.checkins.services.WorkPreference.*;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -81,7 +80,7 @@ public class EmploymentDesiredAvailabilityController {
                                                                            @Nullable String desiredPosition,
                                                                            @Nullable LocalDate desiredStartDate,
                                                                            @Nullable Boolean currentlyEmployed) {
-        return Mono.fromCallable(() -> employmentDesiredAvailabilityServices.findByValues(desiredPosition, desiredStartDate, currentlyEmployed))
+        return Mono.fromCallable(() -> employmentDesiredAvailabilityServices.findByValues(id, desiredPosition, desiredStartDate, currentlyEmployed))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(workPreference -> {
                     List<EmploymentDesiredAvailabilityDTO> dtoList = workPreference.stream()

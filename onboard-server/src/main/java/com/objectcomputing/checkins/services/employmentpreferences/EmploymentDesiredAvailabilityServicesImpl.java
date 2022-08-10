@@ -2,9 +2,8 @@ package com.objectcomputing.checkins.services.employmentpreferences;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.WorkPreference.WorkPreference;
-import com.objectcomputing.checkins.services.WorkPreference.WorkPreferenceRepository;
 import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -12,7 +11,8 @@ import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
-public class EmploymentDesiredAvailabilityServicesImpl {
+@Singleton
+public class EmploymentDesiredAvailabilityServicesImpl implements EmploymentDesiredAvailabilityServices {
 
     private final EmploymentDesiredAvailabilityRepository employmentDesiredAvailabilityRepository;
 
@@ -27,6 +27,11 @@ public class EmploymentDesiredAvailabilityServicesImpl {
             throw new NotFoundException("No new employee profile for id " + id);
         }
         return employmentDesiredAvailabilityPreferences.get();
+    }
+
+    @Override
+    public EmploymentDesiredAvailability savePreferences(EmploymentDesiredAvailability workPreference) {
+        return null;
     }
 
     @Override
@@ -56,7 +61,7 @@ public class EmploymentDesiredAvailabilityServicesImpl {
 
     @Override
     public EmploymentDesiredAvailability findByPosition(String desiredPosition) {
-        List<EmploymentDesiredAvailability> searchResult = employmentDesiredAvailabilityRepository.search(null, desiredPosition, null, null, null, null);
+        List<EmploymentDesiredAvailability> searchResult = employmentDesiredAvailabilityRepository.search(null, desiredPosition, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }
@@ -65,7 +70,7 @@ public class EmploymentDesiredAvailabilityServicesImpl {
 
     @Override
     public EmploymentDesiredAvailability findByReferral(String referredBy) {
-        List<EmploymentDesiredAvailability> searchResult = employmentDesiredAvailabilityRepository.search(null, null, null, null, referredBy, null);
+        List<EmploymentDesiredAvailability> searchResult = employmentDesiredAvailabilityRepository.search(null, null, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }
