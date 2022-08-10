@@ -3,9 +3,8 @@ package com.objectcomputing.checkins.services.checkins;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
@@ -27,15 +26,16 @@ public class CheckInServicesImpl implements CheckInServices {
     public static final Logger LOG = LoggerFactory.getLogger(CheckInServicesImpl.class);
 
     private final CheckInRepository checkinRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final RoleServices roleServices;
 
     public CheckInServicesImpl(CheckInRepository checkinRepo,
-                               MemberProfileRepository memberRepo,
-                               CurrentUserServices currentUserServices, RoleServices roleServices) {
+                               MemberProfileRetrievalServices memberProfileRetrievalServices,
+                               CurrentUserServices currentUserServices,
+                               RoleServices roleServices) {
         this.checkinRepo = checkinRepo;
-        this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
     }
@@ -44,11 +44,11 @@ public class CheckInServicesImpl implements CheckInServices {
     public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
         Boolean grantAccess = false;
 
-        MemberProfile memberTryingToGainAccess = memberRepo.findById(memberId).orElseThrow(() -> {
-            throw new NotFoundException(String.format("Member %s not found", memberId));
+        MemberProfile memberTryingToGainAccess = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
+            throw new BadArgException("Member %s does not exist", memberId);
         });
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> {
-            throw new NotFoundException(String.format("Checkin %s not found", checkinId));
+            throw new NotFoundException("Checkin %s not found", checkinId);
         });
 
         boolean isAdmin = false;
@@ -61,8 +61,8 @@ public class CheckInServicesImpl implements CheckInServices {
         if(isAdmin){
             grantAccess = true;
         } else {
-            MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
-                throw new NotFoundException(String.format("Team member not found %s not found", checkinRecord.getTeamMemberId()));
+            MemberProfile teamMemberOnCheckin = memberProfileRetrievalServices.getById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
+                throw new NotFoundException("Member %s does not exist", checkinRecord.getTeamMemberId());
             });
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
 
@@ -89,12 +89,13 @@ public class CheckInServicesImpl implements CheckInServices {
         final UUID memberId = checkIn.getTeamMemberId();
         final UUID pdlId = checkIn.getPdlId();
         LocalDateTime chkInDate = checkIn.getCheckInDate();
-        Optional<MemberProfile> memberProfileOfTeamMember = memberRepo.findById(memberId);
+        MemberProfile memberProfileOfTeamMember = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
+            throw new BadArgException("Member %s does not exist", memberId);
+        });
 
         validate(checkIn.getId() != null, "Found unexpected id for checkin %s", checkIn.getId());
         validate(memberId.equals(pdlId), "Team member id %s can't be same as PDL id", checkIn.getTeamMemberId());
-        validate(memberProfileOfTeamMember.isEmpty(), "Member %s doesn't exist", memberId);
-        validate(!pdlId.equals(memberProfileOfTeamMember.get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
+        validate(!pdlId.equals(memberProfileOfTeamMember.getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
         validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
         if (!isAdmin) {
             validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
@@ -128,15 +129,17 @@ public class CheckInServicesImpl implements CheckInServices {
         LocalDateTime chkInDate = checkIn.getCheckInDate();
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        Optional<MemberProfile> memberProfileOfTeamMember = memberRepo.findById(memberId);
+        MemberProfile memberProfileOfTeamMember = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
+            throw new BadArgException("Member %s does not exist", memberId);
+        });
         boolean isAdmin = currentUserServices.isAdmin();
 
         validate(id == null, "Unable to find checkin record with id %s", checkIn.getId());
         Optional<CheckIn> associatedCheckin = checkinRepo.findById(id);
         validate(memberId == null, "Invalid checkin %s", checkIn.getId());
-        validate(memberProfileOfTeamMember.isEmpty(), "Member %s doesn't exist", memberId);
+        validate(memberProfileOfTeamMember == null, "Member %s doesn't exist", memberId);
         validate(associatedCheckin.isEmpty(), "Checkin %s doesn't exist", id);
-        validate(!pdlId.equals(memberProfileOfTeamMember.get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
+        validate(!pdlId.equals(memberProfileOfTeamMember.getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
         validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
         if (!isAdmin) {
             // Limit update to subject of check-in, PDL of subject and Admin
@@ -157,12 +160,14 @@ public class CheckInServicesImpl implements CheckInServices {
         checkinRepo.findAll().forEach(checkIn::add);
 
         if (teamMemberId != null) {
-            Optional<MemberProfile> memberToSearch = memberRepo.findById(teamMemberId);
-            if (memberToSearch.isPresent()) {
+            MemberProfile memberToSearch = memberProfileRetrievalServices.getById(teamMemberId).orElseThrow(() -> {
+                throw new BadArgException("Member %s does not exist", teamMemberId);
+            });
+            if (memberToSearch != null) {
                 // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
                 validate((!isAdmin && currentUser != null &&
                                 !currentUser.getId().equals(teamMemberId) &&
-                                !currentUser.getId().equals(memberToSearch.get().getPdlId())),
+                                !currentUser.getId().equals(memberToSearch.getPdlId())),
                         "You are not authorized to perform this operation");
                 checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
             } else checkIn.clear();
@@ -188,7 +193,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
     private void validate(boolean isError, String message, Object... args) {
         if (isError) {
-            throw new BadArgException(String.format(message, args));
+            throw new BadArgException(message, args);
         }
     }
 }

@@ -38,7 +38,7 @@ public class SettingsServicesImpl implements SettingsServices {
         if (setting.getId() != null && settingsRepository.findById(setting.getId()).isPresent()) {
             return settingsRepository.update(setting);
         } else {
-            throw new BadArgException(String.format("Setting %s does not exist, cannot update", setting.getId()));
+            throw new BadArgException("Setting %s does not exist, cannot update", setting.getId());
         }
     }
 

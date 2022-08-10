@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.feedback_answer;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestStatus;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.FeedbackAnswerFixture;
@@ -131,7 +132,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         getFeedbackTemplateRepository().save(template);
 
         TemplateQuestion question = saveTemplateQuestion(template, 1);
-        FeedbackRequest canceledRequest = saveSampleFeedbackRequestWithStatus(sender, requestee, recipient, template.getId(), "canceled");
+        FeedbackRequest canceledRequest = saveSampleFeedbackRequestWithStatus(sender, requestee, recipient, template.getId(), FeedbackRequestStatus.CANCELED);
 
         FeedbackAnswer feedbackAnswer = createSampleFeedbackAnswer(question.getId(), canceledRequest.getId());
         FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);
