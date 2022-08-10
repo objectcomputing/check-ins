@@ -1,57 +1,73 @@
 import { ACTIONS } from './../redux/reducers/login';
 import axios from 'axios';
+import { SRPClientSession, SRPParameters, SRPRoutines } from 'tssrp6a';
 import { bigintToHex, getEnvSpecificAPIURI } from './../utils/helperFunctions';
 
-import { createVerifierAndSalt, SRPParameters, SRPRoutines } from 'tssrp6a';
-
-const postCode = (
-  email,
-  code
-) => {
+const postCode = (email, code) => {
   return async (dispatch, getState) => {
+
     try {
       const baseURL = getEnvSpecificAPIURI();
-      const url = `${baseURL}/api/auth/activate`;
+      const url = `${baseURL}/api/auth/activate/challenge`;
+      const loginData = { identity: email };
+
+      const response = await axios
+        .post(url, loginData, {
+          withCredentials: true,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+
+      const url2 = `${baseURL}/api/auth/activate`;
 
       const srp6aNimbusRoutines = new SRPRoutines(
         new SRPParameters(SRPParameters.PrimeGroup[512])
       );
 
-      const { s, v } = await createVerifierAndSalt(
-        srp6aNimbusRoutines,
-        email,
-        code
+      const srp6aClient = await new SRPClientSession(
+        srp6aNimbusRoutines
+      ).step1(email, code);
+      code = '';
+
+      let salt = response.data.salt;
+      let b = response.data.b;
+
+      const srp6aClient_step2 = await srp6aClient.step2(
+        BigInt('0x' + salt),
+        BigInt('0x' + b)
       );
 
-      let convertedSaltBigIntToHex = bigintToHex(s);
-      let convertedVerifierBigIntToHex = bigintToHex(v);
+      let hexedM1 = bigintToHex(srp6aClient_step2.M1);
+      let hexedA = bigintToHex(srp6aClient_step2.A);
+      let encodedCode = hexedM1 + ':' + hexedA;
 
-      const loginData = {
+      const loginData2 = {
         emailAddress: email,
-        salt: convertedSaltBigIntToHex,
-        primaryVerifier: convertedVerifierBigIntToHex
+        secret: encodedCode
       };
 
-      const response = await axios.post(url, loginData, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
-
-      console.log('Account Activation succeeded');
+      const response2 = await axios
+        .post(url2, loginData2, {
+          withCredentials: true,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+      console.log('Login succeeded');
       dispatch({
         type: ACTIONS.LOAD_USER,
         payload: {
-          email: email,
+          email: '',
           accessToken: '',
-          status: response?.status,
+          status: response2?.status,
           expiration: ''
         }
       });
-
+      document.body.style.cursor = 'default';
     } catch (error) {
-      console.error(error);
       dispatch({
         type: ACTIONS.INVALID_LOAD,
         payload: { status: 'error' }

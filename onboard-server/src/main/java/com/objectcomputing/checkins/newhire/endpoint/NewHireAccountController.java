@@ -49,13 +49,6 @@ public class NewHireAccountController {
                 .flatMap(userAccount -> Mono.just(Map.of("success", Boolean.TRUE)));
     }
 
-    @Post("/addCredentials") // we want to use this endpoint to add credentials for a user
-    @Produces(MediaType.APPLICATION_JSON)
-    public Mono<Map<String, Object>> addCredentialsToAccount(@Body NewHireAccountConfig newHireAccountConfig, @Body NewHireAccountEntity newHireAccountEntity) {
-        return userAccountService.saveUserAccountCredentials(newHireAccountConfig, newHireAccountEntity)
-                .flatMap(userAccount -> Mono.just(Map.of("success", Boolean.TRUE)));
-    }
-
     @Put("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Mono<Map<String,Object>> update(AuthenticatedActor actor, @Body NewHireAccountConfig newHireAccountConfig) {

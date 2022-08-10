@@ -105,6 +105,7 @@ public class NewHireAccountService {
                  Instant.now(), DEFAULT_TIME_TO_LIVE);
     }
 
+    // This is used to activate the user's account with credentials.
     public Mono<NewHireAccountEntity> activateUserAccount(NewHireAccountEntity userAccount, NewHireAccountConfig newHireAccountConfig) {
         return saveUserAccountCredentials(newHireAccountConfig, userAccount)
                 .flatMap(credentials ->

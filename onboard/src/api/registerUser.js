@@ -12,7 +12,7 @@ const registerUser = (
   return async (dispatch, getState) => {
     try {
       const baseURL = getEnvSpecificAPIURI();
-      const url = `${baseURL}/api/administration/addMember`;
+      const url = `${baseURL}/auth/api/account`;
 
       const srp6aNimbusRoutines = new SRPRoutines(
         new SRPParameters(SRPParameters.PrimeGroup[512])
