@@ -18,6 +18,7 @@ import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMemberId
 import DateFnsUtils from "@date-io/date-fns";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
 import {softDeleteAdHocTemplates} from "../api/feedbacktemplate";
+import {FeedbackRequestStatus} from "../context/util";
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = 'FeedbackRequestPage';
@@ -219,7 +220,7 @@ const FeedbackRequestPage = () => {
          templateId: query.template,
          sendDate,
          dueDate,
-         status: "pending",
+         status: FeedbackRequestStatus.SENT,
          submitDate: null
        };
        sendFeedbackRequest(feedbackRequest);
