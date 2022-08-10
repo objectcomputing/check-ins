@@ -36,7 +36,7 @@ public class FeedbackRequestCreateDTO {
 
     @NotNull
     @Schema(description = "completion status of request", required = true)
-    private String status;
+    private FeedbackRequestStatus status;
 
     @Nullable
     @Schema(description = "date the recipient submitted feedback for the request")
@@ -92,11 +92,11 @@ public class FeedbackRequestCreateDTO {
         this.dueDate = dueDate;
     }
 
-    public String getStatus() {
+    public FeedbackRequestStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(FeedbackRequestStatus status) {
         this.status = status;
     }
 

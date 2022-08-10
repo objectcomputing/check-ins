@@ -24,6 +24,7 @@ import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
+import {FeedbackRequestStatus} from "../../context/util";
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = "FeedbackSubmitForm";
@@ -123,7 +124,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }, [questionAnswerPairs, updateFeedbackAnswerWithDebounce]);
 
   async function updateRequestSubmit() {
-    request.status = "submitted"
+    request.status = FeedbackRequestStatus.SUBMITTED;
     request.submitDate = dateUtils.format(new Date(), "yyyy-MM-dd")
     return await updateFeedbackRequest(request, csrf);
   }
