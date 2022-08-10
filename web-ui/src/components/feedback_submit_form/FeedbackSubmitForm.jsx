@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import React, {useContext, useEffect, useState, useCallback, useRef} from "react";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
@@ -20,7 +20,6 @@ import {
 import {
 getQuestionAndAnswer
 } from "../../api/feedbackanswer"
-import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
@@ -39,12 +38,12 @@ const classes = {
 const Root = styled('div')({
   [`& .${classes.announcement}`]: {
     textAlign: "center",
-    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
+    '@media (max-width: 800px)': {
       fontSize: "22px"
     }
   },
   [`& .${classes.tip}`]: {
-    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
+    '@media (max-width: 800px)': {
       fontSize: "15px"
     }
   },
@@ -90,28 +89,51 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([]);
+  const savingAnswer = useRef(-1);  // Track the index of the answer being updated, if any
 
-  const updateFeedbackAnswer = async (index, answer) => {
-    let res;
+  const updateFeedbackAnswer = useCallback((index, answer) => {
+    const updateAnswer = async (index, answer) => {
+      let res;
 
-    // Save or update answer on server
-    if (answer && csrf) {
-      if (answer.id) {
-        res = await updateSingleAnswer(answer, csrf);
-      } else {
-        res = await saveSingleAnswer(answer, csrf);
+      // Save or update answer on server
+      if (answer && csrf) {
+        savingAnswer.current = index;
+        if (answer.id) {
+          res = await updateSingleAnswer(answer, csrf);
+        } else {
+          res = await saveSingleAnswer(answer, csrf);
+        }
       }
-    }
 
-    // Update local state with new answer ID
-    if (res && res.payload && res.payload.data && !res.error) {
-      let updatedQuestionAnswerPairs = [...questionAnswerPairs];
-      updatedQuestionAnswerPairs[index].answer.id = res.payload.data.id;
-      setQuestionAnswerPairs(updatedQuestionAnswerPairs);
-    }
-  }
+      // Update local state with new answer ID
+      if (res && res.payload && res.payload.data && !res.error) {
+        let updatedQuestionAnswerPairs = [...questionAnswerPairs];
+        updatedQuestionAnswerPairs[index].answer.id = res.payload.data.id;
+        return updatedQuestionAnswerPairs;
+      } else if (res && res.error) {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Failed to save answer"
+          },
+        });
+      }
+    };
 
-  const updateFeedbackAnswerWithDebounce = debounce(updateFeedbackAnswer, 1000);
+    updateAnswer(index, answer).then((updatedQuestionsAndAnswers) => {
+      if (updatedQuestionsAndAnswers) {
+        setQuestionAnswerPairs(updatedQuestionsAndAnswers);
+      }
+    });
+  }, [csrf, dispatch, questionAnswerPairs]);
+
+  // Only allow another update once an id is received back from the server, and it has been placed in local state
+  useEffect(() => {
+    if (savingAnswer.current >= 0 && questionAnswerPairs[savingAnswer.current].answer.id) {
+      savingAnswer.current = -1;
+    }
+  }, [questionAnswerPairs]);
 
   const handleAnswerChange = useCallback((index, newAnswer) => {
     // Update local state with answer data until assigned an ID
@@ -120,8 +142,10 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     setQuestionAnswerPairs(updatedQuestionAnswerPairs);
 
     // Save or update new answer with debounce
-    updateFeedbackAnswerWithDebounce(index, newAnswer);
-  }, [questionAnswerPairs, updateFeedbackAnswerWithDebounce]);
+    if (savingAnswer.current === -1) {
+      updateFeedbackAnswer(index, newAnswer);
+    }
+  }, [questionAnswerPairs, updateFeedbackAnswer]);
 
   async function updateRequestSubmit() {
     request.status = FeedbackRequestStatus.SUBMITTED;
