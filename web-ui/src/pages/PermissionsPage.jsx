@@ -89,7 +89,6 @@ const PermissionsPage = () => {
 
     if (csrf) {
       loadRolePermissions().then((rolePermissions) => {
-        console.log(rolePermissions);
         setAllRolePermissions(rolePermissions);
       });
     }
@@ -108,8 +107,10 @@ const PermissionsPage = () => {
   }, [searchText, allPermissions, formatPermissionText]);
 
   const roleHasPermission = useCallback((role, permission) => {
-
-    return allRolePermissions.find((entry) => entry.roleId === role.id && entry.permissionId === permission.id);
+    if (allRolePermissions.length === 0) return false;
+    const matchingRole = allRolePermissions.find(roleObj => roleObj.roleId === role.id);
+    const hasPermission = matchingRole.permissions?.find(permissionObj => permissionObj.id === permission.id);
+    return !!hasPermission;
   }, [allRolePermissions]);
 
   // Event handler for changing a role permission
