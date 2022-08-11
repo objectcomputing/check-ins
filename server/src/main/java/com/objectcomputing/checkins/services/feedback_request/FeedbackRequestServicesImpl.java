@@ -113,13 +113,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
          */
 
         final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
-        FeedbackRequest originalFeedback = null;
 
-        if (feedbackRequest.getId() != null) {
-            originalFeedback = getById(feedbackRequest.getId());
-        }
-
-        validate(originalFeedback != null).orElseThrow(() -> {
+        FeedbackRequest originalFeedback = feedbackReqRepository.findById(feedbackRequest.getId()).orElseThrow(() -> {
             throw new BadArgException("Cannot update feedback request that does not exist");
         });
 
@@ -131,6 +126,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         validate(!(feedbackRequest.getStatus() == FeedbackRequestStatus.CANCELED && originalFeedback.getStatus() == FeedbackRequestStatus.SUBMITTED)).orElseThrow(() -> {
             throw new BadArgException("Attempted to cancel a feedback request that was already submitted");
         });
+        validate(statusUpdateIsPermitted(originalFeedback, feedbackRequest)).orElseThrow(() -> {
+            throw new PermissionException("You do not have permission to change this feedback request from %s to %s", originalFeedback.getStatus(), feedbackRequest.getStatus());
+        });
+
         validate(!dueDateUpdateAttempted || updateDueDateIsPermitted(feedbackRequest)).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
         });
@@ -253,9 +252,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return currentUserId.equals(feedbackRequest.getRecipientId());
     }
 
-    private void validateStatusUpdate(FeedbackRequest originalRequest, FeedbackRequest newRequest) {
+    private boolean statusUpdateIsPermitted(FeedbackRequest originalRequest, FeedbackRequest newRequest) {
         if (currentUserServices.isAdmin()) {
-            return;  // Admin is allowed to alter any status
+            return true;  // Admin is allowed to alter any status
         }
 
         UUID creatorId = originalRequest.getCreatorId();
@@ -266,7 +265,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         FeedbackRequestStatus newStatus = newRequest.getStatus();
 
         if (originalStatus == newStatus) {
-            return;  // No status update is attempted
+            return true;  // No status update is attempted
         }
 
         boolean valid = false;
@@ -283,9 +282,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             }
         }
 
-        if (!valid) {
-            throw new PermissionException(String.format("You do not have permission to change this feedback request from %s to %s", originalStatus, newStatus));
-        }
+        return valid;
     }
 
     private FeedbackRequest getFromDTO(FeedbackRequestUpdateDTO dto) {
