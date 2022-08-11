@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.newhire.commons.NewHireAccountConfig;
 import com.objectcomputing.checkins.newhire.commons.SharableNewHireAccount;
 import com.objectcomputing.checkins.security.authentication.srp6.Srp6Secrets;
 import com.objectcomputing.checkins.security.authentication.srp6.client.Srp6ClientSecretsFactory;
+import com.objectcomputing.checkins.services.email.EmailServices;
 import com.objectcomputing.checkins.services.onboardeecreate.commons.AccountState;
 import com.objectcomputing.checkins.services.onboardeecreate.newhire.commons.NewHireAccountConfig;
 import com.objectcomputing.checkins.services.onboardeecreate.newhire.commons.SharableNewHireAccount;
@@ -29,18 +30,21 @@ public class NewHireAccountService {
     private final Srp6ClientSecretsFactory secretsFactory;
     private final NewHireAuthorizationCodeRepository userAuthorizationCodeRepository;
     private final NewHireAccountCommunicationService accountCommunicationService;
+    private final EmailServices emailServices;
 
     public NewHireAccountService(NewHireAccountRepository userAccountRepository,
                                  NewHireCredentialsRepository newHireCredentialsRepository,
                                  Srp6ClientSecretsFactory secretsFactory,
                                  NewHireAuthorizationCodeRepository userAuthorizationCodeRepository,
-                                 NewHireAccountCommunicationService accountCommunicationService) {
+                                 NewHireAccountCommunicationService accountCommunicationService,
+                                 EmailServices emailServices) {
 
         this.userAccountRepository = userAccountRepository;
         this.newHireCredentialsRepository = newHireCredentialsRepository;
         this.secretsFactory = secretsFactory;
         this.userAuthorizationCodeRepository = userAuthorizationCodeRepository;
         this.accountCommunicationService = accountCommunicationService;
+        this.emailServices = emailServices;
     }
 
     public Mono<NewHireAccountEntity> createUserAccountWithCredentials(NewHireAccountConfig newHireAccountConfig) {
@@ -77,10 +81,12 @@ public class NewHireAccountService {
     }
 
     private Mono<Object> sendUserAccountNotification(NewHireAccountEntity userAccount, String code) {
-        return accountCommunicationService.sendEmail(
-                "OCI New Hire Invitation", List.of(userAccount.getEmailAddress()),
-                "You are invited to join OCI New Hire platform " + userAccount
-                        + ".  You have 15 minutes to activate your account.  Your code is " + code) ;
+        return Mono.just(emailServices.sendAndSaveEmail(
+                "OCI New Hire Invitation",
+                "Congratulations! You have been invited to join OCI as a New Hire on the Onboarding Platform. <br /> You have 15 minutes to activate your account.  Your code is " + code,
+                true,
+                userAccount.getEmailAddress()
+        )).map(emailAddresses -> Mono.just(new Object()));
     }
 
     private Tuple2<NewHireAuthorizationCodeEntity,String> generateUserAuthorizationCode(NewHireAccountEntity userAccount) {

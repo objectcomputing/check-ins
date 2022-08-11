@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(RoleType.Constants.HR_ROLE)
 @Controller("/services/create-onboardee")
 public class CreateNewOnboardeeController {
 
@@ -35,10 +35,7 @@ public class CreateNewOnboardeeController {
         this.userAccountConverter = userAccountConverter;
     }
 
-
-
     @Post("/")
-    @Secured(RoleType.Constants.HR_ROLE)
     @Produces(MediaType.APPLICATION_JSON)
     public Mono<Map<String, Object>> createUserAccountWithoutCredentials(@Body SharableNewHireAccount sharableNewHireAccount) {
         return userAccountService.createUserAccountWithoutCredentials(sharableNewHireAccount)

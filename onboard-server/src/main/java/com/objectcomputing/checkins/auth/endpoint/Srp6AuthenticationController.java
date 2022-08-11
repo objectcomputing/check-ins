@@ -84,7 +84,7 @@ public class Srp6AuthenticationController {
                 .doFinally((st) -> authSessionHelper.cleanup(session));
     }
 
-    @Post("/activate/challenge") // First - check email & access code,
+    @Post("/activate/challenge") // first
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     public Mono<Srp6Challenge> activateChallenge(Session session, @Body ChallengeRequest challengeRequest) {
@@ -94,7 +94,7 @@ public class Srp6AuthenticationController {
                 .flatMap(challengeAccount -> challengeOperation.challenge(session, challengeAccount));
     }
 
-    @Post("/activate") // 2nd - check email & access code, and sets account to ACTIVE
+    @Post("/activate") // probably enables us to check email & access code, and sets account to ACTIVE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     public Mono<AuthorizationToken> activate(Session session, @Body ActivationRequest activationRequest) {
