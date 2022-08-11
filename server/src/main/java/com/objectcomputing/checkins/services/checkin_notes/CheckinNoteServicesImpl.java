@@ -68,7 +68,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             throw new BadArgException("Found unexpected id %s for check in note", checkinNote.getId());
         });
         validate(createById != null && memberProfileRetrievalServices.existsById(createById)).orElseThrow(() -> {
-            throw new BadArgException("Member %s doesn't exist", createById);
+            throw new BadArgException("Member who created the Checkin note does not exist", createById);
         });
         validate(isAdmin || !isCompleted).orElseThrow(() -> {
             throw new PermissionException("User is unauthorized to do this operation");
@@ -127,7 +127,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             throw new BadArgException("Unable to locate checkin note to update with id %s", checkinNote.getId());
         });
         memberProfileRetrievalServices.getById(createById).orElseThrow(() -> {
-            throw new BadArgException("Member %s doesn't exist", createById);
+            throw new BadArgException("Member who created the Checkin note does not exist", createById);
         });
 
         if (!isAdmin && isCompleted) {
