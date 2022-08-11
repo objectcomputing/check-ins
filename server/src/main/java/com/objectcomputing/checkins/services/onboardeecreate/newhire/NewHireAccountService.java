@@ -1,64 +1,39 @@
 package com.objectcomputing.checkins.services.onboardeecreate.newhire;
 
-import com.objectcomputing.checkins.commons.AccountState;
-import com.objectcomputing.checkins.newhire.commons.NewHireAccountConfig;
-import com.objectcomputing.checkins.newhire.commons.SharableNewHireAccount;
-import com.objectcomputing.checkins.security.authentication.srp6.Srp6Secrets;
-import com.objectcomputing.checkins.security.authentication.srp6.client.Srp6ClientSecretsFactory;
 import com.objectcomputing.checkins.services.email.EmailServices;
 import com.objectcomputing.checkins.services.onboardeecreate.commons.AccountState;
-import com.objectcomputing.checkins.services.onboardeecreate.newhire.commons.NewHireAccountConfig;
 import com.objectcomputing.checkins.services.onboardeecreate.newhire.commons.SharableNewHireAccount;
 import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.*;
+import com.objectcomputing.checkins.services.onboardeecreate.security.authentication.srp6.Srp6Secrets;
+import com.objectcomputing.checkins.services.onboardeecreate.security.authentication.srp6.client.Srp6ClientSecretsFactory;
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Random;
 
-import static com.objectcomputing.checkins.newhire.model.NewHireAuthorizationCodeEntity.DEFAULT_TIME_TO_LIVE;
+import static com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAuthorizationCodeEntity.DEFAULT_TIME_TO_LIVE;
 
 @Singleton
 public class NewHireAccountService {
     private static final long CODE_LENGTH = 5;
 
     private final NewHireAccountRepository userAccountRepository;
-    private final NewHireCredentialsRepository newHireCredentialsRepository;
     private final Srp6ClientSecretsFactory secretsFactory;
     private final NewHireAuthorizationCodeRepository userAuthorizationCodeRepository;
-    private final NewHireAccountCommunicationService accountCommunicationService;
     private final EmailServices emailServices;
 
     public NewHireAccountService(NewHireAccountRepository userAccountRepository,
-                                 NewHireCredentialsRepository newHireCredentialsRepository,
                                  Srp6ClientSecretsFactory secretsFactory,
                                  NewHireAuthorizationCodeRepository userAuthorizationCodeRepository,
-                                 NewHireAccountCommunicationService accountCommunicationService,
                                  EmailServices emailServices) {
 
         this.userAccountRepository = userAccountRepository;
-        this.newHireCredentialsRepository = newHireCredentialsRepository;
         this.secretsFactory = secretsFactory;
         this.userAuthorizationCodeRepository = userAuthorizationCodeRepository;
-        this.accountCommunicationService = accountCommunicationService;
         this.emailServices = emailServices;
-    }
-
-    public Mono<NewHireAccountEntity> createUserAccountWithCredentials(NewHireAccountConfig newHireAccountConfig) {
-        return userAccountRepository.save(
-                new NewHireAccountEntity( newHireAccountConfig.getEmailAddress(), AccountState.Active, Instant.now()))
-
-                .flatMap(userAccount -> saveUserAccountCredentials(newHireAccountConfig, userAccount)
-                            .flatMap(unknown -> Mono.just(userAccount)));
-    }
-
-    public Mono<NewHireCredentialsEntity> saveUserAccountCredentials(NewHireAccountConfig newHireAccountConfig, NewHireAccountEntity newHireAccount) {
-        return newHireCredentialsRepository.save(
-                new NewHireCredentialsEntity(
-                        newHireAccount, newHireAccountConfig.getSalt(), newHireAccountConfig.getPrimaryVerifier()));
     }
 
     public Mono<NewHireAccountEntity> createUserAccountWithoutCredentials(SharableNewHireAccount sharableNewHireAccount) {
@@ -112,13 +87,5 @@ public class NewHireAccountService {
     private NewHireAuthorizationCodeEntity createUserAuthorizationCode(NewHireAccountEntity newHireAccount, String salt, String verifier) {
         return new NewHireAuthorizationCodeEntity(newHireAccount, salt, verifier, AuthorizationPurpose.Activation,
                  Instant.now(), DEFAULT_TIME_TO_LIVE);
-    }
-
-    // This is used to activate the user's account with credentials.
-    public Mono<NewHireAccountEntity> activateUserAccount(NewHireAccountEntity userAccount, NewHireAccountConfig newHireAccountConfig) {
-        return saveUserAccountCredentials(newHireAccountConfig, userAccount)
-                .flatMap(credentials ->
-                        userAuthorizationCodeRepository.consumeAuthorizationCodes(userAccount.getId(), AuthorizationPurpose.Activation))
-                .thenReturn(userAccount);
     }
 }

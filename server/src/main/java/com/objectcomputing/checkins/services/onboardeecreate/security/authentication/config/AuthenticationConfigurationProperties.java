@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.onboardeecreate.security.authentication.config;
 
-import com.objectcomputing.checkins.OnboardConfigurationProperties;
+import com.objectcomputing.checkins.services.onboardeecreate.OnboardConfigurationProperties;
 import io.micronaut.context.annotation.ConfigurationProperties;
 
 @ConfigurationProperties(AuthenticationConfigurationProperties.PREFIX)

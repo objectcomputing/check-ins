@@ -1,9 +1,8 @@
 package com.objectcomputing.checkins.services.onboardeecreate.security.token;
 
-import com.objectcomputing.checkins.auth.operations.AuthenticatableAccount;
-import com.objectcomputing.checkins.security.authorization.AuthorizationToken;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.util.BuildableHashMap;
+import com.objectcomputing.checkins.services.onboardeecreate.security.authentication.auth.AuthenticatableAccount;
 import com.objectcomputing.checkins.services.onboardeecreate.security.authorization.AuthorizationToken;
-import com.objectcomputing.checkins.util.BuildableHashMap;
 import io.micronaut.security.authentication.ClientAuthentication;
 import io.micronaut.security.token.generator.TokenGenerator;
 import jakarta.inject.Singleton;

@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.onboardeecreate.security.authentication.srp6.config;
 
-import com.objectcomputing.checkins.security.authentication.config.AuthenticationConfigurationProperties;
 import com.objectcomputing.checkins.services.onboardeecreate.security.authentication.config.AuthenticationConfigurationProperties;
 import io.micronaut.context.annotation.ConfigurationProperties;
 

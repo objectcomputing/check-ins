@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.onboardeecreate.newhire.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.objectcomputing.checkins.util.time.TimeToLive;
-import com.objectcomputing.checkins.util.time.TimeToLiveConverter;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.util.time.TimeToLive;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.util.time.TimeToLiveConverter;
 import io.micronaut.data.annotation.*;
 import io.micronaut.data.model.DataType;
 

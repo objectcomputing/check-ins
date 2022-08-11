@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.onboardeecreate.security.authentication.binding;
 
-import com.objectcomputing.checkins.security.authentication.AuthenticatedActor;
+import com.objectcomputing.checkins.services.onboardeecreate.security.authentication.AuthenticatedActor;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.convert.value.MutableConvertibleValues;

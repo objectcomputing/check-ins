@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.onboardeecreate.security.authentication.auth;
 
-import com.objectcomputing.checkins.commons.Account;
-import com.objectcomputing.checkins.commons.AccountState;
-import com.objectcomputing.checkins.commons.Identifiable;
+import com.objectcomputing.checkins.services.onboardeecreate.commons.Account;
+import com.objectcomputing.checkins.services.onboardeecreate.commons.AccountState;
+import com.objectcomputing.checkins.services.onboardeecreate.commons.Identifiable;
 
 import java.util.Objects;
 import java.util.UUID;

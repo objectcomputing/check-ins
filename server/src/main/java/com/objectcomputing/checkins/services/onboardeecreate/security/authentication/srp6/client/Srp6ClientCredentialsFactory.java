@@ -1,7 +1,9 @@
 package com.objectcomputing.checkins.services.onboardeecreate.security.authentication.srp6.client;
 
-import com.objectcomputing.checkins.security.authentication.srp6.Srp6Challenge;
-import com.objectcomputing.checkins.security.authentication.srp6.config.Srp6EncryptionConfiguration;
+import com.nimbusds.srp6.SRP6ClientCredentials;
+import com.nimbusds.srp6.SRP6ClientSession;
+import com.nimbusds.srp6.SRP6CryptoParams;
+import com.nimbusds.srp6.SRP6Exception;
 import com.objectcomputing.checkins.services.onboardeecreate.security.authentication.srp6.Srp6Challenge;
 import com.objectcomputing.checkins.services.onboardeecreate.security.authentication.srp6.config.Srp6EncryptionConfiguration;
 import io.micronaut.context.annotation.Factory;
