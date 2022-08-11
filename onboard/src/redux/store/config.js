@@ -7,7 +7,7 @@ import rootReducer from '../reducers/rootReducer';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['login', 'profile'] // add more reducers here for whitelisting as they're created
+  whitelist: ['login', 'profile', 'educationReducer'] // add more reducers here for whitelisting as they're created
   // blacklist: ['']
 };
 
