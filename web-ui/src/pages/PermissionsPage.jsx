@@ -59,6 +59,12 @@ const PermissionsPage = () => {
   const [allRolePermissions, setAllRolePermissions] = useState([]);
   const [filteredPermissions, setFilteredPermissions] = useState([]);
 
+  const formatPermissionText = useCallback((permission) => {
+    let permissionText = permission.replaceAll("_", " ");
+    permissionText = permissionText.toLowerCase();
+    return permissionText.charAt(0).toUpperCase() + permissionText.slice(1);
+  }, []);
+
   // Get all permissions from server and store in state
   useEffect(() => {
     const getPermissions = async () => {
@@ -76,13 +82,14 @@ const PermissionsPage = () => {
 
   // Get all role permissions from server and store in state
   useEffect(() => {
-    const getRolePermissions = async () => {
+    const loadRolePermissions = async () => {
       const res = await getAllRolePermissions(csrf);
       return res && res.payload && res.payload.data ? res.payload.data : [];
     }
 
     if (csrf) {
-      getRolePermissions().then((rolePermissions) => {
+      loadRolePermissions().then((rolePermissions) => {
+        console.log(rolePermissions);
         setAllRolePermissions(rolePermissions);
       });
     }
@@ -94,13 +101,14 @@ const PermissionsPage = () => {
     let searchedPermissions = allPermissions;
     if (searchText.trim()) {
       searchedPermissions = allPermissions.filter((permission) =>
-        permission.permission.toLowerCase().includes(searchText.trim().toLowerCase())
+        formatPermissionText(permission.permission).toLowerCase().includes(searchText.trim().toLowerCase())
       );
     }
     setFilteredPermissions(searchedPermissions);
-  }, [searchText, allPermissions]);
+  }, [searchText, allPermissions, formatPermissionText]);
 
   const roleHasPermission = useCallback((role, permission) => {
+
     return allRolePermissions.find((entry) => entry.roleId === role.id && entry.permissionId === permission.id);
   }, [allRolePermissions]);
 
@@ -125,12 +133,6 @@ const PermissionsPage = () => {
       });
     }
   }, [csrf]);
-
-  const formatPermissionText = useCallback((permission) => {
-    let permissionText = permission.replaceAll("_", " ");
-    permissionText = permissionText.toLowerCase();
-    return permissionText.charAt(0).toUpperCase() + permissionText.slice(1);
-  }, []);
 
   return (
     <div className="permissions-content">
