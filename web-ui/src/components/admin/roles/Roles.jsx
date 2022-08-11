@@ -44,16 +44,16 @@ import {selectProfile} from "../../../context/selectors";
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, memberProfiles, roles, userRoles } = state;
+  const { csrf, memberProfiles, userRoles } = state;
 
   const [showAddUser, setShowAddUser] = useState(false);
   const [showAddRole, setShowAddRole] = useState(false);
   const [newRole, setNewRole] = useState("");
   // const [editRole, setEditRole] = useState(false);
   const [memberSearchText, setMemberSearchText] = useState("");
-  const [selectedRoles, setSelectedRoles] = useState([]);
+  const [filteredRoles, setFilteredRoles] = useState([]);
   const [selectedMember, setSelectedMember] = useState({});
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState({});
 
   memberProfiles.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -86,13 +86,12 @@ const Roles = () => {
 
   useEffect(() => {
     if (userRoles) {
-      setSelectedRoles(userRoles.map(roleObj => roleObj.role));
+      setFilteredRoles(userRoles.map(roleObj => roleObj.role));
     }
   }, [userRoles]);
 
   const addToRole = async (member) => {
-    const role = roles.find((role) => role.role === selectedRole);
-    let res = await addUserToRole(role.id, member.id, csrf);
+    let res = await addUserToRole(selectedRole.roleId, member.id, csrf);
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
     if (data) {
@@ -112,7 +111,7 @@ const Roles = () => {
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: `${member.name} added to ${selectedRole}s`,
+          toast: `${member.name} added to ${selectedRole.role}s`,
         },
       });
     }
@@ -120,7 +119,7 @@ const Roles = () => {
   };
 
   const addRole = async (member) => {
-    let res = await addNewRole(selectedRole, member.id, csrf);
+    let res = await addNewRole(selectedRole.role, member.id, csrf);
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
     if (data) {
@@ -133,7 +132,7 @@ const Roles = () => {
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: `${member.name} added to ${selectedRole}s`,
+          toast: `${member.name} added to ${selectedRole.role}s`,
         },
       });
     }
@@ -158,22 +157,22 @@ const Roles = () => {
                 <Select
                   labelId="roles-select-label"
                   multiple
-                  value={selectedRoles}
+                  value={filteredRoles}
                   onChange={(event) => {
                     const value = event.target.value;
-                    setSelectedRoles(typeof value === "string" ? value.split(",") : value)
+                    setFilteredRoles(typeof value === "string" ? value.split(",") : value)
                   }}
                   input={<OutlinedInput label="Roles"/>}
                   renderValue={(selected) => selected.join(", ")}
                 >
                   {userRoles?.map((roleObj) => (
                     <MenuItem key={roleObj.role} value={roleObj.role}>
-                      <Checkbox checked={selectedRoles.indexOf(roleObj.role) > -1}/>
+                      <Checkbox checked={filteredRoles.indexOf(roleObj.role) > -1}/>
                       <ListItemText primary={roleObj.role}/>
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{`Showing ${selectedRoles.length}/${userRoles?.length} roles`}</FormHelperText>
+                <FormHelperText>{`Showing ${filteredRoles.length}/${userRoles?.length} roles`}</FormHelperText>
               </FormControl>
               <TextField
                 className="member-role-search"
@@ -190,9 +189,37 @@ const Roles = () => {
             </div>
           </div>
         </div>
+        <Modal open={showAddUser} onClose={closeAddUser}>
+          <div className="role-modal">
+            <Autocomplete
+              options={memberProfiles.filter((member) => {
+                return !selectedRole.memberIds?.includes(member.id);
+              })}
+              value={selectedMember}
+              onChange={(event, newValue) =>
+                setSelectedMember(newValue)
+              }
+              getOptionLabel={(option) => option.name || ""}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  className="fullWidth"
+                  label="User To Add"
+                  placeholder={`Select User to add to ${selectedRole.role}s`}
+                />
+              )}
+            />
+            <Button
+              color="primary"
+              onClick={() => addToRole(selectedMember)}
+            >
+              Save
+            </Button>
+          </div>
+        </Modal>
         <div className="roles-bot">
           {userRoles?.map((roleObj) =>
-            selectedRoles.includes(roleObj.role) ? (
+            filteredRoles.includes(roleObj.role) ? (
               <Card className="role" key={roleObj.roleId}>
                 <CardContent className="role-card">
                   <List style={{ paddingTop: 0 }}>
@@ -214,7 +241,7 @@ const Roles = () => {
                               endIcon={<PersonAddIcon/>}
                               onClick={() => {
                                 setShowAddUser(true);
-                                setSelectedRole(roleObj.role);
+                                setSelectedRole(roleObj);
                               }}
                             >
                               Add User
@@ -234,34 +261,6 @@ const Roles = () => {
                   </List>
                 </CardContent>
                 <CardActions>
-                  <Modal open={showAddUser} onClose={closeAddUser}>
-                    <div className="role-modal">
-                      <Autocomplete
-                        options={memberProfiles.filter(
-                          (member) => !roleObj.memberIds.includes(member.id)
-                        )}
-                        value={selectedMember}
-                        onChange={(event, newValue) =>
-                          setSelectedMember(newValue)
-                        }
-                        getOptionLabel={(option) => option.name || ""}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            className="fullWidth"
-                            label="User To Add"
-                            placeholder={`Select User to add to ${selectedRole}s`}
-                          />
-                        )}
-                      />
-                      <Button
-                        color="primary"
-                        onClick={() => addToRole(selectedMember)}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </Modal>
                   <Modal open={showAddRole} onClose={closeAddRole}>
                     <div className="role-modal">
                       <TextField
