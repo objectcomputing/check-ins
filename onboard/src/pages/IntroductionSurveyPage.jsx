@@ -3,6 +3,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import {
+  Checkbox,
   Grid,
   Box,
   Radio,
@@ -57,16 +58,14 @@ const IntroductionSurveyPage = () => {
                 }}
               >
                 <FormLabel>2. Over the course of the next couple of weeks you will receive an email from Google asking you to set up your OCI Google Account. Please watch for this as it expires 48 hours after it is sent. Once set up, you will then have access to all of the tools listed below. Please identify which, if any, you would like training on:</FormLabel>
-                <RadioGroup>
-                  <FormControlLabel value="gmail" control={<Radio />} label="Gmail" />
-                  <FormControlLabel value="google_calendar" control={<Radio />} label="Google Calendar" />
-                  <FormControlLabel value="google_meet" control={<Radio />} label="Google Meet" />
-                  <FormControlLabel value="google_docs" control={<Radio />} label="Google Docs" />
-                  <FormControlLabel value="google_sheets" control={<Radio />} label="Google Sheets" />
-                  <FormControlLabel value="google_drive" control={<Radio />} label="Google Drive" />
-                  <FormControlLabel value="google_chat" control={<Radio />} label="Google Chat" />
-                  <FormControlLabel value="know_how_use_all" control={<Radio />} label="I know how to use all the above" />
-                </RadioGroup>
+                <FormControlLabel value="gmail" control={<Checkbox />} label="Gmail" />
+                <FormControlLabel value="google_calendar" control={<Checkbox />} label="Google Calendar" />
+                <FormControlLabel value="google_meet" control={<Checkbox />} label="Google Meet" />
+                <FormControlLabel value="google_docs" control={<Checkbox />} label="Google Docs" />
+                <FormControlLabel value="google_sheets" control={<Checkbox />} label="Google Sheets" />
+                <FormControlLabel value="google_drive" control={<Checkbox />} label="Google Drive" />
+                <FormControlLabel value="google_chat" control={<Checkbox />} label="Google Chat" />
+                <FormControlLabel value="know_how_use_all" control={<Checkbox />} label="I know how to use all the above" />
               </FormControl>
             </Grid>
             <Grid item xs={12} sx={{ mt: 4 }}>
