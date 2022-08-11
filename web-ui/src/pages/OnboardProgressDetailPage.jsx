@@ -210,7 +210,7 @@ export default function OnboardProgressDetailPage(onboardee){
     <div className="detail-onboard">
       <Grid container >
         <Grid item xs={5}>
-          <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
+          <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%", padding: "2em" }}>
             <Button
               onClick={handleOpen}
               variant="contained"
@@ -318,7 +318,7 @@ export default function OnboardProgressDetailPage(onboardee){
           </Box>
         </Grid>
 
-        <Grid item xs={7} sx={{ height: 650 }}>
+        <Grid item xs={7} sx={{ padding: "2em" }}>
           <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
             <div style={{ display: "flex" }}>
               <h1>Documents/Surveys</h1>
@@ -344,12 +344,12 @@ export default function OnboardProgressDetailPage(onboardee){
             />
           </Box>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={6} sx={{ display: "flex", alignContent: "flex-end", flexWrap: "wrap", justifyContent: "flex-start", padding: "2em"}}>
           <Button variant="contained" onClick={handleReturn}>
             Back
           </Button>
         </Grid>
-        <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Grid item xs={6} sx={{ display: "flex", justifyContent: "flex-end", flexWrap: "wrap", flexDirection: "row", alignContent: "flex-end", padding: "2em" }}>
           <Button
             variant="contained"
             onClick={handleOpenEdit}

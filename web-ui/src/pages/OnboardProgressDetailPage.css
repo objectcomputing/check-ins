@@ -2,4 +2,5 @@
   display: flex;
   justify-content: center;
   column-gap: 5%;
+  height: calc(100vh - 64px);
 }
