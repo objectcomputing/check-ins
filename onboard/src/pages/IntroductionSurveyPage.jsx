@@ -1,10 +1,9 @@
 import React from "react";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
+import TextField from "../components/inputs/TextField";
 import {
   Grid,
-  Typography,
   Box,
   Radio,
   FormControlLabel,
@@ -129,6 +128,7 @@ const IntroductionSurveyPage = () => {
             >
               <FormLabel>5. Based on your understanding of your role, is there any other training that you feel would be helpful?</FormLabel>
               <TextField
+                variant="outlined"
                 
               />
             </FormControl>
@@ -145,6 +145,7 @@ const IntroductionSurveyPage = () => {
             >
               <FormLabel>6. Please help us introduce you to the team by providing a short introduction to yourself.  This could include such things as your background, interests (professional as well as personal), pets/family/friends, reasons for joining OCI, etc.  </FormLabel>
               <TextField
+                variant="outlined"
                 
               />
             </FormControl>
@@ -160,6 +161,7 @@ const IntroductionSurveyPage = () => {
             >
               <FormLabel>7. What are some additional skills, interests, etc. that you have that you would like to expand upon while working at OCI?  </FormLabel>
               <TextField
+                variant="outlined"
                 
               />
             </FormControl>
@@ -175,6 +177,7 @@ const IntroductionSurveyPage = () => {
             >
               <FormLabel>9. Do you have any special certifications or training that you believe we should be aware of?  </FormLabel>
               <TextField
+                variant="outlined"
                 
               />
             </FormControl>
