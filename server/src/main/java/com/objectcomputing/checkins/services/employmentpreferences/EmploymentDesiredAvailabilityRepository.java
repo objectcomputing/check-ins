@@ -41,7 +41,7 @@ public interface EmploymentDesiredAvailabilityRepository extends CrudRepository<
             "AND  (:desiredPosition IS NULL OR PGP_SYM_DECRYPT(cast(mp.desiredPosition as bytea),'${aes.key}') = :desiredPosition) " +
             "AND  (:desiredStartDate IS NULL OR PGP_SYM_DECRYPT(cast(mp.desiredStartDate as bytea),'${aes.key}') = :desiredStartDate) " +
             "AND  (:desiredSalary IS NULL OR PGP_SYM_DECRYPT(cast(mp.desiredSalary as bytea),'${aes.key}') = :desiredSalary) " +
-            "AND  (CAST(:currentlyEmployed as date) IS NULL OR CAST(PGP_SYM_DECRYPT(cast(mp.currentlyEmployed as bytea),'${aes.key}') as currentlyEmployed) = :birthDate) " +
+            "AND  (CAST(:currentlyEmployed as date) IS NULL OR CAST(PGP_SYM_DECRYPT(cast(mp.currentlyEmployed as bytea),'${aes.key}') as currentlyEmployed) = :currentlyEmployed) " +
             "AND  (:contactCurrentEmployer IS NULL OR PGP_SYM_DECRYPT(cast(mp.contactCurrentEmployer as bytea),'${aes.key}') = :contactCurrentEmployer) " +
             "AND  (:previousEmploymentOCI IS NULL OR PGP_SYM_DECRYPT(cast(mp.previousEmploymentOCI as bytea),'${aes.key}') = :previousEmploymentOCI) " +
             "AND  (:noncompeteAgreement IS NULL OR PGP_SYM_DECRYPT(cast(mp.noncompeteAgreement as bytea),'${aes.key}') = :noncompeteAgreement) " +
@@ -51,6 +51,11 @@ public interface EmploymentDesiredAvailabilityRepository extends CrudRepository<
             @Nullable String id,
             @Nullable String desiredPosition,
             @Nullable LocalDate desiredStartDate,
-            @Nullable Boolean currentlyEmployed
+            @Nullable String desiredSalary,
+            @Nullable Boolean currentlyEmployed,
+            @Nullable Boolean contactCurrentEmployer,
+            @Nullable Boolean previousEmploymentOCI,
+            @Nullable Boolean noncompeteAgreement,
+            @Nullable LocalDate noncompeteExpirationDate
     );
 }

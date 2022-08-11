@@ -51,6 +51,10 @@ public interface EmploymentDesiredAvailabilityRepository extends CrudRepository<
             @Nullable String id,
             @Nullable String desiredPosition,
             @Nullable LocalDate desiredStartDate,
-            @Nullable Boolean currentlyEmployed
-    );
+            @Nullable String desiredSalary,
+            @Nullable Boolean currentlyEmployed,
+            @Nullable Boolean contactCurrentEmployer,
+            @Nullable Boolean previousEmploymentOCI,
+            @Nullable Boolean noncompeteAgreement,
+            @Nullable LocalDate noncompeteExpirationDate);
 }

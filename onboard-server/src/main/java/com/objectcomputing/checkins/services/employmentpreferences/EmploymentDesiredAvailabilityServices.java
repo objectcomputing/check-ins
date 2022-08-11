@@ -9,7 +9,9 @@ import java.util.UUID;
 public interface EmploymentDesiredAvailabilityServices {
     EmploymentDesiredAvailability getById(UUID id);
 
-    Set<EmploymentDesiredAvailability> findByValues (UUID id, String desiredPosition, LocalDate desiredStartDate, Boolean currentlyEmployed);
+    Set<EmploymentDesiredAvailability> findByValues (UUID id, String desiredPosition, LocalDate desiredStartDate,
+                                                     String desiredSalary, Boolean currentlyEmployed, Boolean contactCurrentEmployer,
+                                                     Boolean previousEmploymentOCI, Boolean noncompeteAgreement, LocalDate noncompeteExpirationDate);
 
     EmploymentDesiredAvailability savePreferences(EmploymentDesiredAvailability employmentDesiredAvailabilityPreferences);
 
@@ -18,8 +20,6 @@ public interface EmploymentDesiredAvailabilityServices {
     Boolean deletePreferences(UUID id);
 
     EmploymentDesiredAvailability findByPosition(@NotNull String desiredPosition);
-
-    EmploymentDesiredAvailability findByReferral(String referredBy);
 
     List<EmploymentDesiredAvailability> findAll();
 }

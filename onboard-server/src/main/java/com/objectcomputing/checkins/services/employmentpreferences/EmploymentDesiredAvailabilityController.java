@@ -77,10 +77,15 @@ public class EmploymentDesiredAvailabilityController {
 
     @Get("/{?desiredPosition,desiredStartDate,currentlyEmployed,referredBy,referrerEmail}")
     public Mono<HttpResponse<List<EmploymentDesiredAvailabilityDTO>>> findByValue(@Nullable UUID id,
-                                                                           @Nullable String desiredPosition,
-                                                                           @Nullable LocalDate desiredStartDate,
-                                                                           @Nullable Boolean currentlyEmployed) {
-        return Mono.fromCallable(() -> employmentDesiredAvailabilityServices.findByValues(id, desiredPosition, desiredStartDate, currentlyEmployed))
+                                                                                  @Nullable String desiredPosition,
+                                                                                  @Nullable LocalDate desiredStartDate,
+                                                                                  @Nullable String desiredSalary,
+                                                                                  @Nullable Boolean currentlyEmployed,
+                                                                                  @Nullable Boolean contactCurrentEmployer,
+                                                                                  @Nullable Boolean previousEmploymentOCI,
+                                                                                  @Nullable Boolean noncompeteAgreement,
+                                                                                  @Nullable LocalDate noncompeteExpirationDate) {
+        return Mono.fromCallable(() -> employmentDesiredAvailabilityServices.findByValues(id, desiredPosition, desiredStartDate, desiredSalary, currentlyEmployed, contactCurrentEmployer,previousEmploymentOCI, noncompeteAgreement, noncompeteExpirationDate))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(workPreference -> {
                     List<EmploymentDesiredAvailabilityDTO> dtoList = workPreference.stream()

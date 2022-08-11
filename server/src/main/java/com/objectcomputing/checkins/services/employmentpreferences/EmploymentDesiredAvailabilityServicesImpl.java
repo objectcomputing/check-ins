@@ -39,9 +39,14 @@ public class EmploymentDesiredAvailabilityServicesImpl implements EmploymentDesi
             @Nullable UUID id,
             @Nullable String desiredPosition,
             @Nullable LocalDate desiredStartDate,
-            @Nullable Boolean currentlyEmployed) {
+            @Nullable String desiredSalary,
+            @Nullable Boolean currentlyEmployed,
+            @Nullable Boolean contactCurrentEmployer,
+            @Nullable Boolean previousEmploymentOCI,
+            @Nullable Boolean noncompeteAgreement,
+            @Nullable LocalDate noncompeteExpirationDate) {
         HashSet<EmploymentDesiredAvailability> employed_desired_availability_preferences = new HashSet<>(employmentDesiredAvailabilityRepository.search( (nullSafeUUIDToString(id)), desiredPosition, desiredStartDate,
-                currentlyEmployed));
+                desiredSalary, currentlyEmployed, contactCurrentEmployer, previousEmploymentOCI, noncompeteAgreement, noncompeteExpirationDate));
         return employed_desired_availability_preferences;
     }
 
@@ -61,16 +66,7 @@ public class EmploymentDesiredAvailabilityServicesImpl implements EmploymentDesi
 
     @Override
     public EmploymentDesiredAvailability findByPosition(String desiredPosition) {
-        List<EmploymentDesiredAvailability> searchResult = employmentDesiredAvailabilityRepository.search(null, desiredPosition, null, null);
-        if (searchResult.size() != 1) {
-            throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
-        }
-        return searchResult.get(0);
-    }
-
-    @Override
-    public EmploymentDesiredAvailability findByReferral(String referredBy) {
-        List<EmploymentDesiredAvailability> searchResult = employmentDesiredAvailabilityRepository.search(null, null, null, null);
+        List<EmploymentDesiredAvailability> searchResult = employmentDesiredAvailabilityRepository.search(null, desiredPosition, null, null, false, false, false, false, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }

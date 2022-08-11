@@ -4,6 +4,10 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.EmploymentPreferencesFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import jakarta.inject.Inject;
@@ -15,6 +19,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.List;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EmploymentDesiredAvailabilityControllerTest extends TestContainersSuite implements MemberProfileFixture, EmploymentPreferencesFixture, RoleFixture {
 
@@ -37,8 +45,18 @@ public class EmploymentDesiredAvailabilityControllerTest extends TestContainersS
     }
 
     @Test
-    public void testGETALLEmployment() {
+    public void testGETALLEmploymentPrefrences() {
+        createADefaultEmploymentPreferences();
+        createSecondDefaultEmploymentPreferences();
 
+        final HttpRequest<Object> request = HttpRequest.
+                GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<List<EmploymentDesiredAvailabilityDTO>> response = client.toBlocking().exchange(request, Argument.listOf(EmploymentDesiredAvailabilityDTO.class));
+        final List<EmploymentDesiredAvailabilityDTO> results = response.body();
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(2, results.size());
     }
 
 }
