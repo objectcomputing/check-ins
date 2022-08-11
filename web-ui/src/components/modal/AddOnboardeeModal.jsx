@@ -43,7 +43,7 @@ const emptyOnboardee = {
 };
 
 const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
-  const { state, dispatch } = useContext(AppContext);
+  const { dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const [emptyFile, setEmptyFile] = useState(" ");
 
