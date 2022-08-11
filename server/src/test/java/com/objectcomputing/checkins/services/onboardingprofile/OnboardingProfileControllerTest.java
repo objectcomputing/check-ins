@@ -35,8 +35,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class OnboardingProfileControllerTest extends TestContainersSuite implements
-        MemberProfileFixture, OnboardingFixture, RoleFixture {
+public class OnboardingProfileControllerTest extends TestContainersSuite implements MemberProfileFixture, OnboardingFixture, RoleFixture {
     private static final Logger LOG = LoggerFactory.getLogger(OnboardingProfileControllerTest.class);
 
         @Inject
