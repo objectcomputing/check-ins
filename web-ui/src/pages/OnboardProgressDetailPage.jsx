@@ -29,15 +29,15 @@ const modalStyle = {
   pb: 3,
   m: 2,
   maxHeight: "90vh",
-  overflow: "auto"
+  overflow: "auto",
 };
 
-export default function OnboardProgressDetailPage(onboardee){
+export default function OnboardProgressDetailPage(onboardee) {
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
   const location = useLocation();
   const { state, dispatch } = useContext(AppContext);
-  const { csrf , onboardeeProfiles} = state;
+  const { csrf, onboardeeProfiles } = state;
   const { name, email, hireType, title } = location.state;
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
 
@@ -56,19 +56,18 @@ export default function OnboardProgressDetailPage(onboardee){
     getData();
   }, []);
 
-  const options = ["Finish Onboarding", "Delete"]
+  const options = ["Finish Onboarding", "Delete"];
 
   const delWord = [
     {
       body: "Are you sure you want to delete this onboardee? Onboardee will no longer have access to 'Onboarding'.",
-      confirm: "Onboarding complete."
+      confirm: "Onboarding complete.",
     },
     {
       body: "Warning! If you confirm, this user WILL be deleted and their information will be removed from 'Onboarding'. This action is permanent and cannot be undone. Continue?",
-      confirm: "Onboardee deleted."
-    }
+      confirm: "Onboardee deleted.",
+    },
   ];
-
 
   const history = useHistory();
   const [open, setOpen] = useState(false);
@@ -83,12 +82,11 @@ export default function OnboardProgressDetailPage(onboardee){
   const handleDel = (e, index) => {
     setDelNum(index);
     setOpenDel(!openDel);
-  }
+  };
   const [openDelConf, setOpenDelConf] = useState(false);
 
-
   const handleReturn = () => {
-    history.push({ pathname: `/onboard/progress` })
+    history.push({ pathname: `/onboard/progress` });
   };
   //handleDelSubmit will do more when the back-end is set-up
   //Will need it to delete user data and notifications
@@ -96,7 +94,6 @@ export default function OnboardProgressDetailPage(onboardee){
     setOpenDel(!openDel);
     setOpenDelConf(!openDelConf);
   };
-
 
   const accordionArr = [
     {
@@ -165,7 +162,9 @@ export default function OnboardProgressDetailPage(onboardee){
   ];
 
   const documentRows = documentArr
-    .filter((e) => e.signrequest !== null && e.signrequest.signers[1].email === email)
+    .filter(
+      (e) => e.signrequest !== null && e.signrequest.signers[1].email === email
+    )
     .map((filteredE, i) => ({
       id: filteredE.uuid,
       documentName: filteredE.name,
@@ -208,7 +207,7 @@ export default function OnboardProgressDetailPage(onboardee){
   ];
   return (
     <div className="detail-onboard">
-      <Grid container >
+      <Grid container>
         <Grid item xs={5}>
           <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
             <Button
@@ -273,19 +272,30 @@ export default function OnboardProgressDetailPage(onboardee){
             <Modal open={openDel}>
               <Box sx={modalStyle}>
                 <div>
-                  <Typography sx={{ textAlign: 'center' }}>
+                  <Typography sx={{ textAlign: "center" }}>
                     {`${delWord[delNum].body}`}
                   </Typography>
                   <Grid container sx={{ mt: 5 }}>
-                    <Grid item xs={5} display="flex" justifyContent="flex-end" alignItems="flex-end">
+                    <Grid
+                      item
+                      xs={5}
+                      display="flex"
+                      justifyContent="flex-end"
+                      alignItems="flex-end"
+                    >
                       <Button variant="contained" onClick={handleCancel}>
                         Cancel
                       </Button>
                     </Grid>
                     {/* This grid exists for styling purposes only. */}
-                    <Grid item xs={2}>
-                    </Grid>
-                    <Grid item xs={5} display="flex" justifyContent="flex-start" alignItems="flex-start">
+                    <Grid item xs={2}></Grid>
+                    <Grid
+                      item
+                      xs={5}
+                      display="flex"
+                      justifyContent="flex-start"
+                      alignItems="flex-start"
+                    >
                       <Button variant="contained" onClick={handleDelSubmit}>
                         Confirm
                       </Button>
@@ -312,7 +322,7 @@ export default function OnboardProgressDetailPage(onboardee){
             </Modal>
 
             <h1>{name}</h1>
-            <h1>{email} </h1>     
+            <h1>{email} </h1>
             <h1>{title}</h1>
             <h1>{hireType}</h1>
           </Box>
@@ -349,11 +359,12 @@ export default function OnboardProgressDetailPage(onboardee){
             Back
           </Button>
         </Grid>
-        <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button
-            variant="contained"
-            onClick={handleOpenEdit}
-          >
+        <Grid
+          item
+          xs={6}
+          style={{ display: "flex", justifyContent: "flex-end" }}
+        >
+          <Button variant="contained" onClick={handleOpenEdit}>
             Edit Onboardee
           </Button>
 
