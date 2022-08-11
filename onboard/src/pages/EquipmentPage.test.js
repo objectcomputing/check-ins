@@ -12,7 +12,7 @@ describe("Equipment page", () => {
     test("Buttons render", () => {
         render(<EquipmentPage />);
         const equipBtns = screen.getAllByRole('button');
-        expect(equipBtns.length).toBe(8);
+        expect(equipBtns.length).toBe(11);
     });
 
     test("Input field render", () => {
