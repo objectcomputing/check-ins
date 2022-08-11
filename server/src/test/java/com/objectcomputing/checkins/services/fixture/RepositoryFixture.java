@@ -1,22 +1,25 @@
 package com.objectcomputing.checkins.services.fixture;
 
-import com.objectcomputing.checkins.services.email.EmailRepository;
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.demographics.DemographicsRepository;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionRepository;
+import com.objectcomputing.checkins.services.email.EmailRepository;
+import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
+import com.objectcomputing.checkins.services.employmentpreferences.EmploymentDesiredAvailabilityRepository;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionRepository;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileRepository;
+import com.objectcomputing.checkins.services.opportunities.OpportunitiesRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
@@ -27,15 +30,13 @@ import com.objectcomputing.checkins.services.role.member_roles.MemberRoleReposit
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionRepository;
 import com.objectcomputing.checkins.services.settings.SettingsRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
-import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
+import com.objectcomputing.checkins.services.survey.SurveyRepository;
 import com.objectcomputing.checkins.services.tags.TagRepository;
+import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.MemberHistoryRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
-import com.objectcomputing.checkins.services.survey.SurveyRepository;
-import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
-import com.objectcomputing.checkins.services.opportunities.OpportunitiesRepository;
 
 public interface RepositoryFixture {
     EmbeddedServer getEmbeddedServer();
@@ -177,5 +178,9 @@ public interface RepositoryFixture {
 
     default OnboardingProfileRepository getOnboardingProfileRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(OnboardingProfileRepository.class);
+    }
+
+    default EmploymentDesiredAvailabilityRepository getEmploymentDesiredAvailabilityRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(EmploymentDesiredAvailabilityRepository.class);
     }
 }

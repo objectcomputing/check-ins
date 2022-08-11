@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.employmentpreferences;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.EmploymentPreferencesFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-import com.objectcomputing.checkins.services.fixture.OnboardingFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -16,7 +16,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
-public class EmploymentDesiredAvailabilityControllerTest extends TestContainersSuite implements MemberProfileFixture, OnboardingFixture, RoleFixture {
+public class EmploymentDesiredAvailabilityControllerTest extends TestContainersSuite implements MemberProfileFixture, EmploymentPreferencesFixture, RoleFixture {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmploymentDesiredAvailabilityControllerTest.class);
 
@@ -38,6 +38,7 @@ public class EmploymentDesiredAvailabilityControllerTest extends TestContainersS
 
     @Test
     public void testGETALLEmployment() {
+
     }
 
 }
