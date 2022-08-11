@@ -128,7 +128,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
-        validate(!(feedbackRequest.getStatus().equals("canceled") && originalFeedback.getStatus().equals("submitted"))).orElseThrow(() -> {
+        validate(!(feedbackRequest.getStatus() == FeedbackRequestStatus.CANCELED && originalFeedback.getStatus() == FeedbackRequestStatus.SUBMITTED)).orElseThrow(() -> {
             throw new BadArgException("Attempted to cancel a feedback request that was already submitted");
         });
         validate(!dueDateUpdateAttempted || updateDueDateIsPermitted(feedbackRequest)).orElseThrow(() -> {
@@ -144,7 +144,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
 
         // Send email if the feedback request has been reopened for edits
-        if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
+        if (originalFeedback.getStatus() == FeedbackRequestStatus.SUBMITTED && feedbackRequest.getStatus() == FeedbackRequestStatus.SENT) {
             MemberProfile creator = memberProfileRetrievalServices.getById(storedRequest.getCreatorId()).orElseThrow();
             MemberProfile requestee = memberProfileRetrievalServices.getById(storedRequest.getRequesteeId()).orElseThrow();
             MemberProfile recipient = memberProfileRetrievalServices.getById(storedRequest.getRecipientId()).orElseThrow();
@@ -251,6 +251,41 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         return currentUserId.equals(feedbackRequest.getRecipientId());
+    }
+
+    private void validateStatusUpdate(FeedbackRequest originalRequest, FeedbackRequest newRequest) {
+        if (currentUserServices.isAdmin()) {
+            return;  // Admin is allowed to alter any status
+        }
+
+        UUID creatorId = originalRequest.getCreatorId();
+        UUID recipientId = originalRequest.getRecipientId();
+
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        FeedbackRequestStatus originalStatus = originalRequest.getStatus();
+        FeedbackRequestStatus newStatus = newRequest.getStatus();
+
+        if (originalStatus == newStatus) {
+            return;  // No status update is attempted
+        }
+
+        boolean valid = false;
+
+        if (currentUser.getId().equals(creatorId)) {
+            if (originalStatus == FeedbackRequestStatus.SENT && newStatus == FeedbackRequestStatus.CANCELED) {
+                valid = true;  // The creator can cancel the feedback request
+            } else if (originalStatus == FeedbackRequestStatus.SUBMITTED && newStatus == FeedbackRequestStatus.SENT) {
+                valid = true; // The creator can reopen the feedback request for edits
+            }
+        } else if (currentUser.getId().equals(recipientId)) {
+            if (originalStatus == FeedbackRequestStatus.SENT && newStatus == FeedbackRequestStatus.SUBMITTED) {
+                valid = true;  // The recipient can submit the feedback request
+            }
+        }
+
+        if (!valid) {
+            throw new PermissionException(String.format("You do not have permission to change this feedback request from %s to %s", originalStatus, newStatus));
+        }
     }
 
     private FeedbackRequest getFromDTO(FeedbackRequestUpdateDTO dto) {
