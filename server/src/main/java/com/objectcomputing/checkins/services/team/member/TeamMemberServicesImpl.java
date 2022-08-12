@@ -4,7 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamRepository;
@@ -22,18 +22,18 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
     private final TeamRepository teamRepo;
     private final TeamMemberRepository teamMemberRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final MemberHistoryRepository memberHistoryRepository;
 
     public TeamMemberServicesImpl(TeamRepository teamRepo,
                                   TeamMemberRepository teamMemberRepo,
-                                  MemberProfileRepository memberRepo,
+                                  MemberProfileRetrievalServices memberProfileRetrievalServices,
                                   CurrentUserServices currentUserServices,
                                   MemberHistoryRepository memberHistoryRepository) {
         this.teamRepo = teamRepo;
         this.teamMemberRepo = teamMemberRepo;
-        this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.memberHistoryRepository = memberHistoryRepository;
     }
@@ -51,17 +51,17 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         Optional<Team> team = teamRepo.findById(teamId);
         if (team.isEmpty()) {
-            throw new BadArgException(String.format("Team %s doesn't exist", teamId));
+            throw new BadArgException("Team %s doesn't exist", teamId);
         }
 
         Set<TeamMember> teamLeads = this.findByFields(teamId, null, true);
 
         if (teamMember.getId() != null) {
-            throw new BadArgException(String.format("Found unexpected id %s for team member", teamMember.getId()));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
+            throw new BadArgException("Found unexpected id %s for team member", teamMember.getId());
+        } else if (memberProfileRetrievalServices.getById(memberId).isEmpty()) {
+            throw new BadArgException("Member %s doesn't exist", memberId);
         } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isPresent()) {
-            throw new BadArgException(String.format("Member %s already exists in team %s", memberId, teamId));
+            throw new BadArgException("Member %s already exists in team %s", memberId, teamId);
         } else if (!isAdmin && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
@@ -86,17 +86,17 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         Optional<Team> team = teamRepo.findById(teamId);
 
         if (team.isEmpty()) {
-            throw new BadArgException(String.format("Team %s doesn't exist", teamId));
+            throw new BadArgException("Team %s doesn't exist", teamId);
         }
 
         Set<TeamMember> teamLeads = this.findByFields(teamId, null, true);
 
         if (id == null || teamMemberRepo.findById(id).isEmpty()) {
-            throw new BadArgException(String.format("Unable to locate teamMember to update with id %s", id));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
+            throw new BadArgException("Unable to locate teamMember to update with id %s", id);
+        } else if (memberProfileRetrievalServices.getById(memberId).isEmpty()) {
+            throw new BadArgException("Member %s doesn't exist", memberId);
         } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isEmpty()) {
-            throw new BadArgException(String.format("Member %s is not part of team %s", memberId, teamId));
+            throw new BadArgException("Member %s is not part of team %s", memberId, teamId);
         } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
@@ -137,7 +137,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
                 teamMemberRepo.deleteById(id);
             }
         } else {
-            throw new NotFoundException(String.format("Unable to locate teamMember with id %s", id));
+            throw new NotFoundException("Unable to locate teamMember with id %s", id);
         }
 
         teamMemberRepo.delete(teamMember);
@@ -161,7 +161,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
                 });
             }
         } else {
-            throw new NotFoundException(String.format("Unable to locate team with id %s", id));
+            throw new NotFoundException("Unable to locate team with id %s", id);
         }
     }
 }

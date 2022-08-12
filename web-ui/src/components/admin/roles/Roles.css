@@ -115,3 +115,38 @@
   justify-content: space-between;
   margin-left: 16px;
 }
+
+.roles-content .roles .roles-top .roles-top-left {
+  width: 100%;
+}
+
+.roles-content .roles .roles-top-search-fields {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.roles-content .roles .roles-top-search-fields .role-select {
+  margin-right: 2rem;
+  margin-top: 12px;
+}
+
+@media screen and (max-width: 600px) {
+
+  .roles-content .roles .roles-top .roles-top-search-fields {
+    flex-direction: column;
+  }
+
+  .roles-content .roles .roles-top .roles-top-search-fields .role-select {
+    width: 300px;
+    margin-top: 0;
+    margin-right: 0;
+  }
+
+  .roles-content .roles .roles-top .roles-top-search-fields .member-role-search {
+    width: 300px;
+    margin-bottom: 1rem;
+  }
+
+}

@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -18,15 +19,16 @@ import java.util.Optional;
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
 
-    private final MemberProfileRepository memberProfileRepo;
+    private final MemberProfileRepository memberProfileRepository;
     private final SecurityService securityService;
     private final RoleServices roleServices;
     private final MemberRoleServices memberRoleServices;
 
     public CurrentUserServicesImpl(MemberProfileRepository memberProfileRepository,
                                    RoleServices roleServices,
-                                   SecurityService securityService, MemberRoleServices memberRoleServices) {
-        this.memberProfileRepo = memberProfileRepository;
+                                   SecurityService securityService,
+                                   MemberRoleServices memberRoleServices) {
+        this.memberProfileRepository = memberProfileRepository;
         this.roleServices = roleServices;
         this.securityService = securityService;
         this.memberRoleServices = memberRoleServices;
@@ -34,12 +36,8 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
 
     @Override
     public MemberProfile findOrSaveUser(@NotNull String firstName, @NotNull String lastName, @NotNull String workEmail) {
-        Optional<MemberProfile> userProfile = memberProfileRepo.findByWorkEmail(workEmail);
-        if (userProfile.isPresent()) {
-            return userProfile.get();
-        }
-
-        return saveNewUser(firstName, lastName, workEmail);
+        Optional<MemberProfile> userProfile = memberProfileRepository.findByWorkEmail(workEmail);
+        return userProfile.orElseGet(() -> saveNewUser(firstName, lastName, workEmail));
     }
 
     @Override
@@ -57,7 +55,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
             Optional<Authentication> auth = securityService.getAuthentication();
             if (auth.isPresent() && auth.get().getAttributes().get("email") != null) {
                 String workEmail = auth.get().getAttributes().get("email").toString();
-                return memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
+                return memberProfileRepository.findByWorkEmail(workEmail).orElse(null);
             }
         }
 
@@ -65,12 +63,12 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     }
 
     private MemberProfile saveNewUser(String firstName, String lastName, String workEmail) {
-        MemberProfile emailProfile = memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
+        MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(workEmail).orElse(null);
         if (emailProfile != null) {
-            throw new AlreadyExistsException(String.format("Email %s already exists in database", workEmail));
+            throw new AlreadyExistsException("Email %s already exists in database", workEmail);
         }
 
-        MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
+        MemberProfile createdMember = memberProfileRepository.save(new MemberProfile(firstName, null, lastName, null, "", null,
                 "", workEmail, "", null, "", null, null, null, null, null));
 
         Optional<Role> role = roleServices.findByRole("MEMBER");

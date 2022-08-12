@@ -13,7 +13,7 @@ public class PermissionsValidation {
 
     public void validatePermissions(@NotNull boolean isError, @NotNull String message, Object... args) {
         if (isError) {
-            throw new PermissionException(String.format(message, args));
+            throw new PermissionException(message, args);
         }
     }
 }
