@@ -305,9 +305,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="contained" onClick={submitOnboardeeClick}>
-              <OnboardeeAddedModal />
-            </Button>
+            <OnboardeeAddedModal onClick={submitOnboardeeClick}/>
           </Grid>
         </Grid>
       </Box>
