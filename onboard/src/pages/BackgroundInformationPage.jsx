@@ -7,6 +7,7 @@ import EmploymentHistory from "./subsections/backgroundInformation/EmploymentHis
 import EmploymentEligbility from "./subsections/backgroundInformation/EmploymentEligbility";
 import ReferralTypeAndSignature from "./subsections/backgroundInformation/ReferralTypeAndSignature";
 import { isArrayPresent } from "../utils/helperFunctions";
+import { Grid } from "@mui/material";
 import "./BackgroundInformationPage.css";
 
 const accordionArr = [
@@ -39,18 +40,20 @@ const accordionArr = [
 const BackgroundInformationPage = () => {
   return (
     <div>
-      {isArrayPresent(accordionArr) &&
-        accordionArr.map((arr, i) => {
-          return (
-            <Accordion
-              key={i}
-              title={arr.title}
-              open={i === 0 ? true : false}
-              index={i}
-              content={arr.content}
-            />
-          );
-        })}
+      <Grid container>
+        {isArrayPresent(accordionArr) &&
+          accordionArr.map((arr, i) => {
+            return (
+              <Accordion
+                key={i}
+                title={arr.title}
+                open={i === 0 ? true : false}
+                index={i}
+                content={arr.content}
+              />
+            );
+          })}
+      </Grid>
     </div>
   );
 };
