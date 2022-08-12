@@ -5,7 +5,6 @@ import { Button, Grid } from "@mui/material";
 import EducationForm from './EducationForm';
 import { isArrayPresent } from '../../../utils/helperFunctions';
 import postEducation from '../../../api/postEducation';
-import { v4 as uuidv4 } from 'uuid';
 
 let initialData = {
   id: 0,
@@ -30,10 +29,6 @@ function Education() {
       setEducationSections([{ ...initialData}]);
     }
   }, [educationData]);
-
-  useEffect(() => {
-    console.log(educationSections);
-  }, [educationSections])
 
   function handleSaveInformation(e) {
     e.preventDefault();
