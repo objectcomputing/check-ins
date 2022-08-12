@@ -97,7 +97,6 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
                 assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
         }
 
-
       @Test
         public void testPOSTCreateAOnboardeeProfile() {
 

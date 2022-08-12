@@ -19,10 +19,10 @@ public interface EmploymentDesiredAvailabilityRepository extends CrudRepository<
             "PGP_SYM_DECRYPT(cast(mp.desiredPosition as bytea),'${aes.key}') as desiredPosition, " +
             "PGP_SYM_DECRYPT(cast(mp.desiredStartDate as bytea),'${aes.key}') as desiredStartDate, " +
             "PGP_SYM_DECRYPT(cast(mp.desiredSalary as bytea),'${aes.key}') as desiredSalary, " +
-            "PGP_SYM_DECRYPT(cast(mp.currentlyEmployed as bytea),'${aes.key}') as currentlyEmployed, " +
-            "PGP_SYM_DECRYPT(cast(mp.contactCurrentEmployer as bytea),'${aes.key}') as contactCurrentEmployer, " +
-            "PGP_SYM_DECRYPT(cast(mp.previousEmploymentOCI as bytea),'${aes.key}') as previousEmploymentOCI, " +
-            "PGP_SYM_DECRYPT(cast(mp.noncompeteAgreement as bytea),'${aes.key}') as noncompeteAgreement, " +
+            "currentlyEmployed, " +
+            "contactCurrentEmployer, " +
+            "previousEmploymentOCI, " +
+            "noncompeteAgreement, " +
             "PGP_SYM_DECRYPT(cast(mp.noncompeteExpirationDate as bytea),'${aes.key}') as noncompeteExpirationDate, " +
             "FROM \"employment_desired_availability\" mp ",
             nativeQuery = true)
@@ -32,19 +32,19 @@ public interface EmploymentDesiredAvailabilityRepository extends CrudRepository<
             "PGP_SYM_DECRYPT(cast(mp.desiredPosition as bytea),'${aes.key}') as desiredPosition, " +
             "PGP_SYM_DECRYPT(cast(mp.desiredStartDate as bytea),'${aes.key}') as desiredStartDate," +
             "PGP_SYM_DECRYPT(cast(mp.desiredSalary as bytea),'${aes.key}') as desiredSalary," +
-            "PGP_SYM_DECRYPT(cast(mp.currentlyEmployed as bytea),'${aes.key}') as currentlyEmployed," +
-            "PGP_SYM_DECRYPT(cast(mp.contactCurrentEmployer as bytea),'${aes.key}') as contactCurrentEmployer," +
-            "PGP_SYM_DECRYPT(cast(mp.previousEmploymentOCI as bytea),'${aes.key}') as previousEmploymentOCI," +
-            "PGP_SYM_DECRYPT(cast(mp.noncompeteAgreement as bytea),'${aes.key}') as noncompeteAgreement," +
+            "currentlyEmployed," +
+            "contactCurrentEmployer," +
+            "previousEmploymentOCI," +
+            "noncompeteAgreement," +
             "PGP_SYM_DECRYPT(cast(mp.noncompeteExpirationDate as bytea),'${aes.key}') as noncompeteExpirationDate," +
             "FROM \"employment_desired_availability\" mp " +
             "AND  (:desiredPosition IS NULL OR PGP_SYM_DECRYPT(cast(mp.desiredPosition as bytea),'${aes.key}') = :desiredPosition) " +
             "AND  (:desiredStartDate IS NULL OR PGP_SYM_DECRYPT(cast(mp.desiredStartDate as bytea),'${aes.key}') = :desiredStartDate) " +
             "AND  (:desiredSalary IS NULL OR PGP_SYM_DECRYPT(cast(mp.desiredSalary as bytea),'${aes.key}') = :desiredSalary) " +
-            "AND  (CAST(:currentlyEmployed as date) IS NULL OR CAST(PGP_SYM_DECRYPT(cast(mp.currentlyEmployed as bytea),'${aes.key}') as currentlyEmployed) = :currentlyEmployed) " +
-            "AND  (:contactCurrentEmployer IS NULL OR PGP_SYM_DECRYPT(cast(mp.contactCurrentEmployer as bytea),'${aes.key}') = :contactCurrentEmployer) " +
-            "AND  (:previousEmploymentOCI IS NULL OR PGP_SYM_DECRYPT(cast(mp.previousEmploymentOCI as bytea),'${aes.key}') = :previousEmploymentOCI) " +
-            "AND  (:noncompeteAgreement IS NULL OR PGP_SYM_DECRYPT(cast(mp.noncompeteAgreement as bytea),'${aes.key}') = :noncompeteAgreement) " +
+            "AND  (:currentlyEmployed IS NULL OR currentlyEmployed = :currentlyEmployed) " +
+            "AND  (:contactCurrentEmployer IS NULL OR contactCurrentEmployer = :contactCurrentEmployer) " +
+            "AND  (:previousEmploymentOCI IS NULL OR previousEmploymentOCI = :previousEmploymentOCI) " +
+            "AND  (:noncompeteAgreement IS NULL OR noncompeteAgreement = :noncompeteAgreement) " +
             "AND  (:noncompeteExpirationDate IS NULL OR PGP_SYM_DECRYPT(cast(mp.noncompeteExpirationDate as bytea),'${aes.key}') = :noncompeteExpirationDate) ",
             nativeQuery = true)
     List<EmploymentDesiredAvailability> search(
@@ -56,6 +56,5 @@ public interface EmploymentDesiredAvailabilityRepository extends CrudRepository<
             @Nullable Boolean contactCurrentEmployer,
             @Nullable Boolean previousEmploymentOCI,
             @Nullable Boolean noncompeteAgreement,
-            @Nullable LocalDate noncompeteExpirationDate
-    );
+            @Nullable LocalDate noncompeteExpirationDate);
 }

@@ -10,19 +10,26 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
-import org.junit.Test;
-import org.junit.platform.commons.logging.Logger;
-import org.junit.platform.commons.logging.LoggerFactory;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.employmentpreferences.EmploymentDesiredAvailabilityTestUtil.assertPreferencesEqual;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EmploymentDesiredAvailabilityControllerTest extends TestContainersSuite implements MemberProfileFixture, EmploymentPreferencesFixture, RoleFixture {
 
@@ -45,7 +52,7 @@ public class EmploymentDesiredAvailabilityControllerTest extends TestContainersS
     }
 
     @Test
-    public void testGETALLEmploymentPrefrences() {
+    public void testGETALLEmploymentPreferences() {
         createADefaultEmploymentPreferences();
         createSecondDefaultEmploymentPreferences();
 
@@ -57,6 +64,32 @@ public class EmploymentDesiredAvailabilityControllerTest extends TestContainersS
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(2, results.size());
+    }
+
+    @Test
+    public void testGETGetById() {
+        EmploymentDesiredAvailability employmentDesiredAvailability = createADefaultEmploymentPreferences();
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", employmentDesiredAvailability.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        final HttpResponse<EmploymentDesiredAvailabilityDTO> response = client.toBlocking().exchange(request, EmploymentDesiredAvailabilityDTO.class);
+
+        assertPreferencesEqual(employmentDesiredAvailability, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    public void testGETGetByIdNotFound() {
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
 
 }

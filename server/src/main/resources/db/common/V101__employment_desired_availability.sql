@@ -1,13 +1,11 @@
-CREATE TABLE onboard_profile(
+CREATE TABLE employment_desired_availability(
         id varchar PRIMARY KEY,
-        firstname varchar,
-        middlename varchar,
-        lastname varchar,
-        socialsecuritynumber varchar,
-        birthdate varchar,
-        currentaddress varchar,
-        previousaddress varchar,
-        phonenumber varchar,
-        secondphonenumber varchar,
-        personalemail varchar
+        desiredposition varchar,
+        desiredstartdate varchar,
+        desiredsalary varchar,
+        currentlyemployed BOOLEAN,
+        contactcurrentemployer BOOLEAN,
+        previousemploymentoci BOOLEAN,
+        noncompeteagreement BOOLEAN,
+        noncompeteexpirationdate varchar
 );

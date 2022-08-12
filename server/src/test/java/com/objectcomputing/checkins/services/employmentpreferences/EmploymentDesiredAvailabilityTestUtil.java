@@ -51,7 +51,7 @@ public class EmploymentDesiredAvailabilityTestUtil {
 
     public static EmploymentDesiredAvailability mkEmploymentDesiredAvailability() { return mkEmploymentDesiredAvailability(""); }
 
-    public static void assertProfilesEqual(EmploymentDesiredAvailability entity, EmploymentDesiredAvailabilityDTO dto) {
+    public static void assertPreferencesEqual(EmploymentDesiredAvailability entity, EmploymentDesiredAvailabilityDTO dto) {
         assertEquals(entity.getDesiredPosition(), dto.getDesiredPosition());
         assertEquals(entity.getDesiredStartDate(), dto.getDesiredStartDate());
         assertEquals(entity.getDesiredSalary(), dto.getDesiredSalary());

@@ -61,44 +61,28 @@ public class EmploymentDesiredAvailability {
 
     @NotBlank
     @Column(name = "currentlyemployed")
-    @ColumnTransformer(
-            read = "pgp_sym_decrypt(currentlyemployed::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}') "
-    )
     @Schema(description = "is the applicant currently employed")
     private Boolean currentlyEmployed;
 
     @Nullable
     @Column(name = "contactcurrentemployer")
-    @ColumnTransformer(
-            read = "pgp_sym_decrypt(contactcurrentemployer::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}') "
-    )
     @Schema(description = "can we contact applicant's current employer")
     private Boolean contactCurrentEmployer;
 
     @NotBlank
     @Column(name = "previousemploymentoci")
-    @ColumnTransformer(
-            read = "pgp_sym_decrypt(previousemploymentoci::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}') "
-    )
     @Schema(description = "has the applicant worked at oci before")
     private Boolean previousEmploymentOCI;
 
     @NotBlank
     @Column(name = "noncompeteagreement")
-    @ColumnTransformer(
-            read = "pgp_sym_decrypt(noncompeteagreement::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}') "
-    )
     @Schema(description = "what position the applicant is applying for")
     private Boolean noncompeteAgreement;
 
     @Nullable
-    @Column(name = "noncompeteagreementexpirationdate")
+    @Column(name = "noncompeteexpirationdate")
     @ColumnTransformer(
-            read = "pgp_sym_decrypt(noncompeteagreementexpirationdate::bytea,'${aes.key}')",
+            read = "pgp_sym_decrypt(noncompeteexpirationdate::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "expiration date of the non-compete agreement")
