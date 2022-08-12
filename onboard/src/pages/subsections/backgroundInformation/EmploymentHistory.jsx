@@ -50,6 +50,7 @@ function JobHistory() {
 
         <Grid container justifyContent={"flex-end"}>
           <Button variant="outlined" sx={{
+            mt: "16px",
             backgroundColor: "#1666b6 !important",
             color: "white !important",
             fontWeight: "bold",

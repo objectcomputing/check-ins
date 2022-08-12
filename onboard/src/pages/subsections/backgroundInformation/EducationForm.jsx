@@ -4,6 +4,7 @@ import FormLabel from "@mui/material/FormLabel";
 import Grid from "@mui/material/Grid";
 import InputField from "../../../components/inputs/InputField";
 import TextField from "../../../components/inputs/TextField";
+import { Divider } from "@mui/material";
 
 function EducationForm({ section, educationSections, setEducationSections }) {
 
@@ -25,7 +26,7 @@ function EducationForm({ section, educationSections, setEducationSections }) {
         let newArr = [];
         educationSections.forEach((eSection) => {
             if (eSection.id === section.id) {
-                newArr.push({...section, [name]: val});
+                newArr.push({ ...section, [name]: val });
             } else {
                 newArr.push(eSection);
             }
@@ -95,163 +96,166 @@ function EducationForm({ section, educationSections, setEducationSections }) {
     }
 
     return (
-        <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            sx={{ marginTop: 3 }}
-        >
-            <Grid item xs={12} sm={12} md={12} lg={6} >
-                <FormControl
-                    sx={{
-                        marginTop: "8px",
-                        marginBottom: 1,
-                        marginLeft: 3,
-                        width: "90%",
-                        maxWidth: "500px",
-                    }}
-                >
-                    <InputField
-                        title={"Highest Degree Level Acquired:"}
-                        id="highestDegree"
-                        value={section.highestDegree}
-                        autoFocus={true}
-                        error={highestDegreeError}
-                        onChangeHandler={handleChange}
-                        helperMessage={highestDegreeHelper}
-                        label="Highest Degree Level"
-                        type="text"
-                    ></InputField>
-                </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-                <FormControl
-                    sx={{
-                        my: 1,
-                        marginLeft: 3,
-                        width: "90%",
-                        maxWidth: "500px",
-                    }}
-                >
-                    <InputField
-                        title="Institution:"
-                        id="institution"
-                        label="Institution"
-                        value={section.institution}
-                        error={institutionError}
-                        helperMessage={institutionHelper}
-                        onChangeHandler={handleChange}
-                        type={"text"}
-                    ></InputField>
-                </FormControl>
-            </Grid>
+        <div>
+            {section.id !== 0 && ( <Divider variant="middle" sx={{ mt: "24px"}}/> )}
+            <Grid
+                container
+                rowSpacing={1}
+                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                sx={{ marginTop: 3 }}
+            >
+                <Grid item xs={12} sm={12} md={12} lg={6} >
+                    <FormControl
+                        sx={{
+                            marginTop: "8px",
+                            marginBottom: 1,
+                            marginLeft: 3,
+                            width: "90%",
+                            maxWidth: "500px",
+                        }}
+                    >
+                        <InputField
+                            title={"Highest Degree Level Acquired:"}
+                            id="highestDegree"
+                            value={section.highestDegree}
+                            autoFocus={true}
+                            error={highestDegreeError}
+                            onChangeHandler={handleChange}
+                            helperMessage={highestDegreeHelper}
+                            label="Highest Degree Level"
+                            type="text"
+                        ></InputField>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                    <FormControl
+                        sx={{
+                            my: 1,
+                            marginLeft: 3,
+                            width: "90%",
+                            maxWidth: "500px",
+                        }}
+                    >
+                        <InputField
+                            title="Institution:"
+                            id="institution"
+                            label="Institution"
+                            value={section.institution}
+                            error={institutionError}
+                            helperMessage={institutionHelper}
+                            onChangeHandler={handleChange}
+                            type={"text"}
+                        ></InputField>
+                    </FormControl>
+                </Grid>
 
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-                <FormControl
-                    sx={{
-                        my: 1,
-                        marginLeft: 3,
-                        width: "90%",
-                        maxWidth: "500px",
-                    }}
-                >
-                    <InputField
-                        title="Location:"
-                        id="location"
-                        label="Location"
-                        value={section.location}
-                        error={locationError}
-                        helperMessage={locationHelper}
-                        onChangeHandler={handleChange}
-                        type={"text"}
-                    ></InputField>
-                </FormControl>
-            </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                    <FormControl
+                        sx={{
+                            my: 1,
+                            marginLeft: 3,
+                            width: "90%",
+                            maxWidth: "500px",
+                        }}
+                    >
+                        <InputField
+                            title="Location:"
+                            id="location"
+                            label="Location"
+                            value={section.location}
+                            error={locationError}
+                            helperMessage={locationHelper}
+                            onChangeHandler={handleChange}
+                            type={"text"}
+                        ></InputField>
+                    </FormControl>
+                </Grid>
 
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-                <FormControl
-                    sx={{
-                        my: 1,
-                        marginLeft: 3,
-                        width: "90%",
-                        maxWidth: "500px",
-                    }}
-                >
-                    <InputField
-                        title="Degree:"
-                        id="degree"
-                        label="Degree"
-                        value={section.degree}
-                        error={degreeError}
-                        helperMessage={degreeHelper}
-                        onChangeHandler={handleChange}
-                        type={"text"}
-                    ></InputField>
-                </FormControl>
-            </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                    <FormControl
+                        sx={{
+                            my: 1,
+                            marginLeft: 3,
+                            width: "90%",
+                            maxWidth: "500px",
+                        }}
+                    >
+                        <InputField
+                            title="Degree:"
+                            id="degree"
+                            label="Degree"
+                            value={section.degree}
+                            error={degreeError}
+                            helperMessage={degreeHelper}
+                            onChangeHandler={handleChange}
+                            type={"text"}
+                        ></InputField>
+                    </FormControl>
+                </Grid>
 
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-                <FormControl
-                    sx={{
-                        my: 1,
-                        marginLeft: 3,
-                        width: "90%",
-                        maxWidth: "500px",
-                    }}
-                >
-                    <InputField
-                        title="Major / Concentration:"
-                        id="major"
-                        label="Major"
-                        value={section.major}
-                        error={majorError}
-                        helperMessage={majorHelper}
-                        onChangeHandler={handleChange}
-                        type={"text"}
-                    ></InputField>
-                </FormControl>
-            </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                    <FormControl
+                        sx={{
+                            my: 1,
+                            marginLeft: 3,
+                            width: "90%",
+                            maxWidth: "500px",
+                        }}
+                    >
+                        <InputField
+                            title="Major / Concentration:"
+                            id="major"
+                            label="Major"
+                            value={section.major}
+                            error={majorError}
+                            helperMessage={majorHelper}
+                            onChangeHandler={handleChange}
+                            type={"text"}
+                        ></InputField>
+                    </FormControl>
+                </Grid>
 
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-                <FormControl
-                    sx={{
-                        my: 1,
-                        marginLeft: 3,
-                        width: "90%",
-                        maxWidth: "500px",
-                    }}
-                >
-                    <FormLabel>Completion Date:</FormLabel>
-                    <InputField
-                        id="completionDate"
-                        value={section.completionDate}
-                        error={completionDateError}
-                        helperMessage={completionDateHelper}
-                        onChangeHandler={handleChange}
-                        type="date"
-                    />
-                </FormControl>
-            </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                    <FormControl
+                        sx={{
+                            my: 1,
+                            marginLeft: 3,
+                            width: "90%",
+                            maxWidth: "500px",
+                        }}
+                    >
+                        <FormLabel>Completion Date:</FormLabel>
+                        <InputField
+                            id="completionDate"
+                            value={section.completionDate}
+                            error={completionDateError}
+                            helperMessage={completionDateHelper}
+                            onChangeHandler={handleChange}
+                            type="date"
+                        />
+                    </FormControl>
+                </Grid>
 
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-                <FormControl
-                    sx={{
-                        my: 1,
-                        marginLeft: 3,
-                        width: "90%",
-                        maxWidth: "500px",
-                    }}
-                >
-                    <TextField
-                        title="Additional Research, Coursework, and Certification:"
-                        id="additionalInformation"
-                        value={section.additionalInformation}
-                        onChangeHandler={handleChange}
-                        type={"text"}
-                    ></TextField>
-                </FormControl>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                    <FormControl
+                        sx={{
+                            my: 1,
+                            marginLeft: 3,
+                            width: "90%",
+                            maxWidth: "500px",
+                        }}
+                    >
+                        <TextField
+                            title="Additional Research, Coursework, and Certification:"
+                            id="additionalInformation"
+                            value={section.additionalInformation}
+                            onChangeHandler={handleChange}
+                            type={"text"}
+                        ></TextField>
+                    </FormControl>
+                </Grid>
             </Grid>
-        </Grid>
+        </div>
     );
 }
 

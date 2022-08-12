@@ -3,6 +3,7 @@ import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
 import InputField from "../../../components/inputs/InputField";
 import TextField from "../../../components/inputs/TextField";
+import { Divider } from "@mui/material";
 
 function EmploymentHistory({ section, jobHistorySections, setJobHistorySections }) {
 
@@ -102,6 +103,8 @@ function EmploymentHistory({ section, jobHistorySections, setJobHistorySections 
     }
 
     return (
+        <div>
+        {section.id !== 0 && ( <Divider variant="middle" sx={{ mt: "24px"}}/> )}
         <Grid
             container
             rowSpacing={1}
@@ -242,6 +245,7 @@ function EmploymentHistory({ section, jobHistorySections, setJobHistorySections 
                 </FormControl>
             </Grid>
         </Grid>
+        </div>
     );
 }
 
