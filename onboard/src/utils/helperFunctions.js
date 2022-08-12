@@ -18,7 +18,7 @@ export const getEnvSpecificAPIURI = () => {
  * @returns a boolean
  */
 
-export const isArrayPresent = (array) => Array.isArray(array) && array.length;
+export const isArrayPresent = (array) => (Array.isArray(array) && array.length) ? true : false;
 
 /**
  * Converts a non-negative bigint to a hexadecimal string
