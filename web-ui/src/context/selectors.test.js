@@ -206,28 +206,19 @@ describe("Selectors", () => {
 
     const matchingRoles = [
       {
-        memberRoleId: {
-          roleId: "12",
-          memberId: "2",
-        }
-      },
-      {
-        memberRoleId: {
-          roleId: "12",
-          memberId: "3",
-        }
-      },
+        roleId: "12",
+        role: "PDL",
+        memberIds: ["2", "3"]
+      }
     ];
 
     const testMemberRoles = [
       {
-        memberRoleId: {
-          roleId: "11",
-          memberId: "1",
-        }
+        roleId: "11",
+        role: "MEMBER",
+        memberIds: ["1"]
       },
-      matchingRoles[0],
-      matchingRoles[1],
+      matchingRoles[0]
     ];
 
     const testState = {
@@ -321,28 +312,19 @@ describe("Selectors", () => {
 
     const matchingRoles = [
       {
-        memberRoleId: {
-          roleId: "12",
-          memberId: "2",
-        }
-      },
-      {
-        memberRoleId: {
-          roleId: "12",
-          memberId: "3",
-        }
-      },
+        roleId: "12",
+        role: "PDL",
+        memberIds: ["2", "3"]
+      }
     ];
 
     const testMemberRoles = [
       {
-        memberRoleId: {
-          roleId: "11",
-          memberId: "1",
-        }
+        roleId: "11",
+        role: "MEMBER",
+        memberIds: ["1"]
       },
-      matchingRoles[0],
-      matchingRoles[1],
+      matchingRoles[0]
     ];
 
     const testState = {

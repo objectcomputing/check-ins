@@ -8,7 +8,7 @@ const postUser = (email, secret) => {
 
     try {
       const baseURL = getEnvSpecificAPIURI();
-      const url = `${baseURL}/api/challenge`;
+      const url = `${baseURL}/api/auth/challenge`;
       const loginData = { identity: email };
 
       const response = await axios
@@ -20,7 +20,7 @@ const postUser = (email, secret) => {
           }
         });
 
-      const url2 = `${baseURL}/api/authenticate`;
+      const url2 = `${baseURL}/api/auth/authenticate`;
 
       const srp6aNimbusRoutines = new SRPRoutines(
         new SRPParameters(SRPParameters.PrimeGroup[512])
@@ -44,7 +44,7 @@ const postUser = (email, secret) => {
       let encodedSecret = hexedM1 + ':' + hexedA;
 
       const loginData2 = {
-        identity: email,
+        emailAddress: email,
         secret: encodedSecret
       };
 
@@ -61,8 +61,6 @@ const postUser = (email, secret) => {
         type: ACTIONS.LOAD_USER,
         payload: {
           email: email,
-          firstName: '',
-          lastName: '',
           accessToken: response2?.data?.token,
           status: response2?.status,
           expiration: response2?.data?.expirationTime

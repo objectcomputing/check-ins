@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import { AppContext } from "../../../context/AppContext";
 import {
@@ -19,20 +19,28 @@ import {
   Card,
   CardActions,
   CardContent,
-  InputAdornment,
   List,
   ListSubheader,
   Modal,
   TextField,
   Typography,
+  Autocomplete,
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+  FormHelperText,
   Divider
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import Autocomplete from "@mui/material/Autocomplete";
+import SearchIcon from "@mui/icons-material/Search";
 
 import "./Roles.css";
 import {selectProfile} from "../../../context/selectors";
-import {Search} from "@mui/icons-material";
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -41,7 +49,9 @@ const Roles = () => {
   const [showAddUser, setShowAddUser] = useState(false);
   const [showAddRole, setShowAddRole] = useState(false);
   const [newRole, setNewRole] = useState("");
-  const [searchText, setSearchText] = useState("");
+  // const [editRole, setEditRole] = useState(false);
+  const [memberSearchText, setMemberSearchText] = useState("");
+  const [selectedRoles, setSelectedRoles] = useState([]);
   const [selectedMember, setSelectedMember] = useState({});
   const [selectedRole, setSelectedRole] = useState("");
 
@@ -73,6 +83,12 @@ const Roles = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (userRoles) {
+      setSelectedRoles(userRoles.map(roleObj => roleObj.role));
+    }
+  }, [userRoles]);
 
   const addToRole = async (member) => {
     const role = roles.find((role) => role.role === selectedRole);
@@ -136,24 +152,47 @@ const Roles = () => {
       <div className="roles">
         <div className="roles-top">
           <div className="roles-top-left">
-            <TextField
-              className="role-search"
-              label="Search Roles"
-              placeholder="Role"
-              fullWidth={true}
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value);
-              }}
-              InputProps={{endAdornment: (
-                <InputAdornment color="gray" position="end"><Search/></InputAdornment>
-              )}}
-            />
+            <div className="roles-top-search-fields">
+              <FormControl size="small" className="role-select">
+                <InputLabel id="roles-select-label">Roles</InputLabel>
+                <Select
+                  labelId="roles-select-label"
+                  multiple
+                  value={selectedRoles}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setSelectedRoles(typeof value === "string" ? value.split(",") : value)
+                  }}
+                  input={<OutlinedInput label="Roles"/>}
+                  renderValue={(selected) => selected.join(", ")}
+                >
+                  {userRoles?.map((roleObj) => (
+                    <MenuItem key={roleObj.role} value={roleObj.role}>
+                      <Checkbox checked={selectedRoles.indexOf(roleObj.role) > -1}/>
+                      <ListItemText primary={roleObj.role}/>
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{`Showing ${selectedRoles.length}/${userRoles?.length} roles`}</FormHelperText>
+              </FormControl>
+              <TextField
+                className="member-role-search"
+                label="Search members"
+                placeholder="Member Name"
+                value={memberSearchText}
+                onChange={(e) => {
+                  setMemberSearchText(e.target.value);
+                }}
+                InputProps={{
+                  endAdornment: <InputAdornment color="gray" position="end"><SearchIcon/></InputAdornment>
+                }}
+              />
+            </div>
           </div>
         </div>
         <div className="roles-bot">
           {userRoles?.map((roleObj) =>
-            roleObj.role.toLowerCase().includes(searchText.toLowerCase()) ? (
+            selectedRoles.includes(roleObj.role) ? (
               <Card className="role" key={roleObj.roleId}>
                 <CardContent className="role-card">
                   <List style={{ paddingTop: 0 }}>
@@ -189,6 +228,7 @@ const Roles = () => {
                         roleName={roleObj.role}
                         roleMembers={roleObj.memberIds.map((memberId) => selectProfile(state, memberId))}
                         onRemove={(member) => removeFromRole(member, roleObj.roleId, roleObj.role)}
+                        memberQuery={memberSearchText}
                       />
                     </div>
                   </List>

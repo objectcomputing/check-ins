@@ -18,6 +18,7 @@ import { getAvatarURL } from "../../api/api.js";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import queryString from "query-string";
+import {FeedbackRequestStatus} from "../../context/util";
 
 const PREFIX = 'FeedbackRequestCard';
 const classes = {
@@ -259,7 +260,7 @@ const FeedbackRequestCard = ({
                       onClick={handleViewAllResponsesClick}
                       disabled={
                         sortedResponses.length === 0 ||
-                        sortedResponses.every((o) => o.status === "pending")
+                        sortedResponses.every((o) => o.status === FeedbackRequestStatus.SENT)
                       }
                     >
                       View all responses
