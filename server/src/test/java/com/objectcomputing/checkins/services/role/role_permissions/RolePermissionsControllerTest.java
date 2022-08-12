@@ -176,7 +176,7 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
     }
 
     @Test

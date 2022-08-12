@@ -73,7 +73,7 @@ public class RolePermissionController {
     public Mono<? extends HttpResponse<?>> delete(@NotNull UUID roleId, @NotNull UUID permissionId) {
         return Mono.fromCallable(() -> rolePermissionServices.delete(new RolePermissionId(roleId, permissionId)))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(success -> (HttpResponse<?>) HttpResponse.ok())
+                .map(success -> (HttpResponse<?>) HttpResponse.noContent())
                 .subscribeOn(scheduler);
     }
 }
