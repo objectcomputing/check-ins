@@ -9,7 +9,6 @@ import FormControl from "@mui/material/FormControl";
 import LoadingButton from "@mui/lab/LoadingButton";
 import NotStartedIcon from "@mui/icons-material/NotStarted";
 import ReactCodeInput from "react-verification-code-input";
-import RequestAccess from "../../sharedModules/RequestAccess";
 import postCode from "../../../../../api/postCode";
 
 // This is the Activation dialog.
