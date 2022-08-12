@@ -64,6 +64,7 @@ export default function OnboardProgressPage(onboardee) {
                 email: cellValues.row.email,
                 hireType: cellValues.row.hireType,
                 title: cellValues.row.title,
+                completed: cellValues.row.completed
               },
             }}
           >
@@ -81,7 +82,7 @@ export default function OnboardProgressPage(onboardee) {
       name: "Daniel Ryu",
       email: "d97shryu@gmail.com",
       title: "Intern",
-      completed: "No",
+      completed: "Not Completed",
       dateAdded: "Jul 15, 2022",
       hireType: "Hourly",
     },
@@ -90,7 +91,7 @@ export default function OnboardProgressPage(onboardee) {
       name: "Brandon Li",
       email: "li.brandon@outlook.com",
       title: "Intern",
-      completed: "No",
+      completed: "Not Completed",
       dateAdded: "Jul 15, 2022",
       hireType: "Hourly",
     },
