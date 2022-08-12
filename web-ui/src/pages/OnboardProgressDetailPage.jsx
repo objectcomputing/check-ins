@@ -38,7 +38,7 @@ export default function OnboardProgressDetailPage(onboardee) {
   const location = useLocation();
   const { state, dispatch } = useContext(AppContext);
   const { csrf, onboardeeProfiles } = state;
-  const { name, email, hireType, title } = location.state;
+  const { name, email, hireType, title, completed } = location.state;
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
 
   useEffect(() => {
@@ -321,10 +321,18 @@ export default function OnboardProgressDetailPage(onboardee) {
               </Box>
             </Modal>
 
-            <h1>{name}</h1>
-            <h1>{email} </h1>
-            <h1>{title}</h1>
-            <h1>{hireType}</h1>
+            <Typography variant="h4">{name}</Typography>
+            <Typography variant="h4">{email}</Typography>
+            <Typography variant="h4">{title}</Typography>
+            <Typography variant="h4">{hireType}</Typography>
+            <Typography
+              variant="h4"
+              sx={{
+                color: completed === "Not Completed" ? "red" : "green",
+              }}
+            >
+              Status: {completed}
+            </Typography>
           </Box>
         </Grid>
 
