@@ -3,12 +3,12 @@ import axios from 'axios';
 import { SRPClientSession, SRPParameters, SRPRoutines } from 'tssrp6a';
 import { bigintToHex, getEnvSpecificAPIURI } from './../utils/helperFunctions';
 
-const postUser = (email, secret) => {
+const postCode = (email, code) => {
   return async (dispatch, getState) => {
 
     try {
       const baseURL = getEnvSpecificAPIURI();
-      const url = `${baseURL}/api/auth/challenge`;
+      const url = `${baseURL}/api/auth/activate/challenge`;
       const loginData = { identity: email };
 
       const response = await axios
@@ -20,7 +20,7 @@ const postUser = (email, secret) => {
           }
         });
 
-      const url2 = `${baseURL}/api/auth/authenticate`;
+      const url2 = `${baseURL}/api/auth/activate`;
 
       const srp6aNimbusRoutines = new SRPRoutines(
         new SRPParameters(SRPParameters.PrimeGroup[512])
@@ -28,8 +28,8 @@ const postUser = (email, secret) => {
 
       const srp6aClient = await new SRPClientSession(
         srp6aNimbusRoutines
-      ).step1(email, secret);
-      secret = '';
+      ).step1(email, code);
+      code = '';
 
       let salt = response.data.salt;
       let b = response.data.b;
@@ -41,11 +41,11 @@ const postUser = (email, secret) => {
 
       let hexedM1 = bigintToHex(srp6aClient_step2.M1);
       let hexedA = bigintToHex(srp6aClient_step2.A);
-      let encodedSecret = hexedM1 + ':' + hexedA;
+      let encodedCode = hexedM1 + ':' + hexedA;
 
       const loginData2 = {
         emailAddress: email,
-        secret: encodedSecret
+        secret: encodedCode
       };
 
       const response2 = await axios
@@ -60,10 +60,10 @@ const postUser = (email, secret) => {
       dispatch({
         type: ACTIONS.LOAD_USER,
         payload: {
-          email: email,
-          accessToken: response2?.data?.token,
+          email: '',
+          accessToken: '',
           status: response2?.status,
-          expiration: response2?.data?.expirationTime
+          expiration: ''
         }
       });
       document.body.style.cursor = 'default';
@@ -76,4 +76,4 @@ const postUser = (email, secret) => {
     return getState();
   };
 };
-export default postUser;
+export default postCode;
