@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import Grid from "@mui/material/Grid";
-import InputField from "../../../components/inputs/InputField";
-import TextField from "../../../components/inputs/TextField";
 import Box from "@mui/material/Box";
-import { Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import EducationForm from './EducationForm';
 import { isArrayPresent } from '../../../utils/helperFunctions';
 import postEducation from '../../../api/postEducation';
 import { v4 as uuidv4 } from 'uuid';
 
 let initialData = {
+  id: 0,
   highestDegree: '',
   institution: '',
   location: '',
@@ -31,13 +27,12 @@ function Education() {
 
   useEffect(() => {
     if (!isArrayPresent(educationData)) {
-      setEducationSections([{ ...initialData, id: uuidv4() }]);
+      setEducationSections([{ ...initialData}]);
     }
   }, [educationData]);
 
   useEffect(() => {
     console.log(educationSections);
-    console.log(isArrayPresent(educationSections));
   }, [educationSections])
 
   function handleSaveInformation(e) {
@@ -47,18 +42,26 @@ function Education() {
   }
 
   function addMoreSections() {
-    setEducationSections([...educationSections, { ...initialData, id: uuidv4() }])
+    setEducationSections([...educationSections, { ...initialData, id: educationSections.length }])
   }
 
 
   return (
     <Box sx={{ width: "100%", textAlign: "left" }}>
       <form autoComplete="off" onSubmit={handleSaveInformation}>
-        {isArrayPresent(educationSections) && educationSections.map((section, index) => {
-          return <EducationForm section={section} educationSections={educationSections} setEducationSections={setEducationSections} key={index} />;
+        {isArrayPresent(educationSections) && educationSections.map((section) => {
+          return <EducationForm section={section} educationSections={educationSections} setEducationSections={setEducationSections} key={section.id} />;
         })}
 
-        <Button variant="outlined" onClick={addMoreSections}>Add more</Button>
+        <Grid container justifyContent={"flex-end"}>
+          <Button variant="outlined" sx={{
+            backgroundColor: "#1666b6 !important",
+            color: "white !important",
+            fontWeight: "bold",
+            boxShadow:
+              "0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)"
+          }} onClick={addMoreSections}>Add more</Button>
+        </Grid>
       </form>
     </Box>
   );

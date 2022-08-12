@@ -6,7 +6,6 @@ import InputField from "../../../components/inputs/InputField";
 import TextField from "../../../components/inputs/TextField";
 
 function EducationForm({ section, educationSections, setEducationSections }) {
-    const [filteredState, setFilteredState] = useState([]);
 
     const [highestDegreeHelper, setHighestDegreeHelper] = useState("");
     const [institutionHelper, setInsitutionHelper] = useState("");
@@ -22,111 +21,77 @@ function EducationForm({ section, educationSections, setEducationSections }) {
     const [majorError, setMajorError] = useState(false);
     const [completionDateError, setCompletionDateError] = useState(false);
 
-    useEffect(() => {
-        let newFilteredState = educationSections.filter(currentObjs => currentObjs.id !== section.id);
-        setFilteredState([...newFilteredState]);
-        console.log("Filtered for section ", section.id)
-        console.log(newFilteredState)
-        console.log("This is the education section for section ", section.id)
-        console.log(educationSections)
-    }, [educationSections])
+    function adjustState(name, val) {
+        let newArr = [];
+        educationSections.forEach((eSection) => {
+            if (eSection.id === section.id) {
+                newArr.push({...section, [name]: val});
+            } else {
+                newArr.push(eSection);
+            }
+        })
+        return newArr;
+    }
 
     function handleChange(event) {
         const e = event;
         const val = e.target.value;
         const name = e.target.name;
 
-        setEducationSections([
-            ...filteredState, {
-                ...section,
-                [name]: val
-            }
-        ]);
+        let newState = adjustState(name, val);
+        setEducationSections(newState);
 
         if (name === "highestDegree") {
-
             if (val.length > 0) {
                 setHighestDegreeError(false);
                 setHighestDegreeHelper("");
             } else {
                 setHighestDegreeError(true);
-                setHighestDegreeHelper("Please enter in your highest degree earned");
+                setHighestDegreeHelper("Please enter in your highest degree earned.");
+            }
+        } else if (name === "institution") {
+            if (val.length > 0) {
+                setInsitutionError(false);
+                setInsitutionHelper("");
+            } else {
+                setInsitutionError(true);
+                setInsitutionHelper(
+                    "Please enter in the name of the institution you studied at."
+                );
+            }
+        } else if (name === "location") {
+            if (val.length > 0) {
+                setLocationError(false);
+                setLocationHelper("");
+            } else {
+                setLocationError(true);
+                setLocationHelper("Please enter the location of the institution.");
+            }
+        } else if (name === "degree") {
+            if (val.length > 0) {
+                setDegreeError(false);
+                setDegreeHelper("");
+            } else {
+                setDegreeError(true);
+                setDegreeHelper("Please enter your degree.");
+            }
+        } else if (name === "major") {
+            if (val.length > 0) {
+                setMajorError(false);
+                setMajorHelper("");
+            } else {
+                setMajorError(true);
+                setMajorHelper("Please enter in your chosen major.");
+            }
+        } else if (name === "completionDate") {
+            if (val.length > 0) {
+                setCompletionDateError(false);
+                setCompletionDateHelper("");
+            } else {
+                setCompletionDateError(true);
+                setCompletionDateHelper("Please enter in a date.");
             }
         }
-        // } else if (name === "institution") {
-        //     const newState = [...filteredState, {
-        //         ...section,
-        //         institution: val
-        //     }];
-        //     setEducationSections(newState);
-        //     if (val.length > 0) {
-        //         setInsitutionError(false);
-        //         setInsitutionHelper("");
-        //     } else {
-        //         setInsitutionError(true);
-        //         setInsitutionHelper(
-        //             "Please enter in the name of the institution you studied at"
-        //         );
-        //     }
-        // } else if (name === "locate") {
-        //     const newState = [...filteredState, {
-        //         ...section,
-        //         location: val
-        //     }];
-        //     setEducationSections(newState);
-        //     if (val.length > 0) {
-        //         setLocationError(false);
-        //         setLocationHelper("");
-        //     } else {
-        //         setLocationError(true);
-        //         setLocationHelper("Please enter the location of the institution");
-        //     }
-        // } else if (name === "degree") {
-        //     const newState = [...filteredState, {
-        //         ...section,
-        //         degree: val
-        //     }];
-        //     setEducationSections(newState);
-        //     if (val.length > 0) {
-        //         setDegreeError(false);
-        //         setDegreeHelper("");
-        //     } else {
-        //         setDegreeError(true);
-        //         setDegreeHelper("Please enter your degree");
-        //     }
-        // } else if (name === "major") {
-        //     const newState = [...filteredState, {
-        //         ...section,
-        //         major: val
-        //     }];
-        //     setEducationSections(newState);
-        //     if (val.length > 0) {
-        //         setMajorError(false);
-        //         setMajorHelper("");
-        //     } else {
-        //         setMajorError(true);
-        //         setMajorHelper("Please enter in your chosen major");
-        //     }
-        // } else if (name === "completionDate") {
-        //     const newState = [...filteredState, {
-        //         ...section,
-        //         completionDate: val
-        //     }];
-        //     setEducationSections(newState);
-        //     if (val.length > 0) {
-        //         setCompletionDateError(false);
-        //         setCompletionDateHelper("");
-        //     } else {
-        //         setCompletionDateError(true);
-        //         setCompletionDateHelper("Please enter in a date");
-        //     }
-        // } else if (name === "additionalInformation") {
-        //     const newState = [...filteredState, {
-        //         ...section,
-        //         additionalInformation: val
-        //     }];
-        //     setEducationSections(newState);
-        // }
     }
 
     return (
@@ -147,7 +112,7 @@ function EducationForm({ section, educationSections, setEducationSections }) {
                     }}
                 >
                     <InputField
-                        title={"Highest Degree Level Accuired:"}
+                        title={"Highest Degree Level Acquired:"}
                         id="highestDegree"
                         value={section.highestDegree}
                         autoFocus={true}
@@ -192,7 +157,7 @@ function EducationForm({ section, educationSections, setEducationSections }) {
                 >
                     <InputField
                         title="Location:"
-                        id="locate"
+                        id="location"
                         label="Location"
                         value={section.location}
                         error={locationError}
