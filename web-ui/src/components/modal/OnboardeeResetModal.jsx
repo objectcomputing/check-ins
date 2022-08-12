@@ -44,7 +44,7 @@ const OnboardeeResetModal = () => {
             }}
           >
             <Typography variant="p" component="h3">
-              Onboardee added!
+              Onboardee Reset!
             </Typography>
           </div>
           <div>
@@ -55,11 +55,11 @@ const OnboardeeResetModal = () => {
                   onClick={handleClose}
                   style={{
                     display: "flex",
-                    justifyContent: "centered",
+                    justifyContent: "flex-start",
                     gap: "10px",
                   }}
                 >
-                  Okay
+                  Reset Onboardee
                 </Button>
               </Grid>
             </Grid>
