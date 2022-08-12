@@ -4,8 +4,8 @@ import { Modal, TextField, IconButton } from "@mui/material";
 import { Button } from "@mui/material";
 import { useCallback } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 const modalBoxStyle = {
   position: "absolute",
@@ -44,19 +44,67 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
   const handleOfferLetter = (e) => {
     setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
   };
+
+  const validateInputs = useCallback(() => {
+    let regEmail =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; // eslint-disable-line
+    if (!regEmail.test(editedOnboardee.email)) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Please enter a valid email",
+        },
+      });
+      return false;
+    }
+    return true;
+  }, [editedOnboardee, dispatch]);
+  const validateRequiredInputsPresent = useCallback(() => {
+    return (
+      editedOnboardee.firstName?.length > 0 &&
+      editedOnboardee.lastName?.length > 0 &&
+      editedOnboardee.email?.length > 0 &&
+      editedOnboardee.postition?.length > 0 &&
+      editedOnboardee.hireType?.length > 0 &&
+      editedOnboardee.employeeId?.length > 0 &&
+      editedOnboardee.pdl?.length > 0
+    );
+  }, [editedOnboardee]);
+
   const submitOnboardeeClick = useCallback(async () => {
-    onSave(editedOnboardee).then(() => {
-      if (isNewOnboardee.current) {
-        setOnboardee({ emptyOnboardee });
-        setIsNewOnboardee(true);
-      }
-    });
-  }, [onSave, editedOnboardee, isNewOnboardee]);
+    let required = validateRequiredInputsPresent();
+
+    let inputsFeasible = validateInputs();
+    if (!required) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast:
+            "One or more required fields are empty. Check starred input fields",
+        },
+      });
+    } else if (required && inputsFeasible) {
+      onSave(editedOnboardee).then(() => {
+        if (isNewOnboardee.current) {
+          setOnboardee({ emptyOnboardee });
+          setIsNewOnboardee(true);
+        }
+      });
+    }
+  }, [
+    validateRequiredInputsPresent,
+    onSave,
+    dispatch,
+    validateInputs,
+    editedOnboardee,
+    isNewOnboardee,
+  ]);
 
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={modalBoxStyle}>
-
         <Typography align="center" id="title" variant="h3" component="h2">
           Edit Onboardee
         </Typography>
@@ -115,10 +163,8 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
               variant="standard"
               value={editedOnboardee.hireType ? editedOnboardee.hireType : ""}
               onChange={(e) => {
-
                 setOnboardee({ ...editedOnboardee, hireType: e.target.value });
-              }
-              }
+              }}
             >
               <MenuItem value={"hourly"}>Hourly</MenuItem>
               <MenuItem value={"fulltime"}>FullTime</MenuItem>
@@ -157,7 +203,6 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
               <MenuItem value={"dummy1"}>dummy1</MenuItem>
               <MenuItem value={"dummy2"}>dummy2</MenuItem>
               <MenuItem value={"dummy3"}>dummy3</MenuItem>
-
             </Select>
           </Grid>
         </Grid>
@@ -242,7 +287,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="contained" onClock={submitOnboardeeClick}>
+            <Button variant="contained" onClick={submitOnboardeeClick}>
               Submit
             </Button>
           </Grid>
