@@ -35,7 +35,7 @@ export const addRolePermission = async (roleId, permissionId, cookie) => {
 export const removeRolePermission = async (roleId, permissionId, cookie) => {
   return resolve({
     method: "delete",
-    url: rolePermissionsUrl,
+    url: `${rolePermissionsUrl}/${roleId}/${permissionId}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });
