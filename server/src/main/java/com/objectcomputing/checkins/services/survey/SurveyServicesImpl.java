@@ -81,7 +81,7 @@ public class SurveyServicesImpl implements SurveyService {
                 throw new BadArgException("Unable to find survey record with id %s", surveyResponse.getId());
             });
             validate(memberProfileRetrievalServices.existsById(memberId)).orElseThrow(() -> {
-                throw new BadArgException("Member %s doesn't exist");
+                throw new BadArgException("Member %s doesn't exist", memberId);
             });
             validate(surSubDate.isAfter(LocalDate.EPOCH) && surSubDate.isBefore(LocalDate.MAX)).orElseThrow(() -> {
                 throw new BadArgException("Invalid date for survey submission date %s", memberId);
