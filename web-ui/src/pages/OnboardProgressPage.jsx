@@ -6,17 +6,15 @@ import { Box } from "@mui/system";
 import { AppContext } from "../context/AppContext";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddOnboardModal from "../components/modal/AddOnboardeeModal";
-import {
-  Button
-} from "@mui/material";
-import { useState, useContext} from "react";
+import { Button } from "@mui/material";
+import { useState, useContext } from "react";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
-import { createOnboardee } from "../api/onboardeeMember";
+import { createOnboardee, initializeOnboardee } from "../api/onboardeeMember";
 
-export default function OnboardProgressPage(onboardee){
+export default function OnboardProgressPage(onboardee) {
   const [open, setOpen] = useState(false);
   const { state, dispatch } = useContext(AppContext);
-  const { csrf , onboardeeProfiles} = state;
+  const { csrf, onboardeeProfiles } = state;
   const handleAddModalClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
@@ -35,15 +33,15 @@ export default function OnboardProgressPage(onboardee){
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     { field: "name", headerName: "Name", width: 130 },
-    { 
-      field: "email", 
+    {
+      field: "email",
       headerName: "Email",
-      renderCell: (cellValues) =>{
-        return(
-        <a href={"mailto:" + cellValues.row.email}>{cellValues.row.email}</a>
+      renderCell: (cellValues) => {
+        return (
+          <a href={"mailto:" + cellValues.row.email}>{cellValues.row.email}</a>
         );
       },
-      width: 220 
+      width: 220,
     },
     { field: "hireType", headerName: "Hire Type", width: 150 },
     {
@@ -98,7 +96,7 @@ export default function OnboardProgressPage(onboardee){
     {
       field: "notificationMsg",
       headerName: "Notification Message",
-      flex: 1
+      flex: 1,
     },
   ];
 
@@ -129,6 +127,32 @@ export default function OnboardProgressPage(onboardee){
     },
   ];
 
+  async function submitInfo(onboardee) {
+    if (
+      onboardee.firstName &&
+      onboardee.lastName &&
+      onboardee.position &&
+      onboardee.email &&
+      onboardee.hireType &&
+      onboardee.pdl &&
+      csrf
+    ) {
+
+      let res1 = await initializeOnboardee(onboardee.email, csrf);
+      console.log(res1);
+
+      // let res2 = await createOnboardee(onboardee, csrf);
+      // let data2 =
+      //   res2.payload && res2.payload.data && !res2.error ? res2.payload.data : null;
+      // if (data2) {
+      //   dispatch({
+      //     type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
+      //     payload: [...onboardeeProfiles, data2],
+      //   });
+      // }
+    }
+  }
+
   return (
     <div className="onboard-page">
       <Box sx={{ height: 400, width: "60%", mt: "5%" }}>
@@ -140,32 +164,12 @@ export default function OnboardProgressPage(onboardee){
         >
           Add Onboardee
         </Button>
-         <AddOnboardModal
-              onboardee={{}}
-              open={open}
-              onClose={handleAddModalClose}
-              onSave={async (onboardee) => {
-                if (
-                  onboardee.firstName &&
-                  onboardee.lastName &&
-                  onboardee.position &&
-                  onboardee.email &&
-                  onboardee.hireType &&
-                  onboardee.pdl &&
-                  csrf
-                )
-                {
-                  let res = await createOnboardee(onboardee, csrf);
-                  let data = res.payload && res.payload.data && !res.error ? res.payload.data : null;
-                  if (data) {
-                    dispatch({
-                      type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
-                      payload: [...onboardeeProfiles, data],
-                    });
-                  }
-                  }
-              }}
-            />
+        <AddOnboardModal
+          onboardee={{}}
+          open={open}
+          onClose={handleAddModalClose}
+          onSave={submitInfo}
+        />
         <DataGrid
           rows={rows}
           columns={columns}
