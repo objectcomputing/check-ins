@@ -4,7 +4,6 @@ import RightSidebar from "./../components/sidebar/RightSidebar";
 import CultureVideoPage from "./CultureVideoPage";
 import BackgroundInformationPage from "./BackgroundInformationPage";
 import IntroductionSurveyPage from "./IntroductionSurveyPage";
-import WorkingLocationPage from "./WorkingLocationPage";
 import EquipmentPage from "./EquipmentPage";
 import DocumentSigningPage from "./DocumentSigningPage";
 import Congratulations from "./CongratulationsPage";
@@ -29,22 +28,14 @@ const menuList = [
   },
   {
     index: 2,
-    name: "Work Preference",
-    title: "Where would you PREFER to work?",
-    completed: false,
-    child: <WorkingLocationPage />,
-    visited: false,
-  },
-  {
-    index: 3,
-    name: "Computer and Accessories",
-    title: "Computer and Accessories",
+    name: "Computer & Work Environment",
+    title: "Computer & Work Environment",
     completed: false,
     child: <EquipmentPage />,
     visited: false,
   },
   {
-    index: 4,
+    index: 3,
     name: "Internal Document Signing",
     title: "Internal Document Signing",
     completed: false,
@@ -52,7 +43,7 @@ const menuList = [
     visited: false,
   },
   {
-    index: 5,
+    index: 4,
     name: "About You",
     title: "You Know About Us Now! Tell Us About You!",
     completed: false,
@@ -60,7 +51,7 @@ const menuList = [
     visited: false,
   },
   {
-    index: 6,
+    index: 5,
     name: "Cake!",
     title: "Congratulations!",
     completed: false,
