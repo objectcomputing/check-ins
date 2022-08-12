@@ -33,9 +33,7 @@ const emptyOnboardee = {
   pdl: "",
 };
 
-const editReset = false;
-
-const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
+const EditOnboardee = ({ onboardee, open, onSave, onReset, onClose }) => {
   const { dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const [empFile, setEmpFile] = useState(" ");
@@ -78,6 +76,36 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
   }, [editedOnboardee]);
 
   const submitOnboardeeClick = useCallback(async () => {
+    let required = validateRequiredInputsPresent();
+
+    let inputsFeasible = validateInputs();
+    if (!required) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast:
+            "One or more required fields are empty. Check starred input fields",
+        },
+      });
+    } else if (required && inputsFeasible) {
+      onSave(editedOnboardee).then(() => {
+        if (isNewOnboardee.current) {
+          setOnboardee({ emptyOnboardee });
+          setIsNewOnboardee(true);
+        }
+      });
+    }
+  }, [
+    validateRequiredInputsPresent,
+    onSave,
+    dispatch,
+    validateInputs,
+    editedOnboardee,
+    isNewOnboardee,
+  ]);
+
+  const resetOnboardeeClick = useCallback(async () => {
     let required = validateRequiredInputsPresent();
 
     let inputsFeasible = validateInputs();
@@ -187,9 +215,9 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
               id="email"
               variant="standard"
               value={editedOnboardee.email ? editedOnboardee.email : ""}
-              onChange={(e) =>
-                setOnboardee({ ...editedOnboardee, email: e.target.value })
-              }
+              onChange={(e) => {
+                setOnboardee({ ...editedOnboardee, email: e.target.value });
+              }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -294,6 +322,10 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
           >
             <Button variant="contained" onClick={submitOnboardeeClick}>
               Submit
+            </Button>
+
+            <Button variant="contained" onClick={resetOnboardeeClick}>
+              Reset Onboardee
             </Button>
           </Grid>
         </Grid>
