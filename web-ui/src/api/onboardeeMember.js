@@ -5,7 +5,7 @@ const onboardeeProfileUrl = "/services/onboardee-profiles";
 
 export const initializeOnboardee = async (email, cookie) => {
     let initOnboardee = {
-        email_address: email
+        emailAddress: email
     };
     return resolve({
         method: "post",

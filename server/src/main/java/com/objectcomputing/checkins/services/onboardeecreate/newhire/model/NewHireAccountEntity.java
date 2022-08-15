@@ -19,7 +19,6 @@ public class NewHireAccountEntity implements Identifiable, Account {
     @Id
     @Column(name="new_hire_account_id")
     @AutoPopulated
-    @TypeDef(type = DataType.STRING)
     @GeneratedValue(GeneratedValue.Type.AUTO)
     private UUID id;
 
