@@ -330,7 +330,8 @@ export default function OnboardProgressDetailPage(onboardee) {
             </Modal>
           </Box>
           <Typography variant="h4">Name: {name}</Typography>
-          <Typography variant="h4">Email: {email}</Typography>
+          <Typography variant="h4">Email: <a href={"mailto:" + email}>{email}</a>
+          </Typography>
           <Divider />
           <Typography variant="h4">Position: {title}</Typography>
           <Typography variant="h4">Hire Type: {hireType}</Typography>
