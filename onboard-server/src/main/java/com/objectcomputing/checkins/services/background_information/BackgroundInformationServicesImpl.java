@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.background_information;
 
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
 

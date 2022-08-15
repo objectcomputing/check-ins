@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.onboard.background_information;
 
-
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
