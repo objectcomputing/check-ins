@@ -330,7 +330,8 @@ export default function OnboardProgressDetailPage(onboardee) {
             </Modal>
           </Box>
           <Typography variant="h4">Name: {name}</Typography>
-          <Typography variant="h4">Email: <a href={"mailto:" + email}>{email}</a>
+          <Typography variant="h4">
+            Email: <a href={"mailto:" + email}>{email}</a>
           </Typography>
           <Divider />
           <Typography variant="h4">Position: {title}</Typography>
@@ -339,12 +340,14 @@ export default function OnboardProgressDetailPage(onboardee) {
 
         <Grid item xs={7} sx={{ padding: "2em" }}>
           <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
-            <Box className="header">
-              <h1>Documents/Surveys</h1>
-              <ProgressIndicator
-                dataDocument={documentRows}
-                dataSurvey={surveyRows}
-              />
+            <Box className="boxColor">
+              <Typography align="center" variant="h3">
+                Documents/Surveys
+                <ProgressIndicator
+                  dataDocument={documentRows}
+                  dataSurvey={surveyRows}
+                />
+              </Typography>
             </Box>
 
             <DataGrid
