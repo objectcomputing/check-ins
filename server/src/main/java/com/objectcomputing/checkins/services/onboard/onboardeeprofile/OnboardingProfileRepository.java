@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardeeprofile;
+package com.objectcomputing.checkins.services.onboard.onboardeeprofile;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
@@ -23,7 +23,8 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
             "PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') as previousAddress, " +
             "PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') as phoneNumber, " +
             "PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber, " +
-            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail " +
+            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail, " +
+            "backgroundId " +
             "FROM \"onboard_profile\" mp " +
             "WHERE  (:socialSecurityNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea), '${aes.key}') = :socialSecurityNumber) ",
             nativeQuery = true)
@@ -39,7 +40,8 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
             "PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') as previousAddress," +
             "PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') as phoneNumber," +
             "PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber," +
-            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail " +
+            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail, " +
+            "backgroundId " +
             "FROM \"onboard_profile\" mp " +
             "WHERE  (:socialSecurityNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea), '${aes.key}') = :socialSecurityNumber) " +
                     "AND  (:firstName IS NULL OR PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') = :firstName) " +
@@ -50,7 +52,8 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
                     "AND  (:previousAddress IS NULL OR PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') = :previousAddress) " +
                     "AND  (:phoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') = :phoneNumber) " +
                     "AND  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') = :secondPhoneNumber) " +
-                    "AND  (:personalEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') = :personalEmail) " ,
+                    "AND  (:personalEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') = :personalEmail) " +
+                    "AND  (:backgroundId IS NULL OR backgroundId = :backgroundId)",
             nativeQuery = true)
     List<OnboardingProfile> search(
             @Nullable String id,
@@ -63,6 +66,7 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
             @Nullable String previousAddress,
             @Nullable String phoneNumber,
             @Nullable String secondPhoneNumber,
-            @Nullable String personalEmail
+            @Nullable String personalEmail,
+            @Nullable String backgroundId
     );
 }

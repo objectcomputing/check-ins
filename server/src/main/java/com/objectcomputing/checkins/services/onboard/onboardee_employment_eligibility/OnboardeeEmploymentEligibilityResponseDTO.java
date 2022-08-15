@@ -1,14 +1,22 @@
-package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
+package com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility;
+
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import io.micronaut.core.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.UUID;
+
+
+
 
 @Introspected
-public class OnboardeeEmploymentEligibilityCreateDTO {
+public class OnboardeeEmploymentEligibilityResponseDTO {
+
+    @NotNull
+    @Schema(description = "id of the onboardee this profile entry is associated with", required = true)
+    private UUID id;
 
     @NotNull
     @Schema(description = "onboardee age", required = true)
@@ -23,7 +31,7 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
     private String visaStatus;
 
     @Nullable
-    @Schema(description = "onboardee visa expiry date", nullable = true)
+    @Schema(description = "onboarde visa expiry date", nullable = true)
     private LocalDate expirationDate;
 
     @NotNull
@@ -33,6 +41,18 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
     @Nullable
     @Schema(description = "onboardee felony explanation", nullable = true)
     private String felonyExplanation;
+
+    @NotNull
+    @Schema(description = "Background Id of onboardee")
+    private UUID backgroundId;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     @NotNull
     public Boolean getAgeLegal() {
@@ -88,17 +108,22 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
         this.felonyExplanation = felonyExplanation;
     }
 
+    public UUID getBackgroundId() { return backgroundId; }
+
+    public void setBackgroundId(UUID backgroundId) { this.backgroundId = backgroundId; }
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OnboardeeEmploymentEligibilityCreateDTO that = (OnboardeeEmploymentEligibilityCreateDTO) o;
-        return Objects.equals(ageLegal, that.ageLegal) &&
-                Objects.equals(usCitizen, that.usCitizen) &&
-                Objects.equals(visaStatus, that.visaStatus) &&
-                Objects.equals(expirationDate, that.expirationDate) &&
-                Objects.equals(felonyStatus, that.felonyStatus) &&
-                Objects.equals(felonyExplanation, that.felonyExplanation);
-               
+    public String toString() {
+        return "OnboardeeEmploymentEligibilityResponseDTO{" +
+                "id=" + id +
+                ", ageLegal ='" + ageLegal + '\'' +
+                ", usCitizen='" + usCitizen + '\'' +
+                ", visaStatus='" + visaStatus +  '\'' +
+                ", expirationDate='" + expirationDate +
+                ", felonyStatus='" + felonyStatus + '\'' +
+                ", felonyExplanation=" + felonyExplanation +  '\'' +
+                ", backgroundId=" + backgroundId + '\'' +
+                '}';
     }
+
 }
+ 

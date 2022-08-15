@@ -1,8 +1,13 @@
 package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
 import static com.objectcomputing.checkins.services.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityTestUtil.*;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.BackgroundInformationFixture;
 import com.objectcomputing.checkins.services.fixture.OnboardeeEmploymentEligibilityFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformation;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibility;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityCreateDTO;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityResponseDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -24,15 +29,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OnboardeeEmploymentEligibilityControllerTest extends TestContainersSuite implements
-        OnboardeeEmploymentEligibilityFixture, RoleFixture {
+        OnboardeeEmploymentEligibilityFixture, RoleFixture, BackgroundInformationFixture {
     @Inject
     @Client("/services/onboardee-employment-eligibility")
     private HttpClient client;
 
     @Test
     public void testGETAllOnboardeeEmploymentEligibility() {
-        createADefaultOnboardeeEmploymentEligibility();
-        createADefaultOnboardeeEmploymentEligibility2();
+        BackgroundInformation temp1 = createDefaultBackgroundInformation();
+        BackgroundInformation temp2 = createSecondBackgroundInformation();
+        createADefaultOnboardeeEmploymentEligibility(temp1);
+        createADefaultOnboardeeEmploymentEligibility2(temp2);
         final HttpRequest<Object> request = HttpRequest.
                 GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
@@ -71,8 +78,8 @@ public class OnboardeeEmploymentEligibilityControllerTest extends TestContainers
     }
     @Test
     public void testPOSTCreateAOnboardeeEmploymentEligibility() {
-
-        OnboardeeEmploymentEligibilityResponseDTO dto = mkUpdateOnboardeeEmploymentEligibilityResponseDTO();
+        BackgroundInformation backgroundInformation = createDefaultBackgroundInformation();
+        OnboardeeEmploymentEligibilityResponseDTO dto = mkUpdateOnboardeeEmploymentEligibilityResponseDTO(backgroundInformation);
 
         final HttpRequest<?> request = HttpRequest.
                 POST("/", dto).basicAuth(MEMBER_ROLE, MEMBER_ROLE);

@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardeeprofile;
+package com.objectcomputing.checkins.services.onboard.onboardeeprofile;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -120,8 +120,14 @@ public class OnboardingProfile {
     @Schema(description = "onboardee's personal email.", required = true)
     private String personalEmail;
 
+    @NotNull
+    @Column(name="backgroundid")
+    @TypeDef(type=DataType.STRING)
+    @Schema(description = "id of background information", required = true)
+    private UUID backgroundId;
 
-    public OnboardingProfile(String firstName, @Nullable String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, @Nullable String secondPhoneNumber, String personalEmail) {
+
+    public OnboardingProfile(String firstName, @Nullable String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber, @Nullable String secondPhoneNumber, String personalEmail, UUID backgroundId) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -132,8 +138,9 @@ public class OnboardingProfile {
         this.phoneNumber = phoneNumber;
         this.secondPhoneNumber = secondPhoneNumber;
         this.personalEmail = personalEmail;
+        this.backgroundId = backgroundId;
     }
-    public OnboardingProfile(UUID id, String firstName, @Nullable String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber,@Nullable String secondPhoneNumber, String personalEmail) {
+    public OnboardingProfile(UUID id, String firstName, @Nullable String middleName, String lastName, String socialSecurityNumber, LocalDate birthDate, String currentAddress, @Nullable String previousAddress, String phoneNumber,@Nullable String secondPhoneNumber, String personalEmail, UUID backgroundId) {
         this.id= id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -145,6 +152,7 @@ public class OnboardingProfile {
         this.phoneNumber = phoneNumber;
         this.secondPhoneNumber = secondPhoneNumber;
         this.personalEmail= personalEmail;
+        this.backgroundId = backgroundId;
     }
 
     public OnboardingProfile(){}
@@ -240,6 +248,9 @@ public class OnboardingProfile {
         this.personalEmail = personalEmail;
     }
 
+    public UUID getBackgroundId() { return backgroundId; }
+
+    public void setBackgroundId(UUID backgroundId) { this.backgroundId = backgroundId; }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -255,12 +266,13 @@ public class OnboardingProfile {
                 Objects.equals(previousAddress, that.previousAddress) &&
                 Objects.equals(phoneNumber, that.phoneNumber) &&
                 Objects.equals(secondPhoneNumber, that.secondPhoneNumber) &&
-                Objects.equals(personalEmail, that.personalEmail);
+                Objects.equals(personalEmail, that.personalEmail) &&
+                Objects.equals(backgroundId, that.backgroundId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail);
+        return Objects.hash(id, firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail, backgroundId);
     }
 }
 

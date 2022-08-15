@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
+package com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -70,17 +71,23 @@ public class OnboardeeEmploymentEligibility {
     @Schema(description = "explanation of convicted felony")
     private String felonyExplanation;
 
-    public OnboardeeEmploymentEligibility(Boolean ageLegal,Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
+    @NotNull
+    @Column(name="backgroundid")
+    @TypeDef(type=DataType.STRING)
+    @Schema(description = "id of background information", required = true)
+    private UUID backgroundId;
+    public OnboardeeEmploymentEligibility(Boolean ageLegal,Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation, UUID backgroundId) {
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
         this.visaStatus = visaStatus;
         this.expirationDate = expirationDate;
         this.felonyStatus = felonyStatus;
         this.felonyExplanation = felonyExplanation;
+        this.backgroundId = backgroundId;
 
     }
 
-    public OnboardeeEmploymentEligibility(UUID id, Boolean ageLegal, Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
+    public OnboardeeEmploymentEligibility(UUID id, Boolean ageLegal, Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation, UUID backgroundId) {
         this.id = id;
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
@@ -88,7 +95,7 @@ public class OnboardeeEmploymentEligibility {
         this.expirationDate = expirationDate;
         this.felonyStatus = felonyStatus;
         this.felonyExplanation = felonyExplanation;
-
+        this.backgroundId = backgroundId;
     }
 
     public void setId(UUID id) {
@@ -151,16 +158,19 @@ public class OnboardeeEmploymentEligibility {
         this.felonyExplanation = felonyExplanation;
     }
 
+    public UUID getBackgroundId() { return backgroundId; }
+
+    public void setBackgroundId(UUID backgroundId) { this.backgroundId = backgroundId; }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OnboardeeEmploymentEligibility that = (OnboardeeEmploymentEligibility) o;
-        return Objects.equals(id, that.id) && Objects.equals(ageLegal, that.ageLegal) && Objects.equals(usCitizen, that.usCitizen) && Objects.equals(visaStatus, that.visaStatus) && Objects.equals(expirationDate, that.expirationDate) && Objects.equals(felonyStatus, that.felonyStatus) && Objects.equals(felonyExplanation, that.felonyExplanation);
+        return Objects.equals(id, that.id) && Objects.equals(ageLegal, that.ageLegal) && Objects.equals(usCitizen, that.usCitizen) && Objects.equals(visaStatus, that.visaStatus) && Objects.equals(expirationDate, that.expirationDate) && Objects.equals(felonyStatus, that.felonyStatus) && Objects.equals(felonyExplanation, that.felonyExplanation) && Objects.equals(backgroundId, that.backgroundId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ageLegal, usCitizen, visaStatus, expirationDate, felonyStatus, felonyExplanation);
+        return Objects.hash(id, ageLegal, usCitizen, visaStatus, expirationDate, felonyStatus, felonyExplanation, backgroundId);
     }
 }

@@ -1,0 +1,2 @@
+ALTER TABLE onboardee_employment_eligibility
+ADD COLUMN backgroundid varchar UNIQUE references background_information(id);

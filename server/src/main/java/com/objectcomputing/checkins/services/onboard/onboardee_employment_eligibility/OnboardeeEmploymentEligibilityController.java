@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
+package com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -64,8 +64,9 @@ public class OnboardeeEmploymentEligibilityController {
                                                                                            @Nullable String visaStatus,
                                                                                            @Nullable LocalDate expirationDate,
                                                                                            @Nullable Boolean felonyStatus,
-                                                                                           @Nullable String felonyExplanation) {
-        return Mono.fromCallable(() -> onboardeeEmploymentEligibilityServices.findByValues(id, ageLegal, usCitizen, visaStatus, expirationDate, felonyStatus, felonyExplanation))
+                                                                                           @Nullable String felonyExplanation,
+                                                                                           @Nullable UUID backgroundId) {
+        return Mono.fromCallable(() -> onboardeeEmploymentEligibilityServices.findByValues(id, ageLegal, usCitizen, visaStatus, expirationDate, felonyStatus, felonyExplanation, backgroundId))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(OnboardeeEmploymentEligibility -> {
                     List<OnboardeeEmploymentEligibilityResponseDTO> dtoList = OnboardeeEmploymentEligibility.stream()
@@ -121,16 +122,17 @@ public class OnboardeeEmploymentEligibilityController {
         dto.setExpirationDate(entity.getExpirationDate());
         dto.setFelonyStatus(entity.getFelonyStatus());
         dto.setFelonyExplanation(entity.getFelonyExplanation());
+        dto.setBackgroundId(entity.getBackgroundId());
         return dto;
     }
 
     private OnboardeeEmploymentEligibility fromDTO(OnboardeeEmploymentEligibilityResponseDTO dto) {
         return new OnboardeeEmploymentEligibility(dto.getId(), dto.getAgeLegal(), dto.getUsCitizen(), dto.getVisaStatus(),
-                dto.getExpirationDate(), dto.getFelonyStatus(), dto.getFelonyExplanation());
+                dto.getExpirationDate(), dto.getFelonyStatus(), dto.getFelonyExplanation(), dto.getBackgroundId());
     }
 
     private OnboardeeEmploymentEligibility fromDTO(OnboardeeEmploymentEligibilityCreateDTO dto) {
         return new OnboardeeEmploymentEligibility(dto.getAgeLegal(), dto.getUsCitizen(), dto.getVisaStatus(),
-                dto.getExpirationDate(), dto.getFelonyStatus(), dto.getFelonyExplanation());
+                dto.getExpirationDate(), dto.getFelonyStatus(), dto.getFelonyExplanation(), dto.getBackgroundId());
     }
 }

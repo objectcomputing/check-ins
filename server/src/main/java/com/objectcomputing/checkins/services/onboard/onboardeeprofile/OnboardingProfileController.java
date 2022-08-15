@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardeeprofile;
+package com.objectcomputing.checkins.services.onboard.onboardeeprofile;
 
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -73,6 +73,7 @@ public class OnboardingProfileController {
      * @param birthDate            {@link LocalDate} birth date of the onboardee
      * @param phoneNumber          {@link String} Onboardee's phone number
      * @param personalEmail        {@link String} Onboardee's personal email
+     * @param backgroundId         {@link UUID} ID of the background information
      * @return {@link List< OnboardingProfileDTO >} List of Onboardees that match the input parameters
      */
     @Get("/{?id,firstName,lastName,socialSecurityNumber,birthDate,phoneNumber,personalEmail}")
@@ -82,8 +83,9 @@ public class OnboardingProfileController {
                                                                       @Nullable String socialSecurityNumber,
                                                                       @Nullable LocalDate birthDate,
                                                                       @Nullable String phoneNumber,
-                                                                      @Nullable String personalEmail) {
-        return Mono.fromCallable(() -> onboardingProfileServices.findByValues(id, firstName, lastName, socialSecurityNumber, birthDate, phoneNumber, personalEmail))
+                                                                      @Nullable String personalEmail,
+                                                                      @Nullable UUID backgroundId) {
+        return Mono.fromCallable(() -> onboardingProfileServices.findByValues(id, firstName, lastName, socialSecurityNumber, birthDate, phoneNumber, personalEmail, backgroundId))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(Onboardingprofile -> {
                     List<OnboardingProfileDTO> dtoList = Onboardingprofile.stream()
@@ -164,17 +166,18 @@ public class OnboardingProfileController {
         dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setSecondPhoneNumber(entity.getSecondPhoneNumber());
         dto.setPersonalEmail(entity.getPersonalEmail());
+        dto.setBackgroundId(entity.getBackgroundId());
         return dto;
     }
     private OnboardingProfile fromDTO(OnboardingProfileDTO dto) {
         return new OnboardingProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(),
-                dto.getPhoneNumber(), dto.getSecondPhoneNumber(), dto.getPersonalEmail());
+                dto.getPhoneNumber(), dto.getSecondPhoneNumber(), dto.getPersonalEmail(), dto.getBackgroundId());
     }
 
     private OnboardingProfile fromDTO(OnboardingProfileCreateDTO dto) {
         return new OnboardingProfile( dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(),
-                dto.getPhoneNumber(), dto.getSecondPhoneNumber(),dto.getPersonalEmail() );
+                dto.getPhoneNumber(), dto.getSecondPhoneNumber(),dto.getPersonalEmail(), dto.getBackgroundId() );
     }
 }

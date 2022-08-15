@@ -1,9 +1,7 @@
-package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
+package com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility;
 
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
+import  com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileRepository;
 import jakarta.inject.Singleton;
 
 import javax.annotation.Nullable;
@@ -38,9 +36,10 @@ public class OnboardeeEmploymentEligibilityServicesImpl implements OnboardeeEmpl
             @Nullable String visaStatus,
             @Nullable LocalDate expirationDate,
             @Nullable Boolean felonyStatus,
-            @Nullable String felonyExplanation) {
+            @Nullable String felonyExplanation,
+            @Nullable UUID backgroundId) {
         HashSet<OnboardeeEmploymentEligibility> onboardee_employment_eligibility = new HashSet<>(onboardeeEmploymentEligibilityRepository.search((nullSafeUUIDToString(id)), ageLegal,
-                usCitizen, null, null, felonyStatus, null));
+                usCitizen, null, null, felonyStatus, null, nullSafeUUIDToString(backgroundId)));
 
         return onboardee_employment_eligibility;
     }

@@ -1,10 +1,15 @@
 package com.objectcomputing.checkins.services.onboardingprofile;
 
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileCreateDTO;
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileDTO;
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformation;
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformationCreateDTO;
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformationDTO;
+import com.objectcomputing.checkins.services.onboard.onboardeeprofile.OnboardingProfileCreateDTO;
+import com.objectcomputing.checkins.services.onboard.onboardeeprofile.OnboardingProfileDTO;
+import com.objectcomputing.checkins.services.onboard.onboardeeprofile.OnboardingProfile;
 import java.time.LocalDate;
+import java.util.UUID;
 
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OnboardingProfileTestUtil {
 
@@ -23,7 +28,7 @@ public class OnboardingProfileTestUtil {
     }
 
     //ResponseDTO here is used as an UpdateDTO
-    public static OnboardingProfileDTO mkUpdateOnboardeeProfileDTO() {
+    public static OnboardingProfileDTO mkUpdateOnboardeeProfileDTO(BackgroundInformation backgroundInformation) {
         OnboardingProfileDTO dto = new OnboardingProfileDTO();
         dto.setFirstName("TestFirstName");
         dto.setMiddleName("TestMiddleName");
@@ -35,10 +40,11 @@ public class OnboardingProfileTestUtil {
         dto.setPhoneNumber("TestPhoneNumber");
         dto.setPhoneNumber("TestSecondPhoneNumber");
         dto.setPersonalEmail("TestPersonalEmail");
+        dto.setBackgroundId(backgroundInformation.getId());
         return dto;
     }
 
-    public static OnboardingProfile mkOnboarding_Profile(String seed) {
+    public static OnboardingProfile mkOnboarding_Profile(String seed, BackgroundInformation backgroundInformation) {
         return new OnboardingProfile("TestFirstName" + seed,
                 "TestMiddleName" + seed,
                 "TestLastName" + seed,
@@ -48,12 +54,14 @@ public class OnboardingProfileTestUtil {
                 "TestPreviousAddress" + seed,
                 "TestPhoneNumber" + seed,
                 "TestSecondPhoneNumber" + seed,
-                "TestPersonalEmail" + seed
+                "TestPersonalEmail" + seed,
+                backgroundInformation.getId()
                 );
     }
 
     public static OnboardingProfile mkOnboarding_Profile() {
-        return mkOnboarding_Profile("");
+        BackgroundInformation backgroundInformation = new BackgroundInformation("ocitest", false);
+        return mkOnboarding_Profile("", backgroundInformation);
     }
 
     public static void assertProfilesEqual(OnboardingProfile entity, OnboardingProfileDTO dto) {
@@ -96,7 +104,7 @@ public class OnboardingProfileTestUtil {
        dto.setPhoneNumber(entity.getPhoneNumber());
        dto.setSecondPhoneNumber(entity.getSecondPhoneNumber());
        dto.setPersonalEmail(entity.getPersonalEmail());
-
+       dto.setBackgroundId(entity.getBackgroundId());
        return dto;
     }
 }

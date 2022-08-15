@@ -1,18 +1,11 @@
-package com.objectcomputing.checkins.services.onboardeeprofile;
+package com.objectcomputing.checkins.services.onboard.onboardeeprofile;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
-import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -58,6 +51,10 @@ public class OnboardingProfileCreateDTO {
     @NotBlank
     @Schema(description = "Personal email of onboardee")
     private String personalEmail;
+
+    @NotBlank
+    @Schema(description = "Background Information Id of onboardee")
+    private UUID backgroundId;
 
     public String getFirstName() {
         return firstName;
@@ -141,6 +138,10 @@ public class OnboardingProfileCreateDTO {
         this.personalEmail = personalEmail;
     }
 
+    public UUID getBackgroundId() {return backgroundId; }
+
+    public void setBackgroundId(UUID backgroundId){ this.backgroundId = backgroundId; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -155,11 +156,12 @@ public class OnboardingProfileCreateDTO {
                 Objects.equals(previousAddress, that.previousAddress) &&
                 Objects.equals(phoneNumber, that.phoneNumber) &&
                 Objects.equals(secondPhoneNumber, that.secondPhoneNumber) &&
-                Objects.equals(personalEmail, that.personalEmail);
+                Objects.equals(personalEmail, that.personalEmail) &&
+                Objects.equals(backgroundId, that.backgroundId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail);
+        return Objects.hash(firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail, backgroundId);
     }
 }
