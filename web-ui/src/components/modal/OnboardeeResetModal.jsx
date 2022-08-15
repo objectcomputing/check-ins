@@ -54,7 +54,7 @@ const OnboardeeResetModal = () => {
                 xs={6}
                 style={{ display: "flex", justifyContent: "flex-start" }}
               >
-                <Button variant="contained" onClick={onClose}>
+                <Button variant="contained" onClick={handleClose}>
                   Cancel
                 </Button>
               </Grid>
@@ -63,7 +63,7 @@ const OnboardeeResetModal = () => {
                 xs={6}
                 style={{ display: "flex", justifyContent: "flex-end" }}
               >
-                <Button variant="contained" onClick={resetOnboardeeClick}>
+                <Button variant="contained" onClick={handleClose}>
                   Reset Onboardee
                 </Button>
               </Grid>

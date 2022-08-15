@@ -10,6 +10,9 @@ import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
 import OnboardeeResetModal from "./OnboardeeResetModal";
 import { createOnboardee } from "../../api/onboardeeMember";
+import { useHistory } from "react-router-dom";
+
+const history = useHistory();
 
 const modalBoxStyle = {
   position: "absolute",
@@ -339,34 +342,6 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             {
               <Button variant="contained" onClick={resetOnboardeeClick}>
                 Reset Onboardee
-                <OnboardeeResetModal
-                  onboardee={{}}
-                  open={open}
-                  onClose={handleClose}
-                  onSave={async (onboardee) => {
-                    if (
-                      onboardee.firstName &&
-                      onboardee.lastName &&
-                      onboardee.position &&
-                      onboardee.email &&
-                      onboardee.hireType &&
-                      onboardee.manager &&
-                      csrf
-                    ) {
-                      let res = await createOnboardee(onboardee, csrf);
-                      let data =
-                        res.payload && res.payload.data && !res.error
-                          ? res.payload.data
-                          : null;
-                      if (data) {
-                        dispatch({
-                          type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
-                          payload: [...onboardeeProfiles, data],
-                        });
-                      }
-                    }
-                  }}
-                />
               </Button>
             }
           </Grid>
