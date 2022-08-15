@@ -113,7 +113,7 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
                 assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), "/services" + response.getHeaders().get("location"));
         }
 
-         @Test
+        @Test
         public void testPOSTCreateANullOnboardeeProfile() {
 
              OnboardingProfileCreateDTO onboardeeProfileCreateDTO = new OnboardingProfileCreateDTO();

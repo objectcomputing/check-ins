@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.employmentpreferences;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Introspected
 public class EmploymentDesiredAvailabilityDTO {
     @NotNull
     @Schema(description = "id of the new employee profile this entry is associated with", required = true)
