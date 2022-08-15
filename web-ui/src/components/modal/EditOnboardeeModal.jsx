@@ -8,8 +8,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
-import OnboardeeResetModal from "./OnboardeeResetModal";
-import { createOnboardee } from "../../api/onboardeeMember";
 import { useHistory } from "react-router-dom";
 
 const history = useHistory();
@@ -114,6 +112,10 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
 
   let editReset = false;
 
+  const handleReturn = () => {
+    history.push({ pathname: `/onboard/progress` });
+  };
+
   const resetOnboardeeClick = useCallback(async () => {
     onClose();
     let required = validateRequiredInputsPresent();
@@ -136,7 +138,9 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
         }
       });
     }
-    history.push({ pathname: `/onboard/progress` });
+    {
+      handleReturn;
+    }
   }, [
     validateRequiredInputsPresent,
     onSave,
