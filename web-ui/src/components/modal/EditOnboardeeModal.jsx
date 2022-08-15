@@ -242,7 +242,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="contained" onClock={submitOnboardeeClick}>
+            <Button variant="contained" onClick={submitOnboardeeClick}>
               Submit
             </Button>
           </Grid>

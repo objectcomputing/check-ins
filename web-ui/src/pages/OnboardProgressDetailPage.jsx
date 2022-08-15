@@ -13,6 +13,7 @@ import ProgressIndicator from "../components/onboard_progress/ProgressIndicator"
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 import { updateOnboardee } from "../api/onboardeeMember";
 import { AppContext } from "../context/AppContext";
+import SplitButton from "../components/split-button/SplitButton";
 
 const modalStyle = {
   position: "absolute",
@@ -27,15 +28,17 @@ const modalStyle = {
   px: 4,
   pb: 3,
   m: 2,
+  maxHeight: "90vh",
+  overflow: "auto",
 };
 
-export default function OnboardProgressDetailPage(onboardee){
+export default function OnboardProgressDetailPage(onboardee) {
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
   const location = useLocation();
   const { state, dispatch } = useContext(AppContext);
-  const { csrf , onboardeeProfiles} = state;
-  const { name, email, hireType } = location.state;
+  const { csrf, onboardeeProfiles } = state;
+  const { name, email, hireType, title, completed } = location.state;
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
 
   useEffect(() => {
@@ -53,6 +56,19 @@ export default function OnboardProgressDetailPage(onboardee){
     getData();
   }, []);
 
+  const options = ["Finish Onboarding", "Delete"];
+
+  const delWord = [
+    {
+      body: "Are you sure you want to delete this onboardee? Onboardee will no longer have access to 'Onboarding'.",
+      confirm: "Onboarding complete.",
+    },
+    {
+      body: "Warning! If you confirm, this user WILL be deleted and their information will be removed from 'Onboarding'. This action is permanent and cannot be undone. Continue?",
+      confirm: "Onboardee deleted.",
+    },
+  ];
+
   const history = useHistory();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -61,10 +77,16 @@ export default function OnboardProgressDetailPage(onboardee){
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
   const [openDel, setOpenDel] = useState(false);
-  const handleDel = () => setOpenDel(!openDel);
+  const [delNum, setDelNum] = useState(1);
+  const handleCancel = () => setOpenDel(!openDel);
+  const handleDel = (e, index) => {
+    setDelNum(index);
+    setOpenDel(!openDel);
+  };
   const [openDelConf, setOpenDelConf] = useState(false);
+
   const handleReturn = () => {
-    history.push({ pathname: `/onboard/progress` })
+    history.push({ pathname: `/onboard/progress` });
   };
   //handleDelSubmit will do more when the back-end is set-up
   //Will need it to delete user data and notifications
@@ -72,6 +94,7 @@ export default function OnboardProgressDetailPage(onboardee){
     setOpenDel(!openDel);
     setOpenDelConf(!openDelConf);
   };
+
   const accordionArr = [
     {
       title: "Personal Information",
@@ -139,7 +162,9 @@ export default function OnboardProgressDetailPage(onboardee){
   ];
 
   const documentRows = documentArr
-    .filter((e) => e.signrequest !== null && e.signrequest.signers[1].email === email)
+    .filter(
+      (e) => e.signrequest !== null && e.signrequest.signers[1].email === email
+    )
     .map((filteredE, i) => ({
       id: filteredE.uuid,
       documentName: filteredE.name,
@@ -182,9 +207,9 @@ export default function OnboardProgressDetailPage(onboardee){
   ];
   return (
     <div className="detail-onboard">
-      <Grid container >
+      <Grid container>
         <Grid item xs={5}>
-          <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
+          <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%", padding: "2em" }}>
             <Button
               onClick={handleOpen}
               variant="contained"
@@ -201,7 +226,7 @@ export default function OnboardProgressDetailPage(onboardee){
                         <Accordion
                           key={i}
                           title={arr.title}
-                          open={i === 0 ? true : false}
+                          open
                           index={i}
                           content={arr.content}
                         />
@@ -211,7 +236,7 @@ export default function OnboardProgressDetailPage(onboardee){
                     <Button
                       variant="contained"
                       onClick={handleClose}
-                      sx={{ fontSize: "1vw" }}
+                      sx={{ fontSize: "1vw", mt: 3 }}
                     >
                       Close
                     </Button>
@@ -247,17 +272,30 @@ export default function OnboardProgressDetailPage(onboardee){
             <Modal open={openDel}>
               <Box sx={modalStyle}>
                 <div>
-                  <Typography sx={{ textAlign: 'center' }}>
-                    Warning! If you confirm, this user WILL be deleted and their information will be removed from "Onboarding".
-                    This action is permanent and cannot be undone. Continue?
+                  <Typography sx={{ textAlign: "center" }}>
+                    {`${delWord[delNum].body}`}
                   </Typography>
                   <Grid container sx={{ mt: 5 }}>
-                    <Grid item xs={6}>
-                      <Button variant="contained" onClick={handleDel}>
+                    <Grid
+                      item
+                      xs={5}
+                      display="flex"
+                      justifyContent="flex-end"
+                      alignItems="flex-end"
+                    >
+                      <Button variant="contained" onClick={handleCancel}>
                         Cancel
                       </Button>
                     </Grid>
-                    <Grid item xs={6} display="flex" justifyContent="flex-end" alignItems="flex-end">
+                    {/* This grid exists for styling purposes only. */}
+                    <Grid item xs={2}></Grid>
+                    <Grid
+                      item
+                      xs={5}
+                      display="flex"
+                      justifyContent="flex-start"
+                      alignItems="flex-start"
+                    >
                       <Button variant="contained" onClick={handleDelSubmit}>
                         Confirm
                       </Button>
@@ -270,7 +308,7 @@ export default function OnboardProgressDetailPage(onboardee){
               <Box sx={modalStyle}>
                 <div>
                   <Typography align="center" fontSize={32}>
-                    Onboard deleted.
+                    {`${delWord[delNum].confirm}`}
                   </Typography>
                   <Grid container sx={{ mt: 5 }}>
                     <Grid item xs={12} align="center">
@@ -283,13 +321,22 @@ export default function OnboardProgressDetailPage(onboardee){
               </Box>
             </Modal>
 
-            <h1>Name: {name}</h1>
-            <h1>Email: {email} </h1>
-            <h1>Hire Type: {hireType}</h1>
+            <Typography variant="h4">{name}</Typography>
+            <Typography variant="h4">{email}</Typography>
+            <Typography variant="h4">{title}</Typography>
+            <Typography variant="h4">{hireType}</Typography>
+            <Typography
+              variant="h4"
+              sx={{
+                color: completed === "Not Completed" ? "red" : "green",
+              }}
+            >
+              Status: {completed}
+            </Typography>
           </Box>
         </Grid>
 
-        <Grid item xs={7} sx={{ height: 650 }}>
+        <Grid item xs={7} sx={{ padding: "2em" }}>
           <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
             <div style={{ display: "flex" }}>
               <h1>Documents/Surveys</h1>
@@ -315,22 +362,19 @@ export default function OnboardProgressDetailPage(onboardee){
             />
           </Box>
         </Grid>
-        <Grid item xs={6}>
-          <Button variant="contained" sx={{ fontSize: "1vw" }} onClick={handleReturn}>
+        <Grid item xs={6} sx={{ display: "flex", alignContent: "flex-end", flexWrap: "wrap", justifyContent: "flex-start", padding: "2em"}}>
+          <Button variant="contained" onClick={handleReturn}>
             Back
           </Button>
         </Grid>
-        <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Grid item xs={6} sx={{ display: "flex", justifyContent: "flex-end", flexWrap: "wrap", flexDirection: "row", alignContent: "flex-end", padding: "2em" }}>
           <Button
             variant="contained"
             onClick={handleOpenEdit}
-            sx={{ fontSize: "1vw" }}
           >
             Edit Onboardee
           </Button>
-
-          <Button variant="contained" sx={{ fontSize: "1vw" }} >Finish Onboarding</Button>
-          <Button variant="contained" sx={{ fontSize: "1vw" }} onClick={handleDel}>Delete</Button>
+          <SplitButton options={options} onClick={handleDel} />
         </Grid>
       </Grid>
     </div>
