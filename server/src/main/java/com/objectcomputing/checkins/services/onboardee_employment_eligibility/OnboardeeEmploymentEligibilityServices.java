@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;

@@ -87,7 +87,6 @@ public class OnboardeeEmploymentEligibilityController {
 
     @Put()
     public Mono<HttpResponse<OnboardeeEmploymentEligibilityResponseDTO>> update(@Body @Valid OnboardeeEmploymentEligibilityResponseDTO onboardeeEmploymentEligibility) {
-        LOG.info(":)");
         return Mono.fromCallable(() -> onboardeeEmploymentEligibilityServices.saveProfile(fromDTO(onboardeeEmploymentEligibility)))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> {

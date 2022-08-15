@@ -2,8 +2,6 @@ package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfile;
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileRepository;
 import jakarta.inject.Singleton;
 
 import javax.annotation.Nullable;
