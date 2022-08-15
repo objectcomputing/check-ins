@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, Divider } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
@@ -209,7 +209,15 @@ export default function OnboardProgressDetailPage(onboardee) {
     <div className="detail-onboard">
       <Grid container>
         <Grid item xs={5}>
-          <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%", padding: "2em" }}>
+          <Box
+            sx={{
+              height: 150,
+              width: "40%",
+              mt: "5%",
+              ml: "5%",
+              padding: "2em",
+            }}
+          >
             <Button
               onClick={handleOpen}
               variant="contained"
@@ -320,33 +328,26 @@ export default function OnboardProgressDetailPage(onboardee) {
                 </div>
               </Box>
             </Modal>
-
-            <Typography variant="h4">{name}</Typography>
-            <Typography variant="h4">{email}</Typography>
-            <Typography variant="h4">{title}</Typography>
-            <Typography variant="h4">{hireType}</Typography>
-            <Typography
-              variant="h4"
-              sx={{
-                color: completed === "Not Completed" ? "red" : "green",
-              }}
-            >
-              Status: {completed}
-            </Typography>
           </Box>
+          <Typography variant="h4">Name: {name}</Typography>
+          <Typography variant="h4">Email: {email}</Typography>
+          <Divider />
+          <Typography variant="h4">Position: {title}</Typography>
+          <Typography variant="h4">Hire Type: {hireType}</Typography>
         </Grid>
 
         <Grid item xs={7} sx={{ padding: "2em" }}>
           <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
-            <div style={{ display: "flex" }}>
+            <Box className="header">
               <h1>Documents/Surveys</h1>
               <ProgressIndicator
                 dataDocument={documentRows}
                 dataSurvey={surveyRows}
               />
-            </div>
+            </Box>
 
             <DataGrid
+              className="grid"
               rows={documentRows}
               columns={documentColumns}
               pageSize={5}
@@ -360,18 +361,47 @@ export default function OnboardProgressDetailPage(onboardee) {
               rowsPerPageOptions={[5]}
               disableSelectionOnClick
             />
+            <Box className="textBackground">
+              <Typography variant="h4">Status: </Typography>
+              <Typography
+                variant="h4"
+                sx={{
+                  color: completed === "Not Completed" ? "red" : "green",
+                }}
+              >
+                {completed}
+              </Typography>
+            </Box>
           </Box>
         </Grid>
-        <Grid item xs={6} sx={{ display: "flex", alignContent: "flex-end", flexWrap: "wrap", justifyContent: "flex-start", padding: "2em"}}>
+        <Grid
+          item
+          xs={6}
+          sx={{
+            display: "flex",
+            alignContent: "flex-end",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
+            padding: "2em",
+          }}
+        >
           <Button variant="contained" onClick={handleReturn}>
             Back
           </Button>
         </Grid>
-        <Grid item xs={6} sx={{ display: "flex", justifyContent: "flex-end", flexWrap: "wrap", flexDirection: "row", alignContent: "flex-end", padding: "2em" }}>
-          <Button
-            variant="contained"
-            onClick={handleOpenEdit}
-          >
+        <Grid
+          item
+          xs={6}
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            flexWrap: "wrap",
+            flexDirection: "row",
+            alignContent: "flex-end",
+            padding: "2em",
+          }}
+        >
+          <Button variant="contained" onClick={handleOpenEdit}>
             Edit Onboardee
           </Button>
           <SplitButton options={options} onClick={handleDel} />
