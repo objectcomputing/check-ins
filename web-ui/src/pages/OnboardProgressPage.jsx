@@ -128,16 +128,12 @@ export default function OnboardProgressPage(onboardee) {
   ];
 
   async function submitInfo(onboardee) {
-    if (
-      onboardee.firstName &&
-      onboardee.lastName &&
-      onboardee.position &&
-      onboardee.email &&
-      onboardee.hireType &&
-      onboardee.pdl &&
-      csrf
-    ) {
+    console.log(
+      "Submit info"
+    )
+    if (csrf) {
 
+      console.log("CSRF", csrf)
       let res1 = await initializeOnboardee(onboardee.email, csrf);
       console.log(res1);
 
