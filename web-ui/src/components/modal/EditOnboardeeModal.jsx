@@ -9,7 +9,7 @@ import Select from "@mui/material/Select";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
 import OnboardeeResetModal from "./OnboardeeResetModal";
-import { createOnboardee } from "../api/onboardeeMember";
+import { createOnboardee } from "../../api/onboardeeMember";
 
 const modalBoxStyle = {
   position: "absolute",
