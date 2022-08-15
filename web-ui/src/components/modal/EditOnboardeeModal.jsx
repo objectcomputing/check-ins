@@ -8,9 +8,9 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const history = useHistory();
+const navigate = useNavigate();
 
 const modalBoxStyle = {
   position: "absolute",
@@ -113,7 +113,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
   let editReset = false;
 
   const handleReturn = () => {
-    history.push({ pathname: `/onboard/progress` });
+    navigate(`/onboard/progress`);
   };
 
   const resetOnboardeeClick = useCallback(async () => {
@@ -138,9 +138,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
         }
       });
     }
-    {
-      handleReturn;
-    }
+    handleReturn();
   }, [
     validateRequiredInputsPresent,
     onSave,
