@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardeeprofile.exceptions;
+package com.objectcomputing.checkins.services.onboard.exceptions;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

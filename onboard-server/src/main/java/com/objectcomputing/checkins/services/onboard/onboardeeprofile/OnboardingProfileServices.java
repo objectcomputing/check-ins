@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardeeprofile;
+package com.objectcomputing.checkins.services.onboard.onboardeeprofile;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -10,7 +10,7 @@ public interface OnboardingProfileServices {
     OnboardingProfile getById(UUID id);
 
     Set<OnboardingProfile> findByValues (UUID id, String firstName, String lastName, String socialSecurityNumber,
-                                         LocalDate birthDate, String phoneNumber, String personalEmail);
+                                         LocalDate birthDate, String phoneNumber, String personalEmail, UUID backgroundId);
 
     OnboardingProfile saveProfile(OnboardingProfile onboardingProfile);
 

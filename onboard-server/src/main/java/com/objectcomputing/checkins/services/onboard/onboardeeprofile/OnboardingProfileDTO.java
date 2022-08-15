@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardeeprofile;
+package com.objectcomputing.checkins.services.onboard.onboardeeprofile;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
@@ -57,6 +57,9 @@ public class OnboardingProfileDTO {
     @Schema(description = "Personal email of onboardee")
     private String personalEmail;
 
+    @NotNull
+    @Schema(description = "Background Id of onboardee")
+    private UUID backgroundId;
 
     public UUID getId() {
         return id;
@@ -148,6 +151,9 @@ public class OnboardingProfileDTO {
         this.personalEmail = personalEmail;
     }
 
+    public UUID getBackgroundId() { return backgroundId; }
+
+    public void setBackgroundId(UUID backgroundId) { this.backgroundId = backgroundId; }
     @Override
     public String toString() {
         return "OnboardingProfileDTO{" +
@@ -162,6 +168,7 @@ public class OnboardingProfileDTO {
                 ", phoneNumber='" + phoneNumber +
                 ", secondPhoneNumber='" + secondPhoneNumber +
                 ", personalEmail=" + personalEmail +  '\'' +
+                ", backgroundId=" + backgroundId + '\'' +
                 '}';
     }
 
@@ -170,11 +177,11 @@ public class OnboardingProfileDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OnboardingProfileDTO that = (OnboardingProfileDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(middleName, that.middleName) && Objects.equals(lastName, that.lastName) && Objects.equals(socialSecurityNumber, that.socialSecurityNumber) && Objects.equals(birthDate, that.birthDate) && Objects.equals(currentAddress, that.currentAddress) && Objects.equals(previousAddress, that.previousAddress) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(secondPhoneNumber, that.secondPhoneNumber) && Objects.equals(personalEmail, that.personalEmail);
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(middleName, that.middleName) && Objects.equals(lastName, that.lastName) && Objects.equals(socialSecurityNumber, that.socialSecurityNumber) && Objects.equals(birthDate, that.birthDate) && Objects.equals(currentAddress, that.currentAddress) && Objects.equals(previousAddress, that.previousAddress) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(secondPhoneNumber, that.secondPhoneNumber) && Objects.equals(personalEmail, that.personalEmail) && Objects.equals(backgroundId, that.backgroundId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail);
+        return Objects.hash(id, firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail, backgroundId);
     }
 }

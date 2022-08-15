@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.background_information;
+package com.objectcomputing.checkins.services.onboard.background_information;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;

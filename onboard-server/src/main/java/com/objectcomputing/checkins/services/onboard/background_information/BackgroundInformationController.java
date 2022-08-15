@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.background_information;
+package com.objectcomputing.checkins.services.onboard.background_information;
 
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -56,7 +56,7 @@ public class BackgroundInformationController {
                 .subscribeOn(scheduler);
     }
 
-    @Get("/?id,userId,stepComplete}")
+    @Get("/{?id,userId,stepComplete}")
     public Mono<HttpResponse<List<BackgroundInformationDTO>>> findByValue(@Nullable UUID id,
                                                                           @Nullable String userId,
                                                                           @Nullable Boolean stepComplete){
@@ -112,7 +112,7 @@ public class BackgroundInformationController {
     }
 
     private URI location(UUID id) {
-        return URI.create("/onboardee-background-information/" + id);
+        return URI.create("/background-information/" + id);
     }
 
     private BackgroundInformationDTO fromEntity(BackgroundInformation entity) {

@@ -1,14 +1,17 @@
-package com.objectcomputing.checkins.services.onboardeeprofile;
+package com.objectcomputing.checkins.services.onboard.onboardeeprofile;
 
-import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.NotFoundException;
+
+import com.objectcomputing.checkins.services.onboard.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.services.onboard.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.onboard.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
+
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
 public class OnboardingProfileServicesImpl implements OnboardingProfileServices  {
@@ -34,9 +37,10 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
             @Nullable String socialSecurityNumber,
             @Nullable LocalDate birthDate,
             @Nullable String phoneNumber,
-            @Nullable String personalEmail) {
+            @Nullable String personalEmail,
+            @Nullable UUID backgroundId) {
         HashSet<OnboardingProfile> onboarding_profiles = new HashSet<>(onboardingProfileRepository.search( (nullSafeUUIDToString(id)), firstName, null, lastName,
-                socialSecurityNumber,  birthDate,null, null, phoneNumber, null, personalEmail));
+                socialSecurityNumber,  birthDate,null, null, phoneNumber, null, personalEmail, nullSafeUUIDToString(backgroundId)));
 
         return onboarding_profiles;
     }
@@ -63,7 +67,7 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
     @Override
     public OnboardingProfile findByName(String firstName, String lastName) {
         List<OnboardingProfile> searchResult = onboardingProfileRepository.search(null, firstName, null, lastName,
-                null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }

@@ -1,9 +1,11 @@
-package com.objectcomputing.checkins.services.background_information;
+package com.objectcomputing.checkins.services.onboard.background_information;
 
-import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.onboard.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.services.onboard.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -12,6 +14,9 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
 public class BackgroundInformationServicesImpl implements BackgroundInformationServices {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BackgroundInformationServicesImpl.class);
+
     private final BackgroundInformationRepository backgroundInformationRepository;
 
     public BackgroundInformationServicesImpl(BackgroundInformationRepository backgroundInformationRepository){
@@ -32,8 +37,8 @@ public class BackgroundInformationServicesImpl implements BackgroundInformationS
             @Nullable UUID id,
             @Nullable String userId,
             @Nullable Boolean stepComplete){
-        return new HashSet<>(backgroundInformationRepository
-                .search((nullSafeUUIDToString(id)), userId,stepComplete));
+        return new HashSet<>(backgroundInformationRepository.search(nullSafeUUIDToString(id), userId,stepComplete));
+
     }
 
     @Override

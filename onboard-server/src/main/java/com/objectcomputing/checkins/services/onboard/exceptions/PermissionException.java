@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardeeprofile.exceptions;
+package com.objectcomputing.checkins.services.onboard.exceptions;
 
 public class PermissionException extends RuntimeException {
     public PermissionException(String message) {
