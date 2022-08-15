@@ -8,6 +8,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
+import OnboardeeResetModal from "./OnboardeeResetModal";
+import { createOnboardee } from "../api/onboardeeMember";
 
 const modalBoxStyle = {
   position: "absolute",
@@ -30,10 +32,10 @@ const emptyOnboardee = {
   position: "",
   email: "",
   hireType: "",
-  pdl: "",
+  manager: "",
 };
 
-const EditOnboardee = ({ onboardee, open, onSave, onReset, onClose }) => {
+const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
   const { dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const [empFile, setEmpFile] = useState(" ");
@@ -42,10 +44,12 @@ const EditOnboardee = ({ onboardee, open, onSave, onReset, onClose }) => {
   );
   const handleEmployeeAgreement = (e) => {
     setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
+    editReset = true;
   };
   const [offer, setOfferFile] = useState(" ");
   const handleOfferLetter = (e) => {
     setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
+    editReset = true;
   };
 
   const validateInputs = useCallback(() => {
@@ -71,7 +75,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onReset, onClose }) => {
       editedOnboardee.postition?.length > 0 &&
       editedOnboardee.hireType?.length > 0 &&
       editedOnboardee.employeeId?.length > 0 &&
-      editedOnboardee.pdl?.length > 0
+      editedOnboardee.manager?.length > 0
     );
   }, [editedOnboardee]);
 
@@ -105,7 +109,10 @@ const EditOnboardee = ({ onboardee, open, onSave, onReset, onClose }) => {
     isNewOnboardee,
   ]);
 
+  let editReset = false;
+
   const resetOnboardeeClick = useCallback(async () => {
+    onClose();
     let required = validateRequiredInputsPresent();
 
     let inputsFeasible = validateInputs();
@@ -126,6 +133,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onReset, onClose }) => {
         }
       });
     }
+    history.push({ pathname: `/onboard/progress` });
   }, [
     validateRequiredInputsPresent,
     onSave,
@@ -217,6 +225,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onReset, onClose }) => {
               value={editedOnboardee.email ? editedOnboardee.email : ""}
               onChange={(e) => {
                 setOnboardee({ ...editedOnboardee, email: e.target.value });
+                editReset = true;
               }}
             />
           </Grid>
@@ -226,11 +235,11 @@ const EditOnboardee = ({ onboardee, open, onSave, onReset, onClose }) => {
             </Typography>
             <Select
               sx={{ width: "75%" }}
-              id="pdl"
+              id="manager"
               variant="standard"
-              value={editedOnboardee.pdl ? editedOnboardee.pdl : ""}
+              value={editedOnboardee.manager ? editedOnboardee.manager : ""}
               onChange={(e) =>
-                setOnboardee({ ...editedOnboardee, pdl: e.target.value })
+                setOnboardee({ ...editedOnboardee, manager: e.target.value })
               }
             >
               <MenuItem value={"dummy1"}>dummy1</MenuItem>
@@ -320,13 +329,46 @@ const EditOnboardee = ({ onboardee, open, onSave, onReset, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="contained" onClick={submitOnboardeeClick}>
-              Submit
-            </Button>
-
-            <Button variant="contained" onClick={resetOnboardeeClick}>
-              Reset Onboardee
-            </Button>
+            if (!editReset){" "}
+            {
+              <Button variant="contained" onClick={submitOnboardeeClick}>
+                Submit
+              </Button>
+            }
+            else{" "}
+            {
+              <Button variant="contained" onClick={resetOnboardeeClick}>
+                Reset Onboardee
+                <OnboardeeResetModal
+                  onboardee={{}}
+                  open={open}
+                  onClose={handleClose}
+                  onSave={async (onboardee) => {
+                    if (
+                      onboardee.firstName &&
+                      onboardee.lastName &&
+                      onboardee.position &&
+                      onboardee.email &&
+                      onboardee.hireType &&
+                      onboardee.manager &&
+                      csrf
+                    ) {
+                      let res = await createOnboardee(onboardee, csrf);
+                      let data =
+                        res.payload && res.payload.data && !res.error
+                          ? res.payload.data
+                          : null;
+                      if (data) {
+                        dispatch({
+                          type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
+                          payload: [...onboardeeProfiles, data],
+                        });
+                      }
+                    }
+                  }}
+                />
+              </Button>
+            }
           </Grid>
         </Grid>
       </Box>

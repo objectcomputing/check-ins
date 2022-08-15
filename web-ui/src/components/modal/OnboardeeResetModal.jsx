@@ -16,7 +16,6 @@ const OnboardeeResetModal = () => {
     pb: 3,
     m: 2,
   };
-
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -26,7 +25,7 @@ const OnboardeeResetModal = () => {
   };
   return (
     <React.Fragment>
-      <Button onClick={handleOpen}>Submit</Button>
+      onClick={handleOpen}
       <Modal
         open={open}
         onClose={handleClose}
@@ -44,21 +43,27 @@ const OnboardeeResetModal = () => {
             }}
           >
             <Typography variant="p" component="h3">
-              Onboardee Reset!
+              This action will restart their entire onboarding process. Are you
+              sure you want to reset this onboardee?
             </Typography>
           </div>
           <div>
-            <Grid container sx={{ mt: 5 }}>
-              <Grid item xs={12} align="center">
-                <Button
-                  variant="contained"
-                  onClick={handleClose}
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    gap: "10px",
-                  }}
-                >
+            <Grid container>
+              <Grid
+                item
+                xs={6}
+                style={{ display: "flex", justifyContent: "flex-start" }}
+              >
+                <Button variant="contained" onClick={onClose}>
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid
+                item
+                xs={6}
+                style={{ display: "flex", justifyContent: "flex-end" }}
+              >
+                <Button variant="contained" onClick={resetOnboardeeClick}>
                   Reset Onboardee
                 </Button>
               </Grid>

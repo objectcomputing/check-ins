@@ -157,7 +157,7 @@ export default function OnboardProgressPage(onboardee) {
               onboardee.position &&
               onboardee.email &&
               onboardee.hireType &&
-              onboardee.pdl &&
+              onboardee.manager &&
               csrf
             ) {
               let res = await createOnboardee(onboardee, csrf);
