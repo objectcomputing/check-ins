@@ -32,16 +32,14 @@ public class BackgroundInformationServicesImpl implements BackgroundInformationS
             @Nullable UUID id,
             @Nullable String userId,
             @Nullable Boolean stepComplete){
-        HashSet<BackgroundInformation> background_information = new HashSet<>(backgroundInformationRepository
+        return new HashSet<>(backgroundInformationRepository
                 .search((nullSafeUUIDToString(id)), userId,stepComplete));
-
-        return background_information;
     }
 
     @Override
     public BackgroundInformation saveProfile (BackgroundInformation backgroundInformation){
         if (backgroundInformation.getId() != null){
-            throw new AlreadyExistsException(String.format("Background Information User Id exists in database"));
+            throw new AlreadyExistsException("Background Information User Id exists in database");
         }
         if (backgroundInformation.getId() == null){
             return backgroundInformationRepository.save(backgroundInformation);
