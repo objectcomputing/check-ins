@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.onboard.background_information;
 
+
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
@@ -37,18 +38,14 @@ public class BackgroundInformationServicesImpl implements BackgroundInformationS
             @Nullable UUID id,
             @Nullable String userId,
             @Nullable Boolean stepComplete){
-        LOG.info("Entering findByValues\n id: %s\n userId: %s\n stepComplete: %s", id, userId, stepComplete);
-        HashSet<BackgroundInformation> background_information = new HashSet<>(backgroundInformationRepository
-                .search(nullSafeUUIDToString(id), userId,stepComplete));
+        return new HashSet<>(backgroundInformationRepository.search(nullSafeUUIDToString(id), userId,stepComplete));
 
-        LOG.info("Exiting findByValues");
-        return background_information;
     }
 
     @Override
     public BackgroundInformation saveProfile (BackgroundInformation backgroundInformation){
         if (backgroundInformation.getId() != null){
-            throw new AlreadyExistsException(String.format("Background Information User Id exists in database"));
+            throw new AlreadyExistsException("Background Information User Id exists in database");
         }
         if (backgroundInformation.getId() == null){
             return backgroundInformationRepository.save(backgroundInformation);
