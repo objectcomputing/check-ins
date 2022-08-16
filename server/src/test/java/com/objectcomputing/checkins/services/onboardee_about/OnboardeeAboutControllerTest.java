@@ -92,7 +92,7 @@ public class OnboardeeAboutControllerTest extends TestContainersSuite
         final HttpResponse<OnboardeeAboutResponseDTO> response = client.toBlocking().exchange(request,
                 OnboardeeAboutResponseDTO.class);
 
-        // assertEquals(onboardeeAboutResponseDTO, response.body());
+        assertEquals(onboardeeAboutResponseDTO, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertNotEquals(onboardeeAbout.getAdditionalSkills(), response.body().getAdditionalSkills());
         assertEquals(String.format("%s/%s", request.getPath(), onboardeeAboutResponseDTO.getId()),
