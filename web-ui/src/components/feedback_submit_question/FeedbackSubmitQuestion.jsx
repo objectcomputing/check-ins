@@ -34,11 +34,69 @@ const propTypes = {
   onAnswerChange: PropTypes.func
 };
 
-const updateAnswer = async (answer, csrf) => {
-  return await updateSingleAnswer(answer, csrf);
-}
+const AnswerInput = ({ inputType, readOnly, answer, onAnswerChange }) => {
+  let inputField;
 
-const updateAnswerWithDebounce = debounce(updateAnswer, 2000);
+  const handleChange = useCallback((event, value) => {
+    if (inputType === "SLIDER") {
+      onAnswerChange(agreeMarks[value]);
+    } else {
+      onAnswerChange(event.target.value);
+    }
+
+  }, [onAnswerChange, inputType]);
+
+  switch (inputType) {
+    case "TEXT":
+      inputField = (
+        <TextField
+          multiline
+          rows={5}
+          className="fullWidth"
+          variant="outlined"
+          InputProps={{
+            readOnly: readOnly
+          }}
+          onChange={handleChange}
+          value={answer}
+          onBlur={handleChange}
+        />
+      );
+      break;
+    case "RADIO":
+      inputField = (
+        <RadioGroup
+          row
+          value={answer}
+          onChange={handleChange}
+        >
+          <FormControlLabel disabled={readOnly} value="Yes" control={<Radio/>} label="Yes"/>
+          <FormControlLabel disabled={readOnly} value="No" control={<Radio/>} label="No"/>
+          <FormControlLabel disabled={readOnly} value="I don't know" control={<Radio/>} label="I don't know"/>
+        </RadioGroup>
+      );
+      break;
+    case "SLIDER":
+      inputField = (
+        <Slider
+          disabled={readOnly}
+          min={0}
+          max={agreeMarks.length - 1}
+          value={agreeMarks.findIndex(mark => mark === answer)}
+          step={1}
+          marks={agreeMarks.map((mark, index) => {
+            return { value: index, label: mark }
+          })}
+          onChange={handleChange}
+        />
+      );
+      break;
+    default:
+      inputField = <></>;
+      console.warn(`No input rendered for invalid inputType '${inputType}'`);
+  }
+  return inputField;
+}
 
 const FeedbackSubmitQuestion = (props) => {
 
@@ -46,8 +104,16 @@ const FeedbackSubmitQuestion = (props) => {
   const { csrf } = state;
 
   const savingAnswer = useRef(false);
+  const updateAnswerWithDebounce = useRef(debounce(updateSingleAnswer, 2000));
+
+  useEffect(() => {
+    if (props.answer?.id) {
+      savingAnswer.current = false;
+    }
+  }, [props.answer?.id]);
 
   const saveAnswer = useCallback((answer) => {
+    savingAnswer.current = true;
     saveSingleAnswer(answer, csrf).then(res => {
       if (res?.payload?.data && !res.error) {
         const answerWithId = {
@@ -68,13 +134,26 @@ const FeedbackSubmitQuestion = (props) => {
     });
   }, [csrf, dispatch, props]);
 
-  useEffect(() => {
-    if (props.answer && props.answer.id) {
-      savingAnswer.current = false;
-    }
-  }, [props.answer]);
+  const saveAnswerWithDebounce = useRef(debounce(saveAnswer, 2000));
 
-  const handleAnswerChange = (answerText) => {
+  const handleSaveAnswer = useCallback((answerText) => {
+    props.onAnswerChange({
+      answer: answerText
+    });
+
+    if (!savingAnswer.current) {
+      const newAnswer = {
+        answer: answerText,
+        questionId: props.question.id,
+        requestId: props.requestId
+      };
+
+      const save = saveAnswerWithDebounce.current;
+      save(newAnswer);
+    }
+  }, [props, savingAnswer]);
+
+  const handleUpdateAnswer = useCallback((answerText) => {
     if (props.answer && props.answer.id) {
       props.onAnswerChange({
         id: props.answer.id,
@@ -86,81 +165,20 @@ const FeedbackSubmitQuestion = (props) => {
         answer: answerText
       };
 
-      updateAnswerWithDebounce(updatedAnswer, csrf);
-    } else if (!savingAnswer.current) {
-      props.onAnswerChange({
-        answer: answerText
-      });
-
-      const newAnswer = {
-        answer: answerText,
-        questionId: props.question.id,
-        requestId: props.requestId
-      };
-
-      saveAnswer(newAnswer);
+      const update = updateAnswerWithDebounce.current;
+      update(updatedAnswer, csrf);
     }
-  }
-
-  const getInput = () => {
-    let inputField;
-    switch (props.question.inputType) {
-      case "TEXT":
-        inputField = (
-          <TextField
-            multiline
-            rows={5}
-            className="fullWidth"
-            variant="outlined"
-            InputProps={{
-              readOnly: props.readOnly
-            }}
-            onChange={(event) => {
-              handleAnswerChange(event.target.value)
-            }}
-            value={props.answer?.answer}
-          />
-        );
-        break;
-      case "RADIO":
-        inputField = (
-          <RadioGroup row value={props.answer?.answer} onChange={(event) => {
-            handleAnswerChange(event.target.value)
-          }}>
-            <FormControlLabel disabled={props.readOnly} value="Yes" control={<Radio/>} label="Yes"/>
-            <FormControlLabel disabled={props.readOnly} value="No" control={<Radio/>} label="No"/>
-            <FormControlLabel disabled={props.readOnly} value="I don't know" control={<Radio/>} label="I don't know"/>
-          </RadioGroup>
-        );
-        break;
-      case "SLIDER":
-        inputField = (
-          <Slider
-            disabled={props.readOnly}
-            min={0}
-            max={agreeMarks.length - 1}
-            value={agreeMarks.findIndex(mark => mark === props.answer?.answer)}
-            step={1}
-            marks={agreeMarks.map((mark, index) => {
-              return { value: index, label: mark }
-            })}
-            onChange={(_, value) => {
-              handleAnswerChange(agreeMarks[value])
-            }}
-          />
-        );
-        break;
-      default:
-        inputField = <></>;
-        console.warn(`No input rendered for invalid inputType '${props.inputType}'`);
-    }
-    return inputField;
-  }
+  }, [csrf, props]);
 
   return (
     <div className="feedback-submit-question">
       <Typography variant="body1"><b>Q{props.question.questionNumber}:</b> {props.question.question}</Typography>
-      {getInput()}
+      <AnswerInput
+        answer={props.answer?.answer}
+        readOnly={props.readOnly}
+        inputType={props.question?.inputType}
+        onAnswerChange={props.answer?.id ? handleUpdateAnswer : handleSaveAnswer}
+      />
     </div>
   );
 }

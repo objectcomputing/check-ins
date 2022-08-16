@@ -1,19 +1,122 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders the feedback submit question 1`] = `
+.emotion-0 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+}
+
 <div
   className="feedback-submit-question"
 >
-  <ForwardRef(Typography)
-    variant="body1"
+  <p
+    className="MuiTypography-root MuiTypography-body1 emotion-0"
   >
     <b>
       Q
-      1
       :
     </b>
      
-    How is the project going so far?
-  </ForwardRef(Typography)>
+  </p>
 </div>
+`;
+
+exports[`renders the feedback submit question as a slider 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "state": Object {},
+    }
+  }
+>
+  <FeedbackSubmitQuestion
+    answer={
+      Object {
+        "answer": "Neither Agree nor Disagree",
+        "id": "a",
+        "questionId": "1",
+        "requestId": "abc",
+      }
+    }
+    onAnswerChange={[MockFunction]}
+    question={
+      Object {
+        "id": "1",
+        "question": "Do you think the project is going well so far?",
+        "questionNumber": 1,
+        "questionType": "SLIDER",
+      }
+    }
+    readOnly={false}
+    requestId="abc"
+  />
+</ContextProvider>
+`;
+
+exports[`renders the feedback submit question as radio buttons 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "state": Object {},
+    }
+  }
+>
+  <FeedbackSubmitQuestion
+    answer={
+      Object {
+        "answer": "Yes",
+        "id": "a",
+        "questionId": "1",
+        "requestId": "abc",
+      }
+    }
+    onAnswerChange={[MockFunction]}
+    question={
+      Object {
+        "id": "1",
+        "question": "Do you think the project is going well so far?",
+        "questionNumber": 1,
+        "questionType": "RADIO",
+      }
+    }
+    readOnly={false}
+    requestId="abc"
+  />
+</ContextProvider>
+`;
+
+exports[`renders the feedback submit question as text 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "state": Object {},
+    }
+  }
+>
+  <FeedbackSubmitQuestion
+    answer={
+      Object {
+        "answer": "Good",
+        "id": "a",
+        "questionId": "1",
+        "requestId": "abc",
+      }
+    }
+    onAnswerChange={[MockFunction]}
+    question={
+      Object {
+        "id": "1",
+        "question": "How is the project going so far?",
+        "questionNumber": 1,
+        "questionType": "TEXT",
+      }
+    }
+    readOnly={false}
+    requestId="abc"
+  />
+</ContextProvider>
 `;
