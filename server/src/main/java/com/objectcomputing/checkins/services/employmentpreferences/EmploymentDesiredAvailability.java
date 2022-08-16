@@ -88,8 +88,6 @@ public class EmploymentDesiredAvailability {
     @Schema(description = "expiration date of the non-compete agreement")
     private LocalDate noncompeteExpirationDate;
 
-    // Begin of Referral Type
-
     public EmploymentDesiredAvailability(String desiredPosition, LocalDate desiredStartDate, String desiredSalary, Boolean currentlyEmployed,
                           @Nullable Boolean contactCurrentEmployer, Boolean previousEmploymentOCI, Boolean noncompeteAgreement, @Nullable LocalDate noncompeteExpirationDate) {
         this.desiredPosition = desiredPosition;
