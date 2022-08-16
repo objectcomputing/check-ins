@@ -23,6 +23,7 @@ getQuestionAndAnswer
 import DateFnsUtils from "@date-io/date-fns";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
+import {debounce} from "lodash/function";
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = "FeedbackSubmitForm";
@@ -79,7 +80,13 @@ const propTypes = {
   requesteeName: PropTypes.string.isRequired,
   requestId: PropTypes.string.isRequired,
   request: PropTypes.any.isRequired,
+};
+
+const updateAnswer = async (answer, csrf) => {
+  return await updateSingleAnswer(answer, csrf);
 }
+
+const updateAnswerWithDebounce = debounce(updateAnswer, 2000);
 
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -90,44 +97,37 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([]);
   const savingAnswer = useRef(-1);  // Track the index of the answer being updated, if any
 
-  const updateFeedbackAnswer = useCallback((index, answer) => {
-    const updateAnswer = async (index, answer) => {
-      let res;
+  const saveFeedbackAnswer = useCallback((index, answer) => {
 
-      // Save or update answer on server
-      if (answer && csrf) {
-        savingAnswer.current = index;
-        if (answer.id) {
-          res = await updateSingleAnswer(answer, csrf);
-        } else {
-          res = await saveSingleAnswer(answer, csrf);
-        }
-      }
+    const saveAnswer = async () => {
+      return await saveSingleAnswer(answer, csrf);
+    }
 
-      // Update local state with new answer ID
+    savingAnswer.current = index;
+    saveAnswer().then(res => {
       if (res && res.payload && res.payload.data && !res.error) {
         let updatedQuestionAnswerPairs = [...questionAnswerPairs];
         updatedQuestionAnswerPairs[index].answer.id = res.payload.data.id;
-        return updatedQuestionAnswerPairs;
-      } else if (res && res.error) {
+        setQuestionAnswerPairs(updatedQuestionAnswerPairs);
+      } else if (!res || res.error) {
+        savingAnswer.current = -1;  // Enable saves again if server returns error
         dispatch({
           type: UPDATE_TOAST,
           payload: {
             severity: "error",
             toast: "Failed to save answer"
-          },
+          }
         });
       }
-    };
-
-    updateAnswer(index, answer).then((updatedQuestionsAndAnswers) => {
-      if (updatedQuestionsAndAnswers) {
-        setQuestionAnswerPairs(updatedQuestionsAndAnswers);
-      }
     });
+
   }, [csrf, dispatch, questionAnswerPairs]);
 
-  // Only allow another update once an id is received back from the server, and it has been placed in local state
+  const updateFeedbackAnswer = useCallback((index, answer) => {
+    updateAnswerWithDebounce(answer, csrf);
+  }, [csrf]);
+
+  // Signal that the save is complete once an id is received back from the server, and it has been placed in local state
   useEffect(() => {
     if (savingAnswer.current >= 0 && questionAnswerPairs[savingAnswer.current].answer.id) {
       savingAnswer.current = -1;
@@ -141,10 +141,13 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     setQuestionAnswerPairs(updatedQuestionAnswerPairs);
 
     // Save or update new answer with debounce
-    if (savingAnswer.current === -1) {
+    if (newAnswer.id) {
       updateFeedbackAnswer(index, newAnswer);
+    } else if (savingAnswer.current === -1) {
+      saveFeedbackAnswer(index, newAnswer);
     }
-  }, [questionAnswerPairs, updateFeedbackAnswer]);
+
+  }, [questionAnswerPairs, updateFeedbackAnswer, saveFeedbackAnswer]);
 
   async function updateRequestSubmit() {
     request.status = "submitted"
