@@ -1,25 +1,18 @@
-import React, {useContext, useEffect, useState, useCallback, useRef} from "react";
-import { styled } from "@mui/material/styles";
+import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
+import {styled} from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import { green } from "@mui/material/colors";
+import {blue, green} from "@mui/material/colors";
 import Button from "@mui/material/Button";
 import "./FeedbackSubmitForm.css";
-import { Alert, AlertTitle } from "@mui/material";
+import {Alert, AlertTitle} from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import { blue } from "@mui/material/colors";
-import { useHistory } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
-import { selectCsrfToken } from "../../context/selectors";
-import { UPDATE_TOAST } from "../../context/actions";
-import {
-  updateAllAnswers,
-  updateSingleAnswer,
-  updateFeedbackRequest, saveSingleAnswer,
-} from "../../api/feedback";
-import {
-getQuestionAndAnswer
-} from "../../api/feedbackanswer"
+import {useHistory} from "react-router-dom";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken} from "../../context/selectors";
+import {UPDATE_TOAST} from "../../context/actions";
+import {saveSingleAnswer, updateAllAnswers, updateFeedbackRequest, updateSingleAnswer,} from "../../api/feedback";
+import {getQuestionAndAnswer} from "../../api/feedbackanswer"
 import DateFnsUtils from "@date-io/date-fns";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
@@ -82,11 +75,11 @@ const propTypes = {
   request: PropTypes.any.isRequired,
 };
 
-const updateAnswer = async (answer, csrf) => {
-  return await updateSingleAnswer(answer, csrf);
-}
-
-const updateAnswerWithDebounce = debounce(updateAnswer, 2000);
+// const updateAnswer = async (answer, csrf) => {
+//   return await updateSingleAnswer(answer, csrf);
+// }
+//
+// const updateAnswerWithDebounce = debounce(updateAnswer, 2000);
 
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -123,31 +116,35 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
 
   }, [csrf, dispatch, questionAnswerPairs]);
 
-  const updateFeedbackAnswer = useCallback((index, answer) => {
-    updateAnswerWithDebounce(answer, csrf);
-  }, [csrf]);
+  // const updateFeedbackAnswer = useCallback((index, answer) => {
+  //   updateAnswerWithDebounce(answer, csrf);
+  // }, [csrf]);
 
   // Signal that the save is complete once an id is received back from the server, and it has been placed in local state
-  useEffect(() => {
-    if (savingAnswer.current >= 0 && questionAnswerPairs[savingAnswer.current].answer.id) {
-      savingAnswer.current = -1;
-    }
-  }, [questionAnswerPairs]);
+  // useEffect(() => {
+  //   if (savingAnswer.current >= 0 && questionAnswerPairs[savingAnswer.current].answer.id) {
+  //     savingAnswer.current = -1;
+  //   }
+  // }, [questionAnswerPairs]);
 
   const handleAnswerChange = useCallback((index, newAnswer) => {
     // Update local state with answer data until assigned an ID
     let updatedQuestionAnswerPairs = [...questionAnswerPairs];
-    updatedQuestionAnswerPairs[index].answer = {...newAnswer};
+
+    updatedQuestionAnswerPairs[index].answer = {
+      ...questionAnswerPairs[index].answer,
+      ...newAnswer
+    };
     setQuestionAnswerPairs(updatedQuestionAnswerPairs);
 
     // Save or update new answer with debounce
-    if (newAnswer.id) {
-      updateFeedbackAnswer(index, newAnswer);
-    } else if (savingAnswer.current === -1) {
-      saveFeedbackAnswer(index, newAnswer);
-    }
+    // if (newAnswer.id) {
+    //   updateFeedbackAnswer(index, newAnswer);
+    // } else if (savingAnswer.current === -1) {
+    //   saveFeedbackAnswer(index, newAnswer);
+    // }
 
-  }, [questionAnswerPairs, updateFeedbackAnswer, saveFeedbackAnswer]);
+  }, [questionAnswerPairs]);
 
   async function updateRequestSubmit() {
     request.status = "submitted"
@@ -242,18 +239,12 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       {questionAnswerPairs.map((questionAnswerPair, index) => (
         <FeedbackSubmitQuestion
           key={questionAnswerPair.question.id}
-          question={questionAnswerPair.question.question}
-          questionNumber={questionAnswerPair.question.questionNumber}
-          inputType={questionAnswerPair.question.inputType}
+          question={questionAnswerPair.question}
           readOnly={isReviewing}
-          answer={questionAnswerPair.answer?.answer}
-          handleAnswerChange={(newAnswer) => {
-            handleAnswerChange(index, {
-              answer: newAnswer,
-              id: questionAnswerPair.answer?.id,
-              questionId: questionAnswerPair.question.id,
-              requestId: questionAnswerPair.request.id
-            });
+          requestId={questionAnswerPair.request.id}
+          answer={questionAnswerPair.answer}
+          onAnswerChange={(newAnswer) => {
+            handleAnswerChange(index, newAnswer);
           }}
         />
       ))}
