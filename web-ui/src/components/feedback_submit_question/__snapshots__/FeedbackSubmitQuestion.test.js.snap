@@ -1,30 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders the feedback submit question 1`] = `
-.emotion-0 {
-  margin: 0;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.5;
-  letter-spacing: 0.00938em;
-}
-
-<div
-  className="feedback-submit-question"
->
-  <p
-    className="MuiTypography-root MuiTypography-body1 emotion-0"
-  >
-    <b>
-      Q
-      :
-    </b>
-     
-  </p>
-</div>
-`;
-
 exports[`renders the feedback submit question as a slider 1`] = `
 <ContextProvider
   value={
