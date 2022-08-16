@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.onboardee_about;
 
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.exceptions.NotFoundException;
 import jakarta.inject.Singleton;
 
 import java.util.*;
@@ -17,9 +15,10 @@ public class OnboardeeAboutServicesImpl implements OnboardeeAboutServices {
     @Override
     public OnboardeeAbout getById(UUID id) {
         Optional<OnboardeeAbout> onboardeeAbout = onboardeeAboutRespository.findById(id);
-        if (onboardeeAbout.isEmpty()) {
-            throw new NotFoundException("No new about you information for id " + id);
-        }
+        // May need to add exceptions from from check-ins to help handle errors.
+        // if (onboardeeAbout.isEmpty()) {
+        //     throw new NotFoundException("No new about you information for id " + id);
+        // }
         return onboardeeAbout.get();
     }
 
