@@ -58,7 +58,7 @@ public class BackgroundInformationController {
 
     @Get("/{?id,userId,stepComplete}")
     public Mono<HttpResponse<List<BackgroundInformationDTO>>> findByValue(@Nullable UUID id,
-                                                                          @Nullable UUID userId,
+                                                                          @Nullable String userId,
                                                                           @Nullable Boolean stepComplete){
         return Mono.fromCallable(() -> backgroundInformationServices.findByValues(id,userId,stepComplete))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))

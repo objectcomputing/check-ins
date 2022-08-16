@@ -59,10 +59,10 @@ public class OnboardingProfileTestUtil {
                 );
     }
 
-    public static OnboardingProfile mkOnboarding_Profile() {
-        BackgroundInformation backgroundInformation = new BackgroundInformation("ocitest", false);
-        return mkOnboarding_Profile("", backgroundInformation);
-    }
+//    public static OnboardingProfile mkOnboarding_Profile() {
+//        BackgroundInformation backgroundInformation = new BackgroundInformation(UUID.randomUUID(), false);
+//        return mkOnboarding_Profile("", backgroundInformation);
+//    }
 
     public static void assertProfilesEqual(OnboardingProfile entity, OnboardingProfileDTO dto) {
         assertEquals(entity.getFirstName(), dto.getFirstName());

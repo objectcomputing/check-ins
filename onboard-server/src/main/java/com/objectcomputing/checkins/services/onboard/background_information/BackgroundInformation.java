@@ -12,7 +12,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -28,23 +27,26 @@ public class BackgroundInformation {
     @Schema(description = "id of the new background information class")
     private UUID id;
 
-    @NotNull
-    @Column(name="userid")
-    @TypeDef(type=DataType.STRING)
-    @Schema(description = "id of account", required = true)
-    private UUID userId;
+    @NotBlank
+    @Column(name = "userid")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(userId::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Schema(description = "user id of the authenticated user from login")
+    private String userId;
 
     @NotBlank
     @Column(name = "stepcomplete")
     @Schema(description = "indication of step being complete")
     private Boolean stepComplete;
 
-    public BackgroundInformation(UUID userId, Boolean stepComplete){
+    public BackgroundInformation(String userId, Boolean stepComplete){
         this.userId = userId;
         this.stepComplete = stepComplete;
     }
 
-    public BackgroundInformation(UUID id, UUID userId, Boolean stepComplete){
+    public BackgroundInformation(UUID id, String userId, Boolean stepComplete){
         this.id = id;
         this.userId = userId;
         this.stepComplete = stepComplete;
@@ -54,9 +56,9 @@ public class BackgroundInformation {
 
     public UUID getId() {return id;}
 
-    public void setUserId(UUID userId){this.userId = userId;}
+    public void setUserId(String userId){this.userId = userId;}
 
-    public UUID getUserId(){return userId;}
+    public String getUserId(){return userId;}
 
     public void setStepComplete(Boolean stepComplete){this.stepComplete = stepComplete;}
 

@@ -16,10 +16,10 @@ public interface BackgroundInformationRepository extends CrudRepository<Backgrou
     List<BackgroundInformation> findAll();
 
     @Query(value = "SELECT id, " +
-            "userId, " +
+            "PGP_SYM_DECRYPT(cast(mp.userId as bytea),'${aes.key}') as userId," +
             "stepComplete " +
             "FROM \"background_information\" mp " +
-            "WHERE (:userId IS NULL OR userId = :userId) " +
+            "WHERE (:userId IS NULL OR PGP_SYM_DECRYPT(cast(mp.userId as bytea), '${aes.key}') = :userId) " +
             "AND  (:stepComplete IS NULL OR stepComplete = :stepComplete) ",
             nativeQuery = true)
     List<BackgroundInformation> search(

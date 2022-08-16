@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.onboard.background_information;
 
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.onboard.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.services.onboard.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -35,9 +35,9 @@ public class BackgroundInformationServicesImpl implements BackgroundInformationS
     @Override
     public Set<BackgroundInformation> findByValues(
             @Nullable UUID id,
-            @Nullable UUID userId,
+            @Nullable String userId,
             @Nullable Boolean stepComplete){
-        return new HashSet<>(backgroundInformationRepository.search(nullSafeUUIDToString(id), nullSafeUUIDToString(userId),stepComplete));
+        return new HashSet<>(backgroundInformationRepository.search(nullSafeUUIDToString(id), userId,stepComplete));
 
     }
 

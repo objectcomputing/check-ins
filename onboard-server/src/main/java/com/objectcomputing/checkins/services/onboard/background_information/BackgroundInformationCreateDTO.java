@@ -5,23 +5,22 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
-import java.util.UUID;
 
 @Introspected
 public class BackgroundInformationCreateDTO {
 
     @NotNull
     @Schema(description = "user Id", required = true)
-    private UUID userId;
+    private String userId;
 
     @NotNull
     @Schema(description = "step completion indicator", required = true)
     private Boolean stepComplete;
 
     @NotNull
-    public UUID getUserId() { return userId; }
+    public String getUserId() { return userId; }
 
-    public void setUserId(@NotNull UUID userId) { this.userId = userId;}
+    public void setUserId(@NotNull String userId) { this.userId = userId;}
 
     @NotNull
     public Boolean getStepComplete(){ return stepComplete;}

@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface BackgroundInformationServices {
     BackgroundInformation getById(UUID id);
 
-    Set<BackgroundInformation> findByValues(UUID id, UUID userId, Boolean stepComplete);
+    Set<BackgroundInformation> findByValues(UUID id, String userId, Boolean stepComplete);
 
     BackgroundInformation saveProfile(BackgroundInformation backgroundInformation);
 
