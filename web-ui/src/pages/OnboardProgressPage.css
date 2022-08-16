@@ -3,3 +3,11 @@
   justify-content: center;
   column-gap: 5%;
 }
+
+.notification-header{
+  background-color: rgb(234, 234, 234);
+}
+
+.grid{
+  background-color: rgb(245, 245, 245);
+}
