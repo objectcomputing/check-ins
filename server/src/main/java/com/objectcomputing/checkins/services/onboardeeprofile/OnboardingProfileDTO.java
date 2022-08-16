@@ -29,15 +29,15 @@ public class OnboardingProfileDTO {
     @Schema(description = "last name of the new onboardee")
     private String lastName;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "social Security # of the new onboardee")
     private String socialSecurityNumber;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "birthdate of the new onboardee")
     private LocalDate birthDate;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "currentAddress of the new onboardee")
     private String currentAddress;
 
@@ -45,7 +45,7 @@ public class OnboardingProfileDTO {
     @Schema(description = "previousAddress of the new onboardee")
     private String previousAddress;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "phone # of the new onboardee")
     private String phoneNumber;
 
@@ -56,7 +56,6 @@ public class OnboardingProfileDTO {
     @NotBlank
     @Schema(description = "Personal email of onboardee")
     private String personalEmail;
-
 
     public UUID getId() {
         return id;
@@ -74,11 +73,12 @@ public class OnboardingProfileDTO {
         this.firstName = firstName;
     }
 
+    @Nullable
     public String getMiddleName() {
         return middleName;
     }
 
-    public void setMiddleName(String middleName) {
+    public void setMiddleName(@Nullable String middleName) {
         this.middleName = middleName;
     }
 
@@ -90,27 +90,30 @@ public class OnboardingProfileDTO {
         this.lastName = lastName;
     }
 
+    @Nullable
     public String getSocialSecurityNumber() {
         return socialSecurityNumber;
     }
 
-    public void setSocialSecurityNumber(String socialSecurityNumber) {
+    public void setSocialSecurityNumber(@Nullable String socialSecurityNumber) {
         this.socialSecurityNumber = socialSecurityNumber;
     }
 
+    @Nullable
     public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(@Nullable LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
+    @Nullable
     public String getCurrentAddress() {
         return currentAddress;
     }
 
-    public void setCurrentAddress(String currentAddress) {
+    public void setCurrentAddress(@Nullable String currentAddress) {
         this.currentAddress = currentAddress;
     }
 
@@ -123,11 +126,12 @@ public class OnboardingProfileDTO {
         this.previousAddress = previousAddress;
     }
 
+    @Nullable
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(@Nullable String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -149,23 +153,6 @@ public class OnboardingProfileDTO {
     }
 
     @Override
-    public String toString() {
-        return "OnboardingProfileDTO{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", socialSecurityNumber='" + socialSecurityNumber + '\'' +
-                ", birthDate='" + birthDate +
-                ", currentAddress='" + currentAddress + '\'' +
-                ", previousAddress=" + previousAddress +  '\'' +
-                ", phoneNumber='" + phoneNumber +
-                ", secondPhoneNumber='" + secondPhoneNumber +
-                ", personalEmail=" + personalEmail +  '\'' +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -176,5 +163,22 @@ public class OnboardingProfileDTO {
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail);
+    }
+
+    @Override
+    public String toString() {
+        return "OnboardingProfileDTO{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", socialSecurityNumber='" + socialSecurityNumber + '\'' +
+                ", birthDate=" + birthDate +
+                ", currentAddress='" + currentAddress + '\'' +
+                ", previousAddress='" + previousAddress + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", secondPhoneNumber='" + secondPhoneNumber + '\'' +
+                ", personalEmail='" + personalEmail + '\'' +
+                '}';
     }
 }

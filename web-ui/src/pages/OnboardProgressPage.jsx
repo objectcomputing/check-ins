@@ -135,17 +135,18 @@ export default function OnboardProgressPage(onboardee) {
 
       console.log("CSRF", csrf)
       let res1 = await initializeOnboardee(onboardee.email, csrf);
-      console.log(res1);
+      console.log(res1?.payload?.data?.success);
 
-      // let res2 = await createOnboardee(onboardee, csrf);
-      // let data2 =
-      //   res2.payload && res2.payload.data && !res2.error ? res2.payload.data : null;
-      // if (data2) {
-      //   dispatch({
-      //     type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
-      //     payload: [...onboardeeProfiles, data2],
-      //   });
-      // }
+      if (res1?.payload?.data?.success === true) {
+        let res2 = await createOnboardee(onboardee, csrf);
+        console.log(res2);
+        if (res2?.payload?.data?.success === true) {
+          dispatch({
+            type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
+            payload: [...onboardeeProfiles, res2.payload.data],
+          });
+        }
+      }
     }
   }
 

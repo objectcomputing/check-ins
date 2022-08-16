@@ -27,11 +27,21 @@ export const updateOnboardee = async (onboardee, cookie) => {
 };
 
 export const createOnboardee = async (newOnboardee, cookie) => {
+    console.log(newOnboardee);
+    let initProfile = {
+        firstName: newOnboardee.firstName,
+        lastName: newOnboardee.lastName,
+        personalEmail: newOnboardee?.email,
+        currentAddress: "",
+        middleName: "",
+        phoneNumber: "",
+        socialSecurityNumber: ""
+    };
     return resolve({
         method: "post",
         url: onboardeeProfileUrl,
         responseType: "json",
-        data: newOnboardee,
+        data: initProfile,
         headers: { "X-CSRF-Header": cookie },
     });
 };
