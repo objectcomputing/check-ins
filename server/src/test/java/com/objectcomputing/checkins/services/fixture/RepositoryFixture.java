@@ -33,6 +33,8 @@ import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.MemberHistoryRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
+import com.objectcomputing.checkins.services.workingenvironment.WorkingEnvironmentRepository;
+
 import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.survey.SurveyRepository;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
@@ -182,5 +184,9 @@ public interface RepositoryFixture {
 
     default OnboardeeEmploymentEligibilityRepository getOnboardeeEmploymentEligibilityRepository(){
         return getEmbeddedServer().getApplicationContext().getBean(OnboardeeEmploymentEligibilityRepository.class);
+    }
+
+    default WorkingEnvironmentRepository getWorkingEnvironmentRespository(){
+        return getEmbeddedServer().getApplicationContext().getBean(WorkingEnvironmentRepository.class);
     }
 }
