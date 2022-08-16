@@ -1,26 +1,18 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
-import { styled } from "@mui/material/styles";
+import React, {useCallback, useContext, useEffect, useState} from "react";
+import {styled} from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import { green } from "@mui/material/colors";
+import {blue, green} from "@mui/material/colors";
 import Button from "@mui/material/Button";
 import "./FeedbackSubmitForm.css";
-import { Alert, AlertTitle } from "@mui/material";
+import {Alert, AlertTitle} from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import { blue } from "@mui/material/colors";
-import { useHistory } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
-import { selectCsrfToken } from "../../context/selectors";
-import { UPDATE_TOAST } from "../../context/actions";
-import {
-  updateAllAnswers,
-  updateSingleAnswer,
-  updateFeedbackRequest, saveSingleAnswer,
-} from "../../api/feedback";
-import {
-getQuestionAndAnswer
-} from "../../api/feedbackanswer"
-import { debounce } from "lodash/function";
+import {useHistory} from "react-router-dom";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken} from "../../context/selectors";
+import {UPDATE_TOAST} from "../../context/actions";
+import {updateAllAnswers, updateFeedbackRequest} from "../../api/feedback";
+import {getQuestionAndAnswer} from "../../api/feedbackanswer"
 import DateFnsUtils from "@date-io/date-fns";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
@@ -38,12 +30,12 @@ const classes = {
 const Root = styled('div')({
   [`& .${classes.announcement}`]: {
     textAlign: "center",
-    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
+    '@media (max-width: 800px)': {
       fontSize: "22px"
     }
   },
   [`& .${classes.tip}`]: {
-    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
+    '@media (max-width: 800px)': {
       fontSize: "15px"
     }
   },
@@ -80,7 +72,7 @@ const propTypes = {
   requesteeName: PropTypes.string.isRequired,
   requestId: PropTypes.string.isRequired,
   request: PropTypes.any.isRequired,
-}
+};
 
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -90,37 +82,17 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([]);
 
-  const updateFeedbackAnswer = async (index, answer) => {
-    let res;
-
-    // Save or update answer on server
-    if (answer && csrf) {
-      if (answer.id) {
-        res = await updateSingleAnswer(answer, csrf);
-      } else {
-        res = await saveSingleAnswer(answer, csrf);
-      }
-    }
-
-    // Update local state with new answer ID
-    if (res && res.payload && res.payload.data && !res.error) {
-      let updatedQuestionAnswerPairs = [...questionAnswerPairs];
-      updatedQuestionAnswerPairs[index].answer.id = res.payload.data.id;
-      setQuestionAnswerPairs(updatedQuestionAnswerPairs);
-    }
-  }
-
-  const updateFeedbackAnswerWithDebounce = debounce(updateFeedbackAnswer, 1000);
-
   const handleAnswerChange = useCallback((index, newAnswer) => {
     // Update local state with answer data until assigned an ID
     let updatedQuestionAnswerPairs = [...questionAnswerPairs];
-    updatedQuestionAnswerPairs[index].answer = {...newAnswer};
+
+    updatedQuestionAnswerPairs[index].answer = {
+      ...questionAnswerPairs[index].answer,
+      ...newAnswer
+    };
     setQuestionAnswerPairs(updatedQuestionAnswerPairs);
 
-    // Save or update new answer with debounce
-    updateFeedbackAnswerWithDebounce(index, newAnswer);
-  }, [questionAnswerPairs, updateFeedbackAnswerWithDebounce]);
+  }, [questionAnswerPairs]);
 
   async function updateRequestSubmit() {
     request.status = "submitted"
@@ -215,18 +187,12 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       {questionAnswerPairs.map((questionAnswerPair, index) => (
         <FeedbackSubmitQuestion
           key={questionAnswerPair.question.id}
-          question={questionAnswerPair.question.question}
-          questionNumber={questionAnswerPair.question.questionNumber}
-          inputType={questionAnswerPair.question.inputType}
+          question={questionAnswerPair.question}
           readOnly={isReviewing}
-          answer={questionAnswerPair.answer?.answer}
-          handleAnswerChange={(newAnswer) => {
-            handleAnswerChange(index, {
-              answer: newAnswer,
-              id: questionAnswerPair.answer?.id,
-              questionId: questionAnswerPair.question.id,
-              requestId: questionAnswerPair.request.id
-            });
+          requestId={questionAnswerPair.request.id}
+          answer={questionAnswerPair.answer}
+          onAnswerChange={(newAnswer) => {
+            handleAnswerChange(index, newAnswer);
           }}
         />
       ))}
