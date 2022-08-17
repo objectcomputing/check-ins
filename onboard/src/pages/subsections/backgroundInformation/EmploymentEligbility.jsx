@@ -11,10 +11,10 @@ import Box from "@mui/material/Box";
 import { FormHelperText } from "@mui/material";
 
 function EmploymentEligbility() {
-  const [age18Yrs, setAge18Yrs] = useState("");
+  const [ageLegal, setAgeLegal] = useState("");
   const [usCitizen, setUSCitizen] = useState("");
   const [visaStatus, setVisaStatus] = useState("");
-  const [dateOfExpiration, setDateOfExpiration] = useState("");
+  const [visaExpiration, setVisaExpiration] = useState("");
   const [felonyStatus, setFelonyStatus] = useState("");
   const [felonyExplanation, setFelonyExplanation] = useState("");
 
@@ -42,14 +42,14 @@ function EmploymentEligbility() {
     const name = e.target.name;
 
     if (name === "18-or-not") {
-      setAge18Yrs(val);
+      setAgeLegal(val);
       setAge18YrsHelper("");
     } else if (name === "us-Citizen-or-not") {
       setUSCitizen(val);
       setCitizenHelper("");
     } else if (name === "visaStatus") {
       setVisaStatus(val);
-      if (val.length > 0 && dateOfExpiration === "") {
+      if (val.length > 0 && visaExpiration === "") {
         setVisaStatusHelper("");
         setDateOfExpirationError(true);
         setDateOfExpirationHelper(
@@ -60,7 +60,7 @@ function EmploymentEligbility() {
         setDateOfExpirationHelper("");
       }
     } else if (name === "dateOfExpiration") {
-      setDateOfExpiration(val);
+      setVisaExpiration(val);
       if (val.length > 0) {
         setDateOfExpirationError(false);
         setDateOfExpirationHelper("");
@@ -121,7 +121,7 @@ function EmploymentEligbility() {
               <RadioGroup
                 autoFocus={true}
                 name="18-or-not"
-                value={age18Yrs}
+                value={ageLegal}
                 onChange={handleChange}
               >
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
@@ -188,7 +188,7 @@ function EmploymentEligbility() {
               <FormLabel>Date of Expiration:</FormLabel>
               <InputField
                 id="dateOfExpiration"
-                value={dateOfExpiration}
+                value={visaExpiration}
                 error={dateOfExpirationError}
                 helperMessage={dateOfExpirationHelper}
                 onChangeHandler={handleChange}

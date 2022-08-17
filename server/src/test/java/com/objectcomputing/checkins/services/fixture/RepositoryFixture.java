@@ -37,6 +37,7 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.survey.SurveyRepository;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
+import com.objectcomputing.checkins.services.employmenthistory.EmploymentHistoryRepository;
 import com.objectcomputing.checkins.services.opportunities.OpportunitiesRepository;
 
 public interface RepositoryFixture {
@@ -187,5 +188,9 @@ public interface RepositoryFixture {
 
     default BackgroundInformationRepository getBackgroundInformationRepository(){
         return getEmbeddedServer().getApplicationContext().getBean(BackgroundInformationRepository.class);
+    }
+
+    default EmploymentHistoryRepository getEmploymentHistoryRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(EmploymentHistoryRepository.class);
     }
 }

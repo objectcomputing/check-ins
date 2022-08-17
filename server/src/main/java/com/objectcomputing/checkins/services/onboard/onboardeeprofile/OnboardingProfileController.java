@@ -123,7 +123,6 @@ public class OnboardingProfileController {
      */
     @Put()
     public Mono<HttpResponse<OnboardingProfileDTO>> update(@Body @Valid OnboardingProfileDTO onboardeeProfile) {
-        LOG.info(":)");
         return Mono.fromCallable(() -> onboardingProfileServices.saveProfile(fromDTO(onboardeeProfile)))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> {

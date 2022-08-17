@@ -41,6 +41,7 @@ function Education() {
   }
 
 
+
   return (
     <Box sx={{ width: "100%", textAlign: "left" }}>
       <form autoComplete="off" onSubmit={handleSaveInformation}>
