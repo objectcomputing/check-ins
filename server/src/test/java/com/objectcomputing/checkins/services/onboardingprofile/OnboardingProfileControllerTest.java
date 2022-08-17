@@ -94,18 +94,18 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 //        assertEquals(HttpStatus.OK, response.getStatus());
 //    }
 //
-//    @Test
-//    public void testGETGetByIdNotFound() {
-//
-//        final HttpRequest<Object> request = HttpRequest.
-//                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-//
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                () -> client.toBlocking().exchange(request, Map.class));
-//
-//        assertNotNull(responseException.getResponse());
-//        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-//    }
+    @Test
+    public void testGETGetByIdNotFound() {
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+    }
 //
 //
 //    @Test
@@ -172,16 +172,16 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
 //        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 //    }
 //
-//    @Test
-//    public void testPUTUpdateNullOnboardeeProfile() {
-//
-//        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                () -> client.toBlocking().exchange(request, Map.class));
-//
-//        assertNotNull(responseException.getResponse());
-//        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-//    }
+    @Test
+    public void testPUTUpdateNullOnboardeeProfile() {
+
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
 //
 //    @Test
 //    public void testPostWithNullName() {
