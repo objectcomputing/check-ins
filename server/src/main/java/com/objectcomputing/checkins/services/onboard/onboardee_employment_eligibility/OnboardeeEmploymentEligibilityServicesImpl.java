@@ -36,10 +36,9 @@ public class OnboardeeEmploymentEligibilityServicesImpl implements OnboardeeEmpl
             @Nullable String visaStatus,
             @Nullable LocalDate expirationDate,
             @Nullable Boolean felonyStatus,
-            @Nullable String felonyExplanation,
-            @Nullable UUID backgroundId) {
+            @Nullable String felonyExplanation) {
         HashSet<OnboardeeEmploymentEligibility> onboardee_employment_eligibility = new HashSet<>(onboardeeEmploymentEligibilityRepository.search((nullSafeUUIDToString(id)), ageLegal,
-                usCitizen, null, null, felonyStatus, null, nullSafeUUIDToString(backgroundId)));
+                usCitizen, null, null, felonyStatus, null));
 
         return onboardee_employment_eligibility;
     }

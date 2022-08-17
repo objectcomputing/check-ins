@@ -37,10 +37,6 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
     @Schema(description = "onboardee felony explanation", nullable = true)
     private String felonyExplanation;
 
-    @NotBlank
-    @Schema(description = "Background Information Id of onboardee")
-    private UUID backgroundId;
-
     @NotNull
     public Boolean getAgeLegal() {
         return ageLegal;
@@ -95,9 +91,6 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
         this.felonyExplanation = felonyExplanation;
     }
 
-    public UUID getBackgroundId() { return backgroundId; }
-
-    public void setBackgroundId(UUID backgroundId) { this.backgroundId = backgroundId; }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -108,8 +101,7 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
                 Objects.equals(visaStatus, that.visaStatus) &&
                 Objects.equals(expirationDate, that.expirationDate) &&
                 Objects.equals(felonyStatus, that.felonyStatus) &&
-                Objects.equals(felonyExplanation, that.felonyExplanation) &&
-                Objects.equals(backgroundId, that.backgroundId);
+                Objects.equals(felonyExplanation, that.felonyExplanation);
                
     }
 }

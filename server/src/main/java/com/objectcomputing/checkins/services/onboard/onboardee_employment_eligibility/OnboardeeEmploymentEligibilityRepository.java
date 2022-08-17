@@ -22,15 +22,13 @@ public interface OnboardeeEmploymentEligibilityRepository extends CrudRepository
             "PGP_SYM_DECRYPT(cast(mp.expirationDate as bytea),'${aes.key}') as expirationDate," +
             "felonyStatus, " +
             "PGP_SYM_DECRYPT(cast(mp.felonyExplanation as bytea),'${aes.key}') as felonyExplanation, " +
-            "backgroundId " +
             "FROM \"onboardee_employment_eligibility\" mp " +
             "WHERE (:ageLegal IS NULL OR ageLegal = :ageLegal) " +
             "AND  (:usCitizen IS NULL OR usCitizen = :usCitizen) " +
             "AND  (:visaStatus IS NULL OR PGP_SYM_DECRYPT(cast(mp.visaStatus as bytea),'${aes.key}') = :visaStatus) " +
             "AND  (CAST(:expirationDate as date) IS NULL OR CAST(PGP_SYM_DECRYPT(cast(mp.expirationDate as bytea),'${aes.key}') as date) = :expirationDate) " +
             "AND  (:felonyStatus IS NULL OR felonyStatus = :felonyStatus) " +
-            "AND  (:felonyExplanation IS NULL OR PGP_SYM_DECRYPT(cast(mp.felonyExplanation as bytea), '${aes.key}') = :felonyExplanation) " +
-            "AND  (:backgroundId IS NULL OR backgroundId = :backgroundId)",
+            "AND  (:felonyExplanation IS NULL OR PGP_SYM_DECRYPT(cast(mp.felonyExplanation as bytea), '${aes.key}') = :felonyExplanation) ",
             nativeQuery = true)
     List<OnboardeeEmploymentEligibility> search(
             @Nullable String id,
@@ -39,7 +37,6 @@ public interface OnboardeeEmploymentEligibilityRepository extends CrudRepository
             @Nullable String visaStatus,
             @Nullable LocalDate expirationDate,
             @Nullable Boolean felonyStatus,
-            @Nullable String felonyExplanation,
-            @Nullable String backgroundId
+            @Nullable String felonyExplanation
     );
 }

@@ -29,15 +29,15 @@ public class OnboardingProfileDTO {
     @Schema(description = "last name of the new onboardee")
     private String lastName;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "social Security # of the new onboardee")
     private String socialSecurityNumber;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "birthdate of the new onboardee")
     private LocalDate birthDate;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "currentAddress of the new onboardee")
     private String currentAddress;
 
@@ -45,7 +45,7 @@ public class OnboardingProfileDTO {
     @Schema(description = "previousAddress of the new onboardee")
     private String previousAddress;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "phone # of the new onboardee")
     private String phoneNumber;
 
@@ -77,6 +77,7 @@ public class OnboardingProfileDTO {
         this.firstName = firstName;
     }
 
+    @Nullable
     public String getMiddleName() {
         return middleName;
     }
@@ -93,6 +94,7 @@ public class OnboardingProfileDTO {
         this.lastName = lastName;
     }
 
+    @Nullable
     public String getSocialSecurityNumber() {
         return socialSecurityNumber;
     }
@@ -101,6 +103,7 @@ public class OnboardingProfileDTO {
         this.socialSecurityNumber = socialSecurityNumber;
     }
 
+    @Nullable
     public LocalDate getBirthDate() {
         return birthDate;
     }
@@ -109,6 +112,7 @@ public class OnboardingProfileDTO {
         this.birthDate = birthDate;
     }
 
+    @Nullable
     public String getCurrentAddress() {
         return currentAddress;
     }
@@ -126,6 +130,7 @@ public class OnboardingProfileDTO {
         this.previousAddress = previousAddress;
     }
 
+    @Nullable
     public String getPhoneNumber() {
         return phoneNumber;
     }

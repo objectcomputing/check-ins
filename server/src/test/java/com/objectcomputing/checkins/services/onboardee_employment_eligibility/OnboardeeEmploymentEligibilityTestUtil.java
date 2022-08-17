@@ -29,12 +29,11 @@ public class OnboardeeEmploymentEligibilityTestUtil {
         dto.setExpirationDate(LocalDate.now());
         dto.setFelonyStatus(false);
         dto.setFelonyExplanation("Say No to Felony");
-        dto.setBackgroundId(backgroundInformation.getId());
         return dto;
     }
 
     public static OnboardeeEmploymentEligibility mkOnboardee_Employment_Eligibility(String seed, BackgroundInformation backgroundInformation) {
-        return new OnboardeeEmploymentEligibility(true, true, "F-1" + seed, LocalDate.now(), false, "Say No to Felony" + seed, backgroundInformation.getId());
+        return new OnboardeeEmploymentEligibility(true, true, "F-1" + seed, LocalDate.now(), false, "Say No to Felony" + seed);
     }
 
     public static void assetProfilesEqual(OnboardeeEmploymentEligibility entity, OnboardeeEmploymentEligibilityResponseDTO dto) {

@@ -42,10 +42,6 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
     @Schema(description = "onboardee felony explanation", nullable = true)
     private String felonyExplanation;
 
-    @NotNull
-    @Schema(description = "Background Id of onboardee")
-    private UUID backgroundId;
-
     public UUID getId() {
         return id;
     }
@@ -108,9 +104,6 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
         this.felonyExplanation = felonyExplanation;
     }
 
-    public UUID getBackgroundId() { return backgroundId; }
-
-    public void setBackgroundId(UUID backgroundId) { this.backgroundId = backgroundId; }
     @Override
     public String toString() {
         return "OnboardeeEmploymentEligibilityResponseDTO{" +
@@ -121,7 +114,6 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
                 ", expirationDate='" + expirationDate +
                 ", felonyStatus='" + felonyStatus + '\'' +
                 ", felonyExplanation=" + felonyExplanation +  '\'' +
-                ", backgroundId=" + backgroundId + '\'' +
                 '}';
     }
 

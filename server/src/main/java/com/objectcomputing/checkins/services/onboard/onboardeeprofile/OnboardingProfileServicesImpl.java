@@ -34,25 +34,31 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
             @Nullable String socialSecurityNumber,
             @Nullable LocalDate birthDate,
             @Nullable String phoneNumber,
-            @Nullable String personalEmail,
-            @Nullable UUID backgroundId) {
+            @Nullable String personalEmail) {
         HashSet<OnboardingProfile> onboarding_profiles = new HashSet<>(onboardingProfileRepository.search( (nullSafeUUIDToString(id)), firstName, null, lastName,
-                socialSecurityNumber,  birthDate,null, null, phoneNumber, null, personalEmail, nullSafeUUIDToString(backgroundId)));
+                socialSecurityNumber,  birthDate,null, null, phoneNumber, null, personalEmail));
 
         return onboarding_profiles;
     }
 
     @Override
-    public OnboardingProfile saveProfile(OnboardingProfile onboarding_profile) {
-        OnboardingProfile employeeSocialSecurityNumber = onboardingProfileRepository.findBySocial(onboarding_profile.getSocialSecurityNumber()).orElse(null);
-        if (employeeSocialSecurityNumber != null && employeeSocialSecurityNumber.getId() != null && !Objects.equals(onboarding_profile.getId(), employeeSocialSecurityNumber.getId())) {
-            throw new AlreadyExistsException(String.format("Onboardee SSN already exists in database",
-                    onboarding_profile.getSocialSecurityNumber()));
-        }
-        if (onboarding_profile.getId() == null) {
-            return onboardingProfileRepository.save(onboarding_profile);
-        }
-        return onboardingProfileRepository.update(onboarding_profile);
+    public OnboardingProfile saveProfile(String accountEmail, OnboardingProfile onboarding_profile) {
+        Mono<NewHireAccountEntity> accountEntity = newHireAccountRepository.findByEmailAddress(accountEmail);
+        LOG.info(
+                accountEntity.toString()
+        );
+//        LOG.info(
+//                NewHireAccountRepository.findByEmailAddress(onboarding_profile.getPersonalEmail())
+//        );
+//        if (newHireAccountEntity.getId() != null) {
+            if (onboarding_profile.getId() == null) {
+                return onboardingProfileRepository.save(onboarding_profile);
+            }
+            return onboardingProfileRepository.update(onboarding_profile);
+//        } else {
+//            throw new AlreadyExistsException(String.format("New Hire account does not exist in database",
+//                    newHireAccountEntity.getEmailAddress()));
+//        }
     }
 
     @Override
@@ -64,7 +70,7 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
     @Override
     public OnboardingProfile findByName(String firstName, String lastName) {
         List<OnboardingProfile> searchResult = onboardingProfileRepository.search(null, firstName, null, lastName,
-                null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }
