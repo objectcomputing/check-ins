@@ -1,64 +1,66 @@
 package com.objectcomputing.checkins.services.onboard.onboardeeprofile;
 
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import io.micronaut.core.annotation.Nullable;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountRepository;
 import jakarta.inject.Singleton;
-import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 @Singleton
 public class OnboardingProfileServicesImpl implements OnboardingProfileServices  {
+    private static final Logger LOG = LoggerFactory.getLogger(OnboardingProfileServicesImpl.class);
+    private final NewHireAccountRepository newHireAccountRepository;
 
     private final OnboardingProfileRepository onboardingProfileRepository;
-    public OnboardingProfileServicesImpl(OnboardingProfileRepository onboardingProfileRepository) {
+
+    public OnboardingProfileServicesImpl(OnboardingProfileRepository onboardingProfileRepository, NewHireAccountRepository newHireAccountRepository) {
         this.onboardingProfileRepository = onboardingProfileRepository;
+        this.newHireAccountRepository = newHireAccountRepository;
     }
 
     @Override
-    public OnboardingProfile getById(@NotNull UUID id) {
-        Optional<OnboardingProfile> onboardingProfile = onboardingProfileRepository.findById(id);
-        if (onboardingProfile.isEmpty()) {
-            throw new NotFoundException("No new employee profile for id " + id);
-        }
-        return onboardingProfile.get();
-    }
-    @Override
-    public Set<OnboardingProfile> findByValues (
-            @Nullable UUID id,
-            @Nullable String firstName,
-            @Nullable String lastName,
-            @Nullable String socialSecurityNumber,
-            @Nullable LocalDate birthDate,
-            @Nullable String phoneNumber,
-            @Nullable String personalEmail) {
-        HashSet<OnboardingProfile> onboarding_profiles = new HashSet<>(onboardingProfileRepository.search( (nullSafeUUIDToString(id)), firstName, null, lastName,
-                socialSecurityNumber,  birthDate,null, null, phoneNumber, null, personalEmail));
-
-        return onboarding_profiles;
-    }
-
-    @Override
-    public OnboardingProfile saveProfile(String accountEmail, OnboardingProfile onboarding_profile) {
-        Mono<NewHireAccountEntity> accountEntity = newHireAccountRepository.findByEmailAddress(accountEmail);
-        LOG.info(
-                accountEntity.toString()
-        );
-//        LOG.info(
-//                NewHireAccountRepository.findByEmailAddress(onboarding_profile.getPersonalEmail())
-//        );
-//        if (newHireAccountEntity.getId() != null) {
-            if (onboarding_profile.getId() == null) {
-                return onboardingProfileRepository.save(onboarding_profile);
+    public OnboardingProfile getById(@NotNull UUID id){
+        return onboardingProfileRepository.findById(id).flatMap(onboardingProfile -> {
+            if (onboardingProfile == null) {
+                throw new NotFoundException("No new employee background information for id " + id);
             }
-            return onboardingProfileRepository.update(onboarding_profile);
-//        } else {
-//            throw new AlreadyExistsException(String.format("New Hire account does not exist in database",
-//                    newHireAccountEntity.getEmailAddress()));
-//        }
+            return Mono.just(onboardingProfile);
+        }).block();
+    }
+
+    @Override
+    public OnboardingProfile saveProfile(OnboardingProfileCreateDTO onboardingProfileCreateDTO){
+        return newHireAccountRepository.findByEmailAddress(onboardingProfileCreateDTO.getEmailAddress())
+                .flatMap(newHire -> buildNewOnboardEntity(newHire, onboardingProfileCreateDTO))
+                .flatMap(onboardeeProfileEntity -> onboardingProfileRepository.save(onboardeeProfileEntity)).block();
+    }
+
+    public Mono<OnboardingProfile> buildNewOnboardEntity(NewHireAccountEntity newHireAccount, OnboardingProfileCreateDTO onboardingProfileCreateDTO){
+        return Mono.just(new OnboardingProfile(newHireAccount, onboardingProfileCreateDTO.getFirstName(), onboardingProfileCreateDTO.getMiddleName(),
+                onboardingProfileCreateDTO.getLastName(), onboardingProfileCreateDTO.getSocialSecurityNumber(),
+                onboardingProfileCreateDTO.getBirthDate(), onboardingProfileCreateDTO.getCurrentAddress(),
+                onboardingProfileCreateDTO.getPreviousAddress(), onboardingProfileCreateDTO.getPhoneNumber(),
+                onboardingProfileCreateDTO.getSecondPhoneNumber(), onboardingProfileCreateDTO.getPersonalEmail()));
+    }
+
+    @Override
+    public OnboardingProfile updateProfile(OnboardingProfileDTO onboardingProfileDTO){
+        return newHireAccountRepository.findByEmailAddress(onboardingProfileDTO.getEmailAddress())
+                .flatMap(newHire -> buildOnboardEntity(newHire, onboardingProfileDTO))
+                .flatMap(onboardeeProfileEntity -> onboardingProfileRepository.update(onboardeeProfileEntity)).block();
+    }
+
+    public Mono<OnboardingProfile> buildOnboardEntity(NewHireAccountEntity newHireAccount, OnboardingProfileDTO onboardingProfileDTO){
+        return Mono.just(new OnboardingProfile(newHireAccount, onboardingProfileDTO.getId(), onboardingProfileDTO.getFirstName(),
+                onboardingProfileDTO.getMiddleName(), onboardingProfileDTO.getLastName(), onboardingProfileDTO.getSocialSecurityNumber(),
+                onboardingProfileDTO.getBirthDate(), onboardingProfileDTO.getCurrentAddress(), onboardingProfileDTO.getPreviousAddress(),
+                onboardingProfileDTO.getPhoneNumber(), onboardingProfileDTO.getSecondPhoneNumber(), onboardingProfileDTO.getPersonalEmail()));
     }
 
     @Override
@@ -69,16 +71,12 @@ public class OnboardingProfileServicesImpl implements OnboardingProfileServices 
 
     @Override
     public OnboardingProfile findByName(String firstName, String lastName) {
-        List<OnboardingProfile> searchResult = onboardingProfileRepository.search(null, firstName, null, lastName,
-                null, null, null, null, null, null, null);
-        if (searchResult.size() != 1) {
-            throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
-        }
-        return searchResult.get(0);
-    }
-
-    @Override
-    public List<OnboardingProfile> findAll() {
-        return onboardingProfileRepository.findAll();
+        return onboardingProfileRepository.search(null, firstName, null, lastName,
+                null, null, null, null, null, null, null).flatMap(searchResult -> {
+            if (searchResult == null) {
+                throw new NotFoundException("Expected exactly 1 result. Found none.");
+            }
+            return Mono.just(searchResult);
+        }).block();
     }
 }

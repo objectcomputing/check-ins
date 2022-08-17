@@ -5,11 +5,16 @@ import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Introspected
 public class OnboardingProfileCreateDTO {
+
+    @NotNull
+    @Schema(description ="email address of the newHire used to initialize their account")
+    private String emailAddress;
 
     @NotBlank //the below field,firstName, is not allowed to be blank on submission
     @Schema(description = "first name of the new onboardee")
@@ -50,6 +55,14 @@ public class OnboardingProfileCreateDTO {
     @NotBlank
     @Schema(description = "Personal email of onboardee")
     private String personalEmail;
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -143,18 +156,19 @@ public class OnboardingProfileCreateDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OnboardingProfileCreateDTO that = (OnboardingProfileCreateDTO) o;
-        return Objects.equals(firstName, that.firstName) && Objects.equals(middleName, that.middleName) && Objects.equals(lastName, that.lastName) && Objects.equals(socialSecurityNumber, that.socialSecurityNumber) && Objects.equals(birthDate, that.birthDate) && Objects.equals(currentAddress, that.currentAddress) && Objects.equals(previousAddress, that.previousAddress) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(secondPhoneNumber, that.secondPhoneNumber) && Objects.equals(personalEmail, that.personalEmail);
+        return Objects.equals(emailAddress, that.emailAddress) && Objects.equals(firstName, that.firstName) && Objects.equals(middleName, that.middleName) && Objects.equals(lastName, that.lastName) && Objects.equals(socialSecurityNumber, that.socialSecurityNumber) && Objects.equals(birthDate, that.birthDate) && Objects.equals(currentAddress, that.currentAddress) && Objects.equals(previousAddress, that.previousAddress) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(secondPhoneNumber, that.secondPhoneNumber) && Objects.equals(personalEmail, that.personalEmail);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail);
+        return Objects.hash(emailAddress, firstName, middleName, lastName, socialSecurityNumber, birthDate, currentAddress, previousAddress, phoneNumber, secondPhoneNumber, personalEmail);
     }
 
     @Override
     public String toString() {
         return "OnboardingProfileCreateDTO{" +
-                "firstName='" + firstName + '\'' +
+                "emailAddress='" + emailAddress + '\'' +
+                ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", socialSecurityNumber='" + socialSecurityNumber + '\'' +

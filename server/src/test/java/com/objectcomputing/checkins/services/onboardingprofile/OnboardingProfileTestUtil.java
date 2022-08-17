@@ -44,7 +44,8 @@ public class OnboardingProfileTestUtil {
     }
 
     public static OnboardingProfile mkOnboarding_Profile(String seed, BackgroundInformation backgroundInformation) {
-        return new OnboardingProfile("TestFirstName" + seed,
+        return new OnboardingProfile(null,
+                "TestFirstName" + seed,
                 "TestMiddleName" + seed,
                 "TestLastName" + seed,
                 "TestSocialSecurityNumber" + seed,

@@ -1,14 +1,11 @@
 package com.objectcomputing.checkins.services.onboard.onboardeeprofile;
 
-import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
 import com.objectcomputing.checkins.services.role.RoleType;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -22,11 +19,8 @@ import reactor.core.scheduler.Schedulers;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 @Controller("/services/onboardee-profiles")
 @Secured(RoleType.Constants.HR_ROLE)
@@ -66,45 +60,15 @@ public class OnboardingProfileController {
     }
 
     /**
-     * Find onboarding profile by or find all.
-     *
-     * @param id                   {@link UUID} ID of the onboardee
-     * @param firstName            {@link String} Find onboardees with the given first name
-     * @param lastName             {@link String} Find onboardees with the given last name
-     * @param socialSecurityNumber {@link String} Find onboardee
-     * @param birthDate            {@link LocalDate} birth date of the onboardee
-     * @param phoneNumber          {@link String} Onboardee's phone number
-     * @param personalEmail        {@link String} Onboardee's personal email
-     * @return {@link List< OnboardingProfileDTO >} List of Onboardees that match the input parameters
-     */
-    @Get("/{?id,firstName,lastName,socialSecurityNumber,birthDate,phoneNumber,personalEmail}")
-    public Mono<HttpResponse<List<OnboardingProfileDTO>>> findByValue(@Nullable UUID id,
-                                                                      @Nullable String firstName,
-                                                                      @Nullable String lastName,
-                                                                      @Nullable String socialSecurityNumber,
-                                                                      @Nullable LocalDate birthDate,
-                                                                      @Nullable String phoneNumber,
-                                                                      @Nullable String personalEmail) {
-        return Mono.fromCallable(() -> onboardingProfileServices.findByValues(id, firstName, lastName, socialSecurityNumber, birthDate, phoneNumber, personalEmail))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(Onboardingprofile -> {
-                    List<OnboardingProfileDTO> dtoList = Onboardingprofile.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
-                    return (HttpResponse<List<OnboardingProfileDTO>>) HttpResponse
-                            .ok(dtoList);
-                }).subscribeOn(scheduler);
-    }
-
-    /**
      * Save a new onboardee profile.
      *
      * @param onboardeeProfile {@link OnboardingProfileCreateDTO } Information of the onboardee profile being created
      * @return {@link OnboardingProfileDTO} The created onboardee profile
      */
     @Post()
-    public Mono<HttpResponse<OnboardingProfileDTO>> save(@Body @Valid String accountEmail, OnboardingProfileCreateDTO onboardeeProfile) {
+    public Mono<HttpResponse<OnboardingProfileDTO>> save(@Body @Valid OnboardingProfileCreateDTO onboardeeProfile) {
 
-        return Mono.fromCallable(() -> onboardingProfileServices.saveProfile(accountEmail, fromDTO(onboardeeProfile)))
+        return Mono.fromCallable(() -> onboardingProfileServices.saveProfile(onboardeeProfile))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> (HttpResponse<OnboardingProfileDTO>) HttpResponse
                         .created(fromEntity(savedProfile))
@@ -122,9 +86,9 @@ public class OnboardingProfileController {
      * @return {@link OnboardingProfileDTO} The updated onboardee profile
      */
     @Put()
-    public Mono<HttpResponse<OnboardingProfileDTO>> update(@Body @Valid String accountEmail, OnboardingProfileDTO onboardeeProfile) {
+    public Mono<HttpResponse<OnboardingProfileDTO>> update(@Body @Valid OnboardingProfileDTO onboardeeProfile) {
         LOG.info(":)");
-        return Mono.fromCallable(() -> onboardingProfileServices.saveProfile(accountEmail, fromDTO(onboardeeProfile)))
+        return Mono.fromCallable(() -> onboardingProfileServices.updateProfile(onboardeeProfile))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> {
                     OnboardingProfileDTO updatedOnboardeeProfile = fromEntity(savedProfile);
@@ -167,16 +131,5 @@ public class OnboardingProfileController {
         dto.setSecondPhoneNumber(entity.getSecondPhoneNumber());
         dto.setPersonalEmail(entity.getPersonalEmail());
         return dto;
-    }
-    private OnboardingProfile fromDTO(OnboardingProfileDTO dto) {
-        return new OnboardingProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
-                dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(),
-                dto.getPhoneNumber(), dto.getSecondPhoneNumber(), dto.getPersonalEmail());
-    }
-
-    private OnboardingProfile fromDTO(OnboardingProfileCreateDTO dto) {
-        return new OnboardingProfile( dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
-                dto.getSocialSecurityNumber(), dto.getBirthDate(), dto.getCurrentAddress(), dto.getPreviousAddress(),
-                dto.getPhoneNumber(), dto.getSecondPhoneNumber(),dto.getPersonalEmail());
     }
 }

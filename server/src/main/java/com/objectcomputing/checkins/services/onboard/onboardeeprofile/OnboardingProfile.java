@@ -132,9 +132,7 @@ public class OnboardingProfile {
     @JsonIgnore
     private NewHireAccountEntity newHireAccount;
 
-
-
-    public OnboardingProfile(String firstName, @Nullable String middleName, String lastName, @Nullable String socialSecurityNumber, @Nullable LocalDate birthDate, @Nullable String currentAddress, @Nullable String previousAddress, @Nullable String phoneNumber, @Nullable String secondPhoneNumber, String personalEmail) {
+    public OnboardingProfile(NewHireAccountEntity newHireAccount, String firstName, @Nullable String middleName, String lastName, @Nullable String socialSecurityNumber, @Nullable LocalDate birthDate, @Nullable String currentAddress, @Nullable String previousAddress, @Nullable String phoneNumber, @Nullable String secondPhoneNumber, String personalEmail) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -145,8 +143,9 @@ public class OnboardingProfile {
         this.phoneNumber = phoneNumber;
         this.secondPhoneNumber = secondPhoneNumber;
         this.personalEmail = personalEmail;
+        this.newHireAccount = newHireAccount;
     }
-    public OnboardingProfile(UUID id, String firstName, @Nullable String middleName, String lastName, @Nullable String socialSecurityNumber, @Nullable LocalDate birthDate, @Nullable String currentAddress, @Nullable String previousAddress, @Nullable String phoneNumber,@Nullable String secondPhoneNumber, String personalEmail) {
+    public OnboardingProfile(NewHireAccountEntity newHireAccount, UUID id, String firstName, @Nullable String middleName, String lastName, @Nullable String socialSecurityNumber, @Nullable LocalDate birthDate, @Nullable String currentAddress, @Nullable String previousAddress, @Nullable String phoneNumber,@Nullable String secondPhoneNumber, String personalEmail) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -158,6 +157,7 @@ public class OnboardingProfile {
         this.phoneNumber = phoneNumber;
         this.secondPhoneNumber = secondPhoneNumber;
         this.personalEmail= personalEmail;
+        this.newHireAccount = newHireAccount;
     }
 
     public OnboardingProfile(){}

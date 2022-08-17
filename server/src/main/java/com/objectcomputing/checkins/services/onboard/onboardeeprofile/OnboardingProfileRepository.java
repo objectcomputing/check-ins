@@ -3,32 +3,22 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
-import io.micronaut.data.repository.CrudRepository;
+import io.micronaut.data.repository.reactive.ReactorCrudRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @JdbcRepository (dialect = Dialect.POSTGRES)
-public interface OnboardingProfileRepository extends CrudRepository<OnboardingProfile, UUID> {
+public interface OnboardingProfileRepository extends ReactorCrudRepository<OnboardingProfile, UUID> {
 
-    @Query(value = "SELECT id, " +
-            "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
-            "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName, " +
-            "PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') as lastName, " +
-            "PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea),'${aes.key}') as socialSecurityNumber, " +
-            "PGP_SYM_DECRYPT(cast(mp.birthDate as bytea),'${aes.key}') as birthDate, " +
-            "PGP_SYM_DECRYPT(cast(mp.currentAddress as bytea),'${aes.key}') as currentAddress, " +
-            "PGP_SYM_DECRYPT(cast(mp.previousAddress as bytea),'${aes.key}') as previousAddress, " +
-            "PGP_SYM_DECRYPT(cast(mp.phoneNumber as bytea),'${aes.key}') as phoneNumber, " +
-            "PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') as secondPhoneNumber, " +
-            "PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') as personalEmail, " +
-            "FROM \"onboard_profile\" mp " +
-            "WHERE  (:socialSecurityNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.socialSecurityNumber as bytea), '${aes.key}') = :socialSecurityNumber) ",
-            nativeQuery = true)
     Optional<OnboardingProfile> findBySocial(@NotNull String socialSecurityNumber);
-    List<OnboardingProfile> findAll();
+
+    Flux<OnboardingProfile> findAll();
+
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
             "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName," +
@@ -52,7 +42,7 @@ public interface OnboardingProfileRepository extends CrudRepository<OnboardingPr
                     "AND  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') = :secondPhoneNumber) " +
                     "AND  (:personalEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') = :personalEmail) ",
             nativeQuery = true)
-    List<OnboardingProfile> search(
+    Mono<OnboardingProfile> search(
             @Nullable String id,
             @Nullable String firstName,
             @Nullable String middleName,
