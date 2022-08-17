@@ -4,3 +4,17 @@
   column-gap: 5%;
   height: calc(100vh - 64px);
 }
+
+.textBackground {
+  background-color: rgb(245, 245, 245);
+  width: fit-content;
+}
+
+.grid {
+  background-color: rgb(245, 245, 245);
+}
+
+.boxColor {
+  background-color: rgb(217, 217, 217);
+  
+}

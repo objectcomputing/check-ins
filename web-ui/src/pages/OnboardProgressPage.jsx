@@ -5,8 +5,8 @@ import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
 import { AppContext } from "../context/AppContext";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import AddOnboardModal from "../components/modal/AddOnboardeeModal";
-import { Button } from "@mui/material";
+import AddOnboardeeModal from "../components/modal/AddOnboardeeModal";
+import { Button, Typography } from "@mui/material";
 import { useState, useContext } from "react";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 import { createOnboardee, initializeOnboardee } from "../api/onboardeeMember";
@@ -61,6 +61,8 @@ export default function OnboardProgressPage(onboardee) {
                 name: cellValues.row.name,
                 email: cellValues.row.email,
                 hireType: cellValues.row.hireType,
+                title: cellValues.row.title,
+                completed: cellValues.row.completed,
               },
             }}
           >
@@ -156,7 +158,7 @@ export default function OnboardProgressPage(onboardee) {
         <Button
           onClick={handleOpen}
           variant="contained"
-          sx={{ ml: "64%" }}
+          sx={{ ml: "83%" }}
           startIcon={<PersonAddIcon />}
         >
           Add Onboardee
@@ -168,6 +170,7 @@ export default function OnboardProgressPage(onboardee) {
           onSave={submitInfo}
         />
         <DataGrid
+          className="grid"
           rows={rows}
           columns={columns}
           pageSize={5}
@@ -184,7 +187,9 @@ export default function OnboardProgressPage(onboardee) {
         />
       </Box>
       <Box sx={{ height: 400, width: "20%", mt: "3%" }}>
-        <h1>Notifications</h1>
+        <Box className="notification-header">
+          <Typography variant="h4" align="center">Notifications</Typography>
+        </Box>
         <DataGrid
           sx={{ cursor: "pointer" }}
           rows={rowsNotif}
