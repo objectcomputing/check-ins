@@ -25,6 +25,7 @@ import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
+import com.objectcomputing.checkins.services.referraltype.ReferralTypeRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleRepository;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionRepository;
@@ -182,5 +183,9 @@ public interface RepositoryFixture {
 
     default EmploymentDesiredAvailabilityRepository getEmploymentDesiredAvailabilityRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EmploymentDesiredAvailabilityRepository.class);
+    }
+
+    default ReferralTypeRepository getReferralTypeRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(ReferralTypeRepository.class);
     }
 }
