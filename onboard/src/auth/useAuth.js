@@ -11,6 +11,8 @@ import { isArrayPresent } from "./../utils/helperFunctions";
 
 import fetchProfile from "./../api/fetchProfile";
 import fetchToken from "./../api/fetchToken";
+import fetchEducation from "../api/fetchEducation";
+import fetchJobHistory from "../api/fetchJobHistory";
 
 const authContext = createContext();
 
@@ -35,6 +37,8 @@ function useProvideAuth() {
 
   const loginData = useSelector((state) => state.login);
   const profileData = useSelector((state) => state.profile);
+  const educationData = useSelector((state) => state.education);
+  const jobHistoryData = useSelector((state) =>state.jobhistory);
   const newData = useSelector((state) => state.data);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
@@ -51,7 +55,7 @@ function useProvideAuth() {
 
   useEffect(() => {
     // Check for Login status upon change of LoginData
-    setIsLoggedIn(loginCheck);
+    // setIsLoggedIn(loginCheck);
     // console.log('This is loginCheck from loginData useEffect: ' + loginCheck);
     if (initialRender.current) {
       initialRender.current = false;
@@ -63,6 +67,22 @@ function useProvideAuth() {
       if (!isArrayPresent(profileData)) {
         // console.log("Fetch user profile");
         dispatch(fetchProfile(loginData.accessToken));
+      }
+
+      if (!isArrayPresent(educationData)) {
+        console.log("Fetching new data");
+        dispatch(fetchEducation(loginData.accessToken));
+      } else {
+        console.log("Education data already exists");
+        console.log(educationData);
+      }
+
+      if (!isArrayPresent(jobHistoryData)) {
+        console.log("Fetching new data");
+        dispatch(fetchJobHistory(loginData.accessToken));
+      } else {
+        console.log("Job history data already exists");
+        console.log(jobHistoryData);
       }
 
       // THIS IS WHERE ALL FIRST TIME CALLS TO LOAD DATA FROM THE BACKEND SHOULD GO!

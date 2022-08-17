@@ -435,7 +435,7 @@ function PersonalInformation() {
           </Grid>
         </Grid>
       </form>
-      <Grid containter sx={{ mt: 3 }}>
+      <Grid container sx={{ mt: 3 }}>
         <Typography variant="subtitle2" sx={{ fontStyle: 'italic' }}>
           Work email will be based on first and last name with preferred names taking priority. Current email will be: {workEmail}
         </Typography>

@@ -1,5 +1,10 @@
 package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
 
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformation;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibility;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityCreateDTO;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityResponseDTO;
+
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +21,7 @@ public class OnboardeeEmploymentEligibilityTestUtil {
         return dto;
     }
 
-    public static OnboardeeEmploymentEligibilityResponseDTO mkUpdateOnboardeeEmploymentEligibilityResponseDTO() {
+    public static OnboardeeEmploymentEligibilityResponseDTO mkUpdateOnboardeeEmploymentEligibilityResponseDTO(BackgroundInformation backgroundInformation) {
         OnboardeeEmploymentEligibilityResponseDTO dto = new OnboardeeEmploymentEligibilityResponseDTO();
         dto.setAgeLegal(true);
         dto.setUsCitizen(true);
@@ -24,15 +29,12 @@ public class OnboardeeEmploymentEligibilityTestUtil {
         dto.setExpirationDate(LocalDate.now());
         dto.setFelonyStatus(false);
         dto.setFelonyExplanation("Say No to Felony");
+        dto.setBackgroundId(backgroundInformation.getId());
         return dto;
     }
 
-    public static OnboardeeEmploymentEligibility mkOnboardee_Employment_Eligibility(String seed) {
-        return new OnboardeeEmploymentEligibility(true, true, "F-1" + seed, LocalDate.now(), false, "Say No to Felony" + seed);
-    }
-
-    public static OnboardeeEmploymentEligibility mkOnboardee_Employment_Eligibility() {
-        return mkOnboardee_Employment_Eligibility("");
+    public static OnboardeeEmploymentEligibility mkOnboardee_Employment_Eligibility(String seed, BackgroundInformation backgroundInformation) {
+        return new OnboardeeEmploymentEligibility(true, true, "F-1" + seed, LocalDate.now(), false, "Say No to Felony" + seed, backgroundInformation.getId());
     }
 
     public static void assetProfilesEqual(OnboardeeEmploymentEligibility entity, OnboardeeEmploymentEligibilityResponseDTO dto) {
