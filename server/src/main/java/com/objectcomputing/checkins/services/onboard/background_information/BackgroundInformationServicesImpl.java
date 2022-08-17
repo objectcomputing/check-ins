@@ -1,16 +1,16 @@
 package com.objectcomputing.checkins.services.onboard.background_information;
 
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import io.micronaut.core.annotation.Nullable;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountRepository;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
-
-import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+import java.util.List;
+import java.util.UUID;
 
 @Singleton
 public class BackgroundInformationServicesImpl implements BackgroundInformationServices {
@@ -19,37 +19,44 @@ public class BackgroundInformationServicesImpl implements BackgroundInformationS
 
     private final BackgroundInformationRepository backgroundInformationRepository;
 
-    public BackgroundInformationServicesImpl(BackgroundInformationRepository backgroundInformationRepository){
+    private final NewHireAccountRepository newHireAccountRepository;
+
+
+    public BackgroundInformationServicesImpl(BackgroundInformationRepository backgroundInformationRepository, NewHireAccountRepository newHireAccountRepository){
         this.backgroundInformationRepository = backgroundInformationRepository;
+        this.newHireAccountRepository = newHireAccountRepository;
     }
 
     @Override
     public BackgroundInformation getById(@NotNull UUID id){
-        Optional<BackgroundInformation> backgroundInformation = backgroundInformationRepository.findById(id);
-        if (backgroundInformation.isEmpty()){
-            throw new NotFoundException("No new employee background information for id "+ id);
-        }
-        return backgroundInformation.get();
+        return backgroundInformationRepository.findById(id).flatMap(backgroundInformation -> {
+            if (backgroundInformation == null) {
+                throw new NotFoundException("No new employee background information for id " + id);
+            }
+            return Mono.just(backgroundInformation);
+            }).block();
     }
 
     @Override
-    public Set<BackgroundInformation> findByValues(
-            @Nullable UUID id,
-            @Nullable UUID userId,
-            @Nullable Boolean stepComplete){
-        return new HashSet<>(backgroundInformationRepository.search(nullSafeUUIDToString(id), nullSafeUUIDToString(userId),stepComplete));
+    public BackgroundInformation saveProfile (BackgroundInformationCreateDTO backgroundInformationCreateDTO){
+        return newHireAccountRepository.findByEmailAddress(backgroundInformationCreateDTO.getEmailAddress())
+                        .flatMap(newHire -> buildNewBackgroundInformationEntity(newHire, backgroundInformationCreateDTO))
+                        .flatMap(backgroundEntity -> backgroundInformationRepository.save(backgroundEntity)).block();
+    }
 
+    public Mono<BackgroundInformation> buildNewBackgroundInformationEntity (NewHireAccountEntity newHireAccount, BackgroundInformationCreateDTO backgroundInformationCreateDTO){
+        return Mono.just ( new BackgroundInformation(newHireAccount, backgroundInformationCreateDTO.getStepComplete()));
     }
 
     @Override
-    public BackgroundInformation saveProfile (BackgroundInformation backgroundInformation){
-        if (backgroundInformation.getId() != null){
-            throw new AlreadyExistsException("Background Information User Id exists in database");
-        }
-        if (backgroundInformation.getId() == null){
-            return backgroundInformationRepository.save(backgroundInformation);
-        }
-        return backgroundInformationRepository.update(backgroundInformation);
+    public BackgroundInformation updateProfile (BackgroundInformationDTO backgroundInformationDTO){
+        return newHireAccountRepository.findByEmailAddress(backgroundInformationDTO.getEmailAddress())
+                .flatMap(newHire -> buildBackgroundInformationEntity(newHire, backgroundInformationDTO))
+                .flatMap(backgroundEntity -> backgroundInformationRepository.save(backgroundEntity)).block();
+    }
+
+    public Mono<BackgroundInformation> buildBackgroundInformationEntity (NewHireAccountEntity newHireAccount, BackgroundInformationDTO backgroundInformationDTO){
+        return Mono.just ( new BackgroundInformation(newHireAccount, backgroundInformationDTO.getId(), backgroundInformationDTO.getStepComplete()));
     }
 
     @Override
@@ -59,5 +66,5 @@ public class BackgroundInformationServicesImpl implements BackgroundInformationS
     }
 
     @Override
-    public List<BackgroundInformation> findAll() { return backgroundInformationRepository.findAll();}
+    public List<BackgroundInformation> findAll() { return (List<BackgroundInformation>) backgroundInformationRepository.findAll();}
 }

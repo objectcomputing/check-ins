@@ -10,29 +10,36 @@ import java.util.Objects;
 public class BackgroundInformationCreateDTO {
 
     @NotNull
-    @Schema(description = "user Id", required = true)
-    private String userId;
-
-    @NotNull
     @Schema(description = "step completion indicator", required = true)
     private Boolean stepComplete;
 
     @NotNull
-    public String getUserId() { return userId; }
-
-    public void setUserId(@NotNull String userId) { this.userId = userId;}
+    @Schema(description ="email address of the newHire used to initialize their account")
+    private String emailAddress;
 
     @NotNull
     public Boolean getStepComplete(){ return stepComplete;}
 
     public void setStepComplete(@NotNull Boolean stepComplete) { this.stepComplete = stepComplete;}
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     @Override
-    public boolean equals(Object o){
-        if (this == o) return true;;
+    public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BackgroundInformationCreateDTO that = (BackgroundInformationCreateDTO) o;
-        return Objects.equals(userId, that.userId) &&
-                Objects.equals(stepComplete, that.stepComplete);
+        return Objects.equals(stepComplete, that.stepComplete) && Objects.equals(emailAddress, that.emailAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stepComplete, emailAddress);
     }
 }

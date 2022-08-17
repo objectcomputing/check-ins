@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.onboard.background_information;
 
+import com.objectcomputing.checkins.newhire.model.NewHireAccountEntity;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -56,24 +57,9 @@ public class BackgroundInformationController {
                 .subscribeOn(scheduler);
     }
 
-    @Get("/{?id,userId,stepComplete}")
-    public Mono<HttpResponse<List<BackgroundInformationDTO>>> findByValue(@Nullable UUID id,
-                                                                          @Nullable String userId,
-                                                                          @Nullable Boolean stepComplete){
-        return Mono.fromCallable(() -> backgroundInformationServices.findByValues(id,userId,stepComplete))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(BackgroundInformation -> {
-                    List<BackgroundInformationDTO> dtoList = BackgroundInformation.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
-                    return (HttpResponse<List<BackgroundInformationDTO>>) HttpResponse
-                            .ok(dtoList);
-                }).subscribeOn(scheduler);
-
-    }
-
     @Post()
     public Mono<HttpResponse<BackgroundInformationDTO>> save(@Body @Valid BackgroundInformationCreateDTO backgroundInformationDTO){
-        return Mono.fromCallable(() -> backgroundInformationServices.saveProfile(fromDTO(backgroundInformationDTO)))
+        return Mono.fromCallable(() -> backgroundInformationServices.saveProfile( backgroundInformationDTO))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> (HttpResponse<BackgroundInformationDTO>) HttpResponse
                         .created(fromEntity(savedProfile))
@@ -83,8 +69,7 @@ public class BackgroundInformationController {
 
     @Put()
     public Mono<HttpResponse<BackgroundInformationDTO>> update(@Body @Valid BackgroundInformationDTO backgroundInformationDTO){
-        LOG.info(":)");
-        return Mono.fromCallable(() -> backgroundInformationServices.saveProfile(fromDTO(backgroundInformationDTO)))
+        return Mono.fromCallable(() -> backgroundInformationServices.updateProfile(backgroundInformationDTO))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> {
                     BackgroundInformationDTO updatedBackgroundInformation = fromEntity(savedProfile);
@@ -103,13 +88,6 @@ public class BackgroundInformationController {
                 .map(successFlag -> (HttpResponse<?>) HttpResponse.ok())
                 .subscribeOn(scheduler);
     }
-    private BackgroundInformation fromDTO(BackgroundInformationDTO dto) {
-        return new BackgroundInformation(dto.getId(), dto.getUserId(), dto.getStepComplete());
-    }
-
-    private BackgroundInformation fromDTO(BackgroundInformationCreateDTO dto){
-        return new BackgroundInformation(dto.getUserId(), dto.getStepComplete());
-    }
 
     private URI location(UUID id) {
         return URI.create("/background-information/" + id);
@@ -118,7 +96,6 @@ public class BackgroundInformationController {
     private BackgroundInformationDTO fromEntity(BackgroundInformation entity) {
         BackgroundInformationDTO dto = new BackgroundInformationDTO();
         dto.setId(entity.getId());
-        dto.setUserId(entity.getUserId());
         dto.setStepComplete(entity.getStepComplete());
         return dto;
     }
