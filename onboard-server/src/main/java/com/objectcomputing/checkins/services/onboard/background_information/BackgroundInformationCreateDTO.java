@@ -42,4 +42,12 @@ public class BackgroundInformationCreateDTO {
     public int hashCode() {
         return Objects.hash(stepComplete, emailAddress);
     }
+
+    @Override
+    public String toString() {
+        return "BackgroundInformationCreateDTO{" +
+                "stepComplete=" + stepComplete +
+                ", emailAddress='" + emailAddress + '\'' +
+                '}';
+    }
 }

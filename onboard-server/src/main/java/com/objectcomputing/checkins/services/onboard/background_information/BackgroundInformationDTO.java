@@ -53,10 +53,11 @@ public class BackgroundInformationDTO {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "BackgroundInformationDTO{" +
                 "id=" + id +
-                ", stepComplete='" + stepComplete + '\'' +
+                ", stepComplete=" + stepComplete +
+                ", emailAddress='" + emailAddress + '\'' +
                 '}';
     }
 }
