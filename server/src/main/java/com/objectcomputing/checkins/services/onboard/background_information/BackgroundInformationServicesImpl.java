@@ -52,7 +52,7 @@ public class BackgroundInformationServicesImpl implements BackgroundInformationS
     public BackgroundInformation updateProfile (BackgroundInformationDTO backgroundInformationDTO){
         return newHireAccountRepository.findByEmailAddress(backgroundInformationDTO.getEmailAddress())
                 .flatMap(newHire -> buildBackgroundInformationEntity(newHire, backgroundInformationDTO))
-                .flatMap(backgroundEntity -> backgroundInformationRepository.save(backgroundEntity)).block();
+                .flatMap(backgroundEntity -> backgroundInformationRepository.update(backgroundEntity)).block();
     }
 
     public Mono<BackgroundInformation> buildBackgroundInformationEntity (NewHireAccountEntity newHireAccount, BackgroundInformationDTO backgroundInformationDTO){
