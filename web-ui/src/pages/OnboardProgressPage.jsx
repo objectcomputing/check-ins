@@ -5,7 +5,6 @@ import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
 import { AppContext } from "../context/AppContext";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import AddOnboardeeModal from "../components/modal/AddOnboardeeModal";
 import { Button, Typography } from "@mui/material";
 import { useState, useContext } from "react";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
