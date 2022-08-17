@@ -17,8 +17,9 @@ import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.onboardee_about.OnboardeeAboutRespository;
-import com.objectcomputing.checkins.services.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityRepository;
-import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileRepository;
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformationRepository;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityRepository;
+import com.objectcomputing.checkins.services.onboard.onboardeeprofile.OnboardingProfileRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
@@ -187,5 +188,9 @@ public interface RepositoryFixture {
 
     default OnboardeeAboutRespository getOnboardeeAboutRepository(){
         return getEmbeddedServer().getApplicationContext().getBean(OnboardeeAboutRespository.class);
+    }
+
+    default BackgroundInformationRepository getBackgroundInformationRepository(){
+        return getEmbeddedServer().getApplicationContext().getBean(BackgroundInformationRepository.class);
     }
 }
