@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const modalBoxStyle = {
   position: "absolute",
@@ -111,8 +111,8 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
   let editReset = false;
 
   const handleReturn = () => {
-    const history = useHistory();
-    history.push({ pathname: `/onboard/progress` });
+    const navigate = useNavigate();
+    navigate("/onboard/progress", { replace: true });
   };
 
   const resetOnboardeeClick = useCallback(async () => {
