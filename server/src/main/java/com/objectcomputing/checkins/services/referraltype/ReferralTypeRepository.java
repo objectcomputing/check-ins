@@ -42,6 +42,7 @@ public interface ReferralTypeRepository extends CrudRepository<ReferralType, UUI
             nativeQuery = true)
 
     List<ReferralType> search(
+            @Nullable String id,
             @Nullable String discoveredOpportunity,
             @Nullable String referredBy,
             @Nullable String referrerEmail,
