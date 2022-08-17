@@ -1,11 +1,8 @@
-CREATE TABLE employment_desired_availability(
+CREATE TABLE referral_type(
         id varchar PRIMARY KEY,
-        desiredposition varchar,
-        desiredstartdate varchar,
-        desiredsalary varchar,
-        currentlyemployed BOOLEAN,
-        contactcurrentemployer BOOLEAN,
-        previousemploymentoci BOOLEAN,
-        noncompeteagreement BOOLEAN,
-        noncompeteexpirationdate varchar
+        discoveredOpportunity varchar,
+        referredBy varchar,
+        referrerEmail varchar,
+        referrerJobSite varchar,
+        referralTypeOther varchar
 );
