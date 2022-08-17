@@ -10,8 +10,6 @@ import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
 import { useNavigate } from "react-router-dom";
 
-const navigate = useNavigate();
-
 const modalBoxStyle = {
   position: "absolute",
   top: "50%",
@@ -113,6 +111,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
   let editReset = false;
 
   const handleReturn = () => {
+    let navigate = useNavigate();
     navigate(`/onboard/progress`);
   };
 
