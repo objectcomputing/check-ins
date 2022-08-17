@@ -112,7 +112,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
 
   const handleReturn = () => {
     let navigate = useNavigate();
-    navigate(`/onboard/progress`);
+    navigate(`/onboard/progress`, { replace: true });
   };
 
   const resetOnboardeeClick = useCallback(async () => {
