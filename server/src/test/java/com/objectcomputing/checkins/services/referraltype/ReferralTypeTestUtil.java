@@ -37,7 +37,7 @@ public class ReferralTypeTestUtil {
 
     public static ReferralType mReferralType() { return mkReferralType(""); }
 
-    public static void assertPreferencesEqual(ReferralType entity, ReferralTypeDTO dto) {
+    public static void assertReferralTypesEqual(ReferralType entity, ReferralTypeDTO dto) {
         assertEquals(entity.getDiscoveredOpportunity(), dto.getDiscoveredOpportunity());
         assertEquals(entity.getReferredBy(), dto.getReferredBy());
         assertEquals(entity.getReferrerEmail(), dto.getReferrerEmail());

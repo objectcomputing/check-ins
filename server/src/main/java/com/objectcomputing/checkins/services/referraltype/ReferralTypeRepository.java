@@ -20,7 +20,7 @@ public interface ReferralTypeRepository extends CrudRepository<ReferralType, UUI
             "PGP_SYM_DECRYPT(cast(mp.referrerEmail as bytea),'${aes.key}') as referrerEmail, " +
             "PGP_SYM_DECRYPT(cast(mp.referrerJobSite as bytea),'${aes.key}') as referrerJobSite, " +
             "PGP_SYM_DECRYPT(cast(mp.referrerTypeOther as bytea),'${aes.key}') as referrerTypeOther, " +
-            "FROM \"referral_type\" mp " ,
+            "FROM \"referral_type\" mp ",
             nativeQuery = true)
 
     Optional<ReferralType> findByReferrer(@NotNull String referredBy);
@@ -38,7 +38,7 @@ public interface ReferralTypeRepository extends CrudRepository<ReferralType, UUI
             "AND  (:referredBy IS NULL OR PGP_SYM_DECRYPT(cast(mp.referredBy as bytea),'${aes.key}') = :referredBy) " +
             "AND  (:referrerEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.referrerEmail as bytea),'${aes.key}') = :referrerEmail) " +
             "AND  (:referrerJobSite IS NULL OR PGP_SYM_DECRYPT(cast(mp.referrerJobSite as bytea),'${aes.key}') = :referrerJobSite) " +
-            "AND  (:referralTypeOther IS NULL OR PGP_SYM_DECRYPT(cast(mp.referralTypeOther as bytea),'${aes.key}') = :referralTypeOther) " ,
+            "AND  (:referralTypeOther IS NULL OR PGP_SYM_DECRYPT(cast(mp.referralTypeOther as bytea),'${aes.key}') = :referralTypeOther) ",
             nativeQuery = true)
 
     List<ReferralType> search(
