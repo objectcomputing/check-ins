@@ -1,14 +1,22 @@
 import React, { useContext, useState } from "react";
-import { Grid, Typography, Box, Divider } from "@mui/material";
-import { Modal, TextField, IconButton } from "@mui/material";
-import { Button } from "@mui/material";
+import { useHistory } from "react-router-dom";
+import {
+  Grid,
+  Typography,
+  Box,
+  Divider,
+  TextField,
+  IconButton,
+  Button,
+} from "@mui/material";
 import { useCallback } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import OnboardeeResetModal from "./OnboardeeResetModal";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
-import { useNavigate } from "react-router-dom";
+import deleteUser
 
 const modalBoxStyle = {
   position: "absolute",
@@ -35,20 +43,37 @@ const emptyOnboardee = {
 };
 
 const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
+  const history = useHistory();
   const { dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const [empFile, setEmpFile] = useState(" ");
   const [isNewOnboardee, setIsNewOnboardee] = useState(
     Object.keys(onboardee).length === 0 ? true : false
   );
+  const [offer, setOfferFile] = useState(" ");
+  const [open2, setOpen2] = useState(false);
+  const [resetBool, setResetBool] = useState(false);
+
+  const handleReturn = () => {
+    history.push({ pathname: "/onboard/progress" });
+  };
+
+  const handleClose = () => {
+    setOpen2(false);
+  };
+
+  const handleAccountReset = () => {
+    setOpen2(false);
+  };
+
   const handleEmployeeAgreement = (e) => {
     setEmpFile(e.target.value.replace(/^.*[\\/]/, ""));
-    editReset = true;
+    setResetBool(true);
   };
-  const [offer, setOfferFile] = useState(" ");
+
   const handleOfferLetter = (e) => {
     setOfferFile(e.target.value.replace(/^.*[\\/]/, ""));
-    editReset = true;
+    setResetBool(true);
   };
 
   const validateInputs = useCallback(() => {
@@ -108,47 +133,28 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
     isNewOnboardee,
   ]);
 
-  let editReset = false;
+  async function resetOnboardeeClick() {
+    // TODO: query backend to delete user
+    let res1 = await deleteUser(userid);
+    console.log(res1);
 
-  const handleReturn = () => {
-    const navigate = useNavigate();
-    navigate("/onboard/progress", { replace: true });
-  };
-
-  const resetOnboardeeClick = useCallback(async () => {
-    onClose();
-    let required = validateRequiredInputsPresent();
-
-    let inputsFeasible = validateInputs();
-    if (!required) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast:
-            "One or more required fields are empty. Check starred input fields",
-        },
-      });
-    } else if (required && inputsFeasible) {
-      onSave(editedOnboardee).then(() => {
-        if (isNewOnboardee.current) {
-          setOnboardee({ emptyOnboardee });
-          setIsNewOnboardee(true);
-        }
-      });
-    }
-    handleReturn();
-  }, [
-    validateRequiredInputsPresent,
-    onSave,
-    dispatch,
-    validateInputs,
-    editedOnboardee,
-    isNewOnboardee,
-  ]);
+    setOpen2(true);
+    onSave(editedOnboardee).then(() => {
+      if (isNewOnboardee.current) {
+        setOnboardee({ emptyOnboardee });
+        setIsNewOnboardee(true);
+      }
+      handleReturn();
+    });
+  }
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <>
+      <OnboardeeResetModal
+        open={open2}
+        onClose={handleClose}
+        onSave={handleAccountReset}
+      />
       <Box sx={modalBoxStyle}>
         <Typography align="center" id="title" variant="h3" component="h2">
           Edit Onboardee
@@ -229,7 +235,7 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
               value={editedOnboardee.email ? editedOnboardee.email : ""}
               onChange={(e) => {
                 setOnboardee({ ...editedOnboardee, email: e.target.value });
-                editReset = true;
+                setResetBool(true);
               }}
             />
           </Grid>
@@ -333,22 +339,19 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            if (!editReset){" "}
-            {
+            {!resetBool ? (
               <Button variant="contained" onClick={submitOnboardeeClick}>
                 Submit
               </Button>
-            }
-            else{" "}
-            {
+            ) : (
               <Button variant="contained" onClick={resetOnboardeeClick}>
                 Reset Onboardee
               </Button>
-            }
+            )}
           </Grid>
         </Grid>
       </Box>
-    </Modal>
+    </>
   );
 };
 
