@@ -6,7 +6,7 @@ CREATE TABLE onboardee_employment_eligibility(
             visa_status varchar,
             expiration_date varchar,
             felony_status BOOLEAN,
-            felony_explanation varchar
+            felony_explanation varchar,
             CONSTRAINT fk_new_hire
                     FOREIGN KEY(new_hire_account_id)
                     REFERENCES new_hire_account(new_hire_account_id)

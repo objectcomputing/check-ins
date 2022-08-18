@@ -15,7 +15,7 @@ import java.util.UUID;
 @JdbcRepository (dialect = Dialect.POSTGRES)
 public interface OnboardingProfileRepository extends ReactorCrudRepository<OnboardingProfile, UUID> {
 
-    Optional<OnboardingProfile> findBySocial(@NotNull String socialSecurityNumber);
+    Optional<OnboardingProfile> findBySocialSecurityNumber(@NotNull String socialSecurityNumber);
 
     Flux<OnboardingProfile> findAll();
 
