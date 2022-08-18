@@ -16,6 +16,7 @@ import Select from "@mui/material/Select";
 import OnboardeeResetModal from "./OnboardeeResetModal";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
+import OnboardeeEditedModal from "./OnboardeeEditedModal";
 
 const modalBoxStyle = {
   position: "absolute",
@@ -55,6 +56,12 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
 
   const handleReturn = () => {
     history.push({ pathname: "/onboard/progress" });
+  };
+
+  const [openSavedModal, setOpenSavedModal] = useState(false);
+
+  const handleCloseEdit = () => {
+    setOpenSavedModal(false);
   };
 
   const handleClose = () => {
@@ -339,9 +346,17 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
             {!resetBool ? (
-              <Button variant="contained" onClick={submitOnboardeeClick}>
-                Submit
-              </Button>
+              ((
+                <OnboardeeEditedModal
+                  open={openSavedModal}
+                  onClose={handleCloseEdit}
+                />
+              ),
+              (
+                <Button variant="contained" onClick={submitOnboardeeClick}>
+                  Submit
+                </Button>
+              ))
             ) : (
               <Button variant="contained" onClick={resetOnboardeeClick}>
                 Reset Onboardee
