@@ -1,5 +1,6 @@
-import React from "react";
+import { React, useState } from "react";
 import { Modal, Box, Typography, Grid, Button } from "@mui/material";
+import OnboardeeResetConfirmedModal from "./OnboardeeResetConfirmedModal";
 
 const OnboardeeResetModal = ({ open, onClose, onSave }) => {
   const modalBoxStyleMini = {
@@ -15,6 +16,11 @@ const OnboardeeResetModal = ({ open, onClose, onSave }) => {
     px: 4,
     pb: 3,
     m: 2,
+  };
+  const [openResetModal, setOpenResetModal] = useState(false);
+
+  const handleCloseReset = () => {
+    setOpenResetModal(false);
   };
 
   return (
@@ -55,6 +61,10 @@ const OnboardeeResetModal = ({ open, onClose, onSave }) => {
               xs={6}
               style={{ display: "flex", justifyContent: "flex-end" }}
             >
+              <OnboardeeResetConfirmedModal
+                open={openResetModal}
+                onClose={handleCloseReset}
+              />
               <Button variant="contained" onClick={onSave}>
                 Reset Onboardee
               </Button>
