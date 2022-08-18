@@ -1,9 +1,13 @@
 package com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility;
 
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformation;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
+import io.micronaut.data.repository.reactive.ReactorCrudRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
 import java.time.LocalDate;
@@ -11,9 +15,9 @@ import java.util.List;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-public interface OnboardeeEmploymentEligibilityRepository extends CrudRepository<OnboardeeEmploymentEligibility, UUID> {
+public interface OnboardeeEmploymentEligibilityRepository extends ReactorCrudRepository<OnboardeeEmploymentEligibility, UUID> {
 
-    List<OnboardeeEmploymentEligibility> findAll();
+    Flux<OnboardeeEmploymentEligibility> findAll();
 
     @Query(value = "SELECT id, " +
             "ageLegal, " +
@@ -30,7 +34,7 @@ public interface OnboardeeEmploymentEligibilityRepository extends CrudRepository
             "AND  (:felonyStatus IS NULL OR felonyStatus = :felonyStatus) " +
             "AND  (:felonyExplanation IS NULL OR PGP_SYM_DECRYPT(cast(mp.felonyExplanation as bytea), '${aes.key}') = :felonyExplanation) ",
             nativeQuery = true)
-    List<OnboardeeEmploymentEligibility> search(
+    Mono<BackgroundInformation> search(
             @Nullable String id,
             @Nullable Boolean ageLegal,
             @Nullable Boolean usCitizen,

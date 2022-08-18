@@ -81,16 +81,17 @@ public class OnboardeeEmploymentEligibility {
     @JsonIgnore
     private NewHireAccountEntity newHireAccount;
 
-    public OnboardeeEmploymentEligibility(Boolean ageLegal,Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
+    public OnboardeeEmploymentEligibility(NewHireAccountEntity newHireAccountEntity, Boolean ageLegal,Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
         this.visaStatus = visaStatus;
         this.expirationDate = expirationDate;
         this.felonyStatus = felonyStatus;
         this.felonyExplanation = felonyExplanation;
+        this.newHireAccount = newHireAccountEntity;
     }
 
-    public OnboardeeEmploymentEligibility(UUID id, Boolean ageLegal, Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
+    public OnboardeeEmploymentEligibility(NewHireAccountEntity newHireAccountEntity, UUID id, Boolean ageLegal, Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
         this.id = id;
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
@@ -98,6 +99,7 @@ public class OnboardeeEmploymentEligibility {
         this.expirationDate = expirationDate;
         this.felonyStatus = felonyStatus;
         this.felonyExplanation = felonyExplanation;
+        this.newHireAccount = newHireAccountEntity;
     }
 
     public void setId(UUID id) {
@@ -158,6 +160,14 @@ public class OnboardeeEmploymentEligibility {
 
     public void setFelonyExplanation(@Nullable String felonyExplanation) {
         this.felonyExplanation = felonyExplanation;
+    }
+
+    public NewHireAccountEntity getNewHireAccount() {
+        return newHireAccount;
+    }
+
+    public void setNewHireAccount(NewHireAccountEntity newHireAccount) {
+        this.newHireAccount = newHireAccount;
     }
 
     @Override

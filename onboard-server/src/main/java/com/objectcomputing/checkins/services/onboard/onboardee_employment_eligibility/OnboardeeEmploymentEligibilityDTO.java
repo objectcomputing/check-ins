@@ -1,18 +1,15 @@
 package com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import io.micronaut.core.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
 
-
-
-
 @Introspected
-public class OnboardeeEmploymentEligibilityResponseDTO {
+public class OnboardeeEmploymentEligibilityDTO {
 
     @NotNull
     @Schema(description = "id of the onboardee this profile entry is associated with", required = true)
@@ -41,6 +38,10 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
     @Nullable
     @Schema(description = "onboardee felony explanation", nullable = true)
     private String felonyExplanation;
+
+    @NotNull
+    @Schema(description ="email address of the newHire used to initialize their account")
+    private String emailAddress;
 
     public UUID getId() {
         return id;
@@ -104,9 +105,13 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
         this.felonyExplanation = felonyExplanation;
     }
 
+    public String getEmailAddress() {return emailAddress; }
+
+    public void setEmailAddress(String emailAddress) {this.emailAddress = emailAddress; }
+
     @Override
     public String toString() {
-        return "OnboardeeEmploymentEligibilityResponseDTO{" +
+        return "OnboardeeEmploymentEligibilityDTO{" +
                 "id=" + id +
                 ", ageLegal ='" + ageLegal + '\'' +
                 ", usCitizen='" + usCitizen + '\'' +

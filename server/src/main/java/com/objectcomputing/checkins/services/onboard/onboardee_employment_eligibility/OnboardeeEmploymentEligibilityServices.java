@@ -7,10 +7,9 @@ import java.util.UUID;
 
 public interface OnboardeeEmploymentEligibilityServices {
     OnboardeeEmploymentEligibility getById(UUID id);
-    Set<OnboardeeEmploymentEligibility> findByValues (UUID id, Boolean ageLegal, Boolean usCitizen, String visaStatus,
-                                         LocalDate expirationDate, Boolean felonyStatus, String felonyExplanation);
 
-    OnboardeeEmploymentEligibility saveProfile(OnboardeeEmploymentEligibility onboardeeEmploymentEligibility);
+    OnboardeeEmploymentEligibility saveProfile(OnboardeeEmploymentEligibilityCreateDTO onboardeeEmploymentEligibilityCreateDTO);
+    OnboardeeEmploymentEligibility updateProfile(OnboardeeEmploymentEligibilityDTO onboardeeEmploymentEligibilityDTO);
 
     Boolean deleteProfile(UUID id);
 

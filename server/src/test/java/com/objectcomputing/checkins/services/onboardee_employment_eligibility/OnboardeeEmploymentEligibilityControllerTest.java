@@ -1,16 +1,10 @@
 package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
-import static com.objectcomputing.checkins.services.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityTestUtil.*;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.BackgroundInformationFixture;
 import com.objectcomputing.checkins.services.fixture.OnboardeeEmploymentEligibilityFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
-import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformation;
-import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibility;
 import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityCreateDTO;
-import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityResponseDTO;
-import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -18,11 +12,9 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,8 +35,8 @@ public class OnboardeeEmploymentEligibilityControllerTest extends TestContainers
 //        final HttpRequest<Object> request = HttpRequest.
 //                GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 //
-//        final HttpResponse<List<OnboardeeEmploymentEligibilityResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(OnboardeeEmploymentEligibilityResponseDTO.class));
-//        final List<OnboardeeEmploymentEligibilityResponseDTO> results = response.body();
+//        final HttpResponse<List<OnboardeeEmploymentEligibilityDTO>> response = client.toBlocking().exchange(request, Argument.listOf(OnboardeeEmploymentEligibilityDTO.class));
+//        final List<OnboardeeEmploymentEligibilityDTO> results = response.body();
 //
 //        assertEquals(HttpStatus.OK, response.getStatus());
 //        assertEquals(2, results.size());
@@ -79,7 +71,7 @@ public class OnboardeeEmploymentEligibilityControllerTest extends TestContainers
 //    @Test
 //    public void testPOSTCreateAOnboardeeEmploymentEligibility() {
 //        BackgroundInformation backgroundInformation = createDefaultBackgroundInformation();
-//        OnboardeeEmploymentEligibilityResponseDTO dto = mkUpdateOnboardeeEmploymentEligibilityResponseDTO(backgroundInformation);
+//        OnboardeeEmploymentEligibilityDTO dto = mkUpdateOnboardeeEmploymentEligibilityResponseDTO(backgroundInformation);
 //
 //        final HttpRequest<?> request = HttpRequest.
 //                POST("/", dto).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
