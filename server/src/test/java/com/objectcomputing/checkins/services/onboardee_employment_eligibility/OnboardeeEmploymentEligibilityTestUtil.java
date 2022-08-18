@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.onboard.background_information.Back
 import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibility;
 import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityCreateDTO;
 import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityDTO;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
 
 import java.time.LocalDate;
 
@@ -33,7 +34,8 @@ public class OnboardeeEmploymentEligibilityTestUtil {
     }
 
     public static OnboardeeEmploymentEligibility mkOnboardee_Employment_Eligibility(String seed, BackgroundInformation backgroundInformation) {
-        return new OnboardeeEmploymentEligibility(true, true, "F-1" + seed, LocalDate.now(), false, "Say No to Felony" + seed);
+        NewHireAccountEntity newHireAccountEntity = new NewHireAccountEntity();
+        return new OnboardeeEmploymentEligibility(newHireAccountEntity,true, true, "F-1" + seed, LocalDate.now(), false, "Say No to Felony" + seed);
     }
 
     public static void assetProfilesEqual(OnboardeeEmploymentEligibility entity, OnboardeeEmploymentEligibilityDTO dto) {
