@@ -205,7 +205,7 @@ function Activation({ activating, setActivating }) {
             </FormControl>
             <ReactCodeInput
               type="text"
-              fields={6}
+              fields={5}
               values={[]}
               onChange={handleChange}
               loading={loading}
@@ -219,7 +219,7 @@ function Activation({ activating, setActivating }) {
               />
             )}
             <LoadingButton
-              disabled={(val.length < 6 || !email || emailError)}
+              disabled={(val.length < 5 || !email || emailError)}
               loading={loading}
               variant="contained"
               color="primary"

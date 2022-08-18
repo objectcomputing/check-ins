@@ -7,7 +7,8 @@ const postCode = (email, code) => {
   return async (dispatch, getState) => {
 
     try {
-      const baseURL = getEnvSpecificAPIURI();
+      // const baseURL = getEnvSpecificAPIURI();
+      const baseURL = 'localhost:8081';
       const url = `${baseURL}/api/auth/activate/challenge`;
       const loginData = { identity: email };
 
