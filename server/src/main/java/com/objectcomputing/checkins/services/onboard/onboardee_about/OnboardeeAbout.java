@@ -1,8 +1,11 @@
-package com.objectcomputing.checkins.services.onboardee_about;
+package com.objectcomputing.checkins.services.onboard.onboardee_about;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.Relation;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
@@ -13,24 +16,24 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-
-
 import java.util.Objects;
 import java.util.UUID;
+
+import static io.micronaut.data.annotation.Relation.Kind.ONE_TO_ONE;
 
 @Entity
 @Introspected
 @Table(name = "onboardee_about")
 public class OnboardeeAbout {
     @Id
-    @Column(name = "id")
+    @Column(name = "about_you_id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the new employee profile this entry is associated with")
     private UUID id;
     
     @NotBlank
-    @Column(name = "tshirtsize")
+    @Column(name = "tshirt_size")
     @ColumnTransformer(
         read = "pgp_sym_decrypt(tshirtSize::bytea,'${aes.key}')",
         write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -39,7 +42,7 @@ public class OnboardeeAbout {
     private String tshirtSize;
 
     @NotBlank
-    @Column(name = "googletraining")
+    @Column(name = "google_training")
     @ColumnTransformer(
         read = "pgp_sym_decrypt(googleTraining::bytea,'${aes.key}')",
         write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -57,17 +60,17 @@ public class OnboardeeAbout {
     private String introduction;
 
     @NotBlank
-    @Column(name = "vaccinestatus")
+    @Column(name = "vaccine_status")
     @Schema(description = "Has the onboardee taken required vaccinations")
     private Boolean vaccineStatus;
 
     @NotBlank
-    @Column(name = "vaccinetwoweeks")
+    @Column(name = "vaccine_two_weeks")
     @Schema(description = "Has is been two weeks since last vaccine dose")
     private Boolean vaccineTwoWeeks;
 
     @Nullable
-    @Column(name = "othertraining")
+    @Column(name = "other_training")
     @ColumnTransformer(
         read = "pgp_sym_decrypt(otherTraining::bytea,'${aes.key}')",
         write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -76,7 +79,7 @@ public class OnboardeeAbout {
     private String otherTraining;
 
     @Nullable
-    @Column(name = "additionalskills")
+    @Column(name = "additional_skills")
     @ColumnTransformer(
         read = "pgp_sym_decrypt(additionalSkills::bytea,'${aes.key}')",
         write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -93,7 +96,12 @@ public class OnboardeeAbout {
     @Schema(description = "Any other certifications or training onboardee already has")
     private String certifications;
 
-    public OnboardeeAbout(UUID id, String tshirtSize, String googleTraining, @Nullable String introduction, Boolean vaccineStatus, Boolean vaccineTwoWeeks, @Nullable String otherTraining, @Nullable String additionalSkills, @Nullable String certifications) {
+    @Relation(value = ONE_TO_ONE)
+    @Column(name="new_hire_account_id")
+    @JsonIgnore
+    private NewHireAccountEntity newHireAccount;
+
+    public OnboardeeAbout(UUID id, String tshirtSize, String googleTraining, @Nullable String introduction, Boolean vaccineStatus, Boolean vaccineTwoWeeks, @Nullable String otherTraining, @Nullable String additionalSkills, @Nullable String certifications, NewHireAccountEntity newHireAccount) {
         this.id = id;
         this.tshirtSize = tshirtSize;
         this.googleTraining = googleTraining;
@@ -103,9 +111,10 @@ public class OnboardeeAbout {
         this.otherTraining = otherTraining;
         this.additionalSkills = additionalSkills;
         this.certifications = certifications;
+        this.newHireAccount = newHireAccount;
     }
 
-    public OnboardeeAbout(String tshirtSize, String googleTraining, @Nullable String introduction, Boolean vaccineStatus, Boolean vaccineTwoWeeks, @Nullable String otherTraining, @Nullable String additionalSkills, @Nullable String certifications) {
+    public OnboardeeAbout(String tshirtSize, String googleTraining, @Nullable String introduction, Boolean vaccineStatus, Boolean vaccineTwoWeeks, @Nullable String otherTraining, @Nullable String additionalSkills, @Nullable String certifications, NewHireAccountEntity newHireAccount) {
         this.tshirtSize = tshirtSize;
         this.googleTraining = googleTraining;
         this.introduction = introduction;
@@ -114,6 +123,7 @@ public class OnboardeeAbout {
         this.otherTraining = otherTraining;
         this.additionalSkills = additionalSkills;
         this.certifications = certifications;
+        this.newHireAccount = newHireAccount;
     }
 
     public UUID getId() {
@@ -192,16 +202,24 @@ public class OnboardeeAbout {
         this.certifications = certifications;
     }
 
+    public NewHireAccountEntity getNewHireAccount() {
+        return newHireAccount;
+    }
+
+    public void setNewHireAccount(NewHireAccountEntity newHireAccount) {
+        this.newHireAccount = newHireAccount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OnboardeeAbout that = (OnboardeeAbout) o;
-        return Objects.equals(id, that.id) && Objects.equals(tshirtSize, that.tshirtSize) && Objects.equals(googleTraining, that.googleTraining) && Objects.equals(introduction, that.introduction) && Objects.equals(vaccineStatus, that.vaccineStatus) && Objects.equals(vaccineTwoWeeks, that.vaccineTwoWeeks) && Objects.equals(otherTraining, that.otherTraining) && Objects.equals(additionalSkills, that.additionalSkills) && Objects.equals(certifications, that.certifications);
+        return Objects.equals(id, that.id) && Objects.equals(tshirtSize, that.tshirtSize) && Objects.equals(googleTraining, that.googleTraining) && Objects.equals(introduction, that.introduction) && Objects.equals(vaccineStatus, that.vaccineStatus) && Objects.equals(vaccineTwoWeeks, that.vaccineTwoWeeks) && Objects.equals(otherTraining, that.otherTraining) && Objects.equals(additionalSkills, that.additionalSkills) && Objects.equals(certifications, that.certifications) && Objects.equals(newHireAccount, that.newHireAccount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, tshirtSize, googleTraining, introduction, vaccineStatus, vaccineTwoWeeks, otherTraining, additionalSkills, certifications);
+        return Objects.hash(id, tshirtSize, googleTraining, introduction, vaccineStatus, vaccineTwoWeeks, otherTraining, additionalSkills, certifications, newHireAccount);
     }
 }

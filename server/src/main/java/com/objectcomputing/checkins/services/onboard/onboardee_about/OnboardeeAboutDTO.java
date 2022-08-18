@@ -1,15 +1,15 @@
-package com.objectcomputing.checkins.services.onboardee_about;
+package com.objectcomputing.checkins.services.onboard.onboardee_about;
+
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import io.micronaut.core.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-
 import java.util.Objects;
 import java.util.UUID;
 
 @Introspected
-public class OnboardeeAboutResponseDTO {
+public class OnboardeeAboutDTO {
 
     @NotNull
     @Schema(description = "id of the onboardee this profile is associated with", required = true)
@@ -46,6 +46,10 @@ public class OnboardeeAboutResponseDTO {
     @Nullable
     @Schema(description = "Any other certifications or training onboardee already has", nullable = true)
     private String certifications;
+
+    @NotNull
+    @Schema(description ="email address of the newHire used to initialize their account")
+    private String emailAddress;
 
     public UUID getId() {
         return id;
@@ -123,6 +127,14 @@ public class OnboardeeAboutResponseDTO {
         this.certifications = certifications;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     @Override
     public String toString() {
         return "OnboardeeAboutResponseDTO{" +
@@ -135,6 +147,7 @@ public class OnboardeeAboutResponseDTO {
                 ", otherTraining='" + otherTraining + '\'' +
                 ", additionalSkills='" + additionalSkills + '\'' +
                 ", certifications='" + certifications + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
                 '}';
     }
 
@@ -142,12 +155,12 @@ public class OnboardeeAboutResponseDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OnboardeeAboutResponseDTO that = (OnboardeeAboutResponseDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(tshirtSize, that.tshirtSize) && Objects.equals(googleTraining, that.googleTraining) && Objects.equals(introduction, that.introduction) && Objects.equals(vaccineStatus, that.vaccineStatus) && Objects.equals(vaccineTwoWeeks, that.vaccineTwoWeeks) && Objects.equals(otherTraining, that.otherTraining) && Objects.equals(additionalSkills, that.additionalSkills) && Objects.equals(certifications, that.certifications);
+        OnboardeeAboutDTO that = (OnboardeeAboutDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(tshirtSize, that.tshirtSize) && Objects.equals(googleTraining, that.googleTraining) && Objects.equals(introduction, that.introduction) && Objects.equals(vaccineStatus, that.vaccineStatus) && Objects.equals(vaccineTwoWeeks, that.vaccineTwoWeeks) && Objects.equals(otherTraining, that.otherTraining) && Objects.equals(additionalSkills, that.additionalSkills) && Objects.equals(certifications, that.certifications) && Objects.equals(emailAddress, that.emailAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, tshirtSize, googleTraining, introduction, vaccineStatus, vaccineTwoWeeks, otherTraining, additionalSkills, certifications);
+        return Objects.hash(id, tshirtSize, googleTraining, introduction, vaccineStatus, vaccineTwoWeeks, otherTraining, additionalSkills, certifications, emailAddress);
     }
 }

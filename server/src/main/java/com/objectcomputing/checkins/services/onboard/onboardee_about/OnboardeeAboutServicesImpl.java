@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardee_about;
+package com.objectcomputing.checkins.services.onboard.onboardee_about;
 
 import com.objectcomputing.checkins.newhire.model.NewHireAccountEntity;
 import com.objectcomputing.checkins.newhire.model.NewHireAccountRepository;
@@ -6,7 +6,8 @@ import com.objectcomputing.checkins.services.onboard.exceptions.NotFoundExceptio
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @Singleton
 public class OnboardeeAboutServicesImpl implements OnboardeeAboutServices {

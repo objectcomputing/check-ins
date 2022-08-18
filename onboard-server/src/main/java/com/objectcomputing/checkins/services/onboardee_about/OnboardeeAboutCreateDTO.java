@@ -42,6 +42,10 @@ public class OnboardeeAboutCreateDTO {
     @Schema(description = "Any other certifications or training onboardee already has", nullable = true)
     private String certifications;
 
+    @NotNull
+    @Schema(description ="email address of the newHire used to initialize their account")
+    private String emailAddress;
+
     public String getTshirtSize() {
         return tshirtSize;
     }
@@ -110,12 +114,24 @@ public class OnboardeeAboutCreateDTO {
         this.certifications = certifications;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OnboardeeAboutCreateDTO that = (OnboardeeAboutCreateDTO) o;
-        return Objects.equals(tshirtSize, that.tshirtSize) && Objects.equals(googleTraining, that.googleTraining) && Objects.equals(introduction, that.introduction) && Objects.equals(vaccineStatus, that.vaccineStatus) && Objects.equals(vaccineTwoWeeks, that.vaccineTwoWeeks) && Objects.equals(otherTraining, that.otherTraining) && Objects.equals(additionalSkills, that.additionalSkills) && Objects.equals(certifications, that.certifications);
+        return Objects.equals(tshirtSize, that.tshirtSize) && Objects.equals(googleTraining, that.googleTraining) && Objects.equals(introduction, that.introduction) && Objects.equals(vaccineStatus, that.vaccineStatus) && Objects.equals(vaccineTwoWeeks, that.vaccineTwoWeeks) && Objects.equals(otherTraining, that.otherTraining) && Objects.equals(additionalSkills, that.additionalSkills) && Objects.equals(certifications, that.certifications) && Objects.equals(emailAddress, that.emailAddress);
     }
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tshirtSize, googleTraining, introduction, vaccineStatus, vaccineTwoWeeks, otherTraining, additionalSkills, certifications, emailAddress);
+    }
 }

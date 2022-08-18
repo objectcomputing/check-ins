@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardee_about;
+package com.objectcomputing.checkins.services.onboard.onboardee_about;
 
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;

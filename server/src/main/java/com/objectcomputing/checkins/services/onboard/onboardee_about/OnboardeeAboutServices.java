@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardee_about;
+package com.objectcomputing.checkins.services.onboard.onboardee_about;
 
 import java.util.UUID;
 

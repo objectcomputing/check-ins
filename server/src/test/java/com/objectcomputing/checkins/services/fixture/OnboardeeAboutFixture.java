@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 
-import com.objectcomputing.checkins.services.onboardee_about.OnboardeeAbout;
+import com.objectcomputing.checkins.services.onboard.onboardee_about.OnboardeeAbout;
 
 public interface OnboardeeAboutFixture extends RepositoryFixture {
     

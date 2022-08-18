@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.services.fixture.OnboardeeAboutFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
+import com.objectcomputing.checkins.services.onboard.onboardee_about.OnboardeeAbout;
+import com.objectcomputing.checkins.services.onboard.onboardee_about.OnboardeeAboutCreateDTO;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;

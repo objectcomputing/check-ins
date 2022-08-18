@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.onboardee_about;
+package com.objectcomputing.checkins.services.onboard.onboardee_about;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -44,32 +44,32 @@ public class OnboardeeAboutController {
     }
 
     @Get("/{id}")
-    public Mono<HttpResponse<OnboardeeAboutResponseDTO>> getById(UUID id) {
+    public Mono<HttpResponse<OnboardeeAboutDTO>> getById(UUID id) {
         return Mono.fromCallable(() -> onboardeeAboutServices.getById(id))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(profile -> (HttpResponse<OnboardeeAboutResponseDTO>) HttpResponse
+                .map(profile -> (HttpResponse<OnboardeeAboutDTO>) HttpResponse
                         .ok(fromEntity(profile))
                         .headers(headers -> headers.location(location(profile.getId()))))
                 .subscribeOn(scheduler);
     }
 
     @Post()
-    public Mono<HttpResponse<OnboardeeAboutResponseDTO>> save(@Body @Valid OnboardeeAboutCreateDTO onboardeeAbout) {
-        return Mono.fromCallable(() -> onboardeeAboutServices.saveAbout(fromDTO(onboardeeAbout)))
+    public Mono<HttpResponse<OnboardeeAboutDTO>> save(@Body @Valid OnboardeeAboutCreateDTO onboardeeAbout) {
+        return Mono.fromCallable(() -> onboardeeAboutServices.saveAbout(onboardeeAbout))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedProfile -> (HttpResponse<OnboardeeAboutResponseDTO>) HttpResponse
+                .map(savedProfile -> (HttpResponse<OnboardeeAboutDTO>) HttpResponse
                         .created(fromEntity(savedProfile))
                         .headers(headers -> headers.location(location(savedProfile.getId()))))
                 .subscribeOn(scheduler);
     }
 
     @Put()
-    public Mono<HttpResponse<OnboardeeAboutResponseDTO>> update(@Body @Valid OnboardeeAboutResponseDTO onboardeeAbout) {
-        return Mono.fromCallable(() -> onboardeeAboutServices.saveAbout(fromDTO(onboardeeAbout)))
+    public Mono<HttpResponse<OnboardeeAboutDTO>> update(@Body @Valid OnboardeeAboutDTO onboardeeAbout) {
+        return Mono.fromCallable(() -> onboardeeAboutServices.updateAbout(onboardeeAbout))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> {
-                    OnboardeeAboutResponseDTO updatedOnboardeeAbout = fromEntity(savedProfile);
-                    return (HttpResponse<OnboardeeAboutResponseDTO>) HttpResponse
+                    OnboardeeAboutDTO updatedOnboardeeAbout = fromEntity(savedProfile);
+                    return (HttpResponse<OnboardeeAboutDTO>) HttpResponse
                             .ok()
                             .headers(headers -> headers.location(location(updatedOnboardeeAbout.getId())))
                             .body(updatedOnboardeeAbout);
@@ -89,8 +89,8 @@ public class OnboardeeAboutController {
         return URI.create("/onboardee-about/" + id);
     }
 
-    private OnboardeeAboutResponseDTO fromEntity(OnboardeeAbout entity) {
-        OnboardeeAboutResponseDTO dto = new OnboardeeAboutResponseDTO();
+    private OnboardeeAboutDTO fromEntity(OnboardeeAbout entity) {
+        OnboardeeAboutDTO dto = new OnboardeeAboutDTO();
         dto.setId(entity.getId());
         dto.setTshirtSize(entity.getTshirtSize());
         dto.setGoogleTraining(entity.getGoogleTraining());
@@ -103,15 +103,4 @@ public class OnboardeeAboutController {
         return dto;
     }
 
-    private OnboardeeAbout fromDTO(OnboardeeAboutResponseDTO dto) {
-        return new OnboardeeAbout(dto.getId(), dto.getTshirtSize(), dto.getGoogleTraining(), dto.getIntroduction(),
-                dto.getVaccineStatus(), dto.getVaccineTwoWeeks(), dto.getOtherTraining(), dto.getAdditionalSkills(),
-                dto.getCertifications());
-    }
-
-    private OnboardeeAbout fromDTO(OnboardeeAboutCreateDTO dto) {
-        return new OnboardeeAbout(dto.getTshirtSize(), dto.getGoogleTraining(), dto.getIntroduction(),
-                dto.getVaccineStatus(), dto.getVaccineTwoWeeks(), dto.getOtherTraining(), dto.getAdditionalSkills(),
-                dto.getCertifications());
-    }
 }

@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.onboardee_about;
 
+import com.objectcomputing.checkins.services.onboard.onboardee_about.OnboardeeAbout;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnboardeeAboutTestUtil {
