@@ -19,7 +19,7 @@ public interface NewHireAuthorizationCodeRepository extends ReactorCrudRepositor
     @Query(value = "SELECT uac.new_hire_authorization_code_id, uac.new_hire_id, uac.salt, uac.verifier, uac.purpose, uac.source, uac.issued_instant, uac.time_to_live, uac.consumed_instant " +
             "FROM new_hire_authorization_code as uac " +
             "WHERE(" +
-            "(uac.user_account_id = :newHireAccountId)" +
+            "(uac.new_hire_account_id = :newHireAccountId)" +
             " AND " +
             "(uac.consumed_instant is null)" +
             " AND " +
@@ -28,8 +28,8 @@ public interface NewHireAuthorizationCodeRepository extends ReactorCrudRepositor
     Flux<NewHireAuthorizationCodeEntity> findAllActiveUserAuthorizationCodesByUserAccountId(UUID newHireAccountId);
 
     @SuppressWarnings("SqlResolve")
-    @Query(value = "SELECT uac.user_authorization_code_id, uac.user_account_id, uac.salt, uac.verifier, uac.purpose, uac.source, uac.issued_instant, uac.time_to_live, uac.consumed_instant " +
-            "FROM user_authorization_code as uac " +
+    @Query(value = "SELECT uac.new_hire_authorization_code_id, uac.new_hire_account_id, uac.salt, uac.verifier, uac.purpose, uac.source, uac.issued_instant, uac.time_to_live, uac.consumed_instant " +
+            "FROM new_hire_authorization_code as uac " +
             "WHERE(" +
             "(uac.user_account_id = :newHireAccountId AND purpose = :purpose)" +
             " AND " +
@@ -43,9 +43,9 @@ public interface NewHireAuthorizationCodeRepository extends ReactorCrudRepositor
 
     @SuppressWarnings("SqlResolve")
     @Query(value = "SELECT exists(SELECT 1 " +
-            "FROM user_authorization_code as uac " +
+            "FROM new_hire_authorization_code as uac " +
             "WHERE(" +
-            "(uac.user_account_id = :newHireAccountId AND purpose = :purpose)" +
+            "(uac.new_hire_account_id = :newHireAccountId AND purpose = :purpose)" +
             " AND " +
             "(uac.consumed_instant is null)" +
             " AND " +
