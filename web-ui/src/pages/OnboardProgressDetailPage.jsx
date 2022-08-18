@@ -33,12 +33,18 @@ const modalStyle = {
 };
 
 export default function OnboardProgressDetailPage(onboardee) {
+  const history = useHistory();
+  const location = useLocation();
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
-  const location = useLocation();
   const { state, dispatch } = useContext(AppContext);
   const { csrf, onboardeeProfiles } = state;
   const { name, email, hireType, title } = location.state;
+  const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openDel, setOpenDel] = useState(false);
+  const [delNum, setDelNum] = useState(1);
+  const [openDelConf, setOpenDelConf] = useState(false);
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
 
   useEffect(() => {
@@ -69,21 +75,15 @@ export default function OnboardProgressDetailPage(onboardee) {
     },
   ];
 
-  const history = useHistory();
-  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [openEdit, setOpenEdit] = useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
-  const [openDel, setOpenDel] = useState(false);
-  const [delNum, setDelNum] = useState(1);
   const handleCancel = () => setOpenDel(!openDel);
   const handleDel = (e, index) => {
     setDelNum(index);
     setOpenDel(!openDel);
   };
-  const [openDelConf, setOpenDelConf] = useState(false);
 
   const handleReturn = () => {
     history.push({ pathname: `/onboard/progress` });

@@ -16,7 +16,6 @@ import Select from "@mui/material/Select";
 import OnboardeeResetModal from "./OnboardeeResetModal";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TOAST } from "../../context/actions";
-import deleteUser
 
 const modalBoxStyle = {
   position: "absolute",

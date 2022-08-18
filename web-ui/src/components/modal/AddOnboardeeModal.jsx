@@ -45,6 +45,11 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
   const { dispatch } = useContext(AppContext);
   const [editedOnboardee, setOnboardee] = useState(onboardee);
   const [emptyFile, setEmptyFile] = useState(" ");
+  const [openSavedModal, setOpenSavedModal] = useState(false);
+
+  const handleClose = () => {
+    setOpenSavedModal(false);
+  };
 
   const [isNewOnboardee, setIsNewOnboardee] = useState(
     Object.keys(onboardee).length === 0 ? true : false
@@ -77,7 +82,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
       editedOnboardee.firstName?.length > 0 &&
       editedOnboardee.lastName?.length > 0 &&
       editedOnboardee.email?.length > 0 &&
-      editedOnboardee.postition?.length > 0 &&
+      editedOnboardee.position?.length > 0 &&
       editedOnboardee.hireType?.length > 0 &&
       editedOnboardee.manager?.length > 0
     );
@@ -85,7 +90,6 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
 
   const submitOnboardeeClick = useCallback(async () => {
     let required = validateRequiredInputsPresent();
-
     let inputsFeasible = validateInputs();
     if (!required) {
       dispatch({
@@ -102,6 +106,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
           setOnboardee({ emptyOnboardee });
           setIsNewOnboardee(true);
         }
+        setOpenSavedModal(true);
       });
     }
   }, [
@@ -303,8 +308,9 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
+            <OnboardeeAddedModal open={openSavedModal} onClose={handleClose} />
             <Button variant="contained" onClick={submitOnboardeeClick}>
-              <OnboardeeAddedModal />
+              Submit
             </Button>
           </Grid>
         </Grid>
