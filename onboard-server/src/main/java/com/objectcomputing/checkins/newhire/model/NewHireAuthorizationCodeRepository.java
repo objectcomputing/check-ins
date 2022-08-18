@@ -31,7 +31,7 @@ public interface NewHireAuthorizationCodeRepository extends ReactorCrudRepositor
     @Query(value = "SELECT uac.new_hire_authorization_code_id, uac.new_hire_account_id, uac.salt, uac.verifier, uac.purpose, uac.source, uac.issued_instant, uac.time_to_live, uac.consumed_instant " +
             "FROM new_hire_authorization_code as uac " +
             "WHERE(" +
-            "(uac.user_account_id = :newHireAccountId AND purpose = :purpose)" +
+            "(uac.new_hire_account_id = :newHireAccountId AND purpose = :purpose)" +
             " AND " +
             "(uac.consumed_instant is null)" +
             " AND " +
