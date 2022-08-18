@@ -75,10 +75,10 @@ public class OnboardingProfile {
 
     @Nullable
     @Column(name = "birthdate")
-    @ColumnTransformer(
-            read = "pgp_sym_decrypt(birthdate::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}') "
-    )
+//    @ColumnTransformer(
+//            read = "pgp_sym_decrypt(birthdate::bytea,'${aes.key}')",
+//            write = "pgp_sym_encrypt(?,'${aes.key}') "
+//    )
     @Schema(description = "birthdate of the new employee")
     private LocalDate birthDate;
 
@@ -255,6 +255,14 @@ public class OnboardingProfile {
 
     public void setPersonalEmail(String personalEmail) {
         this.personalEmail = personalEmail;
+    }
+
+    public NewHireAccountEntity getNewHireAccount() {
+        return newHireAccount;
+    }
+
+    public void setNewHireAccount(NewHireAccountEntity newHireAccount) {
+        this.newHireAccount = newHireAccount;
     }
 
     @Override

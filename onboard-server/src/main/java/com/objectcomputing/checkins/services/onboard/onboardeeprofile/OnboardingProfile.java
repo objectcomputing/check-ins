@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -77,10 +78,10 @@ public class OnboardingProfile {
 
     @Nullable
     @Column(name = "birthdate")
-    @ColumnTransformer(
-            read = "pgp_sym_decrypt(birthdate::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}') "
-    )
+//    @ColumnTransformer(
+//            read = "pgp_sym_decrypt(birthdate::bytea,'${aes.key}')",
+//            write = "pgp_sym_encrypt(?,'${aes.key}') "
+//    )
     @Schema(description = "birthdate of the new employee")
     private LocalDate birthDate;
 
