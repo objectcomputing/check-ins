@@ -7,10 +7,9 @@ const postCode = (email, code) => {
   return async (dispatch, getState) => {
 
     try {
-      // const baseURL = getEnvSpecificAPIURI();
-      const baseURL = 'localhost:8081';
+      const baseURL = getEnvSpecificAPIURI();
       const url = `${baseURL}/api/auth/activate/challenge`;
-      const loginData = { identity: email };
+      const loginData = { emailAddress: email };
 
       const response = await axios
         .post(url, loginData, {
