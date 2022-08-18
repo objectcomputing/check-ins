@@ -29,7 +29,7 @@ export const updateOnboardee = async (onboardee, cookie) => {
 export const createOnboardee = async (newOnboardee, cookie) => {
     console.log(newOnboardee);
     let initProfile = {
-        accountEmail: newOnboardee?.email,
+        emailAddress: newOnboardee?.email,
         firstName: newOnboardee.firstName,
         lastName: newOnboardee.lastName,
         personalEmail: newOnboardee?.email
