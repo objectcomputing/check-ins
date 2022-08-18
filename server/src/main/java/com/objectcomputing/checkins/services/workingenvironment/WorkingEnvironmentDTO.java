@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Introspected
-public class WorkingEnvironmentResponseDTO {
+public class WorkingEnvironmentDTO {
     @NotNull
     @Schema(description = "id of the onboardee this profile is associated with", required = true)
     private UUID id;
@@ -32,6 +32,10 @@ public class WorkingEnvironmentResponseDTO {
     @Nullable
     @Schema(description = "Other Accessories requested", nullable = true)
     private String otherAccessories;
+
+    @NotNull
+    @Schema(description ="email address of the newHire used to initialize their account")
+    private String emailAddress;
 
     public UUID getId() {
         return id;
@@ -83,28 +87,37 @@ public class WorkingEnvironmentResponseDTO {
         this.otherAccessories = otherAccessories;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        WorkingEnvironmentResponseDTO that = (WorkingEnvironmentResponseDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(workLocation, that.workLocation) && Objects.equals(keyType, that.keyType) && Objects.equals(osType, that.osType) && Objects.equals(accessories, that.accessories) && Objects.equals(otherAccessories, that.otherAccessories);
+        WorkingEnvironmentDTO that = (WorkingEnvironmentDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(workLocation, that.workLocation) && Objects.equals(keyType, that.keyType) && Objects.equals(osType, that.osType) && Objects.equals(accessories, that.accessories) && Objects.equals(otherAccessories, that.otherAccessories) && Objects.equals(emailAddress, that.emailAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, workLocation, keyType, osType, accessories, otherAccessories);
+        return Objects.hash(id, workLocation, keyType, osType, accessories, otherAccessories, emailAddress);
     }
 
     @Override
     public String toString() {
-        return "WorkingEnvironmentResponseDTO{" +
+        return "WorkingEnvironmentDTO{" +
                 "id=" + id +
                 ", workLocation='" + workLocation + '\'' +
                 ", keyType='" + keyType + '\'' +
                 ", osType='" + osType + '\'' +
                 ", accessories='" + accessories + '\'' +
                 ", otherAccessories='" + otherAccessories + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
                 '}';
     }
 }

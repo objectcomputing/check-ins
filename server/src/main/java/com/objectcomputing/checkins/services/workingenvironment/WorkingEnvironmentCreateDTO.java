@@ -1,4 +1,5 @@
 package com.objectcomputing.checkins.services.workingenvironment;
+
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -9,7 +10,7 @@ import java.util.Objects;
 
 @Introspected
 public class WorkingEnvironmentCreateDTO {
-    
+
     @NotNull
     @Schema(description = "Work Location requested", required = true)
     private String workLocation;
@@ -29,6 +30,10 @@ public class WorkingEnvironmentCreateDTO {
     @Nullable
     @Schema(description = "Other Accessories requested", nullable = true)
     private String otherAccessories;
+
+    @NotNull
+    @Schema(description = "email address of the newHire used to initialize their account")
+    private String emailAddress;
 
     public String getWorkLocation() {
         return workLocation;
@@ -72,11 +77,23 @@ public class WorkingEnvironmentCreateDTO {
         this.otherAccessories = otherAccessories;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         WorkingEnvironmentCreateDTO that = (WorkingEnvironmentCreateDTO) o;
-        return Objects.equals(workLocation, that.workLocation) && Objects.equals(keyType, that.keyType) && Objects.equals(osType, that.osType) && Objects.equals(accessories, that.accessories) && Objects.equals(otherAccessories, that.otherAccessories);
+        return Objects.equals(workLocation, that.workLocation) && Objects.equals(keyType, that.keyType)
+                && Objects.equals(osType, that.osType) && Objects.equals(accessories, that.accessories)
+                && Objects.equals(otherAccessories, that.otherAccessories);
     }
 }

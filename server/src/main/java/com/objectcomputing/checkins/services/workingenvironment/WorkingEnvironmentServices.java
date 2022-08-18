@@ -1,15 +1,16 @@
 package com.objectcomputing.checkins.services.workingenvironment;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public interface WorkingEnvironmentServices {
     WorkingEnvironment getById(UUID id);
 
-    Set<WorkingEnvironment> findByValues(UUID id, String workLocation, String keyType, String osType,
-            String accessories, String otherAccessories);
+    WorkingEnvironment saveWorkingEnvironment(WorkingEnvironmentCreateDTO workingEnvironmentCreateDTO);
 
-    WorkingEnvironment saveWorkingEnvironment(WorkingEnvironment workingEnvironment);
+    WorkingEnvironment updateWorkingEnvironment(WorkingEnvironmentDTO workingEnvironmentDTO);
 
     Boolean deleteWorkingEnvironment(UUID id);
+
+    List<WorkingEnvironment> findAll();
 }

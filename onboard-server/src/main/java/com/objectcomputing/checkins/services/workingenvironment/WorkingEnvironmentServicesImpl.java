@@ -1,38 +1,63 @@
 package com.objectcomputing.checkins.services.workingenvironment;
 
 import jakarta.inject.Singleton;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
+
+import com.objectcomputing.checkins.newhire.model.NewHireAccountEntity;
+import com.objectcomputing.checkins.newhire.model.NewHireAccountRepository;
+import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.NotFoundException;
 
 @Singleton
 public class WorkingEnvironmentServicesImpl implements WorkingEnvironmentServices {
     private final WorkingEnvironmentRepository workingEnvironmentRepository;
+    private final NewHireAccountRepository newHireAccountRepository;
 
-    public WorkingEnvironmentServicesImpl(WorkingEnvironmentRepository workingEnvironmentRepository) {
+    public WorkingEnvironmentServicesImpl(WorkingEnvironmentRepository workingEnvironmentRepository,
+            NewHireAccountRepository newHireAccountRepository) {
         this.workingEnvironmentRepository = workingEnvironmentRepository;
+        this.newHireAccountRepository = newHireAccountRepository;
     }
 
     @Override
     public WorkingEnvironment getById(UUID id) {
-        Optional<WorkingEnvironment> workingEnvironment = workingEnvironmentRepository.findById(id);
-        // if (workingEnvironment.isEmpty()) {
-        //     throw new NotFoundException("No new working environment info for id " + id);
-        // }
-        return workingEnvironment.get();
+        return workingEnvironmentRepository.findById(id).flatMap(workingEnvironmentInformation -> {
+            if (workingEnvironmentInformation == null) {
+                throw new NotFoundException("No new employee background information for id " + id);
+            }
+            return Mono.just(workingEnvironmentInformation);
+        }).block();
     }
 
     @Override
-    public Set<WorkingEnvironment> findByValues(UUID id, String workLocation, String keyType, String osType, String accessories, String otherAccessories) {
-        HashSet<WorkingEnvironment> working_environment = new HashSet<>(workingEnvironmentRepository.search(id, workLocation, keyType, osType, accessories, otherAccessories));
-        return working_environment;
+    public WorkingEnvironment saveWorkingEnvironment(WorkingEnvironmentCreateDTO workingEnvironmentCreateDTO) {
+        return newHireAccountRepository.findByEmailAddress(workingEnvironmentCreateDTO.getEmailAddress())
+                .flatMap(newHire -> buildNewWorkingEnvironmentEntity(newHire, workingEnvironmentCreateDTO))
+                .flatMap(backgroundEntity -> workingEnvironmentRepository.save(backgroundEntity)).block();
+    }
+
+    private Mono<WorkingEnvironment> buildNewWorkingEnvironmentEntity(NewHireAccountEntity newHire,
+            WorkingEnvironmentCreateDTO workingEnvironmentCreateDTO) {
+        return Mono.just(new WorkingEnvironment(workingEnvironmentCreateDTO.getWorkLocation(),
+                workingEnvironmentCreateDTO.getKeyType(), workingEnvironmentCreateDTO.getOsType(),
+                workingEnvironmentCreateDTO.getAccessories(), workingEnvironmentCreateDTO.getOtherAccessories(),
+                newHire));
     }
 
     @Override
-    public WorkingEnvironment saveWorkingEnvironment(WorkingEnvironment workingEnvironment) {
-        if(workingEnvironment.getId() == null) {
-            return workingEnvironmentRepository.save(workingEnvironment);
-        }
-        return workingEnvironmentRepository.update(workingEnvironment);
+    public WorkingEnvironment updateWorkingEnvironment(WorkingEnvironmentDTO workingEnvironmentDTO) {
+        return newHireAccountRepository.findByEmailAddress(workingEnvironmentDTO.getEmailAddress())
+                .flatMap(newHire -> buildWorkingEnvironmentEntity(newHire, workingEnvironmentDTO))
+                .flatMap(backgroundEntity -> workingEnvironmentRepository.save(backgroundEntity)).block();
+    }
+
+    private Mono<WorkingEnvironment> buildWorkingEnvironmentEntity(NewHireAccountEntity newHire,
+            WorkingEnvironmentDTO workingEnvironmentDTO) {
+        return Mono.just(new WorkingEnvironment(workingEnvironmentDTO.getId(), workingEnvironmentDTO.getWorkLocation(),
+                workingEnvironmentDTO.getKeyType(), workingEnvironmentDTO.getOsType(),
+                workingEnvironmentDTO.getAccessories(), workingEnvironmentDTO.getOtherAccessories(),
+                newHire));
     }
 
     @Override
@@ -40,4 +65,6 @@ public class WorkingEnvironmentServicesImpl implements WorkingEnvironmentService
         workingEnvironmentRepository.deleteById(id);
         return true;
     }
+
+    public List<WorkingEnvironment> findAll() { return (List<WorkingEnvironment>) workingEnvironmentRepository.findAll();}
 }

@@ -43,34 +43,34 @@ public class WorkingEnvironmentController {
     }
 
     @Get("/{id}")
-    public Mono<HttpResponse<WorkingEnvironmentResponseDTO>> getById(UUID id) {
+    public Mono<HttpResponse<WorkingEnvironmentDTO>> getById(UUID id) {
         return Mono.fromCallable(() -> workingEnvironmentServices.getById(id))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(profile -> (HttpResponse<WorkingEnvironmentResponseDTO>) HttpResponse
+                .map(profile -> (HttpResponse<WorkingEnvironmentDTO>) HttpResponse
                         .ok(fromEntity(profile))
                         .headers(headers -> headers.location(location(profile.getId()))))
                 .subscribeOn(scheduler);
     }
 
     @Post()
-    public Mono<HttpResponse<WorkingEnvironmentResponseDTO>> save(
+    public Mono<HttpResponse<WorkingEnvironmentDTO>> save(
             @Body @Valid WorkingEnvironmentCreateDTO workingEnvironment) {
-        return Mono.fromCallable(() -> workingEnvironmentServices.saveWorkingEnvironment(fromDTO(workingEnvironment)))
+        return Mono.fromCallable(() -> workingEnvironmentServices.saveWorkingEnvironment(workingEnvironment))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedProfile -> (HttpResponse<WorkingEnvironmentResponseDTO>) HttpResponse
+                .map(savedProfile -> (HttpResponse<WorkingEnvironmentDTO>) HttpResponse
                         .created(fromEntity(savedProfile))
                         .headers(headers -> headers.location(location(savedProfile.getId()))))
                 .subscribeOn(scheduler);
     }
 
     @Put()
-    public Mono<HttpResponse<WorkingEnvironmentResponseDTO>> update(
-            @Body @Valid WorkingEnvironmentResponseDTO onboardeeAbout) {
-        return Mono.fromCallable(() -> workingEnvironmentServices.saveWorkingEnvironment(fromDTO(onboardeeAbout)))
+    public Mono<HttpResponse<WorkingEnvironmentDTO>> update(
+            @Body @Valid WorkingEnvironmentDTO onboardeeAbout) {
+        return Mono.fromCallable(() -> workingEnvironmentServices.updateWorkingEnvironment(onboardeeAbout))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> {
-                    WorkingEnvironmentResponseDTO updatedWorkingEnvironment = fromEntity(savedProfile);
-                    return (HttpResponse<WorkingEnvironmentResponseDTO>) HttpResponse
+                    WorkingEnvironmentDTO updatedWorkingEnvironment = fromEntity(savedProfile);
+                    return (HttpResponse<WorkingEnvironmentDTO>) HttpResponse
                             .ok()
                             .headers(headers -> headers.location(location(updatedWorkingEnvironment.getId())))
                             .body(updatedWorkingEnvironment);
@@ -90,8 +90,8 @@ public class WorkingEnvironmentController {
         return URI.create("/working-environment/" + id);
     }
 
-    private WorkingEnvironmentResponseDTO fromEntity(WorkingEnvironment entity) {
-        WorkingEnvironmentResponseDTO dto = new WorkingEnvironmentResponseDTO();
+    private WorkingEnvironmentDTO fromEntity(WorkingEnvironment entity) {
+        WorkingEnvironmentDTO dto = new WorkingEnvironmentDTO();
         dto.setId(entity.getId());
         dto.setWorkLocation(entity.getWorkLocation());
         dto.setKeyType(entity.getKeyType());
@@ -99,16 +99,6 @@ public class WorkingEnvironmentController {
         dto.setAccessories(entity.getAccessories());
         dto.setOtherAccessories(entity.getOtherAccessories());
         return dto;
-    }
-
-    private WorkingEnvironment fromDTO(WorkingEnvironmentResponseDTO dto) {
-        return new WorkingEnvironment(dto.getId(), dto.getWorkLocation(), dto.getKeyType(), dto.getOsType(),
-                dto.getAccessories(), dto.getOtherAccessories());
-    }
-
-    private WorkingEnvironment fromDTO(WorkingEnvironmentCreateDTO dto) {
-        return new WorkingEnvironment(dto.getWorkLocation(), dto.getKeyType(), dto.getOsType(), dto.getAccessories(),
-                dto.getOtherAccessories());
     }
 
 }
