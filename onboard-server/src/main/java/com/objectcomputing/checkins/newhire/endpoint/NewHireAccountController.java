@@ -5,7 +5,6 @@ import com.objectcomputing.checkins.newhire.NewHireAccountService;
 import com.objectcomputing.checkins.auth.exceptions.NoRecordFoundError;
 import com.objectcomputing.checkins.newhire.commons.SharableNewHireAccount;
 import com.objectcomputing.checkins.newhire.commons.NewHireAccountConfig;
-import com.objectcomputing.checkins.newhire.model.NewHireAccountEntity;
 import com.objectcomputing.checkins.newhire.model.NewHireAccountRepository;
 import com.objectcomputing.checkins.security.authentication.AuthenticatedActor;
 import io.micronaut.http.MediaType;
