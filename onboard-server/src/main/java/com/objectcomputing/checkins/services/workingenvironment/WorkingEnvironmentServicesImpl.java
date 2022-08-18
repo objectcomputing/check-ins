@@ -7,7 +7,7 @@ import java.util.*;
 
 import com.objectcomputing.checkins.newhire.model.NewHireAccountEntity;
 import com.objectcomputing.checkins.newhire.model.NewHireAccountRepository;
-import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.onboard.exceptions.NotFoundException;
 
 @Singleton
 public class WorkingEnvironmentServicesImpl implements WorkingEnvironmentServices {
