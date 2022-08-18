@@ -33,28 +33,16 @@ function Activation({ activating, setActivating }) {
     console.log(val);
   }, [val]);
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     if (errorStatus?.status === "error") {
-  //       setErrorMsg("Code Failure Error. Try Again.");
-  //       setLoading(false);
-  //       setStateBustingKey(stateBustingKey + 1);
-  //     } else if (errorStatus?.status === "expired") {
-  //       setErrorMsg("Code expired. Request new one:");
-  //       setLoading(false);
-  //       setStateBustingKey(stateBustingKey + 1);
-  //       setExpiredCode(true);
-  //       setErrorStatus([]);
-  //     } else {
-  //       setErrorMsg("");
-  //     }
-  //   }, 500);
-  // }, [errorStatus]);
-
   useEffect(() => {
     if (loginData?.status === "error") {
       setEmailError(true);
       setErrorMsg("Code Failure Error. Try Again.");
+    } else if (loginData?.status === "expired") {
+      setErrorStatus({ status: "expired" });
+      setCheckEmail(false);
+    } else if (loginData?.status === "success") {
+      setLoading(false);
+      setActivating(false);
     }
   }, [loginData]);
 
@@ -67,25 +55,7 @@ function Activation({ activating, setActivating }) {
     e.preventDefault();
     setLoading(true);
 
-    // if (val === "123456") {
-    //   setTimeout(() => {
-    //     setLoading(false);
-    //     setActivating(false);
-    //   }, 300);
-    // } else if (val === "111111") {
-    //   setErrorStatus({ status: "expired" });
-    //   setCheckEmail(false);
-    // } else {
-    //   setErrorStatus({ status: "error" });
-    //   setCheckEmail(false);
-    // }
-
-    // TODO:
-    // Create action that hooks up with api (api not present yet)
-    // dispatch(activateCode(errorStatus, setErrorStatus, val));
-    dispatch(
-      postCode(email, val)
-    );
+    dispatch(postCode(email, val));
   }
 
   const resetEmailHelperErrorsState = () => {
@@ -219,7 +189,7 @@ function Activation({ activating, setActivating }) {
               />
             )}
             <LoadingButton
-              disabled={(val.length < 5 || !email || emailError)}
+              disabled={val.length < 5 || !email || emailError}
               loading={loading}
               variant="contained"
               color="primary"

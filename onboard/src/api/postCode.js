@@ -56,17 +56,20 @@ const postCode = (email, code) => {
             'Content-Type': 'application/json'
           }
         });
-      console.log('Login succeeded');
+      console.log('Code activation succeeded');
+      console.log(response2);
       dispatch({
         type: ACTIONS.LOAD_USER,
         payload: {
           email: '',
           accessToken: '',
-          status: response2?.status,
+          status: "success",
           expiration: ''
         }
       });
       document.body.style.cursor = 'default';
+
+      // TODO: add an option for expired auth code and set status to 'expired'.
     } catch (error) {
       dispatch({
         type: ACTIONS.INVALID_LOAD,
