@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Modal, Box, Typography, Grid, Button } from "@mui/material";
 
 const OnboardeeAddedModal = ({ open, onClose }) => {
