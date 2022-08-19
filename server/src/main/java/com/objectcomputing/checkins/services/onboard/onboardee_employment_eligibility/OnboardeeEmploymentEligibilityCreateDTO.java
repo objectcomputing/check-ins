@@ -37,9 +37,9 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
     @Schema(description = "onboardee felony explanation", nullable = true)
     private String felonyExplanation;
 
-    @NotBlank
-    @Schema(description = "Background Information Id of onboardee")
-    private UUID backgroundId;
+    @NotNull
+    @Schema(description ="email address of the newHire used to initialize their account")
+    private String emailAddress;
 
     @NotNull
     public Boolean getAgeLegal() {
@@ -95,21 +95,20 @@ public class OnboardeeEmploymentEligibilityCreateDTO {
         this.felonyExplanation = felonyExplanation;
     }
 
-    public UUID getBackgroundId() { return backgroundId; }
+    public String getEmailAddress() { return emailAddress; }
 
-    public void setBackgroundId(UUID backgroundId) { this.backgroundId = backgroundId; }
+    public void setEmailAddress(String emailAddress) {this.emailAddress = emailAddress;}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OnboardeeEmploymentEligibilityCreateDTO that = (OnboardeeEmploymentEligibilityCreateDTO) o;
-        return Objects.equals(ageLegal, that.ageLegal) &&
-                Objects.equals(usCitizen, that.usCitizen) &&
-                Objects.equals(visaStatus, that.visaStatus) &&
-                Objects.equals(expirationDate, that.expirationDate) &&
-                Objects.equals(felonyStatus, that.felonyStatus) &&
-                Objects.equals(felonyExplanation, that.felonyExplanation) &&
-                Objects.equals(backgroundId, that.backgroundId);
-               
+        return Objects.equals(ageLegal, that.ageLegal) && Objects.equals(usCitizen, that.usCitizen) && Objects.equals(visaStatus, that.visaStatus) && Objects.equals(expirationDate, that.expirationDate) && Objects.equals(felonyStatus, that.felonyStatus) && Objects.equals(felonyExplanation, that.felonyExplanation) && Objects.equals(emailAddress, that.emailAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ageLegal, usCitizen, visaStatus, expirationDate, felonyStatus, felonyExplanation, emailAddress);
     }
 }

@@ -84,7 +84,7 @@ public class Srp6AuthenticationController {
                 .doFinally((st) -> authSessionHelper.cleanup(session));
     }
 
-    @Post("/activate/challenge") // First - check email & access code,
+    @Post("/activate/challenge") // 1st - check email & access code,
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     public Mono<Srp6Challenge> activateChallenge(Session session, @Body ChallengeRequest challengeRequest) {
