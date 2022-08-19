@@ -5,9 +5,10 @@ import reactor.core.publisher.Mono;
 
 import java.util.*;
 
-import com.objectcomputing.checkins.newhire.model.NewHireAccountEntity;
-import com.objectcomputing.checkins.newhire.model.NewHireAccountRepository;
-import com.objectcomputing.checkins.services.onboardeeprofile.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountRepository;
+
 
 @Singleton
 public class WorkingEnvironmentServicesImpl implements WorkingEnvironmentServices {
