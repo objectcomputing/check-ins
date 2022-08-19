@@ -16,7 +16,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.objectcomputing.checkins.newhire.model.NewHireAccountEntity;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
+
 import static io.micronaut.data.annotation.Relation.Kind.ONE_TO_ONE;
 
 import java.util.Objects;

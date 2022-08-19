@@ -5,7 +5,7 @@ CREATE TABLE working_environment(
         key_type varchar,
         os_type varchar,
         accessories varchar,
-        other_accessories varchar
+        other_accessories varchar,
         CONSTRAINT fk_new_hire
                 FOREIGN KEY(new_hire_account_id)
                 REFERENCES new_hire_account(new_hire_account_id)

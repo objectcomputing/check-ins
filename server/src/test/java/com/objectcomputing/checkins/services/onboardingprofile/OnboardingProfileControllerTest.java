@@ -47,17 +47,17 @@ public class OnboardingProfileControllerTest extends TestContainersSuite impleme
     }
 
 
-//    @Test
-//    public void testGETGetByIdNotFound() {
-//
-//        final HttpRequest<Object> request = HttpRequest.
-//                GET(String.format("/%s", UUID.randomUUID())).basicAuth(HR_ROLE, HR_ROLE);
-//
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                () -> client.toBlocking().exchange(request, Map.class));
-//
-//        assertNotNull(responseException.getResponse());
-//        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-//    }
+    @Test
+    public void testGETGetByIdNotFound() {
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", UUID.randomUUID())).basicAuth(HR_ROLE, HR_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+    }
 
 }

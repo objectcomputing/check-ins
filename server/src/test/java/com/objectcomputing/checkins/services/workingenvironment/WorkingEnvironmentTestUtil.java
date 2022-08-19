@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.workingenvironment;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WorkingEnvironmentTestUtil {
-    public static void assertEnvironmentEquals(WorkingEnvironment entity, WorkingEnvironmentResponseDTO dto) {
+    public static void assertEnvironmentEquals(WorkingEnvironment entity, WorkingEnvironmentDTO dto) {
         assertEquals(entity.getWorkLocation(), dto.getWorkLocation());
         assertEquals(entity.getKeyType(), dto.getKeyType());
         assertEquals(entity.getOsType(), dto.getOsType());
@@ -11,8 +11,8 @@ public class WorkingEnvironmentTestUtil {
         assertEquals(entity.getOtherAccessories(), dto.getOtherAccessories());
     }
 
-    public static WorkingEnvironmentResponseDTO mkUpdateWorkingEnvironment() {
-        WorkingEnvironmentResponseDTO dto = new WorkingEnvironmentResponseDTO();
+    public static WorkingEnvironmentDTO mkUpdateWorkingEnvironment() {
+        WorkingEnvironmentDTO dto = new WorkingEnvironmentDTO();
         dto.setWorkLocation("Hybrid");
         dto.setKeyType("Key Fob");
         dto.setOsType("Windows");
@@ -21,8 +21,8 @@ public class WorkingEnvironmentTestUtil {
         return dto;
     }
 
-    public static WorkingEnvironmentResponseDTO toDto(WorkingEnvironment entity) {
-        WorkingEnvironmentResponseDTO dto = new WorkingEnvironmentResponseDTO();
+    public static WorkingEnvironmentDTO toDto(WorkingEnvironment entity) {
+        WorkingEnvironmentDTO dto = new WorkingEnvironmentDTO();
         dto.setId(entity.getId());
         dto.setWorkLocation(entity.getWorkLocation());
         dto.setKeyType(entity.getKeyType());
