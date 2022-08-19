@@ -34,7 +34,7 @@ public interface OnboardingProfileRepository extends ReactorCrudRepository<Onboa
 
         Flux<OnboardingProfile> findAll();
 
-        @Query(value = "SELECT id, " +
+        @Query(value = "SELECT onboard_profile_id, " +
                         "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
                         "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName," +
                         "PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') as lastName," +
