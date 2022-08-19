@@ -15,7 +15,7 @@ public interface WorkingEnvironmentRepository extends ReactorCrudRepository<Work
 
     Flux<WorkingEnvironment> findAll();
 
-    @Query(value = "SELECT id, " +
+    @Query(value = "SELECT working_environment_id, " +
             "PGP_SYM_DECRYPT(cast(mp.workLocation as bytea),'${aes.key}') as workLocation," +
             "PGP_SYM_DECRYPT(cast(mp.keyType as bytea),'${aes.key}') as keyType," +
             "PGP_SYM_DECRYPT(cast(mp.osType as bytea),'${aes.key}') as osType," +
@@ -30,7 +30,7 @@ public interface WorkingEnvironmentRepository extends ReactorCrudRepository<Work
             +
             "AND  (:otherAccessories IS NULL OR PGP_SYM_DECRYPT(cast(mp.otherAccessories as bytea),'${aes.key}') = :otherAccessories) ", nativeQuery = true)
     Mono<WorkingEnvironment> search(
-            @Nullable UUID id,
+            @Nullable UUID workingEnvironmentId,
             @Nullable String workLocation,
             @Nullable String keyType,
             @Nullable String osType,
