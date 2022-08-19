@@ -1,11 +1,12 @@
 package com.objectcomputing.checkins.services.workingenvironment;
 
+import com.objectcomputing.checkins.services.role.Role;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
@@ -22,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/working-environment")
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(RoleType.Constants.HR_ROLE)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "working environment")
