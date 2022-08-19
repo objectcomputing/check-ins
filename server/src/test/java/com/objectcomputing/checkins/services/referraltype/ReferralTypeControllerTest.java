@@ -190,7 +190,7 @@ public class ReferralTypeControllerTest extends TestContainersSuite implements M
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        assertEquals(3, errors.size());
+        assertEquals(6, errors.size());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
