@@ -19,8 +19,31 @@
   min-width: 16ch;
 }
 
-.response-card .response-box {
+.response-card-content .feedback-answer-text-field,
+.response-card-content .feedback-answer-radio,
+.response-card-content .feedback-answer-slider {
   width: 100%;
+}
+
+.response-card .feedback-answer-radio {
+  display: flex;
+  flex-direction: row;
+  column-gap: 1.5rem;
+  margin-left: 1.5rem;
+}
+
+.response-card .feedback-answer-text-field .MuiInputBase-input {
+  color: black !important;
+  -webkit-text-fill-color: black !important;
+}
+
+.response-card .feedback-answer-radio .MuiFormControlLabel-label {
+  color: black !important;
+}
+
+.response-card .feedback-answer-slider {
+  margin-left: 4rem;
+  margin-right: 4rem;
 }
 
 @media screen and (max-width: 800px) {
@@ -28,11 +51,25 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 80px 1fr;
+    padding-top: 0 !important;
+    padding-bottom: 1rem !important;
   }
 
   .response-card-content .response-card-recipient-info {
     grid-row: 1;
     grid-column: 1;
+  }
+
+  .response-card .feedback-answer-radio {
+    flex-direction: column;
+    margin-left: 0;
+  }
+
+  .response-card .feedback-answer-slider {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: 90%;
+    margin-bottom: 2rem;
   }
 
   .response-card-content .response-sentiment {
@@ -41,8 +78,18 @@
     justify-self: end;
   }
 
-  .response-card-content .response-box {
+  .response-card-content .feedback-answer-text-field,
+  .response-card-content .feedback-answer-radio,
+  .response-card-content .feedback-answer-slider {
     grid-row: 2;
     grid-column: 1 / span 2;
+  }
+
+  .response-card-content .feedback-answer-slider .MuiSlider-markLabel {
+    font-size: 10px;
+    width: 50px;
+    height: 100px;
+    white-space: break-spaces;
+    text-align: center;
   }
 }
