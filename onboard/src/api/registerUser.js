@@ -7,14 +7,12 @@ import { createVerifierAndSalt, SRPParameters, SRPRoutines } from 'tssrp6a';
 
 const registerUser = (
   email,
-  password,
-  firstName,
-  lastName,
+  password
 ) => {
   return async (dispatch, getState) => {
     try {
       const baseURL = getEnvSpecificAPIURI();
-      const url = `${baseURL}/api/administration/addMember`;
+      const url = `${baseURL}/auth/api/account`;
 
       const srp6aNimbusRoutines = new SRPRoutines(
         new SRPParameters(SRPParameters.PrimeGroup[512])
@@ -31,8 +29,6 @@ const registerUser = (
 
       const loginData = {
         emailAddress: email,
-        firstName: firstName,
-        lastName: lastName,
         salt: convertedSaltBigIntToHex,
         primaryVerifier: convertedVerifierBigIntToHex
       };

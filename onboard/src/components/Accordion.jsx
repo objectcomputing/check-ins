@@ -13,7 +13,7 @@ function Accordion({ title, open, index, content }) {
 
   return (
     <Grid item xs={12} sx={{ marginTop: 7 }} key={index + Math.random()}>
-      <Divider variant="fullWidth" light className="width100Percent" />
+      <Divider variant="fullWidth" light className="width100Percent" sx ={{ borderBottomWidth: 3 }}/>
       <Box
         sx={{
           display: "flex",

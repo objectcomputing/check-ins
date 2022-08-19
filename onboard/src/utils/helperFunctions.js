@@ -5,7 +5,7 @@ export const getEnvSpecificAPIURI = () => {
   // This references the localhost port or the public url as the endpoint for the Micronaut API
   const url = `${
     isDevelopment
-      ? process.env.REACT_APP_DEV_PLATFORM_URI
+      ? process.env.REACT_APP_DEV_URI
       : process.env.PUBLIC_URL
   }`;
 
@@ -18,7 +18,7 @@ export const getEnvSpecificAPIURI = () => {
  * @returns a boolean
  */
 
-export const isArrayPresent = (array) => Array.isArray(array) && array.length;
+export const isArrayPresent = (array) => (Array.isArray(array) && array.length) ? true : false;
 
 /**
  * Converts a non-negative bigint to a hexadecimal string

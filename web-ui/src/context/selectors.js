@@ -131,18 +131,15 @@ export const selectMappedPdls = createSelector(
   selectProfileMap,
   selectPdlRoles,
   selectUserRoles,
-  (memberProfileMap, roles, userRoles) =>
-    userRoles
-      ?.filter(
-        (userRole) =>
-          roles.find((role) => role.id === userRole?.memberRoleId?.roleId) !==
-          undefined
-      )
-      ?.map((userRole) =>
-        userRole?.memberRoleId?.memberId in memberProfileMap
-          ? memberProfileMap[userRole?.memberRoleId?.memberId]
-          : {}
-      )
+  (memberProfileMap, roles, userRoles) => {
+    if (!memberProfileMap || !userRoles || !roles) return [];
+
+    const pdlUserRoles = userRoles.find(userRole => userRole.roleId === roles[0].id);
+
+    return pdlUserRoles?.memberIds
+      .filter((memberId) => memberId in memberProfileMap)
+      .map((memberId) => memberProfileMap[memberId]);
+  }
 );
 
 export const selectMappedUserRoles = createSelector(

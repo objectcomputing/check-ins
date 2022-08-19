@@ -24,12 +24,13 @@ const EquipmentPage = () => {
   const [currentOS, setCurrentOS] = useState("windows");
   const [currentLocation, setCurrentLocation] = useState("office")
   const [currentAccessory, setCurrentAccessory] = useState(equipmentList);
+  const [currentKey, setCurrentKey] = useState("walletcard");
 
   const handleClick = (event, newOS) => {
     setCurrentOS(newOS);
   };
 
-  const workClick = (workEvent, newLocation) => {
+  const workClick = (event, newLocation) => {
     setCurrentLocation(newLocation)
   }
 
@@ -39,6 +40,10 @@ const EquipmentPage = () => {
     setCurrentAccessory(newList);
   };
 
+  const handleKey = (event, newKey) => {
+    setCurrentKey(newKey);
+  }
+
   return (
     <Grid
       container
@@ -47,7 +52,7 @@ const EquipmentPage = () => {
       direction="row"
     >
       <Grid item xs={8}>
-      <h2 style={{ marginTop: "1rem" }}>
+        <h2 style={{ marginTop: "1rem" }}>
           Please select where you would prefer to work:
         </h2>
         <ToggleButtonGroup
@@ -111,7 +116,57 @@ const EquipmentPage = () => {
             Remote
           </ToggleButton>
         </ToggleButtonGroup>
-        <h2 style={{ marginTop: "1rem" }}>
+        <h2 style={{ marginTop: "3rem" }}>
+          Our office is secured with an electronic locking system. Which form of a "key" would you prefer?
+        </h2>
+        <ToggleButtonGroup
+          size="medium"
+          value={currentKey}
+          exclusive
+          onChange={handleKey}
+          sx={{
+            gap: 15,
+            "& .Mui-selected": {
+              backgroundColor: "#1666b6 !important",
+              color: "white !important",
+              fontWeight: "bold",
+            },
+            "& .MuiToggleButtonGroup-grouped:not(:first-of-type)": {
+              marginLeft: "0px !important",
+              borderLeft: "1px solid rgba(25, 118, 210, 0.5) !important",
+            },
+          }}
+        >
+          <ToggleButton
+            value="walletcard"
+            sx={{
+              transition:
+                "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+              border: "1px solid rgba(25, 118, 210, 0.5)",
+              color: "rgb(25, 118, 210)",
+              borderRadius: "4px !important",
+              boxShadow:
+                "0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)",
+            }}
+          >
+            Wallet Card
+          </ToggleButton>
+          <ToggleButton
+            value="keyfob"
+            sx={{
+              transition:
+                "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+              border: "1px solid rgba(25, 118, 210, 0.5)",
+              color: "rgb(25, 118, 210)",
+              borderRadius: "4px !important",
+              boxShadow:
+                "0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)",
+            }}
+          >
+            Key Fob
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <h2 style={{ marginTop: "3rem" }}>
           Please select your computer preference:
         </h2>
         <ToggleButtonGroup

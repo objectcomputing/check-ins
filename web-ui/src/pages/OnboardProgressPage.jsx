@@ -79,17 +79,17 @@ export default function OnboardProgressPage(onboardee) {
       id: 1,
       name: "Daniel Ryu",
       email: "d97shryu@gmail.com",
+      hireType: "Intern",
       completed: "No",
       dateAdded: "Jul 15, 2022",
-      hireType: "Hourly",
     },
     {
       id: 2,
       name: "Brandon Li",
       email: "li.brandon@outlook.com",
+      hireType: "Intern",
       completed: "No",
       dateAdded: "Jul 15, 2022",
-      hireType: "Hourly",
     },
   ];
 
@@ -155,7 +155,7 @@ export default function OnboardProgressPage(onboardee) {
         <Button
           onClick={handleOpen}
           variant="contained"
-          sx={{ ml: "64%" }}
+          sx={{ ml: "83%" }}
           startIcon={<PersonAddIcon />}
         >
           Add Onboardee

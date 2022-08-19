@@ -1,5 +1,11 @@
 package com.objectcomputing.checkins.services.onboardee_employment_eligibility;
 
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformation;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibility;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityCreateDTO;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityDTO;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
+
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,8 +22,8 @@ public class OnboardeeEmploymentEligibilityTestUtil {
         return dto;
     }
 
-    public static OnboardeeEmploymentEligibilityResponseDTO mkUpdateOnboardeeEmploymentEligibilityResponseDTO() {
-        OnboardeeEmploymentEligibilityResponseDTO dto = new OnboardeeEmploymentEligibilityResponseDTO();
+    public static OnboardeeEmploymentEligibilityDTO mkUpdateOnboardeeEmploymentEligibilityResponseDTO(BackgroundInformation backgroundInformation) {
+        OnboardeeEmploymentEligibilityDTO dto = new OnboardeeEmploymentEligibilityDTO();
         dto.setAgeLegal(true);
         dto.setUsCitizen(true);
         dto.setVisaStatus("F-1");
@@ -27,15 +33,12 @@ public class OnboardeeEmploymentEligibilityTestUtil {
         return dto;
     }
 
-    public static OnboardeeEmploymentEligibility mkOnboardee_Employment_Eligibility(String seed) {
-        return new OnboardeeEmploymentEligibility(true, true, "F-1" + seed, LocalDate.now(), false, "Say No to Felony" + seed);
+    public static OnboardeeEmploymentEligibility mkOnboardee_Employment_Eligibility(String seed, BackgroundInformation backgroundInformation) {
+        NewHireAccountEntity newHireAccountEntity = new NewHireAccountEntity();
+        return new OnboardeeEmploymentEligibility(newHireAccountEntity,true, true, "F-1" + seed, LocalDate.now(), false, "Say No to Felony" + seed);
     }
 
-    public static OnboardeeEmploymentEligibility mkOnboardee_Employment_Eligibility() {
-        return mkOnboardee_Employment_Eligibility("");
-    }
-
-    public static void assetProfilesEqual(OnboardeeEmploymentEligibility entity, OnboardeeEmploymentEligibilityResponseDTO dto) {
+    public static void assetProfilesEqual(OnboardeeEmploymentEligibility entity, OnboardeeEmploymentEligibilityDTO dto) {
         assertEquals(entity.getAgeLegal(), dto.getAgeLegal());
         assertEquals(entity.getUsCitizen(), dto.getUsCitizen());
         assertEquals(entity.getVisaStatus(), dto.getVisaStatus());
@@ -44,7 +47,7 @@ public class OnboardeeEmploymentEligibilityTestUtil {
         assertEquals(entity.getFelonyExplanation(), dto.getFelonyExplanation());
     }
 
-    public static void assetProfilesEqual(OnboardeeEmploymentEligibilityCreateDTO entity, OnboardeeEmploymentEligibilityResponseDTO dto) {
+    public static void assetProfilesEqual(OnboardeeEmploymentEligibilityCreateDTO entity, OnboardeeEmploymentEligibilityDTO dto) {
         assertEquals(entity.getAgeLegal(), dto.getAgeLegal());
         assertEquals(entity.getUsCitizen(), dto.getUsCitizen());
         assertEquals(entity.getVisaStatus(), dto.getVisaStatus());
@@ -53,8 +56,8 @@ public class OnboardeeEmploymentEligibilityTestUtil {
         assertEquals(entity.getFelonyExplanation(), dto.getFelonyExplanation());
     }
 
-    public static OnboardeeEmploymentEligibilityResponseDTO toDto(OnboardeeEmploymentEligibility entity) {
-        OnboardeeEmploymentEligibilityResponseDTO dto = new OnboardeeEmploymentEligibilityResponseDTO();
+    public static OnboardeeEmploymentEligibilityDTO toDto(OnboardeeEmploymentEligibility entity) {
+        OnboardeeEmploymentEligibilityDTO dto = new OnboardeeEmploymentEligibilityDTO();
         dto.setId(entity.getId());
         dto.setAgeLegal(entity.getAgeLegal());
         dto.setUsCitizen(entity.getUsCitizen());

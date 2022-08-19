@@ -117,6 +117,7 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
     editedOnboardee,
     isNewOnboardee,
   ]);
+  
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -308,10 +309,8 @@ const AddOnboardeeModal = ({ onboardee, open, onSave, onClose }) => {
             xs={6}
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <OnboardeeAddedModal open={openSavedModal} onClose={handleClose} />
-            <Button variant="contained" onClick={submitOnboardeeClick}>
-              Submit
-            </Button>
+            <OnboardeeAddedModal open={openSavedModal} onClose={handleClose}/>
+            <Button variant="contained" onClick={submitOnboardeeClick}>Submit</Button>
           </Grid>
         </Grid>
       </Box>
