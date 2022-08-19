@@ -1,17 +1,18 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformation;
-
-import java.util.UUID;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
+import reactor.core.publisher.Mono;
 
 public interface BackgroundInformationFixture extends RepositoryFixture {
-    default BackgroundInformation createDefaultBackgroundInformation(){
+    default Mono<BackgroundInformation> createDefaultBackgroundInformation(){
 
-        return getBackgroundInformationRepository().save(new BackgroundInformation(UUID.randomUUID()
-,true));
+        NewHireAccountEntity newHireAccountEntity = new NewHireAccountEntity();
+        return getBackgroundInformationRepository().save(new BackgroundInformation(newHireAccountEntity,true));
     }
 
-    default BackgroundInformation createSecondBackgroundInformation() {
-        return getBackgroundInformationRepository().save(new BackgroundInformation(UUID.randomUUID(), false));
+    default Mono<BackgroundInformation> createSecondBackgroundInformation() {
+        NewHireAccountEntity newHireAccountEntity = new NewHireAccountEntity();
+        return getBackgroundInformationRepository().save(new BackgroundInformation(newHireAccountEntity, false));
     }
 }

@@ -5,7 +5,7 @@ export const getEnvSpecificAPIURI = () => {
   // This references the localhost port or the public url as the endpoint for the Micronaut API
   const url = `${
     isDevelopment
-      ? process.env.REACT_APP_DEV_PLATFORM_URI
+      ? process.env.REACT_APP_DEV_URI
       : process.env.PUBLIC_URL
   }`;
 

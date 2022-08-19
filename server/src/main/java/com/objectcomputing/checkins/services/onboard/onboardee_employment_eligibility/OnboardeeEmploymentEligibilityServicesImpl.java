@@ -2,7 +2,12 @@ package com.objectcomputing.checkins.services.onboard.onboardee_employment_eligi
 
 import  com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformation;
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformationCreateDTO;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountRepository;
 import jakarta.inject.Singleton;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -15,44 +20,50 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class OnboardeeEmploymentEligibilityServicesImpl implements OnboardeeEmploymentEligibilityServices {
     private final OnboardeeEmploymentEligibilityRepository onboardeeEmploymentEligibilityRepository;
 
-    public OnboardeeEmploymentEligibilityServicesImpl(OnboardeeEmploymentEligibilityRepository onboardeeEmploymentEligibilityRepository) {
+    private final NewHireAccountRepository newHireAccountRepository;
+
+    public OnboardeeEmploymentEligibilityServicesImpl(OnboardeeEmploymentEligibilityRepository onboardeeEmploymentEligibilityRepository, NewHireAccountRepository newHireAccountRepository) {
         this.onboardeeEmploymentEligibilityRepository = onboardeeEmploymentEligibilityRepository;
+        this.newHireAccountRepository = newHireAccountRepository;
     }
 
     @Override
-    public OnboardeeEmploymentEligibility getById(@NotNull UUID id) {
-        Optional<OnboardeeEmploymentEligibility> onboardeeEmploymentEligibility = onboardeeEmploymentEligibilityRepository.findById(id);
-        if (onboardeeEmploymentEligibility.isEmpty()) {
-            throw new NotFoundException("No new employee employment eligibility information for id " + id);
-        }
-        return onboardeeEmploymentEligibility.get();
+    public OnboardeeEmploymentEligibility getById(@NotNull UUID id){
+        return onboardeeEmploymentEligibilityRepository.findById(id).flatMap(backgroundInformation -> {
+            if (backgroundInformation == null) {
+                throw new NotFoundException("No employment eligibility information for id " + id);
+            }
+            return Mono.just(backgroundInformation);
+        }).block();
     }
 
-    @Override
-    public Set<OnboardeeEmploymentEligibility> findByValues(
-            @Nullable UUID id,
-            @Nullable Boolean ageLegal,
-            @Nullable Boolean usCitizen,
-            @Nullable String visaStatus,
-            @Nullable LocalDate expirationDate,
-            @Nullable Boolean felonyStatus,
-            @Nullable String felonyExplanation,
-            @Nullable UUID backgroundId) {
-        HashSet<OnboardeeEmploymentEligibility> onboardee_employment_eligibility = new HashSet<>(onboardeeEmploymentEligibilityRepository.search((nullSafeUUIDToString(id)), ageLegal,
-                usCitizen, null, null, felonyStatus, null, nullSafeUUIDToString(backgroundId)));
-
-        return onboardee_employment_eligibility;
-    }
     //implement other methods as well
     @Override
-    public OnboardeeEmploymentEligibility saveProfile (OnboardeeEmploymentEligibility onboardeeEmploymentEligibility){
-        if (onboardeeEmploymentEligibility.getId() != null){
-            throw new AlreadyExistsException(String.format("Onboardee already exists in database"));
-        }
-        if (onboardeeEmploymentEligibility.getId() == null) {
-            return onboardeeEmploymentEligibilityRepository.save(onboardeeEmploymentEligibility);
-        }
-        return onboardeeEmploymentEligibilityRepository.update(onboardeeEmploymentEligibility);
+    public OnboardeeEmploymentEligibility saveProfile (OnboardeeEmploymentEligibilityCreateDTO onboardeeEmploymentEligibilityCreateDTO){
+        return newHireAccountRepository.findByEmailAddress(onboardeeEmploymentEligibilityCreateDTO.getEmailAddress())
+                .flatMap(newHire -> buildNewOnboardeeEmploymentEligibilityEntity(newHire, onboardeeEmploymentEligibilityCreateDTO))
+                .flatMap(onboardeeEmploymentEligibility -> onboardeeEmploymentEligibilityRepository.save(onboardeeEmploymentEligibility)).block();
+    }
+
+    public Mono<OnboardeeEmploymentEligibility> buildNewOnboardeeEmploymentEligibilityEntity (NewHireAccountEntity newHireAccount, OnboardeeEmploymentEligibilityCreateDTO onboardeeEmploymentEligibilityCreateDTO){
+        return Mono.just ( new OnboardeeEmploymentEligibility(newHireAccount, onboardeeEmploymentEligibilityCreateDTO.getAgeLegal(),
+                onboardeeEmploymentEligibilityCreateDTO.getUsCitizen(), onboardeeEmploymentEligibilityCreateDTO.getVisaStatus(),
+                onboardeeEmploymentEligibilityCreateDTO.getExpirationDate(), onboardeeEmploymentEligibilityCreateDTO.getFelonyStatus(),
+                onboardeeEmploymentEligibilityCreateDTO.getFelonyExplanation()));
+    }
+
+    @Override
+    public OnboardeeEmploymentEligibility updateProfile (OnboardeeEmploymentEligibilityDTO onboardeeEmploymentEligibilityDTO){
+        return newHireAccountRepository.findByEmailAddress(onboardeeEmploymentEligibilityDTO.getEmailAddress())
+                .flatMap(newHire -> updateOnboardeeEmploymentEligibilityEntity(newHire, onboardeeEmploymentEligibilityDTO))
+                .flatMap(onboardeeEmploymentEligibility -> onboardeeEmploymentEligibilityRepository.save(onboardeeEmploymentEligibility)).block();
+    }
+
+    public Mono<OnboardeeEmploymentEligibility> updateOnboardeeEmploymentEligibilityEntity (NewHireAccountEntity newHireAccount, OnboardeeEmploymentEligibilityDTO onboardeeEmploymentEligibilityDTO){
+        return Mono.just ( new OnboardeeEmploymentEligibility(newHireAccount, onboardeeEmploymentEligibilityDTO.getId(),
+                onboardeeEmploymentEligibilityDTO.getAgeLegal(), onboardeeEmploymentEligibilityDTO.getUsCitizen(),
+                onboardeeEmploymentEligibilityDTO.getVisaStatus(), onboardeeEmploymentEligibilityDTO.getExpirationDate(),
+                onboardeeEmploymentEligibilityDTO.getFelonyStatus(), onboardeeEmploymentEligibilityDTO.getFelonyExplanation()));
     }
 
     @Override
@@ -63,6 +74,6 @@ public class OnboardeeEmploymentEligibilityServicesImpl implements OnboardeeEmpl
 
     @Override
     public List<OnboardeeEmploymentEligibility> findAll() {
-        return onboardeeEmploymentEligibilityRepository.findAll();
+        return (List<OnboardeeEmploymentEligibility>) onboardeeEmploymentEligibilityRepository.findAll();
     }
 }

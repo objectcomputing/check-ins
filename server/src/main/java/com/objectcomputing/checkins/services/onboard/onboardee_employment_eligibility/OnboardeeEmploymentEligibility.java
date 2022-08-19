@@ -1,8 +1,11 @@
 package com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.Relation;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
@@ -18,29 +21,31 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
+import static io.micronaut.data.annotation.Relation.Kind.ONE_TO_ONE;
+
 @Entity
 @Introspected
 @Table(name = "onboardee_employment_eligibility")
 public class OnboardeeEmploymentEligibility {
     @Id
-    @Column(name = "id")
+    @Column(name = "employment_eligibility_id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the new employee profile this entry is associated with")
     private UUID id;
 
     @NotBlank
-    @Column(name = "agelegal")
+    @Column(name = "age_legal")
     @Schema(description = "is the new employee 18 years old or older")
     private Boolean ageLegal;
 
     @NotBlank
-    @Column(name = "uscitizen")
+    @Column(name = "us_citizen")
     @Schema(description = "is the new employee a US citizen")
     private Boolean usCitizen;
 
     @Nullable
-    @Column(name = "visastatus")
+    @Column(name = "visa_status")
     @ColumnTransformer(
             read = "pgp_sym_decrypt(visaStatus::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -49,7 +54,7 @@ public class OnboardeeEmploymentEligibility {
     private String visaStatus;
 
     @Nullable
-    @Column(name = "expirationdate")
+    @Column(name = "expiration_date")
     @ColumnTransformer(
             read = "pgp_sym_decrypt(expirationDate::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -58,12 +63,12 @@ public class OnboardeeEmploymentEligibility {
     private LocalDate expirationDate;
 
     @NotBlank
-    @Column(name = "felonystatus")
+    @Column(name = "felony_status")
     @Schema(description = "has the new employee been convicted of a felony")
     private Boolean felonyStatus;
 
     @Nullable
-    @Column(name = "felonyexplanation")
+    @Column(name = "felony_explanation")
     @ColumnTransformer(
             read = "pgp_sym_decrypt(felonyExplanation::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -71,23 +76,22 @@ public class OnboardeeEmploymentEligibility {
     @Schema(description = "explanation of convicted felony")
     private String felonyExplanation;
 
-    @NotNull
-    @Column(name="backgroundid")
-    @TypeDef(type=DataType.STRING)
-    @Schema(description = "id of background information", required = true)
-    private UUID backgroundId;
-    public OnboardeeEmploymentEligibility(Boolean ageLegal,Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation, UUID backgroundId) {
+    @Relation(value = ONE_TO_ONE)
+    @Column(name="new_hire_account_id")
+    @JsonIgnore
+    private NewHireAccountEntity newHireAccount;
+
+    public OnboardeeEmploymentEligibility(NewHireAccountEntity newHireAccountEntity, Boolean ageLegal,Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
         this.visaStatus = visaStatus;
         this.expirationDate = expirationDate;
         this.felonyStatus = felonyStatus;
         this.felonyExplanation = felonyExplanation;
-        this.backgroundId = backgroundId;
-
+        this.newHireAccount = newHireAccountEntity;
     }
 
-    public OnboardeeEmploymentEligibility(UUID id, Boolean ageLegal, Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation, UUID backgroundId) {
+    public OnboardeeEmploymentEligibility(NewHireAccountEntity newHireAccountEntity, UUID id, Boolean ageLegal, Boolean usCitizen, @Nullable String visaStatus, @Nullable LocalDate expirationDate, Boolean felonyStatus, @Nullable String felonyExplanation) {
         this.id = id;
         this.ageLegal = ageLegal;
         this.usCitizen = usCitizen;
@@ -95,7 +99,7 @@ public class OnboardeeEmploymentEligibility {
         this.expirationDate = expirationDate;
         this.felonyStatus = felonyStatus;
         this.felonyExplanation = felonyExplanation;
-        this.backgroundId = backgroundId;
+        this.newHireAccount = newHireAccountEntity;
     }
 
     public void setId(UUID id) {
@@ -158,19 +162,24 @@ public class OnboardeeEmploymentEligibility {
         this.felonyExplanation = felonyExplanation;
     }
 
-    public UUID getBackgroundId() { return backgroundId; }
+    public NewHireAccountEntity getNewHireAccount() {
+        return newHireAccount;
+    }
 
-    public void setBackgroundId(UUID backgroundId) { this.backgroundId = backgroundId; }
+    public void setNewHireAccount(NewHireAccountEntity newHireAccount) {
+        this.newHireAccount = newHireAccount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OnboardeeEmploymentEligibility that = (OnboardeeEmploymentEligibility) o;
-        return Objects.equals(id, that.id) && Objects.equals(ageLegal, that.ageLegal) && Objects.equals(usCitizen, that.usCitizen) && Objects.equals(visaStatus, that.visaStatus) && Objects.equals(expirationDate, that.expirationDate) && Objects.equals(felonyStatus, that.felonyStatus) && Objects.equals(felonyExplanation, that.felonyExplanation) && Objects.equals(backgroundId, that.backgroundId);
+        return Objects.equals(id, that.id) && Objects.equals(ageLegal, that.ageLegal) && Objects.equals(usCitizen, that.usCitizen) && Objects.equals(visaStatus, that.visaStatus) && Objects.equals(expirationDate, that.expirationDate) && Objects.equals(felonyStatus, that.felonyStatus) && Objects.equals(felonyExplanation, that.felonyExplanation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ageLegal, usCitizen, visaStatus, expirationDate, felonyStatus, felonyExplanation, backgroundId);
+        return Objects.hash(id, ageLegal, usCitizen, visaStatus, expirationDate, felonyStatus, felonyExplanation);
     }
 }

@@ -53,7 +53,7 @@ public class EmailServicesImpl implements EmailServices {
 
         List<Email> sentEmails = new ArrayList<>();
 
-        if (!currentUserServices.isAdmin()) {
+        if (!currentUserServices.isAdmin() && !currentUserServices.isHumanResources()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
