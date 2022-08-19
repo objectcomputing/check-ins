@@ -150,11 +150,11 @@ public class WorkingEnvironment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkingEnvironment that = (WorkingEnvironment) o;
-        return Objects.equals(id, that.id) && Objects.equals(workLocation, that.workLocation) && Objects.equals(keyType, that.keyType) && Objects.equals(osType, that.osType) && Objects.equals(accessories, that.accessories) && Objects.equals(otherAccessories, that.otherAccessories) && Objects.equals(newHireAccount, that.newHireAccount);
+        return Objects.equals(id, that.id) && Objects.equals(workLocation, that.workLocation) && Objects.equals(keyType, that.keyType) && Objects.equals(osType, that.osType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, workLocation, keyType, osType, accessories, otherAccessories, newHireAccount);
+        return Objects.hash(id, workLocation, keyType, osType, accessories, otherAccessories);
     }
 }
