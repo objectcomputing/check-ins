@@ -37,3 +37,120 @@ exports[`renders correctly 1`] = `
   />
 </ContextProvider>
 `;
+
+exports[`renders correctly for radio button responses 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "dispatch": [Function],
+      "state": Object {
+        "checkins": Array [],
+        "csrf": undefined,
+        "guilds": Array [],
+        "index": 0,
+        "loading": Object {
+          "memberProfiles": false,
+          "teams": false,
+        },
+        "memberProfiles": Array [],
+        "memberSkills": Array [],
+        "roles": Array [],
+        "skills": Array [],
+        "teams": Array [],
+        "terminatedMembers": Array [],
+        "toast": Object {
+          "severity": "",
+          "toast": "",
+        },
+        "userProfile": Object {},
+        "userRoles": Array [],
+      },
+    }
+  }
+>
+  <FeedbackResponseCard
+    answer="Yes"
+    inputType="RADIO"
+    responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"
+    sentiment={1}
+  />
+</ContextProvider>
+`;
+
+exports[`renders correctly for slider responses 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "dispatch": [Function],
+      "state": Object {
+        "checkins": Array [],
+        "csrf": undefined,
+        "guilds": Array [],
+        "index": 0,
+        "loading": Object {
+          "memberProfiles": false,
+          "teams": false,
+        },
+        "memberProfiles": Array [],
+        "memberSkills": Array [],
+        "roles": Array [],
+        "skills": Array [],
+        "teams": Array [],
+        "terminatedMembers": Array [],
+        "toast": Object {
+          "severity": "",
+          "toast": "",
+        },
+        "userProfile": Object {},
+        "userRoles": Array [],
+      },
+    }
+  }
+>
+  <FeedbackResponseCard
+    answer="Neither Agree nor Disagree"
+    inputType="SLIDER"
+    responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"
+    sentiment={0.5}
+  />
+</ContextProvider>
+`;
+
+exports[`renders correctly for text responses 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "dispatch": [Function],
+      "state": Object {
+        "checkins": Array [],
+        "csrf": undefined,
+        "guilds": Array [],
+        "index": 0,
+        "loading": Object {
+          "memberProfiles": false,
+          "teams": false,
+        },
+        "memberProfiles": Array [],
+        "memberSkills": Array [],
+        "roles": Array [],
+        "skills": Array [],
+        "teams": Array [],
+        "terminatedMembers": Array [],
+        "toast": Object {
+          "severity": "",
+          "toast": "",
+        },
+        "userProfile": Object {},
+        "userRoles": Array [],
+      },
+    }
+  }
+>
+  <FeedbackResponseCard
+    answer="I love opossums. I have rehabilitated baby opossums for 25 years, and I intend to do so until my last day!"
+    inputType="TEXT"
+    responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"
+    sentiment={0.8}
+  />
+</ContextProvider>
+`;
