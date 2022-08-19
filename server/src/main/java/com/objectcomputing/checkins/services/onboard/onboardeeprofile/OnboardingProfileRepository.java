@@ -67,7 +67,7 @@ public interface OnboardingProfileRepository extends ReactorCrudRepository<Onboa
                         +
                         "AND  (:personalEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') = :personalEmail) ", nativeQuery = true)
         Mono<OnboardingProfile> search(
-                        @Nullable String onboard_profile_id,
+                        @Nullable String id,
                         @Nullable String firstName,
                         @Nullable String middleName,
                         @Nullable String lastName,
