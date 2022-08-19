@@ -3,6 +3,15 @@ import { resolve } from "./api.js";
 const checkinsUrl = "/services/check-ins";
 const checkinsNoteUrl = "/services/checkin-notes";
 const checkinsPrivateNoteUrl = "/services/private-notes";
+const backgroundInformationUrl = "/services/background-information";
+
+export const updateBackgroundInformation = async (cookie) => {
+  return resolve({
+    url:backgroundInformationUrl,
+    responseType: "json",
+    headers:{ "X-CSRF-Header": cookie },
+  });
+};
 
 export const getMemberCheckinsByPDL = async (memberId, pdlId, cookie) => {
   return resolve({
