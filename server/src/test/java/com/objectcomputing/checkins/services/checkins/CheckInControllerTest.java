@@ -199,7 +199,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Member %s doesn't exist", checkInCreateDTO.getTeamMemberId()), error);
+        assertEquals(String.format("Member %s does not exist", checkInCreateDTO.getTeamMemberId()), error);
     }
 
     @Test
@@ -480,7 +480,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Member %s doesn't exist", checkIn.getTeamMemberId()), error);
+        assertEquals(String.format("Member %s does not exist", checkIn.getTeamMemberId()), error);
         assertEquals(request.getPath(), href);
     }
 

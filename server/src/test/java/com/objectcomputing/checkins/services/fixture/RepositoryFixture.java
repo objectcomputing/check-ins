@@ -20,6 +20,8 @@ import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.onboardeeprofile.OnboardingProfileRepository;
 import com.objectcomputing.checkins.services.opportunities.OpportunitiesRepository;
+import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformationRepository;
+import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
@@ -180,12 +182,17 @@ public interface RepositoryFixture {
     default OnboardingProfileRepository getOnboardingProfileRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(OnboardingProfileRepository.class);
     }
-
     default EmploymentDesiredAvailabilityRepository getEmploymentDesiredAvailabilityRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EmploymentDesiredAvailabilityRepository.class);
     }
 
     default ReferralTypeRepository getReferralTypeRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(ReferralTypeRepository.class);
+    default OnboardeeEmploymentEligibilityRepository getOnboardeeEmploymentEligibilityRepository(){
+        return getEmbeddedServer().getApplicationContext().getBean(OnboardeeEmploymentEligibilityRepository.class);
+    }
+
+    default BackgroundInformationRepository getBackgroundInformationRepository(){
+        return getEmbeddedServer().getApplicationContext().getBean(BackgroundInformationRepository.class);
     }
 }

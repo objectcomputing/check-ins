@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.request_notifications;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Singleton;
 import java.time.LocalDate;
@@ -18,17 +17,14 @@ public class CheckServicesImpl implements CheckServices {
     private EmailSender emailSender;
     private String notificationSubject;
     private String notificationContent;
-    private final MemberProfileServices memberProfileServices;
 
     public CheckServicesImpl(FeedbackRequestRepository feedbackReqRepository, EmailSender emailSender,
                              @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                             @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
-                             MemberProfileServices memberProfileServices) {
+                             @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.emailSender = emailSender;
         this.notificationContent = notificationContent;
         this.notificationSubject = notificationSubject;
-        this.memberProfileServices = memberProfileServices;
     }
 
     @Override

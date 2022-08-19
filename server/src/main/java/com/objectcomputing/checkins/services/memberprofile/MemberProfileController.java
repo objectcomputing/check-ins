@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -61,12 +62,16 @@ public class MemberProfileController {
      */
     @Get("/{id}")
     public Mono<HttpResponse<MemberProfileResponseDTO>> getById(UUID id) {
-
         return Mono.fromCallable(() -> memberProfileServices.getById(id))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(memberProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
-                        .ok(fromEntity(memberProfile))
-                        .headers(headers -> headers.location(location(memberProfile.getId()))))
+                .map(memberProfile -> {
+                    MemberProfile member = memberProfile.orElseThrow(() -> {
+                        throw new NotFoundException("Member profile with ID %s does not exist", id);
+                    });
+                    return (HttpResponse<MemberProfileResponseDTO>) HttpResponse
+                            .ok(fromEntity(member))
+                            .headers(headers -> headers.location(location(member.getId())));
+                })
                 .subscribeOn(scheduler);
     }
 
@@ -142,13 +147,13 @@ public class MemberProfileController {
      * Delete a member profile
      *
      * @param id {@link UUID} Member unique id
-     * @return
+     * @return {@link HttpResponse}
      */
     @Delete("/{id}")
-    public Mono<HttpResponse> delete(@NotNull UUID id) {
+    public Mono<? extends HttpResponse<?>> delete(@NotNull UUID id) {
         return Mono.fromCallable(() -> memberProfileServices.deleteProfile(id))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(successFlag -> (HttpResponse) HttpResponse.ok())
+                .map(successFlag -> (HttpResponse<?>) HttpResponse.ok())
                 .subscribeOn(scheduler);
     }
 

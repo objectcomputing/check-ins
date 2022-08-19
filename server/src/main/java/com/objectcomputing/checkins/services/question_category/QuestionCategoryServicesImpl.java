@@ -47,10 +47,10 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
         }
 
         if (questionCategory.getId() != null) {
-            throw new BadArgException(String.format("Found unexpected id %s for category, please try updating instead.",
-                    questionCategory.getId()));
+            throw new BadArgException("Found unexpected id %s for category, please try updating instead.",
+                    questionCategory.getId());
         } else if (questionCategoryRepository.findByName(questionCategory.getName()).isPresent()) {
-            throw new AlreadyExistsException(String.format("Category %s already exists. ", questionCategory.getName()));
+            throw new AlreadyExistsException("Category %s already exists. ", questionCategory.getName());
         }
         return questionCategoryRepository.save(questionCategory);
     }
@@ -58,14 +58,14 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
     @Override
     public QuestionCategory findById(@NotNull UUID id) {
         return questionCategoryRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(String.format("No question category for id %s", id)));
+                new NotFoundException("No question category for id %s", id));
     }
 
     @Override
     public QuestionCategory findByName(String name) {
         if (name != null) {
             return questionCategoryRepository.findByName(name).orElseThrow(() ->
-                    new NotFoundException(String.format("No question category for name %s", name)));
+                    new NotFoundException("No question category for name %s", name));
         } else {
             throw new BadArgException("Name must not be null");
         }

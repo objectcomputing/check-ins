@@ -1,5 +1,6 @@
 import { resolve } from "./api.js";
-import { getFeedbackTemplateWithQuestions } from "./feedbacktemplate.js";
+import { getFeedbackTemplateWithQuestions } from './feedbacktemplate.js'
+import {FeedbackRequestStatus} from "../context/util";
 
 const feedbackSuggestionURL = "/services/feedback/suggestions";
 const feedbackRequestURL = "/services/feedback/requests";
@@ -41,8 +42,8 @@ export const cancelFeedbackRequest = async (feedbackRequest, cookie) => {
     responseType: "json",
     data: {
       ...feedbackRequest,
-      status: "canceled",
-      dueDate: null,
+      status: FeedbackRequestStatus.CANCELED,
+      dueDate: null
     },
     headers: { "X-CSRF-Header": cookie },
   });

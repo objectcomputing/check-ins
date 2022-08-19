@@ -8,7 +8,7 @@ const fetchToken = () => {
   return async (dispatch, getState) => {
     try {
       const baseURL = getEnvSpecificAPIURI();
-      const url = `${baseURL}/api/synchronize/token`;
+      const url = `${baseURL}/api/token/interpreter`;
 
       console.log('Fetching token if session already exists...');
       const response = await axios.post(url, {}, {

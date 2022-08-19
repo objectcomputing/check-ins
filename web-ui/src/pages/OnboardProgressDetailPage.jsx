@@ -1,35 +1,44 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Typography, Divider } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import getDocuments from "../api/signrequest";
 import "./OnboardProgressDetailPage.css";
 import Accordion from "../components/accordion/Accordion";
-import EditOnboardee from "./EditOnboardee";
+import EditOnboardModal from "../components/modal/EditOnboardeeModal";
 import { isArrayPresent } from "../utils/helperFunction";
 import Modal from "@mui/material/Modal";
 import ProgressIndicator from "../components/onboard_progress/ProgressIndicator";
+import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
+import { updateOnboardee } from "../api/onboardeeMember";
+import { AppContext } from "../context/AppContext";
+import SplitButton from "../components/split-button/SplitButton";
 
 const modalStyle = {
   position: "absolute",
   top: "50%",
-  overflow: "auto",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 800,
-  backgroundColor: "white",
+  width: "75%",
+  backgroundColor: "#fff",
   border: "2px solid #000",
-  boxShadow: 50,
-  p: 4,
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+  m: 2,
+  maxHeight: "90vh",
+  overflow: "auto",
 };
 
-export default function OnboardProgressDetailPage() {
+export default function OnboardProgressDetailPage(onboardee) {
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
   const location = useLocation();
-  const { name, email, hireType } = location.state;
-
+  const { state, dispatch } = useContext(AppContext);
+  const { csrf, onboardeeProfiles } = state;
+  const { name, email, hireType, title, completed } = location.state;
   // This function gets the JSON from the localhost:8080/signrequest-documents and sets the JSON into an array.
 
   useEffect(() => {
@@ -47,12 +56,45 @@ export default function OnboardProgressDetailPage() {
     getData();
   }, []);
 
+  const options = ["Finish Onboarding", "Delete"];
+
+  const delWord = [
+    {
+      body: "Are you sure you want to delete this onboardee? Onboardee will no longer have access to 'Onboarding'.",
+      confirm: "Onboarding complete.",
+    },
+    {
+      body: "Warning! If you confirm, this user WILL be deleted and their information will be removed from 'Onboarding'. This action is permanent and cannot be undone. Continue?",
+      confirm: "Onboardee deleted.",
+    },
+  ];
+
+  const history = useHistory();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [openEdit, setOpenEdit] = useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
+  const [openDel, setOpenDel] = useState(false);
+  const [delNum, setDelNum] = useState(1);
+  const handleCancel = () => setOpenDel(!openDel);
+  const handleDel = (e, index) => {
+    setDelNum(index);
+    setOpenDel(!openDel);
+  };
+  const [openDelConf, setOpenDelConf] = useState(false);
+
+  const handleReturn = () => {
+    history.push({ pathname: `/onboard/progress` });
+  };
+  //handleDelSubmit will do more when the back-end is set-up
+  //Will need it to delete user data and notifications
+  const handleDelSubmit = () => {
+    setOpenDel(!openDel);
+    setOpenDelConf(!openDelConf);
+  };
+
   const accordionArr = [
     {
       title: "Personal Information",
@@ -120,7 +162,9 @@ export default function OnboardProgressDetailPage() {
   ];
 
   const documentRows = documentArr
-    .filter((e) => e.signrequest.signers[1].email === email)
+    .filter(
+      (e) => e.signrequest !== null && e.signrequest.signers[1].email === email
+    )
     .map((filteredE, i) => ({
       id: filteredE.uuid,
       documentName: filteredE.name,
@@ -161,12 +205,19 @@ export default function OnboardProgressDetailPage() {
       completed: "No",
     },
   ];
-
   return (
     <div className="detail-onboard">
-      <Grid container >
+      <Grid container>
         <Grid item xs={5}>
-          <Box sx={{ height: 400, width: "30%", mt: "5%", ml: "5%" }}>
+          <Box
+            sx={{
+              height: 150,
+              width: "40%",
+              mt: "5%",
+              ml: "5%",
+              padding: "2em",
+            }}
+          >
             <Button
               onClick={handleOpen}
               variant="contained"
@@ -183,7 +234,7 @@ export default function OnboardProgressDetailPage() {
                         <Accordion
                           key={i}
                           title={arr.title}
-                          open={i === 0 ? true : false}
+                          open
                           index={i}
                           content={arr.content}
                         />
@@ -193,7 +244,7 @@ export default function OnboardProgressDetailPage() {
                     <Button
                       variant="contained"
                       onClick={handleClose}
-                      sx={{ fontSize: "1vw" }}
+                      sx={{ fontSize: "1vw", mt: 3 }}
                     >
                       Close
                     </Button>
@@ -201,40 +252,106 @@ export default function OnboardProgressDetailPage() {
                 </div>
               </Box>
             </Modal>
-            <Modal open={openEdit} onClose={handleCloseEdit}>
+
+            <EditOnboardModal
+              onboardee={onboardee}
+              open={openEdit}
+              onClose={handleCloseEdit}
+              onSave={async (onboardee) => {
+                let res = await updateOnboardee(onboardee, csrf);
+                let data =
+                  res.payload && res.payload.data && !res.error
+                    ? res.payload.data
+                    : null;
+                if (data) {
+                  const copy = [...onboardeeProfiles];
+                  const index = copy.findIndex(
+                    (profile) => profile.id === data.id
+                  );
+                  copy[index] = data;
+                  dispatch({
+                    type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
+                    payload: copy,
+                  });
+                  handleClose();
+                }
+              }}
+            />
+            <Modal open={openDel}>
               <Box sx={modalStyle}>
                 <div>
-                  <EditOnboardee />
-                  <div>
-                    <Button
-                      variant="contained"
-                      onClick={handleCloseEdit}
-                      sx={{ fontSize: "1vw" }}
+                  <Typography sx={{ textAlign: "center" }}>
+                    {`${delWord[delNum].body}`}
+                  </Typography>
+                  <Grid container sx={{ mt: 5 }}>
+                    <Grid
+                      item
+                      xs={5}
+                      display="flex"
+                      justifyContent="flex-end"
+                      alignItems="flex-end"
                     >
-                      Close
-                    </Button>
-                  </div>
+                      <Button variant="contained" onClick={handleCancel}>
+                        Cancel
+                      </Button>
+                    </Grid>
+                    {/* This grid exists for styling purposes only. */}
+                    <Grid item xs={2}></Grid>
+                    <Grid
+                      item
+                      xs={5}
+                      display="flex"
+                      justifyContent="flex-start"
+                      alignItems="flex-start"
+                    >
+                      <Button variant="contained" onClick={handleDelSubmit}>
+                        Confirm
+                      </Button>
+                    </Grid>
+                  </Grid>
                 </div>
               </Box>
             </Modal>
-
-            <h1>Name: {name}</h1>
-            <h1>Email: {email} </h1>
-            <h1>Hire Type: {hireType}</h1>
+            <Modal open={openDelConf}>
+              <Box sx={modalStyle}>
+                <div>
+                  <Typography align="center" fontSize={32}>
+                    {`${delWord[delNum].confirm}`}
+                  </Typography>
+                  <Grid container sx={{ mt: 5 }}>
+                    <Grid item xs={12} align="center">
+                      <Button variant="contained" onClick={handleReturn}>
+                        Return
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </div>
+              </Box>
+            </Modal>
           </Box>
+          <Typography variant="h4">Name: {name}</Typography>
+          <Typography variant="h4">
+            Email: <a href={"mailto:" + email}>{email}</a>
+          </Typography>
+          <Divider />
+          <Typography variant="h4">Position: {title}</Typography>
+          <Typography variant="h4">Hire Type: {hireType}</Typography>
         </Grid>
 
-        <Grid item xs={7} sx={{ height: 650 }}>
+        <Grid item xs={7} sx={{ padding: "2em" }}>
           <Box sx={{ height: 250, width: "100%", mt: "5%" }}>
-            <div style={{ display: "flex" }}>
-              <h1>Documents/Surveys</h1>
-              <ProgressIndicator
-                dataDocument={documentRows}
-                dataSurvey={surveyRows}
-              />
-            </div>
+            <Box className="boxColor">
+              <Typography align="center" variant="h3">
+                Documents/Surveys
+                <ProgressIndicator
+                  dataDocument={documentRows}
+                  dataSurvey={surveyRows}
+                />
+              </Typography>
+            </Box>
 
             <DataGrid
+              className="grid"
               rows={documentRows}
               columns={documentColumns}
               pageSize={5}
@@ -248,24 +365,50 @@ export default function OnboardProgressDetailPage() {
               rowsPerPageOptions={[5]}
               disableSelectionOnClick
             />
+            <Box className="textBackground">
+              <Typography variant="h4">Status: </Typography>
+              <Typography
+                variant="h4"
+                sx={{
+                  color: completed === "Not Completed" ? "red" : "green",
+                }}
+              >
+                {completed}
+              </Typography>
+            </Box>
           </Box>
         </Grid>
-        <Grid item xs={6}>
-          <Button variant="contained" href="/onboard/progress">
+        <Grid
+          item
+          xs={6}
+          sx={{
+            display: "flex",
+            alignContent: "flex-end",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
+            padding: "2em",
+          }}
+        >
+          <Button variant="contained" onClick={handleReturn}>
             Back
           </Button>
         </Grid>
-        <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end"}}>
-          <Button
-            variant="contained"
-            onClick={handleOpenEdit}
-            sx={{ fontSize: "1vw" }}
-          >
+        <Grid
+          item
+          xs={6}
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            flexWrap: "wrap",
+            flexDirection: "row",
+            alignContent: "flex-end",
+            padding: "2em",
+          }}
+        >
+          <Button variant="contained" onClick={handleOpenEdit}>
             Edit Onboardee
           </Button>
-
-          <Button variant="contained">Finish Onboarding</Button>
-          <Button variant="contained">Delete</Button>
+          <SplitButton options={options} onClick={handleDel} />
         </Grid>
       </Grid>
     </div>

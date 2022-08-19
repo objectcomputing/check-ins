@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { FormControl } from "@mui/material";
+import { FormControl, Typography } from "@mui/material";
 import InputField from "../../../components/inputs/InputField";
 import {
   validAddress,
@@ -12,6 +12,8 @@ import {
 function PersonalInformation() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [prefFName, setPrefFName] = useState("");
+  const [prefLName, setPrefLName] = useState("");
   const [middleInital, setMiddleInital] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [secondaryPhoneNum, setSecondaryPhoneNum] = useState("");
@@ -19,6 +21,7 @@ function PersonalInformation() {
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [currentAddress, setCurrentAddress] = useState("");
   const [permanentAddress, setPermanentAddress] = useState("");
+  const [workEmail, setWorkEmail] = useState("");
 
   const [dateOfBirthHelper, setDateOfBirthHelper] = useState("");
   const [firstNameHelper, setFirstNameHelper] = useState("");
@@ -58,7 +61,7 @@ function PersonalInformation() {
     }
   }
 
-  function handleChange(event) {
+  const handleChange = (event) => {
     const e = event;
     const val = e.target.value;
     const name = e.target.name;
@@ -82,6 +85,10 @@ function PersonalInformation() {
         setLastNameError(true);
         setLastNameHelper("Please enter a full last name.");
       }
+    } else if (name == "prefFName") {
+      setPrefFName(val);
+    } else if (name == "prefLName") {
+      setPrefLName(val);
     } else if (name === "middleInitial") {
       setMiddleInital(val);
       if (val.length === 1) {
@@ -148,6 +155,22 @@ function PersonalInformation() {
     }
   }
 
+  useEffect(() => {
+    if (prefFName != "" && prefLName != "") {
+      let text = (prefLName.replace(/[^a-z]/gi, "") + prefFName.charAt(0) + "@objectcomputing.com").toLowerCase();
+      setWorkEmail(text);
+    } else if (prefFName != "") {
+      let text = (lastName.replace(/[^a-z]/gi, "") + prefFName.charAt(0) + "@objectcomputing.com").toLowerCase();
+      setWorkEmail(text);
+    } else if (prefLName != "") {
+      let text = (prefLName.replace(/[^a-z]/gi, "") + firstName.charAt(0) + "@objectcomputing.com").toLowerCase();
+      setWorkEmail(text);
+    } else {
+      let text = (lastName.replace(/[^a-z]/gi, "") + firstName.charAt(0) + "@objectcomputing.com").toLowerCase();
+      setWorkEmail(text);
+    }
+  }, [firstName, lastName, prefFName, prefLName]);
+
   function handleSaveInformation(e) {
     e.preventDefault();
     console.log("TODO: Submit data to backend!");
@@ -205,6 +228,48 @@ function PersonalInformation() {
                 placeholder="Doe"
                 type="text"
                 helperMessage={lastNameHelper}
+              />
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="first-name"
+                title="Preferred First Name:"
+                id="prefFName"
+                value={prefFName}
+                onChangeHandler={handleChange}
+                placeholder="Jack"
+                type="text"
+              />
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <FormControl
+              sx={{
+                my: 1,
+                marginLeft: 3,
+                width: "90%",
+                maxWidth: "500px",
+              }}
+            >
+              <InputField
+                autocomplete="last-name"
+                title="Preferred Last Name:"
+                id="prefLName"
+                value={prefLName}
+                onChangeHandler={handleChange}
+                placeholder="Deer"
+                type="text"
               />
             </FormControl>
           </Grid>
@@ -370,6 +435,11 @@ function PersonalInformation() {
           </Grid>
         </Grid>
       </form>
+      <Grid container sx={{ mt: 3 }}>
+        <Typography variant="subtitle2" sx={{ fontStyle: 'italic' }}>
+          Work email will be based on first and last name with preferred names taking priority. Current email will be: {workEmail}
+        </Typography>
+      </Grid>
     </Box>
   );
 }
