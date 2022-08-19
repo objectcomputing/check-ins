@@ -75,9 +75,9 @@ public class NewHireAccountService {
 
     private Mono<Object> sendUserAccountNotification(NewHireAccountEntity userAccount, String code) {
         return accountCommunicationService.sendEmail(
-                "OCI New Hire Invitation", List.of(userAccount.getEmailAddress()),
-                "You are invited to join OCI New Hire platform " + userAccount
-                        + ".  You have 15 minutes to activate your account.  Your code is " + code) ;
+                "OCI New Hire Invitation", 
+				List.of(userAccount.getEmailAddress()),
+                "Congratulations! You have been invited to join OCI as a New Hire on the Onboarding Platform. <br />You have 24 hrs to activate your account.  Your code is " + code + ". <br />Please enter your code in the Activation field at <a target=\"_blank\" href=\"https://onboarding.objectcomputing.com\">Onboarding Portal.</a>");
     }
 
     private Tuple2<NewHireAuthorizationCodeEntity,String> generateUserAuthorizationCode(NewHireAccountEntity userAccount) {

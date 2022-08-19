@@ -49,18 +49,18 @@ public class BackgroundInformationControllerTest extends TestContainersSuite imp
 //        assertEquals(2, results.size());
 //    }
 
-    @Test
-    public void testGETGetByIdNotFound() {
-
-        final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-
-        assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-    }
+//    @Test
+//    public void testGETGetByIdNotFound() {
+//
+//        final HttpRequest<Object> request = HttpRequest.
+//                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+//
+//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+//                () -> client.toBlocking().exchange(request, Map.class));
+//
+//        assertNotNull(responseException.getResponse());
+//        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+//    }
 
 //    @Test
 //    public void testPOSTCreateBackgroundInformation(){

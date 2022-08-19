@@ -40,12 +40,12 @@ public class OnboardingProfileTestUtil {
         dto.setPhoneNumber("TestPhoneNumber");
         dto.setPhoneNumber("TestSecondPhoneNumber");
         dto.setPersonalEmail("TestPersonalEmail");
-        dto.setBackgroundId(backgroundInformation.getId());
         return dto;
     }
 
     public static OnboardingProfile mkOnboarding_Profile(String seed, BackgroundInformation backgroundInformation) {
-        return new OnboardingProfile("TestFirstName" + seed,
+        return new OnboardingProfile(null,
+                "TestFirstName" + seed,
                 "TestMiddleName" + seed,
                 "TestLastName" + seed,
                 "TestSocialSecurityNumber" + seed,
@@ -54,15 +54,9 @@ public class OnboardingProfileTestUtil {
                 "TestPreviousAddress" + seed,
                 "TestPhoneNumber" + seed,
                 "TestSecondPhoneNumber" + seed,
-                "TestPersonalEmail" + seed,
-                backgroundInformation.getId()
+                "TestPersonalEmail" + seed
                 );
     }
-
-//    public static OnboardingProfile mkOnboarding_Profile() {
-//        BackgroundInformation backgroundInformation = new BackgroundInformation(UUID.randomUUID(), false);
-//        return mkOnboarding_Profile("", backgroundInformation);
-//    }
 
     public static void assertProfilesEqual(OnboardingProfile entity, OnboardingProfileDTO dto) {
         assertEquals(entity.getFirstName(), dto.getFirstName());
@@ -104,7 +98,6 @@ public class OnboardingProfileTestUtil {
        dto.setPhoneNumber(entity.getPhoneNumber());
        dto.setSecondPhoneNumber(entity.getSecondPhoneNumber());
        dto.setPersonalEmail(entity.getPersonalEmail());
-       dto.setBackgroundId(entity.getBackgroundId());
        return dto;
     }
 }

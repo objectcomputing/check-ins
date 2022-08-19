@@ -12,14 +12,13 @@ import javax.persistence.Enumerated;
 import java.time.Instant;
 import java.util.UUID;
 
-import static io.micronaut.data.annotation.Relation.Kind.*;
+import static io.micronaut.data.annotation.Relation.Kind.ONE_TO_ONE;
 
 @MappedEntity("new_hire_account")
 public class NewHireAccountEntity implements Identifiable, Account {
     @Id
     @Column(name="new_hire_account_id")
     @AutoPopulated
-    @TypeDef(type = DataType.STRING)
     @GeneratedValue(GeneratedValue.Type.AUTO)
     private UUID id;
 

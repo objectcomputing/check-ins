@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Introspected
-public class OnboardeeEmploymentEligibilityResponseDTO {
+public class OnboardeeEmploymentEligibilityDTO {
 
     @NotNull
     @Schema(description = "id of the onboardee this profile entry is associated with", required = true)
@@ -40,8 +40,8 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
     private String felonyExplanation;
 
     @NotNull
-    @Schema(description = "Background Id of onboardee")
-    private UUID backgroundId;
+    @Schema(description ="email address of the newHire used to initialize their account")
+    private String emailAddress;
 
     public UUID getId() {
         return id;
@@ -105,12 +105,13 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
         this.felonyExplanation = felonyExplanation;
     }
 
-    public UUID getBackgroundId() { return backgroundId; }
+    public String getEmailAddress() {return emailAddress; }
 
-    public void setBackgroundId(UUID backgroundId) { this.backgroundId = backgroundId; }
+    public void setEmailAddress(String emailAddress) {this.emailAddress = emailAddress; }
+
     @Override
     public String toString() {
-        return "OnboardeeEmploymentEligibilityResponseDTO{" +
+        return "OnboardeeEmploymentEligibilityDTO{" +
                 "id=" + id +
                 ", ageLegal ='" + ageLegal + '\'' +
                 ", usCitizen='" + usCitizen + '\'' +
@@ -118,7 +119,6 @@ public class OnboardeeEmploymentEligibilityResponseDTO {
                 ", expirationDate='" + expirationDate +
                 ", felonyStatus='" + felonyStatus + '\'' +
                 ", felonyExplanation=" + felonyExplanation +  '\'' +
-                ", backgroundId=" + backgroundId + '\'' +
                 '}';
     }
 
