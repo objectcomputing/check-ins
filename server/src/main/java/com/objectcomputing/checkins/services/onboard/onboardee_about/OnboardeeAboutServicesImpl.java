@@ -1,8 +1,9 @@
 package com.objectcomputing.checkins.services.onboard.onboardee_about;
 
-import com.objectcomputing.checkins.newhire.model.NewHireAccountEntity;
-import com.objectcomputing.checkins.newhire.model.NewHireAccountRepository;
-import com.objectcomputing.checkins.services.onboard.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountRepository;
+
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Mono;
 

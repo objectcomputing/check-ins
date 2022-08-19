@@ -1,12 +1,13 @@
 package com.objectcomputing.checkins.services.onboardee_about;
 
 import com.objectcomputing.checkins.services.onboard.onboardee_about.OnboardeeAbout;
+import com.objectcomputing.checkins.services.onboard.onboardee_about.OnboardeeAboutDTO;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnboardeeAboutTestUtil {
-    public static OnboardeeAboutResponseDTO mkUpdateOnboardeeAbout() {
-        OnboardeeAboutResponseDTO dto = new OnboardeeAboutResponseDTO();
+    public static OnboardeeAboutDTO mkUpdateOnboardeeAbout() {
+        OnboardeeAboutDTO dto = new OnboardeeAboutDTO();
         dto.setTshirtSize("M");
         dto.setGoogleTraining("Gmail");
         dto.setIntroduction("Hello :)");
@@ -18,7 +19,7 @@ public class OnboardeeAboutTestUtil {
         return dto;
     }
     
-    public static void assertAboutEquals(OnboardeeAbout entity, OnboardeeAboutResponseDTO dto) {
+    public static void assertAboutEquals(OnboardeeAbout entity, OnboardeeAboutDTO dto) {
         assertEquals(entity.getTshirtSize(), dto.getTshirtSize());
         assertEquals(entity.getGoogleTraining(), dto.getGoogleTraining());
         assertEquals(entity.getIntroduction(), dto.getIntroduction());
@@ -29,8 +30,8 @@ public class OnboardeeAboutTestUtil {
         assertEquals(entity.getCertifications(), dto.getCertifications());
     }
 
-    public static OnboardeeAboutResponseDTO toDto(OnboardeeAbout entity) {
-        OnboardeeAboutResponseDTO dto = new OnboardeeAboutResponseDTO();
+    public static OnboardeeAboutDTO toDto(OnboardeeAbout entity) {
+        OnboardeeAboutDTO dto = new OnboardeeAboutDTO();
         dto.setId(entity.getId());
         dto.setTshirtSize(entity.getTshirtSize());
         dto.setGoogleTraining(entity.getGoogleTraining());

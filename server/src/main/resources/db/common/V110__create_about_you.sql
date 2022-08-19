@@ -8,7 +8,7 @@ CREATE TABLE onboardee_about(
         vaccine_two_weeks BOOLEAN,
         other_training varchar,
         additional_skills varchar,
-        certifications varchar
+        certifications varchar,
         CONSTRAINT fk_new_hire
                 FOREIGN KEY(new_hire_account_id)
                 REFERENCES new_hire_account(new_hire_account_id)
