@@ -141,8 +141,6 @@ const EditOnboardee = ({ onboardee, open, onSave, onClose }) => {
 
   async function resetOnboardeeClick() {
     // TODO: query backend to delete user
-    let res1 = await deleteUser(userid);
-    console.log(res1);
 
     setOpen2(true);
     onSave(editedOnboardee).then(() => {
