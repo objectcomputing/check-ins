@@ -64,11 +64,12 @@ public class WorkingEnvironment {
     private String otherAccessories;
 
     @Relation(value = ONE_TO_ONE)
-    @Column(name="new_hire_account_id")
+    @Column(name = "new_hire_account_id")
     @JsonIgnore
     private NewHireAccountEntity newHireAccount;
 
-    public WorkingEnvironment(UUID id, String workLocation, String keyType, String osType, @Nullable String accessories, @Nullable String otherAccessories, NewHireAccountEntity newHireAccount) {
+    public WorkingEnvironment(UUID id, String workLocation, String keyType, String osType, @Nullable String accessories,
+            @Nullable String otherAccessories, NewHireAccountEntity newHireAccount) {
         this.id = id;
         this.workLocation = workLocation;
         this.keyType = keyType;
@@ -78,7 +79,8 @@ public class WorkingEnvironment {
         this.newHireAccount = newHireAccount;
     }
 
-    public WorkingEnvironment(String workLocation, String keyType, String osType, @Nullable String accessories, @Nullable String otherAccessories, NewHireAccountEntity newHireAccount) {
+    public WorkingEnvironment(String workLocation, String keyType, String osType, @Nullable String accessories,
+            @Nullable String otherAccessories, NewHireAccountEntity newHireAccount) {
         this.workLocation = workLocation;
         this.keyType = keyType;
         this.osType = osType;
@@ -147,10 +149,15 @@ public class WorkingEnvironment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         WorkingEnvironment that = (WorkingEnvironment) o;
-        return Objects.equals(id, that.id) && Objects.equals(workLocation, that.workLocation) && Objects.equals(keyType, that.keyType) && Objects.equals(osType, that.osType);
+        return Objects.equals(id, that.id) && Objects.equals(workLocation, that.workLocation)
+                && Objects.equals(keyType, that.keyType) && Objects.equals(osType, that.osType)
+                && Objects.equals(accessories, that.accessories)
+                && Objects.equals(otherAccessories, that.otherAccessories);
     }
 
     @Override
