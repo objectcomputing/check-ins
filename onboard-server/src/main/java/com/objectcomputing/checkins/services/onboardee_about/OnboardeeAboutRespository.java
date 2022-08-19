@@ -15,7 +15,7 @@ public interface OnboardeeAboutRespository extends ReactorCrudRepository<Onboard
 
     Flux<OnboardeeAbout> findAll();
 
-    @Query(value = "SELECT id, " +
+    @Query(value = "SELECT onboard_about_id, " +
             "PGP_SYM_DECRYPT(cast(mp.tshirtSize as bytea),'${aes.key}') as tshirtSize," +
             "PGP_SYM_DECRYPT(cast(mp.googleTraining as bytea),'${aes.key}') as googleTraining," +
             "PGP_SYM_DECRYPT(cast(mp.introduction as bytea),'${aes.key}') as introduction," +
@@ -39,7 +39,7 @@ public interface OnboardeeAboutRespository extends ReactorCrudRepository<Onboard
             +
             "AND  (:certifications IS NULL OR PGP_SYM_DECRYPT(cast(mp.certifications as bytea), '${aes.key}') = :certifications) ", nativeQuery = true)
     Mono<OnboardeeAbout> search(
-            @Nullable UUID id,
+            @Nullable UUID onboard_about_id,
             @Nullable String tshirtSize,
             @Nullable String googleTraining,
             @Nullable String introduction,
