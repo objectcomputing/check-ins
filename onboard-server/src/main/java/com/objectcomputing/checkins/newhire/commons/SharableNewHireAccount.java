@@ -8,17 +8,20 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class SharableNewHireAccount implements Identifiable {
-    private final UUID id;
-    private final String emailAddress;
-    private final AccountState state;
-    private final Date createdDate;
+    private UUID id;
+    private String emailAddress;
+    private AccountState state;
+    private Date createdDate;
 
     public SharableNewHireAccount(UUID id, String emailAddress, AccountState state, Date createdDate) {
+        this();
         this.id = id;
         this.emailAddress = emailAddress;
         this.state = state;
         this.createdDate = createdDate;
     }
+
+    public SharableNewHireAccount(){}
 
     public UUID getId() {
         return id;
@@ -34,6 +37,22 @@ public class SharableNewHireAccount implements Identifiable {
 
     public Date getCreatedDate() {
         return createdDate;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public void setState(AccountState state) {
+        this.state = state;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
     @Override

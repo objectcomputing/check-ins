@@ -9,15 +9,11 @@ import java.util.UUID;
 public interface OnboardingProfileServices {
     OnboardingProfile getById(UUID id);
 
-    Set<OnboardingProfile> findByValues (UUID id, String firstName, String lastName, String socialSecurityNumber,
-                                         LocalDate birthDate, String phoneNumber, String personalEmail, UUID backgroundId);
+    OnboardingProfile saveProfile(OnboardingProfileCreateDTO onboardingProfileCreateDTO);
 
-    OnboardingProfile saveProfile(OnboardingProfile onboardingProfile);
+    OnboardingProfile updateProfile(OnboardingProfileDTO onboardingProfileDTO);
 
     Boolean deleteProfile(UUID id);
 
     OnboardingProfile findByName(@NotNull String firstName, @NotNull String lastName);
-
-    List<OnboardingProfile> findAll();
-
 }
