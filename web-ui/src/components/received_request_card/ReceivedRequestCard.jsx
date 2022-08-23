@@ -143,9 +143,9 @@ const ReceivedRequestCard = ({ request }) => {
                 to={`/feedback/submit?request=${request.id}`}
                 style={{ textDecoration: "none" }}
               >
-                <Tooltip title="Give feedback" arrow>
+                <Tooltip title={request.submitDate ? "View feedback" : "Give feedback"} arrow>
                   <IconButton size="large">
-                    <EditIcon />
+                    {request.submitDate ? <VisibilityIcon/> : <EditIcon/>}
                   </IconButton>
                 </Tooltip>
               </Link>
