@@ -5,11 +5,11 @@ import PropTypes from "prop-types";
 import {blue, green} from "@mui/material/colors";
 import Button from "@mui/material/Button";
 import "./FeedbackSubmitForm.css";
-import {Alert, AlertTitle} from "@mui/material";
+import {Alert, AlertTitle, Avatar, Chip} from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import {useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {AppContext} from "../../context/AppContext";
-import {selectCsrfToken} from "../../context/selectors";
+import {selectCsrfToken, selectProfile} from "../../context/selectors";
 import {UPDATE_TOAST} from "../../context/actions";
 import {updateAllAnswers, updateFeedbackRequest} from "../../api/feedback";
 import {getQuestionAndAnswer} from "../../api/feedbackanswer"
@@ -17,7 +17,6 @@ import DateFnsUtils from "@date-io/date-fns";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
 
-const dateUtils = new DateFnsUtils();
 const PREFIX = "FeedbackSubmitForm";
 const classes = {
   announcement: `${PREFIX}-announcement`,
@@ -77,6 +76,7 @@ const propTypes = {
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
+  const requestCreator = selectProfile(state, request?.creatorId);
   const [isLoading, setIsLoading] = useState(false);
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
@@ -172,23 +172,49 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
 
   return isLoading ? <SkeletonLoader type="feedback_requests" /> : (
     <Root className="submit-form">
-      <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{requesteeName}</b></Typography>
-      <div className="wrapper">
-        <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}>info-icon</InfoIcon>
-        <Typography className={classes.tip}><b>Tip of the day: </b>{tip}</Typography>
-      </div>
-      {isReviewing ?
-        <Alert className={classes.warning} severity="warning">
-          <AlertTitle>Notice!</AlertTitle>
-          Feedback is not anonymous, and can be seen by more than just the feedback requester.
-          <strong> Be mindful of your answers.</strong>
-        </Alert> : null
+      <Typography className={classes.announcement} variant="h3">
+        {request?.status === FeedbackRequestStatus.SUBMITTED ? "Viewing" : "Submitting"} Feedback on <b>{requesteeName}</b>
+      </Typography>
+      {request.status !== FeedbackRequestStatus.SUBMITTED &&
+        <div className="wrapper">
+          <InfoIcon style={{color: blue[900], fontSize: '24px'}}>info-icon</InfoIcon>
+          <Typography className={classes.tip}><b>Tip of the day: </b>{tip}</Typography>
+        </div>
+      }
+      {request.status === FeedbackRequestStatus.SUBMITTED
+        ? (
+          <Alert className={classes.warning} severity="success">
+            <AlertTitle>
+              <Typography fontWeight="bold">Submitted on {dateUtils.format(new Date(request.submitDate.join("/")), "MM/dd/yyyy")}</Typography>
+            </AlertTitle>
+            <Typography variant="body2">
+              You have already submitted this feedback request. In order to change your answers, you must contact the creator of this feedback request to enable edits.
+            </Typography>
+            <div className="creator-details">
+              <Typography variant="body2">This feedback request was sent to you by</Typography>
+              <Chip
+                avatar={<Avatar src={getAvatarURL(requestCreator?.workEmail)}/>}
+                label={requestCreator?.name}
+                clickable
+                component={Link}
+                to={`/profile/${requestCreator?.id}`}
+              />
+            </div>
+          </Alert>
+        )
+        : isReviewing && (
+          <Alert className={classes.warning} severity="warning">
+            <AlertTitle>Notice!</AlertTitle>
+            Feedback is not anonymous, and can be seen by more than just the feedback requester.
+            <strong> Be mindful of your answers.</strong>
+          </Alert>
+        )
       }
       {questionAnswerPairs.map((questionAnswerPair, index) => (
         <FeedbackSubmitQuestion
           key={questionAnswerPair.question.id}
           question={questionAnswerPair.question}
-          readOnly={isReviewing}
+          readOnly={request.status === FeedbackRequestStatus.SUBMITTED ? true : isReviewing}
           requestId={questionAnswerPair.request.id}
           answer={questionAnswerPair.answer}
           onAnswerChange={(newAnswer) => {
@@ -196,35 +222,37 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
           }}
         />
       ))}
-      <div className="submit-action-buttons">
-        {isReviewing ?
-        (<React.Fragment>
+      {request.status !== FeedbackRequestStatus.SUBMITTED &&
+        <div className="submit-action-buttons">
+          {isReviewing ?
+            (<React.Fragment>
+              <Button
+                className={classes.coloredButton}
+                disabled={isLoading}
+                onClick={() => setIsReviewing(false)}
+                variant="contained"
+                color="primary">
+                Edit
+              </Button>
+              <Button
+                className={classes.button}
+                disabled={isLoading}
+                onClick={onSubmitHandler}
+                variant="contained"
+                color="primary">
+                Submit
+              </Button>
+            </React.Fragment>) :
             <Button
               className={classes.coloredButton}
               disabled={isLoading}
-              onClick={() => setIsReviewing(false)}
+              onClick={() => setIsReviewing(true)}
               variant="contained"
               color="primary">
-              Edit
-            </Button>
-            <Button
-              className={classes.button}
-              disabled={isLoading}
-              onClick={onSubmitHandler}
-              variant="contained"
-              color="primary">
-              Submit
-            </Button>
-          </React.Fragment>) :
-          <Button
-            className={classes.coloredButton}
-            disabled={isLoading}
-            onClick={() => setIsReviewing(true)}
-            variant="contained"
-            color="primary">
-            Review
-          </Button>}
-      </div>
+              Review
+            </Button>}
+        </div>
+      }
     </Root>
   );
 };
