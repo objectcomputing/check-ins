@@ -8,7 +8,10 @@ import PropTypes from "prop-types";
 import { selectProfile } from "../../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 import { AppContext } from "../../context/AppContext";
-import { Edit as EditIcon } from "@mui/icons-material";
+import {
+  Edit as EditIcon,
+  Visibility as VisibilityIcon
+} from "@mui/icons-material";
 import {FeedbackRequestStatus} from "../../context/util";
 
 const dateFns = new DateFnsUtils();
@@ -139,14 +142,14 @@ const ReceivedRequestCard = ({ request }) => {
             <Submitted />
           </div>
           <div className="submission-link-container">
-            {request && !request.submitDate && request.id && request.status !== FeedbackRequestStatus.CANCELED ? (
+            {request && request.id && request.status !== FeedbackRequestStatus.CANCELED ? (
               <Link
                 to={`/feedback/submit?request=${request.id}`}
                 style={{ textDecoration: "none" }}
               >
-                <Tooltip title="Give feedback" arrow>
+                <Tooltip title={request.submitDate ? "View feedback" : "Give feedback"} arrow>
                   <IconButton size="large">
-                    <EditIcon />
+                    {request.submitDate ? <VisibilityIcon/> : <EditIcon/>}
                   </IconButton>
                 </Tooltip>
               </Link>
