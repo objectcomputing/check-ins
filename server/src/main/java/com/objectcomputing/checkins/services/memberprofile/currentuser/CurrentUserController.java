@@ -3,10 +3,8 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.Role;
-import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -17,6 +15,7 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -55,9 +54,9 @@ public class CurrentUserController {
 
         String workEmail = authentication.getAttributes().get("email").toString();
         String imageUrl = authentication.getAttributes().get("picture") != null ? authentication.getAttributes().get("picture").toString() : "";
-        String name = authentication.getAttributes().get("name").toString().trim();
-        String firstName = name.substring(0, name.indexOf(' '));
-        String lastName = name.substring(name.indexOf(' ') + 1).trim();
+        String name = authentication.getAttributes().get("name") != null ? authentication.getAttributes().get("name").toString().trim() : null;
+        String firstName = name != null ? name.substring(0, name.indexOf(' ')) : "";
+        String lastName = name != null ? name.substring(name.indexOf(' ') + 1).trim() : "";
 
         MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
         List<Permission> permissions = permissionServices.findUserPermissions(user.getId());
