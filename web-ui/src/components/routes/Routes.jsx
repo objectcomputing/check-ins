@@ -31,6 +31,10 @@ import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 import EmailPage from "../../pages/EmailPage";
 import ReviewsPage from "../../pages/ReviewsPage";
 import SelfReviewsPage from "../../pages/SelfReviewsPage";
+import PermissionsPage from "../../pages/PermissionsPage";
+import OnboardProgressPage from "../../pages/OnboardProgressPage";
+import OnboardProgressDetailPage from "../../pages/OnboardProgressDetailPage";
+import KudosPage from "../../pages/KudosPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -93,6 +97,9 @@ export default function Routes() {
       </Route>
       <Route path="/feedback/self-reviews">
         <SelfReviewsPage />
+      </Route>
+      <Route exact path="/kudos">
+        <KudosPage />
       </Route>
 
       {isAdmin && (
