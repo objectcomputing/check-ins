@@ -1,0 +1,23 @@
+.kudos-card .kudos-card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.kudos-card .kudos-card-header .members-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.kudos-card .kudos-card-header .kudos-status-container {
+
+}
+
+.kudos-card .kudos-card-content {
+    padding: 1rem;
+}
