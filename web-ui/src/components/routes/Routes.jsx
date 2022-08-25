@@ -32,6 +32,7 @@ import EmailPage from "../../pages/EmailPage";
 import PermissionsPage from "../../pages/PermissionsPage";
 import OnboardProgressPage from "../../pages/OnboardProgressPage";
 import OnboardProgressDetailPage from "../../pages/OnboardProgressDetailPage";
+import KudosPage from "../../pages/KudosPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -88,6 +89,9 @@ export default function Routes() {
       </Route>
       <Route path="/feedback/received-requests">
         <ReceivedRequestsPage />
+      </Route>
+      <Route exact path="/kudos">
+        <KudosPage />
       </Route>
 
       {isAdmin && (
