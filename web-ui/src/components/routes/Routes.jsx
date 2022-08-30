@@ -33,6 +33,7 @@ import PermissionsPage from "../../pages/PermissionsPage";
 import OnboardProgressPage from "../../pages/OnboardProgressPage";
 import OnboardProgressDetailPage from "../../pages/OnboardProgressDetailPage";
 import KudosPage from "../../pages/KudosPage";
+import ManageKudosPage from "../../pages/ManageKudosPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -160,6 +161,9 @@ export default function Routes() {
           </Route>
           <Route path="/onboard/progress/:onboardId?">
             <OnboardProgressDetailPage />
+          </Route>
+          <Route exact path="/admin/manage-kudos">
+            <ManageKudosPage />
           </Route>
         </Switch>
       )}

@@ -35,3 +35,14 @@ export const getSentKudos = async (memberId, cookie) => {
     headers: { "X-CSRF-Header": cookie }
   });
 };
+
+export const getAllKudos = async (cookie) => {
+  return resolve({
+    url: kudosUrl,
+    params: {
+      includePending: true
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+};
