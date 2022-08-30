@@ -2,11 +2,56 @@ micronaut:
   application:
     name: check-ins
   server:
+    port: 8081
     cors:
       enabled: true
     max-request-size: 100MB
     multipart:
       max-file-size: 100MB
+  session:
+    http:
+      cookie: true
+      header: true
+      remember-me: true   
+  security:
+    enabled: true
+    rejectNotFound: false
+    token:
+      jwt:
+        enabled: true
+        bearer:
+          enabled: true
+        cookie:
+          enabled: true
+        issuer: https://onboardserver.app
+        lease: 36000
+        signatures:
+          secret:
+#            enabled: true
+            generator:
+              secret: 1234567890123456789012345678901234567890123456789012345678901234
+#            algorithm: HS256
+#            base64: false
+      propagation:
+        header:
+          enabled: true
+          headerName: "Authorization"
+          prefix: "Bearer "
+        enabled: true
+    endpoints:
+      logout:
+        get-allowed: true
+    intercept-url-map:
+      - pattern: /**
+        http-method: GET
+        access:
+          - isAnonymous()
+    session:
+      enabled: true
+    netty:
+      event-loops:
+        io:
+          num-threads: 3
   caches:
     photo-cache:
       expire-after-write: 86400
@@ -22,59 +67,23 @@ micronaut:
         enabled: true
         mapping: "/**"
         paths:
-          - "classpath:public" 
-
-  security:
-    enabled: true
-    authentication: cookie
-    token:
-      jwt:
-        enabled: true
-        generator:
-          refresh-token:
-            enabled: true
-            path: /oauth/access_token
-            secret: ${ OAUTH_REFRESH_TOKEN_SECRET:'pleaseChangeThisSecretForANewOne' }
-    oauth2:
-      callback-uri: ${ OAUTH_CALLBACK_URI }
-      clients:
-        google:
-          client-id: ${ OAUTH_CLIENT_ID }
-          client-secret: ${ OAUTH_CLIENT_SECRET }
-          openid:
-            issuer: 'https://accounts.google.com'
-    endpoints:
-      logout:
-        get-allowed: true
-    intercept-url-map:
-      -
-        pattern: /**
-        http-method: GET
-        access:
-          - isAnonymous()
-    reject-not-found: false
-    redirect:
-      prior-to-login: true
-      login-success: /
-      on-rejection: /oauth/login/google
-      unauthorized:
-        url: /oauth/login/google
-      forbidden:
-        url: /forbidden
-    session:
-      enabled: true
-    netty:
-      event-loops:
-        io:
-          num-threads: 3
+          - "classpath:public"
 ---
-datasources:
+r2dbc:
+  datasources:
+    default:
+      url: r2dbc:postgresql://localhost:5432/checkinsdb
+      driver: postgresql
+      username: postgres
+      password: postgres
+      dialect: POSTGRES
+
+---
+datasource:
   default:
-    url: ${JDBC_URL:`jdbc:postgresql:///`}
-    driver-class-name: org.postgresql.Driver
-    dialect: POSTGRES
-    schema-generate: NONE
-    maximum-pool-size: 10
+    url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/checkinsdb`}
+    username: postgres
+    password: postgres
 ---
 check-ins:
   application:
@@ -90,3 +99,10 @@ github-credentials:
 ---
 signrequest-credentials:
   signrequest_token: ${SIGNREQUEST_AUTH_TOKEN}
+---
+onboard:
+  authentication:
+    srp6:
+      encryption:
+        algorithm: SHA-512
+        bitSize: 512

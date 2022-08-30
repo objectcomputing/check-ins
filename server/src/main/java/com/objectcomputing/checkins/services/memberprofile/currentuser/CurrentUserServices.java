@@ -11,6 +11,8 @@ public interface CurrentUserServices {
 
     boolean isAdmin();
 
+    boolean isHumanResources();
+
     MemberProfile getCurrentUser();
 
 }

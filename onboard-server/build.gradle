@@ -45,12 +45,14 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security:2.5.0")
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.security:micronaut-security-oauth2")
+    implementation("io.micronaut:micronaut-session")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.micronaut.views:micronaut-views-thymeleaf")
     implementation("io.swagger.core.v3:swagger-annotations")
     implementation("javax.annotation:javax.annotation-api")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.postgresql:postgresql")
+    implementation('com.nimbusds:srp6a:2.1.0')
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:testcontainers")
@@ -92,7 +94,9 @@ dependencies {
     //implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion", {
     //    exclude group: 'io.micronaut', module: 'micronaut-jdbc'
     //}
-    //implementation  'org.postgresql:postgresql:42.2.12'
+    implementation('org.postgresql:postgresql:42.2.12')
+    implementation("io.micronaut.data:micronaut-data-r2dbc")
+    implementation('org.postgresql:r2dbc-postgresql:0.9.1.RELEASE')
     implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
 
     implementation("io.micronaut.reactor:micronaut-reactor")
@@ -178,4 +182,4 @@ java {
 }
 
 run.classpath += configurations.developmentOnly
-run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Xdebug',"-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n")
+run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Xdebug',"-Xrunjdwp:transport=dt_socket,address=8001,server=y,suspend=n")

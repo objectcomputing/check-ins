@@ -5,30 +5,27 @@ import "./OnboardProgressPage.css";
 import { Box } from "@mui/system";
 import { AppContext } from "../context/AppContext";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import AddOnboardModal from "../components/modal/AddOnboardeeModal";
-import {
-  Button
-} from "@mui/material";
-import { useState, useContext} from "react";
+import AddOnboardeeModal from "../components/modal/AddOnboardeeModal";
+import { Button, Typography } from "@mui/material";
+import { useState, useContext } from "react";
 import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
-import { createOnboardee } from "../api/onboardeeMember";
+import { createOnboardee, initializeOnboardee } from "../api/onboardeeMember";
 
-export default function OnboardProgressPage(onboardee){
+export default function OnboardProgressPage(onboardee) {
   const [open, setOpen] = useState(false);
   const { state, dispatch } = useContext(AppContext);
-  const { csrf , onboardeeProfiles} = state;
+  const { csrf, onboardeeProfiles } = state;
   const handleAddModalClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
   const history = useHistory();
-  const handleRowClick = (name, email, hireType, userID, title) => {
+  const handleRowClick = (name, email, hireType, userID) => {
     history.push({
       pathname: `/onboard/progress/${userID}`,
       state: {
         name: name,
         email: email,
         hireType: hireType,
-        title: title
       },
     });
   };
@@ -36,17 +33,16 @@ export default function OnboardProgressPage(onboardee){
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     { field: "name", headerName: "Name", width: 130 },
-    { 
-      field: "email", 
+    {
+      field: "email",
       headerName: "Email",
-      renderCell: (cellValues) =>{
-        return(
-        <a href={"mailto:" + cellValues.row.email}>{cellValues.row.email}</a>
+      renderCell: (cellValues) => {
+        return (
+          <a href={"mailto:" + cellValues.row.email}>{cellValues.row.email}</a>
         );
       },
-      width: 220 
+      width: 220,
     },
-    { field: "title", headerName: "Title", width: 150 },
     { field: "hireType", headerName: "Hire Type", width: 150 },
     {
       field: "completed",
@@ -65,7 +61,8 @@ export default function OnboardProgressPage(onboardee){
                 name: cellValues.row.name,
                 email: cellValues.row.email,
                 hireType: cellValues.row.hireType,
-                title: cellValues.row.title
+                title: cellValues.row.title,
+                completed: cellValues.row.completed,
               },
             }}
           >
@@ -82,19 +79,17 @@ export default function OnboardProgressPage(onboardee){
       id: 1,
       name: "Daniel Ryu",
       email: "d97shryu@gmail.com",
-      title: "Intern",
+      hireType: "Intern",
       completed: "No",
       dateAdded: "Jul 15, 2022",
-      hireType: "Hourly"
     },
     {
       id: 2,
       name: "Brandon Li",
       email: "li.brandon@outlook.com",
-      title: "Intern",
+      hireType: "Intern",
       completed: "No",
       dateAdded: "Jul 15, 2022",
-      hireType: "Hourly"
     },
   ];
 
@@ -103,7 +98,7 @@ export default function OnboardProgressPage(onboardee){
     {
       field: "notificationMsg",
       headerName: "Notification Message",
-      flex: 1
+      flex: 1,
     },
   ];
 
@@ -114,8 +109,7 @@ export default function OnboardProgressPage(onboardee){
       userID: 1,
       name: "Daniel Ryu",
       email: "ryud@objectcomputing.com",
-      title: "Intern",
-      hireType: "Hourly"
+      hireType: "Intern",
     },
     {
       id: 2,
@@ -123,8 +117,7 @@ export default function OnboardProgressPage(onboardee){
       userID: 2,
       name: "Brandon",
       email: "lib@objectcomputing.com",
-      title: "Intern",
-      hireType: "Hourly"
+      hireType: "Intern",
     },
     {
       id: 3,
@@ -132,10 +125,25 @@ export default function OnboardProgressPage(onboardee){
       userID: 1,
       name: "Daniel Ryu",
       email: "ryud@objectcomputing.com",
-      title: "Intern",
-      hireType: "Hourly"
+      hireType: "Intern",
     },
   ];
+
+  async function submitInfo(onboardee) {
+    if (csrf) {
+      let res1 = await initializeOnboardee(onboardee.email, csrf);
+
+      if (res1?.payload?.data?.success === true) {
+        let res2 = await createOnboardee(onboardee, csrf);
+        if (res2?.payload?.data?.success === true) {
+          dispatch({
+            type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
+            payload: [...onboardeeProfiles, res2.payload.data],
+          });
+        }
+      }
+    }
+  }
 
   return (
     <div className="onboard-page">
@@ -143,38 +151,19 @@ export default function OnboardProgressPage(onboardee){
         <Button
           onClick={handleOpen}
           variant="contained"
-          sx={{ ml: "64%" }}
+          sx={{ ml: "83%" }}
           startIcon={<PersonAddIcon />}
         >
           Add Onboardee
         </Button>
-         <AddOnboardModal
-              onboardee={{}}
-              open={open}
-              onClose={handleAddModalClose}
-              onSave={async (onboardee) => {
-                if (
-                  onboardee.firstName &&
-                  onboardee.lastName &&
-                  onboardee.position &&
-                  onboardee.email &&
-                  onboardee.hireType &&
-                  onboardee.pdl &&
-                  csrf
-                )
-                {
-                  let res = await createOnboardee(onboardee, csrf);
-                  let data = res.payload && res.payload.data && !res.error ? res.payload.data : null;
-                  if (data) {
-                    dispatch({
-                      type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
-                      payload: [...onboardeeProfiles, data],
-                    });
-                  }
-                  }
-              }}
-            />
+        <AddOnboardeeModal
+          onboardee={{}}
+          open={open}
+          onClose={handleAddModalClose}
+          onSave={submitInfo}
+        />
         <DataGrid
+          className="grid"
           rows={rows}
           columns={columns}
           pageSize={5}
@@ -191,7 +180,11 @@ export default function OnboardProgressPage(onboardee){
         />
       </Box>
       <Box sx={{ height: 400, width: "20%", mt: "3%" }}>
-        <h1>Notifications</h1>
+        <Box className="notification-header">
+          <Typography variant="h4" align="center">
+            Notifications
+          </Typography>
+        </Box>
         <DataGrid
           sx={{ cursor: "pointer" }}
           rows={rowsNotif}
@@ -204,8 +197,7 @@ export default function OnboardProgressPage(onboardee){
                 params.row.name,
                 params.row.email,
                 params.row.hireType,
-                params.row.userID,
-                params.row.title
+                params.row.userID
               );
             }
           }}
