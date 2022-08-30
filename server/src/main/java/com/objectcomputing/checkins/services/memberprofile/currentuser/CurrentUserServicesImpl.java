@@ -52,6 +52,11 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         return hasRole(RoleType.ADMIN);
     }
 
+    @Override
+    public boolean isHumanResources() {
+        return hasRole(RoleType.HR);
+    }
+
     public MemberProfile getCurrentUser() {
 
         validate(securityService != null).orElseThrow(() -> {

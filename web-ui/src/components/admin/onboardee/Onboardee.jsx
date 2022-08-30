@@ -1,23 +1,24 @@
 import React, { useContext, useState } from "react";
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 import AddOnboardee from "../../../components/modal/AddOnboardeeModal";
 import { createOnboardee } from "../../../api/onboardeeMember";
 import { AppContext } from "../../../context/AppContext";
-import { UPDATE_MEMBER_PROFILES, UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../../../context/actions";
+import {
+  UPDATE_MEMBER_PROFILES,
+  UPDATE_ONBOARDEE_MEMBER_PROFILES,
+} from "../../../context/actions";
 import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin,
 } from "../../../context/selectors";
-import {
-  createOnboardee
-} from "../../../api/onboardeeMember";
+import { createOnboardee } from "../../../api/onboardeeMember";
 const Onboardee = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, onboardeeProfiles, onboardeeProfile } = state;
   const [open, setOpen] = useState(false);
-  const [serchText, setSearchText] = useState("");
-  
-  const handleOpen = () => setOpen(true)
+  const [searchText, setSearchText] = useState("");
+
+  const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
 
@@ -25,10 +26,8 @@ const Onboardee = () => {
     <Root>
       <div className="onboardee-page">
         <Grid container spacing={3}>
-          <Grid item xs={12} >
-            <Button onClick={handleOpen}>
-              Add Onboardee
-            </Button>
+          <Grid item xs={12}>
+            <Button onClick={handleOpen}>Add Onboardee</Button>
             <AddOnboardee
               onboardee={{}}
               open={open}
@@ -42,29 +41,24 @@ const Onboardee = () => {
                   onboardee.hireType &&
                   onboardee.pdl &&
                   csrf
-                )
-                {
+                ) {
                   let res = await createOnboardee(onboardee, csrf);
-                  let data = res.payload && res.payload.data && !res.error ? res.payload.data : null;
+                  let data =
+                    res.payload && res.payload.data && !res.error
+                      ? res.payload.data
+                      : null;
                   if (data) {
                     dispatch({
                       type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
                       payload: [...onboardeeProfiles, data],
                     });
                   }
-                  }
+                }
               }}
-
-            
-            
             />
-              
-            
           </Grid>
         </Grid>
       </div>
     </Root>
-  )
-
-
-}
+  );
+};

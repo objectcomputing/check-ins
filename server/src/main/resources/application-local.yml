@@ -33,6 +33,15 @@ datasources:
     username: postgres
     password: "postgres"
 ---
+r2dbc:
+  datasources:
+    default:
+      url: r2dbc:postgresql://localhost:5432/checkinsdb
+      driver: postgresql
+      username: postgres
+      password: postgres
+      dialect: POSTGRES
+---
 credentials:
   roles:
     SUPER:

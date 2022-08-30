@@ -55,7 +55,7 @@ public class EmailServicesImpl implements EmailServices {
 
         List<Email> sentEmails = new ArrayList<>();
 
-        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
+        validate(currentUserServices.isAdmin() || currentUserServices.isHumanResources()).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to do this operation");
         });
 
