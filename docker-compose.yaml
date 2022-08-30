@@ -9,3 +9,7 @@ services:
     ports:
       - "5432:5432"
     container_name: checkinsdb
+  sonarqube:
+    image: sonarqube:lts
+    ports:
+      - 9000:9000

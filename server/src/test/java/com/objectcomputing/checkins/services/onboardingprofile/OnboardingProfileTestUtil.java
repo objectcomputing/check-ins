@@ -26,7 +26,6 @@ public class OnboardingProfileTestUtil {
         dto.setPersonalEmail("TestPersonalEmail");
         return dto;
     }
-
     //ResponseDTO here is used as an UpdateDTO
     public static OnboardingProfileDTO mkUpdateOnboardeeProfileDTO(BackgroundInformation backgroundInformation) {
         OnboardingProfileDTO dto = new OnboardingProfileDTO();

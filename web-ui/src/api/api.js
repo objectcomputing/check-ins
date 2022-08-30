@@ -31,18 +31,19 @@ export const getMyAxios = async () => {
         }
 
         // trade in refresh token for access token
-        return axios.get('/oauth/access_token', {
-          baseURL: BASE_API_URL,
-          withCredentials: true,
-          timeout: 30000
-        })
+        return axios
+          .get("/oauth/access_token", {
+            baseURL: BASE_API_URL,
+            withCredentials: true,
+            timeout: 30000,
+          })
           .then(() => {
             // retry original request
             return myAxios(err.config);
           })
           .catch(() => {
             return Promise.reject(err);
-          })
+          });
       }
     );
   }

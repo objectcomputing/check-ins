@@ -2,45 +2,41 @@ import axios from "axios";
 
 export const BASE_API_URL = process.env.REACT_APP_API_URL
   ? process.env.REACT_APP_API_URL
-  : "http://localhost:8080";
-
-let myAxios = null;
+  : "http://localhost:8080/";
 
 export const getMyAxios = async () => {
-  if (!myAxios) {
-    myAxios = axios.create({
-      baseURL: BASE_API_URL,
-      withCredentials: true,
-    });
+  let myAxios = axios.create({
+    baseURL: BASE_API_URL,
+    withCredentials: true,
+  });
 
-    myAxios.interceptors.response.use(
-      // Any status codes that lie within the range of 2xx cause this function to trigger
-      (res) => {
-        return res;
-      },
-      // Any status codes that falls outside the range of 2xx cause this function to trigger
-      (err) => {
-        if (err.response.status !== 401) {
-          return Promise.reject(err);
-        }
-
-        // trade in refresh token for access token
-        return axios
-          .get("/oauth/access_token", {
-            baseURL: BASE_API_URL,
-            withCredentials: true,
-            timeout: 30000,
-          })
-          .then(() => {
-            // retry original request
-            return myAxios(err.config);
-          })
-          .catch(() => {
-            return Promise.reject(err);
-          });
+  myAxios.interceptors.response.use(
+    // Any status codes that lie within the range of 2xx cause this function to trigger
+    (res) => {
+      return res;
+    },
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    (err) => {
+      if (err.response.status !== 401) {
+        return Promise.reject(err);
       }
-    );
-  }
+
+      // trade in refresh token for access token
+      return axios
+        .get("/oauth/access_token", {
+          baseURL: BASE_API_URL,
+          withCredentials: true,
+          timeout: 30000,
+        })
+        .then(() => {
+          // retry original request
+          return myAxios(err.config);
+        })
+        .catch(() => {
+          return Promise.reject(err);
+        });
+    }
+  );
   return myAxios;
 };
 
@@ -59,4 +55,17 @@ export const resolve = async (payload) => {
   }
 
   return resolved;
+};
+
+export const send = async () => {
+  const myAxios = await getMyAxios();
+  myAxios
+    .get("/send-signrequest")
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  return myAxios;
 };

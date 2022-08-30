@@ -26,3 +26,7 @@ check {
 artifacts {
     'default' file: buildDir, type: 'directory', builtBy: yarn_run_build
 }
+
+repositories {
+    mavenCentral()
+}
