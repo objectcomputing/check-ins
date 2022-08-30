@@ -1,3 +1,9 @@
 .kudos-dialog .kudos-dialog-content {
-    width: 600px;
+    margin: 8rem 6rem 1rem 6rem
+}
+
+.kudos-dialog .kudos-dialog-content .kudos-recipient-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
 }

@@ -1,10 +1,12 @@
 import React, {useContext, useState} from "react";
 import PropTypes from "prop-types";
-import {Paper, Collapse, Divider, Typography, Avatar} from "@mui/material";
+import {Paper, Collapse, Divider, Typography, Avatar, Chip, Button} from "@mui/material";
 import {selectProfile} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import {getAvatarURL} from "../../api/api";
 import DateFnsUtils from "@date-io/date-fns";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 
 import "./KudosCard.css";
 
@@ -18,7 +20,7 @@ const propTypes = {
     dateApproved: PropTypes.array,
     dateCreated: PropTypes.array.isRequired
   }).isRequired,
-  type: PropTypes.oneOf(["RECEIVED", "SENT"]).isRequired
+  type: PropTypes.oneOf(["RECEIVED", "SENT", "MANAGE"]).isRequired
 };
 
 const KudosCard = ({ kudos, type }) => {
@@ -44,6 +46,17 @@ const KudosCard = ({ kudos, type }) => {
             <Avatar style={{ marginRight: "0.5em" }} src={getAvatarURL(recipient?.workEmail)} />
             <Typography variant="h5">{recipient?.name}</Typography>
           </>}
+          {type === "MANAGE" && <>
+            <Chip
+              avatar={<Avatar src={getAvatarURL(recipient?.workEmail)}/>}
+              label={recipient?.name}
+            />
+            <Typography variant="body1">received kudos from</Typography>
+            <Chip
+              avatar={<Avatar src={getAvatarURL(sender?.workEmail)}/>}
+              label={sender?.name}
+            />
+          </>}
         </div>
         <div className="kudos-status-container">
           <Typography color={dateApproved ? "green" : "orange"}>
@@ -51,13 +64,29 @@ const KudosCard = ({ kudos, type }) => {
           </Typography>
           {type === "RECEIVED" && <>
             <Typography variant="body2" color="gray" fontSize="10px">
-              Received {dateUtils.format(dateCreated, "MM/dd/yyyy")}
+              Received {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
             </Typography>
           </>}
           {type === "SENT" && <>
             <Typography variant="body2" color="gray" fontSize="10px">
               Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
             </Typography>
+          </>}
+          {type === "MANAGE" && <>
+            <Button
+              variant="outlined"
+              color="success"
+              size="medium"
+            >
+              <CheckIcon/>
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              size="medium"
+            >
+              <CloseIcon/>
+            </Button>
           </>}
         </div>
       </div>
