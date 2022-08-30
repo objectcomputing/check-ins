@@ -13,6 +13,10 @@ public interface RoleFixture extends RepositoryFixture, PermissionFixture, Membe
         return getRoleRepository().save(new Role(role.getRole(), role.getDescription()));
     }
 
+    default Role createRole(RoleType roleType) {
+        return getRoleRepository().save(new Role(roleType.name(), "role description"));
+    }
+
     default Role createAndAssignAdminRole(MemberProfile memberProfile) {
         return createAndAssignRole(RoleType.ADMIN, memberProfile);
     }

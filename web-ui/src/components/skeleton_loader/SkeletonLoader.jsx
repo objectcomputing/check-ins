@@ -183,5 +183,29 @@ export default function SkeletonLoader({ type }) {
         </StyledCard>
       </Box>
     );
+  } else if (type === "documents") {
+    return (
+        <StyledCard>
+          <CardContent style={{ padding: "10px" }}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              width={"100%"}
+            >
+              <Skeleton
+                variant="text"
+                height={"3rem"}
+                width={"40vw"}
+              />
+              <Skeleton
+                variant="rectangular"
+                height={"2rem"}
+                width={"10vw"}
+              />
+            </Box>
+          </CardContent>
+        </StyledCard>
+    );
   }
 }

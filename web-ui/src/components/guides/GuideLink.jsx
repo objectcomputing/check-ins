@@ -1,20 +1,39 @@
 import React from "react";
-import { Link } from 'react-router-dom';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
+import {Link} from "react-router-dom";
+import {
+  ListItem,
+  ListItemButton,
+  ListItemText
+} from "@mui/material";
+import PropTypes from "prop-types";
 import "./GuideLink.css";
 
-const GuideLink = (props) => {
-  const path = "/pdfs/";
-  const fileName = props.name;
-  let fullPath = path + fileName.split(" ").join("_") + ".pdf";
+const propTypes = {
+  document: PropTypes.object.isRequired,
+  draggable: PropTypes.bool.isRequired
+};
+
+const GuideLink = ({ document, draggable }) => {
+
   return (
-    <ListItem key={`guides-{fileName.split(" ").join("_")}`} button component={Link} to={fullPath} target="_blank" >
-        <ListItem>
-          <ListItemText primary={fileName}/>
-        </ListItem>
-    </ListItem>
+    <>
+      <ListItem
+        disablePadding
+      >
+        <ListItemButton
+          component={Link}
+          to={document?.url || ""}
+          target="_blank">
+          <ListItemText
+            style={{ paddingLeft: draggable ? 0 : "1rem"}}
+            primary={document?.name || "Undefined"}
+          />
+        </ListItemButton>
+      </ListItem>
+    </>
   );
 };
+
+GuideLink.propTypes = propTypes;
 
 export default GuideLink;

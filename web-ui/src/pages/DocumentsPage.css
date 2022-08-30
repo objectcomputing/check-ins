@@ -1,0 +1,24 @@
+.documents-page .documents-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.documents-page .documents-header .documents-header-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    column-gap: 2rem;
+}
+
+.documents-page .documents-list .empty-documents-message {
+    color: gray;
+    background-color: #e7e7e7;
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+}

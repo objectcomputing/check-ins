@@ -1,4 +1,4 @@
-import { resolve, BASE_API_URL } from "./api.js";
+import { resolve } from "./api.js";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 

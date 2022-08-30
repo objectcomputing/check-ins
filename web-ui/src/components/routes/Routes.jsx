@@ -30,6 +30,7 @@ import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 import EmailPage from "../../pages/EmailPage";
 import PermissionsPage from "../../pages/PermissionsPage";
+import DocumentsPage from "../../pages/DocumentsPage";
 import OnboardProgressPage from "../../pages/OnboardProgressPage";
 import OnboardProgressDetailPage from "../../pages/OnboardProgressDetailPage";
 
@@ -131,6 +132,9 @@ export default function Routes() {
           <Route path="/admin/email">
             <Header title="Send Email"></Header>
             <EmailPage />
+          </Route>
+          <Route path="/admin/documents">
+            <DocumentsPage />
           </Route>
           <Route exact path="/feedback/request/confirmation">
             <FeedbackRequestConfirmation />
