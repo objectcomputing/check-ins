@@ -10,6 +10,7 @@ import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Singleton
@@ -38,14 +39,6 @@ public class KudosServicesImpl implements KudosServices {
             throw new BadArgException("Kudos sender %s does not exist", kudos.getSenderId());
         });
 
-        memberProfileRetrievalServices.getById(kudos.getRecipientId()).orElseThrow(() -> {
-            throw new BadArgException("Kudos recipient %s does not exist", kudos.getRecipientId());
-        });
-
-        if (kudos.getSenderId().equals(kudos.getRecipientId())) {
-            throw new BadArgException("Users cannot give themselves kudos");
-        }
-
         return kudosRepository.save(kudos);
     }
 
@@ -66,10 +59,8 @@ public class KudosServicesImpl implements KudosServices {
 
         if (!kudos.getSenderId().equals(existingKudos.getSenderId())) {
             throw new BadArgException("Cannot change kudos sender");
-        }
-
-        if (!kudos.getRecipientId().equals(existingKudos.getRecipientId())) {
-            throw new BadArgException("Cannot change kudos recipient");
+        } else if (!kudos.getDateCreated().equals(existingKudos.getDateCreated())) {
+            throw new BadArgException("Cannot change the date the kudos was created");
         }
 
         return kudosRepository.update(kudos);
@@ -90,13 +81,18 @@ public class KudosServicesImpl implements KudosServices {
             }
         } else {
             // If approved, admins, the sender, and the recipient can access the kudos
-            boolean isRecipient = currentUserServices.getCurrentUser().getId().equals(kudos.getRecipientId());
-            if (!currentUserServices.isAdmin() && !isSender && !isRecipient) {
+            if (!currentUserServices.isAdmin() && !isSender) {
                 throw new PermissionException("You are not authorized to perform this operation");
             }
         }
 
         return kudos;
+
+    }
+
+    @Override
+    public Optional<Kudos> findById(UUID id) {
+        return kudosRepository.findById(id);
     }
 
     @Override
