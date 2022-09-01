@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.workingenvironment;
 
+import com.objectcomputing.checkins.services.onboard.workingenvironment.WorkingEnvironment;
+import com.objectcomputing.checkins.services.onboard.workingenvironment.WorkingEnvironmentDTO;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WorkingEnvironmentTestUtil {

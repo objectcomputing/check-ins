@@ -19,6 +19,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformationRepository;
 import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityRepository;
 import com.objectcomputing.checkins.services.onboard.onboardeeprofile.OnboardingProfileRepository;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
@@ -34,7 +35,7 @@ import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.MemberHistoryRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
-import com.objectcomputing.checkins.services.workingenvironment.WorkingEnvironmentRepository;
+import com.objectcomputing.checkins.services.onboard.workingenvironment.WorkingEnvironmentRepository;
 
 import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.survey.SurveyRepository;
@@ -194,5 +195,9 @@ public interface RepositoryFixture {
     
     default BackgroundInformationRepository getBackgroundInformationRepository(){
         return getEmbeddedServer().getApplicationContext().getBean(BackgroundInformationRepository.class);
+    }
+
+    default NewHireAccountRepository  getNewHireAccountRepository(){
+        return getEmbeddedServer().getApplicationContext().getBean(NewHireAccountRepository.class);
     }
 }

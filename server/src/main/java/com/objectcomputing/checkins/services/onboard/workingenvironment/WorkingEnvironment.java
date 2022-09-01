@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.workingenvironment;
+package com.objectcomputing.checkins.services.onboard.workingenvironment;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
@@ -43,7 +43,7 @@ public class WorkingEnvironment {
     @NotBlank
     @Column(name = "key_type")
     @ColumnTransformer(read = "pgp_sym_decrypt(keyType::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
-    @Schema(description = "Type of key requested")
+    @Schema(description = "Type of door key requested: fab or card")
     private String keyType;
 
     @NotBlank
@@ -55,7 +55,7 @@ public class WorkingEnvironment {
     @Nullable
     @Column(name = "accessories")
     @ColumnTransformer(read = "pgp_sym_decrypt(accessories::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
-    @Schema(description = "Accessories requested")
+    @Schema(description = "Computer accessories requested")
     private String accessories;
 
     @Nullable

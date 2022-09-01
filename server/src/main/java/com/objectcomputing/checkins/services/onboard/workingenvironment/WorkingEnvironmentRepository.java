@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.workingenvironment;
+package com.objectcomputing.checkins.services.onboard.workingenvironment;
 
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;

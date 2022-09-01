@@ -1,15 +1,17 @@
-package com.objectcomputing.checkins.services.workingenvironment;
-
+package com.objectcomputing.checkins.services.onboard.workingenvironment;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import io.micronaut.core.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-
 import java.util.Objects;
+import java.util.UUID;
 
 @Introspected
-public class WorkingEnvironmentCreateDTO {
+public class WorkingEnvironmentDTO {
+    @NotNull
+    @Schema(description = "id of the onboardee this profile is associated with", required = true)
+    private UUID id;
 
     @NotNull
     @Schema(description = "Work Location requested", required = true)
@@ -32,8 +34,16 @@ public class WorkingEnvironmentCreateDTO {
     private String otherAccessories;
 
     @NotNull
-    @Schema(description = "email address of the newHire used to initialize their account")
+    @Schema(description ="email address of the newHire used to initialize their account")
     private String emailAddress;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getWorkLocation() {
         return workLocation;
@@ -87,13 +97,27 @@ public class WorkingEnvironmentCreateDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        WorkingEnvironmentCreateDTO that = (WorkingEnvironmentCreateDTO) o;
-        return Objects.equals(workLocation, that.workLocation) && Objects.equals(keyType, that.keyType)
-                && Objects.equals(osType, that.osType) && Objects.equals(accessories, that.accessories)
-                && Objects.equals(otherAccessories, that.otherAccessories);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WorkingEnvironmentDTO that = (WorkingEnvironmentDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(workLocation, that.workLocation) && Objects.equals(keyType, that.keyType) && Objects.equals(osType, that.osType) && Objects.equals(accessories, that.accessories) && Objects.equals(otherAccessories, that.otherAccessories) && Objects.equals(emailAddress, that.emailAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, workLocation, keyType, osType, accessories, otherAccessories, emailAddress);
+    }
+
+    @Override
+    public String toString() {
+        return "WorkingEnvironmentDTO{" +
+                "id=" + id +
+                ", workLocation='" + workLocation + '\'' +
+                ", keyType='" + keyType + '\'' +
+                ", osType='" + osType + '\'' +
+                ", accessories='" + accessories + '\'' +
+                ", otherAccessories='" + otherAccessories + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                '}';
     }
 }

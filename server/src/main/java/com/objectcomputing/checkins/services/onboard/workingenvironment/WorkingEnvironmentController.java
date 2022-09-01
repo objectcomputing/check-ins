@@ -1,6 +1,5 @@
-package com.objectcomputing.checkins.services.workingenvironment;
+package com.objectcomputing.checkins.services.onboard.workingenvironment;
 
-import com.objectcomputing.checkins.services.role.Role;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;

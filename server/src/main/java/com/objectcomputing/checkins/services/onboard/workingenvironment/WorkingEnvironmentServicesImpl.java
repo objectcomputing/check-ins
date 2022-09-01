@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.workingenvironment;
+package com.objectcomputing.checkins.services.onboard.workingenvironment;
 
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Mono;
