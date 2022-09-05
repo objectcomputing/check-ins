@@ -12,6 +12,8 @@ import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
+import static com.objectcomputing.checkins.util.Validation.validate;
+
 @Singleton
 public class SkillsReportServicesImpl implements SkillsReportServices {
     private final MemberSkillRepository memberSkillRepo;
@@ -35,16 +37,16 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
             final Boolean inclusive = request.isInclusive();
 
             for (SkillLevelDTO skill : skills) {
-                if (!skillRepo.existsById(skill.getId())) {
+                validate(skillRepo.existsById(skill.getId())).orElseThrow(() -> {
                     throw new BadArgException("Invalid skill ID %s", skill.getId());
-                }
+                });
             }
 
             if (members != null) {
                 for (UUID member : members) {
-                    if (!memberProfileRetrievalServices.existsById(member)) {
+                    validate(memberProfileRetrievalServices.existsById(member)).orElseThrow(() -> {
                         throw new BadArgException("Invalid member profile ID %s", member);
-                    }
+                    });
                 }
             }
 
@@ -78,9 +80,9 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         final List<MemberSkill> entries = new ArrayList<>();
 
         for (SkillLevelDTO skill : skills) {
-            if (skill.getId() == null) {
+            validate(skill.getId() != null).orElseThrow(() -> {
                 throw new BadArgException("Invalid requested skill ID");
-            }
+            });
 
             final List<MemberSkill> temp = memberSkillRepo.findBySkillid(skill.getId());
             if (skill.getLevel() != null && temp.size() > 0) {

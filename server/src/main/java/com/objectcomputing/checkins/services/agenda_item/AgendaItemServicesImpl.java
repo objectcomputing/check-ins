@@ -1,11 +1,12 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import io.micronaut.core.annotation.Nullable;
@@ -15,24 +16,25 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class AgendaItemServicesImpl implements AgendaItemServices {
 
     private final CheckInRepository checkinRepo;
     private final AgendaItemRepository agendaItemRepository;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final CheckInServices checkInServices;
 
     public AgendaItemServicesImpl(CheckInRepository checkinRepo,
                                   AgendaItemRepository agendaItemRepository,
-                                  MemberProfileRepository memberRepo,
+                                  MemberProfileRetrievalServices memberProfileRetrievalServices,
                                   CurrentUserServices currentUserServices,
                                   CheckInServices checkInServices) {
         this.checkinRepo = checkinRepo;
         this.agendaItemRepository = agendaItemRepository;
-        this.memberRepo = memberRepo;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.checkInServices = checkInServices;
     }
@@ -53,18 +55,34 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
                 //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
                 //nothing needs to happen here.
             }
-            agendaItem.setPriority(lastDisplayOrder+1);
-            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
-            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            validate(checkinId == null || createById == null, "Invalid agenda item %s", agendaItem);
-            validate(agendaItem.getId() != null, "Found unexpected id %s for agenda item", agendaItem.getId());
-            validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
-            validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
-            if (!isAdmin && isCompleted) {
-                validate(true, "User is unauthorized to do this operation");
-            } else if (!isAdmin && !isCompleted) {
-                validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+            agendaItem.setPriority(lastDisplayOrder + 1);
+
+            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> {
+               throw new BadArgException("CheckIn %s doesn't exist", checkinId);
+            });
+            boolean isCompleted = checkinRecord.isCompleted();
+            final UUID pdlId = checkinRecord.getPdlId();
+
+            validate(createById != null).orElseThrow(() -> {
+                throw new BadArgException("Invalid agenda item %s", agendaItem);
+            });
+            validate(agendaItem.getId() == null).orElseThrow(() -> {
+                throw new BadArgException("Found unexpected id %s for agenda item", agendaItem.getId());
+            });
+            validate(memberProfileRetrievalServices.existsById(createById)).orElseThrow(() -> {
+                throw new BadArgException("Member %s doesn't exist", createById);
+            });
+
+            if (isCompleted) {
+                validate(isAdmin).orElseThrow(() -> {
+                    throw new PermissionException("User is unauthorized to do this operation");
+                });
+            } else {
+                boolean isPdl = currentUser.getId().equals(pdlId);
+                boolean isCreator = currentUser.getId().equals(createById);
+                validate(isAdmin || isPdl || isCreator).orElseThrow(() -> {
+                    throw new PermissionException("User is unauthorized to do this operation");
+                });
             }
 
             agendaItemRet = agendaItemRepository.save(agendaItem);
@@ -76,14 +94,19 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     public AgendaItem read(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-        AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElse(null);
-        validate(agendaItemResult == null, "Invalid agenda item id %s", id);
-        if (!isAdmin) {
-            CheckIn checkinRecord = checkinRepo.findById(agendaItemResult.getCheckinid()).orElse(null);
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
-        }
+        AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElseThrow(() -> {
+            throw new BadArgException("Invalid agenda item id %s", id);
+        });
+
+        CheckIn checkinRecord = checkinRepo.findById(agendaItemResult.getCheckinid()).orElse(null);
+        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+        final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+
+        boolean isPdl = currentUser.getId().equals(pdlId);
+        boolean isCreator = currentUser.getId().equals(createById);
+        validate(isAdmin || isPdl || isCreator).orElseThrow(() -> {
+            throw new PermissionException("User is unauthorized to do this operation");
+        });
 
         return agendaItemResult;
     }
@@ -99,17 +122,32 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             final UUID id = agendaItem.getId();
             final UUID checkinId = agendaItem.getCheckinid();
             final UUID createById = agendaItem.getCreatedbyid();
-            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
-            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            validate(checkinId == null || createById == null, "Invalid agenda item %s", agendaItem);
-            validate(id == null || agendaItemRepository.findById(id).isEmpty(), "Unable to locate agenda item to update with id %s", agendaItem.getId());
-            validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
-            validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
-            if (!isAdmin && isCompleted) {
-                validate(true, "User is unauthorized to do this operation");
-            } else if (!isAdmin && !isCompleted) {
-                validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> {
+                throw new BadArgException("CheckIn %s doesn't exist", checkinId);
+            });
+            boolean isCompleted = checkinRecord.isCompleted();
+            final UUID pdlId = checkinRecord.getPdlId();
+
+            validate(createById != null).orElseThrow(() -> {
+                throw new BadArgException("Invalid agenda item %s", agendaItem);
+            });
+            validate(id != null && agendaItemRepository.findById(id).isPresent()).orElseThrow(() -> {
+                throw new BadArgException("Unable to locate agenda item to update with id %s", agendaItem.getId());
+            });
+            validate(memberProfileRetrievalServices.existsById(createById)).orElseThrow(() -> {
+                throw new BadArgException("Member %s doesn't exist", createById);
+            });
+
+            if (isCompleted) {
+                validate(isAdmin).orElseThrow(() -> {
+                    throw new PermissionException("User is unauthorized to do this operation");
+                });
+            } else {
+                boolean isPdl = currentUser.getId().equals(pdlId);
+                boolean isCreator = currentUser.getId().equals(createById);
+                validate(isAdmin || isPdl || isCreator).orElseThrow(() -> {
+                    throw new PermissionException("User is unauthorized to do this operation");
+                });
             }
 
             agendaItemRet = agendaItemRepository.update(agendaItem);
@@ -123,12 +161,18 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         if (checkinid != null) {
-            validate(!checkInServices.accessGranted(checkinid, currentUser.getId()), "User is unauthorized to do this operation");
+            validate(checkInServices.accessGranted(checkinid, currentUser.getId())).orElseThrow(() -> {
+                throw new PermissionException("User is unauthorized to do this operation");
+            });
         } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
-            validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
+            MemberProfile memberRecord = memberProfileRetrievalServices.getById(createbyid).orElseThrow();
+            validate(isAdmin || currentUser.getId().equals(memberRecord.getId())).orElseThrow(() -> {
+                throw new PermissionException("User is unauthorized to do this operation");
+            });
         } else {
-            validate(!isAdmin, "User is unauthorized to do this operation");
+            validate(isAdmin).orElseThrow(() -> {
+                throw new PermissionException("User is unauthorized to do this operation");
+            });
         }
 
         return agendaItemRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
@@ -138,25 +182,28 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     public void delete(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-        AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElse(null);
-        validate(agendaItemResult == null, "Invalid agenda item id %s", id);
+        AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElseThrow(() -> {
+            throw new BadArgException("Invalid agenda item id %s", id);
+        });
 
         CheckIn checkinRecord = checkinRepo.findById(agendaItemResult.getCheckinid()).orElse(null);
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
         final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-        if (!isAdmin && isCompleted) {
-            validate(true, "User is unauthorized to do this operation");
-        } else if (!isAdmin && !isCompleted) {
-            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+
+        if (isCompleted) {
+            validate(isAdmin).orElseThrow(() -> {
+                throw new PermissionException("User is unauthorized to do this operation");
+            });
+        } else {
+            boolean isPdl = currentUser.getId().equals(pdlId);
+            boolean isCreator = currentUser.getId().equals(createById);
+            validate(isAdmin || isPdl || isCreator).orElseThrow(() -> {
+                throw new PermissionException("User is unauthorized to do this operation");
+            });
         }
 
         agendaItemRepository.deleteById(id);
     }
 
-    private void validate(boolean isError, String message, Object... args) {
-        if (isError) {
-            throw new BadArgException(message, args);
-        }
-    }
 }

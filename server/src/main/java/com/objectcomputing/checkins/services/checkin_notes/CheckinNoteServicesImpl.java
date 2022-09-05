@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class CheckinNoteServicesImpl implements CheckinNoteServices {
@@ -31,8 +32,11 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
 
-    public CheckinNoteServicesImpl(CheckInRepository checkinRepo, CheckInServices checkinServices, CheckinNoteRepository checkinNoteRepository,
-                                   MemberProfileRetrievalServices memberProfileRetrievalServices, CurrentUserServices currentUserServices) {
+    public CheckinNoteServicesImpl(CheckInRepository checkinRepo,
+                                   CheckInServices checkinServices,
+                                   CheckinNoteRepository checkinNoteRepository,
+                                   MemberProfileRetrievalServices memberProfileRetrievalServices,
+                                   CurrentUserServices currentUserServices) {
         this.checkinRepo = checkinRepo;
         this.checkinServices = checkinServices;
         this.checkinNoteRepository = checkinNoteRepository;
@@ -50,20 +54,26 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
 
-        if (checkinRecord == null) {
+        validate(checkinRecord != null).orElseThrow(() -> {
             throw new NotFoundException("CheckIn %s doesn't exist", checkinId);
-        }
-
-        if (!checkinServices.accessGranted(checkinId, currentUser.getId())) {
+        });
+        validate(checkinServices.accessGranted(checkinId, currentUser.getId())).orElseThrow(() -> {
             throw new PermissionException("You do not have permission to access this resource");
-        }
+        });
 
-        validate(createById == null, "Invalid checkin note %s", checkinNote);
-        validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
-        validate(memberProfileRetrievalServices.getById(createById).isEmpty(), "Member who created the Checkin note does not exist");
-        if (!isAdmin && isCompleted) {
-            validate(true, "User is unauthorized to do this operation");
-        }
+        validate(createById != null).orElseThrow(() -> {
+            throw new BadArgException("Invalid checkin note %s", checkinNote);
+        });
+        validate(checkinNote.getId() == null).orElseThrow(() -> {
+            throw new BadArgException("Found unexpected id %s for check in note", checkinNote.getId());
+        });
+        validate(createById != null && memberProfileRetrievalServices.existsById(createById)).orElseThrow(() -> {
+            throw new BadArgException("Member who created the Checkin note does not exist", createById);
+        });
+        validate(isAdmin || !isCompleted).orElseThrow(() -> {
+            throw new PermissionException("User is unauthorized to do this operation");
+        });
+
         return checkinNoteRepository.save(checkinNote);
     }
 
@@ -73,17 +83,19 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         boolean isAdmin = currentUserServices.isAdmin();
         CheckinNote checkInNoteResult = checkinNoteRepository.findById(id).orElse(null);
 
-        validate(checkInNoteResult == null, "Invalid checkin note id %s", id);
+        validate(checkInNoteResult != null).orElseThrow(() -> {
+            throw new BadArgException("Invalid checkin note id %s", id);
+        });
 
         if (!isAdmin) {
             CheckIn checkinRecord = checkinRepo.findById(checkInNoteResult.getCheckinid()).orElse(null);
-            if (checkinRecord == null) {
-                throw new NotFoundException("CheckIn %s doesn't exist", checkInNoteResult.getCheckinid());
-            }
 
-            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
+            validate(checkinRecord != null).orElseThrow(() -> {
+                throw new NotFoundException("CheckIn %s doesn't exist", checkInNoteResult.getCheckinid());
+            });
+            validate(checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())).orElseThrow(() -> {
                 throw new PermissionException("User is unauthorized to do this operation");
-            }
+            });
         }
 
         return checkInNoteResult;
@@ -101,18 +113,28 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
 
-        validate(checkinRecord == null, "CheckIn %s doesn't exist", checkinId);
-        if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
+        validate(checkinRecord != null).orElseThrow(() -> {
+            throw new BadArgException("CheckIn %s doesn't exist", checkinId);
+        });
+        validate(checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())).orElseThrow(() -> {
             LOG.debug("Access was not granted.");
             throw new PermissionException("User is unauthorized to do this operation");
-        }
-        validate(createById == null, "Invalid checkin note %s", checkinNote);
-        validate(id == null || checkinNoteRepository.findById(id).isEmpty(), "Unable to locate checkin note to update with id %s", checkinNote.getId());
-        validate(memberProfileRetrievalServices.getById(createById).isEmpty(), "Member who created the Checkin note does not exist");
+        });
+        validate(createById != null).orElseThrow(() -> {
+            throw new BadArgException("Invalid checkin note %s", checkinNote);
+        });
+        validate(id != null && checkinNoteRepository.findById(id).isPresent()).orElseThrow(() -> {
+            throw new BadArgException("Unable to locate checkin note to update with id %s", checkinNote.getId());
+        });
+        memberProfileRetrievalServices.getById(createById).orElseThrow(() -> {
+            throw new BadArgException("Member who created the Checkin note does not exist", createById);
+        });
 
         if (!isAdmin && isCompleted) {
             LOG.debug("User isn't admin and checkin is completed.");
-            validate(!currentUser.getId().equals(pdlId), "User is unauthorized to do this operation");
+            validate(currentUser.getId().equals(pdlId)).orElseThrow(() -> {
+                throw new PermissionException("User is unauthorized to do this operation");
+            });
         }
 
         return checkinNoteRepository.update(checkinNote);
@@ -124,22 +146,21 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         if (checkinid != null) {
-            validate(!checkinServices.accessGranted(checkinid, currentUser.getId()), "User is unauthorized to do this operation");
-        } else if (createbyid != null) {
-            MemberProfile memberRecord = memberProfileRetrievalServices.getById(createbyid).orElseThrow(() -> {
-                throw new BadArgException("Member who created the Checkin note does not exist");
+            validate(checkinServices.accessGranted(checkinid, currentUser.getId())).orElseThrow(() -> {
+                throw new PermissionException("User is unauthorized to do this operation");
             });
-            validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
+        } else if (createbyid != null) {
+            MemberProfile memberRecord = memberProfileRetrievalServices.getById(createbyid).orElseThrow();
+            validate(currentUser.getId().equals(memberRecord.getId()) || isAdmin).orElseThrow(() -> {
+                throw new PermissionException("User is unauthorized to do this operation");
+            });
         } else {
-            validate(!isAdmin, "User is unauthorized to do this operation");
+            validate(isAdmin).orElseThrow(() -> {
+                throw new PermissionException("User is unauthorized to do this operation");
+            });
         }
 
         return checkinNoteRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
     }
 
-    private void validate(boolean isError, String message, Object... args) {
-        if (isError) {
-            throw new BadArgException(message, args);
-        }
-    }
 }

@@ -38,7 +38,7 @@ public class PulseResponseServiceImplTest {
 
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
@@ -69,12 +69,12 @@ public class PulseResponseServiceImplTest {
         PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
         MemberProfile memberprofile = new MemberProfile();
 
-        when(memberProfileRetrievalServices.getById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberprofile));
+        when(memberProfileRetrievalServices.existsById(eq(cd.getTeamMemberId()))).thenReturn(true);
         when(pulseResponseRepository.save(eq(cd))).thenReturn(cd);
 
         assertEquals(cd, services.save(cd));
 
-        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).existsById(any(UUID.class));
         verify(pulseResponseRepository, times(1)).save(any(PulseResponse.class));
     }
 
@@ -128,7 +128,7 @@ public class PulseResponseServiceImplTest {
         assertEquals(String.format("Member %s doesn't exists", cd.getTeamMemberId()), exception.getMessage());
 
         verify(pulseResponseRepository, never()).save(any(PulseResponse.class));
-        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).existsById(any(UUID.class));
     }
 
     @Test
@@ -136,13 +136,13 @@ public class PulseResponseServiceImplTest {
         PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
         MemberProfile memberprofile = new MemberProfile();
 
-        when(memberProfileRetrievalServices.getById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberprofile));
+        when(memberProfileRetrievalServices.existsById(eq(cd.getTeamMemberId()))).thenReturn(true);
         when(pulseResponseRepository.findById(cd.getId())).thenReturn(Optional.of(cd));
         when(pulseResponseRepository.update(eq(cd))).thenReturn(cd);
 
         assertEquals(cd, services.update(cd));
 
-        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).existsById(any(UUID.class));
         verify(pulseResponseRepository, times(1)).findById(cd.getId());
         verify(pulseResponseRepository, times(1)).update(any(PulseResponse.class));
     }
@@ -205,7 +205,7 @@ public class PulseResponseServiceImplTest {
         BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("Member %s doesn't exist", cd.getTeamMemberId()), exception.getMessage());
 
-        verify(memberProfileRetrievalServices, times(1)).getById(any(UUID.class));
+        verify(memberProfileRetrievalServices, times(1)).existsById(any(UUID.class));
         verify(pulseResponseRepository, never()).update(any(PulseResponse.class));
         verify(pulseResponseRepository, times(1)).findById(any(UUID.class));
     }

@@ -14,15 +14,10 @@ import io.micronaut.core.annotation.Nullable;
 
 import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class MemberProfileServicesImpl implements MemberProfileServices {
@@ -33,27 +28,24 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     private final CheckInServices checkInServices;
     private final MemberSkillServices memberSkillServices;
     private final TeamMemberServices teamMemberServices;
-    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository,
                                      CurrentUserServices currentUserServices,
                                      RoleServices roleServices,
                                      CheckInServices checkInServices,
                                      MemberSkillServices memberSkillServices,
-                                     TeamMemberServices teamMemberServices,
-                                     MemberProfileRetrievalServices memberProfileRetrievalServices) {
+                                     TeamMemberServices teamMemberServices) {
         this.memberProfileRepository = memberProfileRepository;
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
         this.checkInServices = checkInServices;
         this.memberSkillServices = memberSkillServices;
         this.teamMemberServices = teamMemberServices;
-        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
     }
 
     @Override
     public Optional<MemberProfile> getById(@NotNull UUID id) {
-        return memberProfileRetrievalServices.getById(id);
+        return memberProfileRepository.findById(id);
     }
 
     @Override
@@ -74,9 +66,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile saveProfile(MemberProfile memberProfile) {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
 
-        if (emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
+        validate(emailProfile == null || emailProfile.getId() == null || Objects.equals(memberProfile.getId(), emailProfile.getId())).orElseThrow(() -> {
             throw new AlreadyExistsException("Email %s already exists in database", memberProfile.getWorkEmail());
-        }
+        });
 
         if (memberProfile.getId() == null) {
             return memberProfileRepository.save(memberProfile);
@@ -87,23 +79,28 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public Boolean deleteProfile(@NotNull UUID id) {
-        if (!currentUserServices.isAdmin()) {
+        validate(currentUserServices.isAdmin()).orElseThrow(() -> {
             throw new PermissionException("Requires admin privileges");
-        }
+        });
+
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
         Set<Role> userRoles = (memberProfile != null) ? roleServices.findUserRoles(memberProfile.getId()) : Collections.emptySet();
 
-        if (memberProfile == null) {
+        validate(memberProfile != null).orElseThrow(() -> {
             throw new NotFoundException("No member profile for id");
-        } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
+        });
+        validate(checkInServices.findByFields(id, null, null).isEmpty()).orElseThrow(() -> {
             throw new BadArgException("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile));
-        } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
+        });
+        validate(memberSkillServices.findByFields(id, null).isEmpty()).orElseThrow(() -> {
             throw new BadArgException("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile));
-        } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
+        });
+        validate(teamMemberServices.findByFields(null, id, null).isEmpty()).orElseThrow(() -> {
             throw new BadArgException("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile));
-        } else if (!userRoles.isEmpty()) {
+        });
+        validate(userRoles.isEmpty()).orElseThrow(() -> {
             throw new BadArgException("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile));
-        }
+        });
 
         // Update PDL ID for all associated members before termination
         List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, null,
@@ -120,15 +117,17 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile findByName(@NotNull String firstName, @NotNull String lastName) {
         List<MemberProfile> searchResult = memberProfileRepository.search(firstName, null, lastName,
                 null, null, null, null, null, null);
-        if (searchResult.size() != 1) {
-            throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
-        }
+
+        validate(searchResult.size() == 1).orElseThrow(() -> {
+            throw new BadArgException("Expected exactly 1 result. Found %s", searchResult.size());
+        });
+
         return searchResult.get(0);
     }
 
     @Override
     public Optional<MemberProfile> findByWorkEmail(@NotNull String workEmail) {
-        return memberProfileRetrievalServices.findByWorkEmail(workEmail);
+        return memberProfileRepository.findByWorkEmail(workEmail);
     }
 
     @Override

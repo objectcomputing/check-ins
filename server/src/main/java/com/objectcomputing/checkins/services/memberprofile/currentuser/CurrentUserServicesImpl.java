@@ -4,7 +4,6 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -15,6 +14,8 @@ import io.micronaut.security.utils.SecurityService;
 import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
+
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
@@ -38,6 +39,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     public MemberProfile findOrSaveUser(@NotNull String firstName, @NotNull String lastName, @NotNull String workEmail) {
         Optional<MemberProfile> userProfile = memberProfileRepository.findByWorkEmail(workEmail);
         return userProfile.orElseGet(() -> saveNewUser(firstName, lastName, workEmail));
+
     }
 
     @Override
@@ -56,22 +58,26 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     }
 
     public MemberProfile getCurrentUser() {
-        if (securityService != null) {
-            Optional<Authentication> auth = securityService.getAuthentication();
-            if (auth.isPresent() && auth.get().getAttributes().get("email") != null) {
-                String workEmail = auth.get().getAttributes().get("email").toString();
-                return memberProfileRepository.findByWorkEmail(workEmail).orElse(null);
-            }
-        }
 
-        throw new NotFoundException("No active members in the system");
+        validate(securityService != null).orElseThrow(() -> {
+            throw new NotFoundException("No active members in the system");
+        });
+
+        Optional<Authentication> auth = securityService.getAuthentication();
+        validate(auth.isPresent() && auth.get().getAttributes().get("email") != null).orElseThrow(() -> {
+            throw new NotFoundException("No active members in the system");
+        });
+
+        String workEmail = auth.get().getAttributes().get("email").toString();
+        return memberProfileRepository.findByWorkEmail(workEmail).orElse(null);
     }
 
     private MemberProfile saveNewUser(String firstName, String lastName, String workEmail) {
-        MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(workEmail).orElse(null);
-        if (emailProfile != null) {
+        Optional<MemberProfile> emailProfile = memberProfileRepository.findByWorkEmail(workEmail);
+
+        validate(emailProfile.isEmpty()).orElseThrow(() -> {
             throw new AlreadyExistsException("Email %s already exists in database", workEmail);
-        }
+        });
 
         MemberProfile createdMember = memberProfileRepository.save(new MemberProfile(firstName, null, lastName, null, "", null,
                 "", workEmail, "", null, "", null, null, null, null, null));

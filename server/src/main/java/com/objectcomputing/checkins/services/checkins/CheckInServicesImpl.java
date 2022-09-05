@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.checkins;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -15,10 +16,11 @@ import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class CheckInServicesImpl implements CheckInServices {
@@ -42,7 +44,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
     @Override
     public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
-        Boolean grantAccess = false;
+        boolean grantAccess = false;
 
         MemberProfile memberTryingToGainAccess = memberProfileRetrievalServices.getById(memberId).orElseThrow(() -> {
             throw new BadArgException("Member %s does not exist", memberId);
@@ -62,7 +64,7 @@ public class CheckInServicesImpl implements CheckInServices {
             grantAccess = true;
         } else {
             MemberProfile teamMemberOnCheckin = memberProfileRetrievalServices.getById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
-                throw new NotFoundException("Member %s does not exist", checkinRecord.getTeamMemberId());
+                throw new NotFoundException("Team member not found %s not found", checkinRecord.getTeamMemberId());
             });
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
 
@@ -93,13 +95,25 @@ public class CheckInServicesImpl implements CheckInServices {
             throw new BadArgException("Member %s does not exist", memberId);
         });
 
-        validate(checkIn.getId() != null, "Found unexpected id for checkin %s", checkIn.getId());
-        validate(memberId.equals(pdlId), "Team member id %s can't be same as PDL id", checkIn.getTeamMemberId());
-        validate(!pdlId.equals(memberProfileOfTeamMember.getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
-        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
-        if (!isAdmin) {
-            validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
-        }
+        validate(checkIn.getId() == null).orElseThrow(() -> {
+            throw new BadArgException("Found unexpected id for checkin %s", checkIn.getId());
+        });
+        validate(!memberId.equals(pdlId)).orElseThrow(() -> {
+            throw new BadArgException("Team member id %s can't be same as PDL id", checkIn.getTeamMemberId());
+        });
+        validate(pdlId.equals(memberProfileOfTeamMember.getPdlId())).orElseThrow(() -> {
+            throw new BadArgException("PDL %s is not associated with member %s", pdlId, memberId);
+        });
+        validate(chkInDate.isAfter(Util.MIN) && chkInDate.isBefore(Util.MAX)).orElseThrow(() -> {
+            throw new BadArgException("Invalid date for checkin %s", checkIn.getTeamMemberId());
+        });
+
+        boolean isTeamMember = currentUser.getId().equals(checkIn.getTeamMemberId());
+        boolean isPdl = currentUser.getId().equals(checkIn.getPdlId());
+
+        validate(isAdmin || isTeamMember || isPdl).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
 
         return checkinRepo.save(checkIn);
     }
@@ -109,13 +123,13 @@ public class CheckInServicesImpl implements CheckInServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        CheckIn result = checkinRepo.findById(id).orElse(null);
-        validate((result == null), "Invalid checkin id %s", id);
+        CheckIn result = checkinRepo.findById(id).orElseThrow(() -> {
+            throw new BadArgException("Invalid checkin id %s", id);
+        });
 
-        if (!isAdmin) {
-            // Limit read to Subject of check-in, PDL of subject and Admin
-            validate(!accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
-        }
+        validate(isAdmin || accessGranted(id, currentUser.getId())).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
 
         return result;
     }
@@ -134,19 +148,26 @@ public class CheckInServicesImpl implements CheckInServices {
         });
         boolean isAdmin = currentUserServices.isAdmin();
 
-        validate(id == null, "Unable to find checkin record with id %s", checkIn.getId());
-        Optional<CheckIn> associatedCheckin = checkinRepo.findById(id);
-        validate(memberId == null, "Invalid checkin %s", checkIn.getId());
-        validate(memberProfileOfTeamMember == null, "Member %s doesn't exist", memberId);
-        validate(associatedCheckin.isEmpty(), "Checkin %s doesn't exist", id);
-        validate(!pdlId.equals(memberProfileOfTeamMember.getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
-        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
-        if (!isAdmin) {
-            // Limit update to subject of check-in, PDL of subject and Admin
-            validate(!accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
-            // Update is only allowed if the check in is not completed unless made by admin
-            validate(associatedCheckin.get().isCompleted(), "Checkin with id %s is complete and cannot be updated", checkIn.getId());
-        }
+        validate(id != null).orElseThrow(() -> {
+            throw new BadArgException("Unable to find checkin record with id %s", id);
+        });
+
+        CheckIn associatedCheckin = checkinRepo.findById(id).orElseThrow(() -> {
+            throw new BadArgException("Checkin %s doesn't exist", id);
+        });
+        validate(pdlId.equals(memberProfileOfTeamMember.getPdlId())).orElseThrow(() -> {
+            throw new BadArgException("PDL %s is not associated with member %s", pdlId, memberId);
+        });
+        validate(chkInDate.isAfter(Util.MIN) && chkInDate.isBefore(Util.MAX)).orElseThrow(() -> {
+            throw new BadArgException("Invalid date for checkin %s", memberId);
+        });
+
+        validate(isAdmin || accessGranted(id, currentUser.getId())).orElseThrow(() -> {
+            throw new PermissionException("You are not authorized to perform this operation");
+        });
+        validate(isAdmin || !associatedCheckin.isCompleted()).orElseThrow(() -> {
+            throw new PermissionException("Checkin with id %s is complete and cannot be updated", checkIn.getId());
+        });
 
         return checkinRepo.update(checkIn);
     }
@@ -156,8 +177,7 @@ public class CheckInServicesImpl implements CheckInServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        Set<CheckIn> checkIn = new HashSet<>();
-        checkinRepo.findAll().forEach(checkIn::add);
+        Set<CheckIn> checkIn = new HashSet<>(checkinRepo.findAll());
 
         if (teamMemberId != null) {
             MemberProfile memberToSearch = memberProfileRetrievalServices.getById(teamMemberId).orElseThrow(() -> {
@@ -165,15 +185,20 @@ public class CheckInServicesImpl implements CheckInServices {
             });
             if (memberToSearch != null) {
                 // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
-                validate((!isAdmin && currentUser != null &&
-                                !currentUser.getId().equals(teamMemberId) &&
-                                !currentUser.getId().equals(memberToSearch.getPdlId())),
-                        "You are not authorized to perform this operation");
+                boolean isTeamMember = currentUser.getId().equals(teamMemberId);
+                boolean isPdl = currentUser.getId().equals(memberToSearch.getPdlId());
+                validate(isAdmin || isTeamMember || isPdl).orElseThrow(() -> {
+                    throw new PermissionException("You are not authorized to perform this operation");
+                });
                 checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
-            } else checkIn.clear();
+            } else {
+                checkIn.clear();
+            }
         } else if (pdlId != null) {
             // Limit findByPdlId to Subject of check-in, PDL of subject and Admin
-            validate(!isAdmin && !currentUser.getId().equals(pdlId), "You are not authorized to perform this operation");
+            validate(isAdmin || currentUser.getId().equals(pdlId)).orElseThrow(() -> {
+                throw new PermissionException("You are not authorized to perform this operation");
+            });
             checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
         } else if (completed != null) {
             checkIn.retainAll(checkinRepo.findByCompleted(completed));
@@ -185,15 +210,11 @@ public class CheckInServicesImpl implements CheckInServices {
             }
         } else {
             // Limit findAll to only Admin
-            validate(!isAdmin, "You are not authorized to perform this operation");
+            validate(isAdmin).orElseThrow(() -> {
+                throw new PermissionException("You are not authorized to perform this operation");
+            });
         }
 
         return checkIn;
-    }
-
-    private void validate(boolean isError, String message, Object... args) {
-        if (isError) {
-            throw new BadArgException(message, args);
-        }
     }
 }

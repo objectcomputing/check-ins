@@ -20,13 +20,11 @@ import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SurveyControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, SurveyFixture {
 
@@ -69,9 +67,11 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText(),
+        List<String> errorList = Stream
+                .of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText(),
                 errors.get(2).get("message").asText(), errors.get(3).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
+                .sorted()
+                .collect(Collectors.toList());
         assertEquals(4,errorList.size());
         assertEquals(request.getPath(),href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -97,7 +97,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(),href);
-        assertEquals(String.format("Member %s doesn't exists",surveyResponseCreateDTO.getCreatedBy()),error);
+        assertEquals(String.format("Member %s doesn't exist",surveyResponseCreateDTO.getCreatedBy()),error);
     }
 
     @Test
@@ -303,7 +303,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Unable to find survey record with id null", surveyResponse.getId()), error);
+        assertEquals("Unable to find survey record with id null", error);
         assertEquals(request.getPath(), href);
 
     }
@@ -392,7 +392,6 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals("User is unauthorized to do this operation", error);
 

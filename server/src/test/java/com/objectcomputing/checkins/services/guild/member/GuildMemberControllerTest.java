@@ -91,7 +91,6 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         );
     }
 
-
     @Test
     void testEmailSentToMultipleRecipientsWhenMemberAddsThemselves() {
         Guild guild = createDefaultGuild();
@@ -113,7 +112,6 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
                 "billm@objectcomputing.com"
         );
     }
-
 
     @Test
     void noEmailSentToGuildLeadsThatRemoveThemselves() {
@@ -478,7 +476,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         assertEquals(request.getPath(), href);
         assertEquals("You are not authorized to perform this operation", error);
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test

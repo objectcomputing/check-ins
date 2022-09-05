@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.team;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -15,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+import static com.objectcomputing.checkins.util.Validation.validate;
 
 @Singleton
 public class TeamServicesImpl implements TeamServices {
@@ -38,20 +40,20 @@ public class TeamServicesImpl implements TeamServices {
         Team newTeamEntity = null;
         List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
         if (teamDTO != null) {
-            if (!teamsRepo.search(teamDTO.getName(), null).isEmpty()) {
-                throw new BadArgException("Team with name %s already exists", teamDTO.getName());
-            } else {
-                if (teamDTO.getTeamMembers() == null ||
-                        teamDTO.getTeamMembers().stream().noneMatch(TeamCreateDTO.TeamMemberCreateDTO::getLead)) {
-                    throw new BadArgException("Team must include at least one team lead");
-                }
-                newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
-                for (TeamCreateDTO.TeamMemberCreateDTO memberDTO : teamDTO.getTeamMembers()) {
-                    MemberProfile existingMember = memberProfileRetrievalServices.getById(memberDTO.getMemberId()).orElseThrow(() -> {
-                        throw new BadArgException("Team member %s does not exist", memberDTO.getMemberId());
-                    });
-                    newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO, newTeamEntity.getId())), existingMember));
-                }
+
+            validate(teamsRepo.search(teamDTO.getName(), null).isEmpty()).orElseThrow(() -> {
+                throw new AlreadyExistsException("Team with name %s already exists", teamDTO.getName());
+            });
+            validate(teamDTO.getTeamMembers() != null && teamDTO.getTeamMembers().stream().anyMatch(TeamCreateDTO.TeamMemberCreateDTO::getLead)).orElseThrow(() -> {
+                throw new BadArgException("Team must include at least one team lead");
+            });
+
+            newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
+            for (TeamCreateDTO.TeamMemberCreateDTO memberDTO : teamDTO.getTeamMembers()) {
+                MemberProfile existingMember = memberProfileRetrievalServices.getById(memberDTO.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Member %s does not exist", memberDTO.getMemberId());
+                });
+                newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO, newTeamEntity.getId())), existingMember));
             }
         }
 
@@ -59,8 +61,9 @@ public class TeamServicesImpl implements TeamServices {
     }
 
     public TeamResponseDTO read(@NotNull UUID teamId) {
-        Team foundTeam = teamsRepo.findById(teamId)
-                .orElseThrow(() -> new NotFoundException("No such team found"));
+        Team foundTeam = teamsRepo.findById(teamId).orElseThrow(() -> {
+            throw new NotFoundException("No such team found");
+        });
 
         List<TeamMemberResponseDTO> teamMembers = teamMemberServices
                 .findByFields(teamId, null, null)
@@ -83,51 +86,47 @@ public class TeamServicesImpl implements TeamServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        if (isAdmin || (currentUser != null &&
-                !teamMemberServices.findByFields(teamDTO.getId(), currentUser.getId(), true).isEmpty())) {
-
-            TeamResponseDTO updated = null;
-            List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
-            if (teamDTO != null) {
-                if (teamDTO.getId() != null && teamsRepo.findById(teamDTO.getId()).isPresent()) {
-                    if (teamDTO.getTeamMembers() == null ||
-                            teamDTO.getTeamMembers().stream().noneMatch(TeamUpdateDTO.TeamMemberUpdateDTO::getLead)) {
-                        throw new BadArgException("Team must include at least one team lead");
-                    }
-
-
-                    Team newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
-
-                    Set<TeamMember> existingTeamMembers = teamMemberServices.findByFields(teamDTO.getId(), null, null);
-                    //add any new members & updates
-                    teamDTO.getTeamMembers().stream().forEach((updatedMember) -> {
-                        Optional<TeamMember> first = existingTeamMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
-                        MemberProfile existingMember = memberProfileRetrievalServices.getById(updatedMember.getMemberId()).orElseThrow(() -> {
-                            throw new BadArgException("Team member %s does not exist", updatedMember.getMemberId());
-                        });
-                        if (first.isEmpty()) {
-                            newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updatedMember, newTeamEntity.getId())), existingMember));
-                        } else {
-                            newMembers.add(fromMemberEntity(teamMemberServices.update(fromMemberDTO(updatedMember, newTeamEntity.getId())), existingMember));
-                        }
-                    });
-
-                    //delete any removed members
-                    existingTeamMembers.stream().forEach((existingMember) -> {
-                        if (!teamDTO.getTeamMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
-                            teamMemberServices.delete(existingMember.getId());
-                        }
-                    });
-
-                    updated = fromEntity(newTeamEntity, newMembers);
-                } else {
-                    throw new BadArgException("Team ID %s does not exist, can't update.", teamDTO.getId());
-                }
-            }
-            return updated;
-        } else {
+        boolean isTeamLead = currentUser != null && !teamMemberServices.findByFields(teamDTO.getId(), currentUser.getId(), true).isEmpty();
+        validate(isAdmin || isTeamLead).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to perform this operation");
+        });
+
+        TeamResponseDTO updated = null;
+        List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
+        if (teamDTO != null) {
+
+            validate(teamDTO.getId() != null && teamsRepo.findById(teamDTO.getId()).isPresent()).orElseThrow(() -> {
+                throw new BadArgException("Team ID %s does not exist, can't update.", teamDTO.getId());
+            });
+            validate(teamDTO.getTeamMembers() != null && teamDTO.getTeamMembers().stream().anyMatch(TeamUpdateDTO.TeamMemberUpdateDTO::getLead)).orElseThrow(() -> {
+                throw new BadArgException("Team must include at least one team lead");
+            });
+
+            Team newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
+
+            Set<TeamMember> existingTeamMembers = teamMemberServices.findByFields(teamDTO.getId(), null, null);
+            //add any new members & updates
+            teamDTO.getTeamMembers().forEach((updatedMember) -> {
+                Optional<TeamMember> first = existingTeamMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
+                MemberProfile existingMember = memberProfileRetrievalServices.getById(updatedMember.getMemberId()).orElseThrow(() -> {
+                    throw new BadArgException("Member %s does not exist", updatedMember.getMemberId());
+                });
+                if (first.isEmpty()) {
+                    newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updatedMember, newTeamEntity.getId())), existingMember));
+                } else {
+                    newMembers.add(fromMemberEntity(teamMemberServices.update(fromMemberDTO(updatedMember, newTeamEntity.getId())), existingMember));
+                }
+            });
+
+            //delete any removed members
+            existingTeamMembers.forEach((existingMember) -> {
+                if (teamDTO.getTeamMembers().stream().noneMatch((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId()))) {
+                    teamMemberServices.delete(existingMember.getId());
+                }
+            });
+            updated = fromEntity(newTeamEntity, newMembers);
         }
+        return updated;
     }
 
     public Set<TeamResponseDTO> findByFields(String name, UUID memberid) {
@@ -153,13 +152,13 @@ public class TeamServicesImpl implements TeamServices {
     public boolean delete(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-
-        if (isAdmin || (currentUser != null && !teamMemberServices.findByFields(id, currentUser.getId(), true).isEmpty())) {
-            teamMemberServices.deleteByTeam(id);
-            teamsRepo.deleteById(id);
-        } else {
+        boolean isTeamLead = currentUser != null && !teamMemberServices.findByFields(id, currentUser.getId(), true).isEmpty();
+        validate(isAdmin || isTeamLead).orElseThrow(() -> {
             throw new PermissionException("You are not authorized to perform this operation");
-        }
+        });
+
+        teamMemberServices.deleteByTeam(id);
+        teamsRepo.deleteById(id);
         return true;
     }
 

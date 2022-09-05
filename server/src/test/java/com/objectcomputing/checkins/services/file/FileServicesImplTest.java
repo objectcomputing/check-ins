@@ -8,7 +8,8 @@ import com.google.api.client.testing.json.MockJsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 import com.google.common.io.ByteStreams;
-import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
@@ -115,7 +116,7 @@ public class FileServicesImplTest {
 
     @BeforeAll
     void initMocksAndInitializeFile() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         testFile = new File(filePath);
         FileWriter myWriter = new FileWriter(testFile);
@@ -191,7 +192,7 @@ public class FileServicesImplTest {
 
     @Test
     void testFindAllFailsIfNotAdmin() {
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
+        final PermissionException responseException = assertThrows(PermissionException.class, () ->
                 services.findFiles(null));
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
@@ -259,7 +260,7 @@ public class FileServicesImplTest {
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
 
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
+        final PermissionException responseException = assertThrows(PermissionException.class, () ->
                 services.findFiles(testCheckinId));
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
@@ -420,7 +421,7 @@ public class FileServicesImplTest {
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
 
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
+        final PermissionException responseException = assertThrows(PermissionException.class, () ->
                 services.downloadFiles(testUploadDocId));
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
@@ -550,7 +551,7 @@ public class FileServicesImplTest {
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
 
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
+        final PermissionException responseException = assertThrows(PermissionException.class, () ->
                 services.deleteFile(uploadDocId));
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
@@ -791,7 +792,7 @@ public class FileServicesImplTest {
     void testUploadFileThrowsErrorWhenFileNameIsEmpty() {
         when(fileToUpload.getFilename()).thenReturn(null);
 
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
+        final BadArgException responseException = assertThrows(BadArgException.class, () ->
                 services.uploadFile(UUID.randomUUID(), fileToUpload));
 
         assertEquals("Please select a valid file before uploading.", responseException.getMessage());
@@ -804,7 +805,7 @@ public class FileServicesImplTest {
         when(fileToUpload.getFilename()).thenReturn("test.file.name");
         when(checkInServices.read(testCheckinId)).thenReturn(null);
 
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
+        final BadArgException responseException = assertThrows(BadArgException.class, () ->
                 services.uploadFile(testCheckinId, fileToUpload));
 
         assertEquals(String.format("Unable to find checkin record with id %s", testCheckinId), responseException.getMessage());
@@ -822,7 +823,7 @@ public class FileServicesImplTest {
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
 
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
+        final PermissionException responseException = assertThrows(PermissionException.class, () ->
                 services.uploadFile(testCheckinId, fileToUpload));
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
@@ -845,7 +846,7 @@ public class FileServicesImplTest {
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testCheckIn.isCompleted()).thenReturn(true);
 
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
+        final PermissionException responseException = assertThrows(PermissionException.class, () ->
                 services.uploadFile(testCheckinId, fileToUpload));
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
