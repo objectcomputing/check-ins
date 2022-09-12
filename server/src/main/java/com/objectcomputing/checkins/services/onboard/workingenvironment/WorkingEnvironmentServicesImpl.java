@@ -23,13 +23,15 @@ public class WorkingEnvironmentServicesImpl implements WorkingEnvironmentService
 
     @Override
     public WorkingEnvironment getById(UUID id) {
-        return workingEnvironmentRepository.findById(id).flatMap(workingEnvironmentInformation -> {
-            if (workingEnvironmentInformation == null) {
-                throw new NotFoundException("No new employee background information for id " + id);
-            }
-            return Mono.just(workingEnvironmentInformation);
-        }).block();
+
+        Optional<WorkingEnvironment> workingEnvironmentInformation = workingEnvironmentRepository.findById(id);
+
+        if (workingEnvironmentInformation.isEmpty()) {
+            throw new NotFoundException("No new employee background information for id " + id);
+        }
+        return workingEnvironmentInformation.get();
     }
+
 
     @Override
     public WorkingEnvironment saveWorkingEnvironment(WorkingEnvironmentCreateDTO workingEnvironmentCreateDTO) {

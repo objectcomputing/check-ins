@@ -3,17 +3,20 @@ package com.objectcomputing.checkins.services.onboard.workingenvironment;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.repository.CrudRepository;
 import io.micronaut.data.repository.reactive.ReactorCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-public interface WorkingEnvironmentRepository extends ReactorCrudRepository<WorkingEnvironment, UUID> {
+public interface WorkingEnvironmentRepository extends CrudRepository<WorkingEnvironment, UUID> {
 
-    Flux<WorkingEnvironment> findAll();
+    List<WorkingEnvironment> findAll();
 
     @Query(value = "SELECT working_environment_id, " +
             "PGP_SYM_DECRYPT(cast(mp.work_location as bytea),'${aes.key}') as workLocation," +
@@ -29,7 +32,7 @@ public interface WorkingEnvironmentRepository extends ReactorCrudRepository<Work
             "AND  (:accessories IS NULL OR PGP_SYM_DECRYPT(cast(mp.accessories as bytea),'${aes.key}') = :accessories) "
             +
             "AND  (:otherAccessories IS NULL OR PGP_SYM_DECRYPT(cast(mp.otherAccessories as bytea),'${aes.key}') = :otherAccessories) ", nativeQuery = true)
-    Mono<WorkingEnvironment> search(
+    List<WorkingEnvironment> search(
             @Nullable UUID workingEnvironmentId,
             @Nullable String workLocation,
             @Nullable String keyType,
