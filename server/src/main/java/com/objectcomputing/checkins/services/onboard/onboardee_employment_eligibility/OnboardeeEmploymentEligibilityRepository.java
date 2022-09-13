@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-public interface OnboardeeEmploymentEligibilityRepository extends ReactorCrudRepository<OnboardeeEmploymentEligibility, UUID> {
+public interface OnboardeeEmploymentEligibilityRepository extends CrudRepository<OnboardeeEmploymentEligibility, UUID> {
 
-    Flux<OnboardeeEmploymentEligibility> findAll();
+    List<OnboardeeEmploymentEligibility> findAll();
 
     @Query(value = "SELECT id, " +
             "ageLegal, " +
@@ -34,7 +34,7 @@ public interface OnboardeeEmploymentEligibilityRepository extends ReactorCrudRep
             "AND  (:felonyStatus IS NULL OR felonyStatus = :felonyStatus) " +
             "AND  (:felonyExplanation IS NULL OR PGP_SYM_DECRYPT(cast(mp.felonyExplanation as bytea), '${aes.key}') = :felonyExplanation) ",
             nativeQuery = true)
-    Mono<BackgroundInformation> search(
+    List<BackgroundInformation> search(
             @Nullable String id,
             @Nullable Boolean ageLegal,
             @Nullable Boolean usCitizen,

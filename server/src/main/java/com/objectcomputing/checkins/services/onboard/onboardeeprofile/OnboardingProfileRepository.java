@@ -3,21 +3,23 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.repository.CrudRepository;
 import io.micronaut.data.repository.reactive.ReactorCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @JdbcRepository (dialect = Dialect.POSTGRES)
-public interface OnboardingProfileRepository extends ReactorCrudRepository<OnboardingProfile, UUID> {
+public interface OnboardingProfileRepository extends CrudRepository<OnboardingProfile, UUID> {
 
     Optional<OnboardingProfile> findBySocialSecurityNumber(@NotNull String socialSecurityNumber);
 
-    Flux<OnboardingProfile> findAll();
+    List<OnboardingProfile> findAll();
 
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
@@ -42,7 +44,7 @@ public interface OnboardingProfileRepository extends ReactorCrudRepository<Onboa
                     "AND  (:secondPhoneNumber IS NULL OR PGP_SYM_DECRYPT(cast(mp.secondPhoneNumber as bytea),'${aes.key}') = :secondPhoneNumber) " +
                     "AND  (:personalEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.personalEmail as bytea),'${aes.key}') = :personalEmail) ",
             nativeQuery = true)
-    Mono<OnboardingProfile> search(
+    List<OnboardingProfile> search(
             @Nullable String id,
             @Nullable String firstName,
             @Nullable String middleName,
