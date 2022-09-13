@@ -5,11 +5,6 @@ micronaut:
     oauth2:
       enabled: false
 ---
-datasources:
-  default:
-    url:  jdbc:tc:postgresql:11.16:///
-    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
----
 mail-jet:
   from_address: "someEmail@test.com"
   from_name: "John Doe"

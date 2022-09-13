@@ -69,13 +69,13 @@ micronaut:
         paths:
           - "classpath:public"
 ---
-datasources:
-  default:
-    url: ${JDBC_URL:`jdbc:postgresql:///`}
-    driver-class-name: org.postgresql.Driver
-    dialect: POSTGRES
-    schema-generate: NONE
-    maximum-pool-size: 4
+r2dbc:
+  datasources:
+    default:
+      url: ${R2DBC_URL:`r2dbc:postgresql://postgres:postgres@localhost:5432/checkinsdb`}
+      driver: postgresql
+      dialect: POSTGRES
+      maximum-pool-size: 4
 ---
 check-ins:
   application:

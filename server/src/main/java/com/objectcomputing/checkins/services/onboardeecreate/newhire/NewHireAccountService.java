@@ -37,11 +37,8 @@ public class NewHireAccountService {
     }
 
     public Mono<NewHireAccountEntity> createUserAccountWithoutCredentials(SharableNewHireAccount sharableNewHireAccount) {
-        return userAccountRepository.save(createUserAccount(sharableNewHireAccount))
-                .flatMap(userAccount -> {
-                    return createActivationCodeAndNotification(userAccount)
-                            .thenReturn(userAccount);
-                });
+        NewHireAccountEntity userAccount = userAccountRepository.save(createUserAccount(sharableNewHireAccount));
+        return createActivationCodeAndNotification(userAccount).thenReturn(userAccount);
     }
 
     private NewHireAccountEntity createUserAccount(SharableNewHireAccount sharableNewHireAccount) {

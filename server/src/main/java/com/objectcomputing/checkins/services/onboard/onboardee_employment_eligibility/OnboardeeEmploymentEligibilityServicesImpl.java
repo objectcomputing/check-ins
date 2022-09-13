@@ -29,41 +29,40 @@ public class OnboardeeEmploymentEligibilityServicesImpl implements OnboardeeEmpl
 
     @Override
     public OnboardeeEmploymentEligibility getById(@NotNull UUID id){
-        return onboardeeEmploymentEligibilityRepository.findById(id).flatMap(backgroundInformation -> {
-            if (backgroundInformation == null) {
-                throw new NotFoundException("No employment eligibility information for id " + id);
-            }
-            return Mono.just(backgroundInformation);
-        }).block();
+        var backgroundInformation = onboardeeEmploymentEligibilityRepository.findById(id);
+        if (backgroundInformation.isEmpty()) {
+            throw new NotFoundException("No employment eligibility information for id " + id);
+        }
+        return backgroundInformation.get();
     }
 
     //implement other methods as well
     @Override
     public OnboardeeEmploymentEligibility saveProfile (OnboardeeEmploymentEligibilityCreateDTO onboardeeEmploymentEligibilityCreateDTO){
-        return newHireAccountRepository.findByEmailAddress(onboardeeEmploymentEligibilityCreateDTO.getEmailAddress())
-                .flatMap(newHire -> buildNewOnboardeeEmploymentEligibilityEntity(newHire, onboardeeEmploymentEligibilityCreateDTO))
-                .flatMap(onboardeeEmploymentEligibility -> onboardeeEmploymentEligibilityRepository.save(onboardeeEmploymentEligibility)).block();
+        NewHireAccountEntity newHire = newHireAccountRepository.findByEmailAddress(onboardeeEmploymentEligibilityCreateDTO.getEmailAddress()).get();
+        OnboardeeEmploymentEligibility onboardeeEmploymentEligibility = buildNewOnboardeeEmploymentEligibilityEntity(newHire, onboardeeEmploymentEligibilityCreateDTO);
+        return onboardeeEmploymentEligibilityRepository.save(onboardeeEmploymentEligibility);
     }
 
-    public Mono<OnboardeeEmploymentEligibility> buildNewOnboardeeEmploymentEligibilityEntity (NewHireAccountEntity newHireAccount, OnboardeeEmploymentEligibilityCreateDTO onboardeeEmploymentEligibilityCreateDTO){
-        return Mono.just ( new OnboardeeEmploymentEligibility(newHireAccount, onboardeeEmploymentEligibilityCreateDTO.getAgeLegal(),
+    public OnboardeeEmploymentEligibility buildNewOnboardeeEmploymentEligibilityEntity (NewHireAccountEntity newHireAccount, OnboardeeEmploymentEligibilityCreateDTO onboardeeEmploymentEligibilityCreateDTO){
+        return new OnboardeeEmploymentEligibility(newHireAccount, onboardeeEmploymentEligibilityCreateDTO.getAgeLegal(),
                 onboardeeEmploymentEligibilityCreateDTO.getUsCitizen(), onboardeeEmploymentEligibilityCreateDTO.getVisaStatus(),
                 onboardeeEmploymentEligibilityCreateDTO.getExpirationDate(), onboardeeEmploymentEligibilityCreateDTO.getFelonyStatus(),
-                onboardeeEmploymentEligibilityCreateDTO.getFelonyExplanation()));
+                onboardeeEmploymentEligibilityCreateDTO.getFelonyExplanation());
     }
 
     @Override
     public OnboardeeEmploymentEligibility updateProfile (OnboardeeEmploymentEligibilityDTO onboardeeEmploymentEligibilityDTO){
-        return newHireAccountRepository.findByEmailAddress(onboardeeEmploymentEligibilityDTO.getEmailAddress())
-                .flatMap(newHire -> updateOnboardeeEmploymentEligibilityEntity(newHire, onboardeeEmploymentEligibilityDTO))
-                .flatMap(onboardeeEmploymentEligibility -> onboardeeEmploymentEligibilityRepository.save(onboardeeEmploymentEligibility)).block();
+        NewHireAccountEntity newHire = newHireAccountRepository.findByEmailAddress(onboardeeEmploymentEligibilityDTO.getEmailAddress()).get();
+        OnboardeeEmploymentEligibility onboardeeEmploymentEligibility = updateOnboardeeEmploymentEligibilityEntity(newHire, onboardeeEmploymentEligibilityDTO);
+        return onboardeeEmploymentEligibilityRepository.save(onboardeeEmploymentEligibility);
     }
 
-    public Mono<OnboardeeEmploymentEligibility> updateOnboardeeEmploymentEligibilityEntity (NewHireAccountEntity newHireAccount, OnboardeeEmploymentEligibilityDTO onboardeeEmploymentEligibilityDTO){
-        return Mono.just ( new OnboardeeEmploymentEligibility(newHireAccount, onboardeeEmploymentEligibilityDTO.getId(),
+    public OnboardeeEmploymentEligibility updateOnboardeeEmploymentEligibilityEntity (NewHireAccountEntity newHireAccount, OnboardeeEmploymentEligibilityDTO onboardeeEmploymentEligibilityDTO){
+        return new OnboardeeEmploymentEligibility(newHireAccount, onboardeeEmploymentEligibilityDTO.getId(),
                 onboardeeEmploymentEligibilityDTO.getAgeLegal(), onboardeeEmploymentEligibilityDTO.getUsCitizen(),
                 onboardeeEmploymentEligibilityDTO.getVisaStatus(), onboardeeEmploymentEligibilityDTO.getExpirationDate(),
-                onboardeeEmploymentEligibilityDTO.getFelonyStatus(), onboardeeEmploymentEligibilityDTO.getFelonyExplanation()));
+                onboardeeEmploymentEligibilityDTO.getFelonyStatus(), onboardeeEmploymentEligibilityDTO.getFelonyExplanation());
     }
 
     @Override

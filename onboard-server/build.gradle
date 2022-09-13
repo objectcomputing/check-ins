@@ -41,7 +41,6 @@ dependencies {
     implementation('io.micronaut:micronaut-runtime:3.4.3')
     implementation("io.micronaut.cache:micronaut-cache-ehcache")
     implementation("io.micronaut.data:micronaut-data-jdbc")
-    implementation("io.micronaut.flyway:micronaut-flyway")
     implementation("io.micronaut.security:micronaut-security:2.5.0")
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.security:micronaut-security-oauth2")
