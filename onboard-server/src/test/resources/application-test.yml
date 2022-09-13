@@ -5,6 +5,13 @@ micronaut:
     oauth2:
       enabled: false
 ---
+r2dbc:
+  datasources:
+    default:
+      url: ${R2DBC_URL:`r2dbc:postgresql://localhost:5432/checkinsdb`}
+      username: postgres
+      password: postgres
+---
 mail-jet:
   from_address: "someEmail@test.com"
   from_name: "John Doe"

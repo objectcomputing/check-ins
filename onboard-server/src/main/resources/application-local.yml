@@ -6,6 +6,10 @@ micronaut:
         web:
           allowedOrigins:
             - ^http(|s):\/\/localhost:.*$
-
-
-
+---
+r2dbc:
+  datasources:
+    default:
+      url: ${R2DBC_URL:`r2dbc:postgresql://localhost:5432/checkinsdb`}
+      username: postgres
+      password: postgres
