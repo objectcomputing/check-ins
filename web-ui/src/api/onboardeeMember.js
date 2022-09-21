@@ -42,4 +42,3 @@ export const createOnboardee = async (newOnboardee, cookie) => {
         headers: { "X-CSRF-Header": cookie },
     });
 };
-

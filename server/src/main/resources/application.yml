@@ -82,15 +82,6 @@ datasources:
     schema-generate: NONE
     maximum-pool-size: 10
 ---
-r2dbc:
-  datasources:
-    default:
-      url: r2dbc:postgresql://localhost:5432/checkinsdb
-      driver: postgresql
-      username: postgres
-      password: postgres
-      dialect: POSTGRES
----
 check-ins:
   application:
     name: "OCI Check-ins"

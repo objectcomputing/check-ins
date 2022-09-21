@@ -130,8 +130,8 @@ jobs:
             --add-cloudsql-instances ${{ secrets.DB_CONNECTION_NAME }} \
             --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.DB_CONNECTION_NAME }}" \
             --set-env-vars "DB_NAME=${{ secrets.DB_NAME }}" \
-            --set-env-vars "DATASOURCES_DEFAULT_PASSWORD=${{ secrets.DB_PASSWORD }}" \
-            --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.DB_USERNAME }}" \
+            --set-env-vars "R2DBC_DATASOURCES_DEFAULT_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+            --set-env-vars "R2DBC_DATASOURCES_DEFAULT_USERNAME=${{ secrets.DB_USERNAME }}" \
             --set-env-vars "AES_KEY=${{ secrets.AES_KEY }}" \
             --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
             --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \

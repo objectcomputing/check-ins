@@ -130,18 +130,11 @@ export default function OnboardProgressPage(onboardee) {
   ];
 
   async function submitInfo(onboardee) {
-    console.log(
-      "Submit info"
-    )
     if (csrf) {
-
-      console.log("CSRF", csrf)
       let res1 = await initializeOnboardee(onboardee.email, csrf);
-      console.log(res1?.payload?.data?.success);
 
       if (res1?.payload?.data?.success === true) {
         let res2 = await createOnboardee(onboardee, csrf);
-        console.log(res2);
         if (res2?.payload?.data?.success === true) {
           dispatch({
             type: UPDATE_ONBOARDEE_MEMBER_PROFILES,
@@ -188,7 +181,9 @@ export default function OnboardProgressPage(onboardee) {
       </Box>
       <Box sx={{ height: 400, width: "20%", mt: "3%" }}>
         <Box className="notification-header">
-          <Typography variant="h4" align="center">Notifications</Typography>
+          <Typography variant="h4" align="center">
+            Notifications
+          </Typography>
         </Box>
         <DataGrid
           sx={{ cursor: "pointer" }}
