@@ -17,8 +17,8 @@ import jakarta.inject.Singleton;
 public class GoogleCloudDatabaseSetup implements BeanCreatedEventListener<DatasourceConfiguration> {
 
     public static final String CLOUD_DB_CONNECTION_NAME = "cloud.db.connection.name";
-    public static final String DATASOURCES_DEFAULT_USERNAME = "datasources.default.username";
-    public static final String DATASOURCES_DEFAULT_PASSWORD = "datasources.default.password";
+    public static final String DATASOURCES_DEFAULT_USERNAME = "r2dbc.datasources.default.username";
+    public static final String DATASOURCES_DEFAULT_PASSWORD = "r2dbc.datasources.default.password";
     private static final String DB_NAME = System.getenv("DB_NAME");
     private final String cloudSqlInstanceName;
 

@@ -29,34 +29,29 @@ public class BackgroundInformationServicesImpl implements BackgroundInformationS
 
     @Override
     public BackgroundInformation getById(@NotNull UUID id){
-        return backgroundInformationRepository.findById(id).flatMap(backgroundInformation -> {
-            if (backgroundInformation == null) {
-                throw new NotFoundException("No new employee background information for id " + id);
-            }
-            return Mono.just(backgroundInformation);
-            }).block();
+        return backgroundInformationRepository.findById(id).orElseThrow(() -> new NotFoundException("No new employee background information for id " + id));
     }
 
     @Override
     public BackgroundInformation saveProfile (BackgroundInformationCreateDTO backgroundInformationCreateDTO){
-        return newHireAccountRepository.findByEmailAddress(backgroundInformationCreateDTO.getEmailAddress())
-                        .flatMap(newHire -> buildNewBackgroundInformationEntity(newHire, backgroundInformationCreateDTO))
-                        .flatMap(backgroundEntity -> backgroundInformationRepository.save(backgroundEntity)).block();
+        NewHireAccountEntity newHireAccount = newHireAccountRepository.findByEmailAddress(backgroundInformationCreateDTO.getEmailAddress()).orElseThrow(() -> new NotFoundException("A new hire with the provided email address could not be found."));
+        BackgroundInformation backgroundInformation = buildNewBackgroundInformationEntity(newHireAccount, backgroundInformationCreateDTO);
+        return backgroundInformationRepository.save(backgroundInformation);
     }
 
-    public Mono<BackgroundInformation> buildNewBackgroundInformationEntity (NewHireAccountEntity newHireAccount, BackgroundInformationCreateDTO backgroundInformationCreateDTO){
-        return Mono.just ( new BackgroundInformation(newHireAccount, backgroundInformationCreateDTO.getStepComplete()));
+    public BackgroundInformation buildNewBackgroundInformationEntity (NewHireAccountEntity newHireAccount, BackgroundInformationCreateDTO backgroundInformationCreateDTO){
+        return new BackgroundInformation(newHireAccount, backgroundInformationCreateDTO.getStepComplete());
     }
 
     @Override
     public BackgroundInformation updateProfile (BackgroundInformationDTO backgroundInformationDTO){
-        return newHireAccountRepository.findByEmailAddress(backgroundInformationDTO.getEmailAddress())
-                .flatMap(newHire -> buildBackgroundInformationEntity(newHire, backgroundInformationDTO))
-                .flatMap(backgroundEntity -> backgroundInformationRepository.update(backgroundEntity)).block();
+        NewHireAccountEntity newHireAccount = newHireAccountRepository.findByEmailAddress(backgroundInformationDTO.getEmailAddress()).orElseThrow(() -> new NotFoundException("A new hire with the provided email address could not be found."));
+        BackgroundInformation backgroundInformation = buildBackgroundInformationEntity(newHireAccount, backgroundInformationDTO);
+        return backgroundInformationRepository.save(backgroundInformation);
     }
 
-    public Mono<BackgroundInformation> buildBackgroundInformationEntity (NewHireAccountEntity newHireAccount, BackgroundInformationDTO backgroundInformationDTO){
-        return Mono.just ( new BackgroundInformation(newHireAccount, backgroundInformationDTO.getId(), backgroundInformationDTO.getStepComplete()));
+    public BackgroundInformation buildBackgroundInformationEntity (NewHireAccountEntity newHireAccount, BackgroundInformationDTO backgroundInformationDTO){
+        return new BackgroundInformation(newHireAccount, backgroundInformationDTO.getId(), backgroundInformationDTO.getStepComplete());
     }
 
     @Override

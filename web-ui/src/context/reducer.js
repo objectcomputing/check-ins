@@ -12,6 +12,7 @@ import {
   SET_CSRF,
   SET_ROLES,
   SET_USER_ROLES,
+  SET_USER_PERMISSIONS,
   UPDATE_CHECKIN,
   UPDATE_CHECKINS,
   UPDATE_MEMBER_PROFILES,
@@ -43,6 +44,7 @@ export const initialState = {
   memberSkills: [],
   roles: [],
   userRoles: [],
+  userPermissions: [],
   skills: [],
   teams: [],
   guilds: [],
@@ -202,6 +204,9 @@ export const reducer = (state, action) => {
       break;
     case SET_USER_ROLES:
       state.userRoles = action.payload;
+      break;
+    case SET_USER_PERMISSIONS:
+      state.userPermissions = action.payload;
       break;
     case DELETE_ROLE:
       state.roles = state.roles.filter((role) => role.id !== action.payload);

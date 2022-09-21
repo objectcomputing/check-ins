@@ -5,13 +5,13 @@ import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHi
 import reactor.core.publisher.Mono;
 
 public interface BackgroundInformationFixture extends RepositoryFixture {
-    default Mono<BackgroundInformation> createDefaultBackgroundInformation(){
+    default BackgroundInformation createDefaultBackgroundInformation(){
 
         NewHireAccountEntity newHireAccountEntity = new NewHireAccountEntity();
         return getBackgroundInformationRepository().save(new BackgroundInformation(newHireAccountEntity,true));
     }
 
-    default Mono<BackgroundInformation> createSecondBackgroundInformation() {
+    default BackgroundInformation createSecondBackgroundInformation() {
         NewHireAccountEntity newHireAccountEntity = new NewHireAccountEntity();
         return getBackgroundInformationRepository().save(new BackgroundInformation(newHireAccountEntity, false));
     }
