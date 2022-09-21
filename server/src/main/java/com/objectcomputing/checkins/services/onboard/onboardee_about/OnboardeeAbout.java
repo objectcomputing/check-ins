@@ -35,7 +35,7 @@ public class OnboardeeAbout {
     @NotBlank
     @Column(name = "tshirt_size")
     @ColumnTransformer(
-        read = "pgp_sym_decrypt(tshirtSize::bytea,'${aes.key}')",
+        read = "pgp_sym_decrypt(tshirt_Size::bytea,'${aes.key}')",
         write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "T-shirt size requested")
@@ -44,7 +44,7 @@ public class OnboardeeAbout {
     @NotBlank
     @Column(name = "google_training")
     @ColumnTransformer(
-        read = "pgp_sym_decrypt(googleTraining::bytea,'${aes.key}')",
+        read = "pgp_sym_decrypt(google_Training::bytea,'${aes.key}')",
         write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "Additional training requested for Google Tools")
@@ -72,7 +72,7 @@ public class OnboardeeAbout {
     @Nullable
     @Column(name = "other_training")
     @ColumnTransformer(
-        read = "pgp_sym_decrypt(otherTraining::bytea,'${aes.key}')",
+        read = "pgp_sym_decrypt(other_Training::bytea,'${aes.key}')",
         write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "Additional training requested based on role")
@@ -81,7 +81,7 @@ public class OnboardeeAbout {
     @Nullable
     @Column(name = "additional_skills")
     @ColumnTransformer(
-        read = "pgp_sym_decrypt(additionalSkills::bytea,'${aes.key}')",
+        read = "pgp_sym_decrypt(additional_Skills::bytea,'${aes.key}')",
         write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "Additional skills that onboardee has")
