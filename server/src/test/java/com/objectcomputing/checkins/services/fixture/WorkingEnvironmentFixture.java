@@ -10,6 +10,7 @@ public interface WorkingEnvironmentFixture extends RepositoryFixture {
         return getWorkingEnvironmentRespository()
                 .save(new WorkingEnvironment("Remote", "Key Fob", "Mac", "HDMI Cable",
                         "No I'm good :)", newHireAccountEntity ))
-                .block();
+
+                ;
     }
 }

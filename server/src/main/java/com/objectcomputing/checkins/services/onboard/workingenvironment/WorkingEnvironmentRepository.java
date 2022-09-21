@@ -19,18 +19,25 @@ public interface WorkingEnvironmentRepository extends CrudRepository<WorkingEnvi
     List<WorkingEnvironment> findAll();
 
     @Query(value = "SELECT working_environment_id, " +
-            "PGP_SYM_DECRYPT(cast(mp.work_location as bytea),'${aes.key}') as workLocation," +
-            "PGP_SYM_DECRYPT(cast(mp.key_type as bytea),'${aes.key}') as keyType," +
-            "PGP_SYM_DECRYPT(cast(mp.os_type as bytea),'${aes.key}') as osType," +
-            "PGP_SYM_DECRYPT(cast(mp.accessories as bytea),'${aes.key}') as accessories," +
-            "PGP_SYM_DECRYPT(cast(mp.other_accessories as bytea),'${aes.key}') as otherAccessories " +
-            "FROM \"working_environment\" mp " +
-            "WHERE (:workLocation IS NULL OR PGP_SYM_DECRYPT(cast(mp.work_location as bytea), '${aes.key}') = :workLocation) "
+            //this decodes the column names and both fields here need to match the column names in the SQL table
+            "PGP_SYM_DECRYPT(cast(ev.work_location as bytea),'${aes.key}') as work_location," +
+            "PGP_SYM_DECRYPT(cast(ev.key_type as bytea),'${aes.key}') as key_type," +
+            "PGP_SYM_DECRYPT(cast(ev.os_type as bytea),'${aes.key}') as os_type," +
+            "PGP_SYM_DECRYPT(cast(ev.accessories as bytea),'${aes.key}') as accessories," +
+            "PGP_SYM_DECRYPT(cast(ev.other_accessories as bytea),'${aes.key}') as other_accessories " +
+           // below should be the name of the table and then we call it "ev" so we don't write it over and over again
+            //"ev" can be any name of a variable that makes sense
+            "FROM \"working_environment\" ev " +
+            //workLocation is the variable that is searched below
+            // looks to see if the parameter is null or if it exists in a column name
+            //if its null or if it's present, it continues to the next search term because of the AND
+            "WHERE (:workLocation IS NULL OR PGP_SYM_DECRYPT(cast(ev.work_location as bytea), '${aes.key}') = :workLocation) "
             +
-            "AND  (:keyType IS NULL OR PGP_SYM_DECRYPT(cast(mp.key_type as bytea), '${aes.key}') = :keyType) " +
-            "AND  (:osType IS NULL OR PGP_SYM_DECRYPT(cast(mp.os_type as bytea), '${aes.key}') = :osType) " +
-            "AND  (:accessories IS NULL OR PGP_SYM_DECRYPT(cast(mp.accessories as bytea),'${aes.key}') = :accessories) "
+            "AND  (:keyType IS NULL OR PGP_SYM_DECRYPT(cast(ev.key_type as bytea), '${aes.key}') = :keyType) " +
+            "AND  (:osType IS NULL OR PGP_SYM_DECRYPT(cast(ev.os_type as bytea), '${aes.key}') = :osType) " +
+            "AND  (:accessories IS NULL OR PGP_SYM_DECRYPT(cast(ev.accessories as bytea),'${aes.key}') = :accessories) "
             +
+            //nativeQuery = true tells to trust the query that it's ok
             "AND  (:otherAccessories IS NULL OR PGP_SYM_DECRYPT(cast(mp.otherAccessories as bytea),'${aes.key}') = :otherAccessories) ", nativeQuery = true)
     List<WorkingEnvironment> search(
             @Nullable UUID workingEnvironmentId,

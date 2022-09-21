@@ -12,7 +12,8 @@ public interface NewHireAccountFixture extends RepositoryFixture {
     default NewHireAccountEntity createNewHireAccountEntity(){
         return getNewHireAccountRepository()
                 .save(new NewHireAccountEntity ("Mr.Nice@gmail.com", Pending, Instant.now(),null))
-                .block();
+//                .block()
+                ;
 
     }
 
