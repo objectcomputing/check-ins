@@ -36,19 +36,19 @@ public class WorkingEnvironment {
 
     @NotBlank
     @Column(name = "work_location")
-    @ColumnTransformer(read = "pgp_sym_decrypt(workLocation::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
+    @ColumnTransformer(read = "pgp_sym_decrypt(work_Location::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
     @Schema(description = "Work Location requested")
     private String workLocation;
 
     @NotBlank
     @Column(name = "key_type")
-    @ColumnTransformer(read = "pgp_sym_decrypt(keyType::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
+    @ColumnTransformer(read = "pgp_sym_decrypt(key_Type::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
     @Schema(description = "Type of door key requested: fab or card")
     private String keyType;
 
     @NotBlank
     @Column(name = "os_type")
-    @ColumnTransformer(read = "pgp_sym_decrypt(osType::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
+    @ColumnTransformer(read = "pgp_sym_decrypt(os_Type::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
     @Schema(description = "Computer OS requested")
     private String osType;
 
@@ -60,7 +60,7 @@ public class WorkingEnvironment {
 
     @Nullable
     @Column(name = "other_accessories")
-    @ColumnTransformer(read = "pgp_sym_decrypt(otherAccessories::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
+    @ColumnTransformer(read = "pgp_sym_decrypt(other_Accessories::bytea,'${aes.key}')", write = "pgp_sym_encrypt(?,'${aes.key}') ")
     @Schema(description = "Other Accessories requested")
     private String otherAccessories;
 

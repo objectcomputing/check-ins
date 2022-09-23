@@ -32,6 +32,7 @@ public class WorkingEnvironmentTestUtil {
         dto.setOsType(entity.getOsType());
         dto.setAccessories(entity.getAccessories());
         dto.setOtherAccessories(entity.getOtherAccessories());
+        dto.setEmailAddress(entity.getNewHireAccount().getEmailAddress());
         return dto;
     }
 }
