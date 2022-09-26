@@ -30,7 +30,6 @@ public class WorkingEnvironment {
     @Id
     @Column(name = "working_environment_id")
     @AutoPopulated
-    @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the new employee profile this entry is associated with")
     private UUID id;
 

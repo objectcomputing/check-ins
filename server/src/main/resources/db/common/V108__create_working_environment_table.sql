@@ -1,5 +1,5 @@
 CREATE TABLE working_environment(
-        working_environment_id varchar PRIMARY KEY,
+        working_environment_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         new_hire_account_id UUID NOT NULL,
         work_location varchar,
         key_type varchar,
