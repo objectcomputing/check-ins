@@ -13,6 +13,7 @@ import com.objectcomputing.checkins.services.onboard.onboardee_about.OnboardeeAb
 import com.objectcomputing.checkins.services.onboard.onboardee_about.OnboardeeAboutCreateDTO;
 import com.objectcomputing.checkins.services.onboard.onboardee_about.OnboardeeAboutDTO;
 
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -25,8 +26,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.HR_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -38,34 +39,34 @@ public class OnboardeeAboutControllerTest extends TestContainersSuite
     @Client("/services/onboardee-about")
     private HttpClient client;
 
-//     @Test
-//     public void testGETGetById() {
+    @Test
+    public void testGETById() {
+        NewHireAccountEntity newHire = createNewHireAccountEntity();
+        OnboardeeAbout onboardeeAbout = createWorkingEnvironment(newHire);
 
-//         OnboardeeAbout onboardeeAbout = createADefaultOnboardeeAbout();
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("%s", onboardeeAbout.getId()))
+                .basicAuth(HR_ROLE, HR_ROLE);
 
-//         final HttpRequest<Object> request = HttpRequest.GET(String.format("%s", onboardeeAbout.getId()))
-//                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<OnboardeeAboutDTO> response = client.toBlocking().exchange(request,
+                OnboardeeAboutDTO.class);
 
-//         final HttpResponse<OnboardeeAboutDTO> response = client.toBlocking().exchange(request,
-//                 OnboardeeAboutDTO.class);
+        assertEquals(toDto(onboardeeAbout), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
 
-//         assertAboutEquals(onboardeeAbout, response.body());
-//         assertEquals(HttpStatus.OK, response.getStatus());
-//     }
+    @Test
+    public void testPOSTCreateANullEnvironment() {
+        WorkingEnvironmentCreateDTO workingEnvironmentCreateDTO = new WorkingEnvironmentCreateDTO();
 
-//     @Test
-//     public void testPOSTCreateANullAboutYou() {
-//         OnboardeeAboutCreateDTO onboardeeAboutCreateDTO = new OnboardeeAboutCreateDTO();
+        final HttpRequest<WorkingEnvironmentCreateDTO> request = HttpRequest.POST("/", workingEnvironmentCreateDTO)
+                .basicAuth(HR_ROLE, HR_ROLE);
 
-//         final HttpRequest<OnboardeeAboutCreateDTO> request = HttpRequest
-//                 .POST("/", onboardeeAboutCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-//         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                 () -> client.toBlocking().exchange(request, Map.class));
-
-//         assertNotNull(responseException.getResponse());
-//         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-//     }
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
 
 //     @Test
 //     public void testPOSTCreateAOnboardeeAbout() {
