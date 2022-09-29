@@ -14,7 +14,8 @@ import {Search} from "@mui/icons-material";
 import {
   getAllRolePermissions,
   addRolePermission,
-  removeRolePermission, getAllPermissions
+  removeRolePermission,
+  getAllPermissions
 } from "../api/permissions";
 
 import "./PermissionsPage.css";
@@ -51,13 +52,19 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
 }));
 
 const PermissionsPage = () => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const { csrf, roles } = state;
 
   const [searchText, setSearchText] = useState("");
   const [allPermissions, setAllPermissions] = useState([]);
   const [allRolePermissions, setAllRolePermissions] = useState([]);
   const [filteredPermissions, setFilteredPermissions] = useState([]);
+
+  const formatPermissionText = useCallback((permission) => {
+    let permissionText = permission.replaceAll("_", " ");
+    permissionText = permissionText.toLowerCase();
+    return permissionText.charAt(0).toUpperCase() + permissionText.slice(1);
+  }, []);
 
   // Get all permissions from server and store in state
   useEffect(() => {
@@ -76,13 +83,13 @@ const PermissionsPage = () => {
 
   // Get all role permissions from server and store in state
   useEffect(() => {
-    const getRolePermissions = async () => {
+    const loadRolePermissions = async () => {
       const res = await getAllRolePermissions(csrf);
       return res && res.payload && res.payload.data ? res.payload.data : [];
     }
 
     if (csrf) {
-      getRolePermissions().then((rolePermissions) => {
+      loadRolePermissions().then((rolePermissions) => {
         setAllRolePermissions(rolePermissions);
       });
     }
@@ -94,43 +101,99 @@ const PermissionsPage = () => {
     let searchedPermissions = allPermissions;
     if (searchText.trim()) {
       searchedPermissions = allPermissions.filter((permission) =>
-        permission.permission.toLowerCase().includes(searchText.trim().toLowerCase())
+        formatPermissionText(permission.permission).toLowerCase().includes(searchText.trim().toLowerCase())
       );
     }
     setFilteredPermissions(searchedPermissions);
-  }, [searchText, allPermissions]);
+  }, [searchText, allPermissions, formatPermissionText]);
 
   const roleHasPermission = useCallback((role, permission) => {
-    return allRolePermissions.find((entry) => entry.roleId === role.id && entry.permissionId === permission.id);
+    if (allRolePermissions.length === 0) return false;
+    const matchingRole = allRolePermissions.find(roleObj => roleObj.roleId === role.id);
+    const hasPermission = matchingRole.permissions?.find(permissionObj => permissionObj.id === permission.id);
+    return !!hasPermission;
   }, [allRolePermissions]);
 
   // Event handler for changing a role permission
-  const handleCheckboxChange = useCallback(async (checked, role, permission) => {
-    let res;
-    let toastMessage;
-    if (checked) {
-      res = await addRolePermission(role.id, permission.id, csrf);
-      toastMessage = `Role ${role.role.toUpperCase()} has been given permission to ${permission.permission.toLowerCase()}`
-    } else {
-      res = await removeRolePermission(role.id, permission.id, csrf);
-      toastMessage = `Role ${role.role.toUpperCase()} no longer has permission to ${permission.permission.toLowerCase()}`
-    }
-    if (res.payload && !res.error) {
-      window.snackDispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "success",
-          toast: toastMessage
+  const handleCheckboxChange = useCallback((checked, role, permission) => {
+
+    const addPermission = async () => {
+        const res = await addRolePermission(role.id, permission.id, csrf);
+        if (res?.payload?.data && !res.error) {
+          const toastPermission = formatPermissionText(permission.permission).substring(4);
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "success",
+              toast: `Role ${role.role.toUpperCase()} has been given permission to ${toastPermission}`
+            }
+          });
         }
+
+        return res;
+    };
+
+    const removePermission = async () => {
+      const res = await removeRolePermission(role.id, permission.id, csrf);
+      if (res && !res.error) {
+        const toastPermission = formatPermissionText(permission.permission).substring(4);
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "success",
+            toast: `Role ${role.role.toUpperCase()} no longer has permission to ${toastPermission}`
+          }
+        })
+      }
+      return res;
+    };
+
+    if (checked) {
+      addPermission().then(res => {
+        if (!res) return;
+
+        // Add role permission to local state
+        const updatedRolePermissions = allRolePermissions.map(rolePermission => {
+          if (rolePermission.roleId === role.id) {
+            const newPermission = {
+              id: permission.id,
+              permission: permission.permission
+            };
+
+            return {
+              ...rolePermission,
+              permissions: rolePermission.permissions
+                ? [...rolePermission.permissions, newPermission]
+                : [newPermission]
+            }
+          } else {
+            return rolePermission;
+          }
+        });
+
+        setAllRolePermissions(updatedRolePermissions);
+      });
+    } else {
+      removePermission().then(res => {
+        if (!res) return;
+
+        // Remove role permission from local state
+        const updatedRolePermissions = allRolePermissions.map(rolePermission => {
+          if (rolePermission.roleId === role.id) {
+            return {
+              ...rolePermission,
+              permissions: rolePermission.permissions.filter(p => p.id !== permission.id)
+            }
+          } else {
+            return rolePermission
+          }
+        });
+
+        setAllRolePermissions(updatedRolePermissions);
       });
     }
-  }, [csrf]);
 
-  const formatPermissionText = useCallback((permission) => {
-    let permissionText = permission.replaceAll("_", " ");
-    permissionText = permissionText.toLowerCase();
-    return permissionText.charAt(0).toUpperCase() + permissionText.slice(1);
-  }, []);
+  }, [csrf, formatPermissionText, allRolePermissions, dispatch]);
 
   return (
     <div className="permissions-content">
@@ -165,7 +228,7 @@ const PermissionsPage = () => {
                   <StyledTableCell key={`${role.id}-${permission.id}`} align="center">
                     <Checkbox
                       checked={roleHasPermission(role, permission)}
-                      onChange={(event) => handleCheckboxChange(event.target.value, role, permission)}
+                      onChange={(event) => handleCheckboxChange(event.target.checked, role, permission)}
                     />
                   </StyledTableCell>
                 ))}
