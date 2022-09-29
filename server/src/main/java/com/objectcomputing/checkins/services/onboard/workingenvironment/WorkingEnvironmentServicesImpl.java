@@ -56,7 +56,7 @@ public class WorkingEnvironmentServicesImpl implements WorkingEnvironmentService
     public WorkingEnvironment updateWorkingEnvironment(WorkingEnvironmentDTO workingEnvironmentDTO) {
         NewHireAccountEntity newHire = newHireAccountRepository.findByEmailAddress(workingEnvironmentDTO.getEmailAddress()).get();
         WorkingEnvironment workingEnvironment = buildWorkingEnvironmentEntity (newHire,workingEnvironmentDTO);
-        return workingEnvironmentRepository.save(workingEnvironment);
+        return workingEnvironmentRepository.update(workingEnvironment);
     }
 
     private WorkingEnvironment buildWorkingEnvironmentEntity(NewHireAccountEntity newHire,
