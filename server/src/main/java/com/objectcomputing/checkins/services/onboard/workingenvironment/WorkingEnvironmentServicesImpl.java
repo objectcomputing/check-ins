@@ -1,19 +1,12 @@
 package com.objectcomputing.checkins.services.onboard.workingenvironment;
 
-import com.objectcomputing.checkins.services.onboard.onboardeeprofile.OnboardingProfile;
-import com.objectcomputing.checkins.services.onboard.onboardeeprofile.OnboardingProfileCreateDTO;
-import com.objectcomputing.checkins.services.onboard.onboardeeprofile.OnboardingProfileDTO;
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import reactor.core.publisher.Mono;
 
 import java.util.*;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
 import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountRepository;
-
-import javax.validation.constraints.NotNull;
 
 
 @Singleton
@@ -35,14 +28,32 @@ public class WorkingEnvironmentServicesImpl implements WorkingEnvironmentService
         if (workingEnvironmentInformation.isEmpty()) {
             throw new NotFoundException("No new employee background information for id " + id);
         }
-        return workingEnvironmentInformation.get();
+
+        WorkingEnvironment found = workingEnvironmentInformation.get();
+        if(found.getNewHireAccount() != null) {
+            Optional<NewHireAccountEntity> newHire = newHireAccountRepository.findById(found.getNewHireAccount().getId());
+            if (!newHire.isEmpty()) {
+                found.setNewHireAccount(newHire.get());
+            }
+        }
+
+        return found;
     }
 
     @Override
     public WorkingEnvironment saveWorkingEnvironment(WorkingEnvironmentCreateDTO workingEnvironmentCreateDTO) {
         NewHireAccountEntity newHire = newHireAccountRepository.findByEmailAddress(workingEnvironmentCreateDTO.getEmailAddress()).get();
         WorkingEnvironment workingEnvironment = buildNewWorkingEnvironmentEntity (newHire,workingEnvironmentCreateDTO);
-        return workingEnvironmentRepository.save(workingEnvironment);
+
+        WorkingEnvironment found = workingEnvironmentRepository.save(workingEnvironment);
+        if(found.getNewHireAccount() != null) {
+            Optional<NewHireAccountEntity> account = newHireAccountRepository.findById(found.getNewHireAccount().getId());
+            if (!account.isEmpty()) {
+                found.setNewHireAccount(account.get());
+            }
+        }
+
+        return found;
     }
 
     public WorkingEnvironment buildNewWorkingEnvironmentEntity(NewHireAccountEntity newHire, WorkingEnvironmentCreateDTO workingEnvironmentCreateDTO) {
