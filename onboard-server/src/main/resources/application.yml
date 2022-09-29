@@ -72,18 +72,10 @@ micronaut:
 r2dbc:
   datasources:
     default:
-      url: r2dbc:postgresql://localhost:5432/checkinsdb
+      url: ${R2DBC_URL:`r2dbc:postgresql:///checkinsdb`}
       driver: postgresql
-      username: postgres
-      password: postgres
-      dialect: POSTGRES
-
----
-datasource:
-  default:
-    url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/checkinsdb`}
-    username: postgres
-    password: postgres
+      dialect: postgres
+      maximum-pool-size: 4
 ---
 check-ins:
   application:

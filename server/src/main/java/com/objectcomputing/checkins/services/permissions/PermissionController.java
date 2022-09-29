@@ -18,6 +18,7 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -64,6 +65,19 @@ public class PermissionController {
     public Mono<HttpResponse<List<Permission>>> getAllPermissions() {
 
         return Mono.fromCallable(permissionServices::findAll)
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
+                .subscribeOn(scheduler);
+    }
+
+    /**
+     * Get all permissions for a specific user
+     * @param memberId the {@link UUID} of the member
+     * @return list of permissions
+     */
+    @Get("/{memberId}")
+    public Mono<HttpResponse<List<Permission>>> getUserPermissions(UUID memberId) {
+        return Mono.fromCallable(() -> permissionServices.findCurrentUserPermissions(memberId))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
                 .subscribeOn(scheduler);

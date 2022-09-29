@@ -11,6 +11,14 @@ export const getAllPermissions = async (cookie) => {
   })
 }
 
+export const getUserPermissions = (memberId, cookie) => {
+  return resolve({
+    url: `${permissionsUrl}/${memberId}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+}
+
 export const getAllRolePermissions = async (cookie) => {
   return resolve({
     url: rolePermissionsUrl,

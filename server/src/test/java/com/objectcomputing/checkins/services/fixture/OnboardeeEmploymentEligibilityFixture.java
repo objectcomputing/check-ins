@@ -9,12 +9,12 @@ import java.time.LocalDate;
 
 public interface OnboardeeEmploymentEligibilityFixture extends RepositoryFixture {
 
-    default Mono<OnboardeeEmploymentEligibility> createADefaultOnboardeeEmploymentEligibility(BackgroundInformation backgroundInformation) {
+    default OnboardeeEmploymentEligibility createADefaultOnboardeeEmploymentEligibility(BackgroundInformation backgroundInformation) {
         NewHireAccountEntity newHireAccountEntity = new NewHireAccountEntity();
         return getOnboardeeEmploymentEligibilityRepository().save(new OnboardeeEmploymentEligibility(newHireAccountEntity,true, true, "F-1", LocalDate.now(), false, "nope"));
     }
 
-    default Mono<OnboardeeEmploymentEligibility> createADefaultOnboardeeEmploymentEligibility2(BackgroundInformation backgroundInformation) {
+    default OnboardeeEmploymentEligibility createADefaultOnboardeeEmploymentEligibility2(BackgroundInformation backgroundInformation) {
         NewHireAccountEntity newHireAccountEntity = new NewHireAccountEntity();
         return getOnboardeeEmploymentEligibilityRepository().save(new OnboardeeEmploymentEligibility(newHireAccountEntity,true,true,"F-1",LocalDate.now(),true,"Yes felony"));
     }

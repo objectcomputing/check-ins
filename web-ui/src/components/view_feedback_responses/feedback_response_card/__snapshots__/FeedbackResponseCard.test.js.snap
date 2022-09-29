@@ -24,6 +24,7 @@ exports[`renders correctly 1`] = `
           "severity": "",
           "toast": "",
         },
+        "userPermissions": Array [],
         "userProfile": Object {},
         "userRoles": Array [],
       },
