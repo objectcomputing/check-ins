@@ -75,7 +75,8 @@ public class WorkingEnvironmentControllerTest extends TestContainersSuite
 
      @Test
      public void testPOSTCreateWorkingEnvironment() {
-         WorkingEnvironmentDTO dto = mkUpdateWorkingEnvironment();
+         NewHireAccountEntity newHire = createNewHireAccountEntity();
+         WorkingEnvironmentDTO dto = mkUpdateWorkingEnvironment(newHire);
 
          final HttpRequest<?> request = HttpRequest.POST("/", dto).basicAuth(HR_ROLE, HR_ROLE);
          final HttpResponse<WorkingEnvironment> response = client.toBlocking().exchange(request,

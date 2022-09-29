@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.workingenvironment;
 
 import com.objectcomputing.checkins.services.onboard.workingenvironment.WorkingEnvironment;
 import com.objectcomputing.checkins.services.onboard.workingenvironment.WorkingEnvironmentDTO;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,13 +15,14 @@ public class WorkingEnvironmentTestUtil {
         assertEquals(entity.getOtherAccessories(), dto.getOtherAccessories());
     }
 
-    public static WorkingEnvironmentDTO mkUpdateWorkingEnvironment() {
+    public static WorkingEnvironmentDTO mkUpdateWorkingEnvironment(NewHireAccountEntity account) {
         WorkingEnvironmentDTO dto = new WorkingEnvironmentDTO();
         dto.setWorkLocation("Hybrid");
         dto.setKeyType("Key Fob");
         dto.setOsType("Windows");
         dto.setAccessories("Monitor");
         dto.setOtherAccessories("No thanks I'm ok :)");
+        if(account != null) dto.setEmailAddress(account.getEmailAddress());
         return dto;
     }
 
