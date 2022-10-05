@@ -251,6 +251,7 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
                       data={getCsvData(items)}
                       headers={getCsvHeaders()}
                       filename="members.csv"
+                      enclosingCharacter=""
                     >
                       <IconButton style={{ marginTop: "-8px" }}>
                         <DownloadIcon/>
