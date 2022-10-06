@@ -19,7 +19,6 @@ import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQu
 import {FeedbackRequestStatus} from "../../context/util";
 import {getAvatarURL} from "../../api/api";
 
-const dateUtils = new DateFnsUtils();
 const PREFIX = "FeedbackSubmitForm";
 const classes = {
   announcement: `${PREFIX}-announcement`,
