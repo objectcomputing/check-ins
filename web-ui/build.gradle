@@ -11,11 +11,13 @@ node {
 
 yarn_run_coverage {
     group 'verification'
+    inputs.files fileTree('src')
     outputs.dir 'coverage'
 }
 
 yarn_run_build {
     group 'build'
+    inputs.files fileTree('src')
     outputs.dir 'build'
 }
 
