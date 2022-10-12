@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.kudos;
 
 import io.micronaut.core.annotation.Nullable;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,11 +13,12 @@ public interface KudosServices {
 
     Kudos update(Kudos kudos);
 
-    Kudos getById(UUID id);
+    KudosResponseDTO getById(UUID id);
 
     Optional<Kudos> findById(UUID id);
 
     boolean delete(UUID id);
 
-    List<Kudos> findByValues(@Nullable UUID senderId, @Nullable UUID recipientId, @Nullable Boolean includePending);
+    List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending);
+
 }

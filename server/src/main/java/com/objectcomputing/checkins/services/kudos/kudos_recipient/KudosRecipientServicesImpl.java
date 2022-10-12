@@ -4,10 +4,13 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.kudos.Kudos;
-import com.objectcomputing.checkins.services.kudos.KudosServices;
+import com.objectcomputing.checkins.services.kudos.KudosRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import jakarta.inject.Singleton;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,14 +19,17 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
 
     private final KudosRecipientRepository kudosRecipientRepository;
     private final CurrentUserServices currentUserServices;
-    private final KudosServices kudosServices;
+    private final KudosRepository kudosRepository;
+    private final MemberProfileRetrievalServices memberProfileRetrievalServices;
 
     public KudosRecipientServicesImpl(KudosRecipientRepository kudosRecipientRepository,
                                       CurrentUserServices currentUserServices,
-                                      KudosServices kudosServices) {
+                                      KudosRepository kudosRepository,
+                                      MemberProfileRetrievalServices memberProfileRetrievalServices) {
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.currentUserServices = currentUserServices;
-        this.kudosServices = kudosServices;
+        this.kudosRepository = kudosRepository;
+        this.memberProfileRetrievalServices = memberProfileRetrievalServices;
     }
 
     @Override
@@ -33,7 +39,7 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
             throw new BadArgException("KudosRecipient id must be null");
         }
 
-        Kudos kudos = kudosServices.findById(kudosRecipient.getKudosId()).orElseThrow(() -> {
+        Kudos kudos = kudosRepository.findById(kudosRecipient.getKudosId()).orElseThrow(() -> {
             throw new NotFoundException("No kudos with id %s", kudosRecipient.getKudosId());
         });
 
@@ -43,19 +49,19 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        if (kudosRecipient.getTeamId() != null && kudosRecipient.getMemberId() != null) {
-            throw new BadArgException("Cannot define both a team and a member in the same KudosRecipient");
-        } else if (kudosRecipient.getTeamId() == null && kudosRecipient.getMemberId() == null) {
-            throw new BadArgException("KudosRecipient must have either teamId or memberId defined");
-        }
+        MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElseThrow(() -> {
+            throw new BadArgException("Cannot save KudosRecipient: member %s does not exist", kudosRecipient.getMemberId());
+        });
 
-        // TODO: Throw exception if this kudos already has a team attached to it
+        if (member.getTerminationDate() != null && member.getTerminationDate().isBefore(LocalDate.now())) {
+            throw new BadArgException("Cannot save KudosRecipient for terminated member %s", kudosRecipient.getMemberId());
+        }
 
         return kudosRecipientRepository.save(kudosRecipient);
     }
 
     @Override
     public List<KudosRecipient> getAllByKudosId(UUID kudosId) {
-        return null;
+        return kudosRecipientRepository.findByKudosId(kudosId);
     }
 }

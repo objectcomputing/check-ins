@@ -46,6 +46,12 @@ public class Kudos {
     @Schema(description = "id of the user who gave the kudos", required = true)
     private UUID senderId;
 
+    @Nullable
+    @Column(name = "teamid")
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the team that received the kudos, null if anonymous group of members")
+    private UUID teamId;
+
     @Column(name = "datecreated")
     @DateCreated
     @TypeDef(type = DataType.DATE)
@@ -107,6 +113,15 @@ public class Kudos {
 
     public void setSenderId(UUID senderId) {
         this.senderId = senderId;
+    }
+
+    @Nullable
+    public UUID getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(@Nullable UUID teamId) {
+        this.teamId = teamId;
     }
 
     public LocalDate getDateCreated() {

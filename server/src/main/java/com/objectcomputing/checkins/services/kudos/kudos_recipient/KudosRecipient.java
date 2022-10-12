@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.kudos.kudos_recipient;
 
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -33,17 +32,11 @@ public class KudosRecipient {
     @Schema(description = "id of the kudos being given to this recipient")
     private UUID kudosId;
 
-    @Nullable
+    @NotNull
     @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member receiving the kudos")
     private UUID memberId;
-
-    @Nullable
-    @Column(name = "teamid")
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the team receiving the kudos")
-    private UUID teamId;
 
     public KudosRecipient() {}
 
@@ -51,12 +44,10 @@ public class KudosRecipient {
      * Constructor for creating KudosRecipient
      * @param kudosId id of the kudos being given to this recipient
      * @param memberId id of the member receiving the kudos
-     * @param teamId id of the team receiving the kudos
      */
-    public KudosRecipient(UUID kudosId, @Nullable UUID memberId, @Nullable UUID teamId) {
+    public KudosRecipient(UUID kudosId, UUID memberId) {
         this.kudosId = kudosId;
         this.memberId = memberId;
-        this.teamId = teamId;
     }
 
     public UUID getId() {
@@ -75,22 +66,12 @@ public class KudosRecipient {
         this.kudosId = kudosId;
     }
 
-    @Nullable
     public UUID getMemberId() {
         return memberId;
     }
 
-    public void setMemberId(@Nullable UUID memberId) {
+    public void setMemberId(UUID memberId) {
         this.memberId = memberId;
-    }
-
-    @Nullable
-    public UUID getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(@Nullable UUID teamId) {
-        this.teamId = teamId;
     }
 
     @Override
@@ -98,12 +79,12 @@ public class KudosRecipient {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         KudosRecipient that = (KudosRecipient) o;
-        return Objects.equals(id, that.id) && Objects.equals(kudosId, that.kudosId) && Objects.equals(memberId, that.memberId) && Objects.equals(teamId, that.teamId);
+        return Objects.equals(id, that.id) && Objects.equals(kudosId, that.kudosId) && Objects.equals(memberId, that.memberId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, kudosId, memberId, teamId);
+        return Objects.hash(id, kudosId, memberId);
     }
 
     @Override
@@ -112,7 +93,6 @@ public class KudosRecipient {
                 "id=" + id +
                 ", kudosId=" + kudosId +
                 ", memberId=" + memberId +
-                ", teamId=" + teamId +
                 '}';
     }
 }
