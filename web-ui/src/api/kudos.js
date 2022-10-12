@@ -16,8 +16,7 @@ export const getReceivedKudos = async (memberId, cookie) => {
   return resolve({
     url: kudosUrl,
     params: {
-      recipientId: memberId,
-      includePending: false
+      recipientId: memberId
     },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
@@ -28,19 +27,18 @@ export const getSentKudos = async (memberId, cookie) => {
   return resolve({
     url: kudosUrl,
     params: {
-      senderId: memberId,
-      includePending: true
+      senderId: memberId
     },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });
 };
 
-export const getAllKudos = async (cookie) => {
+export const getAllKudos = async (cookie, isPending) => {
   return resolve({
     url: kudosUrl,
     params: {
-      includePending: true
+      isPending: isPending
     },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }

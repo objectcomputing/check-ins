@@ -892,3 +892,48 @@ INSERT INTO member_skills
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
 ('e2de59a8-71be-4972-86be-608538503195', '105f2968-a182-45a3-892c-eeff76383fe0', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '3', '2022-05-01');
+
+INSERT INTO kudos
+(id, message, senderid, teamid, datecreated, dateapproved)
+VALUES
+('39dfd281-d0af-4016-848b-8156dfef2b92', PGP_SYM_ENCRYPT('Kudos to Mark Volkmann!', '${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', null, '2022-10-01', '2022-10-02');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('ebc023e1-b577-4b02-a2fb-fc9472a8474a', '39dfd281-d0af-4016-848b-8156dfef2b92', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+
+INSERT INTO kudos
+(id, message, senderid, teamid, datecreated, dateapproved)
+VALUES
+('fbcde196-7703-4f80-ac5e-5ac60b28555e', PGP_SYM_ENCRYPT('Kudos to Geetika and Jesse!', '${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', null, '2022-10-01', null);
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('1ed43248-e50a-42b5-9435-f8f46dba92d8', 'fbcde196-7703-4f80-ac5e-5ac60b28555e', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('bf37c244-f478-42b2-9077-dd4cb052bbb1', 'fbcde196-7703-4f80-ac5e-5ac60b28555e', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');
+
+INSERT INTO kudos
+(id, message, senderid, teamid, datecreated, dateapproved)
+VALUES
+('df2766f0-efab-4925-859e-d993e2e38eaa', PGP_SYM_ENCRYPT('Kudos to the Checkins Experts team!', '${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '2022-09-28', '2022-09-29');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('ab140091-4324-4994-98e0-878cadfaf177', 'df2766f0-efab-4925-859e-d993e2e38eaa', '802cb1f5-a255-4236-8719-773fa53d79d9');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('d6ea00f5-1ec7-4f38-8e53-09efd6e50c4e', 'df2766f0-efab-4925-859e-d993e2e38eaa', '6884ab96-2275-4af9-89d8-ad84254d8759');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('0ca86d55-cffb-4b84-883c-c4c2e41eff73', 'df2766f0-efab-4925-859e-d993e2e38eaa', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');

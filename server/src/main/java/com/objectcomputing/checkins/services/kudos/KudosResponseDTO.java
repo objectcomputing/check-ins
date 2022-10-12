@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.kudos;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.Team;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
@@ -33,7 +34,7 @@ public class KudosResponseDTO {
     private Team recipientTeam;
 
     @Nullable
-    private List<UUID> recipientMembers;
+    private List<MemberProfile> recipientMembers;
 
     public UUID getId() {
         return id;
@@ -86,11 +87,11 @@ public class KudosResponseDTO {
     }
 
     @Nullable
-    public List<UUID> getRecipientMembers() {
+    public List<MemberProfile> getRecipientMembers() {
         return recipientMembers;
     }
 
-    public void setRecipientMembers(@Nullable List<UUID> recipientMembers) {
+    public void setRecipientMembers(@Nullable List<MemberProfile> recipientMembers) {
         this.recipientMembers = recipientMembers;
     }
 
