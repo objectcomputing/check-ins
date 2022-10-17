@@ -8,6 +8,7 @@ import {
 import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken, selectCurrentUser, selectIsPDL, selectIsAdmin, selectCheckin, selectProfile } from "../../context/selectors";
 import { debounce } from "lodash/function";
+import { Editor } from '@tinymce/tinymce-react'
 import LockIcon from "@mui/icons-material/Lock";
 import Skeleton from '@mui/material/Skeleton';
 import Card from '@mui/material/Card';
@@ -120,10 +121,10 @@ const PrivateNote = () => {
                 </div>
               </div>
             ) : (
-              <MarkdownNote 
-                style={{height: "175px", marginBottom: "30px"}}
+              <Editor
+                apiKey='246ojmsp6c7qtnr9aoivktvi3mi5t7ywuf0vevn6wllfcn9e'
                 value={note && note.description ? note.description : ""}
-                onChange={handleNoteChange}
+                onEditorChange={handleNoteChange}
                 readOnly={
                   currentCheckin?.completed ||
                   note === undefined || Object.keys(note) === 0
