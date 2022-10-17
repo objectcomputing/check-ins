@@ -125,6 +125,13 @@ const Notes = (props) => {
                   currentCheckin?.completed ||
                   note === undefined || Object.keys(note) === 0
                 }
+                init={{
+                  plugins: 'lists',
+                  toolbar: 'undo redo | blocks | ' +
+                    'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | help'
+                }}
               />
             )}
           

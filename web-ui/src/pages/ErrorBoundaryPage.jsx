@@ -4,9 +4,10 @@ import { AppContext } from "../context/AppContext";
 import { UPDATE_TOAST } from "../context/actions";
 import { selectCsrfToken } from "../context/selectors";
 import { newGitHubIssue } from "../api/github";
-import MarkdownNote from "../components/markdown-note/MarkdownNote";
 
 import { Button, Modal, TextField } from "@mui/material";
+
+import { Editor } from '@tinymce/tinymce-react';
 
 import "./ErrorBoundaryPage.css";
 import { sanitizeQuillElements } from "../helpers/sanitizehtml";
@@ -93,7 +94,7 @@ const ErrorFallback = ({ error }) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <MarkdownNote
+          <Editor
             required
             placeholder="Issue Description"
             style={{ height: "175px", marginBottom: "30px" }}
