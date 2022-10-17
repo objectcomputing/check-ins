@@ -95,6 +95,7 @@ export const getQuestionsAndAnswers = async (feedbackRequests, cookie) => {
           id: key,
           question: questionInfo.question,
           questionNumber: questionInfo.questionNumber,
+          inputType: questionInfo.inputType,
           templateId: questionInfo.templateId,
           answers: answersForThisQuestion,
         };
