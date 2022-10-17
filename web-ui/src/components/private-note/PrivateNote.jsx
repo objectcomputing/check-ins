@@ -15,7 +15,6 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import "./PrivateNote.css";
-import MarkdownNote from "../markdown-note/MarkdownNote";
 import { sanitizeQuillElements } from "../../helpers/sanitizehtml";
 
 async function realUpdate(note, csrf) {
@@ -129,6 +128,12 @@ const PrivateNote = () => {
                   currentCheckin?.completed ||
                   note === undefined || Object.keys(note) === 0
                 }
+                init={{
+                  toolbar: 'undo redo | blocks | ' +
+                    'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | help'
+                }}
               />
             )}
           
