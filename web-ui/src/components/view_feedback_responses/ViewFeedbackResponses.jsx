@@ -301,6 +301,7 @@ const ViewFeedbackResponses = () => {
                     key={answer.id || answer.responder}
                     responderId={answer.responder}
                     answer={answer.answer || ""}
+                    inputType={question.inputType}
                     sentiment={answer.sentiment}
                   />
                 ))}
