@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutorService;
 import static io.micronaut.http.HttpHeaders.CACHE_CONTROL;
 
 @Controller("/services/member-profiles/member-photos")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.IMAGE_PNG)
 @Tag(name = "member photo")
 public class MemberPhotoController {

@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MemberPhotoControllerTest {
@@ -39,7 +41,7 @@ public class MemberPhotoControllerTest {
 
         when(memberPhotoService.getImageByEmailAddress(testEmail)).thenReturn(testData);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", testEmail));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", testEmail)).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<byte[]> response = client.toBlocking().exchange(request, byte[].class);
 
         assertNotNull(response);
