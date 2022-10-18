@@ -75,6 +75,7 @@ public class FeedbackTemplate {
      * @param creatorId   The {@link UUID} of the user who created the template
      * @param isPublic    Whether the template is public or private
      * @param isAdHoc     Whether the template is an ad-hoc template
+     * @param isReview    Whether the template is used for performance reviews
      */
     public FeedbackTemplate(String title, @Nullable String description, UUID creatorId, Boolean isPublic, Boolean isAdHoc, Boolean isReview) {
         this.id = null;
