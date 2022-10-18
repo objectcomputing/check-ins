@@ -8,18 +8,16 @@ import {
 import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken, selectCurrentUser, selectCheckin, selectProfile } from "../../context/selectors";
 import { debounce } from "lodash/function";
+import { Editor } from '@tinymce/tinymce-react';
 import NotesIcon from "@mui/icons-material/Notes";
 import Skeleton from '@mui/material/Skeleton';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-import MarkdownNote from "../markdown-note/MarkdownNote";
+// import MarkdownNote from "../markdown-note/MarkdownNote";
 import "./Note.css";
-import { sanitizeQuillElements } from "../../helpers/sanitizehtml";
 
 async function realUpdate(note, csrf) {
-  //Clean note of potential malicious content before upload
-  note.description = sanitizeQuillElements(note.description)
   await updateCheckinNote(note,csrf)
 }
 
@@ -50,8 +48,6 @@ const Notes = (props) => {
             ? res.payload.data[0]
             : null;
         if (currentNote) {
-          //Clean note of potential malicious content from database before rendering
-          currentNote.description= sanitizeQuillElements(currentNote.description)
           setNote(currentNote);
         } else if (currentUserId === pdlId) {
           if (!noteRef.current.some((id) => id === checkinId)) {
@@ -90,7 +86,7 @@ const Notes = (props) => {
     }
   }, [csrf, checkinId, currentUserId, pdlId]);
 
-  const handleNoteChange = (content, delta, source, editor) => {
+  const handleNoteChange = (content, editor) => {
     if (Object.keys(note).length === 0 || !csrf || currentCheckin?.completed) {
       return;
     }
@@ -116,14 +112,21 @@ const Notes = (props) => {
                 </div>
               </div>
             ) : (
-              <MarkdownNote 
-                style={{height: "175px", marginBottom: "30px"}}
+              <Editor
+                apiKey='246ojmsp6c7qtnr9aoivktvi3mi5t7ywuf0vevn6wllfcn9e'
                 value={note && note.description ? note.description : ""}
-                onChange={handleNoteChange}
+                onEditorChange={handleNoteChange}
                 readOnly={
                   currentCheckin?.completed ||
                   note === undefined || Object.keys(note) === 0
                 }
+                init={{
+                  plugins: 'lists',
+                  toolbar: 'undo redo | blocks | ' +
+                    'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | help'
+                }}
               />
             )}
           

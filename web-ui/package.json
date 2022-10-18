@@ -41,6 +41,7 @@
     "@mui/styles": "^5.0.1",
     "@nivo/core": "^0.73.0",
     "@nivo/radar": "^0.73.0",
+    "@tinymce/tinymce-react": "^4.2.0",
     "axios": "^0.21.4",
     "date-fns": "^2.24.0",
     "fuse.js": "^6.4.6",
