@@ -54,6 +54,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         feedbackTemplate.setDateCreated(originalTemplate.get().getDateCreated());
         feedbackTemplate.setIsPublic(originalTemplate.get().getIsPublic());
         feedbackTemplate.setIsAdHoc(originalTemplate.get().getIsAdHoc());
+        feedbackTemplate.setIsReview(originalTemplate.get().getIsReview());
 
         if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
@@ -93,6 +94,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         return allTemplates
                 .stream()
                 .filter(template -> template.getIsPublic() || isAdmin || template.getCreatorId().equals(currentUserId))
+                .filter(template -> !template.getIsReview() || isAdmin)
                 .collect(Collectors.toList());
     }
 
