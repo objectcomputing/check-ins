@@ -99,7 +99,7 @@ const ErrorFallback = ({ error }) => {
             placeholder="Issue Description"
             style={{ height: "175px", marginBottom: "30px" }}
             value={body}
-            onChange={handleBodyChange}
+            onEditorChange={handleBodyChange}
           />
           <div className="create-new-issue-modal-actions">
             <Button onClick={close} color="secondary">
