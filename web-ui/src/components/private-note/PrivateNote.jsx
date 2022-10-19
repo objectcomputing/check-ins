@@ -124,11 +124,14 @@ const PrivateNote = () => {
                   note === undefined || Object.keys(note) === 0
                 }
                 init={{
+                  promotion: false,
+                  plugins: 'lists',
                   toolbar: 'undo redo | blocks | ' +
                     'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
                     'alignright alignjustify | bullist numlist outdent indent | ' +
                     'removeformat | help'
                 }}
+                tinymceScriptSrc={process.env.PUBLIC_URL + '/js/tinymce/tinymce.min.js'}
               />
             )}
           

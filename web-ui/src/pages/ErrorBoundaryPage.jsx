@@ -96,10 +96,19 @@ const ErrorFallback = ({ error }) => {
           />
           <Editor
             required
-            placeholder="Issue Description"
+            initialValue="Issue Description"
             style={{ height: "175px", marginBottom: "30px" }}
             value={body}
             onEditorChange={handleBodyChange}
+            init={{
+              promotion: false,
+              plugins: 'lists',
+              toolbar: 'undo redo | blocks | ' +
+                'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'removeformat | help'
+            }}
+            tinymceScriptSrc={process.env.PUBLIC_URL + '/js/tinymce/tinymce.min.js'}
           />
           <div className="create-new-issue-modal-actions">
             <Button onClick={close} color="secondary">
