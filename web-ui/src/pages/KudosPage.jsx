@@ -104,7 +104,7 @@ const KudosPage = () => {
         <div className="received-kudos-list">
           {receivedKudos.length > 0
             ? receivedKudos.map(kudos =>
-              <KudosCard key={kudos.id} kudos={kudos} type="RECEIVED"/>
+              <KudosCard key={kudos.id} kudos={kudos}/>
             )
             : <div className="empty-kudos-container">
               <Typography variant="body2">You have not received any kudos</Typography>
@@ -125,7 +125,7 @@ const KudosPage = () => {
         <div className="sent-kudos-list">
           {sentKudos.length > 0
             ? sentKudos.map(kudos =>
-              <KudosCard key={kudos.id} kudos={kudos} type="SENT"/>
+              <KudosCard key={kudos.id} kudos={kudos}/>
             )
             : <div className="empty-kudos-container">
               <Typography variant="body2">

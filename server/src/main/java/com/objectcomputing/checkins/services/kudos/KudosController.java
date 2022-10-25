@@ -12,6 +12,8 @@ import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -32,6 +34,8 @@ public class KudosController {
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
 
+    private static final Logger LOG = LoggerFactory.getLogger(KudosController.class);
+
     public KudosController(KudosServices kudosServices,
                            EventLoopGroup eventLoopGroup,
                            @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
@@ -41,22 +45,22 @@ public class KudosController {
     }
 
     @Post()
-    public Mono<HttpResponse<Kudos>> create(@Body @Valid Kudos kudos, HttpRequest<Kudos> request) {
+    public Mono<HttpResponse<Kudos>> create(@Body @Valid KudosCreateDTO kudos, HttpRequest<KudosCreateDTO> request) {
         return Mono.fromCallable(() -> kudosServices.save(kudos))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdKudos -> (HttpResponse<Kudos>) HttpResponse
                         .created(createdKudos)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), kudos.getId()))))
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdKudos.getId()))))
                 ).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     @Put()
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<Kudos>> update(@Body @Valid Kudos kudos, HttpRequest<Kudos> request) {
-        return Mono.fromCallable(() -> kudosServices.update(kudos))
+    public Mono<HttpResponse<Kudos>> approve(@Body @Valid Kudos kudos, HttpRequest<Kudos> request) {
+        return Mono.fromCallable(() -> kudosServices.approve(kudos))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedKudos -> (HttpResponse<Kudos>) HttpResponse
-                        .ok(kudos)
+                        .ok(updatedKudos)
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedKudos.getId()))))
                 ).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }

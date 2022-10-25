@@ -44,3 +44,22 @@ export const getAllKudos = async (cookie, isPending) => {
     headers: { "X-CSRF-Header": cookie }
   });
 };
+
+export const approveKudos = async (kudos, cookie) => {
+  return resolve({
+    method: "put",
+    url: kudosUrl,
+    data: kudos,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+};
+
+export const deleteKudos = async (kudosId, cookie) => {
+  return resolve({
+    method: "delete",
+    url: `${kudosUrl}/${kudosId}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+};

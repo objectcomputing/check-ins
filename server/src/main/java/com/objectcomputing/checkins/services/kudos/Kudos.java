@@ -91,6 +91,12 @@ public class Kudos {
         this.dateApproved = dateApproved;
     }
 
+    public Kudos(KudosCreateDTO kudosCreateDTO) {
+        this.message = kudosCreateDTO.getMessage();
+        this.senderId = kudosCreateDTO.getSenderId();
+        this.teamId = kudosCreateDTO.getTeamId();
+    }
+
     public UUID getId() {
         return id;
     }

@@ -1,102 +1,233 @@
-import React, {useContext, useState} from "react";
+import React, {useCallback, useContext, useState} from "react";
 import PropTypes from "prop-types";
-import {Paper, Collapse, Divider, Typography, Avatar, Chip, Button} from "@mui/material";
-import {selectProfile} from "../../context/selectors";
+import {
+  Paper,
+  Collapse,
+  Divider,
+  Typography,
+  Avatar,
+  Chip,
+  Button,
+  AvatarGroup,
+  Tooltip,
+  Dialog,
+  DialogTitle, DialogContent, DialogContentText, DialogActions
+} from "@mui/material";
+import {selectCsrfToken, selectProfile} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import {getAvatarURL} from "../../api/api";
 import DateFnsUtils from "@date-io/date-fns";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import TeamIcon from "@mui/icons-material/Groups";
 
 import "./KudosCard.css";
+import {approveKudos, deleteKudos} from "../../api/kudos";
+import {UPDATE_TOAST} from "../../context/actions";
 
 const dateUtils = new DateFnsUtils();
 
 const propTypes = {
   kudos: PropTypes.shape({
-    senderId: PropTypes.string.isRequired,
-    recipientId: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
+    senderId: PropTypes.string.isRequired,
+    recipientTeam: PropTypes.object,
+    dateCreated: PropTypes.array.isRequired,
     dateApproved: PropTypes.array,
-    dateCreated: PropTypes.array.isRequired
+    recipientMembers: PropTypes.array
   }).isRequired,
-  type: PropTypes.oneOf(["RECEIVED", "SENT", "MANAGE"]).isRequired
+  includeActions: PropTypes.bool,
+  onKudosAction: PropTypes.func,
 };
 
-const KudosCard = ({ kudos, type }) => {
-  const { state } = useContext(AppContext);
+const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
+  const { state, dispatch } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
 
   const [expanded, setExpanded] = useState(true);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const sender = selectProfile(state, kudos.senderId);
-  const recipient = selectProfile(state, kudos.recipientId);
 
-  const dateApproved = kudos.dateApproved ? new Date(kudos.dateApproved.join("/")) : null;
-  const dateCreated = new Date(kudos.dateCreated.join("/"));
+  const getRecipientComponent = useCallback(() => {
+    if (kudos.recipientTeam) {
+      return (
+        <Chip
+          avatar={<Avatar><TeamIcon/></Avatar>}
+          label={kudos.recipientTeam.name}
+        />
+      );
+    } else if (kudos.recipientMembers.length === 1) {
+      const [recipient] = kudos.recipientMembers;
+      return (
+        <Chip
+          avatar={<Avatar src={getAvatarURL(recipient?.workEmail)}/>}
+          label={`${recipient.firstName} ${recipient.lastName}`}
+        />
+      );
+    }
+
+    return (
+      <AvatarGroup max={16}>
+        {kudos.recipientMembers.map(member => (
+          <Tooltip arrow key={member.id} title={`${member.firstName} ${member.lastName}`}>
+            <Avatar src={getAvatarURL(member.workEmail)}/>
+          </Tooltip>
+        ))}
+      </AvatarGroup>
+    );
+  }, [kudos]);
+
+  const approveKudosCallback = useCallback(async (event) => {
+    event.stopPropagation();
+    const res = await approveKudos(kudos, csrf);
+    if (res?.payload?.data && !res.error) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: "Kudos approved"
+        }
+      });
+      onKudosAction();
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to approve kudos"
+        }
+      });
+    }
+  }, [kudos, csrf, dispatch, onKudosAction]);
+
+  const deleteKudosCallback = useCallback(async () => {
+    setDeleteDialogOpen(false);
+    const res = await deleteKudos(kudos.id, csrf);
+    if (res?.payload?.status === 204 && !res.error) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: "Pending kudos deleted"
+        }
+      });
+      onKudosAction();
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to delete kudos"
+        }
+      });
+    }
+  }, [kudos, csrf, dispatch, onKudosAction]);
+
+  const getStatusComponent = useCallback(() => {
+
+    const dateApproved = kudos.dateApproved ? new Date(kudos.dateApproved.join("/")) : null;
+    const dateCreated = new Date(kudos.dateCreated.join("/"));
+
+    if (includeActions) {
+      return <div className="kudos-action-buttons">
+        <Tooltip arrow title="Approve">
+          <Button
+            variant="outlined"
+            color="success"
+            size="small"
+            onClick={approveKudosCallback}
+          >
+            <CheckIcon/>
+          </Button>
+        </Tooltip>
+        <Tooltip arrow title="Delete">
+          <Button
+            variant="outlined"
+            color="error"
+            size="small"
+            onClick={(event) => {
+              event.stopPropagation()
+              setDeleteDialogOpen(true);
+            }}
+          >
+            <CloseIcon/>
+          </Button>
+        </Tooltip>
+      </div>;
+    } else if (dateApproved) {
+      return <>
+        <Typography color="green" variant="body2">
+          Received {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
+        </Typography>
+      </>;
+    }
+
+    return <>
+      <Typography color="orange" variant="body2">Pending</Typography>
+      <Typography variant="body2" color="gray" fontSize="10px">
+        Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
+      </Typography>
+    </>;
+  }, [kudos, includeActions, approveKudosCallback]);
 
   return (
-    <Paper className="kudos-card">
-      <div className="kudos-card-header" onClick={() => setExpanded(!expanded)}>
-        <div className="members-container">
-          {type === "RECEIVED" && <>
-            <Avatar style={{ marginRight: "0.5em" }} src={getAvatarURL(sender?.workEmail)} />
-            <Typography variant="h5">{sender?.name}</Typography>
-          </>}
-          {type === "SENT" && <>
-            <Avatar style={{ marginRight: "0.5em" }} src={getAvatarURL(recipient?.workEmail)} />
-            <Typography variant="h5">{recipient?.name}</Typography>
-          </>}
-          {type === "MANAGE" && <>
-            <Chip
-              avatar={<Avatar src={getAvatarURL(recipient?.workEmail)}/>}
-              label={recipient?.name}
-            />
+    <>
+      <Dialog open={deleteDialogOpen}>
+        <DialogTitle>Delete Kudos</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to deny approval for these kudos? The kudos will be deleted.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            style={{ color: "gray" }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={deleteKudosCallback} color="error" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Paper className="kudos-card">
+        <div className="kudos-card-header" onClick={() => setExpanded(!expanded)}>
+          <div className="members-container">
+            {getRecipientComponent()}
             <Typography variant="body1">received kudos from</Typography>
             <Chip
               avatar={<Avatar src={getAvatarURL(sender?.workEmail)}/>}
               label={sender?.name}
             />
-          </>}
+          </div>
+          <div className="kudos-status-container">
+            {getStatusComponent()}
+          </div>
         </div>
-        <div className="kudos-status-container">
-          <Typography color={dateApproved ? "green" : "orange"}>
-            {dateApproved ? "Approved" : "Pending"}
-          </Typography>
-          {type === "RECEIVED" && <>
-            <Typography variant="body2" color="gray" fontSize="10px">
-              Received {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
-            </Typography>
-          </>}
-          {type === "SENT" && <>
-            <Typography variant="body2" color="gray" fontSize="10px">
-              Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
-            </Typography>
-          </>}
-          {type === "MANAGE" && <>
-            <Button
-              variant="outlined"
-              color="success"
-              size="medium"
-            >
-              <CheckIcon/>
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              size="medium"
-            >
-              <CloseIcon/>
-            </Button>
-          </>}
-        </div>
-      </div>
-      <Divider/>
-      <Collapse in={expanded}>
-        <div className="kudos-card-content">
-          <Typography variant="body1">{kudos.message}</Typography>
-        </div>
-      </Collapse>
-    </Paper>
+        <Divider/>
+        <Collapse in={expanded}>
+          <div className="kudos-card-content">
+            <Typography variant="body1">{kudos.message}</Typography>
+            {kudos.recipientMembers?.length > 1 &&
+              <div className="kudos-recipient-list">
+                <Typography variant="body2">
+                  {kudos.recipientTeam ? "Team Members:" : "Members:"}
+                </Typography>
+                {kudos.recipientMembers.map(recipient => (
+                  <Chip key={recipient.id}
+                        avatar={<Avatar src={getAvatarURL(recipient?.workEmail)}/>}
+                        label={`${recipient.firstName} ${recipient.lastName}`}
+                  />
+                ))}
+              </div>
+            }
+          </div>
+        </Collapse>
+      </Paper>
+    </>
   );
 };
 

@@ -14,10 +14,20 @@
     gap: 0.5rem;
 }
 
-.kudos-card .kudos-card-header .kudos-status-container {
-
+.kudos-card .kudos-card-header .kudos-status-container .kudos-action-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem
 }
 
 .kudos-card .kudos-card-content {
     padding: 1rem;
+}
+
+.kudos-card .kudos-card-content .kudos-recipient-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
 }
