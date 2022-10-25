@@ -66,6 +66,10 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable Boolean terminated) {
         HashSet<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
                 nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId), terminated));
+        // if currentuserservices.isadmin not admin birthday null
+        if (!currentUserServices.isAdmin()){
+            memberProfiles.forEach(memberProfile -> memberProfile.setBirthDate(null));
+        }
 
         return memberProfiles;
     }
@@ -123,6 +127,11 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }
+        // if not admin birthday null
+        if (!currentUserServices.isAdmin()){
+            searchResult.forEach(memberProfile -> memberProfile.setBirthDate(null));
+        }
+
         return searchResult.get(0);
     }
 
