@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, {useCallback, useContext, useEffect, useRef} from "react";
 import { styled } from '@mui/material/styles';
 import { useState } from 'react'
 import "./FeedbackRequestPage.css";
@@ -39,8 +39,6 @@ const FeedbackSubmitPage = () => {
   const [showTips, setShowTips] = useState(true);
   const [feedbackRequest, setFeedbackRequest] = useState(null);
   const [requestee, setRequestee] = useState(null);
-  const [requestSubmitted, setRequestSubmitted] = useState(false);
-  const [requestCanceled, setRequestCanceled] = useState(false);
   const feedbackRequestFetched = useRef(false);
   
   useEffect(() => {
@@ -83,12 +81,8 @@ const FeedbackSubmitPage = () => {
                 toast: "You are not authorized to perform this operation.",
               },
             });
-          } else if (request.status.toLowerCase() === FeedbackRequestStatus.SUBMITTED || request.submitDate) {
-            setRequestSubmitted(true);
-          } else if (request.status.toLowerCase() === FeedbackRequestStatus.CANCELED) {
-            setRequestCanceled(true);
           } else {
-              setFeedbackRequest(request);
+            setFeedbackRequest(request);
           }
         } else {
           history.push("/checkins");
@@ -115,20 +109,24 @@ const FeedbackSubmitPage = () => {
     }
   }, [feedbackRequest, state]);
 
+  const getFeedbackForm = useCallback(() => {
+    if (!feedbackRequestFetched.current || !feedbackRequest) return;
+
+    switch (feedbackRequest.status) {
+      case FeedbackRequestStatus.CANCELED:
+        return <Typography className={classes.announcement} variant="h3">This feedback request has been canceled.</Typography>
+      case FeedbackRequestStatus.SUBMITTED:
+        return <FeedbackSubmitForm requesteeName={requestee?.name} requestId={requestQuery} request={feedbackRequest}/>
+      default:
+        return showTips
+          ? <FeedbackSubmissionTips onNextClick={() => setShowTips(false)}/>
+          : <FeedbackSubmitForm requesteeName={requestee?.name} requestId={requestQuery} request={feedbackRequest}/>
+    }
+  }, [feedbackRequest, requestQuery, requestee, showTips]);
+
   return (
     <Root className="feedback-submit-page">
-      {requestCanceled ?
-        <Typography className={classes.announcement} variant="h3">This feedback request has been canceled.</Typography> :
-        (requestSubmitted ?
-          <Typography className={classes.announcement} variant="h3">You have already submitted this feedback form. Thank you!</Typography> :
-          <>
-            {feedbackRequestFetched.current && (showTips ?
-              <FeedbackSubmissionTips onNextClick={() => setShowTips(false)}/> :
-              <FeedbackSubmitForm requesteeName={requestee?.name} requestId={requestQuery} request={feedbackRequest}/>
-            )}
-          </>
-        )
-      }
+      {getFeedbackForm()}
     </Root>
   );
 };

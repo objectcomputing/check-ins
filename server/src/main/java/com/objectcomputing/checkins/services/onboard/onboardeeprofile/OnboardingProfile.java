@@ -31,8 +31,6 @@ public class OnboardingProfile {
     @Id // indicates this member field below is the primary key of the current entity
     @Column(name = "onboard_profile_id") //indicates this value is stored under a column in the database with the name "id"
     @AutoPopulated //Micronaut will autopopulate a user id for each onboardee's profile automatically
-    @TypeDef(type = DataType.STRING) //indicates what type of data will be stored in the database
-    @GeneratedValue(GeneratedValue.Type.AUTO)
     @Schema(description = "id of the new employee profile this entry is associated with", required = true)
     private UUID id;
 

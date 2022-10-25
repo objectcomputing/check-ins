@@ -21,6 +21,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformationRepository;
 import com.objectcomputing.checkins.services.onboard.onboardee_employment_eligibility.OnboardeeEmploymentEligibilityRepository;
 import com.objectcomputing.checkins.services.onboard.onboardeeprofile.OnboardingProfileRepository;
+import com.objectcomputing.checkins.services.onboardeecreate.newhire.model.NewHireAccountRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
@@ -36,6 +37,8 @@ import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.MemberHistoryRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
+import com.objectcomputing.checkins.services.onboard.workingenvironment.WorkingEnvironmentRepository;
+
 import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.survey.SurveyRepository;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
@@ -187,8 +190,17 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(OnboardeeEmploymentEligibilityRepository.class);
     }
 
+
+    default WorkingEnvironmentRepository getWorkingEnvironmentRespository(){
+        return getEmbeddedServer().getApplicationContext().getBean(WorkingEnvironmentRepository.class);
+    }
+
     default BackgroundInformationRepository getBackgroundInformationRepository(){
         return getEmbeddedServer().getApplicationContext().getBean(BackgroundInformationRepository.class);
+    }
+
+    default NewHireAccountRepository  getNewHireAccountRepository(){
+        return getEmbeddedServer().getApplicationContext().getBean(NewHireAccountRepository.class);
     }
 
     default KudosRepository getKudosRepository() {
