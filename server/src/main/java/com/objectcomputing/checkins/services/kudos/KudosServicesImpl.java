@@ -17,6 +17,7 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,41 +51,67 @@ public class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    public Kudos save(Kudos kudos) {
+    public Kudos save(KudosCreateDTO kudosDTO) {
 
-        if (kudos.getId() != null) {
-            throw new BadArgException("Kudos id must be null");
-        }
-
-        memberProfileRetrievalServices.getById(kudos.getSenderId()).orElseThrow(() -> {
-            throw new BadArgException("Kudos sender %s does not exist", kudos.getSenderId());
+        memberProfileRetrievalServices.getById(kudosDTO.getSenderId()).orElseThrow(() -> {
+            throw new BadArgException("Kudos sender %s does not exist", kudosDTO.getSenderId());
         });
 
-        return kudosRepository.save(kudos);
+        if (kudosDTO.getTeamId() != null) {
+            teamRepository.findById(kudosDTO.getTeamId()).orElseThrow(() -> {
+               throw new BadArgException("Team %s does not exist", kudosDTO.getTeamId());
+            });
+        }
+
+        if (kudosDTO.getMessage() == null || kudosDTO.getMessage().isBlank()) {
+            throw new BadArgException("Kudos message cannot be blank");
+        }
+
+        if (kudosDTO.getRecipientMembers() == null || kudosDTO.getRecipientMembers().isEmpty()) {
+            throw new BadArgException("Kudos must contain at least one recipient");
+        }
+
+        Kudos kudos = new Kudos(kudosDTO);
+
+        Kudos savedKudos = kudosRepository.save(kudos);
+        List<KudosRecipient> savedRecipients = new ArrayList<>();
+
+        kudosDTO.getRecipientMembers().forEach(recipient -> {
+            KudosRecipient kudosRecipient = new KudosRecipient(savedKudos.getId(), recipient.getId());
+            try {
+                kudosRecipientServices.save(kudosRecipient);
+                savedRecipients.add(kudosRecipient);
+            } catch (RuntimeException e) {
+                // If saving KudosRecipient fails, abort save
+                savedRecipients.forEach(savedRecipient ->
+                        kudosRecipientRepository.delete(kudosRecipient)
+                );
+                kudosRepository.delete(savedKudos);
+                throw e;
+            }
+        });
+
+        return savedKudos;
     }
 
     @Override
-    public Kudos update(Kudos kudos) {
+    public Kudos approve(Kudos kudos) {
 
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You are not authorized to perform this operation");
-        }
-
-        if (kudos.getId() == null) {
-            throw new BadArgException("Kudos id must not be null");
         }
 
         Kudos existingKudos = kudosRepository.findById(kudos.getId()).orElseThrow(() -> {
             throw new BadArgException("Kudos with id %s does not exist", kudos.getId());
         });
 
-        if (!kudos.getSenderId().equals(existingKudos.getSenderId())) {
-            throw new BadArgException("Cannot change kudos sender");
-        } else if (!kudos.getDateCreated().equals(existingKudos.getDateCreated())) {
-            throw new BadArgException("Cannot change the date the kudos was created");
+        if (existingKudos.getDateApproved() != null) {
+            throw new BadArgException("Kudos with id %s has already been approved", kudos.getId());
         }
 
-        return kudosRepository.update(kudos);
+        existingKudos.setDateApproved(LocalDate.now());
+
+        return kudosRepository.update(existingKudos);
     }
 
     @Override
@@ -130,6 +157,14 @@ public class KudosServicesImpl implements KudosServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
+        Kudos kudos = kudosRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("Kudos with id %s does not exist", id);
+        });
+
+        // Delete all KudosRecipients associated with this kudos
+        List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
+        kudosRecipientRepository.deleteAll(recipients);
+
         kudosRepository.deleteById(id);
         return true;
     }
@@ -166,7 +201,12 @@ public class KudosServicesImpl implements KudosServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        List<Kudos> kudosList = kudosRepository.searchByPending(isPending);
+        List<Kudos> kudosList = new ArrayList<>();
+        if (isPending) {
+            kudosList.addAll(kudosRepository.getAllPending());
+        } else {
+            kudosList.addAll(kudosRepository.getAllApproved());
+        }
 
         return kudosList
                 .stream()
@@ -193,7 +233,9 @@ public class KudosServicesImpl implements KudosServices {
                 throw new NotFoundException("Kudos with id %s does not exist", kudosRecipient.getKudosId());
             });
 
-            kudosList.add(constructKudosResponseDTO(relatedKudos));
+            if (relatedKudos.getDateApproved() != null) {
+                kudosList.add(constructKudosResponseDTO(relatedKudos));
+            }
         });
 
         return kudosList;

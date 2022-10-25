@@ -2,6 +2,21 @@
     margin: 3rem 4rem 1rem 4rem;
 }
 
+.manage-kudos-page .kudos-tab-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .manage-kudos-page .kudos-card {
-    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.manage-kudos-page .no-pending-kudos-message {
+    background-color: #e5e5e5;
+    color: gray;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
 }

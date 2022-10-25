@@ -17,9 +17,19 @@ public interface KudosRepository extends CrudRepository<Kudos, UUID> {
             "PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message, " +
             "senderid, teamid, datecreated, dateapproved " +
             "FROM kudos " +
-            "WHERE (:isPending = (dateapproved IS NOT NULL))"
+            "WHERE dateapproved IS NULL " +
+            "ORDER BY datecreated DESC"
     )
-    List<Kudos> searchByPending(boolean isPending);
+    List<Kudos> getAllPending();
+
+    @Query(value = "SELECT " +
+            "id, " +
+            "PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message, " +
+            "senderid, teamid, datecreated, dateapproved " +
+            "FROM kudos " +
+            "WHERE dateapproved IS NOT NULL"
+    )
+    List<Kudos> getAllApproved();
 
     @Query(value = "SELECT " +
             "id, " +

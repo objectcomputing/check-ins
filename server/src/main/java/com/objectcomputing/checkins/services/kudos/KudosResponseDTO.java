@@ -33,7 +33,7 @@ public class KudosResponseDTO {
     @Nullable
     private Team recipientTeam;
 
-    @Nullable
+    @NotNull
     private List<MemberProfile> recipientMembers;
 
     public UUID getId() {
@@ -86,12 +86,11 @@ public class KudosResponseDTO {
         this.recipientTeam = recipientTeam;
     }
 
-    @Nullable
     public List<MemberProfile> getRecipientMembers() {
         return recipientMembers;
     }
 
-    public void setRecipientMembers(@Nullable List<MemberProfile> recipientMembers) {
+    public void setRecipientMembers(List<MemberProfile> recipientMembers) {
         this.recipientMembers = recipientMembers;
     }
 

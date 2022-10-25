@@ -937,3 +937,48 @@ INSERT INTO kudos_recipient
 (id, kudosid, memberid)
 VALUES
 ('0ca86d55-cffb-4b84-883c-c4c2e41eff73', 'df2766f0-efab-4925-859e-d993e2e38eaa', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');
+
+INSERT INTO kudos
+(id, message, senderid, teamid, datecreated, dateapproved)
+VALUES
+('17e19f16-d731-4242-a74a-43493a556f08', PGP_SYM_ENCRYPT('Kudos to Michael Kimberlin!', '${aeskey}'), '6884ab96-2275-4af9-89d8-ad84254d8759', null, '2022-08-15', '2022-08-25');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('038485ee-8cac-416b-9da6-d838ee345d0e', '17e19f16-d731-4242-a74a-43493a556f08', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+
+INSERT INTO kudos
+(id, message, senderid, teamid, datecreated, dateapproved)
+VALUES
+('6612b8a0-1d45-4155-b0fb-e0b2d9eaafcb', PGP_SYM_ENCRYPT('Wanted to give some kudos to Michael Kimberlin and Mark Volkmann for their recent help on the project. Thank you very much!', '${aeskey}'), '1b4f99da-ef70-4a76-9b37-8bb783b749ad', null, '2022-10-05', null);
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('59d99cdf-30c5-47c7-988a-42f6602f4cd4', '6612b8a0-1d45-4155-b0fb-e0b2d9eaafcb', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('01f639d5-b7b3-47a2-b165-d7a20d01fec2', '6612b8a0-1d45-4155-b0fb-e0b2d9eaafcb', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+
+INSERT INTO kudos
+(id, message, senderid, teamid, datecreated, dateapproved)
+VALUES
+('9cdce399-4c02-41ed-a63f-35beb6ecb622', PGP_SYM_ENCRYPT('A huge thank you to the Javascript Gurus team for offering their advice on the tech stack for the new project. Kudos to you all!', '${aeskey}'), '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', '2022-10-10', '2022-10-11');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('de84b3fb-f79f-40fa-a4e6-d5126140f3ea', '9cdce399-4c02-41ed-a63f-35beb6ecb622', '43ee8e79-b33d-44cd-b23c-e183894ebfef');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('ec98ebba-c34b-428b-b377-b38a1b882fe6', '9cdce399-4c02-41ed-a63f-35beb6ecb622', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('f792056b-22ce-4e3d-a442-0fdc3cb35e7b', '9cdce399-4c02-41ed-a63f-35beb6ecb622', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
