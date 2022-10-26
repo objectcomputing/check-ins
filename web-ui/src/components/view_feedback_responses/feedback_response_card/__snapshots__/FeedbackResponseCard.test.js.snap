@@ -1,4 +1,3 @@
-
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly for radio button responses 1`] = `
@@ -25,6 +24,7 @@ exports[`renders correctly for radio button responses 1`] = `
           "severity": "",
           "toast": "",
         },
+        "userPermissions": Array [],
         "userProfile": Object {},
         "userRoles": Array [],
       },
@@ -64,6 +64,7 @@ exports[`renders correctly for slider responses 1`] = `
           "severity": "",
           "toast": "",
         },
+        "userPermissions": Array [],
         "userProfile": Object {},
         "userRoles": Array [],
       },
