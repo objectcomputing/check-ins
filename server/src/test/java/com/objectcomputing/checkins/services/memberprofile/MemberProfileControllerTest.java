@@ -561,4 +561,30 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertProfilesEqual(memberProfile, Objects.requireNonNull(response.body().get(0)));
     }
 
+    @Test
+    public void testBirthdayIsFilteredForNonAdmin() throws UnsupportedEncodingException {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/?firstName=%s", encodeValue(memberProfile.getFirstName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
+
+        assertEquals(Set.of(memberProfile), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    public void testBirthdayNotFilteredForAdmin() throws UnsupportedEncodingException {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/?firstName=%s", encodeValue(memberProfile.getFirstName()))).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
+
+        assertEquals(Set.of(memberProfile), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
 }
