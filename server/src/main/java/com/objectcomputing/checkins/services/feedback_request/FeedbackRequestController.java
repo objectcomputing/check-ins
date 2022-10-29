@@ -120,9 +120,9 @@ public class FeedbackRequestController {
      * @return list of {@link FeedbackRequestResponseDTO}
      */
     @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_REQUEST)
-    @Get("/{?creatorId,requesteeId,recipientId,oldestDate}")
-    public Mono<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {
-        return Mono.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate))
+    @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId}")
+    public Mono<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId) {
+        return Mono.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(feedbackReqs -> {
                     List<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
@@ -142,6 +142,7 @@ public class FeedbackRequestController {
         dto.setDueDate(feedbackRequest.getDueDate());
         dto.setStatus(feedbackRequest.getStatus());
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
+        dto.setReviewPeriodId(feedbackRequest.getReviewPeriodId());
 
         return dto;
     }
@@ -155,7 +156,8 @@ public class FeedbackRequestController {
                 dto.getSendDate(),
                 dto.getDueDate(),
                 dto.getStatus(),
-                dto.getSubmitDate());
+                dto.getSubmitDate(),
+                dto.getReviewPeriodId());
     }
 
 }

@@ -6,6 +6,7 @@ import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.validation.constraints.NotNull;
 
 import javax.persistence.Column;
@@ -64,7 +65,6 @@ public class FeedbackRequest {
 
     @Column(name = "status")
     @NotNull
-    @TypeDef(type = DataType.STRING)
     @Schema(description = "completion status of request", required = true)
     private String status;
 
@@ -73,6 +73,12 @@ public class FeedbackRequest {
     @Schema(description = "date the recipient submitted feedback for the request")
     private LocalDate submitDate;
 
+    @Column(name = "review_period_id")
+    @TypeDef(type = DataType.STRING)
+    @Nullable
+    @Schema(description = "the id of the review period in that this request was created for")
+    private UUID reviewPeriodId;
+
     public FeedbackRequest(UUID creatorId,
                            UUID requesteeId,
                            UUID recipientId,
@@ -80,7 +86,8 @@ public class FeedbackRequest {
                            LocalDate sendDate,
                            @Nullable LocalDate dueDate,
                            String status,
-                           @Nullable LocalDate submitDate) {
+                           @Nullable LocalDate submitDate,
+                           @Nullable UUID reviewPeriodId) {
         this.id = null;
         this.creatorId = creatorId;
         this.requesteeId = requesteeId;
@@ -90,6 +97,7 @@ public class FeedbackRequest {
         this.dueDate = dueDate;
         this.status = status;
         this.submitDate = submitDate;
+        this.reviewPeriodId = reviewPeriodId;
     }
 
     public FeedbackRequest() {}
@@ -125,7 +133,6 @@ public class FeedbackRequest {
     public void setRecipientId(UUID recipientId) {
         this.recipientId = recipientId;
     }
-
 
     public UUID getTemplateId() {
         return templateId;
@@ -169,6 +176,14 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
+    @Nullable
+    public UUID getReviewPeriodId() {
+        return reviewPeriodId;
+    }
+
+    public void setReviewPeriodId(UUID reviewPeriodId) {
+        this.reviewPeriodId = reviewPeriodId;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -183,12 +198,13 @@ public class FeedbackRequest {
                 && Objects.equals(sendDate, that.sendDate)
                 && Objects.equals(dueDate, that.dueDate)
                 && Objects.equals(status, that.status)
-                && Objects.equals(submitDate, that.submitDate);
+                && Objects.equals(submitDate, that.submitDate)
+                && Objects.equals(reviewPeriodId, that.reviewPeriodId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, templateId, dueDate, status, submitDate);
+        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, templateId, dueDate, status, submitDate, reviewPeriodId);
     }
 
     @Override
@@ -203,6 +219,7 @@ public class FeedbackRequest {
                 ", dueDate=" + dueDate +
                 ", status='" + status +
                 ", submitDate='" + submitDate +
+                ", reviewPeriodId='" + reviewPeriodId +
                 '}';
     }
 }

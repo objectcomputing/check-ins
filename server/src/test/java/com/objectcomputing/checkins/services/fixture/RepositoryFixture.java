@@ -21,6 +21,7 @@ import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleRepository;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionRepository;
@@ -172,5 +173,9 @@ public interface RepositoryFixture {
 
     default EmailRepository getEmailRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EmailRepository.class);
+    }
+
+    default ReviewPeriodRepository getReviewPeriodRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(ReviewPeriodRepository.class);
     }
 }

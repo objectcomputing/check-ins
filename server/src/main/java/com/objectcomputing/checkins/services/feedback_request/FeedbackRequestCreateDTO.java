@@ -42,6 +42,9 @@ public class FeedbackRequestCreateDTO {
     @Schema(description = "date the recipient submitted feedback for the request")
     private LocalDate submitDate;
 
+    @Nullable
+    @Schema(description = "the id of the review period in that this request was created for")
+    private UUID reviewPeriodId;
 
     public UUID getCreatorId() {
         return creatorId;
@@ -107,6 +110,15 @@ public class FeedbackRequestCreateDTO {
 
     public void setSubmitDate(@Nullable LocalDate submitDate) {
         this.submitDate = submitDate;
+    }
+
+    @Nullable
+    public UUID getReviewPeriodId() {
+        return reviewPeriodId;
+    }
+
+    public void setReviewPeriodId(@Nullable UUID reviewPeriodId) {
+        this.reviewPeriodId = reviewPeriodId;
     }
 
 }
