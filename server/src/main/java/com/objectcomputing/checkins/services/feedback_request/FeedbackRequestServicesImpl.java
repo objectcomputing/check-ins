@@ -141,6 +141,13 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
+        // If a status update is made to anything other than submitted by the requestee, throw an error.
+        if (!feedbackRequest.getStatus().equals("submitted") && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())) {
+            if(currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
+                throw new PermissionException("You are not authorized to do this operation");
+            }
+        }
+
         if (feedbackRequest.getStatus().equals("canceled") && originalFeedback.getStatus().equals("submitted")) {
             throw new BadArgException("Attempted to cancel a feedback request that was already submitted");
         }

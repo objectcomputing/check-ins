@@ -1,12 +1,11 @@
-import React, {useContext, useCallback, useEffect, useState, useRef} from "react";
+import React, {useContext, useCallback, useEffect, useState} from "react";
 import { styled } from '@mui/material/styles';
 import Typography from "@mui/material/Typography";
 import { useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import {AppContext} from "../context/AppContext";
-import {selectCsrfToken, selectCurrentUser} from "../context/selectors";
+import {selectCurrentUser} from "../context/selectors";
 import ReviewPeriods from "../components/reviews/periods/ReviewPeriods";
-import SelfReview from "../components/reviews/self/SelfReview";
 
 const PREFIX = 'ReviewPage';
 const classes = {
@@ -55,15 +54,12 @@ const Root = styled('div')(({theme}) => ({
 }));
 
 const ReviewPage = () => {
-  const {state, dispatch} = useContext(AppContext);
+  const {state} = useContext(AppContext);
   const memberProfile = selectCurrentUser(state);
-  const currentUserId = memberProfile?.id;
   const location = useLocation();
   const history = useHistory();
-  const csrf = selectCsrfToken(state);
   const [query, setQuery] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
-  const queryLoaded = useRef(false);
 
   const handleQueryChange = useCallback((key, value) => {
     let newQuery = {

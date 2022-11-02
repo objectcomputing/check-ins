@@ -1,13 +1,11 @@
-import React, {useCallback, useEffect, useContext, useState} from "react";
+import React, {useEffect, useContext, useState} from "react";
 import PropTypes from "prop-types";
-import Typography from "@mui/material/Typography";
 import { UPDATE_TOAST } from "../../../context/actions";
 import { AppContext } from "../../../context/AppContext";
 import FeedbackSubmitForm from "../../feedback_submit_form/FeedbackSubmitForm";
 import { createFeedbackRequest, findSelfReviewRequestsByPeriodAndTeamMember } from "../../../api/feedback.js";
 import {
   selectCsrfToken,
-  selectUserProfile,
   selectCurrentUserId,
   selectCurrentUser,
   selectReviewPeriod,

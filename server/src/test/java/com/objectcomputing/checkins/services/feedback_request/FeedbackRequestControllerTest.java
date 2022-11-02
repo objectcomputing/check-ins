@@ -186,26 +186,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    void testCreateFeedbackRequestFailsWhenRecipientAndRequesteeAreSame() {
-        //create two member profiles: one for normal employee, one for PDL of normal employee
-        final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        assignPdlRole(pdlMemberProfile);
-        final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
-
-        //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, employeeMemberProfile);
-        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
-
-        //send feedback request
-        final HttpRequest<?> request = HttpRequest.POST("", dto)
-                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class));
-
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-    }
-
-    @Test
     void testCreateFeedbackRequestByAssignedPDL() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
@@ -380,26 +360,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         String error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message").asText();
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals("requestBody.requesteeId: must not be null", error);
-    }
-
-    @Test
-    void testCreateFeedbackRequestWithSameRecipientAndRequestee() {
-        MemberProfile admin = createADefaultMemberProfile();
-        MemberProfile requestee = createASecondDefaultMemberProfile();
-        assignAdminRole(admin);
-
-        // Create feedback request with with same requestee and recipient ids
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, requestee);
-        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
-
-        // Post feedback request
-        final HttpRequest<?> request = HttpRequest.POST("", dto)
-                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("The requestee must not be the same person as the recipient", responseException.getMessage());
     }
 
     @Test
@@ -1166,7 +1126,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackReq.setStatus("canceled");
-        feedbackReq.setDueDate(null);
+
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -1186,7 +1146,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackReq.setStatus("canceled");
-        feedbackReq.setDueDate(null);
+
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -1209,7 +1169,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final FeedbackRequest submittedFeedbackRequest = saveSampleFeedbackRequestWithStatus(pdlMemberProfile, employeeMemberProfile, recipient, template.getId(), "submitted");
 
         submittedFeedbackRequest.setStatus("canceled");
-        submittedFeedbackRequest.setDueDate(null);
+
         final FeedbackRequestUpdateDTO dto = updateDTO(submittedFeedbackRequest);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -1229,7 +1189,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackReq.setStatus("canceled");
-        feedbackReq.setDueDate(null);
+
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
