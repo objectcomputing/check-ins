@@ -16,6 +16,7 @@ exports[`renders correctly 1`] = `
         },
         "memberProfiles": Array [],
         "memberSkills": Array [],
+        "reviewPeriods": Array [],
         "roles": Array [],
         "skills": Array [],
         "teams": Array [],
