@@ -12,6 +12,9 @@ import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,8 @@ import java.util.UUID;
 
 @Singleton
 public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
+
+    private static Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImpl.class);
 
     public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
     public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
@@ -73,10 +78,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         } catch (NotFoundException e) {
             throw new BadArgException("Cannot save feedback request with invalid requestee ID");
         }
-
-        if (feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
-            throw new BadArgException("The requestee must not be the same person as the recipient");
-        }
     }
 
     @Override
@@ -117,6 +118,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
          * submit date can be updated only when the recipient is logged in--fired on submission from any recipient
          */
 
+        LOG.warn("Performing update...");
+
         final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
         FeedbackRequest originalFeedback = null;
 
@@ -124,12 +127,17 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             originalFeedback = getById(feedbackRequest.getId());
         }
 
+        LOG.warn(String.format("Original { due: %s , submit: %s }", originalFeedback.getDueDate(), originalFeedback.getSubmitDate()));
+        LOG.warn(String.format("Updated { due: %s , submit: %s }", feedbackRequest.getDueDate(), feedbackRequest.getSubmitDate()));
+
         if (originalFeedback == null) {
             throw new BadArgException("Cannot update feedback request that does not exist");
         }
 
         validateMembers(originalFeedback);
 
+        LOG.warn(String.format("Original { due: %s , submit: %s }", originalFeedback.getDueDate(), originalFeedback.getSubmitDate()));
+        LOG.warn(String.format("Updated { due: %s , submit: %s }", feedbackRequest.getDueDate(), feedbackRequest.getSubmitDate()));
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
@@ -204,14 +212,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId) || currentUserId.equals(recipientId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId)));
+                LOG.warn(String.format("template: %s, reviewPeriod: %s, requestee: %s", templateId, reviewPeriodId, requesteeId));
+                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId)));
             } else {
                 throw new PermissionException("You are not authorized to do this operation");
             }
@@ -223,10 +232,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean createIsPermitted(UUID requesteeId) {
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
+        MemberProfile requestee = memberProfileServices.getById(requesteeId);
+        final UUID requsteeSupervisor = requestee.getSupervisorid();
+        final UUID requesteePDL = requestee.getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
-        return isAdmin || currentUserId.equals(requesteePDL);
+        return isAdmin || currentUserId.equals(requesteePDL) || currentUserId.equals(requsteeSupervisor) || currentUserId.equals(requesteeId);
     }
 
     private boolean getIsPermitted(UUID requesteeId, UUID recipientId, LocalDate sendDate) {

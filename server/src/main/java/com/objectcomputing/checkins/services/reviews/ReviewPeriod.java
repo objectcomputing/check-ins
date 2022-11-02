@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.reviews;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -36,21 +37,35 @@ public class ReviewPeriod {
     @Schema(description = "Whether or not the review period is open")
     private boolean open = true;
 
+    @Column(name = "review_template_id")
+    @TypeDef(type = DataType.STRING)
+    @Nullable
+    @Schema(description = "the id of the review template to be used for this review period")
+    private UUID reviewTemplateId;
+
+    @Column(name = "self_review_template_id")
+    @TypeDef(type = DataType.STRING)
+    @Nullable
+    @Schema(description = "the id of the self-review template to be used for this review period")
+    private UUID selfReviewTemplateId;
+
     public ReviewPeriod() {
     }
 
     public ReviewPeriod(String name) {
-        this(name, true);
+        this(name, true, null, null);
     }
 
     public ReviewPeriod(UUID id, String name, boolean open) {
-        this(name, open);
+        this(name, open, null, null);
         this.id = id;
     }
 
-    public ReviewPeriod(String name, boolean open) {
+    public ReviewPeriod(String name, boolean open, UUID reviewTemplateId, UUID selfReviewTemplateId) {
         this.name = name;
         this.open = open;
+        this.reviewTemplateId = reviewTemplateId;
+        this.selfReviewTemplateId = selfReviewTemplateId;
     }
 
     public UUID getId() {
@@ -71,19 +86,27 @@ public class ReviewPeriod {
 
     public boolean isOpen() { return open; }
 
-    public void setOpen(boolean extraneous) { this.open = open; }
+    public void setOpen(boolean open) { this.open = open; }
+
+    public UUID getReviewTemplateId() { return reviewTemplateId; }
+
+    public void setReviewTemplateId(UUID reviewTemplateId) { this.reviewTemplateId = reviewTemplateId; }
+
+    public UUID getSelfReviewTemplateId() { return selfReviewTemplateId; }
+
+    public void setSelfReviewTemplateId(UUID selfReviewTemplateId) { this.selfReviewTemplateId = selfReviewTemplateId; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReviewPeriod that = (ReviewPeriod) o;
-        return open == that.open && Objects.equals(id, that.id) && name.equals(that.name);
+        return open == that.open && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(reviewTemplateId, that.reviewTemplateId) && Objects.equals(selfReviewTemplateId, that.selfReviewTemplateId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, open);
+        return Objects.hash(id, name, open, reviewTemplateId, selfReviewTemplateId);
     }
 
     @Override
@@ -92,6 +115,8 @@ public class ReviewPeriod {
         sb.append("id=").append(id);
         sb.append(", name='").append(name).append('\'');
         sb.append(", open=").append(open);
+        sb.append(", reviewTemplateId=").append(reviewTemplateId);
+        sb.append(", selfReviewTemplateId=").append(selfReviewTemplateId);
         sb.append('}');
         return sb.toString();
     }

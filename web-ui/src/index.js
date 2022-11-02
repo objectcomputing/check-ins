@@ -1,11 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import CssBaseline from '@mui/material/CssBaseline';
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
-    <App />, 
+    <><CssBaseline /><App /></>,
   document.getElementById("root")
 );
 

@@ -48,7 +48,7 @@ public class ReviewPeriodController {
     @Post()
     public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<ReviewPeriodCreateDTO> request) {
 
-        return Mono.fromCallable(() -> reviewPeriodServices.save(new ReviewPeriod(period.getName(), period.isOpen())))
+        return Mono.fromCallable(() -> reviewPeriodServices.save(new ReviewPeriod(period.getName(), period.isOpen(), period.getReviewTemplateId(), period.getSelfReviewTemplateId())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(reviewPeriod -> {
                     return (HttpResponse<ReviewPeriod>) HttpResponse.created(reviewPeriod)

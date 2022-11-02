@@ -3,7 +3,9 @@ DROP TABLE IF EXISTS review_periods;
 CREATE TABLE review_periods (
   id varchar PRIMARY KEY,
   name varchar,
-  open boolean
+  open boolean,
+  review_template_id varchar REFERENCES feedback_templates(id),
+  self_review_template_id varchar REFERENCES feedback_templates(id)
 );
 
 ALTER TABLE feedback_requests

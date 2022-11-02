@@ -5,6 +5,8 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -14,6 +16,8 @@ import java.util.UUID;
 
 @Singleton
 public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ReviewPeriodServicesImpl.class);
 
     private final ReviewPeriodRepository reviewPeriodRepository;
     private final CurrentUserServices currentUserServices;
@@ -78,7 +82,7 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You do not have permission to access this resource");
         }
-
+        LOG.warn(String.format("Updating entity %s", reviewPeriod));
         if (reviewPeriod.getId() != null && reviewPeriodRepository.findById(reviewPeriod.getId()).isPresent()) {
             return reviewPeriodRepository.update(reviewPeriod);
         } else {
