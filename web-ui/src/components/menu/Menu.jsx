@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
-import { selectCsrfToken, selectIsAdmin } from "../../context/selectors";
+import { selectCsrfToken, selectIsAdmin, selectTeamMembersBySupervisor } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import { useLocation, Link } from "react-router-dom";
@@ -104,12 +104,29 @@ const directoryLinks = [
   ["/teams", "Teams"],
 ];
 
-const getFeedbackLinks = (isAdmin, isPDL) => isAdmin || isPDL ?
+const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => (isAdmin || isPDL) && isSupervisor ?
     [
       ["/feedback/view", "View Feedback"],
-      ["/feedback/received-requests", "Received Requests"]
+      ["/feedback/received-requests", "Received Requests"],
+      ["/feedback/reviews", "Reviews"],
+      ["/feedback/self-review", "Self-Review"]
     ] :
-    [ ["/feedback/received-requests", "Received Requests"] ];
+    isAdmin || isPDL ?
+    [
+      ["/feedback/view", "View Feedback"],
+      ["/feedback/received-requests", "Received Requests"],
+      ["/feedback/self-review", "Self-Review"]
+    ] :
+    isSupervisor ?
+    [
+      ["/feedback/received-requests", "Received Requests"],
+      ["/feedback/reviews", "Reviews"],
+      ["/feedback/self-review", "Self-Review"]
+    ] :
+    [
+      ["/feedback/received-requests", "Received Requests"],
+      ["/feedback/self-review", "Self-Review"]
+    ];
 
 const reportsLinks = [
   ["/annual-review-reports", "Annual Reviews"],
@@ -135,6 +152,8 @@ function Menu() {
   const isAdmin = selectIsAdmin(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
+  const isSupervisor = selectTeamMembersBySupervisor(state);
+
 
   const theme = useTheme();
   const location = useLocation();
@@ -144,7 +163,7 @@ function Menu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [showHoursUpload, setShowHoursUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const feedbackLinks = getFeedbackLinks(isAdmin, isPDL);
+  const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
