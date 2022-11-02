@@ -106,13 +106,16 @@ const directoryLinks = [
 
 const getFeedbackLinks = (isAdmin, isPDL) => isAdmin || isPDL ?
     [
+      ["/feedback/self-reviews", "Self-Reviews"],
       ["/feedback/view", "View Feedback"],
       ["/feedback/received-requests", "Received Requests"]
     ] :
-    [ ["/feedback/received-requests", "Received Requests"] ];
+    [
+      ["/feedback/self-reviews", "Self-Reviews"],
+      ["/feedback/received-requests", "Received Requests"]
+    ];
 
 const reportsLinks = [
-  ["/annual-review-reports", "Annual Reviews"],
   ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
   ["/checkins-reports", "Check-ins"],
   ["/skills-reports", "Skills"],

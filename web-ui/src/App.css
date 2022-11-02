@@ -2,7 +2,7 @@
   --nav-width: 150px;
 }
 
-@media (min-width: 750px) {
+@media (min-width: 600px) {
   .App {
     padding-left: 150px;
   }

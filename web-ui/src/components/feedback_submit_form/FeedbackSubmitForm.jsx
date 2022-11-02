@@ -74,11 +74,11 @@ const propTypes = {
   request: PropTypes.any.isRequired,
 };
 
-const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
+const FeedbackSubmitForm = ({ requesteeName, requestId, request, reviewOnly = false }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const [isLoading, setIsLoading] = useState(false);
-  const [isReviewing, setIsReviewing] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(reviewOnly);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([]);
 
@@ -103,7 +103,9 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   async function updateAllAnswersSubmit(){
     let answers = [];
     for (let i = 0; i < questionAnswerPairs.length; ++i) {
-      answers.push(questionAnswerPairs[i].answer || {})
+      if(questionAnswerPairs[i]?.answer) {
+        answers.push(questionAnswerPairs[i].answer);
+      }
     }
     return await updateAllAnswers(answers, csrf)
   }
@@ -196,7 +198,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
           }}
         />
       ))}
-      <div className="submit-action-buttons">
+      {!reviewOnly && (<div className="submit-action-buttons">
         {isReviewing ?
         (<React.Fragment>
             <Button
@@ -224,7 +226,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             color="primary">
             Review
           </Button>}
-      </div>
+      </div>)}
     </Root>
   );
 };

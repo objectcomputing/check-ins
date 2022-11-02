@@ -35,7 +35,7 @@ public class CheckServicesImpl implements CheckServices {
     public boolean GetTodaysRequests() {
         LocalDate today = LocalDate.now();
         List<FeedbackRequest> todaysRequests = new ArrayList<>();
-        todaysRequests.addAll(feedbackReqRepository.findByValues(null, null, null, today));
+        todaysRequests.addAll(feedbackReqRepository.findByValues(null, null, null, today, null, null));
         for (FeedbackRequest req: todaysRequests) {
             String newContent =  notificationContent + "<a href=\""+submitURL+req.getId()+"\">Check-Ins application</a>.";
             emailSender.sendEmail(notificationSubject, newContent);

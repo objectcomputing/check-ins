@@ -27,7 +27,9 @@ import {
   UPDATE_TOAST,
   UPDATE_USER_BIO,
   UPDATE_PEOPLE_LOADING,
-  UPDATE_TEAMS_LOADING
+  UPDATE_TEAMS_LOADING,
+  UPDATE_REVIEW_PERIODS,
+  ADD_REVIEW_PERIOD,
 } from "./actions";
 
 export const initialState = {
@@ -51,6 +53,7 @@ export const initialState = {
     toast: "",
   },
   userProfile: {},
+  reviewPeriods: [],
 };
 
 export const reducer = (state, action) => {
@@ -226,7 +229,12 @@ export const reducer = (state, action) => {
       state.guilds.sort((a, b) => a.name.localeCompare(b.name));
       state.guilds = [...state.guilds];
       break;
-      
+    case UPDATE_REVIEW_PERIODS:
+      state.reviewPeriods = action.payload;
+      break;
+    case ADD_REVIEW_PERIOD:
+      state.reviewPeriods = [...state.reviewPeriods, action.payload];
+      break;
     default:
   }
   return { ...state };

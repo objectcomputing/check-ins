@@ -13,6 +13,7 @@ export const selectUserRoles = (state) => state.userRoles;
 export const selectTeams = (state) => state.teams;
 export const selectGuilds = (state) => state.guilds;
 export const selectLoading = (state) => state.loading;
+export const selectReviewPeriods = (state) => state.reviewPeriods;
 
 export const selectTeamsLoading = createSelector (
   selectLoading,
@@ -358,4 +359,23 @@ export const selectMyTeams = createSelector(
     teams?.filter((team) =>
       team.teamMembers?.some((member) => member.memberId === id)
     )
+);
+
+export const selectReviewPeriodMap = createSelector(
+  selectReviewPeriods,
+  (reviewPeriods) => {
+    if (reviewPeriods && reviewPeriods.length) {
+      reviewPeriods = reviewPeriods.reduce((mappedById, period) => {
+        mappedById[period.id] = period;
+        return mappedById;
+      }, {});
+    }
+    return reviewPeriods;
+  }
+);
+
+export const selectReviewPeriod = createSelector(
+  selectReviewPeriodMap,
+  (state, periodId) => periodId,
+  (periodMap, periodId) => periodMap[periodId]
 );
