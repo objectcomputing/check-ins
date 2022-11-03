@@ -103,7 +103,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request, reviewOnly = fa
   async function updateAllAnswersSubmit(){
     let answers = [];
     for (let i = 0; i < questionAnswerPairs.length; ++i) {
-      if(questionAnswerPairs[i]?.answer) {
+      if(questionAnswerPairs[i]?.answer && questionAnswerPairs[i]?.answer?.id && questionAnswerPairs[i]?.answer?.answer) {
         answers.push(questionAnswerPairs[i].answer);
       }
     }
