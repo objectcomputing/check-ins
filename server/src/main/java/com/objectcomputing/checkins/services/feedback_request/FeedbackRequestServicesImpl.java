@@ -118,8 +118,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
          * submit date can be updated only when the recipient is logged in--fired on submission from any recipient
          */
 
-        LOG.warn("Performing update...");
-
         final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
         FeedbackRequest originalFeedback = null;
 
@@ -127,17 +125,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             originalFeedback = getById(feedbackRequest.getId());
         }
 
-        LOG.warn(String.format("Original { due: %s , submit: %s }", originalFeedback.getDueDate(), originalFeedback.getSubmitDate()));
-        LOG.warn(String.format("Updated { due: %s , submit: %s }", feedbackRequest.getDueDate(), feedbackRequest.getSubmitDate()));
-
         if (originalFeedback == null) {
             throw new BadArgException("Cannot update feedback request that does not exist");
         }
 
         validateMembers(originalFeedback);
 
-        LOG.warn(String.format("Original { due: %s , submit: %s }", originalFeedback.getDueDate(), originalFeedback.getSubmitDate()));
-        LOG.warn(String.format("Updated { due: %s , submit: %s }", feedbackRequest.getDueDate(), feedbackRequest.getSubmitDate()));
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
