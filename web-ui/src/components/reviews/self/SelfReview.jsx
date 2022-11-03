@@ -1,8 +1,9 @@
 import React, {useEffect, useContext, useState} from "react";
 import PropTypes from "prop-types";
-import { UPDATE_TOAST } from "../../../context/actions";
+import { UPDATE_TOAST, UPDATE_REVIEW_PERIODS } from "../../../context/actions";
 import { AppContext } from "../../../context/AppContext";
 import FeedbackSubmitForm from "../../feedback_submit_form/FeedbackSubmitForm";
+import { getReviewPeriods } from "../../../api/reviewperiods.js";
 import { createFeedbackRequest, findSelfReviewRequestsByPeriodAndTeamMember } from "../../../api/feedback.js";
 import {
   selectCsrfToken,
@@ -28,6 +29,26 @@ const SelfReview = ({ periodId, onBack }) => {
   const period = selectReviewPeriod(state, periodId);
 
   useEffect(() => {
+    const getAllReviewPeriods = async () => {
+      const res = await getReviewPeriods(csrf);
+      const data =
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: data});
+      }
+    };
+    if (csrf) {
+      getAllReviewPeriods();
+    }
+  }, [csrf, dispatch]);
+
+  useEffect(() => {
     const createSelfReview = async () => {
       if(!memberProfile?.supervisorid) {
         dispatch({
@@ -51,7 +72,7 @@ const SelfReview = ({ periodId, onBack }) => {
           res &&
           res.payload &&
           res.payload.data &&
-          res.payload.status === 200 &&
+          res.payload.status === 201 &&
           !res.error
             ? res.payload.data
             : null;
