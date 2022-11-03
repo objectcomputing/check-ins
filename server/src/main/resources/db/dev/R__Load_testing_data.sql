@@ -692,7 +692,7 @@ VALUES
 INSERT INTO template_questions
 (id, question, template_id, question_number, input_type)
 VALUES
-('2ffa7f2d-3d83-4ffe-b4f2-e8fc10e77170', PGP_SYM_ENCRYPT('How often has this team member displayed each of the following behaviors during the period covered by this review?', '${aeskey}'), '926a37a4-4ded-4633-8900-715b0383aecc', 2, 'NONE');
+('2ffa7f2d-3d83-4ffe-b4f2-e8fc10e77170', PGP_SYM_ENCRYPT('How often did you display each of the following behaviors during the period covered by this review?', '${aeskey}'), '926a37a4-4ded-4633-8900-715b0383aecc', 2, 'NONE');
 
 INSERT INTO template_questions
 (id, question, template_id, question_number, input_type)
@@ -732,7 +732,7 @@ VALUES
 INSERT INTO template_questions
 (id, question, template_id, question_number, input_type)
 VALUES
-('82be76a8-0cf8-427d-9d6a-763c23c05db2', PGP_SYM_ENCRYPT('What significant accomplishments, contributions, or examples of displaying the OCI Values have you had during the period covered by this review?', '${aeskey}'), '926a37a4-4ded-4633-8900-715b0383aecc', 10, 'TEXT');
+('82be76a8-0cf8-427d-9d6a-763c23c05db2', PGP_SYM_ENCRYPT('What significant accomplishments, contributions, or examples of displaying the OCI Values have you had during the period covered by this review? (Completed projects, guild participation, tech talks, SETT articles, volunteer activities, etc.)', '${aeskey}'), '926a37a4-4ded-4633-8900-715b0383aecc', 10, 'TEXT');
 
 INSERT INTO template_questions
 (id, question, template_id, question_number, input_type)
