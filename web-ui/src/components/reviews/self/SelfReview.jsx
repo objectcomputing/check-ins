@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useState} from "react";
+import React, {useEffect, useContext, useState, useRef} from "react";
 import PropTypes from "prop-types";
 import { UPDATE_TOAST, UPDATE_REVIEW_PERIODS } from "../../../context/actions";
 import { AppContext } from "../../../context/AppContext";
@@ -27,6 +27,7 @@ const SelfReview = ({ periodId, onBack }) => {
   const csrf = selectCsrfToken(state);
   const [selfReview, setSelfReview] = useState(null);
   const period = selectReviewPeriod(state, periodId);
+  const loadingReview = useRef(false);
 
   useEffect(() => {
     const getAllReviewPeriods = async () => {
@@ -78,6 +79,8 @@ const SelfReview = ({ periodId, onBack }) => {
             : null;
         if (data) {
           setSelfReview(data);
+        } else {
+          loadingReview.current = false;
         }
       }
     };
@@ -99,7 +102,8 @@ const SelfReview = ({ periodId, onBack }) => {
       }
     };
 
-    if (csrf && !selfReview && currentUserId && memberProfile && period) {
+    if (csrf && !selfReview && currentUserId && memberProfile && period && !loadingReview.current) {
+      loadingReview.current = true;
       getReviewRequest();
     }
   }, [csrf, period, selfReview, currentUserId, memberProfile, dispatch]);
