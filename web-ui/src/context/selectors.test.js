@@ -10,7 +10,7 @@ import {
   selectCurrentMembers,
   selectNormalizedMembers,
   selectNormalizedTeams,
-  selectMostRecentCheckin,
+  selectMostRecentCheckin, selectSupervisors,
 } from "./selectors";
 
 describe("Selectors", () => {
@@ -827,4 +827,65 @@ it("selectMostRecentCheckin should return the most recent and or open checkin", 
 
   console.log(selectMostRecentCheckin(state, memberId));
   expect(selectMostRecentCheckin(state, memberId)).toEqual(expectedResult);
+});
+
+it("selectSupervisors should return only members who are supervisors", () => {
+  const testMemberProfiles = [
+    {
+      id: 1,
+      employeeId: 11,
+      name: "Big Boss",
+      firstName: "Big",
+      lastName: "Boss",
+      supervisorId: 15,
+    },
+    {
+      id: 2,
+      employeeId: 12,
+      name: "Huey Emmerich",
+      firstName: "Huey",
+      lastName: "Emmerich",
+      supervisorId: 11,
+    },
+    {
+      id: 3,
+      employeeId: 13,
+      name: "Kazuhira Miller",
+      firstName: "Kazuhira",
+      lastName: "Miller",
+      supervisorId: 11,
+    },
+    {
+      id: 4,
+      employeeId: 14,
+      name: "Revolver Ocelot",
+      firstName: "Revolver",
+      lastName: "Ocelot",
+      supervisorId: 9,
+    },
+    {
+      id: 5,
+      employeeId: 15,
+      name: "The Boss",
+      firstName: "The",
+      lastName: "Boss",
+      supervisorId: 1,
+    },
+  ]
+
+  const testState = {
+    memberProfiles: [
+      testMemberProfiles[0],
+      testMemberProfiles[1],
+      testMemberProfiles[2],
+      testMemberProfiles[3],
+      testMemberProfiles[4]
+    ],
+  };
+
+  const expectedResult = {
+    supervisors: [11, 15]
+  }
+
+  expect(selectSupervisors(testState)).toEqual(expectedResult);
 });

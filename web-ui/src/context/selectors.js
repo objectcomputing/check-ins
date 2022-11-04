@@ -240,10 +240,10 @@ export const selectPDLCheckinMap = createSelector(selectCheckins, (checkins) =>
   }, {})
 );
 
-export const selectTeamMembersBySupervisor = createSelector(
+export const selectSupervisors = createSelector(
   selectMemberProfiles,
   (memberProfiles) => {
-    let supervisor = memberProfiles.supervisorId;
+    let supervisor = memberProfiles.supervisorid;
     const supervisors = [];
 
     const inSupervisors = supervisors.find(
