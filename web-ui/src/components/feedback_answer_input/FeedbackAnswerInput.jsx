@@ -8,6 +8,7 @@ import Slider from "@mui/material/Slider";
 import withStyles from "@mui/styles/withStyles";
 
 const agreeMarks = ["Strongly Disagree", "Disagree", "Neither Agree nor Disagree", "Agree", "Strongly Agree"];
+const frequencyMarks = ["Very Infrequently", "Infrequently", "Neither Frequently nor Infrequently", "Frequently", "Very Frequently"];
 
 const ReadOnlyTextField = withStyles({
   root: {
@@ -32,6 +33,8 @@ const FeedbackAnswerInput = ({ inputType, readOnly, answer, onAnswerChange }) =>
     if (!onAnswerChange) return;
     if (inputType === "SLIDER") {
       onAnswerChange(agreeMarks[value]);
+    } else if (inputType === "FREQ") {
+      onAnswerChange(frequencyMarks[value]);
     } else {
       onAnswerChange(event.target.value);
     }
@@ -74,7 +77,6 @@ const FeedbackAnswerInput = ({ inputType, readOnly, answer, onAnswerChange }) =>
         >
           <FormControlLabel disabled={readOnly} value="Yes" control={<Radio/>} label="Yes"/>
           <FormControlLabel disabled={readOnly} value="No" control={<Radio/>} label="No"/>
-          <FormControlLabel disabled={readOnly} value="I don't know" control={<Radio/>} label="I don't know"/>
         </RadioGroup>
       );
       break;
@@ -88,6 +90,22 @@ const FeedbackAnswerInput = ({ inputType, readOnly, answer, onAnswerChange }) =>
           value={agreeMarks.findIndex(mark => mark === answer)}
           step={1}
           marks={agreeMarks.map((mark, index) => {
+            return { value: index, label: mark }
+          })}
+          onChange={handleChange}
+        />
+      );
+      break;
+    case "FREQ":
+      inputField = (
+        <Slider
+          className="feedback-answer-slider"
+          disabled={readOnly}
+          min={0}
+          max={frequencyMarks.length - 1}
+          value={frequencyMarks.findIndex(mark => mark === answer)}
+          step={1}
+          marks={frequencyMarks.map((mark, index) => {
             return { value: index, label: mark }
           })}
           onChange={handleChange}

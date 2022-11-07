@@ -4,12 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
-import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
-import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
-import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
-import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
@@ -40,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class FeedbackRequestControllerTest extends TestContainersSuite implements RepositoryFixture, MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture {
+public class FeedbackRequestControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture, ReviewPeriodFixture {
 
     @Inject
     @Client("/services/feedback/requests")
@@ -91,9 +88,20 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         return createSampleFeedbackRequest(creator, requestee, recipient, template.getId());
     }
 
+    private FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
+        FeedbackTemplate template = createAnotherFeedbackTemplate(creator.getId());
+        getFeedbackTemplateRepository().save(template);
+        return createSampleFeedbackRequest(creator, requestee, recipient, template.getId(), reviewPeriod);
+    }
+
     private FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
         final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
         return saveSampleFeedbackRequest(creator, requestee, recipient, feedbackRequest.getTemplateId());
+    }
+
+    private FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient, reviewPeriod);
+        return saveSampleFeedbackRequest(creator, requestee, recipient, feedbackRequest.getTemplateId(), reviewPeriod);
     }
 
     private FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, LocalDate sendDate) {
@@ -175,26 +183,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
-    }
-
-    @Test
-    void testCreateFeedbackRequestFailsWhenRecipientAndRequesteeAreSame() {
-        //create two member profiles: one for normal employee, one for PDL of normal employee
-        final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        assignPdlRole(pdlMemberProfile);
-        final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
-
-        //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, employeeMemberProfile);
-        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
-
-        //send feedback request
-        final HttpRequest<?> request = HttpRequest.POST("", dto)
-                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class));
-
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
@@ -375,26 +363,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    void testCreateFeedbackRequestWithSameRecipientAndRequestee() {
-        MemberProfile admin = createADefaultMemberProfile();
-        MemberProfile requestee = createASecondDefaultMemberProfile();
-        assignAdminRole(admin);
-
-        // Create feedback request with with same requestee and recipient ids
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, requestee);
-        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
-
-        // Post feedback request
-        final HttpRequest<?> request = HttpRequest.POST("", dto)
-                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("The requestee must not be the same person as the recipient", responseException.getMessage());
-    }
-
-    @Test
     void testCreateFeedbackRequestWithNoRecipients() {
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
@@ -563,6 +531,28 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+    }
+
+    @Test
+    void testGetFeedbackRequestByReviewPeriodId() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignAdminRole(pdlMemberProfile);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackRequest unrelatedRequest = saveFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, recipient, reviewPeriod);
+
+        //search for feedback requests by a specific creator
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?reviewPeriodId=%s", reviewPeriod.getId()))
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(1, response.getBody().get().size());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get().get(0));
     }
 
     @Test
@@ -1136,7 +1126,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackReq.setStatus("canceled");
-        feedbackReq.setDueDate(null);
+
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -1156,7 +1146,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackReq.setStatus("canceled");
-        feedbackReq.setDueDate(null);
+
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -1179,7 +1169,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final FeedbackRequest submittedFeedbackRequest = saveSampleFeedbackRequestWithStatus(pdlMemberProfile, employeeMemberProfile, recipient, template.getId(), "submitted");
 
         submittedFeedbackRequest.setStatus("canceled");
-        submittedFeedbackRequest.setDueDate(null);
+
         final FeedbackRequestUpdateDTO dto = updateDTO(submittedFeedbackRequest);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -1199,7 +1189,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackReq.setStatus("canceled");
-        feedbackReq.setDueDate(null);
+
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)

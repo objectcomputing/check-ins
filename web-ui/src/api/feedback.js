@@ -6,6 +6,20 @@ const feedbackRequestURL = "/services/feedback/requests";
 const answerURL = "/services/feedback/answers";
 const questionAndAnswerURL = "/services/feedback/questions-and-answers"
 
+export const findSelfReviewRequestsByPeriodAndTeamMember =  async (period, teamMemberId, cookie) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      reviewPeriodId: period?.id,
+      templateId: period?.selfReviewTemplateId,
+      requesteeId: teamMemberId,
+      recipientId: teamMemberId,
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+};
+
 export const getFeedbackSuggestion = async (id, cookie) => {
   return resolve({
     url: `${feedbackSuggestionURL}/${id}`,

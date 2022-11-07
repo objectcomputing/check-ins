@@ -29,7 +29,8 @@ import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/Feedback
 import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 import EmailPage from "../../pages/EmailPage";
-
+import ReviewsPage from "../../pages/ReviewsPage";
+import SelfReviewsPage from "../../pages/SelfReviewsPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -86,6 +87,12 @@ export default function Routes() {
       </Route>
       <Route path="/feedback/received-requests">
         <ReceivedRequestsPage />
+      </Route>
+      <Route path="/feedback/reviews">
+        <ReviewsPage />
+      </Route>
+      <Route path="/feedback/self-reviews">
+        <SelfReviewsPage />
       </Route>
 
       {isAdmin && (

@@ -106,6 +106,7 @@ const directoryLinks = [
 
 const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => (isAdmin || isPDL) && isSupervisor ?
     [
+      ["/feedback/self-reviews", "Self-Reviews"],
       ["/feedback/view", "View Feedback"],
       ["/feedback/received-requests", "Received Requests"],
       ["/feedback/reviews", "Reviews"],
@@ -129,7 +130,6 @@ const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => (isAdmin || isPDL) &&
     ];
 
 const reportsLinks = [
-  ["/annual-review-reports", "Annual Reviews"],
   ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
   ["/checkins-reports", "Check-ins"],
   ["/skills-reports", "Skills"],

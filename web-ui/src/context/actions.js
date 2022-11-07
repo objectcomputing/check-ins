@@ -27,6 +27,8 @@ export const UPDATE_TERMINATED_MEMBERS =
   "@@check-ins/update_terminated_members";
 export const UPDATE_TOAST = "@@check-ins/update_toast";
 export const UPDATE_USER_BIO = "@@check-ins/update_bio";
-export const UPDATE_FEEEDBACK_SUGGESTIONS = "@@check-ins/update_feedback_suggestions"
-export const UPDATE_PEOPLE_LOADING = "@@check-ins/update_people_loading"
-export const UPDATE_TEAMS_LOADING = "@@check-ins/update_teams_loading"
+export const UPDATE_FEEEDBACK_SUGGESTIONS = "@@check-ins/update_feedback_suggestions";
+export const UPDATE_PEOPLE_LOADING = "@@check-ins/update_people_loading";
+export const UPDATE_TEAMS_LOADING = "@@check-ins/update_teams_loading";
+export const UPDATE_REVIEW_PERIODS = "@@check-ins/update_review_periods";
+export const ADD_REVIEW_PERIOD = "@@check-ins/add_review_period";
