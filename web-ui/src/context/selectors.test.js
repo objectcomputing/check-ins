@@ -57,11 +57,7 @@ describe("Selectors", () => {
       },
     ];
     const testState = {
-      memberProfiles: {
-        [testMemberProfiles[0].id]: testMemberProfiles[0],
-        [testMemberProfiles[1].id]: testMemberProfiles[1],
-        [testMemberProfiles[2].id]: testMemberProfiles[2],
-      },
+      memberProfiles: testMemberProfiles
     };
 
     expect(selectMemberProfiles(testState)).toEqual(testState.memberProfiles);
@@ -837,7 +833,7 @@ it("selectSupervisors should return only members who are supervisors", () => {
       name: "Big Boss",
       firstName: "Big",
       lastName: "Boss",
-      supervisorId: 15,
+      supervisorid: 5,
     },
     {
       id: 2,
@@ -845,7 +841,7 @@ it("selectSupervisors should return only members who are supervisors", () => {
       name: "Huey Emmerich",
       firstName: "Huey",
       lastName: "Emmerich",
-      supervisorId: 11,
+      supervisorid: 1,
     },
     {
       id: 3,
@@ -853,7 +849,7 @@ it("selectSupervisors should return only members who are supervisors", () => {
       name: "Kazuhira Miller",
       firstName: "Kazuhira",
       lastName: "Miller",
-      supervisorId: 11,
+      supervisorid: 1,
     },
     {
       id: 4,
@@ -861,7 +857,7 @@ it("selectSupervisors should return only members who are supervisors", () => {
       name: "Revolver Ocelot",
       firstName: "Revolver",
       lastName: "Ocelot",
-      supervisorId: 9,
+      supervisorid: 3,
     },
     {
       id: 5,
@@ -869,23 +865,15 @@ it("selectSupervisors should return only members who are supervisors", () => {
       name: "The Boss",
       firstName: "The",
       lastName: "Boss",
-      supervisorId: 1,
+      supervisorid: 1,
     },
   ]
 
   const testState = {
-    memberProfiles: [
-      testMemberProfiles[0],
-      testMemberProfiles[1],
-      testMemberProfiles[2],
-      testMemberProfiles[3],
-      testMemberProfiles[4]
-    ],
+    memberProfiles: testMemberProfiles
   };
 
-  const expectedResult = {
-    supervisors: [11, 15]
-  }
+  const expectedResult = [testMemberProfiles[4], testMemberProfiles[0], testMemberProfiles[2]];
 
   expect(selectSupervisors(testState)).toEqual(expectedResult);
 });

@@ -241,23 +241,32 @@ export const selectPDLCheckinMap = createSelector(selectCheckins, (checkins) =>
 );
 
 export const selectSupervisors = createSelector(
-  selectMemberProfiles,
-  (memberProfiles) => {
-    let supervisor = memberProfiles.supervisorid;
-    const supervisors = [];
+  selectCurrentMembers,
+  selectProfileMap,
+  (currentMembers, memberProfileMap) => currentMembers?.reduce((supervisors, currentMember) => {
+    let supervisorId = currentMember.supervisorid;
 
     const inSupervisors = supervisors.find(
-      (supervisor) => supervisor
+      (supervisor) => supervisorId === supervisor?.id
     )
 
-    if (supervisor !== null) {
       if (!inSupervisors){
-        supervisors.push(supervisor);
+        supervisors.push(memberProfileMap[supervisorId]);
       }
-    }
     return supervisors;
-  }
+  }, [])
 );
+
+export const selectSupervisorByUserId = createSelector(
+  selectCurrentUserId,
+  selectSupervisors,
+  (userId, supervisors) => {
+    const isSupervisor = supervisors.find((supervisor) => supervisor.id = userId)
+    if (isSupervisor !== null) {
+      return true
+    }
+  }
+)
 
 export const selectTeamMembersWithCheckinPDL = createSelector(
   (state, pdlId) => pdlId,
