@@ -261,9 +261,11 @@ export const selectSupervisorByUserId = createSelector(
   selectCurrentUserId,
   selectSupervisors,
   (userId, supervisors) => {
-    const isSupervisor = supervisors.find((supervisor) => supervisor.id = userId)
-    if (isSupervisor !== null) {
+    const isSupervisor = supervisors?.find((supervisor) => supervisor?.id === userId)
+    if (isSupervisor !== undefined) {
       return true
+    } else {
+      return false
     }
   }
 )

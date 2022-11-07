@@ -152,7 +152,7 @@ function Menu() {
   const isAdmin = selectIsAdmin(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
-  // const isSupervisor = selectSupervisorByUserId(state) === true;
+  const isSupervisor = selectSupervisorByUserId(state) === true;
 
 
   const theme = useTheme();
