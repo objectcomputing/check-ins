@@ -104,30 +104,14 @@ const directoryLinks = [
   ["/teams", "Teams"],
 ];
 
-const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => (isAdmin || isPDL) && isSupervisor ?
-    [
-      ["/feedback/self-reviews", "Self-Reviews"],
-      ["/feedback/view", "View Feedback"],
-      ["/feedback/received-requests", "Received Requests"],
-      ["/feedback/reviews", "Reviews"],
-      ["/feedback/self-review", "Self-Review"]
-    ] :
-    isAdmin || isPDL ?
-    [
-      ["/feedback/view", "View Feedback"],
-      ["/feedback/received-requests", "Received Requests"],
-      ["/feedback/self-review", "Self-Review"]
-    ] :
-    isSupervisor ?
-    [
-      ["/feedback/received-requests", "Received Requests"],
-      ["/feedback/reviews", "Reviews"],
-      ["/feedback/self-review", "Self-Review"]
-    ] :
-    [
-      ["/feedback/received-requests", "Received Requests"],
-      ["/feedback/self-review", "Self-Review"]
-    ];
+const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => {
+  const links = [];
+  if(isAdmin || isPDL) links.push(["/feedback/view", "View Feedback"]);
+  links.push(["/feedback/received-requests", "Received Requests"]);
+  if(isSupervisor || isAdmin) links.push(["/feedback/reviews", "Reviews"])
+  links.push(["/feedback/self-reviews", "Self-Reviews"]);
+  return links;
+};
 
 const reportsLinks = [
   ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
