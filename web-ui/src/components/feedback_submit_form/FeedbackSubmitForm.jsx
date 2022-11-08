@@ -174,17 +174,17 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request, reviewOnly = fa
 
   return isLoading ? <SkeletonLoader type="feedback_requests" /> : (
     <Root className="submit-form">
-      <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{requesteeName}</b></Typography>
-      <div className="wrapper">
+      <Typography className={classes.announcement} variant="h3">{isReviewing ? "Reviewing" : "Submitting"} Feedback on <b>{requesteeName}</b></Typography>
+      {!isReviewing && (<div className="wrapper">
         <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}>info-icon</InfoIcon>
         <Typography className={classes.tip}><b>Tip of the day: </b>{tip}</Typography>
-      </div>
-      {isReviewing ?
-        <Alert className={classes.warning} severity="warning">
+      </div>)}
+      {isReviewing &&
+        (<Alert className={classes.warning} severity="warning">
           <AlertTitle>Notice!</AlertTitle>
           Feedback is not anonymous, and can be seen by more than just the feedback requester.
           <strong> Be mindful of your answers.</strong>
-        </Alert> : null
+        </Alert>)
       }
       {questionAnswerPairs.map((questionAnswerPair, index) => (
         <FeedbackSubmitQuestion
