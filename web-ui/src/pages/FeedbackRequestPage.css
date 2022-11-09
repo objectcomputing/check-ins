@@ -1,5 +1,5 @@
 .feedback-request-page {
-    margin: 4rem 2rem 2rem 2rem;
+    margin: 4em 2em 0 2em;
     height: 100%;
     max-width: 100%;
 }
@@ -9,7 +9,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin: 0 2em 20px 2em;
+    margin: 0 0 2em 0;
 }
 
 .card-container {

@@ -1,6 +1,4 @@
 .received-requests-page {
-  margin-top: 4em;
-  padding: 0 8em 2em 8em;
   width: 100%;
 }
 
@@ -90,7 +88,7 @@
 
 @media screen and (max-width: 1600px) {
   .received-requests-page {
-    padding: 0 4em 2em 4em;
+    padding: 4em 2em 2em 2em;
   }
 }
 
@@ -102,7 +100,7 @@
 
 @media screen and (max-width: 840px) {
   .received-requests-page {
-    padding: 0 2em 2em 2em;
+    padding: 4em 2em 2em 2em;
   }
 
   .received-requests-page .received-requests-filter-container {

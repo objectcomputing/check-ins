@@ -19,7 +19,7 @@ const classes = {
 const Root = styled('div')(({theme}) => ({
   [`&.${classes.root}`]: {
     backgroundColor: "transparent",
-    margin: "4rem 2rem 2rem 2rem",
+    padding: "4rem 2rem 0 2rem",
     height: "100%",
     'max-width': "100%",
     ['@media (max-width:800px)']: { // eslint-disable-line no-useless-computed-key
@@ -34,7 +34,7 @@ const Root = styled('div')(({theme}) => ({
     'flex-direction': "row",
     'justify-content': "space-between",
     'align-items': "center",
-    margin: "0 2em 20px 2em",
+    margin: "0 0 2em 0",
     ['@media (max-width:800px)']: { // eslint-disable-line no-useless-computed-key
       margin: "0",
       'justify-content': "center",

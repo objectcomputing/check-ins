@@ -84,7 +84,7 @@ const Root = styled('div')(({theme}) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    margin: "0 2em 20px 2em",
+    margin: "0 0 1em 0",
   },
 }));
 
@@ -254,7 +254,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </ListItem>
           <Divider key="skeleton-divider"/>
           </>
-        ) : periods.sort((a, b) => {
+        ) : periods.length > 0 ? periods.sort((a, b) => {
           return (!!a.open === !!b.open) ? ('' + a.name).localeCompare(b.name) : !!a.open ? -1 : 1;
         }).map(({name, open, id}, i) => (
           <>
@@ -284,7 +284,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </ListItem>
           <Divider key={`divider-${id}`}/>
           </>
-        ))
+        )) : (<Typography variant="body1">There are currently no review periods.</Typography>)
       }
       </List>
       <Modal open={open} onClose={handleClose}>

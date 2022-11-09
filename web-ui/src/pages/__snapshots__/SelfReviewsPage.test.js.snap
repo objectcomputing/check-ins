@@ -3,7 +3,7 @@
 exports[`SelfReviewsPage renders correctly 1`] = `
 .emotion-0.SelfReviewPage-root {
   background-color: transparent;
-  margin: 4rem 2rem 2rem 2rem;
+  padding: 4rem 2rem 0 2rem;
   height: 100%;
   max-width: 100%;
 }
@@ -37,7 +37,7 @@ exports[`SelfReviewsPage renders correctly 1`] = `
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  margin: 0 2em 20px 2em;
+  margin: 0 0 2em 0;
 }
 
 @media (max-width:800px) {
@@ -101,7 +101,7 @@ exports[`SelfReviewsPage renders correctly 1`] = `
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  margin: 0 2em 20px 2em;
+  margin: 0 0 1em 0;
 }
 
 .emotion-3 {
@@ -122,6 +122,15 @@ exports[`SelfReviewsPage renders correctly 1`] = `
   padding-bottom: 8px;
   width: 100%;
   background-color: #fff;
+}
+
+.emotion-5 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
 }
 
 <div
@@ -156,7 +165,13 @@ exports[`SelfReviewsPage renders correctly 1`] = `
       </div>
       <ul
         className="MuiList-root MuiList-padding emotion-4"
-      />
+      >
+        <p
+          className="MuiTypography-root MuiTypography-body1 emotion-5"
+        >
+          There are currently no review periods.
+        </p>
+      </ul>
     </div>
   </div>
 </div>

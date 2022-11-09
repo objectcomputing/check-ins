@@ -1,6 +1,4 @@
 .view-feedback-page {
-    margin-top: 4em;
-    padding: 0 10em 0 10em;
     width: 100%;
 }
 
@@ -22,7 +20,7 @@
 
 @media screen and (min-width: 320px) and (max-width: 1600px) {
     .view-feedback-page {
-        padding: 0 4em 0 4em;
+        padding: 4em 2em 0 2em;
     }
 
     .input-row {
@@ -45,6 +43,6 @@
 
 @media screen and (max-width: 600px) {
     .view-feedback-page {
-        padding: 0 2em 0 2em;
+        padding: 4em 2em 0 2em;
     }
 }
