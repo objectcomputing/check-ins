@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
-import { selectCsrfToken, selectIsAdmin, selectSupervisorByUserId } from "../../context/selectors";
+import { selectCsrfToken, selectIsAdmin, selectIsSupervisor } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import { useLocation, Link } from "react-router-dom";
@@ -136,7 +136,7 @@ function Menu() {
   const isAdmin = selectIsAdmin(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
-  const isSupervisor = selectSupervisorByUserId(state) === true;
+  const isSupervisor = selectIsSupervisor(state);
 
 
   const theme = useTheme();

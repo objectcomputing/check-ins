@@ -6,7 +6,7 @@ import queryString from 'query-string';
 import {AppContext} from "../context/AppContext";
 import {selectCurrentUser} from "../context/selectors";
 import ReviewPeriods from "../components/reviews/periods/ReviewPeriods";
-import SelfReview from "../components/reviews/self/SelfReview";
+import SelfReview from "../components/reviews/SelfReview";
 
 const PREFIX = 'SelfReviewPage';
 const classes = {

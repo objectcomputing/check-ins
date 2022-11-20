@@ -4,8 +4,9 @@ import Typography from "@mui/material/Typography";
 import { useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import {AppContext} from "../context/AppContext";
-import {selectCurrentUser} from "../context/selectors";
+import {selectCurrentUser, selectIsAdmin, selectMyTeam, selectCurrentMembers} from "../context/selectors";
 import ReviewPeriods from "../components/reviews/periods/ReviewPeriods";
+import TeamReviews from "../components/reviews/TeamReviews";
 
 const PREFIX = 'ReviewPage';
 const classes = {
@@ -56,8 +57,12 @@ const Root = styled('div')(({theme}) => ({
 const ReviewPage = () => {
   const {state} = useContext(AppContext);
   const memberProfile = selectCurrentUser(state);
+  const currentMembers = selectCurrentMembers(state);
+  const myTeam = selectMyTeam(state);
+  const isAdmin = selectIsAdmin(state);
   const location = useLocation();
   const history = useHistory();
+  const [membersToDisplay, setMembersToDisplay] = useState([]);
   const [query, setQuery] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
 
@@ -80,6 +85,12 @@ const ReviewPage = () => {
   }, [query.period, hasPeriod]);
 
   useEffect(() => {
+    if(currentMembers && currentMembers.length > 0) {
+      isAdmin ? setMembersToDisplay(currentMembers.filter((member) => member?.id !== memberProfile?.id)) : setMembersToDisplay(myTeam);
+    }
+  }, [isAdmin, currentMembers, myTeam]);
+
+  useEffect(() => {
     setSelectedPeriod(getPeriod());
   }, [query.period, getPeriod]);
 
@@ -87,10 +98,6 @@ const ReviewPage = () => {
     const params = queryString.parse(location?.search);
     setQuery(params);
   }, [location.search]);
-
-  const clearPeriod = useCallback(() => {
-    handleQueryChange("period", undefined);
-  }, [handleQueryChange]);
 
   const onPeriodSelected = useCallback((period) => {
       handleQueryChange("period", period);
@@ -105,7 +112,7 @@ const ReviewPage = () => {
         {
             selectedPeriod === null ?
                 (<ReviewPeriods onPeriodSelected={onPeriodSelected} />) :
-                (<Typography variant="h5" onClick={clearPeriod}>{selectedPeriod}</Typography>)
+                (<TeamReviews teamMembers={membersToDisplay} periodId={selectedPeriod} />)
         }
       </div>
     </Root>

@@ -258,7 +258,7 @@ export const selectSupervisors = createSelector(
   }, [])
 );
 
-export const selectSupervisorByUserId = createSelector(
+export const selectIsSupervisor = createSelector(
   selectCurrentUserId,
   selectSupervisors,
   (userId, supervisors) => {
@@ -269,6 +269,22 @@ export const selectSupervisorByUserId = createSelector(
       return false
     }
   }
+)
+
+const filterMembersBySupervisor = (currentMembers, supervisorId) => currentMembers?.filter((currentTeamMember) =>  {
+  return currentTeamMember?.supervisorid === supervisorId;
+});
+
+export const selectTeamMembersBySupervisorId = createSelector(
+  selectCurrentMembers,
+  (state, supervisorId) => supervisorId,
+  filterMembersBySupervisor
+)
+
+export const selectMyTeam = createSelector(
+  selectCurrentMembers,
+  selectCurrentUserId,
+  filterMembersBySupervisor
 )
 
 export const selectTeamMembersWithCheckinPDL = createSelector(
