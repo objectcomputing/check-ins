@@ -88,7 +88,7 @@ const ReviewPage = () => {
     if(currentMembers && currentMembers.length > 0) {
       isAdmin ? setMembersToDisplay(currentMembers.filter((member) => member?.id !== memberProfile?.id)) : setMembersToDisplay(myTeam);
     }
-  }, [isAdmin, currentMembers, myTeam]);
+  }, [isAdmin, currentMembers, myTeam, memberProfile?.id]);
 
   useEffect(() => {
     setSelectedPeriod(getPeriod());

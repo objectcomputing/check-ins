@@ -1,4 +1,4 @@
-import React, {useContext, useCallback, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import SwipeableViews from 'react-swipeable-views';
 import PropTypes from 'prop-types';
 import {AppContext} from "../../context/AppContext";
