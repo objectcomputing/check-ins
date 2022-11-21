@@ -18,7 +18,6 @@
   background-color: green;
 }
 .skills-parent {
-  background-color: white;
   position: absolute;
   max-height: 15rem;
   overflow-y: auto;

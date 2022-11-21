@@ -1,6 +1,5 @@
 import React, {useContext, useCallback, useEffect, useState} from "react";
 import { styled } from '@mui/material/styles';
-import Typography from "@mui/material/Typography";
 import { useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import {AppContext} from "../context/AppContext";
@@ -27,17 +26,6 @@ const Root = styled('div')(({theme}) => ({
       'flex-direction': "column",
       'overflow-x': "hidden",
       margin: "2rem 5% 0 5%",
-    }
-  },
-  [`& .${classes.headerContainer}`]: {
-    display: "flex",
-    'flex-direction': "row",
-    'justify-content': "space-between",
-    'align-items': "center",
-    margin: "0 0 1em 0",
-    ['@media (max-width:800px)']: { // eslint-disable-line no-useless-computed-key
-      margin: "0",
-      'justify-content': "center",
     }
   },
   [`& .${classes.requestHeader}`]: {
@@ -105,9 +93,6 @@ const ReviewPage = () => {
 
   return (
     <Root className={classes.root}>
-      <div className={classes.headerContainer}>
-        <Typography className={classes.requestHeader} variant="h4">Team Reviews<b>{memberProfile?.name}</b></Typography>
-      </div>
       <div className={classes.stepContainer}>
         {
             selectedPeriod === null ?

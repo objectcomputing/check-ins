@@ -8,7 +8,7 @@ import { AppContext } from "../context/AppContext";
 import {
   selectOrderedSkills,
   selectCsrfToken,
-  selectOrderedCurrentMemberProfiles,
+  selectOrderedMemberFirstName,
   selectSkill,
 } from "../context/selectors";
 import { levelMap } from "../context/util";
@@ -27,7 +27,7 @@ const TeamSkillReportPage = () => {
 
   const csrf = selectCsrfToken(state);
   const skills = selectOrderedSkills(state);
-  const memberProfiles = selectOrderedCurrentMemberProfiles(state);
+  const memberProfiles = selectOrderedMemberFirstName(state);
 
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState(null);

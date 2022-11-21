@@ -13,13 +13,27 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import "./App.css";
-import {indigo} from "@mui/material/colors";
 
 const customHistory = createBrowserHistory();
 
 const theme = createTheme({
   palette: {
-    primary: indigo
+    primary: {
+      light: '#6085d9',
+      main: '#2559a7',
+      dark: '#003177',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#ffe8a2',
+      main: '#feb672',
+      dark: '#c88645',
+      contrastText: '#000',
+    },
+    background: {
+      default: '#F5F5F6',
+      paper: '#fff',
+    },
   },
   components: {
     MuiCssBaseline: {

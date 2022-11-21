@@ -104,15 +104,6 @@ exports[`SelfReviewsPage renders correctly 1`] = `
   margin: 0 0 1em 0;
 }
 
-.emotion-3 {
-  margin: 0;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
-  font-weight: 400;
-  font-size: 1.5rem;
-  line-height: 1.334;
-  letter-spacing: 0em;
-}
-
 .emotion-4 {
   list-style: none;
   margin: 0;
@@ -157,11 +148,11 @@ exports[`SelfReviewsPage renders correctly 1`] = `
       <div
         className="ReviewPeriods-headerContainer"
       >
-        <h5
-          className="MuiTypography-root MuiTypography-h5 emotion-3"
+        <h4
+          className="MuiTypography-root MuiTypography-h4 emotion-1"
         >
           Review Periods
-        </h5>
+        </h4>
       </div>
       <ul
         className="MuiList-root MuiList-padding emotion-4"

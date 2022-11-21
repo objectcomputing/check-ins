@@ -2,7 +2,7 @@ import React, {useCallback, useContext, useEffect, useState} from "react";
 import {styled} from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import {blue, green} from "@mui/material/colors";
+import {blue} from "@mui/material/colors";
 import Button from "@mui/material/Button";
 import "./FeedbackSubmitForm.css";
 import {Alert, AlertTitle} from "@mui/material";
@@ -47,11 +47,6 @@ const Root = styled('div')({
   },
   [`& .${classes.coloredButton}`]: {
     margin: "3em 1em 1em 1em",
-    color: "white",
-    backgroundColor: green[500],
-    '&:hover': {
-      backgroundColor: green[700],
-    },
   }
 });
 
@@ -206,7 +201,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request, reviewOnly = fa
               disabled={isLoading}
               onClick={() => setIsReviewing(false)}
               variant="contained"
-              color="primary">
+              color="secondary">
               Edit
             </Button>
             <Button
@@ -224,7 +219,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request, reviewOnly = fa
             onClick={() => setIsReviewing(true)}
             variant="contained"
             color="primary">
-            Review
+            Review Your Responses
           </Button>}
       </div>)}
     </Root>

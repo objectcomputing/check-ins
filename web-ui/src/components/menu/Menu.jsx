@@ -55,7 +55,6 @@ const Root = styled('div')(({theme}) => ({
     },
   },
   [`& .${classes.appBar}`]: {
-    backgroundColor: "#e4e3e4",
     [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
@@ -71,7 +70,6 @@ const Root = styled('div')(({theme}) => ({
   // toolbar: theme.mixins.toolbar,
   [`& .${classes.drawerPaper}`]: {
     width: drawerWidth,
-    backgroundColor: "#a5a4a8",
   },
   [`& .${classes.content}`]: {
     flexGrow: 1,
@@ -79,7 +77,6 @@ const Root = styled('div')(({theme}) => ({
   },
   [`& .${classes.listStyle}`]: {
     textDecoration: "none",
-    color: "white",
     textAlign: "left",
   },
   [`& .${classes.nested}`]: {
@@ -309,7 +306,7 @@ function Menu() {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <img
           alt="Object Computing, Inc."
-          src="/img/ocicube-white.png"
+          src="/img/ocicube-color.png"
           style={{ width: "50%" }}
         />
       </div>

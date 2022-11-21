@@ -171,20 +171,8 @@ export const selectOrderedPdls = createSelector(
     })
 );
 
-export const selectOrderedMemberProfiles = createSelector(
-  selectMemberProfiles,
-  (mappedMemberProfiles) =>
-    mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
-);
-
-export const selectOrderedCurrentMemberProfiles = createSelector(
-  selectCurrentMembers,
-  (mappedMemberProfiles) =>
-    mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
-);
-
 export const selectOrderedMemberFirstName = createSelector(
-  selectMemberProfiles,
+  selectCurrentMembers,
   (mappedMemberProfiles) =>
     mappedMemberProfiles.sort((a, b) => a.firstName.localeCompare(b.firstName))
 );

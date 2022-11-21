@@ -20,10 +20,6 @@ Array [
   }
 }
 
-.emotion-0 .Menu-appBar {
-  background-color: #e4e3e4;
-}
-
 @media (min-width:600px) {
   .emotion-0 .Menu-appBar {
     width: calc(100% - 150px);
@@ -43,7 +39,6 @@ Array [
 
 .emotion-0 .Menu-drawerPaper {
   width: 150px;
-  background-color: #a5a4a8;
 }
 
 .emotion-0 .Menu-content {
@@ -57,7 +52,6 @@ Array [
 .emotion-0 .Menu-listStyle {
   -webkit-text-decoration: none;
   text-decoration: none;
-  color: white;
   text-align: left;
 }
 
@@ -1289,7 +1283,7 @@ Array [
                   >
                     <img
                       alt="Object Computing, Inc."
-                      src="/img/ocicube-white.png"
+                      src="/img/ocicube-color.png"
                       style={
                         Object {
                           "width": "50%",
@@ -1621,7 +1615,7 @@ Array [
               >
                 <img
                   alt="Object Computing, Inc."
-                  src="/img/ocicube-white.png"
+                  src="/img/ocicube-color.png"
                   style={
                     Object {
                       "width": "50%",
@@ -1954,10 +1948,6 @@ Array [
   }
 }
 
-.emotion-0 .Menu-appBar {
-  background-color: #e4e3e4;
-}
-
 @media (min-width:600px) {
   .emotion-0 .Menu-appBar {
     width: calc(100% - 150px);
@@ -1977,7 +1967,6 @@ Array [
 
 .emotion-0 .Menu-drawerPaper {
   width: 150px;
-  background-color: #a5a4a8;
 }
 
 .emotion-0 .Menu-content {
@@ -1991,7 +1980,6 @@ Array [
 .emotion-0 .Menu-listStyle {
   -webkit-text-decoration: none;
   text-decoration: none;
-  color: white;
   text-align: left;
 }
 
@@ -3304,7 +3292,7 @@ Array [
                   >
                     <img
                       alt="Object Computing, Inc."
-                      src="/img/ocicube-white.png"
+                      src="/img/ocicube-color.png"
                       style={
                         Object {
                           "width": "50%",
@@ -3712,7 +3700,7 @@ Array [
               >
                 <img
                   alt="Object Computing, Inc."
-                  src="/img/ocicube-white.png"
+                  src="/img/ocicube-color.png"
                   style={
                     Object {
                       "width": "50%",
@@ -4121,10 +4109,6 @@ Array [
   }
 }
 
-.emotion-0 .Menu-appBar {
-  background-color: #e4e3e4;
-}
-
 @media (min-width:600px) {
   .emotion-0 .Menu-appBar {
     width: calc(100% - 150px);
@@ -4144,7 +4128,6 @@ Array [
 
 .emotion-0 .Menu-drawerPaper {
   width: 150px;
-  background-color: #a5a4a8;
 }
 
 .emotion-0 .Menu-content {
@@ -4158,7 +4141,6 @@ Array [
 .emotion-0 .Menu-listStyle {
   -webkit-text-decoration: none;
   text-decoration: none;
-  color: white;
   text-align: left;
 }
 
@@ -5486,7 +5468,7 @@ Array [
                   >
                     <img
                       alt="Object Computing, Inc."
-                      src="/img/ocicube-white.png"
+                      src="/img/ocicube-color.png"
                       style={
                         Object {
                           "width": "50%",
@@ -5818,7 +5800,7 @@ Array [
               >
                 <img
                   alt="Object Computing, Inc."
-                  src="/img/ocicube-white.png"
+                  src="/img/ocicube-color.png"
                   style={
                     Object {
                       "width": "50%",

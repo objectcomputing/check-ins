@@ -2,7 +2,9 @@ import React, {useEffect, useContext, useCallback, useState, useRef} from "react
 import PropTypes from "prop-types";
 import { useLocation, useHistory } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Avatar from '@mui/material/Avatar';
+import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
 import queryString from 'query-string';
 import Accordion from '@mui/material/Accordion';
@@ -15,7 +17,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import TeamMemberReview from "./TeamMemberReview";
-import { UPDATE_REVIEW_PERIODS } from "../../context/actions";
+import SelectUserModal from "./SelectUserModal";
+import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from "../../context/actions";
 import { AppContext } from "../../context/AppContext";
 import { getReviewPeriods } from "../../api/reviewperiods.js";
 import { createFeedbackRequest, findReviewRequestsByPeriodAndTeamMember, findSelfReviewRequestsByPeriodAndTeamMember } from "../../api/feedback.js";
@@ -51,10 +54,14 @@ const Root = styled('div')(({theme}) => ({
   },
   [`& .${classes.headerContainer}`]: {
     display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    'flex-direction': "row",
+    'justify-content': "space-between",
+    'align-items': "center",
     margin: "0 0 1em 0",
+    ['@media (max-width:800px)']: { // eslint-disable-line no-useless-computed-key
+      margin: "0",
+      'justify-content': "center",
+    }
   },
 }));
 
@@ -70,9 +77,13 @@ const TeamReviews = ({ teamMembers, periodId }) => {
   const [query, setQuery] = useState({});
   const [selectedTeamMember, setSelectedTeamMember] = useState(null);
   const selectedMemberProfile = selectProfile(state, selectedTeamMember);
+  const [newRequestOpen, setNewRequestOpen] = useState(false);
   const loadingReviews = useRef(false);
   const loadedReviews = useRef(false);
   const creatingReview = useRef(false);
+
+  const handleOpenNewRequest = useCallback(() => setNewRequestOpen(true), [setNewRequestOpen]);
+  const handleCloseNewRequest = useCallback(() => setNewRequestOpen(false), [setNewRequestOpen]);
 
   const getReviewStatus = useCallback((teamMemberId) => {
     let reviewStates = { submitted: false, inProgress: false };
@@ -211,12 +222,12 @@ const TeamReviews = ({ teamMembers, periodId }) => {
     handleQueryChange("teamMember", teamMemberId);
   }, [handleQueryChange]);
 
-  useEffect(() => {
+  const loadReviews = useCallback(async () => {
     let newSelfReviews = {};
     let newReviews = {};
     const getSelfReviewRequest = async (teamMember) => {
       const res = await findSelfReviewRequestsByPeriodAndTeamMember(period, teamMember.id, csrf);
-      const data =
+      let data =
         res &&
         res.payload &&
         res.payload.data &&
@@ -225,13 +236,14 @@ const TeamReviews = ({ teamMembers, periodId }) => {
           ? res.payload.data
           : null;
       if (data && data.length > 0) {
+        data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
         newSelfReviews[teamMember.id] = data[0];
       }
     };
 
     const getReviewRequest = async (teamMember) => {
       const res = await findReviewRequestsByPeriodAndTeamMember(period, teamMember.id, csrf);
-      const data =
+      let data =
         res &&
         res.payload &&
         res.payload.data &&
@@ -240,6 +252,7 @@ const TeamReviews = ({ teamMembers, periodId }) => {
           ? res.payload.data
           : null;
       if (data && data.length > 0) {
+        data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
         newReviews[teamMember.id] = data;
       }
     };
@@ -258,8 +271,84 @@ const TeamReviews = ({ teamMembers, periodId }) => {
     }
   }, [csrf, period, teamMembers]);
 
+  useEffect(loadReviews, [loadReviews]);
+
+  const reloadReviews = useCallback(() => {
+    loadedReviews.current = false;
+    loadReviews();
+  }, [loadReviews]);
+
+  const handleNewRequest = useCallback((assignee) => {
+    const createNewRequest = async () => {
+      if(!selectedMemberProfile?.supervisorid) {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "This team member does not have an assigned supervisor. Please assign one before creating a review.",
+          },
+        });
+      } else {
+        const res = await createFeedbackRequest({
+          creatorId: selectedMemberProfile?.supervisorid,
+          requesteeId: selectedMemberProfile?.id,
+          recipientId: assignee?.id,
+          templateId: period.reviewTemplateId,
+          reviewPeriodId: period.id,
+          sendDate: dateUtils.format(new Date(), 'yyyy-MM-dd'),
+          status: "pending",
+        }, csrf);
+        const data =
+          res &&
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 201 &&
+          !res.error
+            ? res.payload.data
+            : null;
+        if (data) {
+          const newReviews = {...reviews}
+          newReviews[selectedMemberProfile?.id].push(data);
+          setReviews(newReviews);
+        } else {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "An error has occurred while submitting the review request.",
+            },
+          });
+        }
+        return data;
+      }
+    };
+
+    handleCloseNewRequest();
+    if (csrf && selectedMemberProfile && period) {
+      createNewRequest().then((res) => {
+        if(res) {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "success",
+              toast: "Review request sent!",
+            },
+          });
+        }
+      });
+    }
+  }, [csrf, period, selectedMemberProfile, dispatch, handleCloseNewRequest, reviews]);
+
   return teamMembers && teamMembers.length > 0 && (
     <Root>
+      <div className={classes.headerContainer}>
+        <Typography variant="h4">Team Reviews</Typography>
+        {selectedTeamMember && (
+          <Button onClick={handleOpenNewRequest} className={classes.actionButtons} endIcon={<AddCircleIcon />} variant="contained" color="primary">
+            Request Review
+          </Button>
+        )}
+      </div>
       {!selectedTeamMember && (
       <>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
@@ -267,7 +356,7 @@ const TeamReviews = ({ teamMembers, periodId }) => {
           return ('' + a?.lastName).toUpperCase().localeCompare(b?.lastName.toUpperCase());
         })
         .filter((teamMember) => {
-          return reviews && !reviews[teamMember.id]?.reduce((status, review) => (status && review.status === 'submitted'), true);
+          return reviews && (!reviews[teamMember.id] || reviews[teamMember.id].length === 0 || !reviews[teamMember.id]?.reduce((status, review) => (status && review.status === 'submitted'), true));
         })
         .map((teamMember, i) => (
           <>
@@ -298,7 +387,7 @@ const TeamReviews = ({ teamMembers, periodId }) => {
               return ('' + a?.lastName).toUpperCase().localeCompare(b?.lastName.toUpperCase());
             })
             .filter((teamMember) => {
-              return reviews && reviews[teamMember.id]?.reduce((status, review) => (status && review.status === 'submitted'), true);
+              return reviews && reviews[teamMember.id] && reviews[teamMember.id].length !== 0 && reviews[teamMember.id]?.reduce((status, review) => (status && review.status === 'submitted'), true);
             })
             .map((teamMember, i) => (
               <>
@@ -319,8 +408,9 @@ const TeamReviews = ({ teamMembers, periodId }) => {
       </Accordion>
       </>)}
       {!!selectedTeamMember && reviews && (
-        <TeamMemberReview memberProfile={teamMembers.find((member) => member?.id === selectedTeamMember)} selfReview={selfReviews[selectedTeamMember]} reviews={reviews[selectedTeamMember]} />
+        <TeamMemberReview reloadReviews={reloadReviews} memberProfile={selectedMemberProfile} selfReview={selfReviews[selectedTeamMember]} reviews={reviews[selectedTeamMember]} />
       )}
+      <SelectUserModal userLabel="Reviewer" open={newRequestOpen} onSelect={handleNewRequest} onClose={handleCloseNewRequest} />
     </Root>
   );
 };

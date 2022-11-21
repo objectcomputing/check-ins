@@ -111,7 +111,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
         newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
-        //LOG.warn("Pretending to send an email about the new request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
+//        LOG.warn("Pretending to send an email about the new request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
         emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
     }
 
@@ -186,7 +186,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                     requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
                     "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
             newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
-            //LOG.warn("Pretending to send an email about the reopened request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
+//            LOG.warn("Pretending to send an email about the reopened request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
             emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         }
 
@@ -310,6 +310,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setDueDate(dto.getDueDate());
         feedbackRequest.setStatus(dto.getStatus());
         feedbackRequest.setSubmitDate(dto.getSubmitDate());
+        feedbackRequest.setRecipientId(dto.getRecipientId());
 
         return feedbackRequest;
     }
