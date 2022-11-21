@@ -739,6 +739,86 @@ INSERT INTO template_questions
 VALUES
 ('f9e5878c-6c4d-4249-8f1a-c3508d8c1597', PGP_SYM_ENCRYPT('Please provide any additional context or reasoning relevant to your self-assessment.', '${aeskey}'), '926a37a4-4ded-4633-8900-715b0383aecc', 11, 'TEXT');
 
+INSERT INTO feedback_templates
+(id, title, description, creator_id, date_created, active, is_public, is_ad_hoc, is_review)
+VALUES
+('d1e94b60-47c4-4945-87d1-4dc88f088e57', 'Annual Review - 2022', 'This survey is intended for performance review.', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2022-11-21', true, true, false, true);
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('6eff224d-d690-4d25-a44f-08b8ec03fbbe', PGP_SYM_ENCRYPT('This team member''s performance (contributions, knowledge, & skill) was strong during the period covered by this review.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 1, 'SLIDER');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('47758dfb-64ca-4203-a5ba-b5fa3ef254dd', PGP_SYM_ENCRYPT('This team member''s potential to contribute is high.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 2, 'SLIDER');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('69576f2e-0236-4401-96f7-2058dfd8759f', PGP_SYM_ENCRYPT('How often has this team member displayed each of the following behaviors during the period covered by this review?', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 3, 'NONE');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('4ab44c4f-bd8f-4e8d-89b7-940ada1a45c0', PGP_SYM_ENCRYPT('Leadership - Team members who display leadership are supportive, conscientious, and empathetic. They provide psychological safety and inspire others to greater levels of contribution.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 4, 'FREQ');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('1fe655dc-9c37-4e55-9bd9-455059832531', PGP_SYM_ENCRYPT('Clear and Timely Communication - Team members who display clear and timely communication provide the necessary level of detail in their communication, target their messaging (tone and recipients), and modulate timing and urgency appropriately.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 5, 'FREQ');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('cf00f422-0b8a-4219-bc3a-8092732f2ef5', PGP_SYM_ENCRYPT('Problem-Solving - Team members who display problem-solving can respond to client, project, or other challenges without the need for intervention. They show the ability to think outside of the box about processes or tasks to remove obstacles and improve efficiency.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 6, 'FREQ');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('3f74c7fe-74fe-4a4d-96c3-aaa35d0cbe70', PGP_SYM_ENCRYPT('Flexibility - Team members who display flexibility modify their approach to tasks or people based on the needs of the situation. They exhibit the ability to change course or alter behavior when new information is obtained, or the desired results are not being achieved.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 7, 'FREQ');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('40448b19-7d3a-4862-aa97-506e768ca4f9', PGP_SYM_ENCRYPT('Dependability - Team members who display dependability exhibit appropriate attention to detail and are punctual. They meet deadlines and agreements and take initiative when needed.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 8, 'FREQ');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('7fad2952-fa1a-43eb-86e6-9a715674c884', PGP_SYM_ENCRYPT('Commitment to Business - Team members who display a commitment to business take ownership of assigned tasks, projects, and areas of responsibility. They look for opportunities to grow and improve the organization’s business and culture.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 9, 'FREQ');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('f40b00b7-4631-4a08-a4a7-a41b7497ddb8', PGP_SYM_ENCRYPT('You can provide more detailed context to your review of this team member below. Be as specific as possible!', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 10, 'NONE');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('93424f36-64a3-4f10-b78a-00de58060177', PGP_SYM_ENCRYPT('What significant accomplishments, contributions, or examples of displaying the OCI Values has this team member had during the period covered by this review?', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 11, 'TEXT');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('8c13c1a5-f1ef-43cc-9f9a-858b01bff930', PGP_SYM_ENCRYPT('This team member should be considered for a promotion.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 12, 'RADIO');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('c2ff8a0d-358f-438b-86f4-59da10bddbe5', PGP_SYM_ENCRYPT('This team member is at risk for low performance.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 13, 'RADIO');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('46cf546a-acbe-48e5-8c8d-1b1ca484af8d', PGP_SYM_ENCRYPT('This team member should be considered for a leadership track.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 14, 'RADIO');
+
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+('174e5851-cb24-4a0f-890c-e6f041db4127', PGP_SYM_ENCRYPT('Please provide any additional context or reasoning relevant to your assessment of this team member.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 15, 'TEXT');
+
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
