@@ -27,6 +27,10 @@ public class FeedbackRequestUpdateDTO {
     @Schema(description = "date the recipient submitted feedback for the request")
     private LocalDate submitDate;
 
+    @Nullable
+    @Schema(description = "the recipient of the request, used to reassign")
+    private UUID recipientId;
+
     public UUID getId() {
         return id;
     }
@@ -60,4 +64,9 @@ public class FeedbackRequestUpdateDTO {
     public void setSubmitDate(@Nullable LocalDate submitDate) {
         this.submitDate = submitDate;
     }
+
+    @Nullable
+    public UUID getRecipientId() { return recipientId; }
+
+    public void setRecipientId(@Nullable UUID recipientId) { this.recipientId = recipientId; }
 }

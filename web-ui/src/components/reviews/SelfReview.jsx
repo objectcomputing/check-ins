@@ -1,16 +1,16 @@
 import React, {useEffect, useContext, useState, useRef} from "react";
 import PropTypes from "prop-types";
-import { UPDATE_TOAST, UPDATE_REVIEW_PERIODS } from "../../../context/actions";
-import { AppContext } from "../../../context/AppContext";
-import FeedbackSubmitForm from "../../feedback_submit_form/FeedbackSubmitForm";
-import { getReviewPeriods } from "../../../api/reviewperiods.js";
-import { createFeedbackRequest, findSelfReviewRequestsByPeriodAndTeamMember } from "../../../api/feedback.js";
+import { UPDATE_TOAST, UPDATE_REVIEW_PERIODS } from "../../context/actions";
+import { AppContext } from "../../context/AppContext";
+import FeedbackSubmitForm from "../feedback_submit_form/FeedbackSubmitForm";
+import { getReviewPeriods } from "../../api/reviewperiods.js";
+import { createFeedbackRequest, findSelfReviewRequestsByPeriodAndTeamMember } from "../../api/feedback.js";
 import {
   selectCsrfToken,
   selectCurrentUserId,
   selectCurrentUser,
   selectReviewPeriod,
-} from "../../../context/selectors";
+} from "../../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 const dateUtils = new DateFnsUtils();
 
@@ -79,9 +79,8 @@ const SelfReview = ({ periodId, onBack }) => {
             : null;
         if (data) {
           setSelfReview(data);
-        } else {
-          loadingReview.current = false;
         }
+        loadingReview.current = false;
       }
     };
 
@@ -97,6 +96,7 @@ const SelfReview = ({ periodId, onBack }) => {
           : null;
       if (data && data.length > 0) {
         setSelfReview(data[0]);
+        loadingReview.current = false;
       } else {
         createSelfReview();
       }

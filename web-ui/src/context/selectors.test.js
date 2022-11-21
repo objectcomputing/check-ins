@@ -10,7 +10,7 @@ import {
   selectCurrentMembers,
   selectNormalizedMembers,
   selectNormalizedTeams,
-  selectMostRecentCheckin,
+  selectMostRecentCheckin, selectSupervisors,
 } from "./selectors";
 
 describe("Selectors", () => {
@@ -57,11 +57,7 @@ describe("Selectors", () => {
       },
     ];
     const testState = {
-      memberProfiles: {
-        [testMemberProfiles[0].id]: testMemberProfiles[0],
-        [testMemberProfiles[1].id]: testMemberProfiles[1],
-        [testMemberProfiles[2].id]: testMemberProfiles[2],
-      },
+      memberProfiles: testMemberProfiles
     };
 
     expect(selectMemberProfiles(testState)).toEqual(testState.memberProfiles);
@@ -827,4 +823,57 @@ it("selectMostRecentCheckin should return the most recent and or open checkin", 
 
   console.log(selectMostRecentCheckin(state, memberId));
   expect(selectMostRecentCheckin(state, memberId)).toEqual(expectedResult);
+});
+
+it("selectSupervisors should return only members who are supervisors", () => {
+  const testMemberProfiles = [
+    {
+      id: 1,
+      employeeId: 11,
+      name: "Big Boss",
+      firstName: "Big",
+      lastName: "Boss",
+      supervisorid: 5,
+    },
+    {
+      id: 2,
+      employeeId: 12,
+      name: "Huey Emmerich",
+      firstName: "Huey",
+      lastName: "Emmerich",
+      supervisorid: 1,
+    },
+    {
+      id: 3,
+      employeeId: 13,
+      name: "Kazuhira Miller",
+      firstName: "Kazuhira",
+      lastName: "Miller",
+      supervisorid: 1,
+    },
+    {
+      id: 4,
+      employeeId: 14,
+      name: "Revolver Ocelot",
+      firstName: "Revolver",
+      lastName: "Ocelot",
+      supervisorid: 3,
+    },
+    {
+      id: 5,
+      employeeId: 15,
+      name: "The Boss",
+      firstName: "The",
+      lastName: "Boss",
+      supervisorid: 1,
+    },
+  ]
+
+  const testState = {
+    memberProfiles: testMemberProfiles
+  };
+
+  const expectedResult = [testMemberProfiles[4], testMemberProfiles[0], testMemberProfiles[2]];
+
+  expect(selectSupervisors(testState)).toEqual(expectedResult);
 });

@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -84,7 +83,7 @@ const Root = styled('div')(({theme}) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    margin: "0 2em 20px 2em",
+    margin: "0 0 1em 0",
   },
 }));
 
@@ -236,7 +235,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   return (
     <Root>
       <div className={classes.headerContainer}>
-        <Typography variant="h5">Review Periods</Typography>
+        <Typography variant="h4">Review Periods</Typography>
         {isAdmin ?
            (<Button onClick={handleOpen} className={classes.actionButtons} variant="contained" color="primary">
               Add Review Period
@@ -252,9 +251,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             </ListItemAvatar>
             <ListItemText primary={(<Skeleton variant="text" sx={{ fontSize: '1rem' }} />)} secondary={(<Skeleton variant="text" sx={{ fontSize: '1rem' }} />)} />
           </ListItem>
-          <Divider key="skeleton-divider"/>
           </>
-        ) : periods.sort((a, b) => {
+        ) : periods.length > 0 ? periods.sort((a, b) => {
           return (!!a.open === !!b.open) ? ('' + a.name).localeCompare(b.name) : !!a.open ? -1 : 1;
         }).map(({name, open, id}, i) => (
           <>
@@ -282,9 +280,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             </ListItemAvatar>
             <ListItemText key={`period-lit-${id}`} onClick={() => onPeriodClick(id)} primary={name + (open ? " - Open" : "")} secondary={getSecondaryLabel(id)} />
           </ListItem>
-          <Divider key={`divider-${id}`}/>
           </>
-        ))
+        )) : (<Typography variant="body1">There are currently no review periods.</Typography>)
       }
       </List>
       <Modal open={open} onClose={handleClose}>

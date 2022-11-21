@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
-import { selectCsrfToken, selectIsAdmin } from "../../context/selectors";
+import { selectCsrfToken, selectIsAdmin, selectIsSupervisor } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import { useLocation, Link } from "react-router-dom";
@@ -55,7 +55,6 @@ const Root = styled('div')(({theme}) => ({
     },
   },
   [`& .${classes.appBar}`]: {
-    backgroundColor: "#e4e3e4",
     [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
@@ -71,7 +70,6 @@ const Root = styled('div')(({theme}) => ({
   // toolbar: theme.mixins.toolbar,
   [`& .${classes.drawerPaper}`]: {
     width: drawerWidth,
-    backgroundColor: "#a5a4a8",
   },
   [`& .${classes.content}`]: {
     flexGrow: 1,
@@ -79,7 +77,6 @@ const Root = styled('div')(({theme}) => ({
   },
   [`& .${classes.listStyle}`]: {
     textDecoration: "none",
-    color: "white",
     textAlign: "left",
   },
   [`& .${classes.nested}`]: {
@@ -104,16 +101,14 @@ const directoryLinks = [
   ["/teams", "Teams"],
 ];
 
-const getFeedbackLinks = (isAdmin, isPDL) => isAdmin || isPDL ?
-    [
-      ["/feedback/self-reviews", "Self-Reviews"],
-      ["/feedback/view", "View Feedback"],
-      ["/feedback/received-requests", "Received Requests"]
-    ] :
-    [
-      ["/feedback/self-reviews", "Self-Reviews"],
-      ["/feedback/received-requests", "Received Requests"]
-    ];
+const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => {
+  const links = [];
+  if(isAdmin || isPDL) links.push(["/feedback/view", "View Feedback"]);
+  links.push(["/feedback/received-requests", "Received Requests"]);
+  if(isSupervisor || isAdmin) links.push(["/feedback/reviews", "Reviews"])
+  links.push(["/feedback/self-reviews", "Self-Reviews"]);
+  return links;
+};
 
 const reportsLinks = [
   ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
@@ -138,6 +133,8 @@ function Menu() {
   const isAdmin = selectIsAdmin(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
+  const isSupervisor = selectIsSupervisor(state);
+
 
   const theme = useTheme();
   const location = useLocation();
@@ -147,7 +144,7 @@ function Menu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [showHoursUpload, setShowHoursUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const feedbackLinks = getFeedbackLinks(isAdmin, isPDL);
+  const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -309,7 +306,7 @@ function Menu() {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <img
           alt="Object Computing, Inc."
-          src="/img/ocicube-white.png"
+          src="/img/ocicube-color.png"
           style={{ width: "50%" }}
         />
       </div>

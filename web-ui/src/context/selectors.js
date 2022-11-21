@@ -171,20 +171,8 @@ export const selectOrderedPdls = createSelector(
     })
 );
 
-export const selectOrderedMemberProfiles = createSelector(
-  selectMemberProfiles,
-  (mappedMemberProfiles) =>
-    mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
-);
-
-export const selectOrderedCurrentMemberProfiles = createSelector(
-  selectCurrentMembers,
-  (mappedMemberProfiles) =>
-    mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
-);
-
 export const selectOrderedMemberFirstName = createSelector(
-  selectMemberProfiles,
+  selectCurrentMembers,
   (mappedMemberProfiles) =>
     mappedMemberProfiles.sort((a, b) => a.firstName.localeCompare(b.firstName))
 );
@@ -240,6 +228,52 @@ export const selectPDLCheckinMap = createSelector(selectCheckins, (checkins) =>
     return accu;
   }, {})
 );
+
+export const selectSupervisors = createSelector(
+  selectCurrentMembers,
+  selectProfileMap,
+  (currentMembers, memberProfileMap) => currentMembers?.reduce((supervisors, currentMember) => {
+    let supervisorId = currentMember.supervisorid;
+
+    const inSupervisors = supervisors.find(
+      (supervisor) => supervisorId === supervisor?.id
+    )
+
+      if (!inSupervisors){
+        supervisors.push(memberProfileMap[supervisorId]);
+      }
+    return supervisors;
+  }, [])
+);
+
+export const selectIsSupervisor = createSelector(
+  selectCurrentUserId,
+  selectSupervisors,
+  (userId, supervisors) => {
+    const isSupervisor = supervisors?.find((supervisor) => supervisor?.id === userId)
+    if (isSupervisor !== undefined) {
+      return true
+    } else {
+      return false
+    }
+  }
+)
+
+const filterMembersBySupervisor = (currentMembers, supervisorId) => currentMembers?.filter((currentTeamMember) =>  {
+  return currentTeamMember?.supervisorid === supervisorId;
+});
+
+export const selectTeamMembersBySupervisorId = createSelector(
+  selectCurrentMembers,
+  (state, supervisorId) => supervisorId,
+  filterMembersBySupervisor
+)
+
+export const selectMyTeam = createSelector(
+  selectCurrentMembers,
+  selectCurrentUserId,
+  filterMembersBySupervisor
+)
 
 export const selectTeamMembersWithCheckinPDL = createSelector(
   (state, pdlId) => pdlId,

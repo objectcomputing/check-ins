@@ -139,6 +139,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         dto.setDueDate(feedbackRequest.getDueDate());
         dto.setStatus(feedbackRequest.getStatus());
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
+        dto.setRecipientId(feedbackRequest.getRecipientId());
         return dto;
     }
 

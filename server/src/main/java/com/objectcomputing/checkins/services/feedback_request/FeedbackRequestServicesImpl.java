@@ -97,17 +97,22 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
+        sendNewRequestEmail(storedRequest);
+        return storedRequest;
+    }
+
+    private void sendNewRequestEmail(FeedbackRequest storedRequest) {
         MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
-        String newContent = "<h1>You have received a feedback request.</h1>" + 
+        String newContent = "<h1>You have received a feedback request.</h1>" +
         "<p><b>" + creator.getFirstName() + " " + creator.getLastName() + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
         if (storedRequest.getDueDate() != null) {
-            newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " +storedRequest.getDueDate().getYear() + ".";
+            newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " + storedRequest.getDueDate().getYear() + ".";
         }
         newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
+//        LOG.warn("Pretending to send an email about the new request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
         emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
-        return storedRequest;
     }
 
     @Override
@@ -131,6 +136,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         validateMembers(originalFeedback);
 
+        boolean reassignAttempted = !Objects.equals(originalFeedback.getRecipientId(), feedbackRequest.getRecipientId());
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
@@ -141,11 +147,18 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             }
         }
 
+        if (reassignAttempted) {
+            if(!reassignIsPermitted(originalFeedback)) {
+                throw new PermissionException("You are not authorized to do this operation");
+            }
+            feedbackRequest.setStatus("sent");
+        }
+
         if (feedbackRequest.getStatus().equals("canceled") && originalFeedback.getStatus().equals("submitted")) {
             throw new BadArgException("Attempted to cancel a feedback request that was already submitted");
         }
 
-        if (dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
+        if (dueDateUpdateAttempted && !updateDueDateIsPermitted(originalFeedback)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -173,8 +186,13 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                     requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
                     "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
             newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
-
+//            LOG.warn("Pretending to send an email about the reopened request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
             emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        }
+
+        // Send email if the feedback request has been reassigned
+        if (reassignAttempted) {
+            sendNewRequestEmail(storedRequest);
         }
 
         return storedRequest;
@@ -215,11 +233,18 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
+        boolean isRequesteesSupervisor = false;
+        if(requesteeId != null) {
+            MemberProfile requestee = memberProfileServices.getById(requesteeId);
+            if(requestee != null && requestee.getSupervisorid() != null && requestee.getSupervisorid().equals(currentUserId)) {
+                isRequesteesSupervisor = true;
+            }
+        }
+
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
-            if (currentUserId.equals(creatorId) || currentUserId.equals(recipientId) || currentUserServices.isAdmin()) {
-                LOG.warn(String.format("template: %s, reviewPeriod: %s, requestee: %s", templateId, reviewPeriodId, requesteeId));
+            if (currentUserId.equals(creatorId) || isRequesteesSupervisor || currentUserId.equals(recipientId) || currentUserServices.isAdmin()) {
                 feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId)));
             } else {
                 throw new PermissionException("You are not authorized to do this operation");
@@ -253,6 +278,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean updateDueDateIsPermitted(FeedbackRequest feedbackRequest) {
+        return isCurrentUserAdminOrOwner(feedbackRequest);
+    }
+
+    private boolean reassignIsPermitted(FeedbackRequest feedbackRequest) {
+        return isCurrentUserAdminOrOwner(feedbackRequest) && !feedbackRequest.getStatus().equals("submitted");
+    }
+
+    private boolean isCurrentUserAdminOrOwner(FeedbackRequest feedbackRequest) {
         boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         return isAdmin || currentUserId.equals(feedbackRequest.getCreatorId());
@@ -277,6 +310,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setDueDate(dto.getDueDate());
         feedbackRequest.setStatus(dto.getStatus());
         feedbackRequest.setSubmitDate(dto.getSubmitDate());
+        feedbackRequest.setRecipientId(dto.getRecipientId());
 
         return feedbackRequest;
     }
