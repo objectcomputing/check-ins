@@ -1,9 +1,7 @@
-import React, {useContext, useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import { styled } from '@mui/material/styles';
 import { useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
-import {AppContext} from "../context/AppContext";
-import {selectCurrentUser, selectIsAdmin, selectMyTeam, selectCurrentMembers} from "../context/selectors";
 import ReviewPeriods from "../components/reviews/periods/ReviewPeriods";
 import TeamReviews from "../components/reviews/TeamReviews";
 
@@ -43,14 +41,8 @@ const Root = styled('div')(({theme}) => ({
 }));
 
 const ReviewPage = () => {
-  const {state} = useContext(AppContext);
-  const memberProfile = selectCurrentUser(state);
-  const currentMembers = selectCurrentMembers(state);
-  const myTeam = selectMyTeam(state);
-  const isAdmin = selectIsAdmin(state);
   const location = useLocation();
   const history = useHistory();
-  const [membersToDisplay, setMembersToDisplay] = useState([]);
   const [query, setQuery] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
 
@@ -73,12 +65,6 @@ const ReviewPage = () => {
   }, [query.period, hasPeriod]);
 
   useEffect(() => {
-    if(currentMembers && currentMembers.length > 0) {
-      isAdmin ? setMembersToDisplay(currentMembers.filter((member) => member?.id !== memberProfile?.id)) : setMembersToDisplay(myTeam);
-    }
-  }, [isAdmin, currentMembers, myTeam, memberProfile?.id]);
-
-  useEffect(() => {
     setSelectedPeriod(getPeriod());
   }, [query.period, getPeriod]);
 
@@ -97,7 +83,7 @@ const ReviewPage = () => {
         {
             selectedPeriod === null ?
                 (<ReviewPeriods onPeriodSelected={onPeriodSelected} />) :
-                (<TeamReviews teamMembers={membersToDisplay} periodId={selectedPeriod} />)
+                (<TeamReviews periodId={selectedPeriod} />)
         }
       </div>
     </Root>

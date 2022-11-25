@@ -10,7 +10,9 @@ import queryString from 'query-string';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -27,6 +29,9 @@ import {
   selectReviewPeriod,
   selectProfile,
   selectCurrentUser,
+  selectIsAdmin,
+  selectMyTeam,
+  selectCurrentMembers,
 } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 import DateFnsUtils from "@date-io/date-fns";
@@ -65,25 +70,37 @@ const Root = styled('div')(({theme}) => ({
   },
 }));
 
-const TeamReviews = ({ teamMembers, periodId }) => {
+const TeamReviews = ({ periodId }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const location = useLocation();
   const history = useHistory();
   const currentUser = selectCurrentUser(state);
+  const currentMembers = selectCurrentMembers(state);
+  const myTeam = selectMyTeam(state);
+  const isAdmin = selectIsAdmin(state);
   const period = selectReviewPeriod(state, periodId);
+  const [teamMembers, setTeamMembers] = useState(null);
   const [selfReviews, setSelfReviews] = useState({});
   const [reviews, setReviews] = useState(null);
   const [query, setQuery] = useState({});
   const [selectedTeamMember, setSelectedTeamMember] = useState(null);
   const selectedMemberProfile = selectProfile(state, selectedTeamMember);
   const [newRequestOpen, setNewRequestOpen] = useState(false);
+  const [includeAll, setIncludeAll] = useState(false);
   const loadingReviews = useRef(false);
   const loadedReviews = useRef(false);
   const creatingReview = useRef(false);
 
   const handleOpenNewRequest = useCallback(() => setNewRequestOpen(true), [setNewRequestOpen]);
   const handleCloseNewRequest = useCallback(() => setNewRequestOpen(false), [setNewRequestOpen]);
+  const toggleIncludeAll = useCallback(() => setIncludeAll(!includeAll), [includeAll, setIncludeAll]);
+
+  useEffect(() => {
+    if(currentMembers && currentMembers.length > 0) {
+      isAdmin && includeAll ? setTeamMembers(currentMembers.filter((member) => member?.id !== currentUser?.id)) : setTeamMembers(myTeam);
+    }
+  }, [isAdmin, includeAll, currentMembers, myTeam, currentUser?.id]);
 
   const getReviewStatus = useCallback((teamMemberId) => {
     let reviewStates = { submitted: false, inProgress: false };
@@ -343,6 +360,14 @@ const TeamReviews = ({ teamMembers, periodId }) => {
     <Root>
       <div className={classes.headerContainer}>
         <Typography variant="h4">Team Reviews</Typography>
+        {!selectedTeamMember && (
+          <FormControlLabel control={
+            <Switch
+              checked={includeAll}
+              onChange={toggleIncludeAll}
+            />
+          } label="Show All" />
+        )}
         {selectedTeamMember && (
           <Button onClick={handleOpenNewRequest} className={classes.actionButtons} endIcon={<AddCircleIcon />} variant="contained" color="primary">
             Request Review
