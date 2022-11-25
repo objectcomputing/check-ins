@@ -36,6 +36,8 @@ micronaut:
             enabled: true
             path: /oauth/access_token
             secret: ${ OAUTH_REFRESH_TOKEN_SECRET:'pleaseChangeThisSecretForANewOne' }
+          access-token:
+            expiration: 28800
     oauth2:
       callback-uri: ${ OAUTH_CALLBACK_URI }
       clients:
