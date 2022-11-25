@@ -298,7 +298,7 @@ const TeamReviews = ({ periodId }) => {
   const toggleIncludeAll = useCallback(() => {
     loadedReviews.current = false;
     setIncludeAll(!includeAll);
-  }, [includeAll, setIncludeAll, reloadReviews]);
+  }, [includeAll, setIncludeAll]);
 
   const handleNewRequest = useCallback((assignee) => {
     const createNewRequest = async () => {
