@@ -1,3 +1,14 @@
+pluginManagement {
+    repositories {
+        google()
+        maven {
+            url "https://repo1.maven.org/maven2"
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+}
 rootProject.name="check-ins"
 include "web-ui"
 include "server"
