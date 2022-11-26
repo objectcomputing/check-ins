@@ -17,7 +17,8 @@ import Typography from "@mui/material/Typography";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemAvatar from '@mui/material/ListItemAvatar'
+import Skeleton from '@mui/material/Skeleton';
 import TeamMemberReview from "./TeamMemberReview";
 import SelectUserModal from "./SelectUserModal";
 import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from "../../context/actions";
@@ -94,7 +95,6 @@ const TeamReviews = ({ periodId }) => {
 
   const handleOpenNewRequest = useCallback(() => setNewRequestOpen(true), [setNewRequestOpen]);
   const handleCloseNewRequest = useCallback(() => setNewRequestOpen(false), [setNewRequestOpen]);
-  const toggleIncludeAll = useCallback(() => setIncludeAll(!includeAll), [includeAll, setIncludeAll]);
 
   useEffect(() => {
     if(currentMembers && currentMembers.length > 0) {
@@ -280,10 +280,10 @@ const TeamReviews = ({ periodId }) => {
       promises.push(...teamMembers.map(getReviewRequest));
 
       Promise.all(promises).then((res) => {
-        setSelfReviews({...newSelfReviews});
-        setReviews({...newReviews});
         loadingReviews.current = false;
         loadedReviews.current = true;
+        setSelfReviews({...newSelfReviews});
+        setReviews({...newReviews});
       });
     }
   }, [csrf, period, teamMembers]);
@@ -294,6 +294,11 @@ const TeamReviews = ({ periodId }) => {
     loadedReviews.current = false;
     loadReviews();
   }, [loadReviews]);
+
+  const toggleIncludeAll = useCallback(() => {
+    loadedReviews.current = false;
+    setIncludeAll(!includeAll);
+  }, [includeAll, setIncludeAll]);
 
   const handleNewRequest = useCallback((assignee) => {
     const createNewRequest = async () => {
@@ -374,7 +379,7 @@ const TeamReviews = ({ periodId }) => {
           </Button>
         )}
       </div>
-      {!selectedTeamMember && (
+      {!selectedTeamMember && loadedReviews.current && (
       <>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         { teamMembers.length > 0 ? teamMembers.sort((a, b) => {
@@ -431,6 +436,14 @@ const TeamReviews = ({ periodId }) => {
           </List>
         </AccordionDetails>
       </Accordion>
+      </>)}
+      {!selectedTeamMember && !loadedReviews.current && (<>
+        <ListItem key="skeleton-period">
+          <ListItemAvatar>
+            <Skeleton animation="wave" variant="circular" width={40} height={40} />
+          </ListItemAvatar>
+          <ListItemText primary={(<Skeleton variant="text" sx={{ fontSize: '1rem' }} />)} secondary={(<Skeleton variant="text" sx={{ fontSize: '1rem' }} />)} />
+        </ListItem>
       </>)}
       {!!selectedTeamMember && reviews && (
         <TeamMemberReview reloadReviews={reloadReviews} memberProfile={selectedMemberProfile} selfReview={selfReviews[selectedTeamMember]} reviews={reviews[selectedTeamMember]} />
