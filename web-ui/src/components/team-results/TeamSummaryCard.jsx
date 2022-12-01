@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TEAMS, UPDATE_TOAST } from "../../context/actions";
 import EditTeamModal from "./EditTeamModal";
+import KudosDialog from "../kudos_dialog/KudosDialog";
 import { Link } from "react-router-dom";
 import {
   Button,
@@ -20,6 +21,7 @@ import {
 import PropTypes from "prop-types";
 import { deleteTeam, updateTeam } from "../../api/team.js";
 import SplitButton from "../split-button/SplitButton";
+import StarIcon from "@mui/icons-material/Star";
 
 const PREFIX = "TeamSummaryCard";
 const classes = {
@@ -60,6 +62,8 @@ const TeamSummaryCard = ({ team, index }) => {
   const { teams, userProfile, csrf } = state;
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [openKudos, setOpenKudos] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState(null);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   const isAdmin =
@@ -81,9 +85,11 @@ const TeamSummaryCard = ({ team, index }) => {
 
   const handleOpen = () => setOpen(true);
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
+  const handleOpenKudos = () => setOpenKudos(true);
 
   const handleClose = () => setOpen(false);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
+  const handleCloseKudos = () => setOpenKudos(false);
 
   const teamId = team?.id;
   const deleteATeam = useCallback(async () => {
@@ -109,12 +115,14 @@ const TeamSummaryCard = ({ team, index }) => {
   }, [teamId, csrf, dispatch, teams]);
 
   const options =
-    isAdmin || isTeamLead ? ["Edit Team", "Delete Team"] : ["Edit Team"];
+    isAdmin || isTeamLead ? ["Edit Team", "Give Kudos", "Delete Team"] : ["Edit Team", "Give Kudos"];
 
   const handleAction = (e, index) => {
     if (index === 0) {
       handleOpen();
     } else if (index === 1) {
+      handleOpenKudos();
+    } else if (index === 2) {
       handleOpenDeleteConfirmation();
     }
   };
@@ -211,6 +219,7 @@ const TeamSummaryCard = ({ team, index }) => {
                 </Button>
               </DialogActions>
             </Dialog>
+            <KudosDialog open={openKudos} onClose={handleCloseKudos} recipientType={"Team"} />
           </>
         )}
       </CardActions>

@@ -67,7 +67,7 @@ const PeoplePage = () => {
         <Grid item xs={12} className={classes.search}>
           <TextField
             className={classes.searchInput}
-            label="Select employees..."
+            label="Search employees..."
             placeholder="Member Name"
             value={searchText}
             onChange={(e) => {

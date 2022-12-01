@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { selectProfile, selectTerminatedMembers } from "../context/selectors";
+import {
+  selectOrderedCurrentMemberProfiles,
+  selectProfile,
+  selectTerminatedMembers
+} from "../context/selectors";
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
@@ -41,7 +45,7 @@ const MemberProfilePage = () => {
   const sortedMembers = selectOrderedMemberFirstName(state);
   let pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId)
   let supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid)
-
+  console.log(selectedMember);
 
   useEffect(() => {
     // in the case of a terminated member, member details will still display
@@ -60,6 +64,8 @@ const MemberProfilePage = () => {
   const [teams, setTeams] = useState([]);
   const [guilds, setGuilds] = useState([]);
   const isCurrentUser = userProfile?.memberProfile?.id === memberId;
+
+  const memberProfiles = selectOrderedCurrentMemberProfiles(state);
 
   useEffect(() => {
     async function getTeamsAndGuilds() {
@@ -167,6 +173,7 @@ const MemberProfilePage = () => {
                 <KudosDialog
                   open={kudosDialogOpen}
                   recipient={selectedMember}
+                  value={selectedMember.name ? selectedMember.name : ""}
                   onClose={() => setKudosDialogOpen(false)}
                 />
                 <Button

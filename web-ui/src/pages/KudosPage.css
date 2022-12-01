@@ -22,3 +22,8 @@
 .kudos-page .kudos-card {
     margin-top: 1rem;
 }
+
+.kudos-page .kudos-page-header  {
+    display: flex;
+    justify-content: space-between;
+}
