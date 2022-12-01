@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {styled} from "@mui/material/styles";
-import {Collapse, Divider, IconButton, Typography} from "@mui/material";
+import {Button, Collapse, Divider, IconButton, Typography} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {AppContext} from "../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../context/selectors";
@@ -9,6 +9,8 @@ import {UPDATE_TOAST} from "../context/actions";
 import KudosCard from "../components/kudos_card/KudosCard";
 
 import "./KudosPage.css";
+import KudosDialog from "../components/kudos_dialog/KudosDialog";
+import StarIcon from "@mui/icons-material/Star";
 
 const PREFIX = "KudosPage";
 const classes = {
@@ -36,9 +38,11 @@ const KudosPage = () => {
   const currentUser = selectCurrentUser(state);
 
   const [receivedKudos, setReceivedKudos] = useState([]);
+  const [selectedMember, setSelectedMember] = useState(null)
   const [sentKudos, setSentKudos] = useState([]);
   const [receivedKudosExpanded, setReceivedKudosExpanded] = useState(true);
   const [sentKudosExpanded, setSentKudosExpanded] = useState(true);
+  const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
 
   useEffect(() => {
     const loadReceivedKudos = async () => {
@@ -90,6 +94,19 @@ const KudosPage = () => {
     <Root className="kudos-page">
       <div className="kudos-page-header">
         <Typography fontWeight="bold" variant="h4">Kudos</Typography>
+        <KudosDialog
+          open={kudosDialogOpen}
+          recipient={selectedMember}
+          onClose={() => setKudosDialogOpen(false)}
+        />
+        <Button
+          className="kudos-dialog-open"
+          variant="outlined"
+          startIcon={<StarIcon/>}
+          onClick={() => setKudosDialogOpen(true)}
+        >
+          Give Kudos
+        </Button>
       </div>
       <div className="received-kudos-header">
         <Typography variant="h5">Received Kudos</Typography>

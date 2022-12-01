@@ -26,7 +26,28 @@ const SortOption = {
   OLDEST: "oldest"
 };
 
-const Root = styled("div")({});
+const PREFIX = 'ManageKudosPage';
+const classes = {
+  kudos: `${PREFIX}-kudos`,
+  search: `${PREFIX}-search`,
+  searchInput: `${PREFIX}-searchInput`
+};
+
+const Root = styled("div")({
+  [`& .${classes.search}`]: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  [`& .${classes.searchInput}`]: {
+    width: "20em",
+  },
+  [`& .${classes.kudos}`]: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
+    width: "100%",
+  },});
 
 const ManageKudosPage = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -38,6 +59,8 @@ const ManageKudosPage = () => {
   const [approvedKudosLoading, setApprovedKudosLoading] = useState(true);
   const [kudosTab, setKudosTab] = useState("PENDING");
   const [timeRange, setTimeRange] = useState(DateRange.TWO_WEEKS);
+
+  const [searchText, setSearchText] = useState("");
 
   const loadPendingKudos = useCallback(async () => {
     setPendingKudosLoading(true);
@@ -115,6 +138,14 @@ const ManageKudosPage = () => {
             <Tab label="Pending" value="PENDING" icon={<PendingIcon/>} iconPosition="start"/>
             <Tab label="Approved" value="APPROVED" icon={<ThumbUpIcon/>} iconPosition="start"/>
           </TabList>
+          <TextField
+            className={classes.searchInput}
+            label={"Search kudos..."}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
+            value={searchText}
+          />
           {kudosTab === "APPROVED" &&
             <TextField
               select

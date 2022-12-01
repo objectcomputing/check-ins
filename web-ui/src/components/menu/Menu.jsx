@@ -92,11 +92,12 @@ const Root = styled("div")(({ theme }) => ({
 }));
 
 const adminLinks = [
-  ["/admin/roles", "Roles"],
+  ["/admin/manage-kudos", "Manage Kudos"],
   ["/admin/permissions", "Permissions"],
-  ["/admin/users", "Users"],
+  ["/admin/roles", "Roles"],
   ["/admin/email", "Send Email"],
   ["/admin/edit-skills", "Skills"],
+  ["/admin/users", "Users"],
 ];
 
 const directoryLinks = [
@@ -108,13 +109,13 @@ const directoryLinks = [
 const getFeedbackLinks = (isAdmin, isPDL) =>
   isAdmin || isPDL
     ? [
-      ["/feedback/view", "View Feedback"],
-      ["/feedback/received-requests", "Received Requests"],
       ["/kudos", "Kudos"],
+      ["/feedback/received-requests", "Received Requests"],
+      ["/feedback/view", "View Feedback"],
     ]
     : [
-      ["/feedback/received-requests", "Received Requests"],
       ["/kudos", "Kudos"],
+      ["/feedback/received-requests", "Received Requests"],
     ];
 
 const reportsLinks = [

@@ -53,6 +53,8 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
   const currentUser = selectCurrentUser(state);
   const teams = selectNormalizedTeams(state, "");
   const memberProfiles = selectOrderedCurrentMemberProfiles(state);
+  console.log(memberProfiles);
+  console.log(selectedMembers);
 
   const handleSubmit = useCallback(() => {
 
@@ -199,6 +201,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
                       {...params}
                       variant="outlined"
                       label="Select Members"
+                      value={(member) => member.name}
                     />
                   )}
                 />
@@ -226,7 +229,11 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
             <TextField
               variant="outlined"
               label="Message"
-              placeholder={`Write a message discussing how ${recipientType === "TEAM" ? "this team has" : (selectedMembers.length === 1 ? "this member has" : "these members have")} earned some kudos!`}
+              placeholder={
+              `Write a message discussing how ${recipientType === "TEAM" 
+                ? "this team has" 
+                : (selectedMembers.length === 1 ? "this member has" : "these members have")} earned some kudos!`
+              }
               multiline
               fullWidth
               rows={7}

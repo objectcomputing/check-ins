@@ -11,7 +11,7 @@ import {
   AvatarGroup,
   Tooltip,
   Dialog,
-  DialogTitle, DialogContent, DialogContentText, DialogActions
+  DialogTitle, DialogContent, DialogContentText, DialogActions, TextField
 } from "@mui/material";
 import {selectCsrfToken, selectProfile} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
@@ -47,8 +47,10 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
 
   const [expanded, setExpanded] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteReason, setDeleteReason] = useState(""); // TODO: setup optional reason for deleting a kudos
 
   const sender = selectProfile(state, kudos.senderId);
+  console.log(kudos);
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
@@ -180,6 +182,14 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
           <DialogContentText>
             Are you sure you want to deny approval for these kudos? The kudos will be deleted.
           </DialogContentText>
+          <TextField id="reason-for-deletion"
+                     fullWidth
+                     multiline
+                     placeholder={'Reason for deletion (optional)'}
+                     rows={5}
+                     style={{ marginTop: "2rem" }}
+                     variant='outlined'
+          />
         </DialogContent>
         <DialogActions>
           <Button
