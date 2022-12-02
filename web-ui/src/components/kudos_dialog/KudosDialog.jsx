@@ -48,7 +48,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
   const [message, setMessage] = useState("");
   const [created, setCreated] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(null);
-  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState(recipient ? [recipient] : []);
 
   const currentUser = selectCurrentUser(state);
   const teams = selectNormalizedTeams(state, "");
@@ -190,7 +190,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
                 <Autocomplete
                   multiple
                   options={memberProfiles}
-                  getOptionLabel={(member) => member.name}
+                  getOptionLabel={(member) => member?.name}
                   value={selectedMembers}
                   onChange={(event, members) => {
                     setSelectedMembers(members);

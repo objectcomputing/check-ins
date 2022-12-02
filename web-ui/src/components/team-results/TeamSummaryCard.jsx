@@ -219,7 +219,7 @@ const TeamSummaryCard = ({ team, index }) => {
                 </Button>
               </DialogActions>
             </Dialog>
-            <KudosDialog open={openKudos} onClose={handleCloseKudos} recipientType={"Team"} />
+            <KudosDialog open={openKudos} onClose={handleCloseKudos} teamId={selectedTeam} />
           </>
         )}
       </CardActions>

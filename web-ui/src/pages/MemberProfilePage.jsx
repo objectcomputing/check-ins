@@ -173,7 +173,6 @@ const MemberProfilePage = () => {
                 <KudosDialog
                   open={kudosDialogOpen}
                   recipient={selectedMember}
-                  value={selectedMember.name ? selectedMember.name : ""}
                   onClose={() => setKudosDialogOpen(false)}
                 />
                 <Button
