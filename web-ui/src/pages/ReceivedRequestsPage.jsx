@@ -77,21 +77,30 @@ const SortOption = {
 const ReceivedRequestsPage = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
+  const currentUserId = selectCurrentUserId(state);
+
   const [searchText, setSearchText] = useState("");
   const [sortValue, setSortValue] = useState(SortOption.SEND_DATE_DESCENDING);
   const [isLoading, setIsLoading] = useState(true)
+
+  const [canceledRequests, setCanceledRequests] = useState([]);
   const [receivedRequests, setReceivedRequests] = useState([]);
-  const [filteredReceivedRequests, setFilteredReceivedRequests] = useState([]);
   const [submittedRequests, setSubmittedRequests] = useState([]);
+
+  const [filteredCanceledRequests, setFilteredCanceledRequests] = useState([]);
+  const [filteredReceivedRequests, setFilteredReceivedRequests] = useState([]);
   const [filteredSubmittedRequests, setFilteredSubmittedRequests] = useState([]);
+
+  const [canceledRequestsExpanded, setCanceledRequestsExpanded] = useState(false);
   const [receivedRequestsExpanded, setReceivedRequestsExpanded] = useState(true);
   const [submittedRequestsExpanded, setSubmittedRequestsExpanded] = useState(false);
-  const currentUserId = selectCurrentUserId(state);
+
 
   useEffect(() => {
     const getAllFeedbackRequests = async () => {
       let res = await getFeedbackRequestsByRecipient(currentUserId, csrf);
       if (res && res.payload && res.payload.data && !res.error) {
+        console.warn("REQUESTS", res.payload.data);
         return res.payload.data;
       } else {
         window.snackDispatch({
@@ -107,6 +116,8 @@ const ReceivedRequestsPage = () => {
     if (csrf && currentUserId) {
       getAllFeedbackRequests().then((data) => {
         if (data) {
+          console.warn({data});
+          setCanceledRequests(data.filter((req) => req.status === 'CANCELED'));
           setReceivedRequests(data.filter((req) => req.submitDate === undefined));
           setSubmittedRequests(data.filter((req) => req.submitDate && req.submitDate.length === 3));
           setIsLoading(false)
@@ -117,25 +128,45 @@ const ReceivedRequestsPage = () => {
   }, [csrf, currentUserId]);
 
   useEffect(() => {
+    let filteredCanceled = [...canceledRequests]
     let filteredReceived = [...receivedRequests];
     let filteredSubmitted = [...submittedRequests];
 
     // Search for intersection of multiple queries separated by commas
     const queries = searchText.split(",").map((search) => search.trim().toLowerCase());
 
+    
+
     if (searchText.trim()) {
       for (let query of queries) {
-        filteredReceived = filteredReceived.filter((request) => {
-          const creatorName = selectProfile(state, request.creatorId).name.toLowerCase();
-          const requesteeName = selectProfile(state, request.requesteeId).name.toLowerCase();
-          return creatorName.includes(query) || requesteeName.includes(query);
-        });
+        
+        const setFiltered = (filteredOption) => {
+          filteredOption = filteredOption.filter((request) => {
+            const creatorName = selectProfile(state, request.creatorId).name.toLowerCase();
+            const requesteeName = selectProfile(state, request.requesteeId).name.toLowerCase();
+            return creatorName.includes(query) || requesteeName.includes(query);
+          });
+        }
+        setFiltered(filteredCanceled)
+        setFiltered(filteredReceived)
+        setFiltered(filteredSubmitted)
+        // filteredCanceled = filteredCanceled.filter((request) => {
+        //   const creatorName = selectProfile(state, request.creatorId).name.toLowerCase();
+        //   const requesteeName = selectProfile(state, request.requesteeId).name.toLowerCase();
+        //   return creatorName.includes(query) || requesteeName.includes(query);
+        // });
 
-        filteredSubmitted = filteredSubmitted.filter((request) => {
-          const creatorName = selectProfile(state, request.creatorId).name.toLowerCase();
-          const requesteeName = selectProfile(state, request.requesteeId).name.toLowerCase();
-          return creatorName.includes(query) || requesteeName.includes(query);
-        });
+        // filteredReceived = filteredReceived.filter((request) => {
+        //   const creatorName = selectProfile(state, request.creatorId).name.toLowerCase();
+        //   const requesteeName = selectProfile(state, request.requesteeId).name.toLowerCase();
+        //   return creatorName.includes(query) || requesteeName.includes(query);
+        // });
+
+        // filteredSubmitted = filteredSubmitted.filter((request) => {
+        //   const creatorName = selectProfile(state, request.creatorId).name.toLowerCase();
+        //   const requesteeName = selectProfile(state, request.requesteeId).name.toLowerCase();
+        //   return creatorName.includes(query) || requesteeName.includes(query);
+        // });
       }
     }
 
@@ -160,9 +191,11 @@ const ReceivedRequestsPage = () => {
         console.warn(`Invalid sort option ${sortValue} provided for received requests`);
     }
 
+    filteredCanceled.sort(sortMethod);
     filteredReceived.sort(sortMethod);
     filteredSubmitted.sort(sortMethod);
 
+    setFilteredCanceledRequests(filteredCanceled);
     setFilteredReceivedRequests(filteredReceived);
     setFilteredSubmittedRequests(filteredSubmitted);
 
@@ -209,6 +242,44 @@ const ReceivedRequestsPage = () => {
           </FormControl>
         </div>
       </div>
+      <div className="request-section-header">
+        <Typography variant="h5">Canceled Requests</Typography>
+        <IconButton
+          onClick={() => setCanceledRequestsExpanded(!canceledRequestsExpanded)}
+          aria-label="show more"
+          className={canceledRequestsExpanded ? classes.expandOpen : classes.expandClose}
+          size="large">
+          <ExpandMoreIcon />
+        </IconButton>
+      </div>
+      <Collapse in={!canceledRequestsExpanded} timeout="auto" unmountOnExit>
+        {isLoading &&
+          <div style={{ marginTop: "1em" }}>
+            {Array.from({ length: 1 })
+              .map((_, index) => <SkeletonLoader key={index} type="received_requests" />)
+            }
+          </div>
+        }
+        {!isLoading && <div style={{ marginTop: "1em" }} className="no-requests-message">
+          <Typography variant="body1">{canceledRequests.length} canceled request{canceledRequests.length === 1 ? "" : "s"} currently hidden</Typography>
+        </div>
+        }
+      </Collapse>
+      <Collapse in={canceledRequestsExpanded} timeout="auto" unmountOnExit>
+        {!isLoading &&
+          <div className="canceled-requests-container">
+            {canceledRequests.length === 0 &&
+              <div className="no-requests-message"><Typography variant="body1">No canceled feedback requests</Typography></div>
+            }
+            {canceledRequests.length > 0 && filteredSubmittedRequests.length === 0 &&
+              <div className="no-requests-message"><Typography variant="body1">No canceled feedback requests</Typography></div>
+            }
+            {filteredCanceledRequests.map((request) => (
+              <ReceivedRequestCard key={request.id} request={request} />
+            ))}
+          </div>
+        }
+      </Collapse>
       <div className="request-section-header">
         <Typography variant="h5">Received Requests</Typography>
         <IconButton
