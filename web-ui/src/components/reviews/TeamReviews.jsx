@@ -3,8 +3,11 @@ import PropTypes from "prop-types";
 import { useLocation, useHistory } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import Avatar from '@mui/material/Avatar';
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import Divider from '@mui/material/Divider';
 import queryString from 'query-string';
 import Accordion from '@mui/material/Accordion';
@@ -18,6 +21,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar'
+import Tooltip from '@mui/material/Tooltip';
 import Skeleton from '@mui/material/Skeleton';
 import TeamMemberReview from "./TeamMemberReview";
 import SelectUserModal from "./SelectUserModal";
@@ -33,6 +37,7 @@ import {
   selectIsAdmin,
   selectMyTeam,
   selectCurrentMembers,
+  selectSubordinates,
 } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 import DateFnsUtils from "@date-io/date-fns";
@@ -79,6 +84,7 @@ const TeamReviews = ({ periodId }) => {
   const currentUser = selectCurrentUser(state);
   const currentMembers = selectCurrentMembers(state);
   const myTeam = selectMyTeam(state);
+  const subordinates = selectSubordinates(state, currentUser?.id);
   const isAdmin = selectIsAdmin(state);
   const period = selectReviewPeriod(state, periodId);
   const [teamMembers, setTeamMembers] = useState(null);
@@ -98,9 +104,9 @@ const TeamReviews = ({ periodId }) => {
 
   useEffect(() => {
     if(currentMembers && currentMembers.length > 0) {
-      isAdmin && includeAll ? setTeamMembers(currentMembers.filter((member) => member?.id !== currentUser?.id)) : setTeamMembers(myTeam);
+      isAdmin && includeAll ? setTeamMembers(currentMembers.filter((member) => member?.id !== currentUser?.id)) : includeAll ? setTeamMembers(subordinates) : setTeamMembers(myTeam);
     }
-  }, [isAdmin, includeAll, currentMembers, myTeam, currentUser?.id]);
+  }, [isAdmin, includeAll, subordinates, currentMembers, myTeam, currentUser?.id]);
 
   const getReviewStatus = useCallback((teamMemberId) => {
     let reviewStates = { submitted: false, inProgress: false };
@@ -361,6 +367,8 @@ const TeamReviews = ({ periodId }) => {
     }
   }, [csrf, period, selectedMemberProfile, dispatch, handleCloseNewRequest, reviews]);
 
+  const createSecondary = (teamMember) => getReviewStatus(teamMember?.id) + ", Self-review: " + getSelfReviewStatus(teamMember?.id);
+
   return teamMembers && teamMembers.length > 0 && (
     <Root>
       <div className={classes.headerContainer}>
@@ -396,7 +404,17 @@ const TeamReviews = ({ periodId }) => {
             <ListItemAvatar key={`teamMember-lia-${teamMember?.id}`}>
               <Avatar src={getAvatarURL(teamMember?.workEmail)} />
             </ListItemAvatar>
-            <ListItemText key={`teamMember-lit-${teamMember?.id}`} primary={teamMember?.firstName + " " + teamMember?.lastName} secondary={getReviewStatus(teamMember?.id) + ", Self-review: "+getSelfReviewStatus(teamMember?.id)} />
+            <ListItemText key={`teamMember-lit-${teamMember?.id}`} primary={teamMember?.firstName + " " + teamMember?.lastName} secondary={createSecondary(teamMember)} />
+            <ListItemSecondaryAction>
+              <Tooltip title="Request Feedback">
+              <IconButton>
+                <AddCommentIcon onClick={(e) => {
+                  e.stopPropagation();
+                  history.push(`/feedback/request?for=${teamMember?.id}`);
+                }}/>
+              </IconButton>
+              </Tooltip>
+            </ListItemSecondaryAction>
           </ListItem>
           <Divider key={`divider-${teamMember?.id}`}/>
           </>
@@ -427,7 +445,15 @@ const TeamReviews = ({ periodId }) => {
                 <ListItemAvatar key={`teamMember-lia-${teamMember?.id}`}>
                   <Avatar src={getAvatarURL(teamMember?.workEmail)} />
                 </ListItemAvatar>
-                <ListItemText key={`teamMember-lit-${teamMember?.id}`} primary={teamMember?.firstName + " " + teamMember?.lastName} secondary={getReviewStatus(teamMember?.id) + ", Self-review: "+getSelfReviewStatus(teamMember?.id)} />
+                <ListItemText key={`teamMember-lit-${teamMember?.id}`} primary={teamMember?.firstName + " " + teamMember?.lastName} secondary={createSecondary(teamMember)} />
+                <ListItemSecondaryAction>
+                  <Tooltip title="Request Feedback"><IconButton>
+                    <AddCommentIcon onClick={(e) => {
+                      e.stopPropagation();
+                      history.push(`/feedback/request?for=${teamMember?.id}`);
+                    }}/>
+                  </IconButton></Tooltip>
+                </ListItemSecondaryAction>
               </ListItem>
               <Divider key={`divider-${teamMember?.id}`}/>
               </>

@@ -257,7 +257,7 @@ export const selectIsSupervisor = createSelector(
       return false
     }
   }
-)
+);
 
 const filterMembersBySupervisor = (currentMembers, supervisorId) => currentMembers?.filter((currentTeamMember) =>  {
   return currentTeamMember?.supervisorid === supervisorId;
@@ -267,13 +267,22 @@ export const selectTeamMembersBySupervisorId = createSelector(
   selectCurrentMembers,
   (state, supervisorId) => supervisorId,
   filterMembersBySupervisor
-)
+);
 
 export const selectMyTeam = createSelector(
   selectCurrentMembers,
   selectCurrentUserId,
   filterMembersBySupervisor
-)
+);
+
+export const selectSubordinates = createSelector(
+  selectTeamMembersBySupervisorId,
+  (state, managerId) => managerId,
+  (state) => state,
+  (team, managerId, state) => team.reduce((subordinates, teamMember) => {
+    return [...subordinates, ...selectSubordinates(state, teamMember.id)];
+  }, [...team])
+);
 
 export const selectTeamMembersWithCheckinPDL = createSelector(
   (state, pdlId) => pdlId,
