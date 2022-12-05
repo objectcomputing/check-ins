@@ -280,7 +280,9 @@ export const selectSubordinates = createSelector(
   (state, managerId) => managerId,
   (state) => state,
   (team, managerId, state) => team.reduce((subordinates, teamMember) => {
-    return [...subordinates, ...selectSubordinates(state, teamMember.id)];
+    if(subordinates.some((current) => current.id === teamMember.id))
+      return subordinates;
+    else return [...subordinates, ...selectSubordinates(state, teamMember.id)];
   }, [...team])
 );
 

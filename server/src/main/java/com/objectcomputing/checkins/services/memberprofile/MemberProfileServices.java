@@ -18,4 +18,6 @@ public interface MemberProfileServices {
     MemberProfile findByName(@NotNull String firstName, @NotNull String lastName);
 
     List<MemberProfile> findAll();
+
+    List<MemberProfile> getSupervisorsForId(UUID id);
 }

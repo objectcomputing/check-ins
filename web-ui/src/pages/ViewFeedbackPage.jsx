@@ -8,9 +8,9 @@ import TextField from "@mui/material/TextField";
 import FeedbackRequestCard from '../components/feedback_request_card/FeedbackRequestCard';
 import Typography from "@mui/material/Typography";
 import "./ViewFeedbackPage.css";
-import {getFeedbackRequestsByCreator} from "../api/feedback";
+import {getFeedbackRequestsByCreator, getFeedbackRequestsByRequestee} from "../api/feedback";
 import {AppContext} from "../context/AppContext";
-import {selectCsrfToken, selectCurrentUserId, selectProfile} from "../context/selectors";
+import {selectCsrfToken, selectCurrentUserId, selectProfile, selectIsSupervisor, selectMyTeam} from "../context/selectors";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader"
 
@@ -75,6 +75,7 @@ const ViewFeedbackPage = () => {
   const {state} = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUserId =  selectCurrentUserId(state);
+  const isSupervisor = selectIsSupervisor(state);
   const gotRequests = useRef(false);
   const [isLoading, setIsLoading] = useState(true)
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
@@ -84,6 +85,14 @@ const ViewFeedbackPage = () => {
     const getFeedbackRequests = async(creatorId) => {
       if (csrf) {
         let res = await getFeedbackRequestsByCreator(creatorId, csrf);
+        return res && res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : null;
+      }
+    }
+    const getFeedbackRequestsById = async(requesteeId) => {
+      if (csrf) {
+        let res = await getFeedbackRequestsByRequestee(requesteeId, undefined, csrf);
         return res && res.payload && res.payload.data && !res.error
           ? res.payload.data
           : null;
@@ -103,7 +112,24 @@ const ViewFeedbackPage = () => {
     const getRequestAndTemplateInfo = async (currentUserId) => {
       //get feedback requests
       const feedbackRequests = await getFeedbackRequests(currentUserId);
+      const contains = (toFind) => feedbackRequests.findIndex(request => request.id === toFind.id) !== -1;
+
+      if(isSupervisor) {
+        const myTeam = selectMyTeam(state);
+        await Promise.all(myTeam.map((member) => {
+          return new Promise(async (resolve) => {
+            const memberRequests = await getFeedbackRequestsById(member.id);
+            memberRequests.forEach((request) => {
+              if (!contains(request)) {
+                feedbackRequests.push(request);
+              }
+            });
+            resolve();
+          });
+        }));
+      }
       return feedbackRequests;
+
     }
 
     const getTemplates = async (feedbackRequests) => {
@@ -155,7 +181,7 @@ const ViewFeedbackPage = () => {
         setFeedbackRequests(groups);
       }
     });
-  }, [currentUserId, csrf, state]);
+  }, [currentUserId, csrf, state, isSupervisor]);
 
   const getFilteredFeedbackRequests = useCallback(() => {
     if (feedbackRequests === undefined) {
@@ -186,16 +212,46 @@ const ViewFeedbackPage = () => {
       }
     }
 
-    return requestsToDisplay?.map((request) => (
-      <FeedbackRequestCard
-        key={`${request?.requesteeId}-${request?.templateId}`}
-        requesteeId={request?.requesteeId}
-        templateName={request?.templateInfo?.title}
-        responses={request?.responses}
-        sortType={sortValue}
-        dateRange={dateRange}
-      />
-      ));
+    const isInRange = (requestDate) => {
+      let oldestDate = new Date();
+      switch (dateRange) {
+        case DateRange.THREE_MONTHS:
+          oldestDate.setMonth(oldestDate.getMonth() - 3);
+          break;
+        case DateRange.SIX_MONTHS:
+          oldestDate.setMonth(oldestDate.getMonth() - 6);
+          break;
+        case DateRange.ONE_YEAR:
+          oldestDate.setFullYear(oldestDate.getFullYear() - 1);
+          break;
+        case DateRange.ALL_TIME:
+          return true;
+        default:
+          oldestDate.setMonth(oldestDate.getMonth() - 3);
+      }
+
+      if (Array.isArray(requestDate)) {
+        requestDate = new Date(requestDate.join("/"));
+        // have to do for Safari
+      }
+      return requestDate >= oldestDate;
+    }
+
+    return requestsToDisplay?.reduce((toDisplay, request) => {
+      if (request?.responses?.length > 0) {
+        if(request.responses.filter((response) => isInRange(response.sendDate)).length > 0) {
+          toDisplay.push((<FeedbackRequestCard
+            key={`${request?.requesteeId}-${request?.templateId}`}
+            requesteeId={request?.requesteeId}
+            templateName={request?.templateInfo?.title}
+            responses={request?.responses}
+            sortType={sortValue}
+            dateRange={dateRange}
+          />));
+        }
+      }
+      return toDisplay;
+    }, []);
   }, [searchText, sortValue, dateRange, feedbackRequests]);
 
   return (
