@@ -132,4 +132,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public List<MemberProfile> findAll() {
         return memberProfileRepository.findAll();
     }
+
+    @Override
+    public List<MemberProfile> getSupervisorsForId(UUID id) {
+        return memberProfileRepository.findSupervisorsForId(id);
+    }
 }

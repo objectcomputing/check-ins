@@ -71,6 +71,26 @@ public class MemberProfileController {
     }
 
     /**
+     * Find supervisors by member profile id.
+     *
+     * @param id {@link UUID} ID of the member profile
+     * @return {@link List<MemberProfileResponseDTO>} List of the profiles for the supervisors of the requested member
+     */
+    @Get("/{id}/supervisors")
+    public Mono<HttpResponse<List<MemberProfileResponseDTO>>> getSupervisorsForId(UUID id) {
+
+        return Mono.fromCallable(() -> memberProfileServices.getSupervisorsForId(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(memberProfiles -> {
+                    List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<MemberProfileResponseDTO>>) HttpResponse
+                            .ok(dtoList);
+
+                }).subscribeOn(scheduler);
+    }
+
+    /**
      * Find member profile by first name, last name, title, leader's ID, email, supervisor's ID or find all.
      *
      * @param firstName {@link String} Find members with the given first name
