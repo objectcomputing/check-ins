@@ -233,13 +233,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
-        boolean isRequesteesSupervisor = false;
-        if(requesteeId != null) {
-            MemberProfile requestee = memberProfileServices.getById(requesteeId);
-            if(requestee != null && requestee.getSupervisorid() != null && requestee.getSupervisorid().equals(currentUserId)) {
-                isRequesteesSupervisor = true;
-            }
-        }
+        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
 
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (currentUserId != null) {
@@ -258,11 +252,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
-        final UUID requsteeSupervisor = requestee.getSupervisorid();
+        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
         final UUID requesteePDL = requestee.getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
-        return isAdmin || currentUserId.equals(requesteePDL) || currentUserId.equals(requsteeSupervisor) || currentUserId.equals(requesteeId);
+        return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || currentUserId.equals(requesteeId);
     }
 
     private boolean getIsPermitted(UUID requesteeId, UUID recipientId, LocalDate sendDate) {
