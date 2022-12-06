@@ -10,6 +10,8 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.core.annotation.Nullable;
 
 import jakarta.inject.Singleton;
@@ -25,6 +27,7 @@ import java.util.UUID;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
+@CacheConfig("member-cache")
 public class MemberProfileServicesImpl implements MemberProfileServices {
 
     private final MemberProfileRepository memberProfileRepository;
@@ -134,6 +137,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
+    @Cacheable
     public List<MemberProfile> getSupervisorsForId(UUID id) {
         return memberProfileRepository.findSupervisorsForId(id);
     }
