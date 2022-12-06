@@ -146,7 +146,7 @@ const FeedbackRequestPage = () => {
       return true;
     }
     return false;
-  }, [memberIds, query, dispatch, handleQueryChange, currentUserId]);
+  }, [memberIds, query, dispatch, handleQueryChange]);
 
   const isValidDate = useCallback((dateString) => {
     let today = new Date();
