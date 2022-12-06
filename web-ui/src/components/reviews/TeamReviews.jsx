@@ -282,6 +282,8 @@ const TeamReviews = ({ periodId }) => {
 
     if (csrf && teamMembers && teamMembers.length > 0 && period && !loadingReviews.current) {
       loadingReviews.current = true;
+      setSelfReviews({});
+      setReviews(null);
       const promises = teamMembers.map(getSelfReviewRequest);
       promises.push(...teamMembers.map(getReviewRequest));
 
@@ -369,7 +371,7 @@ const TeamReviews = ({ periodId }) => {
 
   const createSecondary = (teamMember) => getReviewStatus(teamMember?.id) + ", Self-review: " + getSelfReviewStatus(teamMember?.id);
 
-  return teamMembers && teamMembers.length > 0 && (
+  return (
     <Root>
       <div className={classes.headerContainer}>
         <Typography variant="h4">Team Reviews</Typography>
@@ -390,7 +392,7 @@ const TeamReviews = ({ periodId }) => {
       {!selectedTeamMember && loadedReviews.current && (
       <>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-        { teamMembers.length > 0 ? teamMembers.sort((a, b) => {
+        { teamMembers && teamMembers.length > 0 ? teamMembers.sort((a, b) => {
           return ('' + a?.lastName).toUpperCase().localeCompare(b?.lastName.toUpperCase());
         })
         .filter((teamMember) => {
@@ -431,7 +433,7 @@ const TeamReviews = ({ periodId }) => {
         </AccordionSummary>
         <AccordionDetails>
           <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            { teamMembers.length > 0 ? teamMembers.sort((a, b) => {
+            { teamMembers && teamMembers.length > 0 ? teamMembers.sort((a, b) => {
               return ('' + a?.lastName).toUpperCase().localeCompare(b?.lastName.toUpperCase());
             })
             .filter((teamMember) => {
@@ -463,7 +465,7 @@ const TeamReviews = ({ periodId }) => {
         </AccordionDetails>
       </Accordion>
       </>)}
-      {!selectedTeamMember && !loadedReviews.current && (<>
+      {!selectedTeamMember && loadingReviews.current && (<>
         <ListItem key="skeleton-period">
           <ListItemAvatar>
             <Skeleton animation="wave" variant="circular" width={40} height={40} />

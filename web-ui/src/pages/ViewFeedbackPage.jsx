@@ -84,7 +84,7 @@ const ViewFeedbackPage = () => {
   const myTeam = selectMyTeam(state);
   const gotRequests = useRef(false);
   const [teamMembers, setTeamMembers] = useState(null);
-  const [isLoading, setIsLoading] = useState(true)
+  const isLoading = useRef(true)
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
   const [includeAll, setIncludeAll] = useState(false);
@@ -133,7 +133,7 @@ const ViewFeedbackPage = () => {
       const feedbackRequests = await getFeedbackRequests(currentUserId);
       const contains = (toFind) => feedbackRequests.findIndex(request => request.id === toFind.id) !== -1;
 
-      if(isSupervisor) {
+      if(teamMembers && teamMembers.length > 0) {
         await Promise.all(teamMembers.map((member) => {
           return new Promise(async (resolve) => {
             const memberRequests = await getFeedbackRequestsById(member.id);
@@ -172,6 +172,8 @@ const ViewFeedbackPage = () => {
       return feedbackRequests;
     }
 
+    isLoading.current = true;
+    setFeedbackRequests([]);
     getRequestAndTemplateInfo(currentUserId).then(getTemplates).then(requestList => {
       if (requestList) {
         let groups = [];
@@ -195,7 +197,7 @@ const ViewFeedbackPage = () => {
             groups[existingGroup].responses.push(request);
           }
         }
-        setIsLoading(false)
+        isLoading.current = false;
         setFeedbackRequests(groups);
       }
     });
@@ -342,7 +344,7 @@ const ViewFeedbackPage = () => {
         </div>
       </div>
       <div className="feedback-requests-list-container">
-        {!isLoading ? getFilteredFeedbackRequests(): Array.from({length: 10})
+        {!isLoading.current ? getFilteredFeedbackRequests(): Array.from({length: 10})
             .map((_, index) => <SkeletonLoader key={index} type="feedback_requests" />)}
       </div>
     </Root>
