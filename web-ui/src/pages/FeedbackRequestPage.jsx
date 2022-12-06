@@ -131,7 +131,7 @@ const FeedbackRequestPage = () => {
     if (from) {
       from = Array.isArray(from) ? from : [from];
       for (let recipientId of from) {
-        if (!memberIds.includes(recipientId) || from.includes(currentUserId)) {
+        if (!memberIds.includes(recipientId)) {
           dispatch({
             type: UPDATE_TOAST,
             payload: {
