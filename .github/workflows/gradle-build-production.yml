@@ -106,5 +106,5 @@ jobs:
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins" \
             --platform "managed" \
-            --max-instances 10 \
+            --max-instances 5 \
             --allow-unauthenticated
