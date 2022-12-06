@@ -4,13 +4,15 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Search from "@mui/icons-material/Search";
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import TextField from "@mui/material/TextField";
+import Switch from "@mui/material/Switch";
 import FeedbackRequestCard from '../components/feedback_request_card/FeedbackRequestCard';
 import Typography from "@mui/material/Typography";
 import "./ViewFeedbackPage.css";
 import {getFeedbackRequestsByCreator, getFeedbackRequestsByRequestee} from "../api/feedback";
 import {AppContext} from "../context/AppContext";
-import {selectCsrfToken, selectCurrentUserId, selectProfile, selectIsSupervisor, selectMyTeam} from "../context/selectors";
+import {selectCsrfToken, selectCurrentUserId, selectProfile, selectIsAdmin, selectIsSupervisor, selectMyTeam, selectCurrentMembers, selectSubordinates} from "../context/selectors";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader"
 
@@ -75,11 +77,28 @@ const ViewFeedbackPage = () => {
   const {state} = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUserId =  selectCurrentUserId(state);
+  const isAdmin = selectIsAdmin(state);
   const isSupervisor = selectIsSupervisor(state);
+  const currentMembers = selectCurrentMembers(state);
+  const subordinates = selectSubordinates(state, currentUserId);
+  const myTeam = selectMyTeam(state);
   const gotRequests = useRef(false);
+  const [teamMembers, setTeamMembers] = useState(null);
   const [isLoading, setIsLoading] = useState(true)
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
+  const [includeAll, setIncludeAll] = useState(false);
+
+  useEffect(() => {
+    if(currentMembers && currentMembers.length > 0) {
+      isAdmin && includeAll ? setTeamMembers(currentMembers.filter((member) => member?.id !== currentUserId)) : includeAll ? setTeamMembers(subordinates) : setTeamMembers(myTeam);
+    }
+  }, [isAdmin, includeAll, subordinates, currentMembers, myTeam, currentUserId]);
+
+  const toggleIncludeAll = useCallback(() => {
+      gotRequests.current = false;
+      setIncludeAll(!includeAll);
+    }, [includeAll, setIncludeAll]);
 
   useEffect(() => {
     const getFeedbackRequests = async(creatorId) => {
@@ -115,8 +134,7 @@ const ViewFeedbackPage = () => {
       const contains = (toFind) => feedbackRequests.findIndex(request => request.id === toFind.id) !== -1;
 
       if(isSupervisor) {
-        const myTeam = selectMyTeam(state);
-        await Promise.all(myTeam.map((member) => {
+        await Promise.all(teamMembers.map((member) => {
           return new Promise(async (resolve) => {
             const memberRequests = await getFeedbackRequestsById(member.id);
             memberRequests.forEach((request) => {
@@ -181,7 +199,7 @@ const ViewFeedbackPage = () => {
         setFeedbackRequests(groups);
       }
     });
-  }, [currentUserId, csrf, state, isSupervisor]);
+  }, [currentUserId, teamMembers, csrf, state, isSupervisor]);
 
   const getFilteredFeedbackRequests = useCallback(() => {
     if (feedbackRequests === undefined) {
@@ -258,6 +276,12 @@ const ViewFeedbackPage = () => {
     <Root className="view-feedback-page">
       <div className="view-feedback-header-container">
         <Typography className={classes.pageTitle} variant="h4">Feedback Requests</Typography>
+        <FormControlLabel control={
+                    <Switch
+                      checked={includeAll}
+                      onChange={toggleIncludeAll}
+                    />
+                  } label="Show All" />
         <div className="input-row">
           <TextField
             className={classes.searchField}
