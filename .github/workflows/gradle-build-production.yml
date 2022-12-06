@@ -49,6 +49,11 @@ jobs:
 #          arguments: publish
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
+      - name: Setup python
+        run: |
+          sudo apt-get install python2.7
+      - name: Export gcloud related env variable
+        run: export CLOUDSDK_PYTHON="/usr/bin/python2"
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v0
         with:
