@@ -85,7 +85,7 @@ datasources:
     driver-class-name: org.postgresql.Driver
     dialect: POSTGRES
     schema-generate: NONE
-    maximum-pool-size: 10
+    maximum-pool-size: 20
 ---
 check-ins:
   application:
