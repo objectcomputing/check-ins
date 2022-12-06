@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -23,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Singleton
+@CacheConfig("feedback-cache")
 public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private static Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImpl.class);
@@ -230,6 +233,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
+    @Cacheable
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 

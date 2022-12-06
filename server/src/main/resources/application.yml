@@ -10,6 +10,10 @@ micronaut:
   caches:
     photo-cache:
       expire-after-write: 86400
+    feedback-cache:
+      expire-after-write: 180
+      heap:
+        max-entries: 600
 
   router:
     static-resources:
