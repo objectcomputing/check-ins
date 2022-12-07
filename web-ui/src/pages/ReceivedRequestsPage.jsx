@@ -282,60 +282,6 @@ const ReceivedRequestsPage = () => {
         </div>
       </div>
       <div className="request-section-header">
-        <Typography variant="h5">Canceled Requests</Typography>
-        <IconButton
-          onClick={() => setCanceledRequestsExpanded(!canceledRequestsExpanded)}
-          aria-label="show more"
-          className={
-            canceledRequestsExpanded ? classes.expandOpen : classes.expandClose
-          }
-          size="large"
-        >
-          <ExpandMoreIcon />
-        </IconButton>
-      </div>
-      <Collapse in={!canceledRequestsExpanded} timeout="auto" unmountOnExit>
-        {isLoading && (
-          <div style={{ marginTop: "1em" }}>
-            {Array.from({ length: 1 }).map((_, index) => (
-              <SkeletonLoader key={index} type="received_requests" />
-            ))}
-          </div>
-        )}
-        {!isLoading && (
-          <div style={{ marginTop: "1em" }} className="no-requests-message">
-            <Typography variant="body1">
-              {canceledRequests.length} canceled request
-              {canceledRequests.length === 1 ? "" : "s"} currently hidden
-            </Typography>
-          </div>
-        )}
-      </Collapse>
-      <Collapse in={canceledRequestsExpanded} timeout="auto" unmountOnExit>
-        {!isLoading && (
-          <div className="canceled-requests-container">
-            {canceledRequests.length === 0 && (
-              <div className="no-requests-message">
-                <Typography variant="body1">
-                  No canceled feedback requests
-                </Typography>
-              </div>
-            )}
-            {canceledRequests.length > 0 &&
-              filteredCanceledRequests.length === 0 && (
-                <div className="no-requests-message">
-                  <Typography variant="body1">
-                    No canceled feedback requests
-                  </Typography>
-                </div>
-              )}
-            {filteredCanceledRequests.map((request) => (
-              <ReceivedRequestCard key={request.id} request={request} />
-            ))}
-          </div>
-        )}
-      </Collapse>
-      <div className="request-section-header">
         <Typography variant="h5">Received Requests</Typography>
         <IconButton
           onClick={() => setReceivedRequestsExpanded(!receivedRequestsExpanded)}
@@ -440,6 +386,60 @@ const ReceivedRequestsPage = () => {
                 </div>
               )}
             {filteredSubmittedRequests.map((request) => (
+              <ReceivedRequestCard key={request.id} request={request} />
+            ))}
+          </div>
+        )}
+      </Collapse>
+      <div className="request-section-header">
+        <Typography variant="h5">Canceled Requests</Typography>
+        <IconButton
+          onClick={() => setCanceledRequestsExpanded(!canceledRequestsExpanded)}
+          aria-label="show more"
+          className={
+            canceledRequestsExpanded ? classes.expandOpen : classes.expandClose
+          }
+          size="large"
+        >
+          <ExpandMoreIcon />
+        </IconButton>
+      </div>
+      <Collapse in={!canceledRequestsExpanded} timeout="auto" unmountOnExit>
+        {isLoading && (
+          <div style={{ marginTop: "1em" }}>
+            {Array.from({ length: 1 }).map((_, index) => (
+              <SkeletonLoader key={index} type="received_requests" />
+            ))}
+          </div>
+        )}
+        {!isLoading && (
+          <div style={{ marginTop: "1em" }} className="no-requests-message">
+            <Typography variant="body1">
+              {canceledRequests.length} canceled request
+              {canceledRequests.length === 1 ? "" : "s"} currently hidden
+            </Typography>
+          </div>
+        )}
+      </Collapse>
+      <Collapse in={canceledRequestsExpanded} timeout="auto" unmountOnExit>
+        {!isLoading && (
+          <div className="canceled-requests-container">
+            {canceledRequests.length === 0 && (
+              <div className="no-requests-message">
+                <Typography variant="body1">
+                  No canceled feedback requests
+                </Typography>
+              </div>
+            )}
+            {canceledRequests.length > 0 &&
+              filteredCanceledRequests.length === 0 && (
+                <div className="no-requests-message">
+                  <Typography variant="body1">
+                    No canceled feedback requests
+                  </Typography>
+                </div>
+              )}
+            {filteredCanceledRequests.map((request) => (
               <ReceivedRequestCard key={request.id} request={request} />
             ))}
           </div>
