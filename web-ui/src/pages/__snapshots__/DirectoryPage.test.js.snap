@@ -410,7 +410,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-6:focus::-ms-input-p
           className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-4"
           data-shrink={false}
         >
-          Select employees...
+          Search employees...
         </label>
         <div
           className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl emotion-5"
@@ -438,7 +438,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-6:focus::-ms-input-p
               className="emotion-8"
             >
               <span>
-                Select employees...
+                Search employees...
               </span>
             </legend>
           </fieldset>

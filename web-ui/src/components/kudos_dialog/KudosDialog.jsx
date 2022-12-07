@@ -74,7 +74,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
       return data;
     }
 
-    if (message.trim().length > 0 && csrf && recipient?.id) {
+    if (message.trim().length > 0 && csrf) {
 
       let recipients;
       if (recipientType === "TEAM") {
@@ -84,19 +84,29 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
       } else {
         recipients = selectedMembers;
       }
+      if (recipients && recipients.length > 0){
+        const kudos = {
+          message: message,
+          senderId: currentUser.id,
+          teamId: recipientType === "TEAM" ? selectedTeam.id : null,
+          recipientMembers: recipients
+        };
 
-      const kudos = {
-        message: message,
-        senderId: currentUser.id,
-        teamId: recipientType === "TEAM" ? selectedTeam.id : null,
-        recipientMembers: recipients
-      };
-
-      saveKudos(kudos).then(res => {
-        if (res) {
-          setCreated(true);
-        }
-      });
+        saveKudos(kudos).then(res => {
+          if (res) {
+            setCreated(true);
+          }
+        });
+      }
+      else {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "You must select a recipient"
+          }
+        });
+      }
     }
   }, [state, csrf, dispatch, message, recipient, currentUser, recipientType, selectedMembers, selectedTeam]);
 

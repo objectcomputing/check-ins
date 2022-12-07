@@ -1,10 +1,10 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {styled} from "@mui/material/styles";
-import {Tab, Typography, TextField, MenuItem} from "@mui/material";
+import {Collapse, Divider, Tab, Typography, TextField, MenuItem, IconButton} from "@mui/material";
 import {TabContext, TabList, TabPanel} from "@mui/lab";
 import {getAllKudos} from "../api/kudos";
 import {AppContext} from "../context/AppContext";
-import {selectCsrfToken} from "../context/selectors";
+import {selectCsrfToken, selectProfile} from "../context/selectors";
 import {UPDATE_TOAST} from "../context/actions";
 import KudosCard from "../components/kudos_card/KudosCard";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
@@ -12,6 +12,7 @@ import PendingIcon from "@mui/icons-material/PendingActions";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 
 import "./ManageKudosPage.css";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const DateRange = {
   ONE_WEEK: "1wk",
@@ -138,14 +139,6 @@ const ManageKudosPage = () => {
             <Tab label="Pending" value="PENDING" icon={<PendingIcon/>} iconPosition="start"/>
             <Tab label="Approved" value="APPROVED" icon={<ThumbUpIcon/>} iconPosition="start"/>
           </TabList>
-          <TextField
-            className={classes.searchInput}
-            label={"Search kudos..."}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-            }}
-            value={searchText}
-          />
           {kudosTab === "APPROVED" &&
             <TextField
               select
