@@ -59,7 +59,7 @@ const ReceivedRequestCard = ({ request }) => {
     if (request.dueDate) {
       const today = new Date();
       const due = new Date(request.dueDate);
-      if (!request.submitDate && today > due) {
+      if (!request.submitDate && today > due && request.status !== "canceled") {
         return (
           <Typography className={classes.redTypography}>Overdue</Typography>
         );
@@ -73,7 +73,7 @@ const ReceivedRequestCard = ({ request }) => {
       );
     } else if (request.status === "canceled") {
       return (
-        <Typography className={classes.grayTypography}>
+        <Typography className={classes.redTypography}>
           Canceled
         </Typography>
       );
