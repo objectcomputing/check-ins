@@ -14,7 +14,7 @@ import { UPDATE_ONBOARDEE_MEMBER_PROFILES } from "../context/actions";
 import { updateOnboardee } from "../api/onboardeeMember";
 import { AppContext } from "../context/AppContext";
 import SplitButton from "../components/split-button/SplitButton";
-
+import { updateBackgroundInformation } from "../api/checkins";
 const modalStyle = {
   position: "absolute",
   top: "50%",
@@ -35,6 +35,7 @@ const modalStyle = {
 export default function OnboardProgressDetailPage(onboardee) {
   // get document info from signrequest API
   const [documentArr, setDocumentArr] = useState([]);
+  const [backgroundInformationComplete, setBackgroundInformationComplete] = useState([]);
   const location = useLocation();
   const { state, dispatch } = useContext(AppContext);
   const { csrf, onboardeeProfiles } = state;
@@ -54,6 +55,21 @@ export default function OnboardProgressDetailPage(onboardee) {
       }
     }
     getData();
+  }, []);
+
+  useEffect(() => {
+    async function getBackgroundData(){
+      let res = await updateBackgroundInformation();
+      let backgroundInformation;
+      if (res && res.payload) {
+        backgroundInformation = 
+          res?.payload?.data && !res.error ? res.payload.data : undefined;
+        if (backgroundInformation) {
+          setBackgroundInformationComplete([...backgroundInformation.results]);
+        }
+      }
+    }
+    getBackgroundData();
   }, []);
 
   const options = ["Finish Onboarding", "Delete"];
@@ -192,7 +208,7 @@ export default function OnboardProgressDetailPage(onboardee) {
     {
       id: 1,
       surveyName: "Personal Information",
-      completed: "Yes",
+      completed: backgroundInformationComplete.stepComplete
     },
     {
       id: 2,
