@@ -8,6 +8,16 @@
   }
 }
 
+@media print {
+    :root {
+      --nav-width: 0px;
+    }
+
+  .App {
+    padding-left: 0;
+  }
+}
+
 .App-header {
   min-height: 100vh;
   display: flex;

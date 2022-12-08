@@ -4,6 +4,13 @@
     margin-right: 3em;
 }
 
+@media print {
+    .view-feedback-responses-page {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+}
+
 .view-feedback-responses-page .responses-filter-container {
     display: flex;
     flex-direction: row;

@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import {Typography} from "@mui/material";
-import SentimentIcon from "../../sentiment_icon/SentimentIcon";
 import "./FeedbackResponseCard.css";
 import {AppContext} from "../../../context/AppContext";
 import {selectProfile} from "../../../context/selectors";
@@ -34,9 +33,6 @@ const FeedbackResponseCard = (props) => {
           readOnly
           answer={props.answer}
         />
-        <div className="response-sentiment">
-          <SentimentIcon sentimentScore={props.sentiment}/>
-        </div>
       </CardContent>
     </Card>
   );

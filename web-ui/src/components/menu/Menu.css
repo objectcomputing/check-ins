@@ -6,6 +6,12 @@
   margin-left: 10px;
 }
 
+@media print {
+    nav {
+        display: none;
+    }
+}
+
 .hours-upload-modal .buttons {
   display: flex;
   justify-content: center;
