@@ -25,6 +25,13 @@ Array [
     width: calc(100% - 150px);
     margin-left: 150px;
   }
+
+  @media print {
+    .emotion-0 .Menu-appBar {
+      width: 100%;
+      margin-left: 0px;
+    }
+  }
 }
 
 .emotion-0 .Menu-menuButton {
@@ -1952,6 +1959,13 @@ Array [
   .emotion-0 .Menu-appBar {
     width: calc(100% - 150px);
     margin-left: 150px;
+  }
+
+  @media print {
+    .emotion-0 .Menu-appBar {
+      width: 100%;
+      margin-left: 0px;
+    }
   }
 }
 
@@ -4113,6 +4127,13 @@ Array [
   .emotion-0 .Menu-appBar {
     width: calc(100% - 150px);
     margin-left: 150px;
+  }
+
+  @media print {
+    .emotion-0 .Menu-appBar {
+      width: 100%;
+      margin-left: 0px;
+    }
   }
 }
 

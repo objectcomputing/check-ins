@@ -5,19 +5,9 @@ import RadioGroup from "@mui/material/RadioGroup";
 import {FormControlLabel} from "@mui/material";
 import Radio from "@mui/material/Radio";
 import Slider from "@mui/material/Slider";
-import withStyles from "@mui/styles/withStyles";
 
 const agreeMarks = ["Strongly Disagree", "Disagree", "Neither Agree nor Disagree", "Agree", "Strongly Agree"];
 const frequencyMarks = ["Very Infrequently", "Infrequently", "Neither Frequently nor Infrequently", "Frequently", "Very Frequently"];
-
-const ReadOnlyTextField = withStyles({
-  root: {
-    "& .MuiInputBase-root.Mui-disabled": {
-      color: "rgba(0, 0, 0, 0.8)",
-      webkitTextFillColor: "rgba(0, 0, 0, 0.8)"
-    }
-  }
-})(TextField);
 
 const propTypes = {
   inputType: PropTypes.string.isRequired,
@@ -44,16 +34,9 @@ const FeedbackAnswerInput = ({ inputType, readOnly, answer, onAnswerChange }) =>
     case "TEXT":
       inputField = readOnly
         ? (
-          <ReadOnlyTextField
-            className="fullWidth feedback-answer-text-field"
-            multiline
-            disabled
-            variant="outlined"
-            InputProps={{
-              readOnly: true
-            }}
-            value={answer}
-          />
+          <pre style={{whiteSpace: "pre-wrap"}}
+            className="fullWidth"
+          >{answer}</pre>
         )
         : (
           <TextField

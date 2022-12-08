@@ -295,7 +295,7 @@ const ViewFeedbackResponses = () => {
                   </Typography>
                 </div>
               )}
-              {question.answers.length > 0 &&
+              {question.inputType !== "NONE" && question.answers.length > 0 &&
                 question.answers.map((answer) => (
                   <FeedbackResponseCard
                     key={answer.id || answer.responder}
