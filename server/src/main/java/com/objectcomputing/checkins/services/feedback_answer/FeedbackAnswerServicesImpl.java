@@ -6,6 +6,8 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import java.util.List;
@@ -22,15 +24,18 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     private final CurrentUserServices currentUserServices;
     private final TemplateQuestionServices templateQuestionServices;
     private final FeedbackRequestServices feedbackRequestServices;
+    private final MemberProfileServices memberProfileServices;
 
     public FeedbackAnswerServicesImpl(FeedbackAnswerRepository feedbackAnswerRepository,
                                       CurrentUserServices currentUserServices,
                                       TemplateQuestionServices templateQuestionServices,
-                                      FeedbackRequestServices feedbackRequestServices) {
+                                      FeedbackRequestServices feedbackRequestServices,
+                                      MemberProfileServices memberProfileServices) {
         this.feedbackAnswerRepository = feedbackAnswerRepository;
         this.currentUserServices = currentUserServices;
         this.templateQuestionServices = templateQuestionServices;
         this.feedbackRequestServices = feedbackRequestServices;
+        this.memberProfileServices = memberProfileServices;
     }
 
     @Override
@@ -133,8 +138,13 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     public boolean getIsPermitted(FeedbackRequest feedbackRequest) {
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID requestCreatorId = feedbackRequest.getCreatorId();
+        UUID requesteeId = feedbackRequest.getRequesteeId();
+        MemberProfile requestee = memberProfileServices.getById(requesteeId);
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         final UUID recipientId = feedbackRequest.getRecipientId();
-        return isAdmin || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId);
+        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        final UUID requesteePDL = requestee.getPdlId();
+
+        return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId);
     }
 }
