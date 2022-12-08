@@ -104,7 +104,13 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         } catch (NotFoundException e) {
             throw new NotFoundException("Cannot find attached request for search");
         }
-        if (currentUserId.equals(feedbackRequest.getCreatorId()) || currentUserId.equals(feedbackRequest.getRecipientId()) || currentUserServices.isAdmin()) {
+        final UUID requestCreatorId = feedbackRequest.getCreatorId();
+        final UUID requesteeId = feedbackRequest.getRequesteeId();
+        final UUID recipientId = feedbackRequest.getRecipientId();
+        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        MemberProfile requestee = memberProfileServices.getById(requesteeId);
+        final UUID requesteePDL = requestee.getPdlId();
+        if (currentUserServices.isAdmin() || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId)) {
             response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
             return response;
         }
