@@ -24,26 +24,45 @@ public class BirthDayServicesImpl implements BirthDayServices{
     }
 
     @Override
-    public List<BirthDayResponseDTO> findByValue(String[] months) {
+    public List<BirthDayResponseDTO> findByValue(String[] months, Integer[] daysOfMonth) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You do not have permission to access this resource.");
         }
-        List<MemberProfile> memberProfileAll = new ArrayList<>();
+
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
+        List<MemberProfile> memberProfileAll = memberProfiles.stream().collect(Collectors.toList());
         if (months != null) {
             for (String month : months) {
-                List<MemberProfile> memberProfile = new ArrayList<>();
                 if (month != null) {
-                    memberProfile = memberProfiles
+                    memberProfileAll = memberProfileAll
                             .stream()
                             .filter(member -> member.getBirthDate() != null && month.equalsIgnoreCase(member.getBirthDate().getMonth().name()) && member.getTerminationDate() == null)
                             .collect(Collectors.toList());
                 }
-                memberProfileAll.addAll(memberProfile);
+            }
+        }
+        if(daysOfMonth != null) {
+            for(Integer day: daysOfMonth) {
+                if (day != null) {
+                    memberProfileAll = memberProfiles
+                            .stream()
+                            .filter(member -> member.getBirthDate() != null && day.equals(member.getBirthDate().getDayOfMonth()) && member.getTerminationDate() == null)
+                            .collect(Collectors.toList());
+                }
             }
         }
 
         return profileToBirthDateResponseDto(memberProfileAll);
+    }
+    @Override
+    public List<BirthDayResponseDTO> getTodaysBirthdays() {
+        Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
+        LocalDate today = LocalDate.now();
+        List<MemberProfile> results = memberProfiles
+                .stream()
+                .filter(member -> member.getBirthDate() != null && today.getDayOfMonth() == member.getBirthDate().getDayOfMonth() && today.getMonthValue() == member.getBirthDate().getMonthValue())
+                .collect(Collectors.toList());
+        return profileToBirthDateResponseDto(results);
     }
 
     private List<BirthDayResponseDTO> profileToBirthDateResponseDto(List<MemberProfile> memberProfiles) {

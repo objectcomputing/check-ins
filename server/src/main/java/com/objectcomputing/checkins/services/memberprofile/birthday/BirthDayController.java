@@ -50,10 +50,10 @@ public class BirthDayController {
      * @return {@link Set < BirthDayResponseDTO > list of birthdays}
      */
 
-    @Get("/{?month}")
-    public Mono<HttpResponse<List<BirthDayResponseDTO>>> findByValue(@Nullable String[] month) {
+    @Get("/{?month,dayOfMonth}")
+    public Mono<HttpResponse<List<BirthDayResponseDTO>>> findByValue(@Nullable String[] month, @Nullable Integer[] dayOfMonth) {
 
-        return Mono.fromCallable(() -> birthDayServices.findByValue(month))
+        return Mono.fromCallable(() -> birthDayServices.findByValue(month, dayOfMonth))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(birthdays -> (HttpResponse<List<BirthDayResponseDTO>>) HttpResponse.ok(birthdays))
                 .subscribeOn(scheduler);
