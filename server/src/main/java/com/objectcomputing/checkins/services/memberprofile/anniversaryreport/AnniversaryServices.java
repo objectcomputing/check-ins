@@ -5,4 +5,6 @@ import java.util.List;
 public interface AnniversaryServices {
 
     List<AnniversaryReportResponseDTO> findByValue(String[] month);
+
+    List<AnniversaryReportResponseDTO> getTodaysAnniversaries();
 }

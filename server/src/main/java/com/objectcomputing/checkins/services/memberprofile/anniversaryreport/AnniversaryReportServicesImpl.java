@@ -54,6 +54,17 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
 
     }
 
+    @Override
+    public List<AnniversaryReportResponseDTO> getTodaysAnniversaries() {
+        Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
+        LocalDate today = LocalDate.now();
+        List<MemberProfile> results = memberProfiles
+                .stream()
+                .filter(member -> member.getStartDate() != null && today.getDayOfMonth() == member.getStartDate().getDayOfMonth() && today.getMonthValue() == member.getStartDate().getMonthValue())
+                .collect(Collectors.toList());
+        return profileToAnniversaryResponseDto(results);
+    }
+
     private List<AnniversaryReportResponseDTO> profileToAnniversaryResponseDto(List<MemberProfile> memberProfiles) {
 
         List<AnniversaryReportResponseDTO> anniversaries = new ArrayList<>();

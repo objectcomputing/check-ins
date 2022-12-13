@@ -4,5 +4,7 @@ import java.util.List;
 
 public interface BirthDayServices {
 
-    List<BirthDayResponseDTO> findByValue(String[] month);
+    List<BirthDayResponseDTO> findByValue(String[] month, Integer[] daysOfMonth);
+
+    List<BirthDayResponseDTO> getTodaysBirthdays();
 }
