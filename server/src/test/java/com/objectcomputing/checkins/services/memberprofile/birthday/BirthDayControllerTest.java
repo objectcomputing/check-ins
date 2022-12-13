@@ -39,7 +39,25 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
 
         MemberProfile memberProfile = createADefaultMemberProfileWithBirthDay();
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?month=%s", memberProfile.getStartDate().getMonth().toString())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+                GET(String.format("/?month=%s", memberProfile.getBirthDate().getMonth().toString())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+
+        final HttpResponse<List<BirthDayResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(BirthDayResponseDTO.class));
+
+        assertEquals(1, response.body().size());
+        assertEquals(memberProfile.getId(), response.body().get(0).getUserId());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    public void testGETFindByValueNameOfTheMonthAndDay() {
+
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createAndAssignAdminRole(memberProfileOfAdmin);
+
+        MemberProfile memberProfile = createADefaultMemberProfileWithBirthDayToday();
+        createADefaultMemberProfileWithBirthDayNotToday();
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/?month=%s&dayOfMonth=%s", memberProfile.getBirthDate().getMonth().toString(), memberProfile.getBirthDate().getDayOfMonth())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<List<BirthDayResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(BirthDayResponseDTO.class));
 
@@ -61,7 +79,4 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
         assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
 
     }
-
-
-
 }

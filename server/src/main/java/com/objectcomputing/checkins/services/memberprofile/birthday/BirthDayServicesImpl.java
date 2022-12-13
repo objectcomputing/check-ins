@@ -28,29 +28,26 @@ public class BirthDayServicesImpl implements BirthDayServices{
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You do not have permission to access this resource.");
         }
-        List<MemberProfile> memberProfileAll = new ArrayList<>();
+
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
+        List<MemberProfile> memberProfileAll = memberProfiles.stream().collect(Collectors.toList());
         if (months != null) {
             for (String month : months) {
                 if (month != null) {
-                    List<MemberProfile> memberProfile = new ArrayList<>();
-                    memberProfile = memberProfiles
+                    memberProfileAll = memberProfileAll
                             .stream()
                             .filter(member -> member.getBirthDate() != null && month.equalsIgnoreCase(member.getBirthDate().getMonth().name()) && member.getTerminationDate() == null)
                             .collect(Collectors.toList());
-                    memberProfileAll.addAll(memberProfile);
                 }
             }
         }
         if(daysOfMonth != null) {
             for(Integer day: daysOfMonth) {
                 if (day != null) {
-                    List<MemberProfile> memberProfile = new ArrayList<>();
-                    memberProfile = memberProfiles
+                    memberProfileAll = memberProfiles
                             .stream()
                             .filter(member -> member.getBirthDate() != null && day.equals(member.getBirthDate().getDayOfMonth()) && member.getTerminationDate() == null)
                             .collect(Collectors.toList());
-                    memberProfileAll.addAll(memberProfile);
                 }
             }
         }
