@@ -20,6 +20,10 @@ body.open{
       background-color: #72c8d5;
   }
 }
+.anniversaries {
+  display: flex;
+  justify-content: center;
+}
 .gift {
   position: absolute;
   top: 50%;
@@ -27,14 +31,12 @@ body.open{
   width: 100px;
   height: 100px;
   transform-origin: 0% 0%;
-  cursor: pointer;
   transform: translate(-50%, -50%);
   transition: 1s;
 /*   animation: dukdik 0.5s infinite; */
 }
 .dukdik{
   transform-origin: 0% 0%;
-  cursor: pointer;
   animation: dukdik 0.5s infinite;
 }
 @keyframes dukdik {
@@ -120,7 +122,7 @@ body.open{
 }
 .gift-box.boxDown{
   animation: box-down 1s; 
-   opacity:0; 
+  opacity:0; 
 }
 @keyframes box-down{
   0%{
