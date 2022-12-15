@@ -4,7 +4,10 @@ import { AppContext } from "../../context/AppContext";
 
 import { styled } from "@mui/material/styles";
 import { getAvatarURL } from "../../api/api.js";
-import { selectMemberProfilesLoading } from "../../context/selectors";
+import {
+  selectMemberProfilesLoading,
+  selectProfile,
+} from "../../context/selectors";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 
 import { Card, CardHeader } from "@mui/material";
@@ -43,11 +46,9 @@ const Anniversaries = ({ anniversaries }) => {
 
   const loading = selectMemberProfilesLoading(state);
   const { userProfile } = state;
-  const email = userProfile?.memberProfile?.workEmail;
-
-  console.log({ userProfile });
 
   const createAnniversaryCards = anniversaries.map((anniv, index) => {
+    let user = selectProfile(state, anniv.userId);
     return (
       <Card className={"anniversarys-card"}>
         <Link
@@ -68,7 +69,9 @@ const Anniversaries = ({ anniversaries }) => {
               </Typography>
             }
             disableTypography
-            avatar={<Avatar className={"large"} src={getAvatarURL(email)} />}
+            avatar={
+              <Avatar className={"large"} src={getAvatarURL(user?.workEmail)} />
+            }
           />
         </Link>
       </Card>
