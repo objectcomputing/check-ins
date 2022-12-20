@@ -7,9 +7,10 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 import "./BirthdayAnniversaryReportPage.css";
 
-import { getAnniversary, getBirthday } from "../api/birthdayanniversary.js";
+import { getAnniversary, getBirthday } from "../api/birthdayanniversary";
 import { UPDATE_TOAST } from "../context/actions";
 import SearchBirthdayAnniversaryResults from "../components/search-results/SearchBirthdayAnniversaryResults";
+import { sortAnniversaries, sortBirthdays } from "../context/util";
 
 import { selectCsrfToken } from "../context/selectors";
 
@@ -45,26 +46,6 @@ const BirthdayAnniversaryReportPage = () => {
 
   const handleAnniversary = () => {
     setAnniversary(!anniversary);
-  };
-
-  const sortBirthdays = (birthdayData) => {
-    return birthdayData.sort(
-           // This will change the date string to a int.
-           // The first 1-2 numbers will be the month and the last 2 numbers will be the day.
-           // For example "11/25" will be 1125 or "5/9" will be 509
-           // This will ensure proper sorting.
-           (a, b) => (Number(b.birthDay.substring(0, b.birthDay.indexOf("/")) * 100)
-                         + Number(b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)))
-                     -
-                     (Number(a.birthDay.substring(0, a.birthDay.indexOf("/")) * 100)
-                         + Number(a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length)))
-
-      );
-
-  };
-
-  const sortAnniversaries = (anniversaryData) => {
-    return anniversaryData.sort((a, b) => b.yearsOfService - a.yearsOfService);
   };
 
   const handleSearch = async (monthsToSearch) => {

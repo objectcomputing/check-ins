@@ -21,13 +21,19 @@ body.open{
   }
 }
 .anniversaries {
-  display: flex;
-  justify-content: center;
+  position: relative;
+}
+.anniversaries h1 {
+  margin-bottom: 2rem;
+}
+.anniversaries-card span {
+  color: #2559a7;
+  font-weight: bold;
 }
 .gift {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 0;
+  left: 15rem;
   width: 100px;
   height: 100px;
   transform-origin: 0% 0%;

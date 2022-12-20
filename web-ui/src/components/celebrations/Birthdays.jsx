@@ -13,9 +13,9 @@ import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 import { Card, CardHeader } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 
-import { TextField, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 
-import "./Anniversaries.css";
+import "./Birthdays.css";
 
 import { Typography } from "@mui/material";
 
@@ -40,36 +40,28 @@ const Root = styled("div")({
   },
 });
 
-const Anniversaries = ({ anniversaries }) => {
-  console.log("ANNIV PAGE", Array.isArray(anniversaries), anniversaries);
+const Birthdays = ({ birthdays }) => {
+  console.log("BIRTHDAY PAGE", Array.isArray(birthdays), birthdays);
   const { state } = useContext(AppContext);
 
   const loading = selectMemberProfilesLoading(state);
   const { userProfile } = state;
 
-  const createAnniversaryCards = anniversaries.map((anniv, index) => {
+  const createBirthdayCards = birthdays.map((anniv, index) => {
     let user = selectProfile(state, anniv.userId);
+    console.warn({ anniv, user });
     return (
-      <Card className={"anniversaries-card"}>
+      <Card className={"birthdays-card"}>
         <Link
           style={{ color: "black", textDecoration: "none" }}
           to={`/profile/${anniv.userId}`}
         >
           <CardHeader
-            className={classes.header}
+            className={"birthday-card"}
             title={
               <Typography variant="h5" component="h2">
-                {anniv.name}
-              </Typography>
-            }
-            subheader={
-              <Typography color="textSecondary" component="h3">
-                Thank you for{" "}
-                <span>
-                  {anniv.yearsOfService.toFixed(0)}
-                  {anniv.yearsOfService > 1 ? " years" : " year"}{" "}
-                </span>
-                of service!
+                Happy Birthday{" "}
+                <span>{user.firstName + " " + user.lastName}!</span>
               </Typography>
             }
             disableTypography
@@ -83,14 +75,23 @@ const Anniversaries = ({ anniversaries }) => {
   });
 
   return (
-    <div className="anniversaries">
-      <div className={"gift dukdik"}>
-        <div className={"gift-top open"}></div>
-        <div className={"gift-text open"}></div>
-        <div className={"gift-box"}></div>
+    <div class="birthdays-container">
+      <div class="balloon">
+        <div>
+          <p>Happy</p>
+          <p>Birthday!</p>
+        </div>
+        <div>
+          <p>Happy</p>
+          <p>Birthday!</p>
+        </div>
+        <div>
+          <p>Happy</p>
+          <p>Birthday!</p>
+        </div>
       </div>
       <Root>
-        <h2>Anniversaries</h2>
+        <h2>Birthdays</h2>
         <Grid container columns={6} spacing={3}>
           <Grid item className={classes.members}>
             {loading
@@ -98,7 +99,7 @@ const Anniversaries = ({ anniversaries }) => {
                   <SkeletonLoader key={index} type="people" />
                 ))
               : !loading
-              ? createAnniversaryCards
+              ? createBirthdayCards
               : null}
           </Grid>
         </Grid>
@@ -107,4 +108,4 @@ const Anniversaries = ({ anniversaries }) => {
   );
 };
 
-export default Anniversaries;
+export default Birthdays;
