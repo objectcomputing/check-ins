@@ -1,13 +1,9 @@
 import React, {useCallback, useContext, useState} from "react";
 import PropTypes from "prop-types";
 import {
-  Alert, AppBar, Autocomplete, Avatar,
-  Button, Chip,
-  Dialog,
-  IconButton, MenuItem,
-  Slide,
-  TextField, Toolbar, Tooltip,
-  Typography
+  Alert, AppBar, Autocomplete, Avatar, Button, Checkbox, Chip, Dialog,
+  FormGroup, FormControlLabel, IconButton, MenuItem, Slide, 
+  TextField, Toolbar, Tooltip, Typography
 } from "@mui/material";
 
 import "./KudosDialog.css";
@@ -47,6 +43,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
   const [recipientType, setRecipientType] = useState(teamId ? "TEAM" : "MEMBERS");
   const [message, setMessage] = useState("");
   const [created, setCreated] = useState(false);
+  const [publicCheckin, setPublicCheckin] = useState(true); //TODO: Allow toggle for public/private kudos
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedMembers, setSelectedMembers] = useState(recipient ? [recipient] : []);
 
@@ -216,6 +213,9 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
                   )}
                 />
               }
+              <FormGroup>
+                <FormControlLabel control={<Checkbox defaultChecked />} label="Public" />
+              </FormGroup>
               <TextField
                 select
                 variant="outlined"

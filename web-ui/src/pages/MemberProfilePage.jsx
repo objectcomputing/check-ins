@@ -45,7 +45,6 @@ const MemberProfilePage = () => {
   const sortedMembers = selectOrderedMemberFirstName(state);
   let pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId)
   let supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid)
-  console.log(selectedMember);
 
   useEffect(() => {
     // in the case of a terminated member, member details will still display
