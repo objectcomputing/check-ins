@@ -6,9 +6,11 @@ import {
   selectMemberProfilesLoading,
   selectNormalizedMembers,
 } from "../context/selectors";
-import { TextField, Grid } from "@mui/material";
+import {TextField, Grid, Button} from "@mui/material";
 import "./PeoplePage.css";
+import KudosDialog from "../components/kudos_dialog/KudosDialog";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader"
+import StarIcon from "@mui/icons-material/Star";
 
 const PREFIX = 'PeoplePage';
 const classes = {
@@ -38,6 +40,7 @@ const PeoplePage = () => {
   const { state } = useContext(AppContext);
   const loading= selectMemberProfilesLoading(state)
 
+  const [kudosDialogOpen, setKudosDialogOpen] = useState(null);
   const [searchText, setSearchText] = useState("");
 
   const normalizedMembers = selectNormalizedMembers(state, searchText);
@@ -65,6 +68,18 @@ const PeoplePage = () => {
               setSearchText(e.target.value);
             }}
           />
+          <KudosDialog
+            open={kudosDialogOpen}
+            onClose={() => setKudosDialogOpen(false)}
+          />
+          <Button
+            className="kudos-dialog-open"
+            variant="outlined"
+            startIcon={<StarIcon/>}
+            onClick={() => setKudosDialogOpen(true)}
+          >
+            Give Kudos
+          </Button>
         </Grid>
         <Grid item className={classes.members}>
           {loading ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />):

@@ -1,10 +1,10 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {styled} from "@mui/material/styles";
-import {Collapse, Divider, Tab, Typography, TextField, MenuItem, IconButton} from "@mui/material";
+import {MenuItem, Tab, TextField, Typography} from "@mui/material";
 import {TabContext, TabList, TabPanel} from "@mui/lab";
 import {getAllKudos} from "../api/kudos";
 import {AppContext} from "../context/AppContext";
-import {selectCsrfToken, selectProfile} from "../context/selectors";
+import {selectCsrfToken} from "../context/selectors";
 import {UPDATE_TOAST} from "../context/actions";
 import KudosCard from "../components/kudos_card/KudosCard";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
@@ -12,7 +12,6 @@ import PendingIcon from "@mui/icons-material/PendingActions";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 
 import "./ManageKudosPage.css";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const DateRange = {
   ONE_WEEK: "1wk",
@@ -60,8 +59,6 @@ const ManageKudosPage = () => {
   const [approvedKudosLoading, setApprovedKudosLoading] = useState(true);
   const [kudosTab, setKudosTab] = useState("PENDING");
   const [timeRange, setTimeRange] = useState(DateRange.TWO_WEEKS);
-
-  const [searchText, setSearchText] = useState("");
 
   const loadPendingKudos = useCallback(async () => {
     setPendingKudosLoading(true);
