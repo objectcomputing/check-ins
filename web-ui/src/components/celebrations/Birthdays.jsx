@@ -47,14 +47,14 @@ const Birthdays = ({ birthdays }) => {
   const loading = selectMemberProfilesLoading(state);
   const { userProfile } = state;
 
-  const createBirthdayCards = birthdays.map((anniv, index) => {
-    let user = selectProfile(state, anniv.userId);
-    console.warn({ anniv, user });
+  const createBirthdayCards = birthdays.map((bday, index) => {
+    let user = selectProfile(state, bday.userId);
+    console.warn({ bday, user });
     return (
       <Card className={"birthdays-card"}>
         <Link
           style={{ color: "black", textDecoration: "none" }}
-          to={`/profile/${anniv.userId}`}
+          to={`/profile/${bday.userId}`}
         >
           <CardHeader
             className={"birthday-card"}
