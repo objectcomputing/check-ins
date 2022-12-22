@@ -1,3 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Wendy+One');
+
+body {
+    font-family: "Wendy One", sans-serif;
+  }
+
+  p {
+    text-transform: uppercase;
+  }
+
 .my-birthday {
     position: relative;
 }
@@ -110,7 +120,7 @@
     font-size: 1em;
   }
   p {
-    font-size: .75em;
+    font-size: 1em;
     line-height: 0.5em;
     text-align: center;
     color: white;
