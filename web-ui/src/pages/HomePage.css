@@ -5,6 +5,11 @@
   padding-top: 4rem;
 }
 
+.MuiCardHeader-avatar > div {
+  width: 60px;
+  height: 60px;
+}
+
 @media (max-width: 950px) {
   .celebrations {
     flex-direction: column;

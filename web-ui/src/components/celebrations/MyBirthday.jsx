@@ -12,8 +12,8 @@ const MyBirthday = () => {
   let me = selectCurrentUser(state);
 
   return (
-    <div class="birthdays-container">
-      <div class="balloon">
+    <div class="my-birthday-container">
+      <div class="my-balloons">
         <div>
           <p>Happy</p>
           <p>Birthday!</p>

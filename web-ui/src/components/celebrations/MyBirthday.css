@@ -8,7 +8,7 @@ body {
     text-transform: uppercase;
   }
 
-.my-birthday {
+.my-birthday-container {
     position: relative;
 }
 
@@ -17,13 +17,12 @@ body {
     font-weight: bold;
 }
 
-.balloon {
+.my-balloons {
     margin: 0 auto;
     position: absolute;
-    left: 0rem;
     top: -2rem;
   }
-  .balloon > div {
+  .my-balloons > div {
     width: 104px;
     height: 140px;
     background: rgba(182, 15, 97, 0.9);
@@ -35,7 +34,7 @@ body {
     box-shadow: inset 17px 7px 10px rgba(182, 15, 97, 0.9);
     -webkit-transform-origin: bottom center;
   }
-  .balloon > div:nth-child(1) {
+  .my-balloons > div:nth-child(1) {
     background: rgba(182, 15, 97, 0.9);
     left: 0;
     top: 7rem;
@@ -45,10 +44,10 @@ body {
     -o-animation: balloon1 6s ease-in-out infinite;
     animation: balloon1 6s ease-in-out infinite;
   }
-  .balloon > div:nth-child(1):before {
+  .my-balloons > div:nth-child(1):before {
     color: rgba(182, 15, 97, 0.9);
   }
-  .balloon > div:nth-child(2) {
+  .my-balloons > div:nth-child(2) {
     background: rgba(242, 194, 58, 0.9);
     left: 120px;
     top: 4rem;
@@ -58,10 +57,10 @@ body {
     -o-animation: balloon2 6s ease-in-out infinite;
     animation: balloon2 6s ease-in-out infinite;
   }
-  .balloon > div:nth-child(2):before {
+  .my-balloons > div:nth-child(2):before {
     color: rgba(242, 194, 58, 0.9);
   }
-  .balloon > div:nth-child(3) {
+  .my-balloons > div:nth-child(3) {
     background: rgba(45, 181, 167, 0.9);
     left: 240px;
     box-shadow: inset 10px 10px 10px rgba(35, 140, 129, 0.9);
@@ -70,10 +69,10 @@ body {
     -o-animation: balloon4 6s ease-in-out infinite;
     animation: balloon4 6s ease-in-out infinite;
   }
-  .balloon > div:nth-child(3):before {
+  .my-balloons > div:nth-child(3):before {
     color: rgba(45, 181, 167, 0.9);
   }
-  .balloon > div:nth-child(4) {
+  .my-balloons > div:nth-child(4) {
     background: rgba(190, 61, 244, 0.9);
     left: 360px;
     top: 4rem;
@@ -83,10 +82,10 @@ body {
     -o-animation: balloon1 5s ease-in-out infinite;
     animation: balloon1 5s ease-in-out infinite;
   }
-  .balloon > div:nth-child(4):before {
+  .my-balloons > div:nth-child(4):before {
     color: rgba(190, 61, 244, 0.9);
   }
-  .balloon > div:nth-child(5) {
+  .my-balloons > div:nth-child(5) {
     background: rgba(180, 224, 67, 0.9);
     left: 480px;
     top: 7rem;
@@ -96,10 +95,10 @@ body {
     -o-animation: balloon3 5s ease-in-out infinite;
     animation: balloon3 5s ease-in-out infinite;
   }
-  .balloon > div:nth-child(5):before {
+  .my-balloons > div:nth-child(5):before {
     color: rgba(180, 224, 67, 0.9);
   }
-  .balloon > div:nth-child(6) {
+  .my-balloons > div:nth-child(6) {
     background: rgba(242, 112, 45, 0.9);
     left: 600px;
     box-shadow: inset 10px 10px 10px rgba(202, 92, 35, 0.9);
@@ -108,11 +107,11 @@ body {
     -o-animation: balloon2 3s ease-in-out infinite;
     animation: balloon2 3s ease-in-out infinite;
   }
-  .balloon > div:nth-child(6):before {
+  .my-balloons > div:nth-child(6):before {
     color: rgba(242, 112, 45, 0.9);
   }
   
-  .balloon > div:before {
+  .my-balloons > div:before {
     position: absolute;
     bottom: -11px;
     left: 32px;
@@ -120,7 +119,7 @@ body {
     font-size: 1em;
   }
   p {
-    font-size: 1em;
+    font-size: .75em;
     line-height: 0.5em;
     text-align: center;
     color: white;

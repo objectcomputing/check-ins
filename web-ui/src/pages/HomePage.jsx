@@ -16,8 +16,6 @@ export default function HomePage() {
 
   let me = selectCurrentUser(state);
 
-  console.log({ me });
-
   const [anniversaries, setAnniversaries] = useState([]);
   const [birthdays, setBirthdays] = useState([]);
   const [myBirthday, setMyBirthday] = useState(false);
@@ -45,22 +43,17 @@ export default function HomePage() {
       setMyBirthday(birthdays.some((bday) => bday.userId === me.id));
     }
   }, [birthdays]);
-
   console.log({ myBirthday });
 
   return (
     <div className="home-page">
       <div className="celebrations">
-        {anniversaries.length && birthdays.length ? (
+        {myBirthday ? (
+          <MyBirthday />
+        ) : anniversaries.length && birthdays.length ? (
           <>
-            {myBirthday ? (
-              <MyBirthday />
-            ) : (
-              <>
-                <Anniversaries anniversaries={anniversaries} />
-                <Birthdays birthdays={birthdays} />
-              </>
-            )}
+            <Anniversaries anniversaries={anniversaries} />
+            <Birthdays birthdays={birthdays} />
           </>
         ) : birthdays.length ? (
           <Birthdays birthdays={birthdays} />

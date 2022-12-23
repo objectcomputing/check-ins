@@ -74,7 +74,10 @@ const Anniversaries = ({ anniversaries }) => {
             }
             disableTypography
             avatar={
-              <Avatar className={"large"} src={getAvatarURL(user?.workEmail)} />
+              <Avatar
+                className={"celebrations-avatar"}
+                src={getAvatarURL(user?.workEmail)}
+              />
             }
           />
         </Link>

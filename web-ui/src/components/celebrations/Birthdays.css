@@ -8,7 +8,7 @@ body {
     text-transform: uppercase;
   }
     
-    .birthdays-card span{
+    .birthdays-card span {
     color: #2559a7;
     font-weight: bold;
 }
@@ -19,7 +19,7 @@ body {
     margin: 0 auto;
     position: absolute;
     left: 8rem;
-    top: -2rem;
+    top: -2.5rem;
   }
   .balloon > div {
     width: 80px;
