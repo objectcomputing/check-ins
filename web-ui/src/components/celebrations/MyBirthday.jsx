@@ -8,7 +8,6 @@ import "./MyBirthday.css";
 import "./Birthdays.css";
 
 const MyBirthday = ({ me }) => {
-  console.log({ me });
   return (
     <div className="my-birthday-container">
       <div className="my-balloons" onClick={() => randomConfetti(0.6, 0.5)}>

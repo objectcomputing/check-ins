@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="my-birthday-container"
+>
+  <div
+    className="my-balloons"
+    onClick={[Function]}
+  >
+    <div>
+      <p>
+        Happy
+      </p>
+      <p>
+        Birthday!
+      </p>
+    </div>
+    <div>
+      <p>
+        Happy
+      </p>
+      <p>
+        Birthday!
+      </p>
+    </div>
+    <div>
+      <p>
+        Happy
+      </p>
+      <p>
+        Birthday!
+      </p>
+    </div>
+    <div>
+      <p>
+        Happy
+      </p>
+      <p>
+        Birthday!
+      </p>
+    </div>
+    <div>
+      <p>
+        Happy
+      </p>
+      <p>
+        Birthday!
+      </p>
+    </div>
+  </div>
+  <div
+    className="my-birthday"
+  >
+    <h1>
+      Happy Birthday 
+      !!!
+    </h1>
+  </div>
+</div>
+`;
