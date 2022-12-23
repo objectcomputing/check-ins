@@ -24,7 +24,8 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
 
-    public AnniversaryReportServicesImpl(MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
+    public AnniversaryReportServicesImpl(MemberProfileServices memberProfileServices,
+            CurrentUserServices currentUserServices) {
         this.memberProfileServices = memberProfileServices;
         this.currentUserServices = currentUserServices;
     }
@@ -36,7 +37,8 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
         }
 
         List<MemberProfile> memberProfileAll = new ArrayList<>();
-        Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
+        Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null,
+                false);
         LOG.info(memberProfiles.toString());
         if (months != null) {
             for (String month : months) {
@@ -44,7 +46,9 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
                 if (month != null) {
                     memberProfile = memberProfiles
                             .stream()
-                            .filter(member -> member.getStartDate() != null && month.equalsIgnoreCase(member.getStartDate().getMonth().name()) && member.getTerminationDate() == null)
+                            .filter(member -> member.getStartDate() != null
+                                    && month.equalsIgnoreCase(member.getStartDate().getMonth().name())
+                                    && member.getTerminationDate() == null)
                             .collect(Collectors.toList());
                 }
                 memberProfileAll.addAll(memberProfile);
@@ -56,11 +60,13 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
 
     @Override
     public List<AnniversaryReportResponseDTO> getTodaysAnniversaries() {
-        Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
+        Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null,
+                false);
         LocalDate today = LocalDate.now();
         List<MemberProfile> results = memberProfiles
                 .stream()
-                .filter(member -> member.getStartDate() != null && today.getDayOfMonth() == member.getStartDate().getDayOfMonth() && today.getMonthValue() == member.getStartDate().getMonthValue())
+                .filter(member -> member.getStartDate() != null
+                        && today.getMonthValue() == member.getStartDate().getMonthValue())
                 .collect(Collectors.toList());
         return profileToAnniversaryResponseDto(results);
     }
@@ -80,7 +86,9 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
                 anniversary.setName(member.getFirstName() + " " + member.getLastName());
                 anniversary.setYearsOfService(Double.parseDouble(df.format(yearsOfService)));
                 if (member.getStartDate() != null) {
-                    anniversary.setAnniversary(member.getStartDate().getMonthValue() + "/" + member.getStartDate().getDayOfMonth());
+                    anniversary.setAnniversary(
+                            member.getStartDate().getMonthValue() + "/" + member.getStartDate().getDayOfMonth() + "/"
+                                    + member.getStartDate().getYear());
                 }
                 anniversaries.add(anniversary);
             }

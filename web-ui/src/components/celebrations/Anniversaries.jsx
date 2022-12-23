@@ -57,7 +57,7 @@ const Anniversaries = ({ anniversaries }) => {
             className={classes.header}
             title={
               <Typography variant="h5" component="h2">
-                {anniv.name}
+                {anniv.name} ({anniv.anniversary})
               </Typography>
             }
             subheader={

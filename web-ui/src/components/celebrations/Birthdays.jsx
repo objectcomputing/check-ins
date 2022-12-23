@@ -40,7 +40,7 @@ const Root = styled("div")({
   },
 });
 
-const Birthdays = ({ birthdays }) => {
+const Birthdays = ({ birthdays, xPos = 0.75 }) => {
   const { state } = useContext(AppContext);
 
   const loading = selectMemberProfilesLoading(state);
@@ -78,7 +78,7 @@ const Birthdays = ({ birthdays }) => {
 
   return (
     <div className="birthdays-container">
-      <div className="balloons" onClick={() => randomConfetti(0.6, 0.75)}>
+      <div className="balloons" onClick={() => randomConfetti(0.6, xPos)}>
         <div className="balloon">
           <p>Happy</p>
           <p>Birthday!</p>

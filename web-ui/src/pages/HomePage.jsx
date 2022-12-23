@@ -43,6 +43,8 @@ export default function HomePage() {
     }
   }, [birthdays]);
 
+  console.log({ birthdays });
+
   return (
     <div className="home-page">
       <div className="celebrations">
@@ -54,7 +56,7 @@ export default function HomePage() {
             <Birthdays birthdays={birthdays} />
           </>
         ) : birthdays.length ? (
-          <Birthdays birthdays={birthdays} />
+          <Birthdays birthdays={birthdays} xPos={0.5} />
         ) : anniversaries.length ? (
           <Anniversaries anniversaries={anniversaries} />
         ) : (
