@@ -25,7 +25,6 @@ export default function HomePage() {
       let res = await getTodaysCelebrations(csrf);
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
-      console.warn({ data });
       if (data) {
         if (data.anniversaries) {
           setAnniversaries(sortAnniversaries(data.anniversaries));

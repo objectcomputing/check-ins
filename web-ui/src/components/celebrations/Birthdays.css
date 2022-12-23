@@ -86,6 +86,9 @@ body {
     position: relative;
     top: 25%;
   }
+  .balloons:hover {
+    cursor: pointer;
+  }
   /*BALLOON 1 4*/
   @-webkit-keyframes balloon1 {
     0%,
