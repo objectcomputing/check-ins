@@ -7,11 +7,8 @@ import { randomConfetti } from "../../context/util";
 import "./MyBirthday.css";
 import "./Birthdays.css";
 
-const MyBirthday = () => {
-  const { state } = useContext(AppContext);
-
-  let me = selectCurrentUser(state);
-
+const MyBirthday = ({ me }) => {
+  console.log({ me });
   return (
     <div className="my-birthday-container">
       <div className="my-balloons" onClick={() => randomConfetti(0.6, 0.5)}>

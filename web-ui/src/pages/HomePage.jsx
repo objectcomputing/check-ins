@@ -46,7 +46,7 @@ export default function HomePage() {
   return (
     <div className="home-page">
       <div className="celebrations">
-        {myBirthday ? (
+        {myBirthday && me ? (
           <MyBirthday me={me} />
         ) : anniversaries.length && birthdays.length ? (
           <>
