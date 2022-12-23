@@ -43,13 +43,12 @@ export default function HomePage() {
       setMyBirthday(birthdays.some((bday) => bday.userId === me.id));
     }
   }, [birthdays]);
-  console.log({ myBirthday });
 
   return (
     <div className="home-page">
       <div className="celebrations">
         {myBirthday ? (
-          <MyBirthday />
+          <MyBirthday me={me} />
         ) : anniversaries.length && birthdays.length ? (
           <>
             <Anniversaries anniversaries={anniversaries} />

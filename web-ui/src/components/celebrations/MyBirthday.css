@@ -7,16 +7,13 @@ body {
   p {
     text-transform: uppercase;
   }
-
 .my-birthday-container {
     position: relative;
 }
-
 .my-birthday h1 {
     color: #2559a7;
-    font-weight: bold;
+    font-weight: bolder;
 }
-
 .my-balloons {
     margin: 0 auto;
     position: absolute;
@@ -110,16 +107,19 @@ body {
   .my-balloons > div:nth-child(6):before {
     color: rgba(242, 112, 45, 0.9);
   }
-  
   .my-balloons > div:before {
     position: absolute;
     bottom: -11px;
-    left: 32px;
+    left: 45px;
     content: "▲";
     font-size: 1em;
   }
+  .my-balloons:hover {
+    cursor: pointer;
+  }
   p {
-    font-size: .75em;
+    font-size: 1em;
+    font-weight: bold;
     line-height: 0.5em;
     text-align: center;
     color: white;

@@ -1,3 +1,5 @@
+import confetti from 'canvas-confetti'
+
 export const levelList = [
   "NONE",
   "INTERESTED",
@@ -32,4 +34,13 @@ export const sortBirthdays = (birthdayData) => {
           a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length)
         ))
   );
+};
+
+export const randomConfetti = (y, x) => {
+  confetti({
+    angle: Math.floor(Math.random() * (125 - 55) + 55),
+    spread: Math.floor(Math.random() * (75, 50) + 50),
+    particleCount: Math.floor(Math.random() * (100, 50) + 50),
+    origin: { y: y, x: x },
+  });
 };

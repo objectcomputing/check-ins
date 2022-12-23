@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
-import { AppContext } from "../../context/AppContext";
 
+import { AppContext } from "../../context/AppContext";
 import { selectCurrentUser } from "../../context/selectors";
+import { randomConfetti } from "../../context/util";
 
 import "./MyBirthday.css";
 import "./Birthdays.css";
@@ -12,8 +13,8 @@ const MyBirthday = () => {
   let me = selectCurrentUser(state);
 
   return (
-    <div class="my-birthday-container">
-      <div class="my-balloons">
+    <div className="my-birthday-container">
+      <div className="my-balloons" onClick={() => randomConfetti(0.6, 0.5)}>
         <div>
           <p>Happy</p>
           <p>Birthday!</p>

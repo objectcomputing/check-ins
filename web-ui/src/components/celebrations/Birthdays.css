@@ -15,13 +15,13 @@ body {
   .birthdays-container {
     position: relative;
   }
-  .balloon {
+  .balloons {
     margin: 0 auto;
     position: absolute;
     left: 8rem;
     top: -2.5rem;
   }
-  .balloon > div {
+  .balloons > div {
     width: 80px;
     height: 100px;
     background: rgba(182, 15, 97, 0.9);
@@ -33,7 +33,7 @@ body {
     box-shadow: inset 17px 7px 10px rgba(182, 15, 97, 0.9);
     -webkit-transform-origin: bottom center;
   }
-  .balloon > div:nth-child(1) {
+  .balloons > div:nth-child(1) {
     background: rgba(182, 15, 97, 0.9);
     left: 0;
     box-shadow: inset 10px 10px 10px rgba(135, 11, 72, 0.9);
@@ -42,10 +42,10 @@ body {
     -o-animation: balloon1 6s ease-in-out infinite;
     animation: balloon1 6s ease-in-out infinite;
   }
-  .balloon > div:nth-child(1):before {
+  .balloons > div:nth-child(1):before {
     color: rgba(182, 15, 97, 0.9);
   }
-  .balloon > div:nth-child(2) {
+  .balloons > div:nth-child(2) {
     background: rgba(242, 194, 58, 0.9);
     left: 120px;
     box-shadow: inset 10px 10px 10px rgba(192, 154, 43, 0.9);
@@ -54,10 +54,10 @@ body {
     -o-animation: balloon2 6s ease-in-out infinite;
     animation: balloon2 6s ease-in-out infinite;
   }
-  .balloon > div:nth-child(2):before {
+  .balloons > div:nth-child(2):before {
     color: rgba(242, 194, 58, 0.9);
   }
-  .balloon > div:nth-child(3) {
+  .balloons > div:nth-child(3) {
     background: rgba(45, 181, 167, 0.9);
     left: 240px;
     box-shadow: inset 10px 10px 10px rgba(35, 140, 129, 0.9);
@@ -66,19 +66,20 @@ body {
     -o-animation: balloon4 6s ease-in-out infinite;
     animation: balloon4 6s ease-in-out infinite;
   }
-  .balloon > div:nth-child(3):before {
+  .balloons > div:nth-child(3):before {
     color: rgba(45, 181, 167, 0.9);
   }
   
-  .balloon > div:before {
+  .balloons > div:before {
     position: absolute;
     bottom: -11px;
     left: 32px;
     content: "▲";
     font-size: 1em;
   }
-  p {
+  .balloons p {
     font-size: .75em;
+    font-weight: bold;
     line-height: 0.5em;
     text-align: center;
     color: white;

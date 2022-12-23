@@ -41,16 +41,14 @@ const Root = styled("div")({
 });
 
 const Anniversaries = ({ anniversaries }) => {
-  console.log("ANNIV PAGE", Array.isArray(anniversaries), anniversaries);
   const { state } = useContext(AppContext);
 
   const loading = selectMemberProfilesLoading(state);
-  const { userProfile } = state;
 
   const createAnniversaryCards = anniversaries.map((anniv, index) => {
     let user = selectProfile(state, anniv.userId);
     return (
-      <Card className={"anniversaries-card"}>
+      <Card className={"anniversaries-card"} key={index}>
         <Link
           style={{ color: "black", textDecoration: "none" }}
           to={`/profile/${anniv.userId}`}
