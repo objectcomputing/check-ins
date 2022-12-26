@@ -313,21 +313,15 @@ const ReceivedRequestsPage = () => {
         )}
         {!isLoading && (
           <div className="received-requests-container">
-            {receivedRequests.length === 0 && (
-              <div className="no-requests-message">
-                <Typography variant="body1">
-                  No received feedback requests
-                </Typography>
-              </div>
-            )}
-            {receivedRequests.length > 0 &&
-              filteredReceivedRequests.length === 0 && (
-                <div className="no-requests-message">
-                  <Typography variant="body1">
-                    No matching feedback requests
-                  </Typography>
-                </div>
-              )}
+            {receivedRequests.length === 0 ||
+              (receivedRequests.length > 0 &&
+                filteredReceivedRequests.length === 0 && (
+                  <div className="no-requests-message">
+                    <Typography variant="body1">
+                      No received feedback requests
+                    </Typography>
+                  </div>
+                ))}
             {filteredReceivedRequests.map((request) => (
               <ReceivedRequestCard key={request.id} request={request} />
             ))}
