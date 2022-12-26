@@ -157,7 +157,7 @@ const ReceivedRequestsPage = () => {
     if (searchText.trim()) {
       for (let query of queries) {
         const setFiltered = (filteredOption) => {
-          filteredOption = filteredOption.filter((request) => {
+          return filteredOption.filter((request) => {
             const creatorName = selectProfile(
               state,
               request.creatorId
@@ -169,26 +169,9 @@ const ReceivedRequestsPage = () => {
             return creatorName.includes(query) || requesteeName.includes(query);
           });
         };
-        setFiltered(filteredCanceled);
-        setFiltered(filteredReceived);
-        setFiltered(filteredSubmitted);
-        // filteredCanceled = filteredCanceled.filter((request) => {
-        //   const creatorName = selectProfile(state, request.creatorId).name.toLowerCase();
-        //   const requesteeName = selectProfile(state, request.requesteeId).name.toLowerCase();
-        //   return creatorName.includes(query) || requesteeName.includes(query);
-        // });
-
-        // filteredReceived = filteredReceived.filter((request) => {
-        //   const creatorName = selectProfile(state, request.creatorId).name.toLowerCase();
-        //   const requesteeName = selectProfile(state, request.requesteeId).name.toLowerCase();
-        //   return creatorName.includes(query) || requesteeName.includes(query);
-        // });
-
-        // filteredSubmitted = filteredSubmitted.filter((request) => {
-        //   const creatorName = selectProfile(state, request.creatorId).name.toLowerCase();
-        //   const requesteeName = selectProfile(state, request.requesteeId).name.toLowerCase();
-        //   return creatorName.includes(query) || requesteeName.includes(query);
-        // });
+        filteredCanceled = setFiltered(filteredCanceled);
+        filteredReceived = setFiltered(filteredReceived);
+        filteredSubmitted = setFiltered(filteredSubmitted);
       }
     }
 
