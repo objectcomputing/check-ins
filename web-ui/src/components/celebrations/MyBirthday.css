@@ -7,6 +7,14 @@ body {
   p {
     text-transform: uppercase;
   }
+.hide-my-birthday {
+  display: flex;
+  justify-content: flex-end;
+  font-weight: bold;
+}
+.hide-my-birthday:hover {
+  cursor: pointer;
+}
 .my-birthday-container {
     position: relative;
 }

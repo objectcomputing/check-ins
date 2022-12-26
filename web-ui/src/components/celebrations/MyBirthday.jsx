@@ -1,15 +1,17 @@
-import React, { useContext } from "react";
+import React from "react";
 
-import { AppContext } from "../../context/AppContext";
-import { selectCurrentUser } from "../../context/selectors";
 import { randomConfetti } from "../../context/util";
 
 import "./MyBirthday.css";
 import "./Birthdays.css";
 
-const MyBirthday = ({ me }) => {
+const MyBirthday = (props) => {
+  const { me, hideMyBirthday } = props;
   return (
     <div className="my-birthday-container">
+      <div className="hide-my-birthday" onClick={hideMyBirthday}>
+        X
+      </div>
       <div className="my-balloons" onClick={() => randomConfetti(0.6, 0.5)}>
         <div>
           <p>Happy</p>

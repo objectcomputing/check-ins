@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { getTodaysCelebrations } from "../api/birthdayanniversary";
 import Anniversaries from "../components/celebrations/Anniversaries";
 import Birthdays from "../components/celebrations/Birthdays";
+import MyAnniversary from "../components/celebrations/MyAnniversary";
 import MyBirthday from "../components/celebrations/MyBirthday";
 import { AppContext } from "../context/AppContext";
 import { selectCsrfToken, selectCurrentUser } from "../context/selectors";
@@ -18,7 +19,10 @@ export default function HomePage() {
 
   const [anniversaries, setAnniversaries] = useState([]);
   const [birthdays, setBirthdays] = useState([]);
+  const [myAnniversary, setMyAnniversary] = useState(false);
   const [myBirthday, setMyBirthday] = useState(false);
+  const [showMyAnniversary, setShowMyAnniversary] = useState(false);
+  const [showMyBirthday, setShowMyBirthday] = useState(false);
 
   useEffect(async () => {
     if (csrf) {
@@ -40,16 +44,33 @@ export default function HomePage() {
   useEffect(async () => {
     if (birthdays) {
       setMyBirthday(birthdays.some((bday) => bday.userId === me.id));
+      if (myBirthday) setShowMyBirthday(true);
     }
-  }, [birthdays]);
+    if (anniversaries) {
+      setMyAnniversary(anniversaries.filter((anniv) => anniv.userId === me.id));
+      if (myAnniversary) setShowMyAnniversary(true);
+    }
+  }, [anniversaries, birthdays]);
 
-  console.log({ birthdays });
+  const hideMyAnniversary = () => {
+    setShowMyAnniversary(false);
+  };
+  const hideMyBirthday = () => {
+    setShowMyBirthday(false);
+  };
+
+  console.log({ myAnniversary, me, showMyAnniversary });
 
   return (
     <div className="home-page">
       <div className="celebrations">
-        {myBirthday && me ? (
-          <MyBirthday me={me} />
+        {myBirthday && me && showMyBirthday ? (
+          <MyBirthday me={me} hideMyBirthday={hideMyBirthday} />
+        ) : myAnniversary && me && showMyAnniversary ? (
+          <MyAnniversary
+            hideMyAnniversary={hideMyAnniversary}
+            myAnniversary={myAnniversary}
+          />
         ) : anniversaries.length && birthdays.length ? (
           <>
             <Anniversaries anniversaries={anniversaries} />
