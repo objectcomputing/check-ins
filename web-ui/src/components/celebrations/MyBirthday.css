@@ -4,7 +4,7 @@ body {
     font-family: "Wendy One", sans-serif;
   }
 
-  p {
+  .my-birthday p {
     text-transform: uppercase;
   }
 .hide-my-birthday {
@@ -125,7 +125,7 @@ body {
   .my-balloons:hover {
     cursor: pointer;
   }
-  p {
+  .my-birthday-container p {
     font-size: 1em;
     font-weight: bold;
     line-height: 0.5em;

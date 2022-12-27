@@ -111,19 +111,22 @@ body {
 }
 
 .my-anniversary-gift-text.open {
-  color: #2559a7;
   position: absolute;
   top: 50%;
   left: 50%;
   margin: 0;
   white-space: nowrap;
-  transform: translate3d(-50%, -50%, 0) scale(2);
+  transform: translate3d(-50%, 0, 0) scale(2.5);
   transform-origin: center center;
   z-index: -1;
   opacity:1;
-  transition: 5s;
+  transition: 3s;
 }
-
+.my-anniversary-gift-text.open span {
+  color: #2559a7;
+  font-weight: bolder;
+  font-size: 1rem;
+}
 .my-anniversary-gift-box {
   width: 100%;
   height: 75%;

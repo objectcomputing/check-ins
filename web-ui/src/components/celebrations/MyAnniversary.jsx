@@ -9,6 +9,12 @@ const MyAnniversary = (props) => {
   const yearsOfService = myAnniversary[0]?.yearsOfService;
   const [open, setOpen] = useState(false);
 
+  const text = (
+    <p>
+      Thank you for <span>{yearsOfService}</span> years!!!
+    </p>
+  );
+
   return (
     <div
       className={
@@ -32,7 +38,7 @@ const MyAnniversary = (props) => {
             open ? "my-anniversary-gift-text open" : "my-anniversary-gift-text"
           }
         >
-          {open ? `Thank you for ${yearsOfService} years of service` : ""}
+          {open ? text : ""}
         </div>
         <div
           className={

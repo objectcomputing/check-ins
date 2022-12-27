@@ -4,7 +4,7 @@ body {
     font-family: "Wendy One", sans-serif;
   }
 
-  p {
+  .birthdays-container p {
     text-transform: uppercase;
   }
     
