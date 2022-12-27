@@ -53,11 +53,13 @@ export default function HomePage() {
         anniversaries.filter((anniv) => anniv.userId === me.id)
       );
     }
-  }, [anniversaries, birthdays]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [anniversaries, birthdays, me.id]);
 
   useEffect(async () => {
     myBirthday ? setShowMyBirthday(true) : setShowMyBirthday(false);
     myAnniversary ? setShowMyAnniversary(true) : setShowMyAnniversary(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [myAnniversary, myBirthday]);
 
   const hideMyAnniversary = () => {
