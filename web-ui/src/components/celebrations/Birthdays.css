@@ -13,7 +13,7 @@ body {
     justify-content: center;
   }
   .birthdays-card {
-    min-width: 500px;
+    min-width: 450px;
   }
   .birthdays-card span {
     color: #2559a7;
@@ -254,7 +254,7 @@ body {
 
   @media (max-width: 1180px) {
     .birthdays-container {
-      margin-top: 3rem;
+      margin-top: 5rem;
     }
   }
 

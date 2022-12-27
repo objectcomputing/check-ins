@@ -69,7 +69,17 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
-      <div className="celebrations">
+      <div
+        className={
+          myBirthday &&
+          me &&
+          myAnniversary &&
+          showMyBirthday &&
+          showMyAnniversary
+            ? "double-celebrations"
+            : "celebrations"
+        }
+      >
         {myBirthday &&
         me &&
         myAnniversary &&

@@ -23,12 +23,14 @@ body.open{
 .anniversaries {
   position: relative;
 }
-.anniversaries h2 {
+.anniversaries .anniversary-title {
   display: flex;
   justify-content: center;
 }
 .anniversaries-card {
-  min-width: 500px;
+  /* display: flex;
+  justify-content: center; */
+  min-width: 450px;
 }
 .anniversaries-card span {
   color: #2559a7;

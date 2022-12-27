@@ -91,7 +91,9 @@ const Anniversaries = ({ anniversaries }) => {
         <div className={"anniversary-gift-box"}></div>
       </div>
       <Root>
-        <h2>Anniversaries</h2>
+        <div className="anniversary-title">
+          <h2>Anniversaries</h2>
+        </div>
         <Grid container columns={6} spacing={3}>
           <Grid item className={classes.members}>
             {loading
