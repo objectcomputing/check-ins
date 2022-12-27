@@ -5,6 +5,11 @@
   padding-top: 4rem;
 }
 
+.double-celebration {
+  display: flex;
+  flex-direction: column;
+}
+
 .MuiCardHeader-avatar > div {
   width: 60px;
   height: 60px;

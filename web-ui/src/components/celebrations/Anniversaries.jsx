@@ -85,10 +85,10 @@ const Anniversaries = ({ anniversaries }) => {
 
   return (
     <div className="anniversaries">
-      <div className={"gift dukdik"}>
-        <div className={"gift-top open"}></div>
-        <div className={"gift-text open"}></div>
-        <div className={"gift-box"}></div>
+      <div className={"anniversary-gift box"}>
+        <div className={"anniversary-gift-top open"}></div>
+        <div className={"anniversary-gift-text open"}></div>
+        <div className={"anniversary-gift-box"}></div>
       </div>
       <Root>
         <h2>Anniversaries</h2>

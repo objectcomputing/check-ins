@@ -30,7 +30,7 @@ body.open{
   color: #2559a7;
   font-weight: bold;
 }
-.gift {
+.anniversary-gift {
   position: absolute;
   top: 0;
   left: 15rem;
@@ -39,13 +39,13 @@ body.open{
   transform-origin: 0% 0%;
   transform: translate(-50%, -50%);
   transition: 1s;
-/*   animation: dukdik 0.5s infinite; */
+/*   animation: box 0.5s infinite; */
 }
-.dukdik{
+.box{
   transform-origin: 0% 0%;
-  animation: dukdik 0.5s infinite;
+  animation: box 0.5s infinite;
 }
-@keyframes dukdik {
+@keyframes box {
   0% {
     transform: rotate(0deg) translate(-50%, -50%);
   }
@@ -62,7 +62,7 @@ body.open{
     transform: rotate(0deg) translate(-50%, -50%);
   }
 }
-.gift-top {
+.anniversary-gift-top {
   position: relative;
   width: 110%;
   height: 25%;
@@ -72,7 +72,7 @@ body.open{
   background-image: linear-gradient(to right, #2559a7 0%, #2559a7 44%, #feb672 44%, #feb672 56%, #2559a7 56%, #2559a7 100%);
   transition: 1s;
 }
-.gift-top.boxOpen{
+.anniversary-gift-top.boxOpen{
   animation: box-open 1s;
   opacity:0;
 }
@@ -86,8 +86,8 @@ body.open{
     opacity:0;
   }
 }
-.gift-top::before,
-.gift-top::after {
+.anniversary-gift-top::before,
+.anniversary-gift-top::after {
     content: "";
     width: 15px;
     height: 15px;
@@ -99,12 +99,12 @@ body.open{
     transform: translate3d(-100%, -100%, 0) skew(10deg, 10deg);
 }
 
-.gift-top::after {
+.anniversary-gift-top::after {
   border-radius: 50% 50% 50% 0;
   transform: translate3d(0, -100%, 0) skew(-10deg, -10deg);
 }
 
-.gift-text {
+.anniversary-gift-text {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -118,7 +118,7 @@ body.open{
   transition: 5s;
 }
 
-.gift-box {
+.anniversary-gift-box {
   width: 100%;
   height: 75%;
   position:relative;
@@ -126,7 +126,7 @@ body.open{
   border-radius: 0 0 5px 5px;
   transition: 1s;
 }
-.gift-box.boxDown{
+.anniversary-gift-box.boxDown{
   animation: box-down 1s; 
   opacity:0; 
 }

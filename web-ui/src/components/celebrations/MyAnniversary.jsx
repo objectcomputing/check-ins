@@ -2,10 +2,11 @@ import React, { useState } from "react";
 
 import "./MyAnniversary.css";
 
-const MyAnniversary = ({ myAnniversary }) => {
-  const fullName = myAnniversary[0].name;
-  const firstName = fullName.substring(0, fullName.indexOf(" "));
-  const yearsOfService = myAnniversary[0].yearsOfService;
+const MyAnniversary = (props) => {
+  const { hideMyAnniversary, myAnniversary } = props;
+  const fullName = myAnniversary[0]?.name;
+  const firstName = fullName?.substring(0, fullName.indexOf(" "));
+  const yearsOfService = myAnniversary[0]?.yearsOfService;
   const [open, setOpen] = useState(false);
 
   return (
@@ -14,15 +15,30 @@ const MyAnniversary = ({ myAnniversary }) => {
         open ? "my-anniversary-container open" : "my-anniversary-container"
       }
     >
+      <div className="hide-my-anniversary" onClick={hideMyAnniversary}>
+        X
+      </div>
       <div
-        className={open ? "gift dukdik" : "gift"}
+        className={open ? "my-anniversary-gift box" : "my-anniversary-gift"}
         onClick={() => setOpen(!open)}
       >
-        <div className={open ? "gift-top boxOpen" : "gift-top"}></div>
-        <div className={open ? "gift-text open" : "gift-text"}>
+        <div
+          className={
+            open ? "my-anniversary-gift-top boxOpen" : "my-anniversary-gift-top"
+          }
+        ></div>
+        <div
+          className={
+            open ? "my-anniversary-gift-text open" : "my-anniversary-gift-text"
+          }
+        >
           {open ? `Thank you for ${yearsOfService} years of service` : ""}
         </div>
-        <div className={open ? "gift-box boxDown" : "gift-box"}></div>
+        <div
+          className={
+            open ? "my-anniversary-gift-box boxDown" : "my-anniversary-gift-box"
+          }
+        ></div>
       </div>
       <div className="my-anniversary">
         <h1>Happy Anniversary {firstName}!!!</h1>

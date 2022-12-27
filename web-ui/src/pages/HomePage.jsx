@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { getTodaysCelebrations } from "../api/birthdayanniversary";
 import Anniversaries from "../components/celebrations/Anniversaries";
 import Birthdays from "../components/celebrations/Birthdays";
+import DoubleCelebration from "../components/celebrations/DoubleCelebration";
 import MyAnniversary from "../components/celebrations/MyAnniversary";
 import MyBirthday from "../components/celebrations/MyBirthday";
 import { AppContext } from "../context/AppContext";
@@ -20,6 +21,7 @@ export default function HomePage() {
   const [anniversaries, setAnniversaries] = useState([]);
   const [birthdays, setBirthdays] = useState([]);
   const [myAnniversary, setMyAnniversary] = useState(false);
+  const [myAnniversaryData, setMyAnniversaryData] = useState([]);
   const [myBirthday, setMyBirthday] = useState(false);
   const [showMyAnniversary, setShowMyAnniversary] = useState(false);
   const [showMyBirthday, setShowMyBirthday] = useState(false);
@@ -44,13 +46,19 @@ export default function HomePage() {
   useEffect(async () => {
     if (birthdays) {
       setMyBirthday(birthdays.some((bday) => bday.userId === me.id));
-      if (myBirthday) setShowMyBirthday(true);
     }
     if (anniversaries) {
-      setMyAnniversary(anniversaries.filter((anniv) => anniv.userId === me.id));
-      if (myAnniversary) setShowMyAnniversary(true);
+      setMyAnniversary(anniversaries.some((anniv) => anniv.userId === me.id));
+      setMyAnniversaryData(
+        anniversaries.filter((anniv) => anniv.userId === me.id)
+      );
     }
   }, [anniversaries, birthdays]);
+
+  useEffect(async () => {
+    myBirthday ? setShowMyBirthday(true) : setShowMyBirthday(false);
+    myAnniversary ? setShowMyAnniversary(true) : setShowMyAnniversary(false);
+  }, [myAnniversary, myBirthday]);
 
   const hideMyAnniversary = () => {
     setShowMyAnniversary(false);
@@ -59,17 +67,26 @@ export default function HomePage() {
     setShowMyBirthday(false);
   };
 
-  console.log({ myAnniversary, me, showMyAnniversary });
-
   return (
     <div className="home-page">
       <div className="celebrations">
-        {myBirthday && me && showMyBirthday ? (
+        {myBirthday &&
+        me &&
+        myAnniversary &&
+        showMyBirthday &&
+        showMyAnniversary ? (
+          <DoubleCelebration
+            me={me}
+            hideMyBirthday={hideMyBirthday}
+            hideMyAnniversary={hideMyAnniversary}
+            myAnniversary={myAnniversaryData}
+          />
+        ) : myBirthday && me && showMyBirthday ? (
           <MyBirthday me={me} hideMyBirthday={hideMyBirthday} />
         ) : myAnniversary && me && showMyAnniversary ? (
           <MyAnniversary
             hideMyAnniversary={hideMyAnniversary}
-            myAnniversary={myAnniversary}
+            myAnniversary={myAnniversaryData}
           />
         ) : anniversaries.length && birthdays.length ? (
           <>
