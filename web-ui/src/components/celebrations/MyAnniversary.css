@@ -46,7 +46,7 @@ body {
   transition: 1s;
   animation: box 0.5s infinite;
 }
-.box{
+.my-anniversary-gift .box{
   transform-origin: 0% 0%;
   cursor: pointer;
   animation: box 0.5s infinite;
