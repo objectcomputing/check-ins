@@ -23,8 +23,12 @@ body.open{
 .anniversaries {
   position: relative;
 }
-.anniversaries h1 {
-  margin-bottom: 2rem;
+.anniversaries h2 {
+  display: flex;
+  justify-content: center;
+}
+.anniversaries-card {
+  min-width: 500px;
 }
 .anniversaries-card span {
   color: #2559a7;
@@ -32,8 +36,8 @@ body.open{
 }
 .anniversary-gift {
   position: absolute;
-  top: 0;
-  left: 15rem;
+  top: -2rem;
+  left: 16rem;
   width: 100px;
   height: 100px;
   transform-origin: 0% 0%;

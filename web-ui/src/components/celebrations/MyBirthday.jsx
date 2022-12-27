@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 
 import { randomConfetti } from "../../context/util";
 
@@ -7,6 +7,7 @@ import "./Birthdays.css";
 
 const MyBirthday = (props) => {
   const { me, hideMyBirthday } = props;
+
   return (
     <div className="my-birthday-container">
       <div className="hide-my-birthday" onClick={hideMyBirthday}>

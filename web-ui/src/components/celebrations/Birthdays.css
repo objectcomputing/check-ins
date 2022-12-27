@@ -7,8 +7,15 @@ body {
   .birthdays-container p {
     text-transform: uppercase;
   }
-    
-    .birthdays-card span {
+  
+  .birthdays-container .bday-title {
+    display: flex;
+    justify-content: center;
+  }
+  .birthdays-card {
+    min-width: 500px;
+  }
+  .birthdays-card span {
     color: #2559a7;
     font-weight: bold;
 }
@@ -18,8 +25,8 @@ body {
   .balloons {
     margin: 0 auto;
     position: absolute;
-    left: 8rem;
-    top: -2.5rem;
+    left: 5rem;
+    top: -3.5rem;
   }
   .balloons > div {
     width: 80px;
@@ -47,7 +54,8 @@ body {
   }
   .balloons > div:nth-child(2) {
     background: rgba(242, 194, 58, 0.9);
-    left: 120px;
+    left: 8rem;
+    top: -1.5rem;
     box-shadow: inset 10px 10px 10px rgba(192, 154, 43, 0.9);
     -webkit-animation: balloon2 6s ease-in-out infinite;
     -moz-animation: balloon2 6s ease-in-out infinite;
@@ -244,7 +252,7 @@ body {
     font-size: 3.5em;
   }
 
-  @media (max-width: 950px) {
+  @media (max-width: 1180px) {
     .birthdays-container {
       margin-top: 3rem;
     }
