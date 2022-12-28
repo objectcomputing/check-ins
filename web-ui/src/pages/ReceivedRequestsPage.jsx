@@ -35,8 +35,7 @@ const Root = styled("div")({
   [`& .${classes.pageTitle}`]: {
     paddingRight: "0.4em",
     minWidth: "330px",
-    ["@media screen and (max-width: 600px)"]: {
-      // eslint-disable-line no-useless-computed-key
+    ["@media screen and (max-width: 600px)"]: { // eslint-disable-line no-useless-computed-key
       fontSize: "30px",
       width: "100%",
       padding: 0,
@@ -49,8 +48,7 @@ const Root = styled("div")({
   },
   [`& .${classes.searchField}`]: {
     width: "100%",
-    ["@media screen and (max-width: 840px)"]: {
-      // eslint-disable-line no-useless-computed-key
+    ["@media screen and (max-width: 840px)"]: { // eslint-disable-line no-useless-computed-key
       marginBottom: "1em",
     },
   },
