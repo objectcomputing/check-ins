@@ -11,7 +11,7 @@ const MyAnniversary = (props) => {
 
   const text = (
     <p>
-      Thank you for <span>{yearsOfService}</span> years!!!
+      Thank you for <span>{yearsOfService.toFixed(0)}</span> years!!!
     </p>
   );
 
