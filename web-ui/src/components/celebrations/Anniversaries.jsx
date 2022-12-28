@@ -13,7 +13,7 @@ import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
 import { Card, CardHeader } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 
-import { TextField, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 
 import "./Anniversaries.css";
 
