@@ -43,7 +43,7 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csrf]);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (birthdays) {
       setMyBirthday(birthdays.some((bday) => bday.userId === me.id));
     }
@@ -56,7 +56,7 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [anniversaries, birthdays, me.id]);
 
-  useEffect(async () => {
+  useEffect(() => {
     myBirthday ? setShowMyBirthday(true) : setShowMyBirthday(false);
     myAnniversary ? setShowMyAnniversary(true) : setShowMyAnniversary(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
