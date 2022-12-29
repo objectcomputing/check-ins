@@ -47,33 +47,32 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
 
   const createBirthdayCards = birthdays.map((bday, index) => {
     let user = selectProfile(state, bday.userId);
-    if (user) {
-      return (
-        <Card className={"birthdays-card"} key={index}>
-          <Link
-            style={{ color: "black", textDecoration: "none" }}
-            to={`/profile/${bday.userId}`}
-          >
-            <CardHeader
-              className={"birthday-card"}
-              title={
-                <Typography variant="h5" component="h2">
-                  Happy Birthday{" "}
-                  <span>{user.firstName + " " + user.lastName}!</span>
-                </Typography>
-              }
-              disableTypography
-              avatar={
-                <Avatar
-                  className={"celebrations-avatar"}
-                  src={getAvatarURL(user?.workEmail)}
-                />
-              }
-            />
-          </Link>
-        </Card>
-      );
-    }
+    if (!user) return;
+    return (
+      <Card className={"birthdays-card"} key={index}>
+        <Link
+          style={{ color: "black", textDecoration: "none" }}
+          to={`/profile/${bday.userId}`}
+        >
+          <CardHeader
+            className={"birthday-card"}
+            title={
+              <Typography variant="h5" component="h2">
+                Happy Birthday{" "}
+                <span>{user.firstName + " " + user.lastName}!</span>
+              </Typography>
+            }
+            disableTypography
+            avatar={
+              <Avatar
+                className={"celebrations-avatar"}
+                src={getAvatarURL(user?.workEmail)}
+              />
+            }
+          />
+        </Link>
+      </Card>
+    );
   });
 
   return (
