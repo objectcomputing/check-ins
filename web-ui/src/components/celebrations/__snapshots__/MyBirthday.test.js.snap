@@ -5,6 +5,11 @@ exports[`renders correctly 1`] = `
   className="my-birthday-container"
 >
   <div
+    className="hide-my-birthday"
+  >
+    X
+  </div>
+  <div
     className="my-balloons"
     onClick={[Function]}
   >
