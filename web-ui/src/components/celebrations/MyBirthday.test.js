@@ -4,10 +4,10 @@ import { AppContextProvider } from "../../context/AppContext";
 import { BrowserRouter } from "react-router-dom";
 
 const me = {
-  "name": "SumanMaroju",
-  "birthDay": "12/27",
-  "userId": "1b4f99da-ef70-4a76-9b37-8bb783b749ad"
-}
+        id: "0987654321",
+        name: "Moi",
+        lastName: "Monseiur", 
+      }
 
 it("renders correctly", () => {
   snapshot(
