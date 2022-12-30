@@ -1,7 +1,7 @@
 .celebrations {
   display: flex;
   justify-content: space-evenly;
-  align-items: start;
+  align-items: flex-start;
   padding-top: 4rem;
   margin-top: 2rem;
 }
@@ -9,7 +9,7 @@
 .double-celebrations {
   display: flex;
   justify-content: space-evenly;
-  align-items: start;
+  align-items: flex-start;
   padding-top: 4rem;
 }
 
