@@ -26,19 +26,24 @@ export default function HomePage() {
   const [showMyAnniversary, setShowMyAnniversary] = useState(false);
   const [showMyBirthday, setShowMyBirthday] = useState(false);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (csrf) {
-      let res = await getTodaysCelebrations(csrf);
-      let data =
-        res.payload && res.payload.data && !res.error ? res.payload.data : null;
-      if (data) {
-        if (data.anniversaries) {
-          setAnniversaries(sortAnniversaries(data.anniversaries));
+      const getCelebrations = async () => {
+        let res = await getTodaysCelebrations(csrf);
+        let data =
+          res.payload && res.payload.data && !res.error
+            ? res.payload.data
+            : null;
+        if (data) {
+          if (data.anniversaries) {
+            setAnniversaries(sortAnniversaries(data.anniversaries));
+          }
+          if (data.birthdays) {
+            setBirthdays(sortBirthdays(data.birthdays));
+          }
         }
-        if (data.birthdays) {
-          setBirthdays(sortBirthdays(data.birthdays));
-        }
-      }
+      };
+      getCelebrations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csrf]);
