@@ -73,7 +73,7 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
           </Link>
         </Card>
       );
-    }
+    } else return null;
   });
 
   return (
