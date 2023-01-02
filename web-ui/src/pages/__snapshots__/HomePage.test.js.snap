@@ -4,8 +4,12 @@ exports[`renders correctly 1`] = `
 <div
   className="home-page"
 >
-  <h1>
-    No events currently available...
-  </h1>
+  <div
+    className="celebrations"
+  >
+    <h1>
+      No events currently available...
+    </h1>
+  </div>
 </div>
 `;

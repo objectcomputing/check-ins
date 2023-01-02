@@ -18,7 +18,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
         LocalDate today = LocalDate.now();
         return getMemberProfileRepository().save(new MemberProfile("Bill", null, "Charles",
                 null, "Comedic Relief", null, "New York, New York",
-                "billm@objectcomputing.com", "mr-billy-employee-today", LocalDate.now().minusDays(3).minusYears(5),
+                "billm@objectcomputing.com", "mr-billy-employee-today", LocalDate.now().minusDays(3).minusMonths(1).minusYears(5),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
                 null, null,today.minusYears(30),null,null));
     }
@@ -100,7 +100,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
         return getMemberProfileRepository().save(new MemberProfile("Nobody", null, " Really",
                 null, "Comedic Relief", null, "New York, New York",
                 "nobody@objectcomputing.com", "mr-bill-employee-unrelated",
-                LocalDate.now().minusDays(3).minusYears(5), "is a clay figurine clown star of a parody of children's clay animation shows",
+                LocalDate.now().minusDays(3).minusMonths(1).minusYears(5), "is a clay figurine clown star of a parody of children's clay animation shows",
                 null, null,null,null,null));
     }
 

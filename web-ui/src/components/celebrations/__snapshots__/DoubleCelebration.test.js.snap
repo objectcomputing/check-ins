@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="double-celebration"
+>
+  <div
+    className="anniv"
+  >
+    <div
+      className="my-anniversary-container"
+    >
+      <div
+        className="hide-my-anniversary"
+        onClick={false}
+      >
+        X
+      </div>
+      <div
+        className="my-anniversary-gift"
+        onClick={[Function]}
+      >
+        <div
+          className="my-anniversary-gift-top"
+        />
+        <div
+          className="my-anniversary-gift-text"
+        >
+          
+        </div>
+        <div
+          className="my-anniversary-gift-box"
+        />
+      </div>
+      <div
+        className="my-anniversary"
+      >
+        <h1>
+          Happy Anniversary 
+          !!!
+        </h1>
+      </div>
+    </div>
+  </div>
+  <div
+    className="bday"
+  >
+    <div
+      className="my-birthday-container"
+    >
+      <div
+        className="hide-my-birthday"
+        onClick={false}
+      >
+        X
+      </div>
+      <div
+        className="my-balloons"
+        onClick={[Function]}
+      >
+        <div>
+          <p>
+            Happy
+          </p>
+          <p>
+            Birthday!
+          </p>
+        </div>
+        <div>
+          <p>
+            Happy
+          </p>
+          <p>
+            Birthday!
+          </p>
+        </div>
+        <div>
+          <p>
+            Happy
+          </p>
+          <p>
+            Birthday!
+          </p>
+        </div>
+        <div>
+          <p>
+            Happy
+          </p>
+          <p>
+            Birthday!
+          </p>
+        </div>
+        <div>
+          <p>
+            Happy
+          </p>
+          <p>
+            Birthday!
+          </p>
+        </div>
+      </div>
+      <div
+        className="my-birthday"
+      >
+        <h1>
+          Happy Birthday 
+          Suman
+          !!!
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+`;
