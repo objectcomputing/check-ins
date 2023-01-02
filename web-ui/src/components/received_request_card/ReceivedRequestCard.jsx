@@ -73,7 +73,7 @@ const ReceivedRequestCard = ({ request }) => {
       );
     } else if (request.status === "canceled") {
       return (
-        <Typography className={classes.redTypography}>
+        <Typography className={classes.grayTypography}>
           Canceled
         </Typography>
       );
