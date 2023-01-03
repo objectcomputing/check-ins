@@ -147,8 +147,19 @@ body.open{
 @media (max-width: 600px) {
  .anniversaries-card {
     min-width: unset;
+    /* margin: 0 1rem; */
   }
   .anniversary-gift {
     left: 12rem;
+  }
+}
+
+@media (max-width: 400px) {
+ .anniversaries-card {
+    min-width: unset;
+    margin: 0 1rem;
+  }
+  .anniversary-gift {
+    left: 10rem;
   }
 }

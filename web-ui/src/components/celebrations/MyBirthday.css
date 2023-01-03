@@ -273,7 +273,11 @@ body {
       transform: translate(-15px, 10px) rotate(10deg);
     }
   }
-
+  @media (max-width: 800px) {
+  .my-birthday h1 {
+    font-size: 2.5rem;
+  }
+}
   @media (max-width: 600px) {
   .my-birthday-container {
     bottom: 0rem;
@@ -314,5 +318,29 @@ body {
   .my-balloons > div:nth-child(5) {
     left: 18rem;
     top: 7rem;
+  }
+}
+@media (max-width: 400px) {
+  .my-birthday h1 {
+    font-size: 1.25rem;
+  }
+  .my-birthday-container .my-balloons > div {
+      width: 64px;
+      height: 85px;
+  }
+  .my-balloons > div:nth-child(1) {
+    left: -1rem;
+  }
+  .my-balloons > div:nth-child(2) {
+    left: 3rem;
+  }
+  .my-balloons > div:nth-child(3) {
+    left: 8rem;
+  }
+  .my-balloons > div:nth-child(4) {
+    left: 12rem;
+  }
+  .my-balloons > div:nth-child(5) {
+    left: 16rem;
   }
 }

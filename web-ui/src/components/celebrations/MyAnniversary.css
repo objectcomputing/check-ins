@@ -40,7 +40,7 @@ body {
 }
 .my-anniversary-gift {
   position: absolute;
-  top: 100%;
+  top: 7rem;
   left: 50%;
   width: 150px;
   height: 150px;
@@ -153,14 +153,33 @@ body {
     opacity:0;
   }  
 }
+
+@media (max-width: 800px) {
+  .my-anniversary h1 {
+    font-size: 2.5rem;
+  }
+}
+
 @media (max-width: 600px) {
+  .my-anniversary-gift-text.open {
+    transform: translate3d(-50%, 0, 0) scale(1.5);
+  }
   .my-anniversary-gift {
-    bottom: 0rem;
+    top: 5rem;
     width: 100px;
     height: 100px;
   }
   .my-anniversary h1 {
     font-size: 1.75rem;
     top: 7rem;
+  }
+}
+@media (max-width: 400px) {
+  .my-anniversary-gift {
+    width: 100px;
+    height: 100px;
+  }
+  .my-anniversary h1 {
+    font-size: 1.25rem;
   }
 }
