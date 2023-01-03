@@ -244,14 +244,6 @@ body {
       transform: translate(-15px, 10px) rotate(10deg);
     }
   }
-  h1 {
-    position: relative;
-    top: 200px;
-    text-align: center;
-    color: white;
-    font-size: 3.5em;
-  }
-
   @media (max-width: 1180px) {
     .birthdays-container {
       margin-top: 5rem;
