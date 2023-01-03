@@ -94,7 +94,7 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
       </div>
       <Root>
         <div className="bday-title">
-          <h2>Birthdays</h2>
+          <h1>Birthdays</h1>
         </div>
         <Grid container columns={6} spacing={3}>
           <Grid item className={classes.members}>

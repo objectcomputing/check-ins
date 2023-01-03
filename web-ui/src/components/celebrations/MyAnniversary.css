@@ -33,6 +33,10 @@ body {
 .my-anniversary h1 {
     color: #2559a7;
     font-weight: bolder;
+    position: relative;
+    top: 10rem;
+    text-align: center;
+    font-size: 3.5em;
 }
 .my-anniversary-gift {
   position: absolute;
@@ -148,4 +152,15 @@ body {
     top:50px;
     opacity:0;
   }  
+}
+@media (max-width: 600px) {
+  .my-anniversary-gift {
+    bottom: 0rem;
+    width: 100px;
+    height: 100px;
+  }
+  .my-anniversary h1 {
+    font-size: 1.75rem;
+    top: 7rem;
+  }
 }

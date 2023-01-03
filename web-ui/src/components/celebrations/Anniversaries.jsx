@@ -92,7 +92,7 @@ const Anniversaries = ({ anniversaries }) => {
       </div>
       <Root>
         <div className="anniversary-title">
-          <h2>Anniversaries</h2>
+          <h1>Anniversaries</h1>
         </div>
         <Grid container columns={6} spacing={3}>
           <Grid item className={classes.members}>

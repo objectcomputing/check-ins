@@ -144,3 +144,11 @@ body.open{
     opacity:0;
   }  
 }
+@media (max-width: 600px) {
+ .anniversaries-card {
+    min-width: unset;
+  }
+  .anniversary-gift {
+    left: 12rem;
+  }
+}

@@ -246,7 +246,18 @@ body {
   }
   @media (max-width: 1180px) {
     .birthdays-container {
-      margin-top: 5rem;
+      margin-top: 6rem;
     }
   }
-
+  @media (max-width: 600px) {
+  .birthdays-card {
+      margin: 0 1rem;
+      min-width: unset;
+  }
+  .birthdays-card h5 {
+    font-size: 1rem;
+  }
+  .birthdays-container .balloons {
+    left: 3rem;
+  }
+}
