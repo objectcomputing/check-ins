@@ -108,15 +108,16 @@ const KudosPage = () => {
       case "RECEIVED":
         loadReceivedKudos().then(data => {
           if (data) {
-            console.log('TAB',{data});
-            setReceivedKudos(data);
+          let filteredReceived = data.filter((kudo) => kudo.recipientMembers.some((member) => member.id === currentUser.id))
+            setReceivedKudos(filteredReceived);
           }
         });
         break;
       case "SENT":
         loadSentKudos().then(data => {
           if (data) {
-            setSentKudos(data);
+            let filteredSent = data.filter((kudo) => kudo.senderId === currentUser.id)
+            setSentKudos(filteredSent);
           }
         });
         break;
