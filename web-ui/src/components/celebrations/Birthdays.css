@@ -261,3 +261,15 @@ body {
     left: 3rem;
   }
 }
+
+@media (max-width: 320px) {
+ .balloons > div:nth-child(1) {
+    left: -2rem;
+  }
+  .balloons > div:nth-child(2) {
+    left: 4.5rem;
+  }
+  .balloons > div:nth-child(3) {
+    left: 10.5rem;
+  }
+}
