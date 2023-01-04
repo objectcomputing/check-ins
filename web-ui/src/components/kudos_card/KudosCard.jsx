@@ -50,7 +50,7 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
   const [deleteReason, setDeleteReason] = useState(""); // TODO: setup optional reason for deleting a kudos
 
   const sender = selectProfile(state, kudos.senderId);
-  console.log(kudos);
+  // console.log(kudos);
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {

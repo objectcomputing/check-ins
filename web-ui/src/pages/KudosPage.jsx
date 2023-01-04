@@ -81,29 +81,34 @@ const KudosPage = () => {
         }
       });
     }
-  }, [csrf, dispatch]);
+  }, [csrf]);
 
   useEffect(() => {
     if (csrf && currentUser && currentUser.id) {
       loadReceivedKudos().then(data => {
         if (data) {
-          setReceivedKudos(data);
+          let filtered = data.filter((kudo) => kudo.recipientMembers.some((member) => member.id === currentUser.id))
+          console.log('received', {filtered});
+          setReceivedKudos(filtered);
         }
       });
 
       loadSentKudos().then(data => {
         if (data) {
-          setSentKudos(data);
+          let filtered = data.filter((kudo) => kudo.senderId === currentUser.id)
+          console.log('sent', {filtered});
+          setSentKudos(filtered);
         }
       });
     }
-  }, [csrf, currentUser, dispatch]);
+  }, [csrf, currentUser]);
 
   const handleTabChange = useCallback((event, newTab) => {
     switch (newTab) {
       case "RECEIVED":
         loadReceivedKudos().then(data => {
           if (data) {
+            console.log('TAB',{data});
             setReceivedKudos(data);
           }
         });
@@ -121,6 +126,8 @@ const KudosPage = () => {
 
     setKudosTab(newTab);
   }, [loadReceivedKudos, loadSentKudos]);
+  
+  console.log({currentUser, receivedKudos, sentKudos});
 
   return (
     <Root className="kudos-page">
@@ -151,8 +158,9 @@ const KudosPage = () => {
           {receivedKudosLoading
             ? Array.from({length: 5}).map((_, index) => <SkeletonLoader key={index} type="kudos"/>)
             : (
-              receivedKudos.length > 0
-              ? <div className="received-kudos-list">
+              receivedKudos.length > 0 && receivedKudos.filter((kudo, index) => kudo.recipientMembers[index]?.id === currentUser.id))
+              ? (
+              <div className="received-kudos-list">
                   {receivedKudos.map(k =>
                     <KudosCard
                       key={k.id}
@@ -164,7 +172,9 @@ const KudosPage = () => {
                     />
                   )}
               </div>
-              : <div className="no-pending-kudos-message">
+              )
+              : (
+              <div className="no-pending-kudos-message">
                   <Typography variant="body2">There are currently no pending kudos</Typography>
               </div>
             )

@@ -50,8 +50,8 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
   const currentUser = selectCurrentUser(state);
   const teams = selectNormalizedTeams(state, "");
   const memberProfiles = selectOrderedCurrentMemberProfiles(state);
-  console.log(memberProfiles);
-  console.log(selectedMembers);
+  // console.log(memberProfiles);
+  // console.log(selectedMembers);
 
   const handleSubmit = useCallback(() => {
 
