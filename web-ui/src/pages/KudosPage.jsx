@@ -1,6 +1,6 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {styled} from "@mui/material/styles";
-import {Button, Collapse, Divider, IconButton, Tab, Typography} from "@mui/material";
+import {Button, Tab, Typography} from "@mui/material";
 import {TabContext, TabList, TabPanel} from '@mui/lab';
 import {AppContext} from "../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../context/selectors";
@@ -184,11 +184,15 @@ const KudosPage = () => {
         {sentKudosLoading
             ? Array.from({length: 5}).map((_, index) => <SkeletonLoader key={index} type="kudos"/>)
             : (
+              sentKudos.length > 0 ?
               <div>
                 {sentKudos.map(k =>
                   <KudosCard key={k.id} kudos={k}/>
                 )}
-              </div>
+              </div> 
+              : <div className="no-sent-kudos-message">
+                  <Typography variant="body2">There are currently no sent kudos</Typography>
+                </div>
             )
           }
         </TabPanel>
