@@ -88,7 +88,6 @@ const KudosPage = () => {
       loadReceivedKudos().then(data => {
         if (data) {
           let filtered = data.filter((kudo) => kudo.recipientMembers.some((member) => member.id === currentUser.id))
-          console.log('received', {filtered});
           setReceivedKudos(filtered);
         }
       });
@@ -96,30 +95,19 @@ const KudosPage = () => {
       loadSentKudos().then(data => {
         if (data) {
           let filtered = data.filter((kudo) => kudo.senderId === currentUser.id)
-          console.log('sent', {filtered});
           setSentKudos(filtered);
         }
       });
     }
-  }, [csrf, currentUser]);
+  }, [csrf, currentUser, kudosTab]);
 
   const handleTabChange = useCallback((event, newTab) => {
     switch (newTab) {
       case "RECEIVED":
-        loadReceivedKudos().then(data => {
-          if (data) {
-          let filteredReceived = data.filter((kudo) => kudo.recipientMembers.some((member) => member.id === currentUser.id))
-            setReceivedKudos(filteredReceived);
-          }
-        });
+        setKudosTab("RECEIVED");
         break;
       case "SENT":
-        loadSentKudos().then(data => {
-          if (data) {
-            let filteredSent = data.filter((kudo) => kudo.senderId === currentUser.id)
-            setSentKudos(filteredSent);
-          }
-        });
+        setKudosTab("SENT");
         break;
       default:
         console.warn(`Invalid tab: ${newTab}`);
@@ -128,8 +116,6 @@ const KudosPage = () => {
     setKudosTab(newTab);
   }, [loadReceivedKudos, loadSentKudos]);
   
-  console.log({currentUser, receivedKudos, sentKudos});
-
   return (
     <Root className="kudos-page">
       <div className="kudos-page-header">
@@ -147,7 +133,6 @@ const KudosPage = () => {
           Give Kudos
         </Button>
       </div>
-      {/* Tabs */}
       <TabContext value={kudosTab}>
         <div className="kudos-tab-container">
           <TabList onChange={handleTabChange}>
@@ -203,52 +188,6 @@ const KudosPage = () => {
           }
         </TabPanel>
       </TabContext>
-
-      {/* Collapse */}
-      {/* <div className="received-kudos-header">
-        <Typography variant="h5">Received Kudos</Typography>
-        <IconButton
-          className={receivedKudosExpanded ? classes.expandOpen : classes.expandClose}
-          onClick={() => setReceivedKudosExpanded(!receivedKudosExpanded)}>
-          <ExpandMoreIcon/>
-        </IconButton>
-      </div>
-      <Divider/>
-      <Collapse in={receivedKudosExpanded}>
-        <div className="received-kudos-list">
-          {receivedKudos.length > 0
-            ? receivedKudos.map(kudos =>
-              <KudosCard key={kudos.id} kudos={kudos}/>
-            )
-            : <div className="empty-kudos-container">
-              <Typography variant="body2">You have not received any kudos</Typography>
-            </div>
-          }
-        </div>
-      </Collapse>
-      <div className="sent-kudos-header">
-        <Typography variant="h5">Sent Kudos</Typography>
-        <IconButton
-          className={sentKudosExpanded ? classes.expandOpen : classes.expandClose}
-          onClick={() => setSentKudosExpanded(!sentKudosExpanded)}>
-          <ExpandMoreIcon/>
-        </IconButton>
-      </div>
-      <Divider/>
-      <Collapse in={sentKudosExpanded}>
-        <div className="sent-kudos-list">
-          {sentKudos.length > 0
-            ? sentKudos.map(kudos =>
-              <KudosCard key={kudos.id} kudos={kudos}/>
-            )
-            : <div className="empty-kudos-container">
-              <Typography variant="body2">
-                You have not given any kudos. Visit a member's profile page to send them some kudos!
-              </Typography>
-            </div>
-          }
-        </div>
-      </Collapse> */}
     </Root>
   );
 };
