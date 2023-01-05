@@ -213,9 +213,10 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
                   )}
                 />
               }
-              <FormGroup>
+              {/* TODO: Checkbox for public kudos */}
+              {/* <FormGroup>
                 <FormControlLabel control={<Checkbox defaultChecked />} label="Public" />
-              </FormGroup>
+              </FormGroup> */}
               <TextField
                 select
                 variant="outlined"
