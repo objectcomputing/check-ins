@@ -362,6 +362,47 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     }
 
     @Test
+    void testFindDoesNotGrabReviewsForNonAdmin() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackTemplate templateTwo = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+        saveReviewFeedbackTemplate(memberOne.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET("/?")
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+
+        // Only contains the two non-reviews
+        assertEquals(2, response.getBody().get().size());
+        assertContentEqualsEntity(template, response.getBody().get().get(0));
+        assertContentEqualsEntity(templateTwo, response.getBody().get().get(1));
+    }
+
+    @Test
+    void testFindReviewsForAdmin() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackTemplate templateTwo = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackTemplate templateThree = saveReviewFeedbackTemplate(memberOne.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET("/?")
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(3, response.getBody().get().size());
+        assertContentEqualsEntity(template, response.getBody().get().get(0));
+        assertContentEqualsEntity(templateTwo, response.getBody().get().get(1));
+        assertContentEqualsEntity(templateThree, response.getBody().get().get(2));
+    }
+
+    @Test
     void testGetByTitleNotFound() {
         final MemberProfile memberOne = createADefaultMemberProfile();
         saveDefaultFeedbackTemplate(memberOne.getId());

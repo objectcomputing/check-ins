@@ -34,6 +34,10 @@ public class FeedbackTemplateCreateDTO {
     @Schema(description = "whether the template is an ad-hoc template", required = true)
     private Boolean isAdHoc;
 
+    @NotBlank
+    @Schema(description = "whether the template is used for performance reviews", required = true)
+    private Boolean isReview;
+
     public String getTitle() {
         return title;
     }
@@ -81,6 +85,14 @@ public class FeedbackTemplateCreateDTO {
 
     public void setIsAdHoc(Boolean isAdHoc) {
         this.isAdHoc = isAdHoc;
+    }
+
+    public Boolean getIsReview() {
+        return isReview;
+    }
+
+    public void setIsReview(Boolean isReview) {
+        this.isReview = isReview;
     }
 
 }
