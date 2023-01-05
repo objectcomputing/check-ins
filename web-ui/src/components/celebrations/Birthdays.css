@@ -244,17 +244,32 @@ body {
       transform: translate(-15px, 10px) rotate(10deg);
     }
   }
-  h1 {
-    position: relative;
-    top: 200px;
-    text-align: center;
-    color: white;
-    font-size: 3.5em;
-  }
-
   @media (max-width: 1180px) {
     .birthdays-container {
-      margin-top: 5rem;
+      margin-top: 6rem;
     }
   }
+  @media (max-width: 600px) {
+  .birthdays-card {
+      margin: 0 1rem;
+      min-width: unset;
+  }
+  .birthdays-card h5 {
+    font-size: 1rem;
+  }
+  .birthdays-container .balloons {
+    left: 3rem;
+  }
+}
 
+@media (max-width: 320px) {
+ .balloons > div:nth-child(1) {
+    left: -2rem;
+  }
+  .balloons > div:nth-child(2) {
+    left: 4.5rem;
+  }
+  .balloons > div:nth-child(3) {
+    left: 10.5rem;
+  }
+}

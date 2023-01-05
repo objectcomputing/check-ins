@@ -21,6 +21,10 @@ body {
 .my-birthday h1 {
     color: #2559a7;
     font-weight: bolder;
+    position: relative;
+    top: 12rem;
+    text-align: center;
+    font-size: 3.5em;
 }
 .my-balloons {
     margin: 0 auto;
@@ -54,7 +58,7 @@ body {
   }
   .my-balloons > div:nth-child(2) {
     background: rgba(242, 194, 58, 0.9);
-    left: 120px;
+    left: 8rem;
     top: 4rem;
     box-shadow: inset 10px 10px 10px rgba(192, 154, 43, 0.9);
     -webkit-animation: balloon2 6s ease-in-out infinite;
@@ -67,7 +71,7 @@ body {
   }
   .my-balloons > div:nth-child(3) {
     background: rgba(45, 181, 167, 0.9);
-    left: 240px;
+    left: 16rem;
     box-shadow: inset 10px 10px 10px rgba(35, 140, 129, 0.9);
     -webkit-animation: balloon4 6s ease-in-out infinite;
     -moz-animation: balloon4 6s ease-in-out infinite;
@@ -79,7 +83,7 @@ body {
   }
   .my-balloons > div:nth-child(4) {
     background: rgba(190, 61, 244, 0.9);
-    left: 360px;
+    left: 24rem;
     top: 4rem;
     box-shadow: inset 10px 10px 10px rgba(160, 31, 204, 0.9);
     -webkit-animation: balloon1 5s ease-in-out infinite;
@@ -92,7 +96,7 @@ body {
   }
   .my-balloons > div:nth-child(5) {
     background: rgba(180, 224, 67, 0.9);
-    left: 480px;
+    left: 32rem;
     top: 7rem;
     box-shadow: inset 10px 10px 10px rgba(140, 179, 47, 0.9);
     -webkit-animation: balloon3 5s ease-in-out infinite;
@@ -102,18 +106,6 @@ body {
   }
   .my-balloons > div:nth-child(5):before {
     color: rgba(180, 224, 67, 0.9);
-  }
-  .my-balloons > div:nth-child(6) {
-    background: rgba(242, 112, 45, 0.9);
-    left: 600px;
-    box-shadow: inset 10px 10px 10px rgba(202, 92, 35, 0.9);
-    -webkit-animation: balloon2 3s ease-in-out infinite;
-    -moz-animation: balloon2 3s ease-in-out infinite;
-    -o-animation: balloon2 3s ease-in-out infinite;
-    animation: balloon2 3s ease-in-out infinite;
-  }
-  .my-balloons > div:nth-child(6):before {
-    color: rgba(242, 112, 45, 0.9);
   }
   .my-balloons > div:before {
     position: absolute;
@@ -281,3 +273,74 @@ body {
       transform: translate(-15px, 10px) rotate(10deg);
     }
   }
+  @media (max-width: 800px) {
+  .my-birthday h1 {
+    font-size: 2.5rem;
+  }
+}
+  @media (max-width: 600px) {
+  .my-birthday-container {
+    bottom: 0rem;
+  }
+  .my-birthday-container p {
+    font-size: .5rem;
+    text-align: center;
+    position: relative;
+    top: 25%;
+  }
+  .my-birthday h1 {
+    top: 10rem;
+    text-align: center;
+    font-size: 1.75rem;
+  }
+  .my-birthday-container .my-balloons > div {
+      width: 64px;
+      height: 85px;
+  }
+  .my-balloons > div:before {
+    left: 1.65rem;
+  }
+  .my-balloons > div:nth-child(1) {
+    left: 1rem;
+    top: 7rem;
+  }
+  .my-balloons > div:nth-child(2) {
+    left: 5rem;
+    top: 4rem;
+  }
+  .my-balloons > div:nth-child(3) {
+    left: 10rem;
+  }
+  .my-balloons > div:nth-child(4) {
+    left: 14rem;
+    top: 4rem;
+  }
+  .my-balloons > div:nth-child(5) {
+    left: 18rem;
+    top: 7rem;
+  }
+}
+@media (max-width: 400px) {
+  .my-birthday h1 {
+    font-size: 1.25rem;
+  }
+  .my-birthday-container .my-balloons > div {
+      width: 64px;
+      height: 85px;
+  }
+  .my-balloons > div:nth-child(1) {
+    left: -1rem;
+  }
+  .my-balloons > div:nth-child(2) {
+    left: 3rem;
+  }
+  .my-balloons > div:nth-child(3) {
+    left: 8rem;
+  }
+  .my-balloons > div:nth-child(4) {
+    left: 12rem;
+  }
+  .my-balloons > div:nth-child(5) {
+    left: 16rem;
+  }
+}

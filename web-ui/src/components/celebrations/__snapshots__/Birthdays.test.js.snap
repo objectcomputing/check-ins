@@ -96,9 +96,9 @@ exports[`renders correctly 1`] = `
     <div
       className="bday-title"
     >
-      <h2>
+      <h1>
         Birthdays
-      </h2>
+      </h1>
     </div>
     <div
       className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 emotion-1"

@@ -37,7 +37,7 @@ body.open{
 .anniversary-gift {
   position: absolute;
   top: -2rem;
-  left: 14rem;
+  left: 15rem;
   width: 100px;
   height: 100px;
   transform-origin: 0% 0%;
@@ -143,4 +143,23 @@ body.open{
     top:50px;
     opacity:0;
   }  
+}
+@media (max-width: 600px) {
+ .anniversaries-card {
+    min-width: unset;
+    /* margin: 0 1rem; */
+  }
+  .anniversary-gift {
+    left: 12rem;
+  }
+}
+
+@media (max-width: 400px) {
+ .anniversaries-card {
+    min-width: unset;
+    margin: 0 1rem;
+  }
+  .anniversary-gift {
+    left: 10rem;
+  }
 }
