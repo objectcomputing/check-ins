@@ -16,6 +16,7 @@ import { Card, CardHeader } from "@mui/material";
 import { Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Typography } from "@mui/material";
+// import { getWeek, getYear, isSameWeek } from "date-fns";
 
 import "./Birthdays.css";
 
@@ -43,10 +44,19 @@ const Root = styled("div")({
 const Birthdays = ({ birthdays, xPos = 0.75 }) => {
   const { state } = useContext(AppContext);
 
+  // const currentWeek = getWeek(new Date());
+  // const currentYear = getYear(new Date());
+
   const loading = selectMemberProfilesLoading(state);
 
   const createBirthdayCards = birthdays.map((bday, index) => {
     let user = selectProfile(state, bday.userId);
+    // let bdayThisWeek = isSameWeek(
+    //   getWeek(new Date(bday.birthDay + `/${currentYear}`)),
+    //   currentWeek
+    // );
+
+    // if (user && bdayThisWeek) {
     if (user) {
       return (
         <Card className={"birthdays-card"} key={index}>
