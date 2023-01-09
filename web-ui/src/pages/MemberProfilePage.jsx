@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
-  selectOrderedCurrentMemberProfiles,
   selectProfile,
   selectTerminatedMembers
 } from "../context/selectors";
@@ -63,8 +62,6 @@ const MemberProfilePage = () => {
   const [teams, setTeams] = useState([]);
   const [guilds, setGuilds] = useState([]);
   const isCurrentUser = userProfile?.memberProfile?.id === memberId;
-
-  const memberProfiles = selectOrderedCurrentMemberProfiles(state);
 
   useEffect(() => {
     async function getTeamsAndGuilds() {

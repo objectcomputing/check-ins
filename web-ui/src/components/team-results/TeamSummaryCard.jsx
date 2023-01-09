@@ -21,7 +21,6 @@ import {
 import PropTypes from "prop-types";
 import { deleteTeam, updateTeam } from "../../api/team.js";
 import SplitButton from "../split-button/SplitButton";
-import StarIcon from "@mui/icons-material/Star";
 
 const PREFIX = "TeamSummaryCard";
 const classes = {
