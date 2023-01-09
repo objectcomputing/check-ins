@@ -1,8 +1,8 @@
 import React, {useCallback, useContext, useState} from "react";
 import PropTypes from "prop-types";
 import {
-  Alert, AppBar, Autocomplete, Avatar, Button, Checkbox, Chip, Dialog,
-  FormGroup, FormControlLabel, IconButton, MenuItem, Slide, 
+  Alert, AppBar, Autocomplete, Avatar, Button, Chip, Dialog,
+  IconButton, MenuItem, Slide, 
   TextField, Toolbar, Tooltip, Typography
 } from "@mui/material";
 
@@ -43,7 +43,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
   const [recipientType, setRecipientType] = useState(teamId ? "TEAM" : "MEMBERS");
   const [message, setMessage] = useState("");
   const [created, setCreated] = useState(false);
-  const [publicCheckin, setPublicCheckin] = useState(true); //TODO: Allow toggle for public/private kudos
+  // const [publicKudos, setPublicKudos] = useState(true); //TODO: Allow toggle for public/private kudos
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedMembers, setSelectedMembers] = useState(recipient ? [recipient] : []);
 
@@ -105,7 +105,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
         });
       }
     }
-  }, [state, csrf, dispatch, message, recipient, currentUser, recipientType, selectedMembers, selectedTeam]);
+  }, [state, csrf, dispatch, message, currentUser, recipientType, selectedMembers, selectedTeam]);
 
   const handleMessageChange = useCallback((event) => {
     setMessage(event.target.value);

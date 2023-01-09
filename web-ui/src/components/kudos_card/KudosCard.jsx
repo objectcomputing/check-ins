@@ -47,7 +47,7 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
 
   const [expanded, setExpanded] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteReason, setDeleteReason] = useState(""); // TODO: setup optional reason for deleting a kudos
+  // const [deleteReason, setDeleteReason] = useState(""); // TODO: setup optional reason for deleting a kudos
 
   const sender = selectProfile(state, kudos.senderId);
   // console.log(kudos);
