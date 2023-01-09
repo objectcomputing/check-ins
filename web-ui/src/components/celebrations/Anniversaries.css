@@ -161,6 +161,9 @@ body.open {
   }
 }
 @media (max-width: 600px) {
+  .anniversaries {
+    margin-bottom: 2rem;
+  }
   .anniversaries-card {
     min-width: unset;
     /* margin: 0 1rem; */
@@ -180,10 +183,16 @@ body.open {
     margin: 0 1rem;
   }
   .anniversary-gift {
-    left: 10rem;
+    left: 12rem;
   }
   .anniversaries .anniversary-title h1 {
     font-size: 1.5em;
     margin-top: 1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .anniversary-gift {
+    left: 10rem;
   }
 }

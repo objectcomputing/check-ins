@@ -26,7 +26,7 @@ body {
   margin: 0 auto;
   position: absolute;
   left: 5rem;
-  top: -3.5rem;
+  top: -4.5rem;
 }
 .balloons > div {
   width: 80px;
@@ -268,6 +268,10 @@ body {
 }
 
 @media (max-width: 400px) {
+  .birthdays-container .balloons {
+    left: 5rem;
+    top: -3rem;
+  }
   .balloons > div:nth-child(1) {
     left: -2rem;
   }
@@ -279,5 +283,19 @@ body {
   }
   .birthdays-container .bday-title h1 {
     font-size: 1.5em;
+  }
+}
+
+@media (max-width: 375px) {
+  .birthdays-container .balloons {
+    left: 5rem;
+    top: -5rem;
+  }
+}
+
+@media (max-width: 325px) {
+  .birthdays-container .balloons {
+    left: 3rem;
+    top: -5rem;
   }
 }
