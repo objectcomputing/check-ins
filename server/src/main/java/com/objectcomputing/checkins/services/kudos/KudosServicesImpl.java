@@ -54,12 +54,12 @@ public class KudosServicesImpl implements KudosServices {
     public Kudos save(KudosCreateDTO kudosDTO) {
 
         memberProfileRetrievalServices.getById(kudosDTO.getSenderId()).orElseThrow(() -> {
-            throw new BadArgException("Kudos sender %s does not exist", kudosDTO.getSenderId());
+            throw new BadArgException("Kudos sender %s does not exist");
         });
 
         if (kudosDTO.getTeamId() != null) {
             teamRepository.findById(kudosDTO.getTeamId()).orElseThrow(() -> {
-               throw new BadArgException("Team %s does not exist", kudosDTO.getTeamId());
+               throw new BadArgException("Team %s does not exist");
             });
         }
 
@@ -102,11 +102,11 @@ public class KudosServicesImpl implements KudosServices {
         }
 
         Kudos existingKudos = kudosRepository.findById(kudos.getId()).orElseThrow(() -> {
-            throw new BadArgException("Kudos with id %s does not exist", kudos.getId());
+            throw new BadArgException("Kudos with id %s does not exist");
         });
 
         if (existingKudos.getDateApproved() != null) {
-            throw new BadArgException("Kudos with id %s has already been approved", kudos.getId());
+            throw new BadArgException("Kudos with id %s has already been approved");
         }
 
         existingKudos.setDateApproved(LocalDate.now());
@@ -118,7 +118,7 @@ public class KudosServicesImpl implements KudosServices {
     public KudosResponseDTO getById(UUID id) {
 
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Kudos with id %s does not exist", id);
+            throw new NotFoundException("Kudos with id %s does not exist");
         });
 
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
@@ -158,7 +158,7 @@ public class KudosServicesImpl implements KudosServices {
         }
 
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Kudos with id %s does not exist", id);
+            throw new NotFoundException("Kudos with id %s does not exist");
         });
 
         // Delete all KudosRecipients associated with this kudos
@@ -230,7 +230,7 @@ public class KudosServicesImpl implements KudosServices {
 
         kudosRecipients.forEach(kudosRecipient -> {
             Kudos relatedKudos = kudosRepository.findById(kudosRecipient.getKudosId()).orElseThrow(() -> {
-                throw new NotFoundException("Kudos with id %s does not exist", kudosRecipient.getKudosId());
+                throw new NotFoundException("Kudos with id %s does not exist");
             });
 
             if (relatedKudos.getDateApproved() != null) {
@@ -271,12 +271,12 @@ public class KudosServicesImpl implements KudosServices {
         List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
 
         if (recipients.isEmpty()) {
-            throw new NotFoundException("Could not find recipients for kudos with id %s", kudos.getId());
+            throw new NotFoundException("Could not find recipients for kudos with id %s");
         }
 
         if (kudos.getTeamId() != null) {
             Team recipientTeam = teamRepository.findById(kudos.getTeamId()).orElseThrow(() -> {
-                throw new NotFoundException("Team %s does not exist", kudos.getTeamId());
+                throw new NotFoundException("Team %s does not exist");
             });
             kudosResponseDTO.setRecipientTeam(recipientTeam);
         }
@@ -284,7 +284,7 @@ public class KudosServicesImpl implements KudosServices {
         List<MemberProfile> members = recipients
                 .stream()
                 .map(recipient -> memberProfileRetrievalServices.getById(recipient.getMemberId()).orElseThrow(() -> {
-                    throw new NotFoundException("Member id %s of KudosRecipient %s does not exist", recipient.getMemberId(), recipient.getId());
+                    throw new NotFoundException("Member id %s of KudosRecipient %s does not exist");
                 }))
                 .collect(Collectors.toList());
 

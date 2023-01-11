@@ -40,7 +40,7 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
         }
 
         Kudos kudos = kudosRepository.findById(kudosRecipient.getKudosId()).orElseThrow(() -> {
-            throw new NotFoundException("No kudos with id %s", kudosRecipient.getKudosId());
+            throw new NotFoundException("No kudos with id %s");
         });
 
         boolean isKudosCreator = currentUserServices.getCurrentUser().getId().equals(kudos.getSenderId());
@@ -50,11 +50,11 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
         }
 
         MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElseThrow(() -> {
-            throw new BadArgException("Cannot save KudosRecipient: member %s does not exist", kudosRecipient.getMemberId());
+            throw new BadArgException("Cannot save KudosRecipient: member %s does not exist");
         });
 
         if (member.getTerminationDate() != null && member.getTerminationDate().isBefore(LocalDate.now())) {
-            throw new BadArgException("Cannot save KudosRecipient for terminated member %s", kudosRecipient.getMemberId());
+            throw new BadArgException("Cannot save KudosRecipient for terminated member %s");
         }
 
         return kudosRecipientRepository.save(kudosRecipient);
