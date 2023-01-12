@@ -15,18 +15,13 @@ export const selectGuilds = (state) => state.guilds;
 export const selectLoading = (state) => state.loading;
 export const selectReviewPeriods = (state) => state.reviewPeriods;
 
-export const selectTeamsLoading = createSelector (
+export const selectTeamsLoading = createSelector(selectLoading, (loading) => {
+  return loading.teams;
+});
+export const selectMemberProfilesLoading = createSelector(
   selectLoading,
-  loading =>  {
-    return loading.teams
-  }
-)
-export const selectMemberProfilesLoading = createSelector (
-  selectLoading,
-  (loading) => 
-  loading.memberProfiles
-  
-)
+  (loading) => loading.memberProfiles
+);
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
@@ -131,7 +126,9 @@ export const selectCurrentUserRoles = createSelector(
   selectUserRoles,
   selectCurrentMemberIds,
   (userRoles, memberIds) =>
-    userRoles?.filter((userRole) => memberIds.includes(userRole.memberRoleId.memberId))
+    userRoles?.filter((userRole) =>
+      memberIds.includes(userRole.memberRoleId.memberId)
+    )
 );
 
 export const selectMappedUserRoles = createSelector(
@@ -139,9 +136,11 @@ export const selectMappedUserRoles = createSelector(
   selectRoles,
   (userRoles, roles) => {
     const mappedUserRoles = {};
-    userRoles.forEach(userRole => {
+    userRoles.forEach((userRole) => {
       const memberId = userRole.memberRoleId.memberId;
-      const role = roles.find(role => role.id === userRole.memberRoleId.roleId);
+      const role = roles.find(
+        (role) => role.id === userRole.memberRoleId.roleId
+      );
       if (!(memberId in mappedUserRoles)) {
         mappedUserRoles[memberId] = new Set();
       }
@@ -156,9 +155,23 @@ export const selectMappedPdls = createSelector(
   selectPdlRoles,
   selectCurrentUserRoles,
   (memberProfileMap, roles, userRoles) =>
-    userRoles?.filter((userRole) => roles.find((role) => role.id === userRole?.memberRoleId?.roleId ) !== undefined)?.map((userRole) =>
-      userRole?.memberRoleId?.memberId in memberProfileMap ? memberProfileMap[userRole?.memberRoleId?.memberId] : {}
-    )
+    userRoles
+      ?.filter(
+        (userRole) =>
+          roles.find((role) => role.id === userRole?.memberRoleId?.roleId) !==
+          undefined
+      )
+      ?.map((userRole) =>
+        userRole?.memberRoleId?.memberId in memberProfileMap
+          ? memberProfileMap[userRole?.memberRoleId?.memberId]
+          : {}
+      )
+);
+
+export const selectOrderedCurrentMemberProfiles = createSelector(
+  selectCurrentMembers,
+  (mappedMemberProfiles) =>
+    mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectOrderedPdls = createSelector(
@@ -214,7 +227,7 @@ export const selectMostRecentCheckin = createSelector(
   selectCheckinsForMember,
   (checkins) => {
     if (checkins && checkins.length > 0) {
-      return checkins && checkins[checkins.length-1]
+      return checkins && checkins[checkins.length - 1];
     }
   }
 );
@@ -232,36 +245,40 @@ export const selectPDLCheckinMap = createSelector(selectCheckins, (checkins) =>
 export const selectSupervisors = createSelector(
   selectCurrentMembers,
   selectProfileMap,
-  (currentMembers, memberProfileMap) => currentMembers?.reduce((supervisors, currentMember) => {
-    let supervisorId = currentMember.supervisorid;
+  (currentMembers, memberProfileMap) =>
+    currentMembers?.reduce((supervisors, currentMember) => {
+      let supervisorId = currentMember.supervisorid;
 
-    const inSupervisors = supervisors.find(
-      (supervisor) => supervisorId === supervisor?.id
-    )
+      const inSupervisors = supervisors.find(
+        (supervisor) => supervisorId === supervisor?.id
+      );
 
-      if (!inSupervisors){
+      if (!inSupervisors) {
         supervisors.push(memberProfileMap[supervisorId]);
       }
-    return supervisors;
-  }, [])
+      return supervisors;
+    }, [])
 );
 
 export const selectIsSupervisor = createSelector(
   selectCurrentUserId,
   selectSupervisors,
   (userId, supervisors) => {
-    const isSupervisor = supervisors?.find((supervisor) => supervisor?.id === userId)
+    const isSupervisor = supervisors?.find(
+      (supervisor) => supervisor?.id === userId
+    );
     if (isSupervisor !== undefined) {
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
   }
 );
 
-const filterMembersBySupervisor = (currentMembers, supervisorId) => currentMembers?.filter((currentTeamMember) =>  {
-  return currentTeamMember?.supervisorid === supervisorId;
-});
+const filterMembersBySupervisor = (currentMembers, supervisorId) =>
+  currentMembers?.filter((currentTeamMember) => {
+    return currentTeamMember?.supervisorid === supervisorId;
+  });
 
 export const selectTeamMembersBySupervisorId = createSelector(
   selectCurrentMembers,
@@ -279,11 +296,16 @@ export const selectSubordinates = createSelector(
   selectTeamMembersBySupervisorId,
   (state, managerId) => managerId,
   (state) => state,
-  (team, managerId, state) => team.reduce((subordinates, teamMember) => {
-    if(subordinates.some((current) => current.id === teamMember.id))
-      return subordinates;
-    else return [...subordinates, ...selectSubordinates(state, teamMember.id)];
-  }, [...team])
+  (team, managerId, state) =>
+    team.reduce(
+      (subordinates, teamMember) => {
+        if (subordinates.some((current) => current.id === teamMember.id))
+          return subordinates;
+        else
+          return [...subordinates, ...selectSubordinates(state, teamMember.id)];
+      },
+      [...team]
+    )
 );
 
 export const selectTeamMembersWithCheckinPDL = createSelector(

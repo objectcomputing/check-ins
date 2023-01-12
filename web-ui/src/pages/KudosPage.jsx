@@ -1,11 +1,11 @@
-import React, {useCallback, useContext, useEffect, useState} from "react";
-import {styled} from "@mui/material/styles";
-import {Button, Tab, Typography} from "@mui/material";
-import {TabContext, TabList, TabPanel} from '@mui/lab';
-import {AppContext} from "../context/AppContext";
-import {selectCsrfToken, selectCurrentUser} from "../context/selectors";
-import {getReceivedKudos, getSentKudos} from "../api/kudos";
-import {UPDATE_TOAST} from "../context/actions";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { styled } from "@mui/material/styles";
+import { Button, Tab, Typography } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { AppContext } from "../context/AppContext";
+import { selectCsrfToken, selectCurrentUser } from "../context/selectors";
+import { getReceivedKudos, getSentKudos } from "../api/kudos";
+import { UPDATE_TOAST } from "../context/actions";
 import KudosCard from "../components/kudos_card/KudosCard";
 
 import "./KudosPage.css";
@@ -20,20 +20,20 @@ import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
 const PREFIX = "KudosPage";
 const classes = {
   expandOpen: `${PREFIX}-expandOpen`,
-  expandClose: `${PREFIX}-expandClose`
+  expandClose: `${PREFIX}-expandClose`,
 };
 
 const Root = styled("div")({
   [`& .${classes.expandOpen}`]: {
     transform: "rotate(180deg)",
     transition: "transform 0.1s linear",
-    marginLeft: "auto"
+    marginLeft: "auto",
   },
   [`& .${classes.expandClose}`]: {
     transform: "rotate(0deg)",
     transition: "transform 0.1s linear",
-    marginLeft: "auto"
-  }
+    marginLeft: "auto",
+  },
 });
 
 const KudosPage = () => {
@@ -45,7 +45,7 @@ const KudosPage = () => {
   const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
   const [kudosTab, setKudosTab] = useState("RECEIVED");
   const [receivedKudos, setReceivedKudos] = useState([]);
-  const [receivedKudosLoading, setReceivedKudosLoading] = useState(true)
+  const [receivedKudosLoading, setReceivedKudosLoading] = useState(true);
   const [sentKudos, setSentKudos] = useState([]);
   const [sentKudosLoading, setSentKudosLoading] = useState(true);
 
@@ -60,8 +60,8 @@ const KudosPage = () => {
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast: "Failed to retrieve your received kudos"
-        }
+          toast: "Failed to retrieve your received kudos",
+        },
       });
     }
   }, [csrf, dispatch]);
@@ -77,49 +77,58 @@ const KudosPage = () => {
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast: "Failed to retrieve your sent kudos"
-        }
+          toast: "Failed to retrieve your sent kudos",
+        },
       });
     }
   }, [csrf]);
 
   useEffect(() => {
     if (csrf && currentUser && currentUser.id) {
-      loadReceivedKudos().then(data => {
+      loadReceivedKudos().then((data) => {
         if (data) {
-          let filtered = data.filter((kudo) => kudo.recipientMembers.some((member) => member.id === currentUser.id))
+          let filtered = data.filter((kudo) =>
+            kudo.recipientMembers.some((member) => member.id === currentUser.id)
+          );
           setReceivedKudos(filtered);
         }
       });
 
-      loadSentKudos().then(data => {
+      loadSentKudos().then((data) => {
         if (data) {
-          let filtered = data.filter((kudo) => kudo.senderId === currentUser.id)
+          let filtered = data.filter(
+            (kudo) => kudo.senderId === currentUser.id
+          );
           setSentKudos(filtered);
         }
       });
     }
   }, [csrf, currentUser, kudosTab]);
 
-  const handleTabChange = useCallback((event, newTab) => {
-    switch (newTab) {
-      case "RECEIVED":
-        setKudosTab("RECEIVED");
-        break;
-      case "SENT":
-        setKudosTab("SENT");
-        break;
-      default:
-        console.warn(`Invalid tab: ${newTab}`);
-    }
+  const handleTabChange = useCallback(
+    (event, newTab) => {
+      switch (newTab) {
+        case "RECEIVED":
+          setKudosTab("RECEIVED");
+          break;
+        case "SENT":
+          setKudosTab("SENT");
+          break;
+        default:
+          console.warn(`Invalid tab: ${newTab}`);
+      }
 
-    setKudosTab(newTab);
-  }, [loadReceivedKudos, loadSentKudos]);
-  
+      setKudosTab(newTab);
+    },
+    [loadReceivedKudos, loadSentKudos]
+  );
+
   return (
     <Root className="kudos-page">
       <div className="kudos-page-header">
-        <Typography fontWeight="bold" variant="h4">Kudos</Typography>
+        <Typography fontWeight="bold" variant="h4">
+          Kudos
+        </Typography>
         <KudosDialog
           open={kudosDialogOpen}
           onClose={() => setKudosDialogOpen(false)}
@@ -127,7 +136,7 @@ const KudosPage = () => {
         <Button
           className="kudos-dialog-open"
           variant="outlined"
-          startIcon={<StarIcon/>}
+          startIcon={<StarIcon />}
           onClick={() => setKudosDialogOpen(true)}
         >
           Give Kudos
@@ -136,56 +145,70 @@ const KudosPage = () => {
       <TabContext value={kudosTab}>
         <div className="kudos-tab-container">
           <TabList onChange={handleTabChange}>
-            <Tab label="Received" value="RECEIVED" icon={<ArchiveIcon/>} iconPosition="start"/>
-            <Tab label="Sent" value="SENT" icon={<UnarchiveIcon/>} iconPosition="start"/>
+            <Tab
+              label="Received"
+              value="RECEIVED"
+              icon={<ArchiveIcon />}
+              iconPosition="start"
+            />
+            <Tab
+              label="Sent"
+              value="SENT"
+              icon={<UnarchiveIcon />}
+              iconPosition="start"
+            />
           </TabList>
         </div>
         <TabPanel value="RECEIVED" style={{ padding: "1rem 0" }}>
-          {receivedKudosLoading
-            ? Array.from({length: 5}).map((_, index) => <SkeletonLoader key={index} type="kudos"/>)
-            : (
-              receivedKudos.length > 0 && receivedKudos.filter((kudo, index) => kudo.recipientMembers[index]?.id === currentUser.id))
-              ? (
-              <div className="received-kudos-list">
-                  {receivedKudos.map(k =>
-                    <KudosCard
-                      key={k.id}
-                      kudos={k}
-                      onKudosAction={() => {
-                        const updatedKudos = receivedKudos.filter(pk => pk.id !== k.id);
-                        setReceivedKudos(updatedKudos);
-                      }}
-                    />
-                  )}
-              </div>
-<<<<<<< HEAD
-              )
-              : (
-              <div className="no-pending-kudos-message">
-                  <Typography variant="body2">There are currently no pending kudos</Typography>
-=======
-              : <div className="no-received-kudos-message">
-                  <Typography variant="body2">There are currently no received kudos</Typography>
->>>>>>> 325c5425 (no sent kudos message on kudos page)
-              </div>
-            )
-          }
+          {receivedKudosLoading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonLoader key={index} type="kudos" />
+            ))
+          ) : receivedKudos.length > 0 &&
+            receivedKudos.filter(
+              (kudo, index) =>
+                kudo.recipientMembers[index]?.id === currentUser.id
+            ) ? (
+            <div className="received-kudos-list">
+              {receivedKudos.map((k) => (
+                <KudosCard
+                  key={k.id}
+                  kudos={k}
+                  onKudosAction={() => {
+                    const updatedKudos = receivedKudos.filter(
+                      (pk) => pk.id !== k.id
+                    );
+                    setReceivedKudos(updatedKudos);
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="no-pending-kudos-message">
+              <Typography variant="body2">
+                There are currently no pending kudos
+              </Typography>
+            </div>
+          )}
         </TabPanel>
         <TabPanel value="SENT" style={{ padding: "1rem 0" }}>
-        {sentKudosLoading
-            ? Array.from({length: 5}).map((_, index) => <SkeletonLoader key={index} type="kudos"/>)
-            : (
-              sentKudos.length > 0 ?
-              <div>
-                {sentKudos.map(k =>
-                  <KudosCard key={k.id} kudos={k}/>
-                )}
-              </div> 
-              : <div className="no-sent-kudos-message">
-                  <Typography variant="body2">There are currently no sent kudos</Typography>
-                </div>
-            )
-          }
+          {sentKudosLoading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonLoader key={index} type="kudos" />
+            ))
+          ) : sentKudos.length > 0 ? (
+            <div>
+              {sentKudos.map((k) => (
+                <KudosCard key={k.id} kudos={k} />
+              ))}
+            </div>
+          ) : (
+            <div className="no-sent-kudos-message">
+              <Typography variant="body2">
+                There are currently no sent kudos
+              </Typography>
+            </div>
+          )}
         </TabPanel>
       </TabContext>
     </Root>
