@@ -103,7 +103,7 @@ const KudosPage = () => {
         }
       });
     }
-    // react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csrf, currentUser, kudosTab]);
 
   const handleTabChange = useCallback(
@@ -121,6 +121,7 @@ const KudosPage = () => {
 
       setKudosTab(newTab);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [loadReceivedKudos, loadSentKudos]
   );
 
