@@ -62,8 +62,8 @@ const Root = styled("div")(({ theme }) => ({
     [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
-      ["@media print"]: {
-        // eslint-disable-line no-useless-computed-key
+      // prettier-ignore
+      ["@media print"]: { // eslint-disable-line no-useless-computed-key
         width: `100%`,
         marginLeft: "0px",
       },
