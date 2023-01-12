@@ -64,7 +64,7 @@ const KudosPage = () => {
         },
       });
     }
-  }, [csrf, dispatch]);
+  }, [csrf, dispatch, currentUser.id]);
 
   const loadSentKudos = useCallback(async () => {
     setSentKudosLoading(true);
@@ -81,7 +81,7 @@ const KudosPage = () => {
         },
       });
     }
-  }, [csrf]);
+  }, [csrf, dispatch, currentUser.id]);
 
   useEffect(() => {
     if (csrf && currentUser && currentUser.id) {
@@ -103,6 +103,7 @@ const KudosPage = () => {
         }
       });
     }
+    // react-hooks/exhaustive-deps
   }, [csrf, currentUser, kudosTab]);
 
   const handleTabChange = useCallback(
