@@ -62,7 +62,7 @@ const TeamSummaryCard = ({ team, index }) => {
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openKudos, setOpenKudos] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  // const [selectedTeam, setSelectedTeam] = useState(null);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   const isAdmin =
@@ -114,7 +114,9 @@ const TeamSummaryCard = ({ team, index }) => {
   }, [teamId, csrf, dispatch, teams]);
 
   const options =
-    isAdmin || isTeamLead ? ["Edit Team", "Give Kudos", "Delete Team"] : ["Edit Team", "Give Kudos"];
+    isAdmin || isTeamLead
+      ? ["Edit Team", "Give Kudos", "Delete Team"]
+      : ["Edit Team", "Give Kudos"];
 
   const handleAction = (e, index) => {
     if (index === 0) {
@@ -150,13 +152,13 @@ const TeamSummaryCard = ({ team, index }) => {
       />
       <CardContent>
         {team.teamMembers == null ? (
-          <React.Fragment key ={`empty-team-${team.name}`}>
+          <React.Fragment key={`empty-team-${team.name}`}>
             <strong>Team Leads: </strong>None Assigned
             <br />
             <strong>Team Members: </strong>None Assigned
           </React.Fragment>
         ) : (
-          <React.Fragment key ={`active-team-${team.name}`}>
+          <React.Fragment key={`active-team-${team.name}`}>
             <strong>Team Leads: </strong>
             {leads.map((lead, index) => {
               return (
@@ -218,7 +220,11 @@ const TeamSummaryCard = ({ team, index }) => {
                 </Button>
               </DialogActions>
             </Dialog>
-            <KudosDialog open={openKudos} onClose={handleCloseKudos} teamId={selectedTeam} />
+            <KudosDialog
+              open={openKudos}
+              onClose={handleCloseKudos}
+              teamId={null}
+            />
           </>
         )}
       </CardActions>
