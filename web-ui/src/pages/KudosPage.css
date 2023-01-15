@@ -2,6 +2,11 @@
   margin: 3rem 4rem 3rem 4rem;
 }
 
+.kudos-page .kudos-title {
+  display: flex;
+  justify-content: center;
+}
+
 .kudos-page .received-kudos-header,
 .kudos-page .sent-kudos-header {
   display: flex;

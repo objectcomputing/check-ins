@@ -4,7 +4,6 @@
   align-items: flex-start;
   padding-top: 4rem;
   margin-top: 2rem;
-  border: 1px solid blue;
 }
 
 .double-celebrations {
@@ -15,7 +14,9 @@
 }
 
 .kudos {
-  border: 1px solid red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .MuiCardHeader-avatar > div {

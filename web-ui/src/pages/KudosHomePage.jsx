@@ -10,8 +10,7 @@ import KudosCard from "../components/kudos_card/KudosCard";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
 
 import { styled } from "@mui/material/styles";
-import { TabPanel } from "@mui/lab";
-import { Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 import "./KudosPage.css";
 
@@ -60,34 +59,30 @@ const KudosHomePage = () => {
 
   return (
     <Root className="kudos-page">
-      <h1>Kudos</h1>
-      {
-        // kudsoLoading ? (
-        //   Array.from({ length: 5 }).map((_, index) => (
-        //     <SkeletonLoader key={index} type="kudos" />
-        //   ))
-        // ) :
-        kudos?.length > 0 ? (
-          <div className="kudos-list">
-            {kudos.map((k) => (
-              <KudosCard
-                key={k.id}
-                kudos={k}
-                // onKudosAction={() => {
-                //   const updatedKudos = kudos.filter((pk) => pk.id !== k.id);
-                //   setkudos(updatedKudos);
-                // }}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="no-kudos-message">
-            <Typography variant="body2">
-              There are currently no kudos
-            </Typography>
-          </div>
-        )
-      }
+      <div className="kudos-title">
+        <h1>Kudos</h1>
+      </div>
+      <Grid container columns={6} spacing={3}>
+        <Grid item className={classes.members}>
+          {kudsoLoading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonLoader key={index} type="kudos" />
+            ))
+          ) : !kudsoLoading && kudos?.length > 0 ? (
+            <div className="kudos-list">
+              {kudos.map((k) => (
+                <KudosCard key={k.id} kudos={k} />
+              ))}
+            </div>
+          ) : (
+            <div className="no-kudos-message">
+              <Typography variant="body2">
+                There are currently no kudos
+              </Typography>
+            </div>
+          )}
+        </Grid>
+      </Grid>
     </Root>
   );
 };
