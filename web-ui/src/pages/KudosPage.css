@@ -1,29 +1,30 @@
 .kudos-page {
-    margin: 3rem 4rem 3rem 4rem;
+  margin: 3rem 4rem 3rem 4rem;
 }
 
-.kudos-page .received-kudos-header, .kudos-page .sent-kudos-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-top: 2rem;
+.kudos-page .received-kudos-header,
+.kudos-page .sent-kudos-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 2rem;
 }
 
 .kudos-page .empty-kudos-container {
-    width: 100%;
-    text-align: center;
-    background-color: #e5e5e5;
-    color: gray;
-    border-radius: 4px;
-    padding: 1rem 0;
-    margin-top: 1rem;
+  width: 100%;
+  text-align: center;
+  background-color: #e5e5e5;
+  color: gray;
+  border-radius: 4px;
+  padding: 1rem 0;
+  margin-top: 1rem;
 }
 
 .kudos-page .kudos-card {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
-.kudos-page .kudos-page-header  {
-    display: flex;
-    justify-content: space-between;
+.kudos-page .kudos-page-header {
+  display: flex;
+  justify-content: space-between;
 }
