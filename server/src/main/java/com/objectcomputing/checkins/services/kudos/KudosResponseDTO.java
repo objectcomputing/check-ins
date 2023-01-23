@@ -29,6 +29,9 @@ public class KudosResponseDTO {
 
     @Nullable
     private LocalDate dateApproved;
+    
+    @Nullable
+    private Boolean Public;
 
     @Nullable
     private Team recipientTeam;
@@ -44,12 +47,20 @@ public class KudosResponseDTO {
         this.id = id;
     }
 
+    public Boolean getPublic() {
+        return Public;
+    }
+
     public String getMessage() {
         return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setPublic(Boolean Public) {
+        this.Public = Public;
     }
 
     public UUID getSenderId() {
@@ -99,12 +110,12 @@ public class KudosResponseDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         KudosResponseDTO that = (KudosResponseDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(message, that.message) && Objects.equals(senderId, that.senderId) && Objects.equals(dateCreated, that.dateCreated) && Objects.equals(dateApproved, that.dateApproved) && Objects.equals(recipientTeam, that.recipientTeam) && Objects.equals(recipientMembers, that.recipientMembers);
+        return Objects.equals(id, that.id) && Objects.equals(message, that.message) && Objects.equals(Public, that.Public) && Objects.equals(senderId, that.senderId) && Objects.equals(dateCreated, that.dateCreated) && Objects.equals(dateApproved, that.dateApproved) && Objects.equals(recipientTeam, that.recipientTeam) && Objects.equals(recipientMembers, that.recipientMembers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, message, senderId, dateCreated, dateApproved, recipientTeam, recipientMembers);
+        return Objects.hash(id, message, senderId, dateCreated, dateApproved, recipientTeam, recipientMembers, Public);
     }
 
     @Override
@@ -117,6 +128,7 @@ public class KudosResponseDTO {
                 ", dateApproved=" + dateApproved +
                 ", recipientTeam=" + recipientTeam +
                 ", recipientMembers=" + recipientMembers +
+                ", Public=" + Public +
                 '}';
     }
 }

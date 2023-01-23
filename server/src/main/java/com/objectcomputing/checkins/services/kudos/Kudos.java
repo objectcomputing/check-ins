@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -33,12 +35,15 @@ public class Kudos {
 
     @NotBlank
     @Column(name = "message")
-    @ColumnTransformer(
-            read = "pgp_sym_decrypt(message::bytea, '${aes.key}')",
-            write = "pgp_sym_encrypt(?, '${aes.key}')"
-    )
+    @ColumnTransformer(read = "pgp_sym_decrypt(message::bytea, '${aes.key}')", write = "pgp_sym_encrypt(?, '${aes.key}')")
     @Schema(description = "message describing the kudos", required = true)
     private String message;
+
+    @Nullable
+    @Column(name = "public")
+    @TypeDef(type = DataType.BOOLEAN)
+    @Schema(description = "true if the kudos is public", required = true)
+    private Boolean Public;
 
     @NotNull
     @Column(name = "senderid")
@@ -71,7 +76,8 @@ public class Kudos {
      * @param message string describing the kudos
      * @param senderId id of the user who gave the kudos
      */
-    public Kudos(String message, UUID senderId) {
+    public Kudos(Boolean Public, String message, UUID senderId) {
+        this.Public = Public;
         this.message = message;
         this.senderId = senderId;
         this.dateApproved = null;
@@ -84,14 +90,16 @@ public class Kudos {
      * @param senderId id of the user who gave the kudos
      * @param dateApproved date the kudos were approved
      */
-    public Kudos(UUID id, String message, UUID senderId, @Nullable LocalDate dateApproved) {
+    public Kudos(UUID id, String message, UUID senderId, @Nullable LocalDate dateApproved, Boolean Public) {
         this.id = id;
         this.message = message;
         this.senderId = senderId;
         this.dateApproved = dateApproved;
+        this.Public = Public;
     }
 
     public Kudos(KudosCreateDTO kudosCreateDTO) {
+        this.Public = kudosCreateDTO.getPublic();
         this.message = kudosCreateDTO.getMessage();
         this.senderId = kudosCreateDTO.getSenderId();
         this.teamId = kudosCreateDTO.getTeamId();
@@ -119,6 +127,14 @@ public class Kudos {
 
     public void setSenderId(UUID senderId) {
         this.senderId = senderId;
+    }
+
+    public Boolean getPublic() {
+        return Public;
+    }
+
+    public void setPublic(Boolean Public) {
+        this.Public = Public;
     }
 
     @Nullable
@@ -152,13 +168,13 @@ public class Kudos {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Kudos kudos = (Kudos) o;
-        return Objects.equals(id, kudos.id) && Objects.equals(message, kudos.message) && Objects.equals(senderId, kudos.senderId) && Objects.equals(dateCreated, kudos.dateCreated) && Objects.equals(dateApproved, kudos.dateApproved);
+        return Objects.equals(id, kudos.id) && Objects.equals(message, kudos.message) && Objects.equals(Public, kudos.Public) && Objects.equals(senderId, kudos.senderId) && Objects.equals(dateCreated, kudos.dateCreated) && Objects.equals(dateApproved, kudos.dateApproved);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, message, senderId, dateCreated, dateApproved);
-    }
+        return Objects.hash(id, message, senderId, dateCreated, dateApproved, Public);
+    }   
 
     @Override
     public String toString() {
@@ -168,6 +184,7 @@ public class Kudos {
                 ", senderId=" + senderId +
                 ", dateCreated=" + dateCreated +
                 ", dateApproved=" + dateApproved +
+                ", Public=" + Public +
                 '}';
     }
 }

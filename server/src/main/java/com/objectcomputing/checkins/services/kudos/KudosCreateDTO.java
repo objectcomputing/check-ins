@@ -22,9 +22,13 @@ public class KudosCreateDTO {
     private UUID teamId;
 
     @NotNull
+    private Boolean Public;
+
+    @NotNull
     private List<MemberProfile> recipientMembers;
 
-    public KudosCreateDTO(String message, UUID senderId, @Nullable UUID teamId, List<MemberProfile> recipientMembers) {
+    public KudosCreateDTO(Boolean Public, String message, UUID senderId, @Nullable UUID teamId, List<MemberProfile> recipientMembers) {
+        this.Public = Public;
         this.message = message;
         this.senderId = senderId;
         this.teamId = teamId;
@@ -62,5 +66,13 @@ public class KudosCreateDTO {
 
     public void setRecipientMembers(List<MemberProfile> recipientMembers) {
         this.recipientMembers = recipientMembers;
+    }
+
+    public @NotBlank Boolean getPublic() {
+        return Public;
+    }
+
+     public void setPublic(Boolean Public) {
+        this.Public = Public;
     }
 }
