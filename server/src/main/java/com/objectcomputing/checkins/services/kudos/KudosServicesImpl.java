@@ -170,7 +170,7 @@ public class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    public List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending) {
+    public List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean Public) {
 
         if (isPending != null) {
             return findByPending(isPending);

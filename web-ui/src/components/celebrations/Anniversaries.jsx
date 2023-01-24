@@ -65,7 +65,7 @@ const Anniversaries = ({ anniversaries }) => {
                 Thank you for{" "}
                 <span>
                   {anniv.yearsOfService.toFixed(0)}
-                  {anniv.yearsOfService > 1 ? " years" : " year"}{" "}
+                  {anniv.yearsOfService < 2 ? " year" : " years"}{" "}
                 </span>
                 of service!
               </Typography>
