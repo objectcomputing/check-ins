@@ -1,33 +1,37 @@
 .kudos-card .kudos-card-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  cursor: pointer;
 }
 
 .kudos-card .kudos-card-header .members-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .kudos-card .kudos-card-header .kudos-status-container .kudos-action-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
 }
 
 .kudos-card .kudos-card-content {
-    padding: 1rem;
+  padding: 1rem;
 }
 
 .kudos-card .kudos-card-content .kudos-recipient-list {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.kudos-card .MuiChip-label {
+  font-weight: bold;
 }

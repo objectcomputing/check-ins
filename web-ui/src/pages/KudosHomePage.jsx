@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 
+import { UPDATE_TOAST } from "../context/actions";
 import { AppContext } from "../context/AppContext";
 import { selectCsrfToken } from "../context/selectors";
-import { UPDATE_TOAST } from "../context/actions";
+import { sortKudos } from "../context/util";
 
 import { getAllKudos } from "../api/kudos";
 
@@ -44,7 +45,7 @@ const KudosHomePage = () => {
     setKudosLoading(true);
     const res = await getAllKudos(csrf, false);
     if (res?.payload?.data && !res.error) {
-      setKudos(res.payload.data);
+      setKudos(sortKudos(res.payload.data));
       setKudosLoading(false);
     } else {
       dispatch({
@@ -65,9 +66,11 @@ const KudosHomePage = () => {
       <Grid container columns={6} spacing={3}>
         <Grid item className={classes.members}>
           {kudsoLoading ? (
-            Array.from({ length: 5 }).map((_, index) => (
-              <SkeletonLoader key={index} type="kudos" />
-            ))
+            <div className="kudos-list">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <SkeletonLoader key={index} type="kudos" />
+              ))}
+            </div>
           ) : !kudsoLoading && kudos?.length > 0 ? (
             <div className="kudos-list">
               {kudos.map((k) => (

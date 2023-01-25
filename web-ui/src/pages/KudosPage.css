@@ -15,16 +15,6 @@
   margin-top: 2rem;
 }
 
-.kudos-page .empty-kudos-container {
-  width: 100%;
-  text-align: center;
-  background-color: #e5e5e5;
-  color: gray;
-  border-radius: 4px;
-  padding: 1rem 0;
-  margin-top: 1rem;
-}
-
 .kudos-page .kudos-card {
   margin-top: 1rem;
 }
@@ -32,4 +22,14 @@
 .kudos-page .kudos-page-header {
   display: flex;
   justify-content: space-between;
+}
+
+.kudos-page .kudos-list {
+  min-width: 450px;
+}
+
+.kudos-page .kudos-list .members-container .MuiChip-avatar {
+  margin-left: 0;
+  height: 36px;
+  width: 36px;
 }
