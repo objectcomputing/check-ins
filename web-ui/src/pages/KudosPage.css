@@ -29,3 +29,21 @@
   height: 36px;
   width: 36px;
 }
+
+@media (max-width: 750px) {
+  .kudos-page {
+    margin: 5rem;
+  }
+}
+
+@media (max-width: 425px) {
+  .kudos-page {
+    margin: 1rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .kudos-page {
+    margin: 01rem;
+  }
+}

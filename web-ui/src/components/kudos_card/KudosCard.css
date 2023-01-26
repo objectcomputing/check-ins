@@ -21,6 +21,7 @@
 }
 
 .kudos-card .kudos-card-content {
+  max-width: 650px;
   padding: 1rem;
 }
 
@@ -36,11 +37,7 @@
   font-weight: bold;
 }
 
-@media (max-width: 400px) {
-  .kudos-list {
-    min-width: 280px;
-  }
-
+@media (max-width: 425px) {
   .kudos-list .kudos-card .members-container {
     display: block;
     flex-direction: column;
