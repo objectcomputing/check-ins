@@ -35,3 +35,18 @@
 .kudos-card .MuiChip-label {
   font-weight: bold;
 }
+
+@media (max-width: 400px) {
+  .kudos-list {
+    min-width: 280px;
+  }
+
+  .kudos-list .kudos-card .members-container {
+    display: block;
+    flex-direction: column;
+  }
+
+  .kudos-list .kudos-card .kudos-recipient-list {
+    display: block;
+  }
+}

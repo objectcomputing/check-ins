@@ -18,10 +18,16 @@ export const sortAnniversaries = (anniversaryData) => {
   return anniversaryData.sort((a, b) => b.yearsOfService - a.yearsOfService);
 };
 
-export const sortKudos = (kudos) => {
-  return kudos.sort(
-    (a, b) => new Date(b.dateApproved) - new Date(a.dateApproved)
-  );
+export const sortKudos = (kudos, order = "ASC") => {
+  if (order === "DESC") {
+    return kudos?.sort(
+      (a, b) => new Date(a.dateApproved) - new Date(b.dateApproved)
+    );
+  } else if (order === "ASC") {
+    return kudos?.sort(
+      (a, b) => new Date(b.dateApproved) - new Date(a.dateApproved)
+    );
+  }
 };
 
 export const sortBirthdays = (birthdayData) => {

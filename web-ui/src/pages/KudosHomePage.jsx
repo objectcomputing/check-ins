@@ -39,7 +39,7 @@ const KudosHomePage = () => {
   const csrf = selectCsrfToken(state);
 
   const [kudos, setKudos] = useState(null);
-  const [kudsoLoading, setKudosLoading] = useState(false);
+  const [kudosLoading, setKudosLoading] = useState(false);
 
   useEffect(async () => {
     setKudosLoading(true);
@@ -65,13 +65,13 @@ const KudosHomePage = () => {
       </div>
       <Grid container columns={6} spacing={3}>
         <Grid item className={classes.members}>
-          {kudsoLoading ? (
+          {kudosLoading ? (
             <div className="kudos-list">
               {Array.from({ length: 5 }).map((_, index) => (
                 <SkeletonLoader key={index} type="kudos" />
               ))}
             </div>
-          ) : !kudsoLoading && kudos?.length > 0 ? (
+          ) : !kudosLoading && kudos?.length > 0 ? (
             <div className="kudos-list">
               {kudos.map((k) => (
                 <KudosCard key={k.id} kudos={k} />
