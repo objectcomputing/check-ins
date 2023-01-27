@@ -44,6 +44,9 @@ const KudosHomePage = () => {
   const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
   const [kudosLoading, setKudosLoading] = useState(false);
 
+  let lastMonth = new Date();
+  lastMonth.setMonth(lastMonth.getMonth() - 1);
+
   useEffect(async () => {
     setKudosLoading(true);
     const res = await getAllKudos(csrf, false);
@@ -89,9 +92,11 @@ const KudosHomePage = () => {
             </div>
           ) : !kudosLoading && kudos?.length > 0 ? (
             <div className="kudos-list">
-              {kudos.map((k) => (
-                <KudosCard key={k.id} kudos={k} />
-              ))}
+              {kudos.map((k) => {
+                if (new Date(k.dateApproved) > lastMonth) {
+                  return <KudosCard key={k.id} kudos={k} />;
+                }
+              })}
             </div>
           ) : (
             <div className="no-kudos-message">
