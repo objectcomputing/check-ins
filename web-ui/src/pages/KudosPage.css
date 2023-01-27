@@ -4,7 +4,13 @@
 
 .kudos-page .kudos-title {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+}
+
+.kudos-page .kudos-title div {
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
 }
 
 .kudos-page .received-kudos-header,
@@ -26,13 +32,25 @@
 
 .kudos-page .kudos-list .members-container .MuiChip-avatar {
   margin-left: 0;
-  height: 36px;
-  width: 36px;
+  height: 3rem;
+  width: 3rem;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 800px) {
   .kudos-page {
     margin: 5rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .kudos-page {
+    margin: 5rem;
+  }
+
+  .kudos-page .kudos-list .members-container .MuiChip-avatar {
+    margin-left: 0;
+    height: 2.5rem;
+    width: 2.5rem;
   }
 }
 
@@ -40,10 +58,26 @@
   .kudos-page {
     margin: 1rem;
   }
+  .kudos-page .kudos-list .members-container .MuiChip-avatar {
+    margin-left: 0;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .kudos-page .kudos-page-header {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 375px) {
   .kudos-page {
     margin: 01rem;
+  }
+
+  .kudos-page .kudos-list .members-container .MuiChip-avatar {
+    margin-left: 0;
+    height: 2rem;
+    width: 2rem;
   }
 }

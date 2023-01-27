@@ -54,7 +54,6 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
   // const [deleteReason, setDeleteReason] = useState(""); // TODO: setup optional reason for deleting a kudos
 
   const sender = selectProfile(state, kudos.senderId);
-  // console.log(kudos);
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
@@ -142,62 +141,62 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
     }
   }, [kudos, csrf, dispatch, onKudosAction]);
 
-  // const getStatusComponent = useCallback(() => {
-  //   const dateApproved = kudos.dateApproved
-  //     ? new Date(kudos.dateApproved.join("/"))
-  //     : null;
-  //   const dateCreated = new Date(kudos.dateCreated.join("/"));
+  const getStatusComponent = useCallback(() => {
+    const dateApproved = kudos.dateApproved
+      ? new Date(kudos.dateApproved.join("/"))
+      : null;
+    const dateCreated = new Date(kudos.dateCreated.join("/"));
 
-  //   if (includeActions) {
-  //     return (
-  //       <div className="kudos-action-buttons">
-  //         <Tooltip arrow title="Approve">
-  //           <Button
-  //             variant="outlined"
-  //             color="success"
-  //             size="small"
-  //             onClick={approveKudosCallback}
-  //           >
-  //             <CheckIcon />
-  //           </Button>
-  //         </Tooltip>
-  //         <Tooltip arrow title="Delete">
-  //           <Button
-  //             variant="outlined"
-  //             color="error"
-  //             size="small"
-  //             onClick={(event) => {
-  //               event.stopPropagation();
-  //               setDeleteDialogOpen(true);
-  //             }}
-  //           >
-  //             <CloseIcon />
-  //           </Button>
-  //         </Tooltip>
-  //       </div>
-  //     );
-  //   } else if (dateApproved) {
-  //     return (
-  //       <>
-  //         <Typography color="green" variant="body2">
-  //           Received{" "}
-  //           {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
-  //         </Typography>
-  //       </>
-  //     );
-  //   }
+    if (includeActions) {
+      return (
+        <div className="kudos-action-buttons">
+          <Tooltip arrow title="Approve">
+            <Button
+              variant="outlined"
+              color="success"
+              size="small"
+              onClick={approveKudosCallback}
+            >
+              <CheckIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip arrow title="Delete">
+            <Button
+              variant="outlined"
+              color="error"
+              size="small"
+              onClick={(event) => {
+                event.stopPropagation();
+                setDeleteDialogOpen(true);
+              }}
+            >
+              <CloseIcon />
+            </Button>
+          </Tooltip>
+        </div>
+      );
+    } else if (dateApproved) {
+      return (
+        <>
+          <Typography color="green" variant="body2">
+            Received{" "}
+            {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
+          </Typography>
+        </>
+      );
+    }
 
-  //   return (
-  //     <>
-  //       <Typography color="orange" variant="body2">
-  //         Pending
-  //       </Typography>
-  //       <Typography variant="body2" color="gray" fontSize="10px">
-  //         Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
-  //       </Typography>
-  //     </>
-  //   );
-  // }, [kudos, includeActions, approveKudosCallback]);
+    return (
+      <>
+        <Typography color="orange" variant="body2">
+          Pending
+        </Typography>
+        <Typography variant="body2" color="gray" fontSize="10px">
+          Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
+        </Typography>
+      </>
+    );
+  }, [kudos, includeActions, approveKudosCallback]);
 
   const dateApproved = kudos.dateApproved
     ? new Date(kudos.dateApproved.join("/"))
@@ -246,12 +245,8 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
               avatar={<Avatar src={getAvatarURL(sender?.workEmail)} />}
               label={sender?.name}
             />
-            <Typography color="green" variant="body2">
-              Received{" "}
-              {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
-            </Typography>
           </div>
-          {/* <div className="kudos-status-container">{getStatusComponent()}</div> */}
+          <div className="kudos-status-container">{getStatusComponent()}</div>
         </div>
         <Divider />
         <Collapse in={expanded}>

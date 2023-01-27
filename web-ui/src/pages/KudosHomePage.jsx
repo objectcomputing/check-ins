@@ -8,10 +8,12 @@ import { sortKudos } from "../context/util";
 import { getAllKudos } from "../api/kudos";
 
 import KudosCard from "../components/kudos_card/KudosCard";
+import KudosDialog from "../components/kudos_dialog/KudosDialog";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
 
+import StarIcon from "@mui/icons-material/Star";
+import { Button, Grid, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Grid, Typography } from "@mui/material";
 
 import "./KudosPage.css";
 
@@ -39,6 +41,7 @@ const KudosHomePage = () => {
   const csrf = selectCsrfToken(state);
 
   const [kudos, setKudos] = useState(null);
+  const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
   const [kudosLoading, setKudosLoading] = useState(false);
 
   useEffect(async () => {
@@ -61,7 +64,20 @@ const KudosHomePage = () => {
   return (
     <Root className="kudos-page">
       <div className="kudos-title">
-        <h1>Kudos</h1>
+        <div>
+          <h1>Kudos</h1>
+          <KudosDialog
+            open={kudosDialogOpen}
+            onClose={() => setKudosDialogOpen(false)}
+          />
+          <Button
+            className="kudos-dialog-open"
+            startIcon={<StarIcon />}
+            onClick={() => setKudosDialogOpen(true)}
+          >
+            Give Kudos
+          </Button>
+        </div>
       </div>
       <Grid container columns={6} spacing={3}>
         <Grid item className={classes.members}>

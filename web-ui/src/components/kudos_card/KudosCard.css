@@ -37,10 +37,27 @@
   font-weight: bold;
 }
 
+@media (max-width: 800px) {
+  .kudos-card .kudos-card-header {
+    display: block;
+  }
+
+  .kudos-list .kudos-card .kudos-recipient-list {
+    display: block;
+  }
+}
+
 @media (max-width: 425px) {
+  .kudos-card .kudos-card-header {
+    display: flex;
+  }
   .kudos-list .kudos-card .members-container {
     display: block;
     flex-direction: column;
+  }
+
+  .kudos-status-container {
+    text-align: center;
   }
 
   .kudos-list .kudos-card .kudos-recipient-list {
