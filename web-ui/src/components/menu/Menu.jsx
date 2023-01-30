@@ -389,6 +389,7 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
+          {/* <span className="notification-badge" /> */}
           <Avatar
             onClick={handleClick}
             src={getAvatarURL(workEmail)}

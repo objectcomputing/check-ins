@@ -7,9 +7,9 @@
 }
 
 @media print {
-    nav {
-        display: none;
-    }
+  nav {
+    display: none;
+  }
 }
 
 .hours-upload-modal .buttons {
@@ -35,3 +35,13 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+/* .notification-badge {
+  position: absolute;
+  top: 8px;
+  right: 32px;
+  padding: 8px 8px;
+  border-radius: 50%;
+  background-color: green;
+  z-index: 1;
+} */
