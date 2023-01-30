@@ -20,12 +20,13 @@ import Profile from "../components/profile/Profile";
 import SkillSection from "../components/skills/SkillSection";
 import ProgressBar from "../components/contribution_hours/ProgressBar";
 
+import Autocomplete from "@mui/material/Autocomplete";
+import { Card, CardContent, CardHeader, Chip, TextField } from "@mui/material";
 import { Info } from "@mui/icons-material";
-import {Card, CardContent, CardHeader, Chip, TextField} from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
-import Autocomplete from '@mui/material/Autocomplete';
-
+import RecommendIcon from "@mui/icons-material/Recommend";
 import "./ProfilePage.css";
+import { getReceivedKudos } from "../api/kudos";
 
 const realStoreMember = (member, csrf) => updateMember(member, csrf);
 
@@ -72,6 +73,12 @@ const ProfilePage = () => {
       payload: newBio,
     });
   };
+
+  useEffect(async () => {
+    const res = await getReceivedKudos(userProfile.id, csrf);
+    if (res?.payload?.data && !res.error) {
+    }
+  });
 
   const handleBioChange = (e) => {
     if (!csrf) {
@@ -225,6 +232,35 @@ const ProfilePage = () => {
                   <TextField {...params} placeholder="Join a guild..." />
                 )}
               />
+            </CardContent>
+          </Card>
+        </div>
+        <div className="profile-kudos">
+          <Card style={{ minHeight: 150 }}>
+            <CardHeader
+              avatar={<RecommendIcon />}
+              title="Kudos"
+              titleTypographyProps={{ variant: "h5", component: "h2" }}
+            />
+            <CardContent>
+              {/* <Autocomplete
+                disableClearable
+                id="guildsSelect"
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) =>
+                  value && value.id === option.id
+                }
+                multiple
+                onChange={(event, newVal) => {
+                  addOrDeleteGuildMember(newVal);
+                }}
+                options={guilds}
+                required
+                value={myGuilds}
+                renderInput={(params) => (
+                  <TextField {...params} placeholder="Join a guild..." />
+                )}
+              /> */}
             </CardContent>
           </Card>
         </div>
