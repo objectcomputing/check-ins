@@ -73,9 +73,9 @@ public class KudosController {
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
-    @Get("/{?recipientId,?senderId,?isPending,?Public}")
-    public Mono<HttpResponse<List<KudosResponseDTO>>> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean Public) {
-        return Mono.fromCallable(() -> kudosServices.findByValues(recipientId, senderId, isPending, Public))
+    @Get("/{?recipientId,?senderId,?isPending,?publiclyVisible}")
+    public Mono<HttpResponse<List<KudosResponseDTO>>> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean publiclyVisible) {
+        return Mono.fromCallable(() -> kudosServices.findByValues(recipientId, senderId, isPending, publiclyVisible))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(kudosList -> (HttpResponse<List<KudosResponseDTO>>) HttpResponse.ok(kudosList))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
