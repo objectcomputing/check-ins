@@ -83,7 +83,7 @@ const KudosHomePage = () => {
       )}
       <Grid container columns={6} spacing={3}>
         <Grid item className={classes.members}>
-          {kudosLoading ? (
+          {kudosLoading && kudos?.length === 0 ? (
             <div className="kudos-list">
               {Array.from({ length: 5 }).map((_, index) => (
                 <SkeletonLoader key={index} type="kudos" />
