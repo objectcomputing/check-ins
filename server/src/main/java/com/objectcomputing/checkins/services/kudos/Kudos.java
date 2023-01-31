@@ -41,7 +41,6 @@ public class Kudos {
 
     @Nullable
     @Column(name = "public")
-    @TypeDef(type = DataType.BOOLEAN)
     @Schema(description = "true if the kudos is public", required = true)
     private Boolean Public;
 
@@ -76,11 +75,11 @@ public class Kudos {
      * @param message string describing the kudos
      * @param senderId id of the user who gave the kudos
      */
-    public Kudos(Boolean Public, String message, UUID senderId) {
-        this.Public = Public;
+    public Kudos(String message, UUID senderId, Boolean Public) {
         this.message = message;
         this.senderId = senderId;
         this.dateApproved = null;
+        this.Public = Public;
     }
 
     /**
@@ -99,10 +98,10 @@ public class Kudos {
     }
 
     public Kudos(KudosCreateDTO kudosCreateDTO) {
-        this.Public = kudosCreateDTO.getPublic();
         this.message = kudosCreateDTO.getMessage();
         this.senderId = kudosCreateDTO.getSenderId();
         this.teamId = kudosCreateDTO.getTeamId();
+        this.Public = kudosCreateDTO.getPublic();
     }
 
     public UUID getId() {

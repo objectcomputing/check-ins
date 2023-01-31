@@ -1,32 +1,38 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import { debounce } from "lodash/function";
+
+import {
+  UPDATE_GUILD,
+  UPDATE_USER_BIO,
+  UPDATE_TOAST,
+} from "../context/actions";
 import { AppContext } from "../context/AppContext";
+import { sortKudos } from "../context/util";
 import {
   selectCurrentUser,
   selectMyGuilds,
   selectUserProfile,
   selectMyTeams,
 } from "../context/selectors";
-import {
-  UPDATE_GUILD,
-  UPDATE_USER_BIO,
-  UPDATE_TOAST,
-} from "../context/actions";
+
 import { addGuildMember, deleteGuildMember } from "../api/guild";
-import { updateMember } from "../api/member";
 import { getEmployeeHours } from "../api/hours";
+import { getReceivedKudos } from "../api/kudos";
+import { updateMember } from "../api/member";
+
+import KudosCard from "../components/kudos_card/KudosCard";
 import Profile from "../components/profile/Profile";
-import SkillSection from "../components/skills/SkillSection";
 import ProgressBar from "../components/contribution_hours/ProgressBar";
+import SkillSection from "../components/skills/SkillSection";
 
 import Autocomplete from "@mui/material/Autocomplete";
 import { Card, CardContent, CardHeader, Chip, TextField } from "@mui/material";
 import { Info } from "@mui/icons-material";
 import GroupIcon from "@mui/icons-material/Group";
 import RecommendIcon from "@mui/icons-material/Recommend";
+
 import "./ProfilePage.css";
-import { getReceivedKudos } from "../api/kudos";
 
 const realStoreMember = (member, csrf) => updateMember(member, csrf);
 
@@ -34,6 +40,7 @@ const storeMember = debounce(realStoreMember, 1500);
 
 const ProfilePage = () => {
   const { state, dispatch } = useContext(AppContext);
+
   const memberProfile = selectCurrentUser(state);
   const userProfile = selectUserProfile(state);
 
@@ -42,6 +49,7 @@ const ProfilePage = () => {
   const { firstName, lastName, name } = userProfile;
 
   const [bio, setBio] = useState();
+  const [myKudos, setMyKudos] = useState([]);
   const [myHours, setMyHours] = useState(null);
 
   const myTeams = selectMyTeams(state);
@@ -75,10 +83,11 @@ const ProfilePage = () => {
   };
 
   useEffect(async () => {
-    const res = await getReceivedKudos(userProfile.id, csrf);
+    const res = await getReceivedKudos(memberProfile.id, csrf);
     if (res?.payload?.data && !res.error) {
+      setMyKudos(sortKudos(res.payload.data));
     }
-  });
+  }, [userProfile.id, csrf]);
 
   const handleBioChange = (e) => {
     if (!csrf) {
@@ -243,24 +252,9 @@ const ProfilePage = () => {
               titleTypographyProps={{ variant: "h5", component: "h2" }}
             />
             <CardContent>
-              {/* <Autocomplete
-                disableClearable
-                id="guildsSelect"
-                getOptionLabel={(option) => option.name}
-                isOptionEqualToValue={(option, value) =>
-                  value && value.id === option.id
-                }
-                multiple
-                onChange={(event, newVal) => {
-                  addOrDeleteGuildMember(newVal);
-                }}
-                options={guilds}
-                required
-                value={myGuilds}
-                renderInput={(params) => (
-                  <TextField {...params} placeholder="Join a guild..." />
-                )}
-              /> */}
+              {myKudos.map((k) => {
+                return <KudosCard key={k.id} kudos={k} />;
+              })}
             </CardContent>
           </Card>
         </div>

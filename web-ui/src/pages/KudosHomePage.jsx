@@ -64,24 +64,15 @@ const KudosHomePage = () => {
     }
   }, [csrf, dispatch]);
 
+  console.log({ kudos });
+
   return (
     <Root className="kudos-page">
-      <div className="kudos-title">
-        <div>
-          <h1>Kudos</h1>
-          <KudosDialog
-            open={kudosDialogOpen}
-            onClose={() => setKudosDialogOpen(false)}
-          />
-          <Button
-            className="kudos-dialog-open"
-            startIcon={<StarIcon />}
-            onClick={() => setKudosDialogOpen(true)}
-          >
-            Give Kudos
-          </Button>
+      {!kudosLoading && kudos?.length === 0 && (
+        <div className="no-kudos-message">
+          <Typography variant="body2">There are currently no kudos</Typography>
         </div>
-      </div>
+      )}
       <Grid container columns={6} spacing={3}>
         <Grid item className={classes.members}>
           {kudosLoading ? (
@@ -90,19 +81,37 @@ const KudosHomePage = () => {
                 <SkeletonLoader key={index} type="kudos" />
               ))}
             </div>
-          ) : !kudosLoading && kudos?.length > 0 ? (
-            <div className="kudos-list">
-              {kudos.map((k) => {
-                if (new Date(k.dateApproved) > lastMonth) {
-                  return <KudosCard key={k.id} kudos={k} />;
-                }
-              })}
+          ) : !kudosLoading &&
+            kudos?.length > 0 &&
+            new Date(kudos.dateApproved) > lastMonth ? (
+            <div>
+              <div className="kudos-title">
+                <div>
+                  <h1>Kudos</h1>
+                  <KudosDialog
+                    open={kudosDialogOpen}
+                    onClose={() => setKudosDialogOpen(false)}
+                  />
+                  <Button
+                    className="kudos-dialog-open"
+                    startIcon={<StarIcon />}
+                    onClick={() => setKudosDialogOpen(true)}
+                  >
+                    Give Kudos
+                  </Button>
+                </div>
+              </div>
+              <div className="kudos-list">
+                {kudos.map((k) => {
+                  if (new Date(k.dateApproved) > lastMonth) {
+                    return <KudosCard key={k.id} kudos={k} />;
+                  }
+                })}
+              </div>
             </div>
           ) : (
             <div className="no-kudos-message">
-              <Typography variant="body2">
-                There are currently no kudos
-              </Typography>
+              <h1>No recent kudos</h1>
             </div>
           )}
         </Grid>

@@ -27,12 +27,12 @@ public class KudosCreateDTO {
     @NotNull
     private List<MemberProfile> recipientMembers;
 
-    public KudosCreateDTO(Boolean Public, String message, UUID senderId, @Nullable UUID teamId, List<MemberProfile> recipientMembers) {
-        this.Public = Public;
+    public KudosCreateDTO(String message, UUID senderId, @Nullable UUID teamId, List<MemberProfile> recipientMembers, Boolean Public) {
         this.message = message;
         this.senderId = senderId;
         this.teamId = teamId;
         this.recipientMembers = recipientMembers;
+        this.Public = Public;
     }
 
     public String getMessage() {
