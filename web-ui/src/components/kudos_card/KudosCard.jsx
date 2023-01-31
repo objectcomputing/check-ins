@@ -55,7 +55,7 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
   // const [deleteReason, setDeleteReason] = useState(""); // TODO: setup optional reason for deleting a kudos
 
   const sender = selectProfile(state, kudos.senderId);
-  const isPublic = kudos?.public || false;
+  const isPublic = kudos?.publiclyVisible || false;
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
