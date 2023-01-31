@@ -64,7 +64,6 @@ const ManageKudosPage = () => {
   const loadPendingKudos = useCallback(async () => {
     setPendingKudosLoading(true);
     const res = await getAllKudos(csrf, true);
-    console.log({ res });
     if (res?.payload?.data && !res.error) {
       setPendingKudosLoading(false);
       return res.payload.data;

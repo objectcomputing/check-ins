@@ -33,6 +33,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import RecommendIcon from "@mui/icons-material/Recommend";
 
 import "./ProfilePage.css";
+import { getDate } from "date-fns";
 
 const realStoreMember = (member, csrf) => updateMember(member, csrf);
 
@@ -82,12 +83,21 @@ const ProfilePage = () => {
     });
   };
 
-  useEffect(async () => {
-    const res = await getReceivedKudos(memberProfile.id, csrf);
-    if (res?.payload?.data && !res.error) {
-      setMyKudos(sortKudos(res.payload.data));
+  useEffect(() => {
+    if (csrf) {
+      const receivedKudos = async () => {
+        let res = await getReceivedKudos(memberProfile.id, csrf);
+        let data =
+          res.payload && res.payload.data && !res.error
+            ? res.payload.data
+            : null;
+        if (data) {
+          setMyKudos(sortKudos(data));
+        }
+      };
+      receivedKudos();
     }
-  }, [userProfile.id, csrf]);
+  }, [memberProfile.id, csrf]);
 
   const handleBioChange = (e) => {
     if (!csrf) {

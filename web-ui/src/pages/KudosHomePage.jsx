@@ -47,24 +47,32 @@ const KudosHomePage = () => {
   let lastMonth = new Date();
   lastMonth.setMonth(lastMonth.getMonth() - 1);
 
-  useEffect(async () => {
-    setKudosLoading(true);
-    const res = await getAllKudos(csrf, false);
-    if (res?.payload?.data && !res.error) {
-      setKudos(sortKudos(res.payload.data));
-      setKudosLoading(false);
-    } else {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Failed to retrieve kudos",
-        },
-      });
+  useEffect(() => {
+    if (csrf) {
+      setKudosLoading(true);
+      const allKudos = async () => {
+        let res = await getAllKudos(csrf, false);
+        let data =
+          res.payload && res.payload.data && !res.error
+            ? res.payload.data
+            : null;
+        if (data) {
+          setKudos(sortKudos(res.payload.data));
+          setKudosLoading(false);
+        } else {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "Failed to retrieve kudos",
+            },
+          });
+          setKudosLoading(false);
+        }
+        allKudos();
+      };
     }
   }, [csrf, dispatch]);
-
-  console.log({ kudos });
 
   return (
     <Root className="kudos-page">
