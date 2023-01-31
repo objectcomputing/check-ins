@@ -86,6 +86,10 @@
     margin: 01rem;
   }
 
+  .kudos-page .kudos-list {
+    min-width: unset;
+  }
+
   .kudos-page .kudos-list .members-container .MuiChip-avatar {
     margin-left: 0;
     height: 2rem;
