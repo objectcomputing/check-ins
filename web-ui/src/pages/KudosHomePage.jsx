@@ -69,8 +69,8 @@ const KudosHomePage = () => {
           });
           setKudosLoading(false);
         }
-        allKudos();
       };
+      allKudos();
     }
   }, [csrf, dispatch]);
 
