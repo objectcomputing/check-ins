@@ -254,7 +254,7 @@ const ProfilePage = () => {
           </Card>
         </div>
         <div className="profile-kudos">
-          <Card style={{ minHeight: 150 }}>
+          <Card style={{ maxHeight: 210, overflow: "auto" }}>
             <CardHeader
               avatar={<RecommendIcon />}
               title="Kudos"

@@ -30,3 +30,42 @@
     padding: 0 0 1rem 0;
   }
 }
+
+@media (max-width: 425px) {
+  .profile-kudos .kudos-card .kudos-card-header {
+    display: block;
+  }
+
+  .profile-kudos .kudos-card {
+    margin-bottom: 1rem;
+  }
+
+  .profile-kudos
+    .kudos-card
+    .kudos-card-header
+    .kudos-status-container
+    p:first-child {
+    margin-left: 0;
+  }
+
+  .profile-kudos .kudos-list .kudos-card .members-container {
+    display: block;
+    flex-direction: column;
+  }
+
+  .profile-kudos .kudos-status-container {
+    text-align: left;
+  }
+
+  .profile-kudos .kudos-list .kudos-card .kudos-recipient-list {
+    display: block;
+  }
+
+  .profile-kudos .kudos-card .kudos-card-content .kudos-recipient-list {
+    display: block;
+  }
+
+  .profile-kudos .kudos-card .kudos-card-content .kudos-recipient-list div {
+    margin-bottom: 0.25rem;
+  }
+}
