@@ -15,20 +15,20 @@ public interface KudosRepository extends CrudRepository<Kudos, UUID> {
         @Query(value = "SELECT " +
                         "id, " +
                         "PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message, " +
-                        "senderid, teamid, datecreated, dateapproved, public " +
+                        "senderid, teamid, datecreated, dateapproved, publiclyVisible " +
                         "FROM kudos " +
                         "WHERE dateapproved IS NULL " +
-                        "AND public IS TRUE " +
+                        "AND publiclyVisible IS TRUE " +
                         "ORDER BY datecreated DESC")
         List<Kudos> getAllPending();
 
         @Query(value = "SELECT " +
                         "id, " +
                         "PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message, " +
-                        "senderid, teamid, datecreated, dateapproved, public " +
+                        "senderid, teamid, datecreated, dateapproved, publiclyVisible " +
                         "FROM kudos " +
-                        "WHERE dateapproved IS NOT NULL " +
-                        "AND public IS TRUE")
+                        "WHERE dateapproved IS NOT NULL " + 
+                        "AND publiclyVisible IS TRUE")
         List<Kudos> getAllApproved();
 
         @Query(value = "SELECT " +

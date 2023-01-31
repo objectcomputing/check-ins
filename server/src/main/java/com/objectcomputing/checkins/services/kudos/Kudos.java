@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -40,9 +39,9 @@ public class Kudos {
     private String message;
 
     @Nullable
-    @Column(name = "public")
+    @Column(name = "publiclyvisible")
     @Schema(description = "true if the kudos is public", required = true)
-    private Boolean Public;
+    private Boolean publiclyVisible;
 
     @NotNull
     @Column(name = "senderid")
@@ -75,11 +74,11 @@ public class Kudos {
      * @param message string describing the kudos
      * @param senderId id of the user who gave the kudos
      */
-    public Kudos(String message, UUID senderId, Boolean Public) {
+    public Kudos(String message, UUID senderId, Boolean publiclyVisible) {
         this.message = message;
         this.senderId = senderId;
         this.dateApproved = null;
-        this.Public = Public;
+        this.publiclyVisible = publiclyVisible;
     }
 
     /**
@@ -89,19 +88,19 @@ public class Kudos {
      * @param senderId id of the user who gave the kudos
      * @param dateApproved date the kudos were approved
      */
-    public Kudos(UUID id, String message, UUID senderId, @Nullable LocalDate dateApproved, Boolean Public) {
+    public Kudos(UUID id, String message, UUID senderId, @Nullable LocalDate dateApproved, Boolean publiclyVisible) {
         this.id = id;
         this.message = message;
         this.senderId = senderId;
         this.dateApproved = dateApproved;
-        this.Public = Public;
+        this.publiclyVisible = publiclyVisible;
     }
 
     public Kudos(KudosCreateDTO kudosCreateDTO) {
         this.message = kudosCreateDTO.getMessage();
         this.senderId = kudosCreateDTO.getSenderId();
         this.teamId = kudosCreateDTO.getTeamId();
-        this.Public = kudosCreateDTO.getPublic();
+        this.publiclyVisible = kudosCreateDTO.getPubliclyVisible();
     }
 
     public UUID getId() {
@@ -128,12 +127,12 @@ public class Kudos {
         this.senderId = senderId;
     }
 
-    public Boolean getPublic() {
-        return Public;
+    public Boolean getPubliclyVisible() {
+        return publiclyVisible;
     }
 
-    public void setPublic(Boolean Public) {
-        this.Public = Public;
+    public void setPubliclyVisible(Boolean publiclyVisible) {
+        this.publiclyVisible = publiclyVisible;
     }
 
     @Nullable
@@ -167,12 +166,12 @@ public class Kudos {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Kudos kudos = (Kudos) o;
-        return Objects.equals(id, kudos.id) && Objects.equals(message, kudos.message) && Objects.equals(Public, kudos.Public) && Objects.equals(senderId, kudos.senderId) && Objects.equals(dateCreated, kudos.dateCreated) && Objects.equals(dateApproved, kudos.dateApproved);
+        return Objects.equals(id, kudos.id) && Objects.equals(message, kudos.message) && Objects.equals(publiclyVisible, kudos.publiclyVisible) && Objects.equals(senderId, kudos.senderId) && Objects.equals(dateCreated, kudos.dateCreated) && Objects.equals(dateApproved, kudos.dateApproved);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, message, senderId, dateCreated, dateApproved, Public);
+        return Objects.hash(id, message, senderId, dateCreated, dateApproved, publiclyVisible);
     }   
 
     @Override
@@ -183,7 +182,7 @@ public class Kudos {
                 ", senderId=" + senderId +
                 ", dateCreated=" + dateCreated +
                 ", dateApproved=" + dateApproved +
-                ", Public=" + Public +
+                ", publiclyVisible=" + publiclyVisible +
                 '}';
     }
 }

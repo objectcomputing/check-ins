@@ -267,7 +267,7 @@ public class KudosServicesImpl implements KudosServices {
         kudosResponseDTO.setSenderId(kudos.getSenderId());
         kudosResponseDTO.setDateCreated(kudos.getDateCreated());
         kudosResponseDTO.setDateApproved(kudos.getDateApproved());
-        kudosResponseDTO.setPublic(kudos.getPublic());
+        kudosResponseDTO.setPubliclyVisible(kudos.getPubliclyVisible());
 
         List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
 
