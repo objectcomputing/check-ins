@@ -24,6 +24,30 @@
   max-height: 200px;
 }
 
+.profile-kudos .kudos-card {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .profile-kudos .kudos-card .kudos-card-header {
+    display: block;
+  }
+}
+
+@media (max-width: 800px) {
+  .profile-kudos .kudos-card .kudos-card-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-kudos .kudos-card .kudos-card-header .members-container {
+    display: block;
+  }
+}
+
 @media (max-width: 750px) {
   .Profile .profile-grid {
     grid-template-columns: 100%;
@@ -34,10 +58,11 @@
 @media (max-width: 425px) {
   .profile-kudos .kudos-card .kudos-card-header {
     display: block;
+    text-align: left;
   }
 
-  .profile-kudos .kudos-card {
-    margin-bottom: 1rem;
+  .profile-kudos .kudos-card .kudos-card-header .members-container {
+    display: block;
   }
 
   .profile-kudos
