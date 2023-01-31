@@ -33,7 +33,6 @@ import GroupIcon from "@mui/icons-material/Group";
 import RecommendIcon from "@mui/icons-material/Recommend";
 
 import "./ProfilePage.css";
-import { getDate } from "date-fns";
 
 const realStoreMember = (member, csrf) => updateMember(member, csrf);
 
