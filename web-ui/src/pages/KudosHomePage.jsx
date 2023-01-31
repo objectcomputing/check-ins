@@ -57,7 +57,11 @@ const KudosHomePage = () => {
             ? res.payload.data
             : null;
         if (data) {
-          setKudos(sortKudos(res.payload.data));
+          // only show kudos in the last month for the moment
+          let kudosInLastMonth = data.filter((k) => {
+            return new Date(k.dateApproved) > lastMonth;
+          });
+          setKudos(sortKudos(kudosInLastMonth));
           setKudosLoading(false);
         } else {
           dispatch({
@@ -89,9 +93,7 @@ const KudosHomePage = () => {
                 <SkeletonLoader key={index} type="kudos" />
               ))}
             </div>
-          ) : !kudosLoading &&
-            kudos?.length > 0 &&
-            new Date(kudos.dateApproved) > lastMonth ? (
+          ) : !kudosLoading && kudos?.length > 0 ? (
             <div>
               <div className="kudos-title">
                 <div>
