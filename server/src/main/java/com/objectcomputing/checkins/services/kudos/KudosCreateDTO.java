@@ -6,7 +6,6 @@ import io.micronaut.core.annotation.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,8 +27,7 @@ public class KudosCreateDTO {
     @NotNull
     private List<MemberProfile> recipientMembers;
 
-    public KudosCreateDTO(Boolean Public, String message, UUID senderId, @Nullable UUID teamId, List<MemberProfile> recipientMembers) {
-        this.Public = Public;
+    public KudosCreateDTO(String message, UUID senderId, @Nullable UUID teamId, List<MemberProfile> recipientMembers) {
         this.message = message;
         this.senderId = senderId;
         this.teamId = teamId;
