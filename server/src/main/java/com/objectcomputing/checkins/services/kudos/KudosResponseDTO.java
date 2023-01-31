@@ -31,7 +31,7 @@ public class KudosResponseDTO {
     private LocalDate dateApproved;
     
     @Nullable
-    private Boolean Public;
+    private Boolean publiclyVisible;
 
     @Nullable
     private Team recipientTeam;
@@ -47,8 +47,8 @@ public class KudosResponseDTO {
         this.id = id;
     }
 
-    public Boolean getPublic() {
-        return Public;
+    public Boolean getPubliclyVisible() {
+        return publiclyVisible;
     }
 
     public String getMessage() {
@@ -59,8 +59,8 @@ public class KudosResponseDTO {
         this.message = message;
     }
 
-    public void setPublic(Boolean Public) {
-        this.Public = Public;
+    public void setPubliclyVisible(Boolean publiclyVisible) {
+        this.publiclyVisible = publiclyVisible;
     }
 
     public UUID getSenderId() {
@@ -110,12 +110,12 @@ public class KudosResponseDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         KudosResponseDTO that = (KudosResponseDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(message, that.message) && Objects.equals(Public, that.Public) && Objects.equals(senderId, that.senderId) && Objects.equals(dateCreated, that.dateCreated) && Objects.equals(dateApproved, that.dateApproved) && Objects.equals(recipientTeam, that.recipientTeam) && Objects.equals(recipientMembers, that.recipientMembers);
+        return Objects.equals(id, that.id) && Objects.equals(message, that.message) && Objects.equals(publiclyVisible, that.publiclyVisible) && Objects.equals(senderId, that.senderId) && Objects.equals(dateCreated, that.dateCreated) && Objects.equals(dateApproved, that.dateApproved) && Objects.equals(recipientTeam, that.recipientTeam) && Objects.equals(recipientMembers, that.recipientMembers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, message, senderId, dateCreated, dateApproved, recipientTeam, recipientMembers, Public);
+        return Objects.hash(id, message, senderId, dateCreated, dateApproved, recipientTeam, recipientMembers, publiclyVisible);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class KudosResponseDTO {
                 ", dateApproved=" + dateApproved +
                 ", recipientTeam=" + recipientTeam +
                 ", recipientMembers=" + recipientMembers +
-                ", Public=" + Public +
+                ", publiclyVisible=" + publiclyVisible +
                 '}';
     }
 }
