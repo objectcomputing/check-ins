@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
-import { selectCsrfToken, selectIsAdmin, selectIsSupervisor } from "../../context/selectors";
+import {
+  selectCsrfToken,
+  selectIsAdmin,
+  selectIsSupervisor,
+} from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import { useLocation, Link } from "react-router-dom";
@@ -30,7 +34,7 @@ import {
 import "./Menu.css";
 
 const drawerWidth = 150;
-const PREFIX = 'Menu';
+const PREFIX = "Menu";
 const classes = {
   root: `${PREFIX}-root`,
   drawer: `${PREFIX}-drawer`,
@@ -40,13 +44,13 @@ const classes = {
   content: `${PREFIX}-content`,
   listStyle: `${PREFIX}-listStyle`,
   nested: `${PREFIX}-nested`,
-  subListItem: `${PREFIX}-subListItem`
+  subListItem: `${PREFIX}-subListItem`,
 };
 
-const Root = styled('div')(({theme}) => ({
+const Root = styled("div")(({ theme }) => ({
   [`&.${classes.root}`]: {
-    display: 'flex',
-    paddingRight: `${drawerWidth}px`
+    display: "flex",
+    paddingRight: `${drawerWidth}px`,
   },
   [`& .${classes.drawer}`]: {
     [theme.breakpoints.up("sm")]: {
@@ -58,10 +62,11 @@ const Root = styled('div')(({theme}) => ({
     [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
-      ['@media print']: { // eslint-disable-line no-useless-computed-key
+      // prettier-ignore
+      ["@media print"]: { // eslint-disable-line no-useless-computed-key
         width: `100%`,
         marginLeft: "0px",
-      }
+      },
     },
   },
   [`& .${classes.menuButton}`]: {
@@ -88,15 +93,17 @@ const Root = styled('div')(({theme}) => ({
   },
   [`& .${classes.subListItem}`]: {
     fontSize: "0.9rem",
-  }
+  },
 }));
 
 const adminLinks = [
   // ["/admin/permissions", "Permissions"],
+  ["/admin/manage-kudos", "Manage Kudos"],
+  ["/admin/permissions", "Permissions"],
   ["/admin/roles", "Roles"],
-  ["/admin/users", "Users"],
   ["/admin/email", "Send Email"],
   ["/admin/edit-skills", "Skills"],
+  ["/admin/users", "Users"],
 ];
 
 const directoryLinks = [
@@ -105,14 +112,17 @@ const directoryLinks = [
   ["/teams", "Teams"],
 ];
 
-const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => {
-  const links = [];
-  if(isAdmin || isPDL) links.push(["/feedback/view", "View Feedback"]);
-  links.push(["/feedback/received-requests", "Received Requests"]);
-  if(isSupervisor || isAdmin) links.push(["/feedback/reviews", "Reviews"])
-  links.push(["/feedback/self-reviews", "Self-Reviews"]);
-  return links;
-};
+const getFeedbackLinks = (isAdmin, isPDL) =>
+  isAdmin || isPDL
+    ? [
+        ["/kudos", "Kudos"],
+        ["/feedback/received-requests", "Received Requests"],
+        ["/feedback/view", "View Feedback"],
+      ]
+    : [
+        ["/kudos", "Kudos"],
+        ["/feedback/received-requests", "Received Requests"],
+      ];
 
 const reportsLinks = [
   ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
@@ -138,7 +148,6 @@ function Menu() {
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
   const isSupervisor = selectIsSupervisor(state);
-
 
   const theme = useTheme();
   const location = useLocation();
@@ -206,7 +215,7 @@ function Menu() {
   );
   const [feedbackOpen, setFeedbackOpen] = useState(
     isCollapsibleListOpen(feedbackLinks, location.pathname)
-  )
+  );
   const anchorRef = useRef(null);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -232,7 +241,7 @@ function Menu() {
 
   const toggleFeedback = () => {
     setFeedbackOpen(!feedbackOpen);
-  }
+  };
 
   const toggleDirectory = () => {
     setDirectoryOpen(!directoryOpen);
@@ -334,11 +343,7 @@ function Menu() {
         <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
           {createListJsx(directoryLinks, true)}
         </Collapse>
-        <ListItem
-          button
-          onClick={toggleFeedback}
-          className={classes.listItem}
-        >
+        <ListItem button onClick={toggleFeedback} className={classes.listItem}>
           <ListItemText primary="FEEDBACK" />
         </ListItem>
         <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
@@ -373,7 +378,8 @@ function Menu() {
             edge="start"
             onClick={handleDrawerToggle}
             className={classes.menuButton}
-            size="large">
+            size="large"
+          >
             <MenuIcon />
           </IconButton>
         </Toolbar>
@@ -423,7 +429,7 @@ function Menu() {
       </AppBar>
       <nav className={classes.drawer}>
         <Drawer
-          sx={{display: {sm: 'none', xs: 'block'}}}
+          sx={{ display: { sm: "none", xs: "block" } }}
           variant="temporary"
           disablePortal
           anchor={theme.direction === "rtl" ? "right" : "left"}
@@ -444,7 +450,7 @@ function Menu() {
           }}
           variant="permanent"
           open
-          sx={{display: { xs: 'none', sm: 'block'}}}
+          sx={{ display: { xs: "none", sm: "block" } }}
         >
           {drawer}
         </Drawer>

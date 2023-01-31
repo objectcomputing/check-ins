@@ -1,4 +1,4 @@
-import confetti from 'canvas-confetti'
+import confetti from "canvas-confetti";
 
 export const levelList = [
   "NONE",
@@ -18,6 +18,18 @@ export const sortAnniversaries = (anniversaryData) => {
   return anniversaryData.sort((a, b) => b.yearsOfService - a.yearsOfService);
 };
 
+export const sortKudos = (kudos, order = "ASC") => {
+  if (order === "DESC") {
+    return kudos?.sort(
+      (a, b) => new Date(a.dateApproved) - new Date(b.dateApproved)
+    );
+  } else if (order === "ASC") {
+    return kudos?.sort(
+      (a, b) => new Date(b.dateApproved) - new Date(a.dateApproved)
+    );
+  }
+};
+
 export const sortBirthdays = (birthdayData) => {
   return birthdayData.sort(
     // This will change the date string to a int.
@@ -26,9 +38,7 @@ export const sortBirthdays = (birthdayData) => {
     // This will ensure proper sorting.
     (a, b) =>
       Number(b.birthDay.substring(0, b.birthDay.indexOf("/")) * 100) +
-      Number(
-        b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)
-      ) -
+      Number(b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)) -
       (Number(a.birthDay.substring(0, a.birthDay.indexOf("/")) * 100) +
         Number(
           a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length)

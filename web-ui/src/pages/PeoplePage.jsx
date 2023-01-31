@@ -7,9 +7,11 @@ import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin,
 } from "../context/selectors";
-import { TextField, Grid } from "@mui/material";
+import {TextField, Grid, Button} from "@mui/material";
 import "./PeoplePage.css";
+import KudosDialog from "../components/kudos_dialog/KudosDialog";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader"
+import StarIcon from "@mui/icons-material/Star";
 
 const PREFIX = 'PeoplePage';
 const classes = {
@@ -40,6 +42,7 @@ const PeoplePage = () => {
   const loading= selectMemberProfilesLoading(state)
   const { userProfile } = state;
 
+  const [kudosDialogOpen, setKudosDialogOpen] = useState(null);
   const [searchText, setSearchText] = useState("");
 
   const isAdmin =
@@ -67,13 +70,25 @@ const PeoplePage = () => {
         <Grid item xs={12} className={classes.search}>
           <TextField
             className={classes.searchInput}
-            label="Select employees..."
+            label="Search employees..."
             placeholder="Member Name"
             value={searchText}
             onChange={(e) => {
               setSearchText(e.target.value);
             }}
           />
+          <KudosDialog
+            open={kudosDialogOpen}
+            onClose={() => setKudosDialogOpen(false)}
+          />
+          <Button
+            className="kudos-dialog-open"
+            variant="outlined"
+            startIcon={<StarIcon/>}
+            onClick={() => setKudosDialogOpen(true)}
+          >
+            Give Kudos
+          </Button>
         </Grid>
         <Grid item className={classes.members}>
           {loading ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />):
