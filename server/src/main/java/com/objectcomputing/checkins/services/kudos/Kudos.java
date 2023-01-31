@@ -69,8 +69,6 @@ public class Kudos {
     @Schema(description = "date the kudos were approved, null if pending")
     private LocalDate dateApproved;
 
-    public Kudos() {}
-
     /**
      * Constructor for creating Kudos
      * @param message string describing the kudos
@@ -80,6 +78,13 @@ public class Kudos {
         this.Public = Public;
         this.message = message;
         this.senderId = senderId;
+        this.dateApproved = null;
+    }
+
+    public Kudos(String message, UUID senderId, UUID teamId) {
+        this.message = message;
+        this.senderId = senderId;
+        this.teamId = teamId;
         this.dateApproved = null;
     }
 

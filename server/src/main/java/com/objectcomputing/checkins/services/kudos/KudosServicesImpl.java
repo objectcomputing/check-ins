@@ -95,21 +95,30 @@ public class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    public Kudos approve(Kudos kudos) {
+    public Kudos update(KudosUpdateDTO kudos) {
 
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You are not authorized to perform this operation");
-        }
-
-        Kudos existingKudos = kudosRepository.findById(kudos.getId()).orElseThrow(() -> {
+        Kudos existingKudos = kudosRepository.findById(kudos.getKudosId()).orElseThrow(() -> {
             throw new BadArgException("Kudos with id %s does not exist");
         });
 
-        if (existingKudos.getDateApproved() != null) {
-            throw new BadArgException("Kudos with id %s has already been approved");
-        }
+        if(kudos.getApproved() != null && kudos.getApproved() == Boolean.TRUE) {
+            if (!currentUserServices.isAdmin()) {
+                throw new PermissionException("You are not authorized to perform this operation");
+            }
 
-        existingKudos.setDateApproved(LocalDate.now());
+            if (existingKudos.getDateApproved() != null) {
+                throw new BadArgException("Kudos with id %s has already been approved");
+            }
+
+            existingKudos.setDateApproved(LocalDate.now());
+        } else {
+            if(!currentUserServices.getCurrentUser().getId().equals(existingKudos.getSenderId())) {
+                throw new PermissionException("You are not authorized to perform this operation");
+            }
+
+            existingKudos.setMessage(kudos.getMessage());
+            existingKudos.setDateApproved(null);
+        }
 
         return kudosRepository.update(existingKudos);
     }
@@ -147,23 +156,20 @@ public class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    public Optional<Kudos> findById(UUID id) {
-        return kudosRepository.findById(id);
-    }
-
-    @Override
     public boolean delete(UUID id) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
-
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("Kudos with id %s does not exist");
         });
 
+        if (!currentUserServices.isAdmin() && !currentUserServices.getCurrentUser().getId().equals(kudos.getSenderId())) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
         // Delete all KudosRecipients associated with this kudos
         List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
-        kudosRecipientRepository.deleteAll(recipients);
+        if(recipients != null && recipients.size() > 0) {
+            kudosRecipientRepository.deleteAll(recipients);
+        }
 
         kudosRepository.deleteById(id);
         return true;
@@ -270,13 +276,9 @@ public class KudosServicesImpl implements KudosServices {
 
         List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
 
-        if (recipients.isEmpty()) {
-            throw new NotFoundException("Could not find recipients for kudos with id %s");
-        }
-
         if (kudos.getTeamId() != null) {
             Team recipientTeam = teamRepository.findById(kudos.getTeamId()).orElseThrow(() -> {
-                throw new NotFoundException("Team %s does not exist");
+                throw new NotFoundException(String.format("Team %s does not exist", kudos.getTeamId()));
             });
             kudosResponseDTO.setRecipientTeam(recipientTeam);
         }
@@ -284,7 +286,7 @@ public class KudosServicesImpl implements KudosServices {
         List<MemberProfile> members = recipients
                 .stream()
                 .map(recipient -> memberProfileRetrievalServices.getById(recipient.getMemberId()).orElseThrow(() -> {
-                    throw new NotFoundException("Member id %s of KudosRecipient %s does not exist");
+                    throw new NotFoundException(String.format("Member id %s of KudosRecipient %s does not exist", recipient.getMemberId(), recipient.getId()));
                 }))
                 .collect(Collectors.toList());
 

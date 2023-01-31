@@ -55,9 +55,8 @@ public class KudosController {
     }
 
     @Put()
-    @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<Kudos>> approve(@Body @Valid Kudos kudos, HttpRequest<Kudos> request) {
-        return Mono.fromCallable(() -> kudosServices.approve(kudos))
+    public Mono<HttpResponse<Kudos>> update(@Body @Valid KudosUpdateDTO kudos, HttpRequest<KudosUpdateDTO> request) {
+        return Mono.fromCallable(() -> kudosServices.update(kudos))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedKudos -> (HttpResponse<Kudos>) HttpResponse
                         .ok(updatedKudos)
@@ -82,7 +81,6 @@ public class KudosController {
     }
 
     @Delete("/{id}")
-    @Secured(RoleType.Constants.ADMIN_ROLE)
     public Mono<? extends HttpResponse<?>> delete(@NotNull UUID id) {
         return Mono.fromCallable(() -> kudosServices.delete(id))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))

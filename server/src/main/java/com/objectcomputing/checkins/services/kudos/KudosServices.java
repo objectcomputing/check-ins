@@ -10,11 +10,9 @@ public interface KudosServices {
 
     Kudos save(KudosCreateDTO kudos);
 
-    Kudos approve(Kudos kudos);
+    Kudos update(KudosUpdateDTO kudos);
 
     KudosResponseDTO getById(UUID id);
-
-    Optional<Kudos> findById(UUID id);
 
     boolean delete(UUID id);
 
