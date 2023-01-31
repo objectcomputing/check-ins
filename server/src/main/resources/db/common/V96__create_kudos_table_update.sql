@@ -1,2 +1,2 @@
 ALTER TABLE kudos
-ADD COLUMN public boolean default false;
+ADD COLUMN publiclyvisible boolean default false;
