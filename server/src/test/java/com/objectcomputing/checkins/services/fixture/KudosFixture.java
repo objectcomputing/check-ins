@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 public interface KudosFixture extends RepositoryFixture {
     default Kudos createMemberKudos(MemberProfile sender) {
-        return getKudosRepository().save(new Kudos("message", sender.getId()));
+        return getKudosRepository().save(new Kudos(true,"message", sender.getId()));
     }
 
     default KudosRecipient createKudosRecipient(Kudos kudos, MemberProfile member) {
