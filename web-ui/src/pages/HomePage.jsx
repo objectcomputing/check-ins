@@ -4,8 +4,10 @@ import { getTodaysCelebrations } from "../api/birthdayanniversary";
 import Anniversaries from "../components/celebrations/Anniversaries";
 import Birthdays from "../components/celebrations/Birthdays";
 import DoubleCelebration from "../components/celebrations/DoubleCelebration";
+import KudosHomePage from "./KudosHomePage";
 import MyAnniversary from "../components/celebrations/MyAnniversary";
 import MyBirthday from "../components/celebrations/MyBirthday";
+
 import { AppContext } from "../context/AppContext";
 import { selectCsrfToken, selectCurrentUser } from "../context/selectors";
 import { sortAnniversaries, sortBirthdays } from "../context/util";
@@ -25,6 +27,15 @@ export default function HomePage() {
   const [myBirthday, setMyBirthday] = useState(false);
   const [showMyAnniversary, setShowMyAnniversary] = useState(false);
   const [showMyBirthday, setShowMyBirthday] = useState(false);
+
+  let doubleCelebration;
+
+  useEffect(() => {
+    doubleCelebration =
+      myBirthday && me && myAnniversary && showMyBirthday && showMyAnniversary;
+  }, [
+    myBirthday && me && myAnniversary && showMyBirthday && showMyAnniversary,
+  ]);
 
   useEffect(() => {
     if (csrf) {
@@ -115,8 +126,11 @@ export default function HomePage() {
         ) : anniversaries.length ? (
           <Anniversaries anniversaries={anniversaries} />
         ) : (
-          <h1>No events currently available...</h1>
+          <h1>No Celebrations today &#129300;</h1>
         )}
+      </div>
+      <div className="kudos">
+        <KudosHomePage />
       </div>
     </div>
   );

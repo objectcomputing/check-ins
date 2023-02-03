@@ -13,6 +13,12 @@
   padding-top: 4rem;
 }
 
+.kudos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .MuiCardHeader-avatar > div {
   width: 60px;
   height: 60px;
@@ -39,6 +45,6 @@
     font-weight: bolder;
   }
   .double-celebrations {
-      padding-top: 0;
+    padding-top: 0;
   }
 }

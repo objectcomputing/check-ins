@@ -22,12 +22,13 @@ public class KudosCreateDTO {
     private UUID teamId;
 
     @NotNull
-    private Boolean Public;
+    private Boolean publiclyVisible;
 
     @NotNull
     private List<MemberProfile> recipientMembers;
 
-    public KudosCreateDTO(String message, UUID senderId, @Nullable UUID teamId, List<MemberProfile> recipientMembers) {
+    public KudosCreateDTO(Boolean publiclyVisible, String message, UUID senderId, @Nullable UUID teamId, List<MemberProfile> recipientMembers) {
+        this.publiclyVisible = publiclyVisible;
         this.message = message;
         this.senderId = senderId;
         this.teamId = teamId;
@@ -67,11 +68,11 @@ public class KudosCreateDTO {
         this.recipientMembers = recipientMembers;
     }
 
-    public @NotBlank Boolean getPublic() {
-        return Public;
+    public @NotBlank Boolean getPubliclyVisible() {
+        return publiclyVisible;
     }
 
-     public void setPublic(Boolean Public) {
-        this.Public = Public;
+     public void setPubliclyVisible(Boolean publiclyVisible) {
+        this.publiclyVisible = publiclyVisible;
     }
 }
