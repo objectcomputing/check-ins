@@ -98,7 +98,7 @@ public class KudosControllerTest extends TestContainersSuite implements MemberPr
         MemberProfile kudosSender = createADefaultMemberProfile();
         Kudos kudos = createMemberKudos(kudosSender);
 
-        HttpResponse<Kudos> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/%s", kudos.getId())).basicAuth(kudosSender.getWorkEmail(), MEMBER_ROLE), Kudos.class);
+        HttpResponse<Kudos> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/%s", kudos.getId())).basicAuth(kudosSender.getWorkEmail(), MEMBER_ROLE));
 
         Kudos memberKudos = response.body();
 

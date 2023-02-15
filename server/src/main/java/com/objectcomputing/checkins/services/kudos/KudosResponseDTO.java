@@ -59,7 +59,7 @@ public class KudosResponseDTO {
         this.message = message;
     }
 
-    public void setPubliclyVisible(Boolean Public) {
+    public void setPubliclyVisible(Boolean publiclyVisible) {
         this.publiclyVisible = publiclyVisible;
     }
 
