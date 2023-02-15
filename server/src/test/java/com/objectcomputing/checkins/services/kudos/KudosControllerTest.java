@@ -38,7 +38,7 @@ public class KudosControllerTest extends TestContainersSuite implements MemberPr
         List<MemberProfile> recipientList = new ArrayList<>();
         recipientList.add(kudosRecipient);
         String message = "message";
-        KudosCreateDTO createDTO = new KudosCreateDTO(message, kudosSender.getId(), null, recipientList);
+        KudosCreateDTO createDTO = new KudosCreateDTO(true, message, kudosSender.getId(), null, recipientList);
 
         final HttpRequest<KudosCreateDTO> request = HttpRequest.POST("/", createDTO).basicAuth(kudosSender.getWorkEmail(), MEMBER_ROLE);
         HttpResponse<Kudos> response = client.toBlocking().exchange(request, Kudos.class);
