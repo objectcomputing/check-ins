@@ -100,7 +100,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
           senderId: currentUser.id,
           teamId: recipientType === "TEAM" ? selectedTeam.id : null,
           recipientMembers: recipients,
-          public: publicKudos,
+          publiclyVisible: publicKudos,
         };
 
         saveKudos(kudos).then((res) => {
