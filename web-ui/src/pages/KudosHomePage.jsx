@@ -51,12 +51,16 @@ const KudosHomePage = () => {
     if (csrf) {
       setKudosLoading(true);
       const allKudos = async () => {
-        let res = await getAllKudos(csrf, false);
+        let res = await getAllKudos(csrf);
         let data =
           res.payload && res.payload.data && !res.error
             ? res.payload.data
             : null;
         if (data) {
+          // we only want approved Kudos showing
+          data = data.filter((kudo) => {
+            return kudo.dateApproved;
+          });
           // only show kudos in the last month for the moment
           let kudosInLastMonth = data.filter((k) => {
             return new Date(k.dateApproved) > lastMonth;

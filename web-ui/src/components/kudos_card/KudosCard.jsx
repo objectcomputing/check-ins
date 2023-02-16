@@ -57,6 +57,9 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
   const sender = selectProfile(state, kudos.senderId);
   const isPublic = kudos?.publiclyVisible || false;
 
+  // kudosId is required for kudosApproval
+  kudos = { ...kudos, kudosId: kudos.id };
+
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
       return (

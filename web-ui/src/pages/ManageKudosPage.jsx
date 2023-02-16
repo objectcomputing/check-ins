@@ -63,10 +63,14 @@ const ManageKudosPage = () => {
 
   const loadPendingKudos = useCallback(async () => {
     setPendingKudosLoading(true);
-    const res = await getAllKudos(csrf, true);
+    const res = await getAllKudos(csrf);
     if (res?.payload?.data && !res.error) {
+      // only pending kudos
+      let data = res.payload.data.filter((kudo) => {
+        return !kudo.dateApproved;
+      });
       setPendingKudosLoading(false);
-      return res.payload.data;
+      return data;
     } else {
       dispatch({
         type: UPDATE_TOAST,
@@ -80,10 +84,13 @@ const ManageKudosPage = () => {
 
   const loadApprovedKudos = useCallback(async () => {
     setApprovedKudosLoading(true);
-    const res = await getAllKudos(csrf, false);
+    const res = await getAllKudos(csrf);
     if (res?.payload?.data && !res.error) {
+      let data = res.payload.data.filter((kudo) => {
+        return kudo.dateApproved;
+      });
       setApprovedKudosLoading(false);
-      return res.payload.data;
+      return data;
     } else {
       dispatch({
         type: UPDATE_TOAST,

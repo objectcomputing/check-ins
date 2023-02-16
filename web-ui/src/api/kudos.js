@@ -34,12 +34,9 @@ export const getSentKudos = async (memberId, cookie) => {
   });
 };
 
-export const getAllKudos = async (cookie, isPending) => {
+export const getAllKudos = async (cookie) => {
   return resolve({
     url: kudosUrl,
-    params: {
-      isPending: isPending,
-    },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });
