@@ -14,6 +14,10 @@
   gap: 0.5rem;
 }
 
+.kudos-card .kudos-card-header .kudos-status-container p:first-child {
+  margin-left: 1rem;
+}
+
 .kudos-card .kudos-card-header .kudos-status-container .kudos-action-buttons {
   display: flex;
   flex-direction: row;
@@ -51,6 +55,11 @@
   .kudos-card .kudos-card-header {
     display: flex;
   }
+
+  .kudos-card .kudos-card-header .kudos-status-container p:first-child {
+    margin-left: 0;
+  }
+
   .kudos-list .kudos-card .members-container {
     display: block;
     flex-direction: column;

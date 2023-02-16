@@ -24,6 +24,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import TeamIcon from "@mui/icons-material/Groups";
+import LockIcon from "@mui/icons-material/Lock";
 
 import "./KudosCard.css";
 import { approveKudos, deleteKudos } from "../../api/kudos";
@@ -54,6 +55,7 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
   // const [deleteReason, setDeleteReason] = useState(""); // TODO: setup optional reason for deleting a kudos
 
   const sender = selectProfile(state, kudos.senderId);
+  const isPublic = kudos?.publiclyVisible || false;
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
@@ -198,10 +200,6 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
     );
   }, [kudos, includeActions, approveKudosCallback]);
 
-  const dateApproved = kudos.dateApproved
-    ? new Date(kudos.dateApproved.join("/"))
-    : null;
-
   return (
     <>
       <Dialog open={deleteDialogOpen}>
@@ -246,6 +244,7 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
               label={sender?.name}
             />
           </div>
+          {!isPublic && <LockIcon />}
           <div className="kudos-status-container">{getStatusComponent()}</div>
         </div>
         <Divider />

@@ -7,9 +7,16 @@
   justify-content: flex-end;
 }
 
+.kudos-page .kudos-title h1 {
+  margin-right: 1rem;
+}
+
 .kudos-page .kudos-title div {
   display: flex;
   justify-content: space-between;
+}
+
+.kudos-page .kudos-title div:first-child {
   width: 60%;
 }
 
@@ -28,6 +35,10 @@
 .kudos-page .kudos-page-header {
   display: flex;
   justify-content: space-between;
+}
+
+.kudos-page .kudos-list {
+  min-width: 400px;
 }
 
 .kudos-page .kudos-list .members-container .MuiChip-avatar {
@@ -72,7 +83,11 @@
 
 @media (max-width: 375px) {
   .kudos-page {
-    margin: 01rem;
+    margin: 1rem;
+  }
+
+  .kudos-page .kudos-list {
+    min-width: unset;
   }
 
   .kudos-page .kudos-list .members-container .MuiChip-avatar {
