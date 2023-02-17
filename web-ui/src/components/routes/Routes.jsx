@@ -31,6 +31,8 @@ import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 import EmailPage from "../../pages/EmailPage";
 import ReviewsPage from "../../pages/ReviewsPage";
 import SelfReviewsPage from "../../pages/SelfReviewsPage";
+import KudosPage from "../../pages/KudosPage";
+import ManageKudosPage from "../../pages/ManageKudosPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -94,6 +96,9 @@ export default function Routes() {
       <Route path="/feedback/self-reviews">
         <SelfReviewsPage />
       </Route>
+      <Route exact path="/kudos">
+        <KudosPage />
+      </Route>
 
       {isAdmin && (
         <Switch>
@@ -150,6 +155,9 @@ export default function Routes() {
           </Route>
           <Route path="/feedback/submit">
             <FeedbackSubmitPage />
+          </Route>
+          <Route exact path="/admin/manage-kudos">
+            <ManageKudosPage />
           </Route>
         </Switch>
       )}

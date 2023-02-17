@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { selectProfile, selectTerminatedMembers } from "../context/selectors";
+import {
+  selectProfile,
+  selectTerminatedMembers
+} from "../context/selectors";
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
@@ -18,6 +21,7 @@ import "./MemberProfilePage.css";
 
 import {
   Avatar,
+  Button,
   Card,
   CardContent,
   CardHeader,
@@ -27,17 +31,19 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import StarIcon from "@mui/icons-material/Star";
+import KudosDialog from "../components/kudos_dialog/KudosDialog";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
   const { csrf, skills, userProfile } = state;
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
+  const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
   const sortedPdls = selectOrderedPdls(state);
   const sortedMembers = selectOrderedMemberFirstName(state);
   let pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId)
   let supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid)
-
 
   useEffect(() => {
     // in the case of a terminated member, member details will still display
@@ -123,42 +129,56 @@ const MemberProfilePage = () => {
               </div>
             )}
             {selectedMember && (
-              <Card className="member-profile-card">
-                <CardHeader
-                  title={
-                    <Typography variant="h5" component="h1">
-                      {selectedMember.name}
-                    </Typography>
-                  }
-                  subheader={
-                    <Typography color="textSecondary" component="h2">
-                      {selectedMember.title}
-                    </Typography>
-                  }
-                  disableTypography
-                  avatar={
-                    <Avatar
-                      className="large"
-                      src={getAvatarURL(selectedMember.workEmail)}
-                    />
-                  }
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <Card className="member-profile-card">
+                  <CardHeader
+                    title={
+                      <Typography variant="h5" component="h1">
+                        {selectedMember.name}
+                      </Typography>
+                    }
+                    subheader={
+                      <Typography color="textSecondary" component="h2">
+                        {selectedMember.title}
+                      </Typography>
+                    }
+                    disableTypography
+                    avatar={
+                      <Avatar
+                        className="large"
+                        src={getAvatarURL(selectedMember.workEmail)}
+                      />
+                    }
+                  />
+                  <CardContent>
+                    <Container fixed className="info-container">
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        component="div"
+                      >
+                        <h4>Email: {selectedMember.workEmail || ""}</h4>
+                        <h4>Location: {selectedMember.location || ""}</h4>
+                        <h4>Bio: {selectedMember.bioText || ""}</h4>
+                        <h4>{(supervisorInfo && "Supervisor: " + supervisorInfo.firstName + " " + supervisorInfo.lastName) || ("")}</h4>
+                        <h4>{(pdlInfo && "PDL: " + pdlInfo.firstName + " " + pdlInfo.lastName) || ("")}</h4>
+                      </Typography>
+                    </Container>
+                  </CardContent>
+                </Card>
+                <KudosDialog
+                  open={kudosDialogOpen}
+                  recipient={selectedMember}
+                  onClose={() => setKudosDialogOpen(false)}
                 />
-                <CardContent>
-                  <Container fixed className="info-container">
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      component="div"
-                    >
-                      <h4>Email: {selectedMember.workEmail || ""}</h4>
-                      <h4>Location: {selectedMember.location || ""}</h4>
-                      <h4>Bio: {selectedMember.bioText || ""}</h4>
-                      <h4>{(supervisorInfo && "Supervisor: " + supervisorInfo.firstName + " " + supervisorInfo.lastName) || ("")}</h4>
-                      <h4>{(pdlInfo && "PDL: " + pdlInfo.firstName + " " + pdlInfo.lastName) || ("")}</h4>
-                    </Typography>
-                  </Container>
-                </CardContent>
-              </Card>
+                <Button
+                  variant="outlined"
+                  startIcon={<StarIcon/>}
+                  onClick={() => setKudosDialogOpen(true)}
+                >
+                  Give Kudos
+                </Button>
+              </div>
             )}
           </Grid>
           <Grid item md={7} className="right">
