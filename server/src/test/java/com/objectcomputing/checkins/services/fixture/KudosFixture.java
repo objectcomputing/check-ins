@@ -12,6 +12,9 @@ public interface KudosFixture extends RepositoryFixture {
         return getKudosRepository().save(new Kudos("message", sender.getId(), true));
     }
 
+    default Kudos createSecondMemberKudos(MemberProfile sender) {
+        return getKudosRepository().save(new Kudos("message 2", sender.getId(), true));
+    }
     default KudosRecipient createKudosRecipient(Kudos kudos, MemberProfile member) {
         return getKudosRecipientRepository().save(new KudosRecipient(kudos.getId(), member.getId()));
     }

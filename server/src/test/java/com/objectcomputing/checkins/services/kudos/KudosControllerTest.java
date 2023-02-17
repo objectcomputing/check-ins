@@ -14,6 +14,9 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,11 +101,12 @@ public class KudosControllerTest extends TestContainersSuite implements MemberPr
         MemberProfile kudosSender = createADefaultMemberProfile();
         Kudos kudos = createMemberKudos(kudosSender);
 
-        HttpResponse<Kudos> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/%s", kudos.getId())).basicAuth(kudosSender.getWorkEmail(), MEMBER_ROLE));
+        HttpResponse<KudosResponseDTO> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/%s", kudos.getId())).basicAuth(kudosSender.getWorkEmail(), MEMBER_ROLE));
 
-        Kudos memberKudos = response.body();
+        KudosResponseDTO memberKudos = response.body();
 
-        assertEquals(kudos, memberKudos);
+        assertEquals(kudos.getId(), memberKudos.getId());
+        assertEquals(kudos.getMessage(), memberKudos.getMessage());
     }
 
     @Test
@@ -120,6 +124,18 @@ public class KudosControllerTest extends TestContainersSuite implements MemberPr
 
     @Test
     void testSearchKudosByField() {
+        MemberProfile kudosSender = createADefaultMemberProfile();
+        Kudos kudos = createMemberKudos(kudosSender);
+
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/?senderId=%s", kudosSender.getId())).basicAuth(kudosSender.getWorkEmail(), MEMBER_ROLE);
+
+        HttpResponse<List<KudosResponseDTO>> response = client.toBlocking().exchange(request);
+
+        List<KudosResponseDTO> memberKudos = response.body();
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(1, memberKudos.size());
+        assertEquals(kudosSender.getId(), memberKudos.get(0));
 
     }
 
