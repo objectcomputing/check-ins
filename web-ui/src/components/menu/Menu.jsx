@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
+import { reportMemberCsv } from "../../api/member"
 import { selectCsrfToken, selectIsAdmin, selectIsSupervisor } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
@@ -152,6 +153,29 @@ function Menu() {
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const downloadMembers = async () => {
+    let res = await reportMemberCsv(csrf);
+    if (res?.error) {
+      let error = res?.error?.response?.data?.message;
+
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Hmm...Something went wrong.",
+        },
+      });
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: `File was successfully generated.`,
+        },
+      });
+    }
   };
 
   const uploadFile = async (file) => {
@@ -416,6 +440,16 @@ function Menu() {
                 }}
               >
                 Upload Hours
+              </MenuItem>
+            )}
+            {isAdmin && (
+              <MenuItem
+                onClick={() => {
+                  closeAvatarMenu();
+                  downloadMembers();
+                }}
+              >
+                Download Members
               </MenuItem>
             )}
           </AvatarMenu>
