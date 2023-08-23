@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
 import { reportMemberCsv } from "../../api/member"
-import { BASE_API_URL } from "../../api/api";
 import { selectCsrfToken, selectIsAdmin, selectIsSupervisor } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
@@ -161,7 +160,6 @@ function Menu() {
   const downloadMembers = async () => {
     let res = await reportMemberCsv(csrf);
     if (res?.error) {
-      let error = res?.error?.response?.data?.message;
 
       dispatch({
         type: UPDATE_TOAST,
