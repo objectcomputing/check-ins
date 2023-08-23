@@ -101,6 +101,7 @@ export const deleteMember = async (id, cookie) => {
 export const reportMemberCsv = async (cookie) => {
   return resolve({
     url: csvReportUrl,
-    headers: { "X-CSRF-Header": cookie },
+    responseType: 'blob',
+    headers: { "X-CSRF-Header": cookie, 'Accept': 'text/csv' },
   });
 };

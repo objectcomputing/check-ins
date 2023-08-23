@@ -13,9 +13,11 @@ public class CsvRecord {
     private final String tenure;
     private final String pdlName;
     private final String supervisorName;
+    private final String pdlEmail;
+    private final String supervisorEmail;
 
     public CsvRecord(String firstName, String lastName, String title, String location, String workEmail,
-                     LocalDate startDate, String tenure, String pdlName, String supervisorName) {
+                     LocalDate startDate, String tenure, String pdlName, String pdlEmail, String supervisorName, String supervisorEmail) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.title = title;
@@ -24,7 +26,9 @@ public class CsvRecord {
         this.startDate = startDate;
         this.tenure = tenure;
         this.pdlName = pdlName;
+        this.pdlEmail = pdlEmail;
         this.supervisorName = supervisorName;
+        this.supervisorEmail = supervisorEmail;
     }
 
     public String getFirstName() {
@@ -59,7 +63,11 @@ public class CsvRecord {
         return pdlName;
     }
 
+    public String getPdlEmail() { return pdlEmail; }
+
     public String getSupervisorName() {
         return supervisorName;
     }
+
+    public String getSupervisorEmail() { return supervisorEmail; }
 }

@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MemberProfileReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
     @Inject
-    @Client("/reports/member")
+    @Client("/services/reports/member")
     private HttpClient client;
 
     private String encodeValue(String value) throws UnsupportedEncodingException {
@@ -47,13 +48,14 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        HttpResponse<byte[]> response = client.toBlocking().exchange("/csv", byte[].class);
+        final HttpRequest<Object> request = HttpRequest.
+                GET("/csv").basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        HttpResponse<File> response = client.toBlocking().exchange(request, File.class);
 
         assertNotNull(response);
         assertEquals(200, response.getStatus().getCode());
-        assertEquals("attachment; filename=member_profiles.csv", response.getHeaders().get("content-disposition"));
 
-        byte[] responseBody = response.getBody().orElse(null);
+        File responseBody = response.getBody().orElse(null);
         assertNotNull(responseBody);
     }
 

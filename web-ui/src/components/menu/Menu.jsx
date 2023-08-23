@@ -2,8 +2,11 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
 import { reportMemberCsv } from "../../api/member"
+import { BASE_API_URL } from "../../api/api";
 import { selectCsrfToken, selectIsAdmin, selectIsSupervisor } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
+
+import fileDownload from 'js-file-download';
 
 import { useLocation, Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
@@ -168,11 +171,14 @@ function Menu() {
         },
       });
     } else {
+
+      fileDownload(res?.payload?.data, "members.csv");
+
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: `File was successfully generated.`,
+          toast: `Member export has been saved!`,
         },
       });
     }

@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.scheduling.TaskExecutors;
@@ -11,9 +12,7 @@ import jakarta.inject.Named;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.Period;
@@ -45,19 +44,30 @@ public class MemberProfileReportController {
     }
 
     @Get(uri = "/csv", produces = MediaType.TEXT_CSV)
-    public Mono<MutableHttpResponse<byte[]>> generateCsv() {
+    public Mono<MutableHttpResponse<File>> generateCsv() {
         return Flux.defer(() -> Flux.fromIterable(memberProfileServices.findByValues(null, null, null, null, null, null, false)))
                 .subscribeOn(ioScheduler)
                 .map(this::mapToCsvRecord)
                 .collectList()
-                .map(this::generateCsvContent)
-                .map(csvBytes -> HttpResponse.ok(csvBytes).header("Content-Disposition", "attachment; filename=member_profiles.csv"))
+                .flatMap(this::generateCsvFile)
+                .map(file -> HttpResponse.ok(file).header("Content-Disposition", "attachment; filename=member_profiles.csv"))
                 .onErrorResume(error -> Mono.just(HttpResponse.serverError()));
     }
 
     private CsvRecord mapToCsvRecord(MemberProfile profile) {
-        String pdlName = ""; // Get PDL name based on pdlId
-        String supervisorName = ""; // Get Supervisor name based on supervisorid
+        MemberProfile pdlProfile = profile.getPdlId() != null ? memberProfileServices.getById(profile.getPdlId()).get() : null;
+        MemberProfile supervisorProfile = profile.getSupervisorid() != null ? memberProfileServices.getById(profile.getSupervisorid()).get() : null;
+
+        String pdlName = "", pdlEmail = "";
+        if(pdlProfile != null) {
+            pdlName = MemberProfileUtils.getFullName(pdlProfile);
+            pdlEmail = pdlProfile.getWorkEmail();
+        }
+        String supervisorName = "", supervisorEmail = "";
+        if(supervisorProfile != null) {
+            supervisorName = MemberProfileUtils.getFullName(supervisorProfile);
+            supervisorEmail = supervisorProfile.getWorkEmail();
+        }
 
         LocalDate startDate = profile.getStartDate();
         LocalDate currentDate = LocalDate.now();
@@ -76,16 +86,17 @@ public class MemberProfileReportController {
                 startDate,
                 tenure,
                 pdlName,
-                supervisorName);
+                pdlEmail,
+                supervisorName,
+                supervisorEmail);
     }
 
-    private byte[] generateCsvContent(List<CsvRecord> csvRecords) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader("First Name", "Last Name", "Title", "Location",
-                "Work Email", "Start Date", "Tenure",
-                "PDL Name", "Supervisor Name");
+    private Mono<File> generateCsvFile(List<CsvRecord> csvRecords) {
+        File csvFile = new File("member_profiles.csv");
 
-        try (CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), csvFormat)) {
+        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, StandardCharsets.UTF_8), CSVFormat.DEFAULT.withHeader("First Name", "Last Name", "Title", "Location",
+                "Work Email", "Start Date", "Tenure",
+                "PDL Name", "PDL Email", "Supervisor Name", "Supervisor Email"))) {
             for (CsvRecord csvRecord : csvRecords) {
                 csvPrinter.printRecord(csvRecord.getFirstName(),
                         csvRecord.getLastName(),
@@ -95,13 +106,15 @@ public class MemberProfileReportController {
                         csvRecord.getStartDate(),
                         csvRecord.getTenure(),
                         csvRecord.getPdlName(),
-                        csvRecord.getSupervisorName());
+                        csvRecord.getPdlEmail(),
+                        csvRecord.getSupervisorName(),
+                        csvRecord.getSupervisorEmail());
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error generating CSV file", e);
         }
 
-        return outputStream.toByteArray();
+        return Mono.just(csvFile);
     }
 }
 
