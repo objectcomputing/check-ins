@@ -73,13 +73,16 @@ public class MemberProfileReportController {
         }
 
         LocalDate startDate = profile.getStartDate();
-        LocalDate currentDate = LocalDate.now();
 
-        Period period = Period.between(startDate, currentDate);
-        int years = period.getYears();
-        int months = period.getMonths();
+        String tenure = "";
+        if(startDate != null) {
+            LocalDate currentDate = LocalDate.now();
+            Period period = Period.between(startDate, currentDate);
+            int years = period.getYears();
+            int months = period.getMonths();
 
-        String tenure = years + " years " + months + " months";
+            tenure = years + " years " + months + " months";
+        }
 
         return new CsvRecord(profile.getFirstName(),
                 profile.getLastName(),
