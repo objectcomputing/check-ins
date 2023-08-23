@@ -1,1 +1,1 @@
-MICRONAUT_ENVIRONMENTS=local PORT=8080 ./gradlew run
+MICRONAUT_ENVIRONMENTS=local PORT=8080 ./gradlew :server:run
