@@ -55,8 +55,8 @@ public class MemberProfileReportController {
     }
 
     private CsvRecord mapToCsvRecord(MemberProfile profile) {
-        MemberProfile pdlProfile = profile.getPdlId() != null ? memberProfileServices.getById(profile.getPdlId()).get() : null;
-        MemberProfile supervisorProfile = profile.getSupervisorid() != null ? memberProfileServices.getById(profile.getSupervisorid()).get() : null;
+        MemberProfile pdlProfile = profile.getPdlId() != null ? memberProfileServices.getById(profile.getPdlId()) : null;
+        MemberProfile supervisorProfile = profile.getSupervisorid() != null ? memberProfileServices.getById(profile.getSupervisorid()) : null;
 
         String pdlName = "", pdlEmail = "";
         if(pdlProfile != null) {
