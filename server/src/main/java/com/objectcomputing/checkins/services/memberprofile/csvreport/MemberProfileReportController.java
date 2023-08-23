@@ -51,7 +51,10 @@ public class MemberProfileReportController {
                 .collectList()
                 .flatMap(this::generateCsvFile)
                 .map(file -> HttpResponse.ok(file).header("Content-Disposition", "attachment; filename=member_profiles.csv"))
-                .onErrorResume(error -> Mono.just(HttpResponse.serverError()));
+                .onErrorResume(error -> {
+                    LOG.error("Something went terribly wrong during export... ", error);
+                    return Mono.just(HttpResponse.serverError());
+                });
     }
 
     private CsvRecord mapToCsvRecord(MemberProfile profile) {
