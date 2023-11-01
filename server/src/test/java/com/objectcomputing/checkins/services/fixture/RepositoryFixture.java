@@ -14,6 +14,8 @@ import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateR
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
+import com.objectcomputing.checkins.services.kudos.KudosRepository;
+import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.onboard.background_information.BackgroundInformationRepository;
@@ -192,12 +194,20 @@ public interface RepositoryFixture {
     default WorkingEnvironmentRepository getWorkingEnvironmentRespository(){
         return getEmbeddedServer().getApplicationContext().getBean(WorkingEnvironmentRepository.class);
     }
-    
+
     default BackgroundInformationRepository getBackgroundInformationRepository(){
         return getEmbeddedServer().getApplicationContext().getBean(BackgroundInformationRepository.class);
     }
 
     default NewHireAccountRepository  getNewHireAccountRepository(){
         return getEmbeddedServer().getApplicationContext().getBean(NewHireAccountRepository.class);
+    }
+
+    default KudosRepository getKudosRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(KudosRepository.class);
+    }
+
+    default KudosRecipientRepository getKudosRecipientRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(KudosRecipientRepository.class);
     }
 }
