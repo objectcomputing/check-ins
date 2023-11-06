@@ -234,29 +234,53 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     @Override
     @Cacheable
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, List<UUID> requesteeIds) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        if (currentUserId == null) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
 
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
-        if (currentUserId != null) {
+        if(requesteeIds != null && !requesteeIds.isEmpty()) {
+            //If the user is not an admin and we are not filtering by creator, then they need to be the supervisor or creator of the requests
+            if(creatorId == null && !currentUserServices.isAdmin()) {
+                for (UUID memberId: requesteeIds) {
+                    if(!isSupervisor(requesteeId, currentUserId)) {
+                        throw new PermissionException("You are not authorized to do this operation");
+                    }
+                }
+            }
+            //users should be able to filter by only requests they have created
+            if (currentUserId.equals(creatorId) || currentUserId.equals(recipientId) || currentUserServices.isAdmin()) {
+                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDListToStringList(requesteeIds)));
+            } else {
+                throw new PermissionException("You are not authorized to do this operation");
+            }
+        } else {
+
+            boolean isRequesteesSupervisor = isSupervisor(requesteeId, currentUserId);
+
             //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId) || isRequesteesSupervisor || currentUserId.equals(recipientId) || currentUserServices.isAdmin()) {
                 feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId)));
             } else {
                 throw new PermissionException("You are not authorized to do this operation");
+
             }
         }
 
         return feedbackReqList;
     }
 
+    private boolean isSupervisor(UUID requesteeId, UUID currentUserId) {
+        return requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+    }
+
     private boolean createIsPermitted(UUID requesteeId) {
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        boolean isRequesteesSupervisor = isSupervisor(requesteeId, currentUserId);
         final UUID requesteePDL = requestee.getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
