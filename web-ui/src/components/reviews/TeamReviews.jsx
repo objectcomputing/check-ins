@@ -28,7 +28,7 @@ import SelectUserModal from "./SelectUserModal";
 import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from "../../context/actions";
 import { AppContext } from "../../context/AppContext";
 import { getReviewPeriods } from "../../api/reviewperiods.js";
-import { createFeedbackRequest, findReviewRequestsByPeriodAndTeamMember, findSelfReviewRequestsByPeriodAndTeamMember } from "../../api/feedback.js";
+import { createFeedbackRequest, findReviewRequestsByPeriodAndTeamMembers, findSelfReviewRequestsByPeriodAndTeamMembers } from "../../api/feedback.js";
 import {
   selectCsrfToken,
   selectReviewPeriod,
@@ -248,8 +248,9 @@ const TeamReviews = ({ periodId }) => {
   const loadReviews = useCallback(async () => {
     let newSelfReviews = {};
     let newReviews = {};
-    const getSelfReviewRequest = async (teamMember) => {
-      const res = await findSelfReviewRequestsByPeriodAndTeamMember(period, teamMember.id, csrf);
+    const getSelfReviewRequests = async (teamMembers) => {
+      const teamMemberIds = teamMembers.map(member => member.id);
+      const res = await findSelfReviewRequestsByPeriodAndTeamMembers(period, teamMemberIds, csrf);
       let data =
         res &&
         res.payload &&
@@ -260,12 +261,13 @@ const TeamReviews = ({ periodId }) => {
           : null;
       if (data && data.length > 0) {
         data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
-        newSelfReviews[teamMember.id] = data[0];
+        newSelfReviews[data[0].requesteeId] = data[0];
       }
     };
 
-    const getReviewRequest = async (teamMember) => {
-      const res = await findReviewRequestsByPeriodAndTeamMember(period, teamMember.id, csrf);
+    const getReviewRequests = async (teamMembers) => {
+      const teamMemberIds = teamMembers.map(member => member.id);
+      const res = await findReviewRequestsByPeriodAndTeamMembers(period, teamMemberIds, csrf);
       let data =
         res &&
         res.payload &&
@@ -276,7 +278,7 @@ const TeamReviews = ({ periodId }) => {
           : null;
       if (data && data.length > 0) {
         data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
-        newReviews[teamMember.id] = data;
+        newReviews[data[0].requesteeId] = data;
       }
     };
 
@@ -284,15 +286,12 @@ const TeamReviews = ({ periodId }) => {
       loadingReviews.current = true;
       setSelfReviews({});
       setReviews(null);
-      const promises = teamMembers.map(getSelfReviewRequest);
-      promises.push(...teamMembers.map(getReviewRequest));
-
-      Promise.all(promises).then((res) => {
-        loadingReviews.current = false;
-        loadedReviews.current = true;
-        setSelfReviews({...newSelfReviews});
-        setReviews({...newReviews});
-      });
+      loadingReviews.current = false;
+      loadedReviews.current = true;
+      await getSelfReviewRequests(teamMembers);
+      await getReviewRequests(teamMembers);
+      setSelfReviews({...newSelfReviews});
+      setReviews({...newReviews});
     }
   }, [csrf, period, teamMembers]);
 
