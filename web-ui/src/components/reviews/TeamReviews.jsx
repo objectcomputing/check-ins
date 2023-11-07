@@ -261,7 +261,7 @@ const TeamReviews = ({ periodId }) => {
           : null;
       if (data && data.length > 0) {
         data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
-        newSelfReviews[data[0].requesteeId] = data[0];
+        data.forEach(selfReview => newSelfReviews[selfReview.requesteeId] = selfReview);
       }
     };
 
@@ -278,7 +278,12 @@ const TeamReviews = ({ periodId }) => {
           : null;
       if (data && data.length > 0) {
         data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
-        newReviews[data[0].requesteeId] = data;
+        data.forEach(review => {
+            if(!newReviews[review.requesteeId]) {
+                newReviews[review.requesteeId] = [];
+            }
+            newReviews[review.requesteeId].push(review);
+        });
       }
     };
 
@@ -286,10 +291,10 @@ const TeamReviews = ({ periodId }) => {
       loadingReviews.current = true;
       setSelfReviews({});
       setReviews(null);
-      loadingReviews.current = false;
-      loadedReviews.current = true;
       await getSelfReviewRequests(teamMembers);
       await getReviewRequests(teamMembers);
+      loadingReviews.current = false;
+      loadedReviews.current = true;
       setSelfReviews({...newSelfReviews});
       setReviews({...newReviews});
     }
