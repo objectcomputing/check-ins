@@ -6,13 +6,26 @@ const feedbackRequestURL = "/services/feedback/requests";
 const answerURL = "/services/feedback/answers";
 const questionAndAnswerURL = "/services/feedback/questions-and-answers"
 
-export const findReviewRequestsByPeriodAndTeamMember =  async (period, teamMemberId, cookie) => {
+export const findReviewRequestsByPeriodAndTeamMembers =  async (period, teamMemberIds, cookie) => {
   return resolve({
     url: feedbackRequestURL,
     params: {
       reviewPeriodId: period?.id,
       templateId: period?.reviewTemplateId,
-      requesteeId: teamMemberId,
+      requesteeIds: teamMemberIds,
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+};
+
+export const findSelfReviewRequestsByPeriodAndTeamMembers =  async (period, teamMemberIds, cookie) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      reviewPeriodId: period?.id,
+      templateId: period?.selfReviewTemplateId,
+      requesteeIds: teamMemberIds,
     },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
@@ -203,6 +216,18 @@ export const getFeedbackRequestsByRequestee = async(requesteeId, oldestDate, coo
     url: feedbackRequestURL,
     params: {
       requesteeId,
+      oldestDate
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
+
+export const getFeedbackRequestsByRequestees = async(requesteeIds, oldestDate, cookie) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      requesteeIds,
       oldestDate
     },
     responseType: "json",

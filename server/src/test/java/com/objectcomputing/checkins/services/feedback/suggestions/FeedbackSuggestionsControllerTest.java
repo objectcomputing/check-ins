@@ -45,7 +45,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         createAndAssignRole(RoleType.PDL, pdlProfile);
         MemberProfile supervisor = createADefaultSupervisor();
         createAndAssignRole(RoleType.ADMIN, supervisor);
-        MemberProfile requestee = createASupervisedAndPDLUser(supervisor, pdlProfile);
+        MemberProfile requestee = createAProfileWithSupervisorAndPDL(supervisor, pdlProfile);
         MemberProfile requesteeTeamLead = createAnUnrelatedUser();
         TeamMember requesteeTeamLeadMember = createLeadTeamMember(team, requesteeTeamLead);
         TeamMember requesteeTeamMember = createDefaultTeamMember(team, requestee);
@@ -73,7 +73,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         createAndAssignRole(RoleType.PDL, pdlProfile);
         MemberProfile supervisor = createADefaultSupervisor();
         createAndAssignRole(RoleType.ADMIN, supervisor);
-        MemberProfile requestee = createASupervisedAndPDLUser(supervisor, pdlProfile);
+        MemberProfile requestee = createAProfileWithSupervisorAndPDL(supervisor, pdlProfile);
         MemberProfile requesteeTeamLead = createAnUnrelatedUser();
         TeamMember requesteeTeamLeadMember = createLeadTeamMember(team, requesteeTeamLead);
         TeamMember requesteeTeamMember = createDefaultTeamMember(team, requestee);
@@ -103,7 +103,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         createAndAssignRole(RoleType.PDL, pdlProfile);
         MemberProfile supervisor = createADefaultSupervisor();
         createAndAssignRole(RoleType.ADMIN, supervisor);
-        MemberProfile requestee = createASupervisedAndPDLUser(supervisor, pdlProfile);
+        MemberProfile requestee = createAProfileWithSupervisorAndPDL(supervisor, pdlProfile);
         MemberProfile requesteeTeamLead = createAnUnrelatedUser();
         TeamMember requesteeTeamLeadMember = createLeadTeamMember(team, requesteeTeamLead);
         TeamMember requesteeTeamMember = createDefaultTeamMember(team, requestee);
@@ -132,7 +132,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         createAndAssignRole(RoleType.PDL, pdlProfile);
         MemberProfile supervisor = createADefaultSupervisor();
         createAndAssignRole(RoleType.ADMIN, supervisor);
-        MemberProfile requestee = createASupervisedAndPDLUser(supervisor, pdlProfile);
+        MemberProfile requestee = createAProfileWithSupervisorAndPDL(supervisor, pdlProfile);
         MemberProfile requesteeTeamLead = createAnUnrelatedUser();
         MemberProfile teamMemberofRequestee = createASecondDefaultMemberProfile();
         createLeadTeamMember(team, requesteeTeamLead);
