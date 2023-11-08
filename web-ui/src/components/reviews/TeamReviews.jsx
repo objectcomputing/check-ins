@@ -248,51 +248,63 @@ const TeamReviews = ({ periodId }) => {
   const loadReviews = useCallback(async () => {
     let newSelfReviews = {};
     let newReviews = {};
-    const getSelfReviewRequests = async (teamMembers) => {
-      const teamMemberIds = teamMembers.map(member => member.id);
-      const res = await findSelfReviewRequestsByPeriodAndTeamMembers(period, teamMemberIds, csrf);
-      let data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
-          ? res.payload.data
-          : null;
-      if (data && data.length > 0) {
-        data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
-        data.forEach(selfReview => newSelfReviews[selfReview.requesteeId] = selfReview);
+    const getSelfReviewRequests = async (teamMemberIdBatches) => {
+      for (const teamMemberIds of teamMemberIdBatches) {
+        const res = await findSelfReviewRequestsByPeriodAndTeamMembers(period, teamMemberIds, csrf);
+        let data =
+          res &&
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+            ? res.payload.data
+            : null;
+        if (data && data.length > 0) {
+          data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
+          data.forEach(selfReview => newSelfReviews[selfReview.requesteeId] = selfReview);
+        }
       }
     };
 
-    const getReviewRequests = async (teamMembers) => {
-      const teamMemberIds = teamMembers.map(member => member.id);
-      const res = await findReviewRequestsByPeriodAndTeamMembers(period, teamMemberIds, csrf);
-      let data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
-          ? res.payload.data
-          : null;
-      if (data && data.length > 0) {
-        data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
-        data.forEach(review => {
-            if(!newReviews[review.requesteeId]) {
-                newReviews[review.requesteeId] = [];
-            }
-            newReviews[review.requesteeId].push(review);
-        });
+    const getReviewRequests = async (teamMemberIdBatches) => {
+      for (const teamMemberIds of teamMemberIdBatches) {
+        const res = await findReviewRequestsByPeriodAndTeamMembers(period, teamMemberIds, csrf);
+        let data =
+          res &&
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+            ? res.payload.data
+            : null;
+        if (data && data.length > 0) {
+          data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
+          data.forEach(review => {
+              if(!newReviews[review.requesteeId]) {
+                  newReviews[review.requesteeId] = [];
+              }
+              newReviews[review.requesteeId].push(review);
+          });
+        }
       }
     };
 
     if (csrf && teamMembers && teamMembers.length > 0 && period && !loadingReviews.current) {
+      const batchSize = 50;
+      const teamMemberIdBatches = teamMembers.reduce((batches, member) => {
+        if (!batches.length || batches[batches.length - 1].length === batchSize) {
+          batches.push([]);
+        }
+        if(member?.id) {
+          batches[batches.length - 1].push(member.id)
+        }
+        return batches;
+      }, []);
       loadingReviews.current = true;
       setSelfReviews({});
       setReviews(null);
-      await getSelfReviewRequests(teamMembers);
-      await getReviewRequests(teamMembers);
+      await getSelfReviewRequests(teamMemberIdBatches);
+      await getReviewRequests(teamMemberIdBatches);
       loadingReviews.current = false;
       loadedReviews.current = true;
       setSelfReviews({...newSelfReviews});
