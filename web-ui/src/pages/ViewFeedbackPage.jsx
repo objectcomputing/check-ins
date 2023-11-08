@@ -111,12 +111,25 @@ const ViewFeedbackPage = () => {
     }
     const getFeedbackRequestsForTeamMembers = async(teamMembers) => {
       if (csrf) {
-        let requesteeIds = teamMembers.map((teamMember) => teamMember.id);
+        const batchSize = 50;
+        const teamMemberIdBatches = teamMembers.reduce((batches, member) => {
+          if (!batches.length || batches[batches.length - 1].length === batchSize) {
+            batches.push([]);
+          }
+          if(member?.id) {
+            batches[batches.length - 1].push(member.id)
+          }
+          return batches;
+        }, []);
 
-        let res = await getFeedbackRequestsByRequestees(requesteeIds, undefined, csrf);
-        return res && res.payload && res.payload.data && !res.error
-          ? res.payload.data
-          : null;
+        let results = [];
+        for (const requesteeIds of teamMemberIdBatches) {
+          let res = await getFeedbackRequestsByRequestees(requesteeIds, undefined, csrf);
+          if(res && res.payload && res.payload.data && !res.error) {
+            results = [...results, ...res.payload.data];
+          }
+        }
+        return results;
       }
     }
     const getTemplateInfo = async(templateId) => {
