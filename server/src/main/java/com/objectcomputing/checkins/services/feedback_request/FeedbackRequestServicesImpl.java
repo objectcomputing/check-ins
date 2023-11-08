@@ -9,8 +9,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
-import io.micronaut.cache.annotation.CacheConfig;
-import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -23,9 +21,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Singleton
-@CacheConfig("feedback-cache")
 public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private static Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImpl.class);
@@ -233,7 +231,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
-    @Cacheable
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, List<UUID> requesteeIds) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if (currentUserId == null) {
@@ -242,32 +239,24 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if(requesteeIds != null && !requesteeIds.isEmpty()) {
-            //If the user is not an admin and we are not filtering by creator, then they need to be the supervisor or creator of the requests
-            if(creatorId == null && !currentUserServices.isAdmin()) {
-                for (UUID memberId: requesteeIds) {
-                    if(!isSupervisor(requesteeId, currentUserId)) {
-                        throw new PermissionException("You are not authorized to do this operation");
-                    }
-                }
-            }
-            //users should be able to filter by only requests they have created
-            if (currentUserId.equals(creatorId) || currentUserId.equals(recipientId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDListToStringList(requesteeIds)));
-            } else {
-                throw new PermissionException("You are not authorized to do this operation");
-            }
+            LOG.debug("Finding feedback requests for {} requesteeIds.", requesteeIds.size());
+            feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDListToStringList(requesteeIds)));
         } else {
-
-            boolean isRequesteesSupervisor = isSupervisor(requesteeId, currentUserId);
-
-            //users should be able to filter by only requests they have created
-            if (currentUserId.equals(creatorId) || isRequesteesSupervisor || currentUserId.equals(recipientId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId)));
-            } else {
-                throw new PermissionException("You are not authorized to do this operation");
-
-            }
+            LOG.debug("Finding feedback requests one or fewer requesteeIds: {}", requesteeId);
+            feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId)));
         }
+
+        feedbackReqList = feedbackReqList.stream().filter((FeedbackRequest request) -> {
+            boolean visible = false;
+            if(currentUserServices.isAdmin()){
+                visible = true;
+            } else if(request != null) {
+                if(currentUserId.equals(request.getCreatorId())) visible = true;
+                if(isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
+                if(currentUserId.equals(request.getRecipientId())) visible = true;
+            }
+            return visible;
+        }).collect(Collectors.toList());
 
         return feedbackReqList;
     }

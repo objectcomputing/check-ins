@@ -636,21 +636,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    void testGetByCreatorIdNotPermitted() {
-        MemberProfile pdl = createADefaultMemberProfile();
-        assignPdlRole(pdl);
-        MemberProfile employeeWithPdl = createADefaultMemberProfileForPdl(pdl);
-        MemberProfile recipient = createADefaultRecipient();
-        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdl, employeeWithPdl, recipient);
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s", feedbackRequest.getCreatorId()))
-                .basicAuth(employeeWithPdl.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        assertUnauthorized(responseException);
-    }
-
-    @Test
     void testGetByCreatorRequesteeIdPermitted() {
         //create two employee-PDL relationships
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
@@ -696,11 +681,14 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //search for feedback requests by a specific creator, requestee, and template
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId()))
-                .basicAuth(recipientOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
+                .basicAuth(recipientTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);;
 
-        assertUnauthorized(responseException);
+        final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(0, response.getBody().get().size());
+        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
