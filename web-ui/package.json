@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "jest": {
+    "moduleNameMapper": {
+      "axios": "axios/dist/node/axios.cjs"
+    },
     "snapshotSerializers": [
       "enzyme-to-json/serializer",
       "@emotion/jest/serializer"
