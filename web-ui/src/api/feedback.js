@@ -1,3 +1,4 @@
+import qs from 'qs';
 import { resolve } from "./api.js";
 import { getFeedbackTemplateWithQuestions } from './feedbacktemplate.js'
 
@@ -14,6 +15,9 @@ export const findReviewRequestsByPeriodAndTeamMembers =  async (period, teamMemb
       templateId: period?.reviewTemplateId,
       requesteeIds: teamMemberIds,
     },
+    paramsSerializer: (params) => {
+      return qs.stringify(params, { arrayFormat: 'repeat' })
+    },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });
@@ -26,6 +30,9 @@ export const findSelfReviewRequestsByPeriodAndTeamMembers =  async (period, team
       reviewPeriodId: period?.id,
       templateId: period?.selfReviewTemplateId,
       requesteeIds: teamMemberIds,
+    },
+    paramsSerializer: (params) => {
+      return qs.stringify(params, { arrayFormat: 'repeat' })
     },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
@@ -229,6 +236,9 @@ export const getFeedbackRequestsByRequestees = async(requesteeIds, oldestDate, c
     params: {
       requesteeIds,
       oldestDate
+    },
+    paramsSerializer: (params) => {
+      return qs.stringify(params, { arrayFormat: 'repeat' })
     },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
