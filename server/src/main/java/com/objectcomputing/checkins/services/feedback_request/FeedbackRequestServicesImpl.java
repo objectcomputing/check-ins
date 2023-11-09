@@ -102,8 +102,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private void sendNewRequestEmail(FeedbackRequest storedRequest) {
         MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+        String senderName = creator.getFirstName() + " " + creator.getLastName();
         String newContent = "<h1>You have received a feedback request.</h1>" +
-        "<p><b>" + creator.getFirstName() + " " + creator.getLastName() + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
+                "<p><b>" + senderName + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
         if (storedRequest.getDueDate() != null) {
             newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " + storedRequest.getDueDate().getYear() + ".";
         }
@@ -111,7 +112,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
 //        LOG.warn("Pretending to send an email about the new request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
         if(storedRequest.getRecipientId() != storedRequest.getCreatorId()) {
-            emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         }
     }
 
@@ -180,14 +181,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
             MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
             MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+            String senderName = creator.getFirstName() + " " + creator.getLastName();
             String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
-                    "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
+                    "<p><b>" + senderName +
                     "</b> has reopened the feedback request on <b>" +
                     requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
                     "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
             newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 //            LOG.warn("Pretending to send an email about the reopened request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
-            emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         }
 
         // Send email if the feedback request has been reassigned

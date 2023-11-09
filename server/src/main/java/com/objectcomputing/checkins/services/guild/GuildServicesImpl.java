@@ -263,7 +263,7 @@ public class GuildServicesImpl implements GuildServices {
 
         String emailContent = constructEmailContent(addedMembers, removedMembers, guildName);
         String subject = "Membership Changes have been made to the " + guildName +" guild";
-        emailSender.sendEmail(subject, emailContent, emailsOfGuildLeads.toArray(new String[0]));
+        emailSender.sendEmail(null, null, subject, emailContent, emailsOfGuildLeads.toArray(new String[0]));
 
     }
 

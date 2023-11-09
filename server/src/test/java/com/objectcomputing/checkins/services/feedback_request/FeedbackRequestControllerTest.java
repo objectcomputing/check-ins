@@ -226,10 +226,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
+        String fromName = pdlMemberProfile.getFirstName()+" "+pdlMemberProfile.getLastName();
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         String correctContent = createEmailContent(feedbackRequest, response.getBody().get().getId(), pdlMemberProfile, employeeMemberProfile);
-        verify(emailSender).sendEmail(notificationSubject, correctContent, recipient.getWorkEmail());
+        verify(emailSender).sendEmail(fromName, pdlMemberProfile.getWorkEmail(), notificationSubject, correctContent, recipient.getWorkEmail());
     }
 
     @Test
@@ -1056,10 +1057,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 .basicAuth(pdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
+        String fromName = pdl.getFirstName()+" "+pdl.getLastName();
         // Verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         String correctContent = updateEmailContent(response.getBody().get().getId(), pdl, requestee);
-        verify(emailSender).sendEmail(notificationSubject, correctContent, recipient.getWorkEmail());
+        verify(emailSender).sendEmail(fromName, pdl.getWorkEmail(), notificationSubject, correctContent, recipient.getWorkEmail());
     }
 
     @Test
