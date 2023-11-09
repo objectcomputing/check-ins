@@ -73,12 +73,16 @@ public class MailJetSender implements EmailSender {
 
     /**
      * This call sends a message to the given recipient with attachment.
+     * @param fromName {@link String} The name of the person sending the email
+     * @param fromAddress {@link String} The email address of the person sending the email
      * @param subject {@link String} Subject of email
      * @param content {@link String} Contents of email
      * @param recipients List of recipient email addresses
      */
     @Override
-    public void sendEmail(String subject, String content, String... recipients) {
+    public void sendEmail(String fromName, String fromAddress, String subject, String content, String... recipients) {
+        if(fromName == null) fromName = this.fromName;
+        if(fromAddress == null) fromAddress = this.fromAddress;
 
         List<JSONArray> emailBatches = getEmailBatches(recipients);
         List<JSONArray> failedBatches = new ArrayList<>();
@@ -111,9 +115,9 @@ public class MailJetSender implements EmailSender {
     }
 
     @Override
-    public boolean sendEmailReceivesStatus(String subject, String content, String... recipients) {
+    public boolean sendEmailReceivesStatus(String fromName, String fromAddress, String subject, String content, String... recipients) {
         try {
-            sendEmail(subject, content, recipients);
+            sendEmail(fromName, fromAddress, subject, content, recipients);
         } catch (Exception e){
             LOG.error("An unexpected exception occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
             return false;

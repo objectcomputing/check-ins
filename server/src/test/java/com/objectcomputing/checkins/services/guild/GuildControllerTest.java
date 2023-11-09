@@ -80,7 +80,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         client.toBlocking().exchange(request, GuildResponseDTO.class);
 
-        verify(emailSender).sendEmail(
+        verify(emailSender).sendEmail(null, null,
                 "Membership Changes have been made to the Ninja guild",
                 "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been added:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "billm@objectcomputing.com"
@@ -109,7 +109,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         client.toBlocking().exchange(request, GuildResponseDTO.class);
 
-        verify(emailSender).sendEmail(
+        verify(emailSender).sendEmail(null, null,
                 "Membership Changes have been made to the Ninja guild",
                 "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been removed:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "billm@objectcomputing.com"
