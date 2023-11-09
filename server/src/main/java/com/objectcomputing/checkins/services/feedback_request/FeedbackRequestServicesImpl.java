@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
-    private static Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImpl.class);
 
     public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
     public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
@@ -36,7 +36,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final MemberProfileServices memberProfileServices;
     private EmailSender emailSender;
     private final String notificationSubject;
-    private final String notificationContent;
     private final String webURL;
 
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
@@ -44,7 +43,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                        MemberProfileServices memberProfileServices,
                                        @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
                                        @Property(name = WEB_UI_URL) String webURL
     )
             {
@@ -52,7 +50,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.emailSender = emailSender;
-        this.notificationContent = notificationContent;
         this.notificationSubject = notificationSubject;
         this.webURL = webURL;
     }
@@ -114,7 +111,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
 //        LOG.warn("Pretending to send an email about the new request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
-        emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        if(storedRequest.getRecipientId() != storedRequest.getCreatorId()) {
+            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        }
     }
 
     @Override
