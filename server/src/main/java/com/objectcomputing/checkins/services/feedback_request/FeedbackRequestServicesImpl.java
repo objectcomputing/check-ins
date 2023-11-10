@@ -111,7 +111,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
 //        LOG.warn("Pretending to send an email about the new request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
-        if(storedRequest.getRecipientId() != storedRequest.getRequesteeId()) {
+        if(!storedRequest.getRecipientId().equals(storedRequest.getRequesteeId())) {
             emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         }
     }
