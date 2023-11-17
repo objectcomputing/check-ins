@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+
+import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -57,12 +59,14 @@ public class EmailServicesImpl implements EmailServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        String fromName = currentUser.getFirstName() + " " + currentUser.getLastName();
         LocalDateTime sendDate = LocalDateTime.now();
         boolean status;
         if (html) {
-            status = htmlEmailSender.sendEmailReceivesStatus(subject, content, recipients);
+            status = htmlEmailSender.sendEmailReceivesStatus(fromName, currentUser.getWorkEmail(), subject, content, recipients);
         } else {
-            status = textEmailSender.sendEmailReceivesStatus(subject, content, recipients);
+            status = textEmailSender.sendEmailReceivesStatus(fromName, currentUser.getWorkEmail(), subject, content, recipients);
         }
 
         UUID senderId = currentUserServices.getCurrentUser().getId();

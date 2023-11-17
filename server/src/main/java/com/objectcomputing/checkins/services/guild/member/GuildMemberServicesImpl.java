@@ -84,7 +84,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         }
 
         emailSender
-                .sendEmail("Membership changes have been made to the " + guild.get().getName() + " guild",
+                .sendEmail(null, null, "Membership changes have been made to the " + guild.get().getName() + " guild",
                         constructEmailContent(guildMember, true),
                         getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
                 );
@@ -166,7 +166,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
                 .orElseThrow(() -> new NotFoundException("No Guild found with id " + guildMember.getGuildId()));
 
         emailSender
-                .sendEmail("Membership Changes have been made to the " + guild.getName() + " guild",
+                .sendEmail(null, null, "Membership Changes have been made to the " + guild.getName() + " guild",
                         constructEmailContent(guildMember, false),
                         getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
                 );

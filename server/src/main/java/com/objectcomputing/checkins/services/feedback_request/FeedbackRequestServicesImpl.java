@@ -9,8 +9,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
-import io.micronaut.cache.annotation.CacheConfig;
-import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -23,12 +21,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Singleton
-@CacheConfig("feedback-cache")
 public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
-    private static Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImpl.class);
 
     public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
     public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
@@ -38,7 +36,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final MemberProfileServices memberProfileServices;
     private EmailSender emailSender;
     private final String notificationSubject;
-    private final String notificationContent;
     private final String webURL;
 
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
@@ -46,7 +43,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                        MemberProfileServices memberProfileServices,
                                        @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
                                        @Property(name = WEB_UI_URL) String webURL
     )
             {
@@ -54,7 +50,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.emailSender = emailSender;
-        this.notificationContent = notificationContent;
         this.notificationSubject = notificationSubject;
         this.webURL = webURL;
     }
@@ -107,15 +102,18 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private void sendNewRequestEmail(FeedbackRequest storedRequest) {
         MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+        String senderName = creator.getFirstName() + " " + creator.getLastName();
         String newContent = "<h1>You have received a feedback request.</h1>" +
-        "<p><b>" + creator.getFirstName() + " " + creator.getLastName() + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
+                "<p><b>" + senderName + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
         if (storedRequest.getDueDate() != null) {
             newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " + storedRequest.getDueDate().getYear() + ".";
         }
         newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
 //        LOG.warn("Pretending to send an email about the new request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
-        emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        if(!storedRequest.getRecipientId().equals(storedRequest.getRequesteeId())) {
+            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        }
     }
 
     @Override
@@ -183,14 +181,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
             MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
             MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+            String senderName = creator.getFirstName() + " " + creator.getLastName();
             String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
-                    "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
+                    "<p><b>" + senderName +
                     "</b> has reopened the feedback request on <b>" +
                     requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
                     "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
             newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 //            LOG.warn("Pretending to send an email about the reopened request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
-            emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         }
 
         // Send email if the feedback request has been reassigned
@@ -233,30 +232,45 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
-    @Cacheable
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, List<UUID> requesteeIds) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
-
-        List<FeedbackRequest> feedbackReqList = new ArrayList<>();
-        if (currentUserId != null) {
-            //users should be able to filter by only requests they have created
-            if (currentUserId.equals(creatorId) || isRequesteesSupervisor || currentUserId.equals(recipientId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId)));
-            } else {
-                throw new PermissionException("You are not authorized to do this operation");
-            }
+        if (currentUserId == null) {
+            throw new PermissionException("You are not authorized to do this operation");
         }
 
+        List<FeedbackRequest> feedbackReqList = new ArrayList<>();
+        if(requesteeIds != null && !requesteeIds.isEmpty()) {
+            LOG.debug("Finding feedback requests for {} requesteeIds.", requesteeIds.size());
+            feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDListToStringList(requesteeIds)));
+        } else {
+            LOG.debug("Finding feedback requests one or fewer requesteeIds: {}", requesteeId);
+            feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId)));
+        }
+
+        feedbackReqList = feedbackReqList.stream().filter((FeedbackRequest request) -> {
+            boolean visible = false;
+            if(currentUserServices.isAdmin()){
+                visible = true;
+            } else if(request != null) {
+                if(currentUserId.equals(request.getCreatorId())) visible = true;
+                if(isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
+                if(currentUserId.equals(request.getRecipientId())) visible = true;
+            }
+            return visible;
+        }).collect(Collectors.toList());
+
         return feedbackReqList;
+    }
+
+    private boolean isSupervisor(UUID requesteeId, UUID currentUserId) {
+        return requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
     }
 
     private boolean createIsPermitted(UUID requesteeId) {
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        boolean isRequesteesSupervisor = isSupervisor(requesteeId, currentUserId);
         final UUID requesteePDL = requestee.getPdlId();
 
         //a PDL may create a request for a user who is assigned to them

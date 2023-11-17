@@ -10,7 +10,7 @@ import Switch from "@mui/material/Switch";
 import FeedbackRequestCard from '../components/feedback_request_card/FeedbackRequestCard';
 import Typography from "@mui/material/Typography";
 import "./ViewFeedbackPage.css";
-import {getFeedbackRequestsByCreator, getFeedbackRequestsByRequestee} from "../api/feedback";
+import {getFeedbackRequestsByCreator, getFeedbackRequestsByRequestees} from "../api/feedback";
 import {AppContext} from "../context/AppContext";
 import {selectCsrfToken, selectCurrentUserId, selectProfile, selectIsAdmin, selectIsSupervisor, selectMyTeam, selectCurrentMembers, selectSubordinates} from "../context/selectors";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
@@ -109,12 +109,27 @@ const ViewFeedbackPage = () => {
           : null;
       }
     }
-    const getFeedbackRequestsById = async(requesteeId) => {
+    const getFeedbackRequestsForTeamMembers = async(teamMembers) => {
       if (csrf) {
-        let res = await getFeedbackRequestsByRequestee(requesteeId, undefined, csrf);
-        return res && res.payload && res.payload.data && !res.error
-          ? res.payload.data
-          : null;
+        const batchSize = 50;
+        const teamMemberIdBatches = teamMembers.reduce((batches, member) => {
+          if (!batches.length || batches[batches.length - 1].length === batchSize) {
+            batches.push([]);
+          }
+          if(member?.id) {
+            batches[batches.length - 1].push(member.id)
+          }
+          return batches;
+        }, []);
+
+        let results = [];
+        for (const requesteeIds of teamMemberIdBatches) {
+          let res = await getFeedbackRequestsByRequestees(requesteeIds, undefined, csrf);
+          if(res && res.payload && res.payload.data && !res.error) {
+            results = [...results, ...res.payload.data];
+          }
+        }
+        return results;
       }
     }
     const getTemplateInfo = async(templateId) => {
@@ -134,20 +149,14 @@ const ViewFeedbackPage = () => {
       const contains = (toFind) => feedbackRequests.findIndex(request => request.id === toFind.id) !== -1;
 
       if(teamMembers && teamMembers.length > 0) {
-        await Promise.all(teamMembers.map((member) => {
-          return new Promise(async (resolve) => {
-            const memberRequests = await getFeedbackRequestsById(member.id);
-            memberRequests.forEach((request) => {
-              if (!contains(request)) {
-                feedbackRequests.push(request);
-              }
-            });
-            resolve();
-          });
-        }));
+        const memberRequests = await getFeedbackRequestsForTeamMembers(teamMembers);
+        memberRequests.forEach((request) => {
+          if (!contains(request)) {
+            feedbackRequests.push(request);
+          }
+        });
       }
       return feedbackRequests;
-
     }
 
     const getTemplates = async (feedbackRequests) => {
