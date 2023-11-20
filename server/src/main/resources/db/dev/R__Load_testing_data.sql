@@ -10,7 +10,9 @@ delete from guild;
 delete from member_skills;
 delete from pulse_response;
 delete from questions;
+delete from member_roles;
 delete from role_permissions;
+delete from permissions;
 delete from role;
 delete from team_member;
 delete from team;
@@ -589,10 +591,10 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f');
 
-insert into role_permissions
-    (roleid, permissionid)
-values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '439ad8a8-500f-4f3f-963b-a86437d5820a');
+-- insert into role_permissions
+--     (roleid, permissionid)
+-- values
+--     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '439ad8a8-500f-4f3f-963b-a86437d5820a');
 
 insert into role_permissions
     (roleid, permissionid)
