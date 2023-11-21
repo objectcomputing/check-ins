@@ -1,6 +1,11 @@
 package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
@@ -11,26 +16,24 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import jakarta.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Objects;
-
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class RetentionReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
     @Inject
     @Client("/reports/retention")
     private HttpClient client;
+
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
 
     private String encodeValue(String value) throws UnsupportedEncodingException {
         return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
@@ -38,11 +41,14 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
 
     @Test
     public void testPOSTEmptyRequestReturns400() {
+        MemberProfile adminMember = createAnUnrelatedUser();
+        assignAdminRole(adminMember);
+
         RetentionReportRequestDTO dto = new RetentionReportRequestDTO();
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.POST("", dto)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+                    .basicAuth(adminMember.getWorkEmail(), ADMIN_ROLE));
         });
 
         assertNotNull(thrown.getResponse());
@@ -51,6 +57,9 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
 
     @Test
     public void testPOSTNullStartDateReturns400() {
+        MemberProfile adminMember = createAnUnrelatedUser();
+        assignAdminRole(adminMember);
+
         RetentionReportRequestDTO dto = new RetentionReportRequestDTO();
         dto.setStartDate(null);
         dto.setEndDate(LocalDate.now());
@@ -58,7 +67,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.POST("", dto)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+                    .basicAuth(adminMember.getWorkEmail(), ADMIN_ROLE));
         });
 
         assertNotNull(thrown.getResponse());
@@ -67,6 +76,9 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
 
     @Test
     public void testPOSTNullEndDateReturns400() {
+        MemberProfile adminMember = createAnUnrelatedUser();
+        assignAdminRole(adminMember);
+
         RetentionReportRequestDTO dto = new RetentionReportRequestDTO();
         dto.setStartDate(LocalDate.now());
         dto.setEndDate(null);
@@ -74,7 +86,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.POST("", dto)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+                    .basicAuth(adminMember.getWorkEmail(), ADMIN_ROLE));
         });
 
         assertNotNull(thrown.getResponse());
@@ -83,6 +95,9 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
 
     @Test
     public void testPOSTEndDateBeforeStartDateReturns400() {
+        MemberProfile adminMember = createAnUnrelatedUser();
+        assignAdminRole(adminMember);
+
         RetentionReportRequestDTO dto = new RetentionReportRequestDTO();
         dto.setStartDate(LocalDate.now());
         dto.setEndDate(LocalDate.now().minusMonths(1));
@@ -90,7 +105,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.POST("", dto)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+                    .basicAuth(adminMember.getWorkEmail(), ADMIN_ROLE));
         });
 
         assertNotNull(thrown.getResponse());
@@ -105,7 +120,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setFrequency("WEEKLY");
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfAdmin);
+        assignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -127,7 +142,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setFrequency("");
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfAdmin);
+        assignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -149,7 +164,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setFrequency("MoNtHlY");
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfAdmin);
+        assignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -176,7 +191,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         final MemberProfile memberProfile4 = createATerminatedNewHireProfile();
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfAdmin);
+        assignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -189,5 +204,30 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s", request.getPath()), response.getHeaders().get("Location"));
     }
+
+    @Test
+    void testCorrectRetentionNoPermission() {
+        RetentionReportRequestDTO dto = new RetentionReportRequestDTO();
+        dto.setStartDate(LocalDate.now().minusMonths(2));
+        dto.setEndDate(LocalDate.now());
+        dto.setFrequency("MONTHLY");
+
+        final MemberProfile memberProfile1 = createAPastMemberProfile();
+        final MemberProfile memberProfile2 = createAPastTerminatedMemberProfile();
+        final MemberProfile memberProfile3 = createANewHireProfile();
+        final MemberProfile memberProfile4 = createATerminatedNewHireProfile();
+
+        MemberProfile memberProfile = createAnUnrelatedUser();
+        assignMemberRole(memberProfile);
+
+        final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
+            .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(request, RetentionReportResponseDTO.class);
+        });
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+
+    }
+
 
 }
