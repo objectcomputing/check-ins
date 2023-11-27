@@ -51,7 +51,7 @@ public class AnniversaryReportController {
      */
 
     @Get("/{?month}")
-    @RequiredPermission(Permissions.CAN_VIEW_ADMIN_REPORT)
+    @RequiredPermission(Permissions.CAN_VIEW_ANNIVERSARY_REPORT)
     public Mono<HttpResponse<List<AnniversaryReportResponseDTO>>> findByValue(@Nullable String[] month) {
 
         return Mono.fromCallable(() -> anniversaryServices.findByValue(month))

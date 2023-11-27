@@ -46,7 +46,7 @@ public class SkillsReportController {
      * @return {@link SkillsReportResponseDTO} Returned skills report
      */
     @Post()
-    @RequiredPermission(Permissions.CAN_VIEW_PDL_REPORT)
+    @RequiredPermission(Permissions.CAN_VIEW_SKILLS_REPORT)
     public Mono<HttpResponse<SkillsReportResponseDTO>> reportSkills(@Body @Valid @NotNull SkillsReportRequestDTO requestBody,
                                                                     HttpRequest<SkillsReportRequestDTO> request) {
         return Mono.fromCallable(() -> skillsReportServices.report(requestBody))

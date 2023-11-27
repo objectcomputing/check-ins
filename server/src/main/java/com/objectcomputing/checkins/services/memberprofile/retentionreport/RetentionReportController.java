@@ -48,7 +48,7 @@ public class RetentionReportController {
      * @return {@link RetentionReportResponseDTO} Returned retention report
      */
     @Post()
-    @RequiredPermission(Permissions.CAN_VIEW_ADMIN_REPORT)
+    @RequiredPermission(Permissions.CAN_VIEW_RETENTION_REPORT)
     public Mono<HttpResponse<RetentionReportResponseDTO>> reportRetention(@Body @Valid @NotNull RetentionReportRequestDTO requestBody,
                                                                           HttpRequest<RetentionReportRequestDTO> request) {
         if (requestBody.getStartDate().isAfter(requestBody.getEndDate()) ||

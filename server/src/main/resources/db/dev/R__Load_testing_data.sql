@@ -539,12 +539,27 @@ values
 insert into permissions
 (id, permission)
 values
-    ('f7e815de-8849-11ee-b9d1-0242ac120002', 'CAN_VIEW_ADMIN_REPORT');
+    ('f7e815de-8849-11ee-b9d1-0242ac120002', 'CAN_VIEW_SKILLS_REPORT');
 
 insert into permissions
 (id, permission)
 values
-    ('f7e81958-8849-11ee-b9d1-0242ac120002', 'CAN_VIEW_PDL_REPORT');
+    ('f7e81958-8849-11ee-b9d1-0242ac120002', 'CAN_VIEW_RETENTION_REPORT');
+
+insert into permissions
+(id, permission)
+values
+    ('056e32b2-8d07-11ee-b9d1-0242ac120002', 'CAN_VIEW_ANNIVERSARY_REPORT');
+
+insert into permissions
+(id, permission)
+values
+    ('2d765f78-8d07-11ee-b9d1-0242ac120002', 'CAN_VIEW_BIRTHDAY_REPORT');
+
+insert into permissions
+(id, permission)
+values
+    ('2d765d5c-8d07-11ee-b9d1-0242ac120002', 'CAN_VIEW_PROFILE_REPORT');
 
 insert into role_permissions
     (roleid, permissionid)
@@ -582,7 +597,7 @@ values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1fd790d9-df9a-4201-818b-3a9ac5e5be3b');
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f6961946-a792-4a16-b675-d8cf7980c17a');
 
@@ -597,6 +612,21 @@ values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f7e81958-8849-11ee-b9d1-0242ac120002');
 
 insert into role_permissions
+(roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '056e32b2-8d07-11ee-b9d1-0242ac120002');
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765f78-8d07-11ee-b9d1-0242ac120002');
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765d5c-8d07-11ee-b9d1-0242ac120002');
+
+insert into role_permissions
     (roleid, permissionid)
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '008f6641-0b0a-4e89-84f0-c580f912b80d');
@@ -607,14 +637,34 @@ values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '1bf32dfe-a204-4c80-889e-829ca66c999b');
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f');
 
 insert into role_permissions
 (roleid, permissionid)
 values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e815de-8849-11ee-b9d1-0242ac120002');
+
+insert into role_permissions
+(roleid, permissionid)
+values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e81958-8849-11ee-b9d1-0242ac120002');
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '056e32b2-8d07-11ee-b9d1-0242ac120002');
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2d765f78-8d07-11ee-b9d1-0242ac120002');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '439ad8a8-500f-4f3f-963b-a86437d5820a');
 
 insert into role_permissions
     (roleid, permissionid)

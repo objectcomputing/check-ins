@@ -46,7 +46,7 @@ public class MemberProfileReportController {
     }
 
     @Get(uri = "/csv", produces = MediaType.TEXT_CSV)
-    @RequiredPermission(Permissions.CAN_VIEW_ADMIN_REPORT)
+    @RequiredPermission(Permissions.CAN_VIEW_PROFILE_REPORT)
     public Mono<MutableHttpResponse<File>> generateCsv() {
         return Flux.defer(() -> Flux.fromIterable(memberProfileServices.findByValues(null, null, null, null, null, null, false)))
                 .subscribeOn(ioScheduler)

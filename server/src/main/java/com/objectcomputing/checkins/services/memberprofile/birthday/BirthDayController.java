@@ -53,7 +53,7 @@ public class BirthDayController {
      */
 
     @Get("/{?month,dayOfMonth}")
-    @RequiredPermission(Permissions.CAN_VIEW_ADMIN_REPORT)
+    @RequiredPermission(Permissions.CAN_VIEW_BIRTHDAY_REPORT)
     public Mono<HttpResponse<List<BirthDayResponseDTO>>> findByValue(@Nullable String[] month, @Nullable Integer[] dayOfMonth) {
 
         return Mono.fromCallable(() -> birthDayServices.findByValue(month, dayOfMonth))
