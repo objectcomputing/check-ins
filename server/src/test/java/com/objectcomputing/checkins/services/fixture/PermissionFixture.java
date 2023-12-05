@@ -11,31 +11,36 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
 
     // Add MEMBER Permissions here
     List<Permissions> memberPermissions = List.of(
-            Permissions.CAN_VIEW_FEEDBACK_REQUEST,
-            Permissions.CAN_DELETE_FEEDBACK_REQUEST,
-            Permissions.CAN_VIEW_FEEDBACK_ANSWER,
-            Permissions.CAN_VIEW_PERMISSIONS
+        Permissions.CAN_VIEW_FEEDBACK_REQUEST,
+        Permissions.CAN_DELETE_FEEDBACK_REQUEST,
+        Permissions.CAN_VIEW_FEEDBACK_ANSWER,
+        Permissions.CAN_VIEW_PERMISSIONS
     );
 
     // Add PDL Permissions here
     List<Permissions> pdlPermissions = List.of(
-            Permissions.CAN_VIEW_FEEDBACK_REQUEST,
-            Permissions.CAN_CREATE_FEEDBACK_REQUEST,
-            Permissions.CAN_DELETE_FEEDBACK_REQUEST,
-            Permissions.CAN_VIEW_FEEDBACK_ANSWER,
-            Permissions.CAN_VIEW_PERMISSIONS
+        Permissions.CAN_VIEW_FEEDBACK_REQUEST,
+        Permissions.CAN_CREATE_FEEDBACK_REQUEST,
+        Permissions.CAN_DELETE_FEEDBACK_REQUEST,
+        Permissions.CAN_VIEW_FEEDBACK_ANSWER,
+        Permissions.CAN_VIEW_PERMISSIONS
     );
 
     // Add ADMIN Permissions here
     List<Permissions> adminPermissions = List.of(
-            Permissions.CAN_VIEW_FEEDBACK_REQUEST,
-            Permissions.CAN_CREATE_FEEDBACK_REQUEST,
-            Permissions.CAN_DELETE_FEEDBACK_REQUEST,
-            Permissions.CAN_VIEW_FEEDBACK_ANSWER,
-            Permissions.CAN_DELETE_ORGANIZATION_MEMBERS,
-            Permissions.CAN_CREATE_ORGANIZATION_MEMBERS,
-            Permissions.CAN_VIEW_ROLE_PERMISSIONS,
-            Permissions.CAN_VIEW_PERMISSIONS
+        Permissions.CAN_VIEW_FEEDBACK_REQUEST,
+        Permissions.CAN_CREATE_FEEDBACK_REQUEST,
+        Permissions.CAN_DELETE_FEEDBACK_REQUEST,
+        Permissions.CAN_VIEW_FEEDBACK_ANSWER,
+        Permissions.CAN_DELETE_ORGANIZATION_MEMBERS,
+        Permissions.CAN_CREATE_ORGANIZATION_MEMBERS,
+        Permissions.CAN_VIEW_ROLE_PERMISSIONS,
+        Permissions.CAN_VIEW_PERMISSIONS,
+        Permissions.CAN_VIEW_SKILLS_REPORT,
+        Permissions.CAN_VIEW_RETENTION_REPORT,
+        Permissions.CAN_VIEW_ANNIVERSARY_REPORT,
+        Permissions.CAN_VIEW_BIRTHDAY_REPORT,
+        Permissions.CAN_VIEW_PROFILE_REPORT
     );
 
     default Permission createACustomPermission(Permissions perm) {

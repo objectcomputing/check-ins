@@ -42,7 +42,7 @@ public class PermissionController {
     /**
      * Get all permissions (orders by permission name)
      *
-     * @return {@link List < Permission > list of Permissions}
+     * @return {@link List < Permission > list order by Permissions}
      */
     @RequiredPermission(Permissions.CAN_VIEW_PERMISSIONS)
     @Get("/OrderByPermission")
@@ -57,7 +57,7 @@ public class PermissionController {
     /**
      * Get all permissions
      *
-     * @return {@link List < Permission > list of Permissions}
+     * @return {@link List < Permission > list of all Permissions}
      */
     @RequiredPermission(Permissions.CAN_VIEW_PERMISSIONS)
     @Get
