@@ -1,3 +1,7 @@
+datasources:
+  default:
+    maximum-pool-size: 10
+---
 flyway:
   enabled: enabled
   datasources:
