@@ -14,6 +14,7 @@ export const selectTeams = (state) => state.teams;
 export const selectGuilds = (state) => state.guilds;
 export const selectLoading = (state) => state.loading;
 export const selectReviewPeriods = (state) => state.reviewPeriods;
+export const selectPermissions = (state) => state.permissions;
 
 export const selectTeamsLoading = createSelector (
   selectLoading,
@@ -394,6 +395,15 @@ export const selectMyGuilds = createSelector(
   (id, guilds) =>
     guilds?.filter((guild) =>
       guild.guildMembers?.some((member) => member.memberId === id)
+    )
+);
+
+export const selectMyPermissions = createSelector(
+  selectCurrentUserId,
+  selectPermissions,
+  (id, permissions) =>
+  permissions?.filter((permission) =>
+    permission.permissions?.some((member) => member.memberId === id)
     )
 );
 

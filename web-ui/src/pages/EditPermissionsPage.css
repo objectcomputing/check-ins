@@ -1,0 +1,21 @@
+.edit-permissions-page {
+  margin: 2rem;
+}
+
+.edit-permissions-list {
+  margin: 1rem;
+}
+
+.search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.show-all-permissions {
+  align-items: center;
+  display: flex;
+  margin-top: 1rem;
+}
