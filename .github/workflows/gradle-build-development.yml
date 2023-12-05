@@ -116,5 +116,5 @@ jobs:
             --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
             --set-env-vars "MICRONAUT_ENVIRONMENTS=dev" \
             --platform "managed" \
-            --max-instances 4 \
+            --max-instances 2 \
             --allow-unauthenticated
