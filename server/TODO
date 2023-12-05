@@ -1,5 +1,0 @@
-com.objectcomputing.checkins.services.member_skill.skillsreport.SkillsReportController
-com.objectcomputing.checkins.services.memberprofile.retentionreport.RetentionReportController
-com.objectcomputing.checkins.services.memberprofile.anniversaryreport.AnniversaryReportController
-com.objectcomputing.checkins.services.memberprofile.birthday.BirthDayController
-com.objectcomputing.checkins.services.memberprofile.csvreport.MemberProfileReportController
