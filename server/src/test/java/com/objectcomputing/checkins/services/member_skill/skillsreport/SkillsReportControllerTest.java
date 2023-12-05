@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,8 +45,8 @@ public class SkillsReportControllerTest extends TestContainersSuite
 
     @Test
     void testValidRequestNonEmptyResponse() {
-        MemberProfile pdlMember = createAnUnrelatedUser();
-        assignPdlRole(pdlMember);
+        MemberProfile adminMember = createAnUnrelatedUser();
+        assignAdminRole(adminMember);
 
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final Skill skill = createADefaultSkill();
@@ -61,7 +61,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
         final HttpRequest<SkillsReportRequestDTO> request = HttpRequest.POST("", skillsReportRequestDTO)
-                .basicAuth(pdlMember.getWorkEmail(), PDL_ROLE);
+                .basicAuth(adminMember.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<SkillsReportResponseDTO> response = client.toBlocking()
                 .exchange(request, SkillsReportResponseDTO.class);
 
@@ -79,8 +79,8 @@ public class SkillsReportControllerTest extends TestContainersSuite
 
     @Test
     void testValidRequestEmptyResponse() {
-        MemberProfile pdlMember = createAnUnrelatedUser();
-        assignPdlRole(pdlMember);
+        MemberProfile adminMember = createAnUnrelatedUser();
+        assignAdminRole(adminMember);
 
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final Skill skill = createADefaultSkill();
@@ -95,7 +95,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
         final HttpRequest<SkillsReportRequestDTO> request = HttpRequest.POST("", skillsReportRequestDTO)
-                .basicAuth(pdlMember.getWorkEmail(), PDL_ROLE);
+                .basicAuth(adminMember.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<SkillsReportResponseDTO> response = client.toBlocking()
                 .exchange(request, SkillsReportResponseDTO.class);
 
@@ -108,8 +108,8 @@ public class SkillsReportControllerTest extends TestContainersSuite
 
     @Test
     void testInvalidRequestSkillNotExist() {
-        MemberProfile pdlMember = createAnUnrelatedUser();
-        assignPdlRole(pdlMember);
+        MemberProfile adminMember = createAnUnrelatedUser();
+        assignAdminRole(adminMember);
 
         final SkillsReportRequestDTO skillsReportRequestDTO = new SkillsReportRequestDTO();
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
@@ -121,7 +121,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
         final HttpRequest<SkillsReportRequestDTO> request = HttpRequest.POST("", skillsReportRequestDTO)
-                .basicAuth(pdlMember.getWorkEmail(), PDL_ROLE);
+                .basicAuth(adminMember.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -130,8 +130,8 @@ public class SkillsReportControllerTest extends TestContainersSuite
 
     @Test
     void testInvalidRequestMemberProfileNotExist() {
-        MemberProfile pdlMember = createAnUnrelatedUser();
-        assignPdlRole(pdlMember);
+        MemberProfile adminMember = createAnUnrelatedUser();
+        assignAdminRole(adminMember);
 
         final Skill skill = createADefaultSkill();
 
@@ -147,7 +147,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         skillsReportRequestDTO.setMembers(members);
 
         final HttpRequest<SkillsReportRequestDTO> request = HttpRequest.POST("", skillsReportRequestDTO)
-                .basicAuth(pdlMember.getWorkEmail(), PDL_ROLE);
+                .basicAuth(adminMember.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
