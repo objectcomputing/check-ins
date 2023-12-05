@@ -40,7 +40,11 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_VIEW_RETENTION_REPORT,
         Permissions.CAN_VIEW_ANNIVERSARY_REPORT,
         Permissions.CAN_VIEW_BIRTHDAY_REPORT,
-        Permissions.CAN_VIEW_PROFILE_REPORT
+        Permissions.CAN_VIEW_PROFILE_REPORT,
+        Permissions.CAN_CREATE_CHECKINS,
+        Permissions.CAN_VIEW_CHECKINS,
+        Permissions.CAN_UPDATE_CHECKINS,
+        Permissions.CAN_DELETE_CHECKINS
     );
 
     default Permission createACustomPermission(Permissions perm) {
