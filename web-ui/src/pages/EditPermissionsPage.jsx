@@ -13,7 +13,7 @@ const EditPermissionsPage = (props) => {
   const [searchText, setSearchText] = useState("");
   const [showAllSkills, setShowAllSkills] = useState(false);
 
-  const allPermissions = selectPermissions(state);
+  // const allPermissions = selectPermissions(state);
 
   const handleClick = () => setShowAllSkills(!showAllSkills);
 
