@@ -604,11 +604,6 @@ insert into permissions
 values
     ('ecd952a1-c7c8-47a9-b4ee-762b99276a6f', 'CAN_UPDATE_CHECKINS');
 
-insert into permissions
-(id, permission)
-values
-    ('39adca8f-0f72-49ff-8c59-e39bb9d794dd', 'CAN_DELETE_CHECKINS');
-
 
 
 -- Admin Permissions
@@ -677,14 +672,6 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765d5c-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_PROFILE_REPORT
 
-
-
--- PDL Permissions
-insert into role_permissions
-    (roleid, permissionid)
-values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '008f6641-0b0a-4e89-84f0-c580f912b80d'); -- CAN_VIEW_FEEDBACK_REQUEST
-
 insert into role_permissions
 (roleid, permissionid)
 values
@@ -700,10 +687,13 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
 
+
+
+-- PDL Permissions
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '39adca8f-0f72-49ff-8c59-e39bb9d794dd');  -- CAN_DELETE_CHECKINS
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '008f6641-0b0a-4e89-84f0-c580f912b80d'); -- CAN_VIEW_FEEDBACK_REQUEST
 
 insert into role_permissions
     (roleid, permissionid)

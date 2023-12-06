@@ -17,5 +17,4 @@ public enum Permissions {
     CAN_CREATE_CHECKINS,
     CAN_VIEW_CHECKINS,
     CAN_UPDATE_CHECKINS,
-    CAN_DELETE_CHECKINS,
 }
