@@ -23,102 +23,102 @@ delete from feedback_templates;
 delete from member_profile;
 delete from skills;
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Gina Bremehr
 (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('01b7d769-9fa2-43ff-95c7-f3b950a27bf9', PGP_SYM_ENCRYPT('Gina','${aeskey}'), PGP_SYM_ENCRYPT('Bremehr','${aeskey}'), PGP_SYM_ENCRYPT('COO','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('bremehrg@objectcomputing.com','${aeskey}'), '12312345', '2012-09-20', PGP_SYM_ENCRYPT('Epitome of Strong Woman','${aeskey}'), null, '1988-09-21');
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Ron Steinkamp
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('Ron','${aeskey}'), PGP_SYM_ENCRYPT('Steinkamp','${aeskey}'), PGP_SYM_ENCRYPT('Senior Project Manager','${aeskey}'), '01b7d769-9fa2-43ff-95c7-f3b950a27bf9',  PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('steinkampr@objectcomputing.com','${aeskey}'), '12312346', '2012-09-29', PGP_SYM_ENCRYPT('Managing projects well','${aeskey}'), null, '1988-09-02');
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- John Meyerin
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('John','${aeskey}'), PGP_SYM_ENCRYPT('Meyerin','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('meyerinj@objectcomputing.com','${aeskey}'), '12312347', '2012-09-29', PGP_SYM_ENCRYPT('Outstanding Engineer','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Geetika Sharma
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('Geetika','${aeskey}'), PGP_SYM_ENCRYPT('Sharma','${aeskey}'), PGP_SYM_ENCRYPT('PMO Administrator','${aeskey}'), '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('sharmag@objectcomputing.com','${aeskey}'), '12312348', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Wrangler Extrodinaire','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Holly Williams
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('Holly','${aeskey}'), PGP_SYM_ENCRYPT('Williams','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('williamsh@objectcomputing.com','${aeskey}'), '12312349', '2012-09-29', PGP_SYM_ENCRYPT('Software Engineer Remarkable','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Michael Kimberlin
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('Michael','${aeskey}'), PGP_SYM_ENCRYPT('Kimberlin','${aeskey}'), PGP_SYM_ENCRYPT('Director of Organizational Development','${aeskey}'), '8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('kimberlinm@objectcomputing.com','${aeskey}'), '12312342', '2012-09-29', PGP_SYM_ENCRYPT('Developer of developers and others','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Mark Volkmann
 (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', PGP_SYM_ENCRYPT('Mark','${aeskey}'), PGP_SYM_ENCRYPT('Volkmann','${aeskey}'), PGP_SYM_ENCRYPT('Partner and Distinguished Engineer','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('volkmannm@objectcomputing.com','${aeskey}'), '12312343', '2012-09-29', PGP_SYM_ENCRYPT('Software Engineer Spectacular','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Pramukh Bagur
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('6884ab96-2275-4af9-89d8-ad84254d8759', PGP_SYM_ENCRYPT('Pramukh','${aeskey}'), PGP_SYM_ENCRYPT('Bagur','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('bagurp@objectcomputing.com','${aeskey}'), '12312344', '2012-09-29', PGP_SYM_ENCRYPT('Top notch Engineer','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Jesse Hanner
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', PGP_SYM_ENCRYPT('Jesse','${aeskey}'), PGP_SYM_ENCRYPT('Hanner','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '6884ab96-2275-4af9-89d8-ad84254d8759', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('hannerj@objectcomputing.com','${aeskey}'), '123123450', '2012-09-29', PGP_SYM_ENCRYPT('Amazing Engineer','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Suman Maroju
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('1b4f99da-ef70-4a76-9b37-8bb783b749ad', PGP_SYM_ENCRYPT('Suman','${aeskey}'), PGP_SYM_ENCRYPT('Maroju','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('marojus@objectcomputing.com','${aeskey}'), '123123410', '2012-09-29', PGP_SYM_ENCRYPT('Superior Engineer','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Mohit Bhatia
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('b2d35288-7f1e-4549-aa2b-68396b162490', PGP_SYM_ENCRYPT('Mohit','${aeskey}'), PGP_SYM_ENCRYPT('Bhatia','${aeskey}'), PGP_SYM_ENCRYPT('Principal Software Engineer','${aeskey}'), '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('bhatiam@objectcomputing.com','${aeskey}'), '123123411', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Extraordinaire','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Zack Brown
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Zack','${aeskey}'), PGP_SYM_ENCRYPT('Brown','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('brownz@objectcomputing.com','${aeskey}'), '123123412', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Phenomenal','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Joe Warner
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
 ('066b186f-1425-45de-89f2-4ddcc6ebe237', PGP_SYM_ENCRYPT('Joe','${aeskey}'), PGP_SYM_ENCRYPT('Warner','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('warnerj@objectcomputing.com','${aeskey}'), '123123413', '2012-09-29', PGP_SYM_ENCRYPT('Engineer of Supreme Ability','${aeskey}'), null);
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Julia Smith
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Julia','${aeskey}'),  PGP_SYM_ENCRYPT('Smith','${aeskey}'), PGP_SYM_ENCRYPT('Intern','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('smithj@objectcomputing.com','${aeskey}'), '010101010', '2021-05-22', PGP_SYM_ENCRYPT('Local creature in discovery room','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1998-07-07');
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Faux Freddy
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('2dee821c-de32-4d9c-9ecb-f73e5903d17a', PGP_SYM_ENCRYPT('Faux','${aeskey}'),  PGP_SYM_ENCRYPT('Freddy','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer','${aeskey}'), '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing@objectcomputing.com','${aeskey}'), '010101011', '2021-05-22', PGP_SYM_ENCRYPT('Test user 1','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1950-01-01');
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Unreal Ulysses
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Unreal','${aeskey}'),  PGP_SYM_ENCRYPT('Ulysses','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer 2','${aeskey}'), '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing2@objectcomputing.com','${aeskey}'), '010101012', '2021-05-22', PGP_SYM_ENCRYPT('Test user 2','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1950-01-01');
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Kazuhira Miller
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('a90be358-aa3d-49c8-945a-879a93646e45', PGP_SYM_ENCRYPT('Kazuhira','${aeskey}'),  PGP_SYM_ENCRYPT('Miller','${aeskey}'), PGP_SYM_ENCRYPT('Unit Coordinator','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('millerkaz@objectcomputing.com','${aeskey}'), '012345678', '2022-03-29', PGP_SYM_ENCRYPT('Bff with Big Boss','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Big Boss
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', PGP_SYM_ENCRYPT('Big','${aeskey}'),  PGP_SYM_ENCRYPT('Boss','${aeskey}'), PGP_SYM_ENCRYPT('Sneaky Snake','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('bossb@objectcomputing.com','${aeskey}'), '351242153', '2022-03-29', PGP_SYM_ENCRYPT('The Legendary Big Boss','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Revolver Ocelot
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Shalashaska','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
 
-INSERT INTO member_profile
+INSERT INTO member_profile -- Huey Emmerich
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
 ('8d75c07e-6adc-437a-8659-7dd953ce6600', PGP_SYM_ENCRYPT('Huey','${aeskey}'),  PGP_SYM_ENCRYPT('Emmerich','${aeskey}'), PGP_SYM_ENCRYPT('Head of R&D','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('emmerichh@objectcomputing.com','${aeskey}'), '657483498', '2022-03-29', PGP_SYM_ENCRYPT('Waiting for love to bloom on the battlefield','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
@@ -139,218 +139,235 @@ VALUES
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', PGP_SYM_ENCRYPT('is a pdl','${aeskey}'), 'PDL');
 
 
+-- Admin Role Assigning
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6207b3fd-042d-49aa-9e28-dcc04f537c2d'); -- Michael Kimberlin
 
 INSERT INTO member_roles
     (roleid, memberid)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2559a257-ae84-4076-9ed4-3820c427beeb'); -- Ron Steinkamp
 
 INSERT INTO member_roles
     (roleid, memberid)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2559a257-ae84-4076-9ed4-3820c427beeb');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498'); -- Geetika Sharma 
 
 INSERT INTO member_roles
     (roleid, memberid)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '43ee8e79-b33d-44cd-b23c-e183894ebfef'); -- Zack Brown
 
 INSERT INTO member_roles
     (roleid, memberid)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '43ee8e79-b33d-44cd-b23c-e183894ebfef');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6884ab96-2275-4af9-89d8-ad84254d8759'); -- Pramukh Bagur
 
 INSERT INTO member_roles
     (roleid, memberid)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6884ab96-2275-4af9-89d8-ad84254d8759');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2559a257-ae84-4076-9ed4-3820c427beeb');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '802cb1f5-a255-4236-8719-773fa53d79d9');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6884ab96-2275-4af9-89d8-ad84254d8759');
-
-INSERT INTO member_roles
-(roleid, memberid)
-VALUES
-('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2559a257-ae84-4076-9ed4-3820c427beeb');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '802cb1f5-a255-4236-8719-773fa53d79d9');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '6884ab96-2275-4af9-89d8-ad84254d8759');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '1b4f99da-ef70-4a76-9b37-8bb783b749ad');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'b2d35288-7f1e-4549-aa2b-68396b162490');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '43ee8e79-b33d-44cd-b23c-e183894ebfef');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '8fa673c0-ca19-4271-b759-41cb9db2e83a'); -- Holly Williams
 
 INSERT INTO member_roles(
     roleid, memberid)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '066b186f-1425-45de-89f2-4ddcc6ebe237');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '066b186f-1425-45de-89f2-4ddcc6ebe237'); -- Joe Warner
+
+
+-- PDL Role Assigning
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6207b3fd-042d-49aa-9e28-dcc04f537c2d'); -- Michael Kimberlin
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2559a257-ae84-4076-9ed4-3820c427beeb'); -- Ron Steinkamp
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498'); -- Geetika Sharma
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d'); -- Mark Volkmann
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9'); -- Gina Bremehr
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '802cb1f5-a255-4236-8719-773fa53d79d9'); -- John Meyerin
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6884ab96-2275-4af9-89d8-ad84254d8759'); -- Pramukh Bagur
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '8fa673c0-ca19-4271-b759-41cb9db2e83a'); -- Holly Williams
 
 INSERT INTO member_roles(
     roleid, memberid)
 VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '066b186f-1425-45de-89f2-4ddcc6ebe237');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '066b186f-1425-45de-89f2-4ddcc6ebe237'); -- Joe Warner
 
 
-INSERT INTO team
+-- Member Role Assigning
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9'); -- Gina Bremehr
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2559a257-ae84-4076-9ed4-3820c427beeb'); -- Ron Steinkamp
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '802cb1f5-a255-4236-8719-773fa53d79d9'); -- John Meyerin
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498'); -- Geetika Sharma
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '6207b3fd-042d-49aa-9e28-dcc04f537c2d'); -- Michael Kimberlin
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d'); -- Mark Volkmann
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3'); -- Jesse Hanner
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '6884ab96-2275-4af9-89d8-ad84254d8759'); -- Pramukh Bagur
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '1b4f99da-ef70-4a76-9b37-8bb783b749ad'); -- Suman Maroju
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'b2d35288-7f1e-4549-aa2b-68396b162490'); -- Mohit Bhatia
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '43ee8e79-b33d-44cd-b23c-e183894ebfef'); -- Zack Brown
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '8fa673c0-ca19-4271-b759-41cb9db2e83a'); -- Holly Williams
+
+
+
+-- Teams
+INSERT INTO team -- Checkins Experts
 (id, name, description)
 VALUES
 ('a8733740-cf4c-4c16-a8cf-4f928c409acc', PGP_SYM_ENCRYPT('Checkins Experts','${aeskey}'), PGP_SYM_ENCRYPT('Checkins Engineers of superior knowledge','${aeskey}'));
 
-INSERT INTO team
+INSERT INTO team -- JavaScript Gurus
 (id, name, description)
 VALUES
 ('e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', PGP_SYM_ENCRYPT('JavaScript Gurus','${aeskey}'), PGP_SYM_ENCRYPT('JavaScript Engineers of Outstanding Skill','${aeskey}'));
 
-INSERT INTO team
+INSERT INTO team -- Micronaut Genii
 (id, name, description)
 VALUES
 ('036b95a5-357c-45bd-b60e-e8e2e1afec83', PGP_SYM_ENCRYPT('Micronaut Genii','${aeskey}'), PGP_SYM_ENCRYPT('Micronaut Engineers of Genius Caliber','${aeskey}'));
 
-INSERT INTO team
+INSERT INTO team -- PMO Superness
 (id, name, description)
 VALUES
 ('e545dfa1-a07d-4099-9a5b-ed14f07b87cc', PGP_SYM_ENCRYPT('PMO Superness','${aeskey}'), PGP_SYM_ENCRYPT('Excellent PMO Artists','${aeskey}'));
 
+
+-- Checkins Experts Members
 INSERT INTO team_member
 (id, teamid, memberid, lead)
 VALUES
-('d2ee49cb-9479-49fb-80d7-43c3c1b50f91', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '802cb1f5-a255-4236-8719-773fa53d79d9', true);
+('d2ee49cb-9479-49fb-80d7-43c3c1b50f91', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '802cb1f5-a255-4236-8719-773fa53d79d9', true); -- John Meyerin
 
 INSERT INTO team_member
 (id, teamid, memberid, lead)
 VALUES
-('0f299d11-df47-406f-a426-8e3160eaeb21', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false);
+('c7b4d5e0-09ba-479a-8c40-ca9bbd8f217a', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '6884ab96-2275-4af9-89d8-ad84254d8759', false); -- Pramukh Bagur
 
 INSERT INTO team_member
 (id, teamid, memberid, lead)
 VALUES
-('9e7e9577-a36b-4238-84cc-4f160ac60b40', 'e545dfa1-a07d-4099-9a5b-ed14f07b87cc', '2559a257-ae84-4076-9ed4-3820c427beeb', true);
+('20bf1ddb-53a0-436e-99dc-802c1199e282', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', false); -- Jesse Hanner
 
 INSERT INTO team_member
 (id, teamid, memberid, lead)
 VALUES
-('439ad8a8-500f-4f3f-963b-a86437d5820a', 'e545dfa1-a07d-4099-9a5b-ed14f07b87cc', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', false);
+('122ca588-bf61-4aea-bb6e-39838328bf85', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', 'b2d35288-7f1e-4549-aa2b-68396b162490', true); -- Mohit Bhatia
 
 INSERT INTO team_member
 (id, teamid, memberid, lead)
 VALUES
-('8eea2f65-160c-4db7-9f6d-f367acd333fb', 'e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', '43ee8e79-b33d-44cd-b23c-e183894ebfef', false);
+('adff5631-d4dc-4c61-b3d4-232d1cce8ce0', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', false); -- Suman Maroju
+
+
+-- JavaScript Gurus Members
+INSERT INTO team_member
+(id, teamid, memberid, lead)
+VALUES
+('8eea2f65-160c-4db7-9f6d-f367acd333fb', 'e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', '43ee8e79-b33d-44cd-b23c-e183894ebfef', false); -- Zack Brown
 
 INSERT INTO team_member
 (id, teamid, memberid, lead)
 VALUES
-('c7b4d5e0-09ba-479a-8c40-ca9bbd8f217a', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '6884ab96-2275-4af9-89d8-ad84254d8759', false);
+('f84a21ca-1579-4c6a-8148-6a355518797a', 'e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', true); -- Mark Volkmann
+
+
+-- Micronaut Genii Members
+INSERT INTO team_member
+(id, teamid, memberid, lead)
+VALUES
+('7cf7820a-b099-48e5-b630-4f921ee17d16', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false); -- Holly Williams
+
+
+-- PMO Superness Members
+INSERT INTO team_member
+(id, teamid, memberid, lead)
+VALUES
+('9e7e9577-a36b-4238-84cc-4f160ac60b40', 'e545dfa1-a07d-4099-9a5b-ed14f07b87cc', '2559a257-ae84-4076-9ed4-3820c427beeb', true); -- Ron Steinkamp
 
 INSERT INTO team_member
 (id, teamid, memberid, lead)
 VALUES
-('20bf1ddb-53a0-436e-99dc-802c1199e282', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', false);
+('97f3a251-0ed2-449b-a756-07226e6e6522', 'e545dfa1-a07d-4099-9a5b-ed14f07b87cc', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', false); -- Geetika Sharma
 
-INSERT INTO team_member
-(id, teamid, memberid, lead)
-VALUES
-('f84a21ca-1579-4c6a-8148-6a355518797a', 'e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', true);
 
-INSERT INTO team_member
-(id, teamid, memberid, lead)
-VALUES
-('122ca588-bf61-4aea-bb6e-39838328bf85', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', 'b2d35288-7f1e-4549-aa2b-68396b162490', true);
 
-INSERT INTO team_member
-(id, teamid, memberid, lead)
-VALUES
-('adff5631-d4dc-4c61-b3d4-232d1cce8ce0', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', false);
-
+-- Checkins
 INSERT INTO checkins
 (id, teammemberid, pdlid, checkindate, completed)
 VALUES
@@ -406,6 +423,9 @@ INSERT INTO checkins
 VALUES
 ('553aa528-d5f6-4d15-bfb6-b53738dc7954', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2022-01-16 11:32:29.04', true);
 
+
+
+-- Checkins Notes/Private Notes/Action Items
 INSERT INTO checkin_notes
 (id, checkinid, createdbyid, description)
 VALUES
@@ -462,40 +482,48 @@ INSERT INTO action_items
 (id, checkinid, createdbyid, description)
 Values('0ead3434-82e7-47b4-a0ef-d1f44d01732b', '1343411e-26bf-4274-81ca-1b46ba3f0cb0', '6884ab96-2275-4af9-89d8-ad84254d8759', PGP_SYM_ENCRYPT('Action Item for Pramukh Bagur','${aeskey}'));
 
-insert into guild (id, name, description)
+
+-- Guilds
+insert into guild (id, name, description) -- Software Engineering
 values('ba42d181-3c5b-4ee3-938d-be122c314bee',  PGP_SYM_ENCRYPT('Software Engineering','${aeskey}'), PGP_SYM_ENCRYPT('Resource for Software Engineering Topics','${aeskey}'));
 
-insert into guild (id, name, description)
+insert into guild (id, name, description) -- Micronaut
 values('06cd3202-a209-4ae1-a49a-10395fbe3548', PGP_SYM_ENCRYPT('Micronaut','${aeskey}'), PGP_SYM_ENCRYPT('For Micronaut Lovers and Learners','${aeskey}'));
 
-insert into guild (id, name, description)
+insert into guild (id, name, description) -- Fullstack Development
 values('d1d4af0e-b1a5-47eb-be49-f3581271f1e3', PGP_SYM_ENCRYPT('Fullstack Development','${aeskey}'), PGP_SYM_ENCRYPT('Full Stack Development Interests','${aeskey}'));
 
+
+-- Software Engineering Guild Members
 insert into guild_member (id, guildId, memberId, lead)
-values('fd976615-6a8b-4cd1-8aea-cb7751c8ee1a','ba42d181-3c5b-4ee3-938d-be122c314bee', 'b2d35288-7f1e-4549-aa2b-68396b162490', true);
+values('fd976615-6a8b-4cd1-8aea-cb7751c8ee1a','ba42d181-3c5b-4ee3-938d-be122c314bee', 'b2d35288-7f1e-4549-aa2b-68396b162490', true); -- Mohit Bhatia
 
 insert into guild_member (id, guildId, memberId, lead)
-values('86dc52b9-5b2a-4241-9c54-0fde07600c58','ba42d181-3c5b-4ee3-938d-be122c314bee', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', false);
+values('86dc52b9-5b2a-4241-9c54-0fde07600c58','ba42d181-3c5b-4ee3-938d-be122c314bee', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', false); -- Suman Maroju
 
 insert into guild_member (id, guildId, memberId, lead)
-values('7cd12bb9-6aa4-4edc-831f-f4ebe8f22f62','ba42d181-3c5b-4ee3-938d-be122c314bee', '6884ab96-2275-4af9-89d8-ad84254d8759', false);
+values('7cd12bb9-6aa4-4edc-831f-f4ebe8f22f62','ba42d181-3c5b-4ee3-938d-be122c314bee', '6884ab96-2275-4af9-89d8-ad84254d8759', false); -- Pramukh Bagur
 
 insert into guild_member (id, guildId, memberId, lead)
-values('8a20e99f-c326-4529-8024-26724a8586b1','ba42d181-3c5b-4ee3-938d-be122c314bee', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false);
+values('8a20e99f-c326-4529-8024-26724a8586b1','ba42d181-3c5b-4ee3-938d-be122c314bee', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false); -- Holly Williams
+
+
+-- Micronaut Guild Members
+insert into guild_member (id, guildId, memberId, lead)
+values('7ffe3937-bdce-4ebb-a03d-8a8b7d4703ef','06cd3202-a209-4ae1-a49a-10395fbe3548', '802cb1f5-a255-4236-8719-773fa53d79d9', true); -- John Meyerin
 
 insert into guild_member (id, guildId, memberId, lead)
-values('7ffe3937-bdce-4ebb-a03d-8a8b7d4703ef','06cd3202-a209-4ae1-a49a-10395fbe3548', '802cb1f5-a255-4236-8719-773fa53d79d9', true);
+values('dd694cf2-c0f9-4470-b897-00c564c1252b','06cd3202-a209-4ae1-a49a-10395fbe3548', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false); -- Holly Williams
 
-insert into guild_member (id, guildId, memberId, lead)
-values('dd694cf2-c0f9-4470-b897-00c564c1252b','06cd3202-a209-4ae1-a49a-10395fbe3548', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false);
 
+-- Pulse
 INSERT INTO pulse_response
 (id, submissiondate, updateddate, teammemberid, internalfeelings, externalfeelings)
 VALUES
 ('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2021-01-29', '2021-02-02', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'));
 
 
-
+-- Permissions
 insert into permissions
     (id, permission)
 values
@@ -561,126 +589,136 @@ insert into permissions
 values
     ('2d765d5c-8d07-11ee-b9d1-0242ac120002', 'CAN_VIEW_PROFILE_REPORT');
 
+
+-- Admin Permissions
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '439ad8a8-500f-4f3f-963b-a86437d5820a');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '439ad8a8-500f-4f3f-963b-a86437d5820a'); -- CAN_CREATE_ORGANIZATION_MEMBERS
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '0f299d11-df47-406f-a426-8e3160eaeb21');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '0f299d11-df47-406f-a426-8e3160eaeb21'); -- CAN_DELETE_ORGANIZATION_MEMBERS
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '008f6641-0b0a-4e89-84f0-c580f912b80d');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '008f6641-0b0a-4e89-84f0-c580f912b80d'); -- CAN_VIEW_FEEDBACK_REQUEST
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1bf32dfe-a204-4c80-889e-829ca66c999b');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1bf32dfe-a204-4c80-889e-829ca66c999b'); -- CAN_CREATE_FEEDBACK_REQUEST
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '26a2f861-3f7d-4dc3-8762-716b184a3a47');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '26a2f861-3f7d-4dc3-8762-716b184a3a47'); -- CAN_VIEW_FEEDBACK_ANSWER
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1fd790d9-df9a-4201-818b-3a9ac5e5be3b');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1fd790d9-df9a-4201-818b-3a9ac5e5be3b'); -- CAN_VIEW_ROLE_PERMISSIONS
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f6961946-a792-4a16-b675-d8cf7980c17a');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f6961946-a792-4a16-b675-d8cf7980c17a'); -- CAN_VIEW_PERMISSIONS
 
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f7e815de-8849-11ee-b9d1-0242ac120002');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f7e815de-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_SKILLS_REPORT
 
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f7e81958-8849-11ee-b9d1-0242ac120002');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f7e81958-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_RETENTION_REPORT
 
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '056e32b2-8d07-11ee-b9d1-0242ac120002');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '056e32b2-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_ANNIVERSARY_REPORT
 
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765f78-8d07-11ee-b9d1-0242ac120002');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765f78-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_BIRTHDAY_REPORT
 
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765d5c-8d07-11ee-b9d1-0242ac120002');
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765d5c-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_PROFILE_REPORT
+
+
+
+-- PDL Permissions
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '008f6641-0b0a-4e89-84f0-c580f912b80d'); -- CAN_VIEW_FEEDBACK_REQUEST
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '008f6641-0b0a-4e89-84f0-c580f912b80d');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '1bf32dfe-a204-4c80-889e-829ca66c999b'); -- CAN_CREATE_FEEDBACK_REQUEST
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '1bf32dfe-a204-4c80-889e-829ca66c999b');
-
-insert into role_permissions
-    (roleid, permissionid)
-values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
 
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e815de-8849-11ee-b9d1-0242ac120002');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e815de-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_SKILLS_REPORT
 
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e81958-8849-11ee-b9d1-0242ac120002');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e81958-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_RETENTION_REPORT
 
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '056e32b2-8d07-11ee-b9d1-0242ac120002');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '056e32b2-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_ANNIVERSARY_REPORT
 
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2d765f78-8d07-11ee-b9d1-0242ac120002');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2d765f78-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_BIRTHDAY_REPORT
+
+
+
+-- Member Permissions
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '439ad8a8-500f-4f3f-963b-a86437d5820a'); -- CAN_CREATE_ORGANIZATION_MEMBERS
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '439ad8a8-500f-4f3f-963b-a86437d5820a');
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '008f6641-0b0a-4e89-84f0-c580f912b80d'); -- CAN_VIEW_FEEDBACK_REQUEST
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '008f6641-0b0a-4e89-84f0-c580f912b80d');
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '1bf32dfe-a204-4c80-889e-829ca66c999b'); -- CAN_CREATE_FEEDBACK_REQUEST
 
 insert into role_permissions
     (roleid, permissionid)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '1bf32dfe-a204-4c80-889e-829ca66c999b');
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
 
-insert into role_permissions
-    (roleid, permissionid)
-values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f');
 
+-- Feedback Templates/Template Questions
 INSERT INTO feedback_templates
 (id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
 VALUES
@@ -891,6 +929,9 @@ INSERT INTO template_questions
 VALUES
 ('174e5851-cb24-4a0f-890c-e6f041db4127', PGP_SYM_ENCRYPT('Please provide any additional context or reasoning relevant to your assessment of this team member.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 15, 'TEXT');
 
+
+
+-- Feedback Requests
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
@@ -1001,7 +1042,6 @@ INSERT INTO feedback_requests
 VALUES
 ('7ca4d402-0bb9-4989-9087-8a52a63ee5d0', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'pending');
 
-
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
@@ -1027,6 +1067,9 @@ INSERT INTO feedback_requests
 VALUES
 ('4240735d-15fd-4eea-8bca-8c642a433036', '59b790d2-fabc-11eb-9a03-0242ac130003', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '066b186f-1425-45de-89f2-4ddcc6ebe237', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2021-03-22', '2021-04-01', '2021-04-01', 'submitted');
 
+
+
+-- Feedback Answers
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
@@ -1062,37 +1105,41 @@ INSERT INTO feedback_answers
 VALUES
 ('a223135a-742b-45c6-b9a4-2bb990d956b2', PGP_SYM_ENCRYPT('They are always punctual, and work well with the other members of the team. Although they have a few technical skills they could brush up on, our team is lucky to have them.', '${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', '4240735d-15fd-4eea-8bca-8c642a433036', 0.7);
 
-INSERT INTO skills
+
+-- Skills
+INSERT INTO skills -- React
 (id, name, pending, description, extraneous)
 VALUES
 ('f057af45-e627-499c-8a71-1e6b4ab2fcd2', 'React', false, 'Component-based JavaScript framework', false);
 
-INSERT INTO skills
+INSERT INTO skills -- Micronaut
 (id, name, pending, description, extraneous)
 VALUES
 ('689bb262-10af-40ef-bbf6-d8ad062e1470', 'Micronaut', false, 'JVM framework for microservices and serverless apps', false);
 
-INSERT INTO skills
+INSERT INTO skills -- CSS
 (id, name, pending, description, extraneous)
 VALUES
 ('6b56f0aa-09aa-4b09-bb81-03481af7e49f', 'CSS', true, 'Style sheet language', false);
 
-INSERT INTO skills
+INSERT INTO skills -- Git
 (id, name, pending, description, extraneous)
 VALUES
 ('84682de9-85a7-4bf7-b74b-e9054311a61a', 'Git', true, 'Version control system', false);
 
-INSERT INTO member_skills
+
+-- Member Skills
+INSERT INTO member_skills -- Big Boss, React
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
 ('99b7b700-bba3-440b-8df5-c1b668e9e7e0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '5', '2022-06-01');
 
-INSERT INTO member_skills
+INSERT INTO member_skills -- Big Boss, 
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
 ('daad16fa-2268-4e72-a2ad-e13aa8b8665b', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '6b56f0aa-09aa-4b09-bb81-03481af7e49f', '4', '2022-06-01');
 
-INSERT INTO member_skills
+INSERT INTO member_skills -- Revolver Ocelot, React
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
 ('e2de59a8-71be-4972-86be-608538503195', '105f2968-a182-45a3-892c-eeff76383fe0', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '3', '2022-05-01');
