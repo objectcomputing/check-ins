@@ -725,6 +725,10 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2d765f78-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_BIRTHDAY_REPORT
 
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'd04bd772-4a37-4cc3-91da-8fc7de08f3be'); -- CAN_VIEW_CHECKINS
 
 
 -- Member Permissions
@@ -747,6 +751,11 @@ insert into role_permissions
     (roleid, permissionid)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'd04bd772-4a37-4cc3-91da-8fc7de08f3be'); -- CAN_VIEW_CHECKINS
 
 
 -- Feedback Templates/Template Questions
