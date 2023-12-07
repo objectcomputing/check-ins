@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 
 import { AppContext } from "../context/AppContext";
 import { selectPermissions } from "../context/selectors";
@@ -8,14 +8,23 @@ import { TextField } from "@mui/material";
 import "./EditPermissionsPage.css";
 
 const EditPermissionsPage = (props) => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
+  const { csrf } = state;
+  const [permissionsList, setPermissionsList] = useState([]);
 
   const [searchText, setSearchText] = useState("");
   const [showAllSkills, setShowAllSkills] = useState(false);
 
-  // const allPermissions = selectPermissions(state);
+  const allPermissions = selectPermissions(state);
 
   const handleClick = () => setShowAllSkills(!showAllSkills);
+
+  useEffect(() => {
+
+    console.log("Permissions");
+    console.log(allPermissions, permissionsList);
+
+  }, [allPermissions, permissionsList])
 
   return (
     <div className="edit-permissions-page">
