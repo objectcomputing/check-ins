@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -93,6 +96,7 @@ public class AgendaItemController {
      * @return {@link List <CheckIn > list of checkins
      */
     @Get("/{?checkinid,createdbyid}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
     public Mono<HttpResponse<Set<AgendaItem>>> findAgendaItems(@Nullable UUID checkinid,
                                                                  @Nullable UUID createdbyid) {
         return Mono.fromCallable(() -> agendaItemServices.findByFields(checkinid, createdbyid))
@@ -109,6 +113,7 @@ public class AgendaItemController {
      * @return {@link AgendaItem}
      */
     @Get("/{id}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
     public Mono<HttpResponse<AgendaItem>> readAgendaItem(UUID id) {
         return Mono.fromCallable(() -> agendaItemServices.read(id))
                 .switchIfEmpty(Mono.error(new NotFoundException("No agennda item for UUID")))
