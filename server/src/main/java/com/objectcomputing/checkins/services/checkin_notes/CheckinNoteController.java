@@ -11,6 +11,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
@@ -66,6 +70,7 @@ public class CheckinNoteController {
      * @return
      */
     @Get("/{?checkinid,createdbyid}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
     public Set<CheckinNote> findCheckinNote(@Nullable UUID checkinid,
                                             @Nullable UUID createdbyid) {
         return checkinNoteServices.findByFields(checkinid, createdbyid);
@@ -78,6 +83,7 @@ public class CheckinNoteController {
      * @return
      */
     @Get("/{id}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
     public CheckinNote readCheckinNote(@NotNull UUID id) {
         return checkinNoteServices.read(id);
     }

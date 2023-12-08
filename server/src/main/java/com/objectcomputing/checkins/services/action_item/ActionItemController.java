@@ -10,6 +10,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
+
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -78,6 +82,7 @@ public class ActionItemController {
      * @return {@link ActionItem}
      */
     @Get("/{id}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
     public ActionItem readActionItem(UUID id) {
         return actionItemServices.read(id);
     }
@@ -90,6 +95,7 @@ public class ActionItemController {
      * @return {@link List < CheckIn > list of checkins}
      */
     @Get("/{?checkinid,createdbyid}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
     public Set<ActionItem> findActionItems(@Nullable UUID checkinid,
                                            @Nullable UUID createdbyid) {
         return actionItemServices.findByFields(checkinid, createdbyid);
