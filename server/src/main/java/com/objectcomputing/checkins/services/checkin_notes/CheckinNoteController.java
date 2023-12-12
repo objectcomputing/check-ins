@@ -56,6 +56,7 @@ public class CheckinNoteController {
      * @return
      */
     @Put()
+    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
     public HttpResponse<CheckinNote> updateCheckinNote(@Body @Valid CheckinNote checkinNote, HttpRequest<CheckinNoteCreateDTO> request) {
         CheckinNote updateCheckinNote = checkinNoteServices.update(checkinNote);
         return HttpResponse.ok().headers(headers -> headers.location(
