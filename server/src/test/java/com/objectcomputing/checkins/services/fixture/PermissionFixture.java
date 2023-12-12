@@ -14,7 +14,9 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_VIEW_FEEDBACK_REQUEST,
         Permissions.CAN_DELETE_FEEDBACK_REQUEST,
         Permissions.CAN_VIEW_FEEDBACK_ANSWER,
-        Permissions.CAN_VIEW_PERMISSIONS
+        Permissions.CAN_VIEW_PERMISSIONS,
+        Permissions.CAN_VIEW_CHECKINS,
+        Permissions.CAN_CREATE_CHECKINS
     );
 
     // Add PDL Permissions here
@@ -23,7 +25,9 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_CREATE_FEEDBACK_REQUEST,
         Permissions.CAN_DELETE_FEEDBACK_REQUEST,
         Permissions.CAN_VIEW_FEEDBACK_ANSWER,
-        Permissions.CAN_VIEW_PERMISSIONS
+        Permissions.CAN_VIEW_PERMISSIONS,
+        Permissions.CAN_VIEW_CHECKINS,
+        Permissions.CAN_CREATE_CHECKINS
     );
 
     // Add ADMIN Permissions here

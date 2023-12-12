@@ -8,7 +8,6 @@ import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -16,11 +15,11 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
-import org.reactivestreams.Publisher;
-import reactor.test.StepVerifier;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,6 +36,10 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
     @Client("/services/agenda-items")
     HttpClient client;
 
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
     @Test
     void testCreateAgendaItemByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
@@ -311,7 +314,6 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
     void testFindAllAgendaItemByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfile);
-        createAndAssignAdminRole(memberProfileOfUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileOfUser);
 
@@ -372,7 +374,6 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
-        createAndAssignRole(RoleType.ADMIN, memberProfileForUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -392,7 +393,6 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
-        createAndAssignRole(RoleType.ADMIN, memberProfileForUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -690,7 +690,6 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfMrNobody);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -754,7 +753,6 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
     void testDeleteAAgendaItemByADMINIdWhenCompleted() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        createAndAssignAdminRole(memberProfileOfUser);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
