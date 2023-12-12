@@ -51,6 +51,7 @@ public class AgendaItemController {
      * @return {@link HttpResponse <AgendaItem>}
      */
     @Post("/")
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS)
     public Mono<HttpResponse<AgendaItem>> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem,
                                                              HttpRequest<AgendaItemCreateDTO> request) {
         return Mono

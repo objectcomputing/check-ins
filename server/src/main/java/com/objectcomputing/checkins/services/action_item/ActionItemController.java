@@ -36,6 +36,7 @@ public class ActionItemController {
      * @return {@link HttpResponse <ActionItem>}
      */
     @Post()
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS)
     public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
                                                      HttpRequest<ActionItemCreateDTO> request) {
         ActionItem newActionItem = actionItemServices.save(new ActionItem(actionItem.getCheckinid(),

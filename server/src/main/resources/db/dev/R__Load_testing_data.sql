@@ -704,7 +704,6 @@ values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
 
 
-
 -- PDL Permissions
 insert into role_permissions
     (roleid, permissionid)
@@ -746,6 +745,11 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'd04bd772-4a37-4cc3-91da-8fc7de08f3be'); -- CAN_VIEW_CHECKINS
 
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'd84772ac-85c5-4030-9a86-7db41770fbf3'); -- CAN_CREATE_CHECKINS
+
 
 -- Member Permissions
 insert into role_permissions
@@ -772,6 +776,11 @@ insert into role_permissions
 (roleid, permissionid)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'd04bd772-4a37-4cc3-91da-8fc7de08f3be'); -- CAN_VIEW_CHECKINS
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'd84772ac-85c5-4030-9a86-7db41770fbf3'); -- CAN_CREATE_CHECKINS
 
 
 -- Feedback Templates
