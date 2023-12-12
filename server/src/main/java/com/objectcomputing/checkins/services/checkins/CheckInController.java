@@ -69,6 +69,7 @@ public class CheckInController {
      */
 
     @Post("/")
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS)
     public Mono<HttpResponse<CheckIn>> createCheckIn(@Body @Valid CheckInCreateDTO checkIn,
                                                        HttpRequest<CheckInCreateDTO> request) {
         return Mono.fromCallable(() -> checkInServices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted())))

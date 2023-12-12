@@ -39,6 +39,7 @@ public class CheckinNoteController {
      * @return
      */
     @Post()
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS)
     public HttpResponse<CheckinNote> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote, HttpRequest<CheckinNoteCreateDTO> request) {
         CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(), checkinNote.getCreatedbyid()
                 , checkinNote.getDescription()));

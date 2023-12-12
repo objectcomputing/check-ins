@@ -66,7 +66,7 @@ export const resolve = async (payload) => {
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast: e?.response?.data?.message,
+          toast: e?.response?.data?.message || e?.message,
         },
       });
     }
