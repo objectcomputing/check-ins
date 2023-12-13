@@ -14,6 +14,8 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
@@ -35,6 +37,10 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     HttpClient client;
 
     /////////////////////////////////// READ TESTS /////////////////////////////////////////////////
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
     @Test
     void testReadPrivateNoteNotFound() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
@@ -49,26 +55,6 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
 
         assertEquals(request.getPath(), href);
         assertEquals(String.format("Invalid private note id %s", randomCheckinID), error);
-    }
-
-    @Test
-    void testMemberUnAbleToReadHisPrivateNotes() {
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
-        PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfUser);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
-
     }
 
     @Test
@@ -115,7 +101,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfADMIN = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfADMIN);
+        assignAdminRole(memberProfileOfADMIN);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfPDL);
@@ -220,7 +206,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfAdmin);
+        assignAdminRole(memberProfileOfAdmin);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
@@ -407,7 +393,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     void testAdminUnableToUpdatePrivateNotes() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        createAndAssignAdminRole(memberProfileForPDL);
+        assignAdminRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 

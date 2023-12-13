@@ -645,6 +645,12 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_SKILL_CATEGORIES');
 
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6c144b56-3c1c-472f-8c3e-243e5a4149a1'); -- CAN_VIEW_CHECKINS_ELEVATED
+
+
 -- PDL Permissions
 insert into role_permissions
     (roleid, permission)
@@ -686,6 +692,12 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_UPDATE_CHECKINS');
 
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6c144b56-3c1c-472f-8c3e-243e5a4149a1'); -- CAN_VIEW_CHECKINS_ELEVATED
+
+
 -- Member permissions
 insert into role_permissions
     (roleid, permission)
@@ -726,6 +738,8 @@ insert into role_permissions
 (roleid, permission)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_UPDATE_CHECKINS');
+
+
 
 -- Feedback Templates
 ---- Quarter 1 Feedback Template
