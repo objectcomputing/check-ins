@@ -25,3 +25,11 @@
   display: flex;
   margin-top: 1rem;
 }
+
+.edit-permissions {
+  display: block;
+  float: left;
+  position: relative;
+  width: auto;
+  margin: 2%;
+}
