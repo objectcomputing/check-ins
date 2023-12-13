@@ -74,6 +74,7 @@ public class AgendaItemController {
      * @return {@link HttpResponse< AgendaItem >}
      */
     @Put("/")
+    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
     public Mono<HttpResponse<AgendaItem>> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItem> request) {
         if (agendaItem == null) {
             return Mono.just(HttpResponse.ok());
@@ -130,6 +131,7 @@ public class AgendaItemController {
      * @param id, id of {@link AgendaItem} to delete
      */
     @Delete("/{id}")
+    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
     public HttpResponse<?> deleteAgendaItem(UUID id) {
         agendaItemServices.delete(id);
         return HttpResponse
