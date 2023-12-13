@@ -30,7 +30,8 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_VIEW_PERMISSIONS,
         Permissions.CAN_VIEW_CHECKINS,
         Permissions.CAN_CREATE_CHECKINS,
-        Permissions.CAN_UPDATE_CHECKINS
+        Permissions.CAN_UPDATE_CHECKINS,
+        Permissions.CAN_VIEW_CHECKINS_ELEVATED
     );
 
     // Add ADMIN Permissions here
@@ -51,6 +52,7 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_CREATE_CHECKINS,
         Permissions.CAN_VIEW_CHECKINS,
         Permissions.CAN_UPDATE_CHECKINS,
+        Permissions.CAN_VIEW_CHECKINS_ELEVATED,
         Permissions.CAN_ASSIGN_ROLE_PERMISSIONS
     );
 

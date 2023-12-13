@@ -1,7 +1,10 @@
 package com.objectcomputing.checkins.services.private_notes;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -96,6 +99,7 @@ public class PrivateNoteController {
      * @return
      */
     @Get("/{?checkinid,createdbyid}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS_ELEVATED)
     public Set<PrivateNote> findPrivateNote(@Nullable UUID checkinid,
                                             @Nullable UUID createdbyid) {
         return privateNoteServices.findByFields(checkinid, createdbyid);
@@ -108,6 +112,7 @@ public class PrivateNoteController {
      * @return
      */
     @Get("/{id}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS_ELEVATED)
     public Mono<HttpResponse<PrivateNote>> readPrivateNote(UUID id) {
         return Mono.fromCallable(() -> {
             PrivateNote result = privateNoteServices.read(id);
