@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -49,6 +51,7 @@ public class CheckinDocumentController {
      */
 
     @Get("/{?checkinsId}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS_ELEVATED)
     public Mono<HttpResponse<Set<CheckinDocument>>> findCheckinDocument(@Nullable UUID checkinsId) {
         return Mono.fromCallable(() -> checkinDocumentService.read(checkinsId))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
