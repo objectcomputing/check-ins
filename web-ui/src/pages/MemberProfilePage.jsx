@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { selectProfile, selectTerminatedMembers } from "../context/selectors";
+import { selectCurrentUserId, selectIsAdmin, selectProfile, selectTerminatedMembers } from "../context/selectors";
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
@@ -18,6 +18,7 @@ import "./MemberProfilePage.css";
 
 import {
   Avatar,
+  Button,
   Card,
   CardContent,
   CardHeader,
@@ -27,16 +28,23 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useHistory } from "react-router-dom";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
+  const history = useHistory();
   const { csrf, skills, userProfile } = state;
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
   const sortedPdls = selectOrderedPdls(state);
   const sortedMembers = selectOrderedMemberFirstName(state);
-  let pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId)
-  let supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid)
+  const isAdmin = selectIsAdmin(state);
+  const currentUserId = selectCurrentUserId(state);
+  const pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId);
+  const supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid);
+  const currentUserIsPdl = pdlInfo?.id === currentUserId;
+  const currentUserIsSupervisor = supervisorInfo?.id === currentUserId;
+  const canRequestFeedback = isAdmin || currentUserIsPdl || currentUserIsSupervisor;
 
 
   useEffect(() => {
@@ -157,6 +165,18 @@ const MemberProfilePage = () => {
                       <h4>{(pdlInfo && "PDL: " + pdlInfo.firstName + " " + pdlInfo.lastName) || ("")}</h4>
                     </Typography>
                   </Container>
+                  {canRequestFeedback && <Container fixed sx={{ display: "flex", justifyContent: "center" }}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        history.push(`/feedback/request?for=${memberId}`);
+                      }}
+                    >
+                      Request Feedback
+                    </Button>
+                  </Container>}
                 </CardContent>
               </Card>
             )}
