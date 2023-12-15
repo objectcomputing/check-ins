@@ -314,7 +314,7 @@ export const selectCurrentUserSubordinates = createSelector(
 export const selectIsSubordinateOfCurrentUser = createSelector(
   selectCurrentUserSubordinates,
   (_, teamMemberId) => teamMemberId,
-  (subordinates, teamMemberId) => subordinates.some((teamMember) => teamMember.id == teamMemberId)
+  (subordinates, teamMemberId) => subordinates.some((teamMember) => teamMember.id === teamMemberId)
 );
 
 export const selectTeamMembersWithCheckinPDL = createSelector(
