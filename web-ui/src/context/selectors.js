@@ -237,7 +237,7 @@ export const selectSupervisors = createSelector(
 
     const supervisorIds = filteredMembers?.map(member => member.supervisorid);
     const uniqueSupervisorIds = [...new Set(supervisorIds)];
-    
+
     const supervisors = uniqueSupervisorIds.map(id => memberProfileMap[id]);
     return supervisors;
   }
@@ -283,19 +283,42 @@ export const selectMyTeam = createSelector(
   filterMembersBySupervisor
 );
 
-export const selectSubordinates = createSelector(
+/* Internal Selector, not for export */
+const selectSubordinatesPreventCycle = createSelector(
   selectTeamMembersBySupervisorId,
-  (state, managerId) => managerId,
+  (_, managerId) => managerId,
+  (_, __, previouslyIncluded) => previouslyIncluded || [],
   (state) => state,
-  (team, managerId, state) => team.reduce((subordinates, teamMember) => {
-    if(subordinates.some((current) => current.id === teamMember.id))
+  (team, managerId, previouslyIncluded, state) => team.reduce((subordinates, teamMember) => {
+    if(previouslyIncluded.some((current) => current === teamMember.id))
       return subordinates;
-    else return [...subordinates, ...selectSubordinates(state, teamMember.id)];
+    else return [...subordinates, ...selectSubordinatesPreventCycle(state, teamMember.id, [...previouslyIncluded, managerId])];
   }, [...team])
 );
 
+export const selectSubordinates = createSelector(
+  selectTeamMembersBySupervisorId,
+  (_, managerId) => managerId,
+  (state) => state,
+  (team, managerId, state) => team.reduce((subordinates, teamMember) => {
+    return [...subordinates, ...selectSubordinatesPreventCycle(state, teamMember.id, [managerId])];
+  }, [...team])
+);
+
+export const selectCurrentUserSubordinates = createSelector(
+  selectCurrentUserId,
+  (state) => state,
+  (currentUserId, state) => selectSubordinates(state, currentUserId)
+);
+
+export const selectIsSubordinateOfCurrentUser = createSelector(
+  selectCurrentUserSubordinates,
+  (_, teamMemberId) => teamMemberId,
+  (subordinates, teamMemberId) => subordinates.some((teamMember) => teamMember.id == teamMemberId)
+);
+
 export const selectTeamMembersWithCheckinPDL = createSelector(
-  (state, pdlId) => pdlId,
+  (_, pdlId) => pdlId,
   selectPDLCheckinMap,
   selectProfileMap,
   (pdlId, pdlCheckinMap, profileMap) =>
