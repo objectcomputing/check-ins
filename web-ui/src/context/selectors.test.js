@@ -14,6 +14,7 @@ import {
   selectSupervisors,
   selectSupervisorHierarchyIds,
   selectSubordinates,
+  selectIsSubordinateOfCurrentUser,
 } from "./selectors";
 
 describe("Selectors", () => {
@@ -1013,6 +1014,160 @@ describe("Selectors", () => {
     const expectedResult = [testMemberProfiles[1], testMemberProfiles[2], testMemberProfiles[3], testMemberProfiles[5]];
 
     expect(selectSubordinates(testState, testMemberProfiles[0].id)).toEqual(expectedResult);
+  });
+
+it("selectIsSubordinateOfCurrentUser should return true when user is in the current users' heirarchy", () => {
+    const testMemberProfiles = [
+      {
+        id: 1,
+        employeeId: 11,
+        name: "Big Boss",
+        firstName: "Big",
+        lastName: "Boss",
+        supervisorid: 5,
+      },
+      {
+        id: 2,
+        employeeId: 12,
+        name: "Huey Emmerich",
+        firstName: "Huey",
+        lastName: "Emmerich",
+        supervisorid: 1,
+      },
+      {
+        id: 3,
+        employeeId: 13,
+        name: "Kazuhira Miller",
+        firstName: "Kazuhira",
+        lastName: "Miller",
+        supervisorid: 1,
+      },
+      {
+        id: 4,
+        employeeId: 14,
+        name: "Revolver Ocelot",
+        firstName: "Revolver",
+        lastName: "Ocelot",
+        supervisorid: 3,
+      },
+      {
+        id: 5,
+        employeeId: 15,
+        name: "THE Boss",
+        firstName: "THE",
+        lastName: "Boss",
+      },
+      {
+        id: 6,
+        employeeId: 16,
+        name: "Entry Level",
+        firstName: "Entry",
+        lastName: "Level",
+        supervisorid: 4,
+      },
+      {
+        id: 7,
+        employeeId: 15,
+        name: "Other Boss",
+        firstName: "Other",
+        lastName: "Boss",
+        supervisorid: 5,
+      },
+      {
+        id: 8,
+        employeeId: 15,
+        name: "Other Person",
+        firstName: "Other",
+        lastName: "Person",
+        supervisorid: 7,
+      },
+    ]
+
+    const testState = {
+      userProfile: {
+        memberProfile: testMemberProfiles[0]
+      },
+      memberProfiles: testMemberProfiles
+    };
+
+    expect(selectIsSubordinateOfCurrentUser(testState, testMemberProfiles[5].id)).toBe(true);
+  });
+
+it("selectIsSubordinateOfCurrentUser should return false when user is not in the current users' heirarchy", () => {
+    const testMemberProfiles = [
+      {
+        id: 1,
+        employeeId: 11,
+        name: "Big Boss",
+        firstName: "Big",
+        lastName: "Boss",
+        supervisorid: 5,
+      },
+      {
+        id: 2,
+        employeeId: 12,
+        name: "Huey Emmerich",
+        firstName: "Huey",
+        lastName: "Emmerich",
+        supervisorid: 1,
+      },
+      {
+        id: 3,
+        employeeId: 13,
+        name: "Kazuhira Miller",
+        firstName: "Kazuhira",
+        lastName: "Miller",
+        supervisorid: 1,
+      },
+      {
+        id: 4,
+        employeeId: 14,
+        name: "Revolver Ocelot",
+        firstName: "Revolver",
+        lastName: "Ocelot",
+        supervisorid: 3,
+      },
+      {
+        id: 5,
+        employeeId: 15,
+        name: "THE Boss",
+        firstName: "THE",
+        lastName: "Boss",
+      },
+      {
+        id: 6,
+        employeeId: 16,
+        name: "Entry Level",
+        firstName: "Entry",
+        lastName: "Level",
+        supervisorid: 4,
+      },
+      {
+        id: 7,
+        employeeId: 15,
+        name: "Other Boss",
+        firstName: "Other",
+        lastName: "Boss",
+        supervisorid: 5,
+      },
+      {
+        id: 8,
+        employeeId: 15,
+        name: "Other Person",
+        firstName: "Other",
+        lastName: "Person",
+        supervisorid: 7,
+      },
+    ]
+
+    const testState = {
+      userProfile: {
+        memberProfile: testMemberProfiles[0]
+      },
+      memberProfiles: testMemberProfiles
+    };
+
+    expect(selectIsSubordinateOfCurrentUser(testState, testMemberProfiles[7].id)).toBe(false);
   });
 
 });
