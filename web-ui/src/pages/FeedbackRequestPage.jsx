@@ -149,7 +149,7 @@ const FeedbackRequestPage = () => {
   }, [memberIds, query, dispatch, handleQueryChange]);
 
   const isValidDate = useCallback((dateString) => {
-    const today = Date.now();
+    const today = new Date().setHours(0, 0, 0, 0);
     const timeStamp = Date.parse(dateString);
     if (timeStamp < today)
       return false;
@@ -173,6 +173,7 @@ const FeedbackRequestPage = () => {
         return hasFor() && templateIsValid && hasFrom();
       } else if (activeStep === 3) {
         const dueQueryValid = query.due ? isValidDate(query.due) : true;
+        console.log({hasFor: hasFor(), templateIsValid, hasFrom: hasFrom(), hasSend: hasSend(), dueQueryValid});
         return hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid;
       } else {
         return false;
