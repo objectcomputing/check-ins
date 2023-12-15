@@ -52,7 +52,7 @@ VALUES
 INSERT INTO member_profile -- Michael Kimberlin
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
-('6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('Michael','${aeskey}'), PGP_SYM_ENCRYPT('Kimberlin','${aeskey}'), PGP_SYM_ENCRYPT('Director of Organizational Development','${aeskey}'), '8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('kimberlinm@objectcomputing.com','${aeskey}'), '12312342', '2012-09-29', PGP_SYM_ENCRYPT('Developer of developers and others','${aeskey}'), null);
+('6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('Michael','${aeskey}'), PGP_SYM_ENCRYPT('Kimberlin','${aeskey}'), PGP_SYM_ENCRYPT('Director of Organizational Development','${aeskey}'), '8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('kimberlinm@objectcomputing.com','${aeskey}'), '12312342', '2012-09-29', PGP_SYM_ENCRYPT('Developer of developers and others','${aeskey}'), '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
 
 INSERT INTO member_profile -- Mark Volkmann
 (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid)
@@ -82,7 +82,7 @@ VALUES
 INSERT INTO member_profile -- Zack Brown
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
-('43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Zack','${aeskey}'), PGP_SYM_ENCRYPT('Brown','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('brownz@objectcomputing.com','${aeskey}'), '123123412', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Phenomenal','${aeskey}'), null);
+('43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Zack','${aeskey}'), PGP_SYM_ENCRYPT('Brown','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('brownz@objectcomputing.com','${aeskey}'), '123123412', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Phenomenal','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO member_profile -- Joe Warner
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)

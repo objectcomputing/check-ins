@@ -232,18 +232,26 @@ export const selectPDLCheckinMap = createSelector(selectCheckins, (checkins) =>
 export const selectSupervisors = createSelector(
   selectCurrentMembers,
   selectProfileMap,
-  (currentMembers, memberProfileMap) => currentMembers?.reduce((supervisors, currentMember) => {
-    let supervisorId = currentMember.supervisorid;
+  (currentMembers, memberProfileMap) => {
+    const filteredMembers = currentMembers?.filter(member => member.supervisorid);
 
-    const inSupervisors = supervisors.find(
-      (supervisor) => supervisorId === supervisor?.id
-    )
-
-      if (!inSupervisors){
-        supervisors.push(memberProfileMap[supervisorId]);
-      }
+    const supervisorIds = filteredMembers?.map(member => member.supervisorid);
+    const uniqueSupervisorIds = [...new Set(supervisorIds)];
+    
+    const supervisors = uniqueSupervisorIds.map(id => memberProfileMap[id]);
     return supervisors;
-  }, [])
+  }
+);
+
+const buildSupervisorHierarchy = (allSupervisors, member, supervisorChain ) => {
+  const memberSupervisor = allSupervisors?.find(supervisor => supervisor.id === member?.supervisorid);
+  supervisorChain.push(memberSupervisor);
+  return !memberSupervisor?.supervisorid ? supervisorChain : buildSupervisorHierarchy(allSupervisors, memberSupervisor, supervisorChain);
+}
+
+export const selectSupervisorHierarchyIds = (selectedMember) => createSelector(
+  selectSupervisors,
+  (allSupervisors) => buildSupervisorHierarchy(allSupervisors, selectedMember, []).map(supervisor => supervisor?.id)
 );
 
 export const selectIsSupervisor = createSelector(

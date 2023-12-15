@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { selectCurrentUserId, selectIsAdmin, selectProfile, selectTerminatedMembers } from "../context/selectors";
+import { selectCurrentUserId, selectIsAdmin, selectProfile, selectTerminatedMembers, selectSupervisorHierarchyIds } from "../context/selectors";
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
@@ -42,8 +42,9 @@ const MemberProfilePage = () => {
   const currentUserId = selectCurrentUserId(state);
   const pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId);
   const supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid);
+  const supervisorChain = selectSupervisorHierarchyIds(selectedMember)(state);
   const currentUserIsPdl = pdlInfo?.id === currentUserId;
-  const currentUserIsSupervisor = supervisorInfo?.id === currentUserId;
+  const currentUserIsSupervisor = supervisorChain.includes(currentUserId);
   const canRequestFeedback = isAdmin || currentUserIsPdl || currentUserIsSupervisor;
 
 

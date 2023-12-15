@@ -10,7 +10,7 @@ import {
   selectCurrentMembers,
   selectNormalizedMembers,
   selectNormalizedTeams,
-  selectMostRecentCheckin, selectSupervisors,
+  selectMostRecentCheckin, selectSupervisors, selectSupervisorHierarchyIds,
 } from "./selectors";
 
 describe("Selectors", () => {
@@ -867,6 +867,13 @@ it("selectSupervisors should return only members who are supervisors", () => {
       lastName: "Boss",
       supervisorid: 1,
     },
+    {
+      id: 6,
+      employeeId: 15,
+      name: "No Supervisor",
+      firstName: "No",
+      lastName: "Supervisor",
+    },
   ]
 
   const testState = {
@@ -877,3 +884,64 @@ it("selectSupervisors should return only members who are supervisors", () => {
 
   expect(selectSupervisors(testState)).toEqual(expectedResult);
 });
+
+it("selectSupervisorHierarchyIds should return a list of ids of everyone who is above the selected member", () => {
+  const testMemberProfiles = [
+    {
+      id: 1,
+      employeeId: 11,
+      name: "Big Boss",
+      firstName: "Big",
+      lastName: "Boss",
+      supervisorid: 2,
+    },
+    {
+      id: 2,
+      employeeId: 12,
+      name: "Huey Emmerich",
+      firstName: "Huey",
+      lastName: "Emmerich",
+      supervisorid: 4,
+    },
+    {
+      id: 3,
+      employeeId: 13,
+      name: "Kazuhira Miller",
+      firstName: "Kazuhira",
+      lastName: "Miller",
+      supervisorid: 5,
+    },
+    {
+      id: 4,
+      employeeId: 14,
+      name: "Revolver Ocelot",
+      firstName: "Revolver",
+      lastName: "Ocelot",
+      supervisorid: 6,
+    },
+    {
+      id: 5,
+      employeeId: 15,
+      name: "The Boss",
+      firstName: "The",
+      lastName: "Boss",
+      supervisorid: 6,
+    },
+    {
+      id: 6,
+      employeeId: 15,
+      name: "No Supervisor",
+      firstName: "No",
+      lastName: "Supervisor",
+    },
+  ]
+
+  const testState = {
+    memberProfiles: testMemberProfiles
+  };
+
+  const expectedResult = [testMemberProfiles[1].id, testMemberProfiles[3].id, testMemberProfiles[5].id];
+
+  expect(selectSupervisorHierarchyIds(testMemberProfiles[0])(testState)).toEqual(expectedResult);
+});
+
