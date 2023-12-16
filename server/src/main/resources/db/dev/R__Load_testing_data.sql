@@ -703,7 +703,6 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
 
-
 -- PDL Permissions
 insert into role_permissions
     (roleid, permissionid)
@@ -721,24 +720,14 @@ values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e815de-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_SKILLS_REPORT
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '26a2f861-3f7d-4dc3-8762-716b184a3a47'); -- CAN_VIEW_FEEDBACK_ANSWER
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e81958-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_RETENTION_REPORT
-
-insert into role_permissions
-(roleid, permissionid)
-values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '056e32b2-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_ANNIVERSARY_REPORT
-
-insert into role_permissions
-(roleid, permissionid)
-values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2d765f78-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_BIRTHDAY_REPORT
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f6961946-a792-4a16-b675-d8cf7980c17a'); -- CAN_VIEW_PERMISSIONS
 
 insert into role_permissions
 (roleid, permissionid)
@@ -755,13 +744,7 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
 
-
--- Member Permissions
-insert into role_permissions
-    (roleid, permissionid)
-values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '439ad8a8-500f-4f3f-963b-a86437d5820a'); -- CAN_CREATE_ORGANIZATION_MEMBERS
-
+-- Member permissions
 insert into role_permissions
     (roleid, permissionid)
 values
@@ -778,6 +761,16 @@ values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
 
 insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '26a2f861-3f7d-4dc3-8762-716b184a3a47'); -- CAN_VIEW_FEEDBACK_ANSWER
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'f6961946-a792-4a16-b675-d8cf7980c17a'); -- CAN_VIEW_PERMISSIONS
+
+insert into role_permissions
 (roleid, permissionid)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'd04bd772-4a37-4cc3-91da-8fc7de08f3be'); -- CAN_VIEW_CHECKINS
@@ -791,7 +784,6 @@ insert into role_permissions
 (roleid, permissionid)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
-
 
 -- Feedback Templates
 ---- Quarter 1 Feedback Template
