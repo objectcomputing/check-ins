@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.checkins;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -50,6 +53,7 @@ public class CheckInController {
      * @return
      */
     @Get("/{?teamMemberId,pdlId,completed}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
     public Mono<HttpResponse<Set<CheckIn>>> findCheckIns(@Nullable UUID teamMemberId, @Nullable UUID pdlId, @Nullable Boolean completed) {
         return Mono.fromCallable(() -> checkInServices.findByFields(teamMemberId, pdlId, completed))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -65,6 +69,7 @@ public class CheckInController {
      */
 
     @Post("/")
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS)
     public Mono<HttpResponse<CheckIn>> createCheckIn(@Body @Valid CheckInCreateDTO checkIn,
                                                        HttpRequest<CheckInCreateDTO> request) {
         return Mono.fromCallable(() -> checkInServices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted())))
@@ -83,6 +88,7 @@ public class CheckInController {
      * @return {@link HttpResponse<CheckIn>}
      */
     @Put("/")
+    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
     public Mono<HttpResponse<CheckIn>> update(@Body @Valid @NotNull CheckIn checkIn,
                                                 HttpRequest<CheckIn> request) {
         return Mono.fromCallable(() -> checkInServices.update(checkIn))
@@ -100,6 +106,7 @@ public class CheckInController {
      * @return
      */
     @Get("/{id}")
+    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
     public Mono<HttpResponse<CheckIn>> readCheckIn(@NotNull UUID id) {
         return Mono.fromCallable(() -> checkInServices.read(id))
                 .switchIfEmpty(Mono.error(new NotFoundException("No checkin for UUID")))

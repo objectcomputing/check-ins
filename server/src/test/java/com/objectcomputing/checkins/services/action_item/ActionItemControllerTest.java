@@ -16,6 +16,8 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
@@ -34,6 +36,10 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     @Client("/services/action-items")
     HttpClient client;
 
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
     @Test
     void testCreateAnActionItemByAdmin() {
 
@@ -315,7 +321,6 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     void testDeleteAnActionItemByADMINIdWhenCompleted() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        createAndAssignAdminRole(memberProfileOfUser);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -481,7 +486,6 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     void testFindAllActionItemsByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForAdmin = createADefaultMemberProfileForPdl(memberProfile);
-        createAndAssignAdminRole(memberProfileForAdmin);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForAdmin);
 
@@ -503,7 +507,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
+        createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
                 .basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);

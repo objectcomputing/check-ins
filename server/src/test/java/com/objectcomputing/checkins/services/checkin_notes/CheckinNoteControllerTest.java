@@ -17,6 +17,8 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
@@ -36,11 +38,15 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     @Client("/services/checkin-notes")
     HttpClient client;
 
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
     @Test
     void testCreateCheckinNoteByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        Role role = createAndAssignAdminRole(memberProfileOfUser);
+        Role role = assignAdminRole(memberProfileOfUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -67,7 +73,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateCheckinNoteByPdl() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileOfUser);
+        Role role = assignPdlRole(memberProfileOfUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -93,7 +99,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateCheckinNoteByMember() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.MEMBER, memberProfile);
+        Role role = assignMemberRole(memberProfile);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -157,7 +163,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateACheckInNoteForNonExistingCheckInId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfile);
+        Role role = assignPdlRole(memberProfile);
 
         CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
         checkinNoteCreateDTO.setCheckinid(UUID.randomUUID());
@@ -182,7 +188,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateACheckInNoteForNonExistingMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfile);
+        Role role = assignPdlRole(memberProfile);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -209,7 +215,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateACheckInNoteByPLDIdWhenCompleted() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileOfPDL);
+        Role role = assignPdlRole(memberProfileOfPDL);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -235,7 +241,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateThrowsPermissionException() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        Role role = createAndAssignRole(RoleType.MEMBER, memberProfileOfUser);
+        Role role = assignMemberRole(memberProfileOfUser);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -262,7 +268,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
-        Role pdlRole = createAndAssignRole(RoleType.PDL, memberProfileOfMrNobody);
+        Role pdlRole = assignPdlRole(memberProfileOfMrNobody);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -288,9 +294,8 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     @Test
     void testCreateCheckinNoteByPDLWhoCreatedIt() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfFormerPDL = createAnUnrelatedUser();
-        Role pdlRole = createAndAssignRole(RoleType.PDL, memberProfileOfFormerPDL);
+        Role pdlRole = assignPdlRole(memberProfileOfFormerPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileOfFormerPDL);
 
@@ -317,7 +322,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testReadCheckinNoteByPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileForPDL);
+        Role role = assignPdlRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -335,7 +340,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testReadCheckinNoteByMEMBER() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.MEMBER, memberProfileForPDL);
+        Role role = assignMemberRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -353,7 +358,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testReadCheckinNoteByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.ADMIN, memberProfileForPDL);
+        Role role = assignAdminRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -372,7 +377,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileForFormerPDL = createASecondDefaultMemberProfileForPdl(memberProfile);
-        Role pdlRole = createAndAssignRole(RoleType.PDL, memberProfileForPDL);
+        Role pdlRole = assignPdlRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForFormerPDL);
 
@@ -394,7 +399,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     @Test
     void testReadCheckinNoteNotFound() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        Role pdlRole = createAndAssignRole(RoleType.PDL, memberProfileOfPDL);
+        Role pdlRole = assignPdlRole(memberProfileOfPDL);
 
         UUID randomCheckinID = UUID.randomUUID();
 
@@ -416,7 +421,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
-        Role pdlRole = createAndAssignRole(RoleType.PDL, memberProfileOfMrNobody);
+        Role pdlRole = assignPdlRole(memberProfileOfMrNobody);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -439,7 +444,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testReadCheckinNoteByFormerPDLWhoCreatedIt() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileOfFormerPDL = createAnUnrelatedUser();
-        Role pdlRole = createAndAssignRole(RoleType.PDL, memberProfileOfFormerPDL);
+        Role pdlRole = assignPdlRole(memberProfileOfFormerPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileOfFormerPDL);
 
@@ -458,7 +463,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindAllCheckinNoteByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role pdlRole = createAndAssignRole(RoleType.ADMIN, memberProfileForPDL);
+        Role pdlRole = assignAdminRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -477,11 +482,11 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindAllCheckinNoteByNonAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.MEMBER, memberProfileForPDL);
+        Role role = assignMemberRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        CheckinNote checkinNote = createADefaultCheckInNote(checkIn, memberProfile);
+        createADefaultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
                 .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole());
@@ -500,7 +505,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindCheckinNoteByBothCheckinIdAndCreateByid() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfile);
+        Role role = assignPdlRole(memberProfile);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -521,7 +526,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
-        Role role = createAndAssignRole(RoleType.ADMIN, memberProfileForUnrelatedUser);
+        Role role = assignAdminRole(memberProfileForUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -541,7 +546,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
-        Role role = createAndAssignRole(RoleType.ADMIN, memberProfileForUnrelatedUser);
+        Role role = assignAdminRole(memberProfileForUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -560,7 +565,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindCheckinNoteByCheckinIdForPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileForPDL);
+        Role role = assignPdlRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -580,7 +585,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile unrelatedUser = createAnUnrelatedUser();
-        Role role = createAndAssignRole(RoleType.PDL, unrelatedUser);
+        Role role = assignPdlRole(unrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -601,7 +606,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindCheckinNoteByCreatedByIdByMember() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileForPDL);
+        Role role = assignPdlRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -621,7 +626,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile anUnrelatedUser = createAnUnrelatedUser();
-        Role role = createAndAssignRole(RoleType.PDL, anUnrelatedUser);
+        Role role = assignPdlRole(anUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -642,7 +647,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateCheckinNoteByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.ADMIN, memberProfileForPDL);
+        Role role = assignAdminRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -661,7 +666,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateCheckinNoteByPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileForPDL);
+        Role role = assignPdlRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -679,7 +684,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateCheckinNoteByMEMBER() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.MEMBER, memberProfile);
+        Role role = assignMemberRole(memberProfile);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -697,7 +702,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateInvalidCheckinNote() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileForPDL);
+        Role role = assignPdlRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -726,7 +731,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     @Test
     void testUpdateNullCheckinNote() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createAndAssignRole(RoleType.PDL, memberProfile);
+        Role role = assignPdlRole(memberProfile);
 
         final HttpRequest<?> request = HttpRequest.PUT("", "")
                 .basicAuth("test@test.com", role.getRole());
@@ -759,7 +764,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateNonExistingCheckInNote() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileForPDL);
+        Role role = assignPdlRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -784,7 +789,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateNonExistingCheckInNoteForCheckInId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileForPDL);
+        Role role = assignPdlRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -809,7 +814,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateNonExistingCheckInNoteForMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileForPDL);
+        Role role = assignPdlRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -835,7 +840,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
-        Role role = createAndAssignRole(RoleType.PDL, memberProfileOfMrNobody);
+        Role role = assignPdlRole(memberProfileOfMrNobody);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfile, memberProfileForPDL);
 
@@ -860,7 +865,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
-        Role role = createAndAssignRole(RoleType.ADMIN, memberProfileOfMrNobody);
+        Role role = assignAdminRole(memberProfileOfMrNobody);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -879,7 +884,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateThrowsPermissionException() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileForUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        Role role = createAndAssignRole(RoleType.MEMBER, memberProfileForUser);
+        Role role = assignPdlRole(memberProfileForUser);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileForUser, memberProfileOfPDL);
         CheckinNote checkinNote = createADefaultCheckInNote(checkIn, memberProfileForUser);

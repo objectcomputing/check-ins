@@ -114,6 +114,7 @@ jobs:
             --set-env-vars "WEB_ADDRESS=https://checkins-develop-tuvcfzotpq-uc.a.run.app" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
+            --set-env-vars "MICRONAUT_ENVIRONMENTS=dev" \
             --platform "managed" \
-            --max-instances 4 \
+            --max-instances 2 \
             --allow-unauthenticated

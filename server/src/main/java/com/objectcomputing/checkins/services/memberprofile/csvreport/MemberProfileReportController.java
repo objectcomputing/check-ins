@@ -1,8 +1,10 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.scheduling.TaskExecutors;
@@ -44,6 +46,7 @@ public class MemberProfileReportController {
     }
 
     @Get(uri = "/csv", produces = MediaType.TEXT_CSV)
+    @RequiredPermission(Permissions.CAN_VIEW_PROFILE_REPORT)
     public Mono<MutableHttpResponse<File>> generateCsv() {
         return Flux.defer(() -> Flux.fromIterable(memberProfileServices.findByValues(null, null, null, null, null, null, false)))
                 .subscribeOn(ioScheduler)

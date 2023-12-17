@@ -51,6 +51,9 @@ export const createNewCheckin = async (memberProfile, dispatch, csrf) => {
       },
       csrf
     );
+
+    if (res.error) return;
+
     const checkin =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
 
