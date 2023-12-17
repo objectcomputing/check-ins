@@ -19,8 +19,8 @@ delete from team;
 delete from feedback_answers;
 delete from feedback_requests;
 delete from template_questions;
-delete from feedback_templates;
 delete from review_periods;
+delete from feedback_templates;
 delete from member_profile;
 delete from skills;
 
