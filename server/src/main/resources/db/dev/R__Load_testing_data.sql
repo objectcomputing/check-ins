@@ -16,11 +16,11 @@ delete from permissions;
 delete from role;
 delete from team_member;
 delete from team;
-delete from review_periods;
 delete from feedback_answers;
 delete from feedback_requests;
 delete from template_questions;
 delete from feedback_templates;
+delete from review_periods;
 delete from member_profile;
 delete from skills;
 
