@@ -244,7 +244,7 @@ export const selectSupervisors = createSelector(
 );
 
 const buildSupervisorHierarchy = (allSupervisors, member, supervisorChain ) => {
-  const memberSupervisor = allSupervisors?.find(supervisor => supervisor.id === member?.supervisorid);
+  const memberSupervisor = allSupervisors?.find(supervisor => supervisor?.id === member?.supervisorid);
   supervisorChain.push(memberSupervisor);
   return !memberSupervisor?.supervisorid ? supervisorChain : buildSupervisorHierarchy(allSupervisors, memberSupervisor, supervisorChain);
 }
