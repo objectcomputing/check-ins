@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Introspected
-public class RolePermissionResponseDTO {
+public class RolePermissionsResponseDTO {
 
     @NotNull
     @Schema(description = "id of the role", required = true)
