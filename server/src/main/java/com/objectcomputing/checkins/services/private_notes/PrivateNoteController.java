@@ -54,6 +54,7 @@ public class PrivateNoteController {
      * @return
      */
     @Post("/")
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS_ELEVATED)
     public Mono<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         return Mono.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
                 privateNote.getCreatedbyid(), privateNote.getDescription())))
