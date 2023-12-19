@@ -67,6 +67,7 @@ public class CheckinDocumentController {
      */
 
     @Post()
+    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS_ELEVATED)
     public Mono<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
                                                                     HttpRequest<CheckinDocumentCreateDTO> request) {
         return Mono.fromCallable(() -> checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(),checkinDocument.getUploadDocId())))
