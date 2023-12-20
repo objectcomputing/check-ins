@@ -9,6 +9,7 @@ import jakarta.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Singleton
 public class RolePermissionServicesImpl implements RolePermissionServices {
@@ -25,8 +26,8 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
         this.permissionServices = permissionServices;
     }
 
-    public List<RolePermissionResponseDTO> findAll() {
-        List<RolePermissionResponseDTO> roleInfo = new ArrayList<>();
+    public List<RolePermissionsResponseDTO> findAll() {
+        List<RolePermissionsResponseDTO> roleInfo = new ArrayList<>();
         List<RolePermission> records =  rolePermissionRepository.findAll();
         List<Role> roles = roleServices.findAllRoles();
         List<Permission> permissions = permissionServices.findAll();
@@ -40,14 +41,26 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
                 }
             }
 
-            RolePermissionResponseDTO rolePermissionResponseDTO = new RolePermissionResponseDTO();
-            rolePermissionResponseDTO.setRoleId(role.getId());
-            rolePermissionResponseDTO.setRole(role.getRole());
-            rolePermissionResponseDTO.setDescription(role.getDescription());
-            rolePermissionResponseDTO.setPermissions(permissionsAssociatedWithRole);
-            roleInfo.add(rolePermissionResponseDTO);
+            RolePermissionsResponseDTO rolePermissionsResponseDTO = new RolePermissionsResponseDTO();
+            rolePermissionsResponseDTO.setRoleId(role.getId());
+            rolePermissionsResponseDTO.setRole(role.getRole());
+            rolePermissionsResponseDTO.setDescription(role.getDescription());
+            rolePermissionsResponseDTO.setPermissions(permissionsAssociatedWithRole);
+            roleInfo.add(rolePermissionsResponseDTO);
         }
 
         return roleInfo;
+    }
+
+    @Override
+    public RolePermission save(UUID roleId, UUID permissionId) {
+        rolePermissionRepository.saveByIds(roleId.toString(), permissionId.toString());
+        RolePermission saved = rolePermissionRepository.findByIds(roleId.toString(), permissionId.toString()).get(0);
+        return saved;
+    }
+
+    @Override
+    public void delete(UUID roleId, UUID permissionId) {
+        rolePermissionRepository.deleteByIds(roleId.toString(), permissionId.toString());
     }
 }

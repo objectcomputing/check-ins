@@ -577,6 +577,11 @@ values
     ('1fd790d9-df9a-4201-818b-3a9ac5e5be3b', 'CAN_VIEW_ROLE_PERMISSIONS');
 
 insert into permissions
+    (id, permission)
+values
+    ('ba001065-bfef-41cc-a03d-6e168ba1c244', 'CAN_ASSIGN_ROLE_PERMISSIONS');
+
+insert into permissions
 (id, permission)
 values
     ('f6961946-a792-4a16-b675-d8cf7980c17a', 'CAN_VIEW_PERMISSIONS');
@@ -658,6 +663,11 @@ insert into role_permissions
     (roleid, permissionid)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1fd790d9-df9a-4201-818b-3a9ac5e5be3b'); -- CAN_VIEW_ROLE_PERMISSIONS
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ba001065-bfef-41cc-a03d-6e168ba1c244'); -- CAN_ASSIGN_ROLE_PERMISSIONS
 
 insert into role_permissions
     (roleid, permissionid)
