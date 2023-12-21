@@ -655,6 +655,11 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'a5a71f7d-a3f5-4126-8aaf-0ad18a06615a'); -- CAN_CREATE_CHECKINS_ELEVATED
 
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '73330168-00a6-4a11-ae98-005566569ef7'); -- CAN_UPDATE_CHECKINS_ELEVATED
+
 
 -- PDL Permissions
 insert into role_permissions
@@ -705,7 +710,12 @@ values
 insert into role_permissions
 (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6c144b56-3c1c-472f-8c3e-243e5a4149a1'); -- CAN_CREATE_CHECKINS_ELEVATED
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a5a71f7d-a3f5-4126-8aaf-0ad18a06615a'); -- CAN_CREATE_CHECKINS_ELEVATED
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '73330168-00a6-4a11-ae98-005566569ef7'); -- CAN_UPDATE_CHECKINS_ELEVATED
 
 
 -- Member permissions
