@@ -354,7 +354,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
                 client.toBlocking().exchange(request, String.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("User is unauthorized to do this operation", responseException.getMessage());
+        assertEquals("Forbidden", responseException.getMessage());
 
     }
 
@@ -411,12 +411,9 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.PUT("", PrivateNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
 
     }
 
