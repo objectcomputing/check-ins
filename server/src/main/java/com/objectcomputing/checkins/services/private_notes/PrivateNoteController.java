@@ -77,6 +77,7 @@ public class PrivateNoteController {
      * @return
      */
     @Put("/")
+    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS_ELEVATED)
     public Mono<HttpResponse<PrivateNote>> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         if (privateNote == null) {
             return Mono.just(HttpResponse.ok());

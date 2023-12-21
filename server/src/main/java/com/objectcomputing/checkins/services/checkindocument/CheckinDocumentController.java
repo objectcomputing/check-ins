@@ -85,6 +85,7 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
     @Put()
+    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS_ELEVATED)
     public Mono<HttpResponse<CheckinDocument>> update(@Body @Valid CheckinDocument checkinDocument,
                                             HttpRequest<CheckinDocument> request) {
         if (checkinDocument == null) {
@@ -107,6 +108,7 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<>}
      */
     @Delete("/{checkinsId}")
+    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS_ELEVATED)
     public HttpResponse<?> delete(UUID checkinsId) {
         checkinDocumentService.deleteByCheckinId(checkinsId);
         return HttpResponse
