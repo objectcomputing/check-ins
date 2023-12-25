@@ -25,6 +25,26 @@ const EditPermissionsPage = (props) => {
   const handleClickDelete = () => setDeletePermissions(!deletePermissions);
   const handleClickView = () => setViewPermissions(!viewPermissions);
 
+  const permissionTypes = [
+    'CAN_VIEW_FEEDBACK_REQUEST',
+    'CAN_CREATE_FEEDBACK_REQUEST',
+    'CAN_DELETE_FEEDBACK_REQUEST',
+    'CAN_VIEW_FEEDBACK_ANSWER',
+    'CAN_DELETE_ORGANIZATION_MEMBERS',
+    'CAN_CREATE_ORGANIZATION_MEMBERS',
+    'CAN_VIEW_ROLE_PERMISSIONS',
+    'CAN_ASSIGN_ROLE_PERMISSIONS',
+    'CAN_VIEW_PERMISSIONS',
+    'CAN_VIEW_SKILLS_REPORT',
+    'CAN_VIEW_RETENTION_REPORT',
+    'CAN_VIEW_ANNIVERSARY_REPORT',
+    'CAN_VIEW_BIRTHDAY_REPORT',
+    'CAN_VIEW_PROFILE_REPORT',
+    'CAN_CREATE_CHECKINS',
+    'CAN_VIEW_CHECKINS',
+    'CAN_UPDATE_CHECKINS',
+  ];
+
   useEffect(() => {
     console.log("Permissions");
     console.log(allPermissions, permissionsList);
@@ -55,9 +75,9 @@ const EditPermissionsPage = (props) => {
         </div>
       </div>
 
-      <div className="edit-permissions-list">
+      <div className="permissions-list">
         <h2>Edit Permissions Below:</h2>
-        <div className="edit-permissions">
+        <div className="permissions">
           <input
             onClick={handleClickUpdate}
             id="update-permissions"
@@ -66,7 +86,7 @@ const EditPermissionsPage = (props) => {
           />
           <label htmlFor="update-permissions">Update permissions</label>
         </div>
-        <div className="edit-permissions">
+        <div className="permissions">
           <input
             onClick={handleClickDelete}
             id="delete-permissions"
@@ -75,7 +95,7 @@ const EditPermissionsPage = (props) => {
           />
           <label htmlFor="delete-permissions">Delete permissions</label>
         </div>
-        <div className="edit-permissions">
+        <div className="permissions">
           <input
             onClick={handleClickView}
             id="view-permissions"
