@@ -54,6 +54,7 @@ public class ActionItemController {
      * @return {@link HttpResponse< ActionItem >}
      */
     @Put()
+    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
     public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<ActionItem> request) {
         ActionItem updatedActionItem = actionItemServices.update(actionItem);
         return HttpResponse
@@ -70,6 +71,7 @@ public class ActionItemController {
      * @param id, id of {@link ActionItem} to delete
      */
     @Delete("/{id}")
+    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
     public HttpResponse<?> deleteActionItem(UUID id) {
         actionItemServices.delete(id);
         return HttpResponse

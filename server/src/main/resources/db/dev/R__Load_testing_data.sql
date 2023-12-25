@@ -19,6 +19,7 @@ delete from team;
 delete from feedback_answers;
 delete from feedback_requests;
 delete from template_questions;
+delete from review_periods;
 delete from feedback_templates;
 delete from member_profile;
 delete from skills;
@@ -52,7 +53,7 @@ VALUES
 INSERT INTO member_profile -- Michael Kimberlin
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
-('6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('Michael','${aeskey}'), PGP_SYM_ENCRYPT('Kimberlin','${aeskey}'), PGP_SYM_ENCRYPT('Director of Organizational Development','${aeskey}'), '8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('kimberlinm@objectcomputing.com','${aeskey}'), '12312342', '2012-09-29', PGP_SYM_ENCRYPT('Developer of developers and others','${aeskey}'), null);
+('6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('Michael','${aeskey}'), PGP_SYM_ENCRYPT('Kimberlin','${aeskey}'), PGP_SYM_ENCRYPT('Director of Organizational Development','${aeskey}'), '8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('kimberlinm@objectcomputing.com','${aeskey}'), '12312342', '2012-09-29', PGP_SYM_ENCRYPT('Developer of developers and others','${aeskey}'), '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
 
 INSERT INTO member_profile -- Mark Volkmann
 (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid)
@@ -82,7 +83,7 @@ VALUES
 INSERT INTO member_profile -- Zack Brown
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
 VALUES
-('43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Zack','${aeskey}'), PGP_SYM_ENCRYPT('Brown','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('brownz@objectcomputing.com','${aeskey}'), '123123412', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Phenomenal','${aeskey}'), null);
+('43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Zack','${aeskey}'), PGP_SYM_ENCRYPT('Brown','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('brownz@objectcomputing.com','${aeskey}'), '123123412', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Phenomenal','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO member_profile -- Joe Warner
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
@@ -576,6 +577,11 @@ values
     ('1fd790d9-df9a-4201-818b-3a9ac5e5be3b', 'CAN_VIEW_ROLE_PERMISSIONS');
 
 insert into permissions
+    (id, permission)
+values
+    ('ba001065-bfef-41cc-a03d-6e168ba1c244', 'CAN_ASSIGN_ROLE_PERMISSIONS');
+
+insert into permissions
 (id, permission)
 values
     ('f6961946-a792-4a16-b675-d8cf7980c17a', 'CAN_VIEW_PERMISSIONS');
@@ -661,6 +667,11 @@ values
 insert into role_permissions
     (roleid, permissionid)
 values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ba001065-bfef-41cc-a03d-6e168ba1c244'); -- CAN_ASSIGN_ROLE_PERMISSIONS
+
+insert into role_permissions
+    (roleid, permissionid)
+values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f6961946-a792-4a16-b675-d8cf7980c17a'); -- CAN_VIEW_PERMISSIONS
 
 insert into role_permissions
@@ -703,7 +714,6 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
 
-
 -- PDL Permissions
 insert into role_permissions
     (roleid, permissionid)
@@ -721,24 +731,14 @@ values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e815de-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_SKILLS_REPORT
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '26a2f861-3f7d-4dc3-8762-716b184a3a47'); -- CAN_VIEW_FEEDBACK_ANSWER
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f7e81958-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_RETENTION_REPORT
-
-insert into role_permissions
-(roleid, permissionid)
-values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '056e32b2-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_ANNIVERSARY_REPORT
-
-insert into role_permissions
-(roleid, permissionid)
-values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2d765f78-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_BIRTHDAY_REPORT
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f6961946-a792-4a16-b675-d8cf7980c17a'); -- CAN_VIEW_PERMISSIONS
 
 insert into role_permissions
 (roleid, permissionid)
@@ -750,13 +750,12 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'd84772ac-85c5-4030-9a86-7db41770fbf3'); -- CAN_CREATE_CHECKINS
 
-
--- Member Permissions
 insert into role_permissions
-    (roleid, permissionid)
+(roleid, permissionid)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '439ad8a8-500f-4f3f-963b-a86437d5820a'); -- CAN_CREATE_ORGANIZATION_MEMBERS
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
 
+-- Member permissions
 insert into role_permissions
     (roleid, permissionid)
 values
@@ -773,6 +772,16 @@ values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
 
 insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '26a2f861-3f7d-4dc3-8762-716b184a3a47'); -- CAN_VIEW_FEEDBACK_ANSWER
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'f6961946-a792-4a16-b675-d8cf7980c17a'); -- CAN_VIEW_PERMISSIONS
+
+insert into role_permissions
 (roleid, permissionid)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'd04bd772-4a37-4cc3-91da-8fc7de08f3be'); -- CAN_VIEW_CHECKINS
@@ -782,6 +791,10 @@ insert into role_permissions
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'd84772ac-85c5-4030-9a86-7db41770fbf3'); -- CAN_CREATE_CHECKINS
 
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
 
 -- Feedback Templates
 ---- Quarter 1 Feedback Template

@@ -12,11 +12,13 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
     // Add MEMBER Permissions here
     List<Permissions> memberPermissions = List.of(
         Permissions.CAN_VIEW_FEEDBACK_REQUEST,
+        Permissions.CAN_CREATE_FEEDBACK_REQUEST,
         Permissions.CAN_DELETE_FEEDBACK_REQUEST,
         Permissions.CAN_VIEW_FEEDBACK_ANSWER,
         Permissions.CAN_VIEW_PERMISSIONS,
         Permissions.CAN_VIEW_CHECKINS,
-        Permissions.CAN_CREATE_CHECKINS
+        Permissions.CAN_CREATE_CHECKINS,
+        Permissions.CAN_UPDATE_CHECKINS
     );
 
     // Add PDL Permissions here
@@ -27,7 +29,8 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_VIEW_FEEDBACK_ANSWER,
         Permissions.CAN_VIEW_PERMISSIONS,
         Permissions.CAN_VIEW_CHECKINS,
-        Permissions.CAN_CREATE_CHECKINS
+        Permissions.CAN_CREATE_CHECKINS,
+        Permissions.CAN_UPDATE_CHECKINS
     );
 
     // Add ADMIN Permissions here
@@ -47,7 +50,8 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_VIEW_PROFILE_REPORT,
         Permissions.CAN_CREATE_CHECKINS,
         Permissions.CAN_VIEW_CHECKINS,
-        Permissions.CAN_UPDATE_CHECKINS
+        Permissions.CAN_UPDATE_CHECKINS,
+        Permissions.CAN_ASSIGN_ROLE_PERMISSIONS
     );
 
     default Permission createACustomPermission(Permissions perm) {

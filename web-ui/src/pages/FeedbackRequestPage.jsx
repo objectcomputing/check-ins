@@ -149,17 +149,19 @@ const FeedbackRequestPage = () => {
   }, [memberIds, query, dispatch, handleQueryChange]);
 
   const isValidDate = useCallback((dateString) => {
-    let today = new Date();
-    today = dateUtils.format(today, "MM/dd/yyyy");
-    let timeStamp = Date.parse(dateString)
-    if (dateString < today)
+    const today = new Date().setHours(0, 0, 0, 0);
+    const timeStamp = Date.parse(dateString);
+    if (timeStamp < today)
       return false;
     else
       return !isNaN(timeStamp);
   }, []);
 
   const hasSend = useCallback(() => {
-    const isValidPair = query.due ? query.due >= query.send : true;
+    const dueTimestamp = Date.parse(query.due);
+    const sendTimestamp = Date.parse(query.send);
+
+    const isValidPair = query.due ? dueTimestamp >= sendTimestamp : true;
     return (query.send && isValidDate(query.send) && isValidPair)
   }, [query.send, isValidDate, query.due]);
 
@@ -171,6 +173,7 @@ const FeedbackRequestPage = () => {
         return hasFor() && templateIsValid && hasFrom();
       } else if (activeStep === 3) {
         const dueQueryValid = query.due ? isValidDate(query.due) : true;
+        console.log({hasFor: hasFor(), templateIsValid, hasFrom: hasFrom(), hasSend: hasSend(), dueQueryValid});
         return hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid;
       } else {
         return false;
