@@ -11,7 +11,6 @@ import {
 import {
   UPDATE_GUILD,
   UPDATE_USER_BIO,
-  UPDATE_TOAST,
 } from "../context/actions";
 import { addGuildMember, deleteGuildMember } from "../api/guild";
 import { updateMember } from "../api/member";
