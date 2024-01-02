@@ -24,7 +24,9 @@ public interface PermissionRepository extends CrudRepository<Permission, UUID> {
             "    ON permissions.id = role_permissions.permissionid " +
             "WHERE member_profile.id = :id")
     List<Permission> findUserPermissions(UUID id);
-    
+
+    List<Permission> findByPermission(String permission);
+
     @NonNull
     List<Permission> findAll();
 
