@@ -660,6 +660,11 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '73330168-00a6-4a11-ae98-005566569ef7'); -- CAN_UPDATE_CHECKINS_ELEVATED
 
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '49b56886-d422-4cbf-8258-20788c01b680'); -- CAN_DELETE_CHECKINS_ELEVATED
+
 
 -- PDL Permissions
 insert into role_permissions

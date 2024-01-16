@@ -1,13 +1,11 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
-;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-public interface PermissionFixture extends RepositoryFixture, RolePermissionFixture {
+public interface PermissionFixture extends RolePermissionFixture {
 
     // Add MEMBER Permissions here
     List<Permission> memberPermissions = List.of(
