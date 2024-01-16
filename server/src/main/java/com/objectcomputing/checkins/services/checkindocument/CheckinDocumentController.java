@@ -108,7 +108,7 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<>}
      */
     @Delete("/{checkinsId}")
-    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS_ELEVATED)
+    @RequiredPermission(Permissions.CAN_DELETE_CHECKINS_ELEVATED)
     public HttpResponse<?> delete(UUID checkinsId) {
         checkinDocumentService.deleteByCheckinId(checkinsId);
         return HttpResponse

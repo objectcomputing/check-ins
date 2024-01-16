@@ -384,8 +384,8 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
                 client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("You do not have permission to access this resource", responseException.getMessage());
-    }
+        assertEquals("Forbidden", responseException.getMessage());
+    }     
 
     @Test
     void deleteCheckinDocumentThrowsExceptionForMemberRole() {
