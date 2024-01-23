@@ -2,11 +2,6 @@ package com.objectcomputing.checkins.services.role.role_permissions;
 
 import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerCreateDTO;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
-import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.PermissionFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
@@ -14,7 +9,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
-import com.tc.text.StringFormatter;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -28,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -68,7 +61,7 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         assertEquals(adminRole.getId(), actual.get(0).getRoleId());
         assertEquals(adminRole.getRole(), actual.get(0).getRole());
         assertNotNull(actual.get(0).getDescription());
-        assertEquals(17, actual.get(0).getPermissions().size());
+        assertEquals(Permissions.values().length, actual.get(0).getPermissions().size());
         List<Permission> assigned = actual.get(0).getPermissions();
         for(Permissions permission: adminPermissions) {
             Permission stored = getPermissionRepository().findByPermission(permission.name()).get(0);
