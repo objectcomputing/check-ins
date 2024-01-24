@@ -58,6 +58,21 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
+    void testMemberUnAbleToReadHisPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfUser);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+    }
+
+    @Test
     void testPdlAbleToReadHisPrivateNotes() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
