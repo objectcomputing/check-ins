@@ -65,7 +65,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfUser);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
