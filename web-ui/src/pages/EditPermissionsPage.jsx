@@ -1,5 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 
+import EditPermissionsPageRoles from "./EditPermissionsPageRoles";
+
 import { getPermissionsList } from "../api/permissions";
 
 import { AppContext } from "../context/AppContext";
@@ -20,20 +22,48 @@ const EditPermissionsPage = (props) => {
   const [showAllPermissions, setShowAllPermissions] = useState(true);
 
   const [
-    updateFeedbackRequestPermissions,
-    setUpdateFeedbackRequestPermissions,
+    createFeedbackRequestPermissionsAdmin,
+    setCreateFeedbackRequestPermissionsAdmin,
   ] = useState(false);
   const [
-    deleteFeedbackRequestPermissions,
-    setDeleteFeedbackRequestPermissions,
+    createFeedbackRequestPermissionsPDL,
+    setCreateFeedbackRequestPermissionsPDL,
   ] = useState(false);
-  const [viewFeedbackRequestPermissions, setViewFeedbackRequestPermissions] =
-    useState(false);
+  const [
+    createFeedbackRequestPermissionsMember,
+    setCreateFeedbackRequestPermissionsMember,
+  ] = useState(false);
+
+  const [
+    deleteFeedbackRequestPermissionsAdmin,
+    setDeleteFeedbackRequestPermissionsAdmin,
+  ] = useState(false);
+  const [
+    deleteFeedbackRequestPermissionsPDL,
+    setDeleteFeedbackRequestPermissionsPDL,
+  ] = useState(false);
+  const [
+    deleteFeedbackRequestPermissionsMember,
+    setDeleteFeedbackRequestPermissionsMember,
+  ] = useState(false);
+
+  const [
+    viewFeedbackRequestPermissionsAdmin,
+    setViewFeedbackRequestPermissionsAdmin,
+  ] = useState(false);
+  const [
+    viewFeedbackRequestPermissionsPDL,
+    setViewFeedbackRequestPermissionsPDL,
+  ] = useState(false);
+  const [
+    viewFeedbackRequestPermissionsMember,
+    setViewFeedbackRequestPermissionsMember,
+  ] = useState(false);
 
   const [viewFeedbackAnswerPermissions, setViewFeedbackAnswerPermissions] =
     useState(false);
 
-  const [updateOrgMembersPermissions, setUpdateOrgMembersPermissions] =
+  const [createOrgMembersPermissions, setCreateOrgMembersPermissions] =
     useState(false);
   const [deleteOrgMembersPermissions, setDeleteOrgMembersPermissions] =
     useState(false);
@@ -57,18 +87,50 @@ const EditPermissionsPage = (props) => {
 
   const handleClick = () => setShowAllPermissions(!showAllPermissions);
 
-  const handleClickUpdateFeedbackRequest = () =>
-    setUpdateFeedbackRequestPermissions(!updateFeedbackRequestPermissions);
-  const handleClickDeleteFeedbackRequest = () =>
-    setDeleteFeedbackRequestPermissions(!deleteFeedbackRequestPermissions);
-  const handleClickViewFeedbackRequest = () =>
-    setViewFeedbackRequestPermissions(!viewFeedbackRequestPermissions);
+  const handleClickCreateFeedbackRequestAdmin = () =>
+    setCreateFeedbackRequestPermissionsAdmin(
+      !createFeedbackRequestPermissionsAdmin
+    );
+
+  const handleClickCreateFeedbackRequestPDL = () =>
+    setCreateFeedbackRequestPermissionsPDL(
+      !createFeedbackRequestPermissionsPDL
+    );
+
+  const handleClickCreateFeedbackRequestMember = () =>
+    setCreateFeedbackRequestPermissionsMember(
+      !createFeedbackRequestPermissionsMember
+    );
+
+  const handleClickDeleteFeedbackRequestAdmin = () =>
+    setDeleteFeedbackRequestPermissionsAdmin(
+      !deleteFeedbackRequestPermissionsAdmin
+    );
+  const handleClickDeleteFeedbackRequestPDL = () =>
+    setDeleteFeedbackRequestPermissionsPDL(
+      !deleteFeedbackRequestPermissionsPDL
+    );
+  const handleClickDeleteFeedbackRequestMember = () =>
+    setDeleteFeedbackRequestPermissionsMember(
+      !deleteFeedbackRequestPermissionsMember
+    );
+
+  const handleClickViewFeedbackRequestAdmin = () =>
+    setViewFeedbackRequestPermissionsAdmin(
+      !viewFeedbackRequestPermissionsAdmin
+    );
+  const handleClickViewFeedbackRequestPDL = () =>
+    setViewFeedbackRequestPermissionsPDL(!viewFeedbackRequestPermissionsPDL);
+  const handleClickViewFeedbackRequestMember = () =>
+    setViewFeedbackRequestPermissionsMember(
+      !viewFeedbackRequestPermissionsMember
+    );
 
   const handleClickViewFeedbackAnswer = () =>
     setViewFeedbackAnswerPermissions(!viewFeedbackAnswerPermissions);
 
-  const handleClickUpdateOrgMembersPermissions = () =>
-    setUpdateOrgMembersPermissions(!updateOrgMembersPermissions);
+  const handleClickCreateOrgMembersPermissions = () =>
+    setCreateOrgMembersPermissions(!createOrgMembersPermissions);
   const handleClickDeleteOrgMembers = () =>
     setDeleteOrgMembersPermissions(!deleteOrgMembersPermissions);
 
@@ -161,39 +223,36 @@ const EditPermissionsPage = (props) => {
 
       <div className="permissions-list">
         <h2>Edit Feedback Request Permissions Below:</h2>
-        <div className="permissions">
-          <input
-            onClick={handleClickUpdateFeedbackRequest}
-            id="update-feedback-request-permissions"
-            type="checkbox"
-            value={updateFeedbackRequestPermissions}
-          />
-          <label htmlFor="update-feedback-request-permissions">
-            Update Feedback Request permissions
-          </label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickDeleteFeedbackRequest}
-            id="delete-feedback-request-permissions"
-            type="checkbox"
-            value={deleteFeedbackRequestPermissions}
-          />
-          <label htmlFor="delete-feedback-request-permissions">
-            Delete Feedback Request permissions
-          </label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickViewFeedbackRequest}
-            id="view-feedback-request-permissions"
-            type="checkbox"
-            value={viewFeedbackRequestPermissions}
-          />
-          <label htmlFor="view-feedback-request-permissions">
-            View Feedback Request permissions
-          </label>
-        </div>
+
+        <EditPermissionsPageRoles
+          title="Create Feedback Request permissions"
+          selectAdmin={handleClickCreateFeedbackRequestAdmin}
+          admin={createFeedbackRequestPermissionsAdmin}
+          selectPDL={handleClickCreateFeedbackRequestPDL}
+          pdl={createFeedbackRequestPermissionsPDL}
+          selectMember={handleClickCreateFeedbackRequestMember}
+          member={createFeedbackRequestPermissionsMember}
+        />
+
+        <EditPermissionsPageRoles
+          title="Delete Feedback Request permissions"
+          selectAdmin={handleClickDeleteFeedbackRequestAdmin}
+          admin={deleteFeedbackRequestPermissionsAdmin}
+          selectPDL={handleClickDeleteFeedbackRequestPDL}
+          pdl={deleteFeedbackRequestPermissionsPDL}
+          selectMember={handleClickDeleteFeedbackRequestMember}
+          member={deleteFeedbackRequestPermissionsMember}
+        />
+
+        <EditPermissionsPageRoles
+          title="View Feedback Request permissions"
+          selectAdmin={handleClickViewFeedbackRequestAdmin}
+          admin={viewFeedbackRequestPermissionsAdmin}
+          selectPDL={handleClickViewFeedbackRequestPDL}
+          pdl={viewFeedbackRequestPermissionsPDL}
+          selectMember={handleClickViewFeedbackRequestMember}
+          member={viewFeedbackRequestPermissionsMember}
+        />
       </div>
 
       <div className="permissions-list">
@@ -215,13 +274,13 @@ const EditPermissionsPage = (props) => {
         <h2>Edit Organization Members Permissions Below:</h2>
         <div className="permissions">
           <input
-            onClick={handleClickUpdateOrgMembersPermissions}
-            id="update-permissions"
+            onClick={handleClickCreateOrgMembersPermissions}
+            id="create-permissions"
             type="checkbox"
-            value={updateOrgMembersPermissions}
+            value={createOrgMembersPermissions}
           />
-          <label htmlFor="update-permissions">
-            Update Organization Members permissions
+          <label htmlFor="create-permissions">
+            Create Organization Members permissions
           </label>
         </div>
         <div className="permissions">

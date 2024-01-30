@@ -1,6 +1,6 @@
 import { resolve } from "./api.js";
 
-const permissionsListUrl = "/services/permissions"
+const permissionsListUrl = "/services/roles/role-permissions"
 
 export const getPermissionsList = async (cookie) => {
     return resolve({
