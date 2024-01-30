@@ -60,13 +60,40 @@ const EditPermissionsPage = (props) => {
     setViewFeedbackRequestPermissionsMember,
   ] = useState(false);
 
-  const [viewFeedbackAnswerPermissions, setViewFeedbackAnswerPermissions] =
-    useState(false);
+  const [
+    viewFeedbackAnswerPermissionsAdmin,
+    setViewFeedbackAnswerPermissionsAdmin,
+  ] = useState(false);
+  const [
+    viewFeedbackAnswerPermissionsPDL,
+    setViewFeedbackAnswerPermissionsPDL,
+  ] = useState(false);
+  const [
+    viewFeedbackAnswerPermissionsMember,
+    setViewFeedbackAnswerPermissionsMember,
+  ] = useState(false);
 
-  const [createOrgMembersPermissions, setCreateOrgMembersPermissions] =
+  const [
+    createOrgMembersPermissionsAdmin,
+    setCreateOrgMembersPermissionsAdmin,
+  ] = useState(false);
+  const [createOrgMembersPermissionsPDL, setCreateOrgMembersPermissionsPDL] =
     useState(false);
-  const [deleteOrgMembersPermissions, setDeleteOrgMembersPermissions] =
+  const [
+    createOrgMembersPermissionsMember,
+    setCreateOrgMembersPermissionsMember,
+  ] = useState(false);
+
+  const [
+    deleteOrgMembersPermissionsAdmin,
+    setDeleteOrgMembersPermissionsAdmin,
+  ] = useState(false);
+  const [deleteOrgMembersPermissionsPDL, setDeleteOrgMembersPermissionsPDL] =
     useState(false);
+  const [
+    deleteOrgMembersPermissionsMember,
+    setDeleteOrgMembersPermissionsMember,
+  ] = useState(false);
 
   const [viewRolePermissions, setViewRolePermissions] = useState(false);
   const [assignRolePermissions, setAssignRolePermissions] = useState(false);
@@ -126,13 +153,28 @@ const EditPermissionsPage = (props) => {
       !viewFeedbackRequestPermissionsMember
     );
 
-  const handleClickViewFeedbackAnswer = () =>
-    setViewFeedbackAnswerPermissions(!viewFeedbackAnswerPermissions);
+  const handleClickViewFeedbackAnswerAdmin = () =>
+    setViewFeedbackAnswerPermissionsAdmin(!viewFeedbackAnswerPermissionsAdmin);
+  const handleClickViewFeedbackAnswerPDL = () =>
+    setViewFeedbackAnswerPermissionsPDL(!viewFeedbackAnswerPermissionsPDL);
+  const handleClickViewFeedbackAnswerMember = () =>
+    setViewFeedbackAnswerPermissionsMember(
+      !viewFeedbackAnswerPermissionsMember
+    );
 
-  const handleClickCreateOrgMembersPermissions = () =>
-    setCreateOrgMembersPermissions(!createOrgMembersPermissions);
-  const handleClickDeleteOrgMembers = () =>
-    setDeleteOrgMembersPermissions(!deleteOrgMembersPermissions);
+  const handleClickCreateOrgMembersPermissionsAdmin = () =>
+    setCreateOrgMembersPermissionsAdmin(!createOrgMembersPermissionsAdmin);
+  const handleClickCreateOrgMembersPermissionsPDL = () =>
+    setCreateOrgMembersPermissionsPDL(!createOrgMembersPermissionsPDL);
+  const handleClickCreateOrgMembersPermissionsMember = () =>
+    setCreateOrgMembersPermissionsMember(!createOrgMembersPermissionsMember);
+
+  const handleClickDeleteOrgMembersPermissionsAdmin = () =>
+    setDeleteOrgMembersPermissionsAdmin(!deleteOrgMembersPermissionsAdmin);
+  const handleClickDeleteOrgMembersPermissionsPDL = () =>
+    setDeleteOrgMembersPermissionsPDL(!deleteOrgMembersPermissionsPDL);
+  const handleClickDeleteOrgMembersPermissionsMember = () =>
+    setDeleteOrgMembersPermissionsMember(!deleteOrgMembersPermissionsMember);
 
   const handleClickRolePermissionsView = () =>
     setViewRolePermissions(!viewRolePermissions);
@@ -257,43 +299,37 @@ const EditPermissionsPage = (props) => {
 
       <div className="permissions-list">
         <h2>Edit Feedback Answer Permissions Below:</h2>
-        <div className="permissions">
-          <input
-            onClick={handleClickViewFeedbackAnswer}
-            id="view-feedback-answer-permissions"
-            type="checkbox"
-            value={viewFeedbackAnswerPermissions}
-          />
-          <label htmlFor="view-feedback-answer-permissions">
-            View Feedback Answer permissions
-          </label>
-        </div>
+        <EditPermissionsPageRoles
+          title="View Feedback Answer permissions"
+          selectAdmin={handleClickViewFeedbackAnswerAdmin}
+          admin={viewFeedbackAnswerPermissionsAdmin}
+          selectPDL={handleClickViewFeedbackAnswerPDL}
+          pdl={viewFeedbackAnswerPermissionsPDL}
+          selectMember={handleClickViewFeedbackAnswerMember}
+          member={viewFeedbackAnswerPermissionsMember}
+        />
       </div>
 
       <div className="permissions-list">
         <h2>Edit Organization Members Permissions Below:</h2>
-        <div className="permissions">
-          <input
-            onClick={handleClickCreateOrgMembersPermissions}
-            id="create-permissions"
-            type="checkbox"
-            value={createOrgMembersPermissions}
-          />
-          <label htmlFor="create-permissions">
-            Create Organization Members permissions
-          </label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickDeleteOrgMembers}
-            id="delete-permissions"
-            type="checkbox"
-            value={deleteOrgMembersPermissions}
-          />
-          <label htmlFor="delete-permissions">
-            Delete Organization Members permissions
-          </label>
-        </div>
+        <EditPermissionsPageRoles
+          title="Create Organization Members permissions"
+          selectAdmin={handleClickCreateOrgMembersPermissionsAdmin}
+          admin={createOrgMembersPermissionsAdmin}
+          selectPDL={handleClickCreateOrgMembersPermissionsPDL}
+          pdl={createOrgMembersPermissionsPDL}
+          selectMember={handleClickCreateOrgMembersPermissionsMember}
+          member={createOrgMembersPermissionsMember}
+        />
+        <EditPermissionsPageRoles
+          title="Delete Organization Members permissions"
+          selectAdmin={handleClickDeleteOrgMembersPermissionsAdmin}
+          admin={deleteOrgMembersPermissionsAdmin}
+          selectPDL={handleClickDeleteOrgMembersPermissionsPDL}
+          pdl={deleteOrgMembersPermissionsPDL}
+          selectMember={handleClickDeleteOrgMembersPermissionsMember}
+          member={deleteOrgMembersPermissionsMember}
+        />
       </div>
 
       <div className="permissions-list">
