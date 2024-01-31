@@ -95,10 +95,22 @@ const EditPermissionsPage = (props) => {
     setDeleteOrgMembersPermissionsMember,
   ] = useState(false);
 
-  const [viewRolePermissions, setViewRolePermissions] = useState(false);
-  const [assignRolePermissions, setAssignRolePermissions] = useState(false);
+  const [viewRolePermissionsAdmin, setViewRolePermissionsAdmin] =
+    useState(false);
+  const [viewRolePermissionsPDL, setViewRolePermissionsPDL] = useState(false);
+  const [viewRolePermissionsMember, setViewRolePermissionsMember] =
+    useState(false);
 
-  const [viewPermissions, setViewPermissions] = useState(false);
+  const [assignRolePermissionsAdmin, setAssignRolePermissionsAdmin] =
+    useState(false);
+  const [assignRolePermissionsPDL, setAssignRolePermissionsPDL] =
+    useState(false);
+  const [assignRolePermissionsMember, setAssignRolePermissionsMember] =
+    useState(false);
+
+  const [viewPermissionsAdmin, setViewPermissionsAdmin] = useState(false);
+  const [viewPermissionsPDL, setViewPermissionsPDL] = useState(false);
+  const [viewPermissionsMember, setViewPermissionsMember] = useState(false);
 
   const [viewSkillsReports, setViewSkillsReports] = useState(false);
   const [viewRetentionReports, setViewRetentionReports] = useState(false);
@@ -176,12 +188,25 @@ const EditPermissionsPage = (props) => {
   const handleClickDeleteOrgMembersPermissionsMember = () =>
     setDeleteOrgMembersPermissionsMember(!deleteOrgMembersPermissionsMember);
 
-  const handleClickRolePermissionsView = () =>
-    setViewRolePermissions(!viewRolePermissions);
-  const handleClickRolePermissionsAssign = () =>
-    setAssignRolePermissions(!assignRolePermissions);
+  const handleClickRolePermissionsViewAdmin = () =>
+    setViewRolePermissionsAdmin(!viewRolePermissionsAdmin);
+  const handleClickRolePermissionsViewPDL = () =>
+    setViewRolePermissionsPDL(!viewRolePermissionsPDL);
+  const handleClickRolePermissionsViewMember = () =>
+    setViewRolePermissionsMember(!viewRolePermissionsMember);
 
-  const handleClickView = () => setViewPermissions(!viewPermissions);
+  const handleClickRolePermissionsAssignAdmin = () =>
+    setAssignRolePermissionsAdmin(!assignRolePermissionsAdmin);
+  const handleClickRolePermissionsAssignPDL = () =>
+    setAssignRolePermissionsPDL(!assignRolePermissionsPDL);
+  const handleClickRolePermissionsAssignMember = () =>
+    setAssignRolePermissionsMember(!assignRolePermissionsMember);
+
+  const handleClickViewAdmin = () =>
+    setViewPermissionsAdmin(!viewPermissionsAdmin);
+  const handleClickViewPDL = () => setViewPermissionsPDL(!viewPermissionsPDL);
+  const handleClickViewMember = () =>
+    setViewPermissionsMember(!viewPermissionsMember);
 
   const handleClickViewSkillsReports = () =>
     setViewSkillsReports(!viewSkillsReports);
@@ -233,10 +258,10 @@ const EditPermissionsPage = (props) => {
     }
   }, [permissionsList, csrf]);
 
-  useEffect(() => {
-    console.log("Permissions");
-    console.log(allPermissions, permissionsList);
-  }, [allPermissions, permissionsList]);
+  // useEffect(() => {
+  //   console.log("Permissions");
+  //   console.log(allPermissions, permissionsList);
+  // }, [allPermissions, permissionsList]);
 
   return (
     <div className="edit-permissions-page">
@@ -334,39 +359,38 @@ const EditPermissionsPage = (props) => {
 
       <div className="permissions-list">
         <h2>Edit Role Permissions Below:</h2>
-        <div className="permissions">
-          <input
-            onClick={handleClickRolePermissionsView}
-            id="view-role-permissions"
-            type="checkbox"
-            value={viewRolePermissions}
-          />
-          <label htmlFor="view-role-permissions">View Role permissions</label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickRolePermissionsAssign}
-            id="assign-role-permissions"
-            type="checkbox"
-            value={assignRolePermissions}
-          />
-          <label htmlFor="assign-role-permissions">
-            Assign Role permissions
-          </label>
-        </div>
+        <EditPermissionsPageRoles
+          title="View Role permissions"
+          selectAdmin={handleClickRolePermissionsViewAdmin}
+          admin={viewRolePermissionsAdmin}
+          selectPDL={handleClickRolePermissionsViewPDL}
+          pdl={viewRolePermissionsPDL}
+          selectMember={handleClickRolePermissionsViewMember}
+          member={viewRolePermissionsMember}
+        />
+
+        <EditPermissionsPageRoles
+          title="Assign Role permissions"
+          selectAdmin={handleClickRolePermissionsAssignAdmin}
+          admin={assignRolePermissionsAdmin}
+          selectPDL={handleClickRolePermissionsAssignPDL}
+          pdl={assignRolePermissionsPDL}
+          selectMember={handleClickRolePermissionsAssignMember}
+          member={assignRolePermissionsMember}
+        />
       </div>
 
       <div className="permissions-list">
         <h2>Edit View Permissions Below:</h2>
-        <div className="permissions">
-          <input
-            onClick={handleClickView}
-            id="view-permissions"
-            type="checkbox"
-            value={viewPermissions}
-          />
-          <label htmlFor="view-permissions">View permissions</label>
-        </div>
+        <EditPermissionsPageRoles
+          title="View permissions"
+          selectAdmin={handleClickViewAdmin}
+          admin={viewPermissionsAdmin}
+          selectPDL={handleClickViewPDL}
+          pdl={viewPermissionsPDL}
+          selectMember={handleClickViewMember}
+          member={viewPermissionsMember}
+        />
       </div>
 
       <div className="permissions-list">
