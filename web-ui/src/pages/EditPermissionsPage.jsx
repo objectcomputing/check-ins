@@ -112,11 +112,33 @@ const EditPermissionsPage = (props) => {
   const [viewPermissionsPDL, setViewPermissionsPDL] = useState(false);
   const [viewPermissionsMember, setViewPermissionsMember] = useState(false);
 
-  const [viewSkillsReports, setViewSkillsReports] = useState(false);
-  const [viewRetentionReports, setViewRetentionReports] = useState(false);
-  const [viewAnniversaryReports, setViewAnniversaryReports] = useState(false);
-  const [viewBirthdayReports, setViewBirthdayReports] = useState(false);
-  const [viewProfileReports, setViewProfileReports] = useState(false);
+  const [viewSkillsReportsAdmin, setViewSkillsReportsAdmin] = useState(false);
+  const [viewSkillsReportsPDL, setViewSkillsReportsPDL] = useState(false);
+  const [viewSkillsReportsMember, setViewSkillsReportsMember] = useState(false);
+
+  const [viewRetentionReportsAdmin, setViewRetentionReportsAdmin] =
+    useState(false);
+  const [viewRetentionReportsPDL, setViewRetentionReportsPDL] = useState(false);
+  const [viewRetentionReportsMember, setViewRetentionReportsMember] =
+    useState(false);
+
+  const [viewAnniversaryReportsAdmin, setViewAnniversaryReportsAdmin] =
+    useState(false);
+  const [viewAnniversaryReportsPDL, setViewAnniversaryReportsPDL] =
+    useState(false);
+  const [viewAnniversaryReportsMember, setViewAnniversaryReportsMember] =
+    useState(false);
+
+  const [viewBirthdayReportsAdmin, setViewBirthdayReportsAdmin] =
+    useState(false);
+  const [viewBirthdayReportsPDL, setViewBirthdayReportsPDL] = useState(false);
+  const [viewBirthdayReportsMember, setViewBirthdayReportsMember] =
+    useState(false);
+
+  const [viewProfileReportsAdmin, setViewProfileReportsAdmin] = useState(false);
+  const [viewProfileReportsPDL, setViewProfileReportsPDL] = useState(false);
+  const [viewProfileReportsMember, setViewProfileReportsMember] =
+    useState(false);
 
   const [updateCheckins, setUpdateCheckins] = useState(false);
   const [createCheckins, setCreateCheckins] = useState(false);
@@ -208,16 +230,40 @@ const EditPermissionsPage = (props) => {
   const handleClickViewMember = () =>
     setViewPermissionsMember(!viewPermissionsMember);
 
-  const handleClickViewSkillsReports = () =>
-    setViewSkillsReports(!viewSkillsReports);
-  const handleClickViewRetentionReports = () =>
-    setViewRetentionReports(!viewRetentionReports);
-  const handleClickViewAnniversaryReports = () =>
-    setViewAnniversaryReports(!viewAnniversaryReports);
-  const handleClickViewBirthdayReports = () =>
-    setViewBirthdayReports(!viewBirthdayReports);
-  const handleClickViewProfileReports = () =>
-    setViewProfileReports(!viewProfileReports);
+  const handleClickViewSkillsReportsAdmin = () =>
+    setViewSkillsReportsAdmin(!viewSkillsReportsAdmin);
+  const handleClickViewSkillsReportsPDL = () =>
+    setViewSkillsReportsPDL(!viewSkillsReportsPDL);
+  const handleClickViewSkillsReportsMember = () =>
+    setViewSkillsReportsMember(!viewSkillsReportsMember);
+
+  const handleClickViewRetentionReportsAdmin = () =>
+    setViewRetentionReportsAdmin(!viewRetentionReportsAdmin);
+  const handleClickViewRetentionReportsPDL = () =>
+    setViewRetentionReportsPDL(!viewRetentionReportsPDL);
+  const handleClickViewRetentionReportsMember = () =>
+    setViewRetentionReportsMember(!viewRetentionReportsMember);
+
+  const handleClickViewAnniversaryReportsAdmin = () =>
+    setViewAnniversaryReportsAdmin(!viewAnniversaryReportsAdmin);
+  const handleClickViewAnniversaryReportsPDL = () =>
+    setViewAnniversaryReportsPDL(!viewAnniversaryReportsPDL);
+  const handleClickViewAnniversaryReportsMember = () =>
+    setViewAnniversaryReportsMember(!viewAnniversaryReportsMember);
+
+  const handleClickViewBirthdayReportsAdmin = () =>
+    setViewBirthdayReportsAdmin(!viewBirthdayReportsAdmin);
+  const handleClickViewBirthdayReportsPDL = () =>
+    setViewBirthdayReportsPDL(!viewBirthdayReportsPDL);
+  const handleClickViewBirthdayReportsMember = () =>
+    setViewBirthdayReportsMember(!viewBirthdayReportsMember);
+
+  const handleClickViewProfileReportsAdmin = () =>
+    setViewProfileReportsAdmin(!viewProfileReportsAdmin);
+  const handleClickViewProfileReportsPDL = () =>
+    setViewProfileReportsPDL(!viewProfileReportsPDL);
+  const handleClickViewProfileReportsMember = () =>
+    setViewProfileReportsMember(!viewProfileReportsMember);
 
   const handleClickUpdateCheckins = () => setUpdateCheckins(!updateCheckins);
   const handleClickCreateCheckins = () => setCreateCheckins(!createCheckins);
@@ -395,53 +441,51 @@ const EditPermissionsPage = (props) => {
 
       <div className="permissions-list">
         <h2>Edit View Reports Permissions Below:</h2>
-        <div className="permissions">
-          <input
-            onClick={handleClickViewSkillsReports}
-            id="view-skills-reports"
-            type="checkbox"
-            value={viewSkillsReports}
-          />
-          <label htmlFor="view-skills-reports">View Skills Reports</label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickViewRetentionReports}
-            id="view-retention-reports"
-            type="checkbox"
-            value={viewRetentionReports}
-          />
-          <label htmlFor="view-retention-reports">View Retention Reports</label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickViewAnniversaryReports}
-            id="view-anniversary-reports"
-            type="checkbox"
-            value={viewAnniversaryReports}
-          />
-          <label htmlFor="view-anniversary-reports">
-            View Anniversary Reports
-          </label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickViewBirthdayReports}
-            id="view-birthday-reports"
-            type="checkbox"
-            value={viewBirthdayReports}
-          />
-          <label htmlFor="view-birthday-reports">View Birthday Reports</label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickViewProfileReports}
-            id="view-profile-reports"
-            type="checkbox"
-            value={viewProfileReports}
-          />
-          <label htmlFor="view-profile-reports">View Profile Reports</label>
-        </div>
+        <EditPermissionsPageRoles
+          title="View Skills Reports"
+          selectAdmin={handleClickViewSkillsReportsAdmin}
+          admin={viewSkillsReportsAdmin}
+          selectPDL={handleClickViewSkillsReportsPDL}
+          pdl={viewSkillsReportsPDL}
+          selectMember={handleClickViewSkillsReportsMember}
+          member={viewSkillsReportsMember}
+        />
+        <EditPermissionsPageRoles
+          title="View Retention Reports"
+          selectAdmin={handleClickViewRetentionReportsAdmin}
+          admin={viewRetentionReportsAdmin}
+          selectPDL={handleClickViewRetentionReportsPDL}
+          pdl={viewRetentionReportsPDL}
+          selectMember={handleClickViewRetentionReportsMember}
+          member={viewRetentionReportsMember}
+        />
+        <EditPermissionsPageRoles
+          title="View Anniversary Reports"
+          selectAdmin={handleClickViewAnniversaryReportsAdmin}
+          admin={viewAnniversaryReportsAdmin}
+          selectPDL={handleClickViewAnniversaryReportsPDL}
+          pdl={viewAnniversaryReportsPDL}
+          selectMember={handleClickViewAnniversaryReportsMember}
+          member={viewAnniversaryReportsMember}
+        />
+        <EditPermissionsPageRoles
+          title="View Birthday Reports"
+          selectAdmin={handleClickViewBirthdayReportsAdmin}
+          admin={viewBirthdayReportsAdmin}
+          selectPDL={handleClickViewBirthdayReportsPDL}
+          pdl={viewBirthdayReportsPDL}
+          selectMember={handleClickViewBirthdayReportsMember}
+          member={viewBirthdayReportsMember}
+        />
+        <EditPermissionsPageRoles
+          title="View Profile Reports"
+          selectAdmin={handleClickViewProfileReportsAdmin}
+          admin={viewProfileReportsAdmin}
+          selectPDL={handleClickViewProfileReportsPDL}
+          pdl={viewProfileReportsPDL}
+          selectMember={handleClickViewProfileReportsMember}
+          member={viewProfileReportsMember}
+        />
       </div>
 
       <div className="permissions-list">
