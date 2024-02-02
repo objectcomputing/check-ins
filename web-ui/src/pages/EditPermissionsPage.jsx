@@ -140,9 +140,17 @@ const EditPermissionsPage = (props) => {
   const [viewProfileReportsMember, setViewProfileReportsMember] =
     useState(false);
 
-  const [updateCheckins, setUpdateCheckins] = useState(false);
-  const [createCheckins, setCreateCheckins] = useState(false);
-  const [viewCheckins, setViewCheckins] = useState(false);
+  const [updateCheckinsAdmin, setUpdateCheckinsAdmin] = useState(false);
+  const [updateCheckinsPDL, setUpdateCheckinsPDL] = useState(false);
+  const [updateCheckinsMember, setUpdateCheckinsMember] = useState(false);
+
+  const [createCheckinsAdmin, setCreateCheckinsAdmin] = useState(false);
+  const [createCheckinsPDL, setCreateCheckinsPDL] = useState(false);
+  const [createCheckinsMember, setCreateCheckinsMember] = useState(false);
+
+  const [viewCheckinsAdmin, setViewCheckinsAdmin] = useState(false);
+  const [viewCheckinsPDL, setViewCheckinsPDL] = useState(false);
+  const [viewCheckinsMember, setViewCheckinsMember] = useState(false);
 
   const allPermissions = selectPermissions(state);
 
@@ -265,9 +273,25 @@ const EditPermissionsPage = (props) => {
   const handleClickViewProfileReportsMember = () =>
     setViewProfileReportsMember(!viewProfileReportsMember);
 
-  const handleClickUpdateCheckins = () => setUpdateCheckins(!updateCheckins);
-  const handleClickCreateCheckins = () => setCreateCheckins(!createCheckins);
-  const handleClickViewCheckins = () => setViewCheckins(!viewCheckins);
+  const handleClickUpdateCheckinsAdmin = () =>
+    setUpdateCheckinsAdmin(!updateCheckinsAdmin);
+  const handleClickUpdateCheckinsPDL = () =>
+    setUpdateCheckinsPDL(!updateCheckinsPDL);
+  const handleClickUpdateCheckinsMember = () =>
+    setUpdateCheckinsMember(!updateCheckinsMember);
+
+  const handleClickCreateCheckinsAdmin = () =>
+    setCreateCheckinsAdmin(!createCheckinsAdmin);
+  const handleClickCreateCheckinsPDL = () =>
+    setCreateCheckinsPDL(!createCheckinsPDL);
+  const handleClickCreateCheckinsMember = () =>
+    setCreateCheckinsMember(!createCheckinsMember);
+
+  const handleClickViewCheckinsAdmin = () =>
+    setViewCheckinsAdmin(!viewCheckinsAdmin);
+  const handleClickViewCheckinsPDL = () => setViewCheckinsPDL(!viewCheckinsPDL);
+  const handleClickViewCheckinsMember = () =>
+    setViewCheckinsMember(!viewCheckinsMember);
 
   // const permissionTypes = [
   //   'CAN_VIEW_FEEDBACK_REQUEST',
@@ -490,33 +514,36 @@ const EditPermissionsPage = (props) => {
 
       <div className="permissions-list">
         <h2>Edit Checkins Below:</h2>
-        <div className="permissions">
-          <input
-            onClick={handleClickUpdateCheckins}
-            id="update-checkins"
-            type="checkbox"
-            value={updateCheckins}
-          />
-          <label htmlFor="update-checkins">Update Checkins</label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickCreateCheckins}
-            id="create-checkins"
-            type="checkbox"
-            value={createCheckins}
-          />
-          <label htmlFor="create-checkins">Create Checkins</label>
-        </div>
-        <div className="permissions">
-          <input
-            onClick={handleClickViewCheckins}
-            id="view-checkins"
-            type="checkbox"
-            value={viewCheckins}
-          />
-          <label htmlFor="view-checkins">View Checkins</label>
-        </div>
+
+        <EditPermissionsPageRoles
+          title="Update Checkins"
+          selectAdmin={handleClickUpdateCheckinsAdmin}
+          admin={updateCheckinsAdmin}
+          selectPDL={handleClickUpdateCheckinsPDL}
+          pdl={updateCheckinsPDL}
+          selectMember={handleClickUpdateCheckinsMember}
+          member={updateCheckinsMember}
+        />
+
+        <EditPermissionsPageRoles
+          title="Create Checkins"
+          selectAdmin={handleClickCreateCheckinsAdmin}
+          admin={createCheckinsAdmin}
+          selectPDL={handleClickCreateCheckinsPDL}
+          pdl={createCheckinsPDL}
+          selectMember={handleClickCreateCheckinsMember}
+          member={createCheckinsMember}
+        />
+
+        <EditPermissionsPageRoles
+          title="View Checkins"
+          selectAdmin={handleClickViewCheckinsAdmin}
+          admin={viewCheckinsAdmin}
+          selectPDL={handleClickViewCheckinsPDL}
+          pdl={viewCheckinsPDL}
+          selectMember={handleClickViewCheckinsMember}
+          member={viewCheckinsMember}
+        />
       </div>
     </div>
   );
