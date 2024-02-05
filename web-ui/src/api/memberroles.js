@@ -1,10 +1,10 @@
 import { resolve } from "./api.js";
 
-const permissionsListUrl = "/services/permissions"
+const memberRolesUrl = "/services/roles/members"
 
-export const getPermissionsList = async (cookie) => {
+export const getMemberRolesList = async (cookie) => {
     return resolve({
-      url: permissionsListUrl,
+      url: memberRolesUrl,
       responseType: "json",
       headers: { "X-CSRF-Header": cookie },
     });

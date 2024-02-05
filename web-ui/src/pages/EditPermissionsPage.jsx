@@ -3,11 +3,16 @@ import React, { useEffect, useContext, useState } from "react";
 import EditPermissionsPageRoles from "./EditPermissionsPageRoles";
 
 import { getPermissionsList } from "../api/permissions";
+import { getRolePermissionsList } from "../api/rolepermissions";
+import { getCurrentUserRole } from '../api/roles';
+import { getMemberRolesList } from '../api/memberroles';
+import { isArrayPresent, isObjectInArray, filterObjectByValOrKey } from '../helpers/checks';
 
 import { AppContext } from "../context/AppContext";
-import { selectPermissions } from "../context/selectors";
-
-import { TextField } from "@mui/material";
+// import { selectPermissions } from "../context/selectors";
+import {
+  selectCurrentUserId,
+} from "../context/selectors";
 
 import "./EditPermissionsPage.css";
 
@@ -16,10 +21,11 @@ const EditPermissionsPage = (props) => {
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const [permissionsList, setPermissionsList] = useState([]);
-
-  const [searchText, setSearchText] = useState("");
-
-  const [showAllPermissions, setShowAllPermissions] = useState(true);
+  const [rolePermissionsList, setRolePermissionsList] = useState([]);
+  // const allPermissions = selectPermissions(state);
+  const currentUserId = selectCurrentUserId(state);
+  const [currentUserRole, setCurrentUserRole] = useState([]);
+  const [memberRoles, setMemberRoles] = useState([]);
 
   const [
     createFeedbackRequestPermissionsAdmin,
@@ -151,10 +157,6 @@ const EditPermissionsPage = (props) => {
   const [viewCheckinsAdmin, setViewCheckinsAdmin] = useState(false);
   const [viewCheckinsPDL, setViewCheckinsPDL] = useState(false);
   const [viewCheckinsMember, setViewCheckinsMember] = useState(false);
-
-  const allPermissions = selectPermissions(state);
-
-  const handleClick = () => setShowAllPermissions(!showAllPermissions);
 
   const handleClickCreateFeedbackRequestAdmin = () =>
     setCreateFeedbackRequestPermissionsAdmin(
@@ -314,50 +316,62 @@ const EditPermissionsPage = (props) => {
   // ];
 
   useEffect(() => {
-    const doTask = async (team) => {
-      let res = await getPermissionsList(team, csrf);
+    const doTask1 = async () => {
+      let res = await getRolePermissionsList(csrf);
+      let data =
+        res.payload && res.payload.data && !res.error ? res.payload.data : null;
+      if (data) {
+        setRolePermissionsList(data);
+      }
+    };
+    const doTask2 = async () => {
+      let res = await getPermissionsList(csrf);
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
       if (data) {
         setPermissionsList(data);
       }
     };
+    const doTask3 = async () => {
+      let res = await getMemberRolesList(csrf);
+      let data =
+        res.payload && res.payload.data && !res.error ? res.payload.data : null;
+      if (data) {
+        setMemberRoles(data);
+      }
+    };
 
     if (csrf) {
-      doTask();
+      doTask1();
+      doTask2();
+      doTask3();
     }
-  }, [permissionsList, csrf]);
+  }, [csrf]);
 
-  // useEffect(() => {
-  //   console.log("Permissions");
-  //   console.log(allPermissions, permissionsList);
-  // }, [allPermissions, permissionsList]);
+  useEffect(() => {
+    console.log("Permissions List");
+    console.log(permissionsList);
+    // console.log("All Permissions");
+    // console.log(allPermissions);
+    console.log("Role Permissions");
+    console.log(rolePermissionsList);
+  }, [permissionsList, rolePermissionsList]);
+
+  useEffect(() => {
+    console.log("Member Roles");
+    console.log(memberRoles);
+    if(isArrayPresent(memberRoles)) {
+      let data = memberRoles.filter((a) => a.memberRoleId.memberId === currentUserId);
+      if (isArrayPresent(data)) {
+        setCurrentUserRole(data[0].memberRoleId.roleId);
+      }
+    }
+    console.log("Current User Role:")
+    console.log(currentUserRole);
+  }, [memberRoles, currentUserRole]);
 
   return (
     <div className="edit-permissions-page">
-      <div className="search">
-        <div>
-          <TextField
-            label="Search Permissions"
-            placeholder="Permission"
-            fullWidth={true}
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-            }}
-          />
-          <div className="show-all-permissions">
-            <input
-              onClick={handleClick}
-              id="all-permissions"
-              type="checkbox"
-              value={showAllPermissions}
-            />
-            <label htmlFor="all-permissions">Show all permissions</label>
-          </div>
-        </div>
-      </div>
-
       <div className="permissions-list">
         <h2>Edit Feedback Request Permissions Below:</h2>
 
