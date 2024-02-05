@@ -4,7 +4,6 @@ import EditPermissionsPageRoles from "./EditPermissionsPageRoles";
 
 import { getPermissionsList } from "../api/permissions";
 import { getRolePermissionsList } from "../api/rolepermissions";
-import { getCurrentUserRole } from "../api/roles";
 import { getMemberRolesList } from "../api/memberroles";
 import { isArrayPresent, filterObjectByValOrKey } from "../helpers/checks";
 
@@ -23,6 +22,10 @@ const EditPermissionsPage = (props) => {
   const currentUserId = selectCurrentUserId(state);
   const [currentUserRole, setCurrentUserRole] = useState("");
   const [memberRoles, setMemberRoles] = useState([]);
+
+  const [adminPermissionsList, setAdminPermissionsList] = useState([]);
+  const [pdlPermissionsList, setPDLPermissionsList] = useState([]);
+  const [memberPermissionsList, setMemberPermissionsList] = useState([]);
 
   const [
     createFeedbackRequestPermissionsAdmin,
@@ -346,11 +349,11 @@ const EditPermissionsPage = (props) => {
   }, [csrf]);
 
   useEffect(() => {
-    console.log("Permissions List");
-    console.log(permissionsList);
     console.log("Role Permissions");
     console.log(rolePermissionsList);
-  }, [permissionsList, rolePermissionsList]);
+    console.log("Permissions List");
+    console.log(permissionsList);
+  }, [rolePermissionsList, permissionsList]);
 
   useEffect(() => {
     console.log("Member Roles");
@@ -364,7 +367,7 @@ const EditPermissionsPage = (props) => {
           rolePermissionsList,
           data[0].memberRoleId.roleId
         );
-        if (role) {
+        if (isArrayPresent(role)) {
           console.log("This is role", role);
           setCurrentUserRole(role[0].role);
         }
@@ -373,6 +376,308 @@ const EditPermissionsPage = (props) => {
     console.log("Current User Role:");
     console.log(currentUserRole);
   }, [memberRoles, currentUserRole]);
+
+  useEffect(() => {
+    let adminRole = filterObjectByValOrKey(
+      rolePermissionsList,
+      "ADMIN",
+      "role"
+    );
+    if (isArrayPresent(adminRole)) {
+      setAdminPermissionsList(adminRole[0].permissions);
+      console.log("This is the admin permissions list", adminPermissionsList);
+    }
+  }, [rolePermissionsList, adminPermissionsList]);
+
+  useEffect(() => {
+    let pdlRole = filterObjectByValOrKey(rolePermissionsList, "PDL", "role");
+    if (isArrayPresent(pdlRole)) {
+      setPDLPermissionsList(pdlRole[0].permissions);
+      console.log("This is the PDL permissions list", pdlPermissionsList);
+    }
+  }, [rolePermissionsList, pdlPermissionsList]);
+
+  useEffect(() => {
+    let memberRole = filterObjectByValOrKey(
+      rolePermissionsList,
+      "MEMBER",
+      "role"
+    );
+    if (isArrayPresent(memberRole)) {
+      setMemberPermissionsList(memberRole[0].permissions);
+      console.log("This is the Member permissions list", memberPermissionsList);
+    }
+  }, [rolePermissionsList, memberPermissionsList]);
+
+  useEffect(() => {
+    setCreateFeedbackRequestPermissionsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_CREATE_FEEDBACK_REQUEST"
+      )
+    );
+    setDeleteFeedbackRequestPermissionsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_DELETE_FEEDBACK_REQUEST"
+      )
+    );
+    setViewFeedbackRequestPermissionsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_REQUEST"
+      )
+    );
+    setViewFeedbackAnswerPermissionsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_ANSWER"
+      )
+    );
+    setCreateOrgMembersPermissionsAdmin(
+      adminPermissionsList.some(
+        (permission) =>
+          permission.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+      )
+    );
+    setDeleteOrgMembersPermissionsAdmin(
+      adminPermissionsList.some(
+        (permission) =>
+          permission.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+      )
+    );
+    setViewRolePermissionsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_ROLE_PERMISSIONS"
+      )
+    );
+    setAssignRolePermissionsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_ASSIGN_ROLE_PERMISSIONS"
+      )
+    );
+    setViewPermissionsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_PERMISSIONS"
+      )
+    );
+    setViewSkillsReportsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_SKILLS_REPORT"
+      )
+    );
+    setViewRetentionReportsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_RETENTION_REPORT"
+      )
+    );
+    setViewAnniversaryReportsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_ANNIVERSARY_REPORT"
+      )
+    );
+    setViewBirthdayReportsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_BIRTHDAY_REPORT"
+      )
+    );
+    setViewProfileReportsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_PROFILE_REPORT"
+      )
+    );
+    setUpdateCheckinsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_UPDATE_CHECKINS"
+      )
+    );
+    setCreateCheckinsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_CREATE_CHECKINS"
+      )
+    );
+    setViewCheckinsAdmin(
+      adminPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_CHECKINS"
+      )
+    );
+  }, [adminPermissionsList]);
+
+  useEffect(() => {
+    setCreateFeedbackRequestPermissionsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_CREATE_FEEDBACK_REQUEST"
+      )
+    );
+    setDeleteFeedbackRequestPermissionsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_DELETE_FEEDBACK_REQUEST"
+      )
+    );
+    setViewFeedbackRequestPermissionsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_REQUEST"
+      )
+    );
+    setViewFeedbackAnswerPermissionsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_ANSWER"
+      )
+    );
+    setCreateOrgMembersPermissionsPDL(
+      pdlPermissionsList.some(
+        (permission) =>
+          permission.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+      )
+    );
+    setDeleteOrgMembersPermissionsPDL(
+      pdlPermissionsList.some(
+        (permission) =>
+          permission.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+      )
+    );
+    setViewRolePermissionsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_ROLE_PERMISSIONS"
+      )
+    );
+    setAssignRolePermissionsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_ASSIGN_ROLE_PERMISSIONS"
+      )
+    );
+    setViewPermissionsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_PERMISSIONS"
+      )
+    );
+    setViewSkillsReportsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_SKILLS_REPORT"
+      )
+    );
+    setViewRetentionReportsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_RETENTION_REPORT"
+      )
+    );
+    setViewAnniversaryReportsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_ANNIVERSARY_REPORT"
+      )
+    );
+    setViewBirthdayReportsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_BIRTHDAY_REPORT"
+      )
+    );
+    setViewProfileReportsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_PROFILE_REPORT"
+      )
+    );
+    setUpdateCheckinsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_UPDATE_CHECKINS"
+      )
+    );
+    setCreateCheckinsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_CREATE_CHECKINS"
+      )
+    );
+    setViewCheckinsPDL(
+      pdlPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_CHECKINS"
+      )
+    );
+  }, [pdlPermissionsList]);
+
+  useEffect(() => {
+    setCreateFeedbackRequestPermissionsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_CREATE_FEEDBACK_REQUEST"
+      )
+    );
+    setDeleteFeedbackRequestPermissionsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_DELETE_FEEDBACK_REQUEST"
+      )
+    );
+    setViewFeedbackRequestPermissionsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_REQUEST"
+      )
+    );
+    setViewFeedbackAnswerPermissionsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_ANSWER"
+      )
+    );
+    setCreateOrgMembersPermissionsMember(
+      memberPermissionsList.some(
+        (permission) =>
+          permission.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+      )
+    );
+    setDeleteOrgMembersPermissionsMember(
+      memberPermissionsList.some(
+        (permission) =>
+          permission.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+      )
+    );
+    setViewRolePermissionsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_ROLE_PERMISSIONS"
+      )
+    );
+    setAssignRolePermissionsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_ASSIGN_ROLE_PERMISSIONS"
+      )
+    );
+    setViewPermissionsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_PERMISSIONS"
+      )
+    );
+    setViewSkillsReportsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_SKILLS_REPORT"
+      )
+    );
+    setViewRetentionReportsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_RETENTION_REPORT"
+      )
+    );
+    setViewAnniversaryReportsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_ANNIVERSARY_REPORT"
+      )
+    );
+    setViewBirthdayReportsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_BIRTHDAY_REPORT"
+      )
+    );
+    setViewProfileReportsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_PROFILE_REPORT"
+      )
+    );
+    setUpdateCheckinsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_UPDATE_CHECKINS"
+      )
+    );
+    setCreateCheckinsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_CREATE_CHECKINS"
+      )
+    );
+    setViewCheckinsMember(
+      memberPermissionsList.some(
+        (permission) => permission.permission === "CAN_VIEW_CHECKINS"
+      )
+    );
+  }, [memberPermissionsList]);
 
   let isAdmin = currentUserRole === "ADMIN";
 
