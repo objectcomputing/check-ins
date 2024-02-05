@@ -4,15 +4,13 @@ import EditPermissionsPageRoles from "./EditPermissionsPageRoles";
 
 import { getPermissionsList } from "../api/permissions";
 import { getRolePermissionsList } from "../api/rolepermissions";
-import { getCurrentUserRole } from '../api/roles';
-import { getMemberRolesList } from '../api/memberroles';
-import { isArrayPresent, isObjectInArray, filterObjectByValOrKey } from '../helpers/checks';
+import { getCurrentUserRole } from "../api/roles";
+import { getMemberRolesList } from "../api/memberroles";
+import { isArrayPresent, filterObjectByValOrKey } from "../helpers/checks";
 
 import { AppContext } from "../context/AppContext";
 // import { selectPermissions } from "../context/selectors";
-import {
-  selectCurrentUserId,
-} from "../context/selectors";
+import { selectCurrentUserId } from "../context/selectors";
 
 import "./EditPermissionsPage.css";
 
@@ -22,9 +20,8 @@ const EditPermissionsPage = (props) => {
   const { csrf } = state;
   const [permissionsList, setPermissionsList] = useState([]);
   const [rolePermissionsList, setRolePermissionsList] = useState([]);
-  // const allPermissions = selectPermissions(state);
   const currentUserId = selectCurrentUserId(state);
-  const [currentUserRole, setCurrentUserRole] = useState([]);
+  const [currentUserRole, setCurrentUserRole] = useState("");
   const [memberRoles, setMemberRoles] = useState([]);
 
   const [
@@ -351,8 +348,6 @@ const EditPermissionsPage = (props) => {
   useEffect(() => {
     console.log("Permissions List");
     console.log(permissionsList);
-    // console.log("All Permissions");
-    // console.log(allPermissions);
     console.log("Role Permissions");
     console.log(rolePermissionsList);
   }, [permissionsList, rolePermissionsList]);
@@ -360,205 +355,224 @@ const EditPermissionsPage = (props) => {
   useEffect(() => {
     console.log("Member Roles");
     console.log(memberRoles);
-    if(isArrayPresent(memberRoles)) {
-      let data = memberRoles.filter((a) => a.memberRoleId.memberId === currentUserId);
+    if (isArrayPresent(memberRoles)) {
+      let data = memberRoles.filter(
+        (a) => a.memberRoleId.memberId === currentUserId
+      );
       if (isArrayPresent(data)) {
-        setCurrentUserRole(data[0].memberRoleId.roleId);
+        let role = filterObjectByValOrKey(
+          rolePermissionsList,
+          data[0].memberRoleId.roleId
+        );
+        if (role) {
+          console.log("This is role", role);
+          setCurrentUserRole(role[0].role);
+        }
       }
     }
-    console.log("Current User Role:")
+    console.log("Current User Role:");
     console.log(currentUserRole);
   }, [memberRoles, currentUserRole]);
 
+  let isAdmin = currentUserRole === "ADMIN";
+
   return (
     <div className="edit-permissions-page">
-      <div className="permissions-list">
-        <h2>Edit Feedback Request Permissions Below:</h2>
+      {isAdmin ? (
+        <>
+          <div className="permissions-list">
+            <h2>Edit Feedback Request Permissions Below:</h2>
 
-        <EditPermissionsPageRoles
-          title="Create Feedback Request permissions"
-          selectAdmin={handleClickCreateFeedbackRequestAdmin}
-          admin={createFeedbackRequestPermissionsAdmin}
-          selectPDL={handleClickCreateFeedbackRequestPDL}
-          pdl={createFeedbackRequestPermissionsPDL}
-          selectMember={handleClickCreateFeedbackRequestMember}
-          member={createFeedbackRequestPermissionsMember}
-        />
+            <EditPermissionsPageRoles
+              title="Create Feedback Request permissions"
+              selectAdmin={handleClickCreateFeedbackRequestAdmin}
+              admin={createFeedbackRequestPermissionsAdmin}
+              selectPDL={handleClickCreateFeedbackRequestPDL}
+              pdl={createFeedbackRequestPermissionsPDL}
+              selectMember={handleClickCreateFeedbackRequestMember}
+              member={createFeedbackRequestPermissionsMember}
+            />
 
-        <EditPermissionsPageRoles
-          title="Delete Feedback Request permissions"
-          selectAdmin={handleClickDeleteFeedbackRequestAdmin}
-          admin={deleteFeedbackRequestPermissionsAdmin}
-          selectPDL={handleClickDeleteFeedbackRequestPDL}
-          pdl={deleteFeedbackRequestPermissionsPDL}
-          selectMember={handleClickDeleteFeedbackRequestMember}
-          member={deleteFeedbackRequestPermissionsMember}
-        />
+            <EditPermissionsPageRoles
+              title="Delete Feedback Request permissions"
+              selectAdmin={handleClickDeleteFeedbackRequestAdmin}
+              admin={deleteFeedbackRequestPermissionsAdmin}
+              selectPDL={handleClickDeleteFeedbackRequestPDL}
+              pdl={deleteFeedbackRequestPermissionsPDL}
+              selectMember={handleClickDeleteFeedbackRequestMember}
+              member={deleteFeedbackRequestPermissionsMember}
+            />
 
-        <EditPermissionsPageRoles
-          title="View Feedback Request permissions"
-          selectAdmin={handleClickViewFeedbackRequestAdmin}
-          admin={viewFeedbackRequestPermissionsAdmin}
-          selectPDL={handleClickViewFeedbackRequestPDL}
-          pdl={viewFeedbackRequestPermissionsPDL}
-          selectMember={handleClickViewFeedbackRequestMember}
-          member={viewFeedbackRequestPermissionsMember}
-        />
-      </div>
+            <EditPermissionsPageRoles
+              title="View Feedback Request permissions"
+              selectAdmin={handleClickViewFeedbackRequestAdmin}
+              admin={viewFeedbackRequestPermissionsAdmin}
+              selectPDL={handleClickViewFeedbackRequestPDL}
+              pdl={viewFeedbackRequestPermissionsPDL}
+              selectMember={handleClickViewFeedbackRequestMember}
+              member={viewFeedbackRequestPermissionsMember}
+            />
+          </div>
 
-      <div className="permissions-list">
-        <h2>Edit Feedback Answer Permissions Below:</h2>
-        <EditPermissionsPageRoles
-          title="View Feedback Answer permissions"
-          selectAdmin={handleClickViewFeedbackAnswerAdmin}
-          admin={viewFeedbackAnswerPermissionsAdmin}
-          selectPDL={handleClickViewFeedbackAnswerPDL}
-          pdl={viewFeedbackAnswerPermissionsPDL}
-          selectMember={handleClickViewFeedbackAnswerMember}
-          member={viewFeedbackAnswerPermissionsMember}
-        />
-      </div>
+          <div className="permissions-list">
+            <h2>Edit Feedback Answer Permissions Below:</h2>
+            <EditPermissionsPageRoles
+              title="View Feedback Answer permissions"
+              selectAdmin={handleClickViewFeedbackAnswerAdmin}
+              admin={viewFeedbackAnswerPermissionsAdmin}
+              selectPDL={handleClickViewFeedbackAnswerPDL}
+              pdl={viewFeedbackAnswerPermissionsPDL}
+              selectMember={handleClickViewFeedbackAnswerMember}
+              member={viewFeedbackAnswerPermissionsMember}
+            />
+          </div>
 
-      <div className="permissions-list">
-        <h2>Edit Organization Members Permissions Below:</h2>
-        <EditPermissionsPageRoles
-          title="Create Organization Members permissions"
-          selectAdmin={handleClickCreateOrgMembersPermissionsAdmin}
-          admin={createOrgMembersPermissionsAdmin}
-          selectPDL={handleClickCreateOrgMembersPermissionsPDL}
-          pdl={createOrgMembersPermissionsPDL}
-          selectMember={handleClickCreateOrgMembersPermissionsMember}
-          member={createOrgMembersPermissionsMember}
-        />
-        <EditPermissionsPageRoles
-          title="Delete Organization Members permissions"
-          selectAdmin={handleClickDeleteOrgMembersPermissionsAdmin}
-          admin={deleteOrgMembersPermissionsAdmin}
-          selectPDL={handleClickDeleteOrgMembersPermissionsPDL}
-          pdl={deleteOrgMembersPermissionsPDL}
-          selectMember={handleClickDeleteOrgMembersPermissionsMember}
-          member={deleteOrgMembersPermissionsMember}
-        />
-      </div>
+          <div className="permissions-list">
+            <h2>Edit Organization Members Permissions Below:</h2>
+            <EditPermissionsPageRoles
+              title="Create Organization Members permissions"
+              selectAdmin={handleClickCreateOrgMembersPermissionsAdmin}
+              admin={createOrgMembersPermissionsAdmin}
+              selectPDL={handleClickCreateOrgMembersPermissionsPDL}
+              pdl={createOrgMembersPermissionsPDL}
+              selectMember={handleClickCreateOrgMembersPermissionsMember}
+              member={createOrgMembersPermissionsMember}
+            />
+            <EditPermissionsPageRoles
+              title="Delete Organization Members permissions"
+              selectAdmin={handleClickDeleteOrgMembersPermissionsAdmin}
+              admin={deleteOrgMembersPermissionsAdmin}
+              selectPDL={handleClickDeleteOrgMembersPermissionsPDL}
+              pdl={deleteOrgMembersPermissionsPDL}
+              selectMember={handleClickDeleteOrgMembersPermissionsMember}
+              member={deleteOrgMembersPermissionsMember}
+            />
+          </div>
 
-      <div className="permissions-list">
-        <h2>Edit Role Permissions Below:</h2>
-        <EditPermissionsPageRoles
-          title="View Role permissions"
-          selectAdmin={handleClickRolePermissionsViewAdmin}
-          admin={viewRolePermissionsAdmin}
-          selectPDL={handleClickRolePermissionsViewPDL}
-          pdl={viewRolePermissionsPDL}
-          selectMember={handleClickRolePermissionsViewMember}
-          member={viewRolePermissionsMember}
-        />
+          <div className="permissions-list">
+            <h2>Edit Role Permissions Below:</h2>
+            <EditPermissionsPageRoles
+              title="View Role permissions"
+              selectAdmin={handleClickRolePermissionsViewAdmin}
+              admin={viewRolePermissionsAdmin}
+              selectPDL={handleClickRolePermissionsViewPDL}
+              pdl={viewRolePermissionsPDL}
+              selectMember={handleClickRolePermissionsViewMember}
+              member={viewRolePermissionsMember}
+            />
 
-        <EditPermissionsPageRoles
-          title="Assign Role permissions"
-          selectAdmin={handleClickRolePermissionsAssignAdmin}
-          admin={assignRolePermissionsAdmin}
-          selectPDL={handleClickRolePermissionsAssignPDL}
-          pdl={assignRolePermissionsPDL}
-          selectMember={handleClickRolePermissionsAssignMember}
-          member={assignRolePermissionsMember}
-        />
-      </div>
+            <EditPermissionsPageRoles
+              title="Assign Role permissions"
+              selectAdmin={handleClickRolePermissionsAssignAdmin}
+              admin={assignRolePermissionsAdmin}
+              selectPDL={handleClickRolePermissionsAssignPDL}
+              pdl={assignRolePermissionsPDL}
+              selectMember={handleClickRolePermissionsAssignMember}
+              member={assignRolePermissionsMember}
+            />
+          </div>
 
-      <div className="permissions-list">
-        <h2>Edit View Permissions Below:</h2>
-        <EditPermissionsPageRoles
-          title="View permissions"
-          selectAdmin={handleClickViewAdmin}
-          admin={viewPermissionsAdmin}
-          selectPDL={handleClickViewPDL}
-          pdl={viewPermissionsPDL}
-          selectMember={handleClickViewMember}
-          member={viewPermissionsMember}
-        />
-      </div>
+          <div className="permissions-list">
+            <h2>Edit View Permissions Below:</h2>
+            <EditPermissionsPageRoles
+              title="View permissions"
+              selectAdmin={handleClickViewAdmin}
+              admin={viewPermissionsAdmin}
+              selectPDL={handleClickViewPDL}
+              pdl={viewPermissionsPDL}
+              selectMember={handleClickViewMember}
+              member={viewPermissionsMember}
+            />
+          </div>
 
-      <div className="permissions-list">
-        <h2>Edit View Reports Permissions Below:</h2>
-        <EditPermissionsPageRoles
-          title="View Skills Reports"
-          selectAdmin={handleClickViewSkillsReportsAdmin}
-          admin={viewSkillsReportsAdmin}
-          selectPDL={handleClickViewSkillsReportsPDL}
-          pdl={viewSkillsReportsPDL}
-          selectMember={handleClickViewSkillsReportsMember}
-          member={viewSkillsReportsMember}
-        />
-        <EditPermissionsPageRoles
-          title="View Retention Reports"
-          selectAdmin={handleClickViewRetentionReportsAdmin}
-          admin={viewRetentionReportsAdmin}
-          selectPDL={handleClickViewRetentionReportsPDL}
-          pdl={viewRetentionReportsPDL}
-          selectMember={handleClickViewRetentionReportsMember}
-          member={viewRetentionReportsMember}
-        />
-        <EditPermissionsPageRoles
-          title="View Anniversary Reports"
-          selectAdmin={handleClickViewAnniversaryReportsAdmin}
-          admin={viewAnniversaryReportsAdmin}
-          selectPDL={handleClickViewAnniversaryReportsPDL}
-          pdl={viewAnniversaryReportsPDL}
-          selectMember={handleClickViewAnniversaryReportsMember}
-          member={viewAnniversaryReportsMember}
-        />
-        <EditPermissionsPageRoles
-          title="View Birthday Reports"
-          selectAdmin={handleClickViewBirthdayReportsAdmin}
-          admin={viewBirthdayReportsAdmin}
-          selectPDL={handleClickViewBirthdayReportsPDL}
-          pdl={viewBirthdayReportsPDL}
-          selectMember={handleClickViewBirthdayReportsMember}
-          member={viewBirthdayReportsMember}
-        />
-        <EditPermissionsPageRoles
-          title="View Profile Reports"
-          selectAdmin={handleClickViewProfileReportsAdmin}
-          admin={viewProfileReportsAdmin}
-          selectPDL={handleClickViewProfileReportsPDL}
-          pdl={viewProfileReportsPDL}
-          selectMember={handleClickViewProfileReportsMember}
-          member={viewProfileReportsMember}
-        />
-      </div>
+          <div className="permissions-list">
+            <h2>Edit View Reports Permissions Below:</h2>
+            <EditPermissionsPageRoles
+              title="View Skills Reports"
+              selectAdmin={handleClickViewSkillsReportsAdmin}
+              admin={viewSkillsReportsAdmin}
+              selectPDL={handleClickViewSkillsReportsPDL}
+              pdl={viewSkillsReportsPDL}
+              selectMember={handleClickViewSkillsReportsMember}
+              member={viewSkillsReportsMember}
+            />
+            <EditPermissionsPageRoles
+              title="View Retention Reports"
+              selectAdmin={handleClickViewRetentionReportsAdmin}
+              admin={viewRetentionReportsAdmin}
+              selectPDL={handleClickViewRetentionReportsPDL}
+              pdl={viewRetentionReportsPDL}
+              selectMember={handleClickViewRetentionReportsMember}
+              member={viewRetentionReportsMember}
+            />
+            <EditPermissionsPageRoles
+              title="View Anniversary Reports"
+              selectAdmin={handleClickViewAnniversaryReportsAdmin}
+              admin={viewAnniversaryReportsAdmin}
+              selectPDL={handleClickViewAnniversaryReportsPDL}
+              pdl={viewAnniversaryReportsPDL}
+              selectMember={handleClickViewAnniversaryReportsMember}
+              member={viewAnniversaryReportsMember}
+            />
+            <EditPermissionsPageRoles
+              title="View Birthday Reports"
+              selectAdmin={handleClickViewBirthdayReportsAdmin}
+              admin={viewBirthdayReportsAdmin}
+              selectPDL={handleClickViewBirthdayReportsPDL}
+              pdl={viewBirthdayReportsPDL}
+              selectMember={handleClickViewBirthdayReportsMember}
+              member={viewBirthdayReportsMember}
+            />
+            <EditPermissionsPageRoles
+              title="View Profile Reports"
+              selectAdmin={handleClickViewProfileReportsAdmin}
+              admin={viewProfileReportsAdmin}
+              selectPDL={handleClickViewProfileReportsPDL}
+              pdl={viewProfileReportsPDL}
+              selectMember={handleClickViewProfileReportsMember}
+              member={viewProfileReportsMember}
+            />
+          </div>
 
-      <div className="permissions-list">
-        <h2>Edit Checkins Below:</h2>
+          <div className="permissions-list">
+            <h2>Edit Checkins Below:</h2>
 
-        <EditPermissionsPageRoles
-          title="Update Checkins"
-          selectAdmin={handleClickUpdateCheckinsAdmin}
-          admin={updateCheckinsAdmin}
-          selectPDL={handleClickUpdateCheckinsPDL}
-          pdl={updateCheckinsPDL}
-          selectMember={handleClickUpdateCheckinsMember}
-          member={updateCheckinsMember}
-        />
+            <EditPermissionsPageRoles
+              title="Update Checkins"
+              selectAdmin={handleClickUpdateCheckinsAdmin}
+              admin={updateCheckinsAdmin}
+              selectPDL={handleClickUpdateCheckinsPDL}
+              pdl={updateCheckinsPDL}
+              selectMember={handleClickUpdateCheckinsMember}
+              member={updateCheckinsMember}
+            />
 
-        <EditPermissionsPageRoles
-          title="Create Checkins"
-          selectAdmin={handleClickCreateCheckinsAdmin}
-          admin={createCheckinsAdmin}
-          selectPDL={handleClickCreateCheckinsPDL}
-          pdl={createCheckinsPDL}
-          selectMember={handleClickCreateCheckinsMember}
-          member={createCheckinsMember}
-        />
+            <EditPermissionsPageRoles
+              title="Create Checkins"
+              selectAdmin={handleClickCreateCheckinsAdmin}
+              admin={createCheckinsAdmin}
+              selectPDL={handleClickCreateCheckinsPDL}
+              pdl={createCheckinsPDL}
+              selectMember={handleClickCreateCheckinsMember}
+              member={createCheckinsMember}
+            />
 
-        <EditPermissionsPageRoles
-          title="View Checkins"
-          selectAdmin={handleClickViewCheckinsAdmin}
-          admin={viewCheckinsAdmin}
-          selectPDL={handleClickViewCheckinsPDL}
-          pdl={viewCheckinsPDL}
-          selectMember={handleClickViewCheckinsMember}
-          member={viewCheckinsMember}
-        />
-      </div>
+            <EditPermissionsPageRoles
+              title="View Checkins"
+              selectAdmin={handleClickViewCheckinsAdmin}
+              admin={viewCheckinsAdmin}
+              selectPDL={handleClickViewCheckinsPDL}
+              pdl={viewCheckinsPDL}
+              selectMember={handleClickViewCheckinsMember}
+              member={viewCheckinsMember}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <h3>You do not have permission to view this page.</h3>
+        </>
+      )}
     </div>
   );
 };
