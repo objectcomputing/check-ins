@@ -23,6 +23,8 @@ const EditPermissionsPage = (props) => {
   const [currentUserRole, setCurrentUserRole] = useState("");
   const [memberRoles, setMemberRoles] = useState([]);
 
+  const [isAdminRole, setIsAdminRole] = useState(false);
+
   const [adminPermissionsList, setAdminPermissionsList] = useState([]);
   const [pdlPermissionsList, setPDLPermissionsList] = useState([]);
   const [memberPermissionsList, setMemberPermissionsList] = useState([]);
@@ -345,19 +347,19 @@ const EditPermissionsPage = (props) => {
       doTask1();
       doTask2();
       doTask3();
+    } else {
+      window.location.reload(true);
     }
   }, [csrf]);
 
-  useEffect(() => {
-    console.log("Role Permissions");
-    console.log(rolePermissionsList);
-    console.log("Permissions List");
-    console.log(permissionsList);
-  }, [rolePermissionsList, permissionsList]);
+  // useEffect(() => {
+  //   console.log("Role Permissions");
+  //   console.log(rolePermissionsList);
+  //   console.log("Permissions List");
+  //   console.log(permissionsList);
+  // }, [rolePermissionsList, permissionsList]);
 
   useEffect(() => {
-    console.log("Member Roles");
-    console.log(memberRoles);
     if (isArrayPresent(memberRoles)) {
       let data = memberRoles.filter(
         (a) => a.memberRoleId.memberId === currentUserId
@@ -373,9 +375,18 @@ const EditPermissionsPage = (props) => {
         }
       }
     }
+
+    if (currentUserRole === "ADMIN") {
+      setIsAdminRole(true);
+    } else {
+      setIsAdminRole(false);
+    }
+
+    console.log("Member Roles");
+    console.log(memberRoles);
     console.log("Current User Role:");
     console.log(currentUserRole);
-  }, [memberRoles, currentUserRole]);
+  }, [memberRoles, currentUserRole, csrf]);
 
   useEffect(() => {
     let adminRole = filterObjectByValOrKey(
@@ -679,11 +690,9 @@ const EditPermissionsPage = (props) => {
     );
   }, [memberPermissionsList]);
 
-  let isAdmin = currentUserRole === "ADMIN";
-
   return (
     <div className="edit-permissions-page">
-      {isAdmin ? (
+      {isAdminRole ? (
         <>
           <div className="permissions-list">
             <h2>Edit Feedback Request Permissions Below:</h2>
