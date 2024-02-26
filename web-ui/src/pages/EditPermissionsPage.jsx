@@ -386,7 +386,7 @@ const EditPermissionsPage = (props) => {
     console.log(memberRoles);
     console.log("Current User Role:");
     console.log(currentUserRole);
-  }, [memberRoles, currentUserRole, csrf]);
+  }, [memberRoles, currentUserRole, csrf, rolePermissionsList, currentUserId]);
 
   useEffect(() => {
     let adminRole = filterObjectByValOrKey(
