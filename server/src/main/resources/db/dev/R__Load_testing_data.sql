@@ -1237,3 +1237,10 @@ INSERT INTO member_skills -- Revolver Ocelot, React
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
 ('e2de59a8-71be-4972-86be-608538503195', '105f2968-a182-45a3-892c-eeff76383fe0', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '3', '2022-05-01');
+
+
+-- Skill Categories
+INSERT INTO skillcategories
+(id, name, description)
+VALUES
+('38cd877f-1c50-4167-a592-eed3847ebf0b', 'Languages', 'Programming Languages');
