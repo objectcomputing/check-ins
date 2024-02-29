@@ -1,12 +1,10 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -16,7 +14,9 @@ import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +36,23 @@ public class SkillCategoryController {
         this.skillCategoryServices = skillCategoryServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
+    }
+
+    @Post()
+    public Mono<HttpResponse<SkillCategory>> create(@Body @Valid SkillCategoryCreateDTO dto, HttpRequest<SkillCategoryCreateDTO> request) {
+        return Mono
+                .fromCallable(() -> {
+                    SkillCategory skillCategory = new SkillCategory(dto.getName(), dto.getDescription());
+                    return skillCategoryServices.save(skillCategory);
+                })
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(createdSkillCategory -> {
+                    URI uri = URI.create(String.format("%s/%s", request.getPath(), createdSkillCategory.getId()));
+                    return (HttpResponse<SkillCategory>) HttpResponse
+                        .created(createdSkillCategory)
+                        .headers(headers -> headers.location(uri));
+                })
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     @Get("/{id}")

@@ -16,6 +16,11 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
     }
 
     @Override
+    public SkillCategory save(SkillCategory skillCategory) {
+        return skillCategoryRepository.save(skillCategory);
+    }
+
+    @Override
     public SkillCategory read(@NotNull UUID id) {
         return skillCategoryRepository.findById(id).orElse(null);
     }

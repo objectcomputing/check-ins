@@ -25,6 +25,26 @@ public class SkillCategoryControllerTest extends TestContainersSuite implements 
     private HttpClient client;
 
     @Test
+    public void testPost() {
+        SkillCategoryCreateDTO createDTO = new SkillCategoryCreateDTO();
+        createDTO.setName("Languages");
+        createDTO.setDescription("Programming Languages");
+
+        final HttpRequest<SkillCategoryCreateDTO> request = HttpRequest
+                .POST("/", createDTO)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<SkillCategory> response = client.toBlocking().exchange(request, SkillCategory.class);
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(createDTO.getName(), response.getBody().get().getName());
+        assertEquals(createDTO.getDescription(), response.getBody().get().getDescription());
+
+        String expectedURI = String.format("%s/%s", request.getPath(), response.getBody().get().getId());
+        assertEquals(expectedURI, response.getHeaders().get("location"));
+    }
+
+    @Test
     public void testGetByIdHappyPath() {
         SkillCategory skillCategory = createDefaultSkillCategory();
 
