@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.skillcategory;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.SkillCategoryFixture;
+import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -10,6 +11,8 @@ import io.micronaut.http.client.annotation.Client;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
@@ -35,6 +38,22 @@ public class SkillCategoryControllerTest extends TestContainersSuite implements 
 
         SkillCategory body = Objects.requireNonNull(response.body());
         assertEquals(skillCategory, body);
+    }
+
+    @Test
+    public void testFindAll() {
+        SkillCategory skillCategory = createDefaultSkillCategory();
+
+        final HttpRequest<?> request = HttpRequest
+                .GET("/")
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<List<SkillCategory>> response = client
+                .toBlocking()
+                .exchange(request, Argument.listOf(SkillCategory.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(Collections.singletonList(skillCategory), response.getBody().orElseThrow());
     }
 
 }

@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
@@ -45,9 +46,17 @@ public class SkillCategoryController {
                 throw new NotFoundException("No skill category for UUID");
             }
             return result;
-        }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(skills -> {
-            return (HttpResponse<SkillCategory>) HttpResponse.ok(skills);
-        }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        }).publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(skills -> (HttpResponse<SkillCategory>) HttpResponse.ok(skills))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    }
+
+    @Get()
+    public Mono<HttpResponse<List<SkillCategory>>> findAll() {
+        return Mono.fromCallable(skillCategoryServices::findAll)
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(createdSkillCategory -> (HttpResponse<List<SkillCategory>>) HttpResponse.ok(createdSkillCategory))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
 }
