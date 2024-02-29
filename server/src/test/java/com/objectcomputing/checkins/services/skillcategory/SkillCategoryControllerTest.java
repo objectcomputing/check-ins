@@ -8,12 +8,11 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +44,22 @@ public class SkillCategoryControllerTest extends TestContainersSuite implements 
     }
 
     @Test
+    public void testCreateSkillCategoryAlreadyExists() {
+        SkillCategory existingCategory = createDefaultSkillCategory();
+
+        SkillCategoryCreateDTO createDTO = new SkillCategoryCreateDTO();
+        createDTO.setName(existingCategory.getName());
+
+        final HttpRequest<SkillCategoryCreateDTO> request = HttpRequest
+                .POST("/", createDTO)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.CONFLICT, responseException.getStatus());
+    }
+
+    @Test
     public void testGetByIdHappyPath() {
         SkillCategory skillCategory = createDefaultSkillCategory();
 
@@ -58,6 +73,18 @@ public class SkillCategoryControllerTest extends TestContainersSuite implements 
 
         SkillCategory body = Objects.requireNonNull(response.body());
         assertEquals(skillCategory, body);
+    }
+
+    @Test
+    public void testGetByIdNotFound() {
+        final HttpRequest<?> request = HttpRequest
+                .GET(String.format("/%s", UUID.randomUUID()))
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, SkillCategory.class));
+
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
 
     @Test
