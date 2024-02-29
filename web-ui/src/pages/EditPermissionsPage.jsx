@@ -347,9 +347,7 @@ const EditPermissionsPage = (props) => {
       doTask1();
       doTask2();
       doTask3();
-    } else {
-      window.location.reload(true);
-    }
+    } 
   }, [csrf]);
 
   // useEffect(() => {
