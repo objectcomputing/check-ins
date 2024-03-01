@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
+import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
@@ -13,5 +14,9 @@ public interface SkillCategoryRepository extends CrudRepository<SkillCategory, U
 
     @NonNull
     List<SkillCategory> findAll();
+
+    SkillCategory findByName(String name);
+
+    List<SkillCategory> findAllByName(String name);
 
 }

@@ -1,9 +1,11 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Singleton
@@ -17,6 +19,10 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
 
     @Override
     public SkillCategory save(SkillCategory skillCategory) {
+        List<SkillCategory> byName = skillCategoryRepository.findAllByName(skillCategory.getName());
+        if (!byName.isEmpty()) {
+            throw new AlreadyExistsException(skillCategory.getName());
+        }
         return skillCategoryRepository.save(skillCategory);
     }
 
