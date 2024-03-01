@@ -1243,4 +1243,14 @@ VALUES
 INSERT INTO skillcategories
 (id, name, description)
 VALUES
-('38cd877f-1c50-4167-a592-eed3847ebf0b', 'Languages', 'Programming Languages');
+('38cd877f-1c50-4167-a592-eed3847ebf0b', 'Languages', 'Programming languages');
+
+INSERT INTO skillcategories
+(id, name, description)
+VALUES
+('ad2a7de0-aad8-4bde-837a-566aaef1fa7c', 'Essential Skills', 'General skills useful for the workplace');
+
+INSERT INTO skillcategories
+(id, name, description)
+VALUES
+('0778a8e7-21d8-4ca3-a0dc-cad676aac417', 'Tools', 'Software tools');

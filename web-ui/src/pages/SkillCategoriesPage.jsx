@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 
 import { AppContext } from "../context/AppContext";
 
-import {Button, DialogTitle, Typography} from "@mui/material";
+import {Button, DialogActions, DialogContent, DialogTitle, Typography} from "@mui/material";
 import SkillCategoryCard from "../components/skill-category-card/SkillCategoryCard";
 
 import "./SkillCategoriesPage.css";
@@ -66,7 +66,7 @@ const SkillCategoriesPage = () => {
         <SkillCategoryCard
           name={category.name}
           description={category.description}
-          skills={[]}
+          skills={category.name === "Languages" ? ["Java", "Python", "JavaScript"] : []}
         />
       )}
       <Dialog
@@ -74,6 +74,17 @@ const SkillCategoriesPage = () => {
         onClose={() => setDialogOpen(false)}
       >
         <DialogTitle>New Category</DialogTitle>
+        <DialogContent>
+
+        </DialogContent>
+        <DialogActions>
+          <Button style={{color: "gray"}} onClick={() => setDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button color="primary">
+            Create
+          </Button>
+        </DialogActions>
       </Dialog>
     </Root>
   );
