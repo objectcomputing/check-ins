@@ -1,9 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { styled } from '@mui/material/styles';
 
 import { AppContext } from "../context/AppContext";
 
-import { Button, Typography } from "@mui/material";
+import {Button, DialogTitle, Typography} from "@mui/material";
+import SkillCategoryCard from "../components/skill-category-card/SkillCategoryCard";
+
+import "./SkillCategoriesPage.css";
+import Dialog from "@mui/material/Dialog";
+import {selectCsrfToken} from "../context/selectors";
+import {getSkillCategories} from "../api/skillcategory";
 
 const PREFIX = 'SkillCategoriesPage';
 const classes = {
@@ -26,15 +32,49 @@ const Root = styled('div')({
 });
 
 const SkillCategoriesPage = () => {
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+
+  const [skillCategories, setSkillCategories] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const retrieveSkillCategories = async () => {
+      const res = await getSkillCategories(csrf);
+      return res.error ? [] : res.payload.data;
+    }
+
+    if (csrf) {
+      retrieveSkillCategories().then((data => {
+        setSkillCategories(data);
+      }))
+    }
+  }, [csrf]);
+
   return (
     <Root className={classes.root}>
       <div className="skill-categories-header">
         <Typography variant="h4">Skill Categories</Typography>
         <Button
-          variant="contained">
+          variant="contained"
+          onClick={() => setDialogOpen(true)}
+        >
           New Category
         </Button>
       </div>
+      {skillCategories.map(category =>
+        <SkillCategoryCard
+          name={category.name}
+          description={category.description}
+          skills={[]}
+        />
+      )}
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+      >
+        <DialogTitle>New Category</DialogTitle>
+      </Dialog>
     </Root>
   );
 };
