@@ -100,6 +100,7 @@ const adminLinks = [
   ["/admin/users", "Users"],
   ["/admin/email", "Send Email"],
   ["/admin/edit-skills", "Skills"],
+  ["/admin/skill-categories", "Skill Categories"],
 ];
 
 const directoryLinks = [
