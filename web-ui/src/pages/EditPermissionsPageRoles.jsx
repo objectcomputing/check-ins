@@ -23,7 +23,7 @@ const EditPermissionsPageRoles = ({
       <label htmlFor="admin-field">Admin</label>
       <Checkbox
         checked={pdl}
-        id="admin-field"
+        id="pdl-field"
         onChange={selectPDL}
         inputProps={{ "aria-label": `pdl checkbox ${title}` }}
       />
@@ -31,7 +31,7 @@ const EditPermissionsPageRoles = ({
       <label htmlFor="pdl-field">PDL</label>
       <Checkbox
         checked={member}
-        id="admin-field"
+        id="member-field"
         onChange={selectMember}
         inputProps={{ "aria-label": `member checkbox ${title}` }}
       />
