@@ -17,7 +17,7 @@ public interface SkillCategorySkillRepository extends CrudRepository<SkillCatego
 
         @Query("SELECT s.name " +
                 "FROM skillcategory_skills ss " +
-                "         JOIN public.skills s on s.id = ss.skill_id " +
+                "         JOIN skills s on s.id = ss.skill_id " +
                 "WHERE ss.skillcategory_id = :skillCategoryId")
         List<String> findSkillNamesBySkillCategoryId(String skillCategoryId);
 

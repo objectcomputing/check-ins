@@ -132,4 +132,28 @@ public class SkillCategoryControllerTest extends TestContainersSuite implements 
         assertEquals(expectedList, response.getBody().orElseThrow());
     }
 
+    @Test
+    public void testFindAllWithoutSkills() {
+        SkillCategory skillCategory = createDefaultSkillCategory();
+
+        List<SkillCategoryResponseDTO> expectedList = new ArrayList<>();
+        SkillCategoryResponseDTO dto = new SkillCategoryResponseDTO();
+        dto.setId(skillCategory.getId());
+        dto.setName(skillCategory.getName());
+        dto.setDescription(skillCategory.getDescription());
+        dto.setSkills(Collections.emptyList());
+        expectedList.add(dto);
+
+        final HttpRequest<?> request = HttpRequest
+                .GET("/with-skills")
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<List<SkillCategoryResponseDTO>> response = client
+                .toBlocking()
+                .exchange(request, Argument.listOf(SkillCategoryResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(expectedList, response.getBody().orElseThrow());
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.micronaut.core.annotation.Introspected;
 
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Introspected
+@JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class SkillCategoryResponseDTO {
     private UUID id;
 
