@@ -3,9 +3,14 @@ import React, { useEffect, useContext, useState } from "react";
 import EditPermissionsPageRoles from "./EditPermissionsPageRoles";
 
 import { getPermissionsList } from "../api/permissions";
-import { getRolePermissionsList } from "../api/rolepermissions";
+import {
+  getRolePermissionsList,
+  postRolePermissionsList,
+} from "../api/rolepermissions";
 import { getMemberRolesList } from "../api/memberroles";
 import { isArrayPresent, filterObjectByValOrKey } from "../helpers/checks";
+
+import { UPDATE_TOAST } from "../context/actions";
 
 import { AppContext } from "../context/AppContext";
 // import { selectPermissions } from "../context/selectors";
@@ -160,11 +165,42 @@ const EditPermissionsPage = (props) => {
   const [viewCheckinsPDL, setViewCheckinsPDL] = useState(false);
   const [viewCheckinsMember, setViewCheckinsMember] = useState(false);
 
-  const handleClickCreateFeedbackRequestAdmin = () =>
+  const changeRolePermission = async (roleId, permissionId) => {
+    let newSchema = { roleId: roleId, permissionId: permissionId };
+    let res = await postRolePermissionsList(newSchema, csrf);
+    let data =
+      res.payload && res.payload.data && !res.error ? res.payload.data : null;
+    if (data) {
+      // dispatch({
+      //   type: UPDATE_ROLE_PERMISSION,
+      //   payload: data,
+      // });
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: `Permission added to Role`,
+        },
+      });
+    } else {
+      console.log(res?.error);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "warning",
+          toast: `Problem changing permission for that role`,
+        },
+      });
+    }
+  };
+
+  const handleClickCreateFeedbackRequestAdmin = ({roleId, permissionId}) => {
+    // {"roleId": "e8a4fff8-e984-4e59-be84-a713c9fa8d23", "permissionId": "439ad8a8-500f-4f3f-963b-a86437d5820a"}
+    changeRolePermission(roleId, permissionId);
     setCreateFeedbackRequestPermissionsAdmin(
       !createFeedbackRequestPermissionsAdmin
     );
-
+  };
   const handleClickCreateFeedbackRequestPDL = () =>
     setCreateFeedbackRequestPermissionsPDL(
       !createFeedbackRequestPermissionsPDL
@@ -347,7 +383,7 @@ const EditPermissionsPage = (props) => {
       doTask1();
       doTask2();
       doTask3();
-    } 
+    }
   }, [csrf]);
 
   // useEffect(() => {
