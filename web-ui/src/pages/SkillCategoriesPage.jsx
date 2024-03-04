@@ -66,7 +66,7 @@ const SkillCategoriesPage = () => {
         <SkillCategoryCard
           name={category.name}
           description={category.description}
-          skills={category.name === "Languages" ? ["Java", "Python", "JavaScript"] : []}
+          skills={category.skills}
         />
       )}
       <Dialog
