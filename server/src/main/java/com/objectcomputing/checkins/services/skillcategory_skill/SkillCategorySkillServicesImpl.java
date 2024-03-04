@@ -20,6 +20,11 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
     }
 
     @Override
+    public List<String> findSkillNamesBySkillCategoryId(String skillCategoryId) {
+        return skillCategorySkillRepository.findSkillNamesBySkillCategoryId(skillCategoryId);
+    }
+
+    @Override
     public List<SkillCategorySkill> findAllBySkillCategoryId(UUID categoryId) {
         return skillCategorySkillRepository.findAllBySkillCategoryId(categoryId);
     }

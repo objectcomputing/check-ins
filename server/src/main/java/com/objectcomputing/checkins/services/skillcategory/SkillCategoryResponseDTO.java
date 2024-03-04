@@ -1,12 +1,10 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
-import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.core.annotation.Introspected;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Introspected
 public class SkillCategoryResponseDTO {
@@ -18,12 +16,12 @@ public class SkillCategoryResponseDTO {
 
     private List<String> skills;
 
-    public static SkillCategoryResponseDTO create(SkillCategory skillCategory, List<Skill> skills) {
+    public static SkillCategoryResponseDTO create(SkillCategory skillCategory, List<String> skills) {
         SkillCategoryResponseDTO dto = new SkillCategoryResponseDTO();
         dto.setId(skillCategory.getId());
         dto.setName(skillCategory.getName());
         dto.setDescription(skillCategory.getDescription());
-        dto.setSkills(skills.stream().map(Skill::getName).collect(Collectors.toList()));
+        dto.setSkills(skills);
         return dto;
     }
 

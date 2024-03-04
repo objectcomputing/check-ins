@@ -6,5 +6,7 @@ import java.util.UUID;
 public interface SkillCategorySkillServices {
     List<SkillCategorySkill> findAll();
 
+    List<String> findSkillNamesBySkillCategoryId(String skillCategoryId);
+
     List<SkillCategorySkill> findAllBySkillCategoryId(UUID categoryId);
 }
