@@ -1254,3 +1254,16 @@ INSERT INTO skillcategories
 (id, name, description)
 VALUES
 ('0778a8e7-21d8-4ca3-a0dc-cad676aac417', 'Tools', 'Software tools');
+
+-- SkillCategory
+INSERT INTO skillcategory_skills -- Languages CSS
+(skillcategory_id, skill_id)
+values
+('38cd877f-1c50-4167-a592-eed3847ebf0b', '6b56f0aa-09aa-4b09-bb81-03481af7e49f');
+
+INSERT INTO skillcategory_skills -- Tools GIT
+(skillcategory_id, skill_id)
+values
+('0778a8e7-21d8-4ca3-a0dc-cad676aac417', '84682de9-85a7-4bf7-b74b-e9054311a61a');
+
+

@@ -103,4 +103,20 @@ public class SkillCategoryControllerTest extends TestContainersSuite implements 
         assertEquals(Collections.singletonList(skillCategory), response.getBody().orElseThrow());
     }
 
+    @Test
+    public void testFindAllWithSkills() {
+//        SkillCategory skillCategory = createDefaultSkillCategory();
+
+        final HttpRequest<?> request = HttpRequest
+                .GET("/with-skills")
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<List<SkillCategoryResponseDTO>> response = client
+                .toBlocking()
+                .exchange(request, Argument.listOf(SkillCategoryResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+//        assertEquals(Collections.singletonList(skillCategory), response.getBody().orElseThrow());
+    }
+
 }

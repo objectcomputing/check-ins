@@ -11,4 +11,6 @@ public interface SkillCategoryServices {
 
     List<SkillCategory> findAll();
 
+    List<SkillCategoryResponseDTO> findAllWithSkills();
+
 }
