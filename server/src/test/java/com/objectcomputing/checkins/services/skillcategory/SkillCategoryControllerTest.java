@@ -2,6 +2,9 @@ package com.objectcomputing.checkins.services.skillcategory;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.SkillCategoryFixture;
+import com.objectcomputing.checkins.services.fixture.SkillCategorySkillFixture;
+import com.objectcomputing.checkins.services.fixture.SkillFixture;
+import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -17,7 +20,7 @@ import java.util.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SkillCategoryControllerTest extends TestContainersSuite implements SkillCategoryFixture {
+public class SkillCategoryControllerTest extends TestContainersSuite implements SkillCategoryFixture, SkillFixture, SkillCategorySkillFixture {
 
     @Inject
     @Client("/services/skills/categories")
@@ -105,7 +108,17 @@ public class SkillCategoryControllerTest extends TestContainersSuite implements 
 
     @Test
     public void testFindAllWithSkills() {
-//        SkillCategory skillCategory = createDefaultSkillCategory();
+        SkillCategory skillCategory = createDefaultSkillCategory();
+        Skill skill = createADefaultSkill();
+        createSkillCategorySkill(skillCategory.getId(), skill.getId());
+
+        List<SkillCategoryResponseDTO> expectedList = new ArrayList<>();
+        SkillCategoryResponseDTO dto = new SkillCategoryResponseDTO();
+        dto.setId(skillCategory.getId());
+        dto.setName(skillCategory.getName());
+        dto.setDescription(skillCategory.getDescription());
+        dto.setSkills(Collections.singletonList(skill.getName()));
+        expectedList.add(dto);
 
         final HttpRequest<?> request = HttpRequest
                 .GET("/with-skills")
@@ -116,7 +129,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite implements 
                 .exchange(request, Argument.listOf(SkillCategoryResponseDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-//        assertEquals(Collections.singletonList(skillCategory), response.getBody().orElseThrow());
+        assertEquals(expectedList, response.getBody().orElseThrow());
     }
 
 }
