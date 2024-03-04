@@ -2,8 +2,7 @@ package com.objectcomputing.checkins.services.skillcategory_skill;
 
 import jakarta.inject.Singleton;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class SkillCategorySkillServicesImpl implements SkillCategorySkillServices {
@@ -21,7 +20,8 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
 
     @Override
     public List<String> findSkillNamesBySkillCategoryId(String skillCategoryId) {
-        return skillCategorySkillRepository.findSkillNamesBySkillCategoryId(skillCategoryId);
+        List<String> skillNames = skillCategorySkillRepository.findSkillNamesBySkillCategoryId(skillCategoryId);
+        return Objects.nonNull(skillNames) ? skillNames : Collections.emptyList();
     }
 
     @Override
