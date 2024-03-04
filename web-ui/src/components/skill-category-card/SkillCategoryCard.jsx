@@ -33,7 +33,7 @@ const SkillCategoryCard = ({ name, description, skills }) => {
       />
       <CardContent style={{display: "flex", gap: "0.5rem"}}>
         {(skills && skills.length > 0) ? (
-          skills.map((name) => <Chip label={name}/>)
+          skills.map((name) => <Chip key={name} label={name}/>)
         ) : (
           <Typography style={{fontStyle: "italic"}} variant="body2" color="textSecondary">This category contains no skills.</Typography>
         )}

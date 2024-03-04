@@ -3,13 +3,14 @@ import { styled } from '@mui/material/styles';
 
 import { AppContext } from "../context/AppContext";
 
-import {Button, DialogActions, DialogContent, DialogTitle, Typography} from "@mui/material";
+import {Button, Typography} from "@mui/material";
 import SkillCategoryCard from "../components/skill-category-card/SkillCategoryCard";
 
 import "./SkillCategoriesPage.css";
-import Dialog from "@mui/material/Dialog";
 import {selectCsrfToken} from "../context/selectors";
-import {getSkillCategories} from "../api/skillcategory";
+import {createSkillCategory, getSkillCategories} from "../api/skillcategory";
+import SkillCategoryNewDialog from "../components/skill-category-new-dialog/SkillCategoryNewDialog";
+import {UPDATE_TOAST} from "../context/actions";
 
 const PREFIX = 'SkillCategoriesPage';
 const classes = {
@@ -32,7 +33,7 @@ const Root = styled('div')({
 });
 
 const SkillCategoriesPage = () => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
   const [skillCategories, setSkillCategories] = useState([]);
@@ -47,9 +48,33 @@ const SkillCategoriesPage = () => {
     if (csrf) {
       retrieveSkillCategories().then((data => {
         setSkillCategories(data);
-      }))
+      }));
     }
   }, [csrf]);
+
+  const createNewSkillCategory = async (categoryName, categoryDescription) => {
+    const newSkillCategory = {
+      name: categoryName,
+      description: categoryDescription
+    };
+
+    let res = await createSkillCategory(newSkillCategory, csrf);
+    if (!res.error) {
+      let newCategory = res.payload.data;
+      if (newCategory) {
+        const withNewCategory = [...skillCategories, newCategory];
+        setSkillCategories(withNewCategory);
+      }
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Error: Could not save category"
+        }
+      });
+    }
+  }
 
   return (
     <Root className={classes.root}>
@@ -64,28 +89,20 @@ const SkillCategoriesPage = () => {
       </div>
       {skillCategories.map(category =>
         <SkillCategoryCard
+          key={category.id}
           name={category.name}
           description={category.description}
           skills={category.skills}
         />
       )}
-      <Dialog
-        open={dialogOpen}
+      <SkillCategoryNewDialog
+        isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
-      >
-        <DialogTitle>New Category</DialogTitle>
-        <DialogContent>
-
-        </DialogContent>
-        <DialogActions>
-          <Button style={{color: "gray"}} onClick={() => setDialogOpen(false)}>
-            Cancel
-          </Button>
-          <Button color="primary">
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={(categoryName, categoryDescription) => {
+          createNewSkillCategory(categoryName, categoryDescription)
+            .then(() => setDialogOpen(false));
+        }}
+      />
     </Root>
   );
 };
