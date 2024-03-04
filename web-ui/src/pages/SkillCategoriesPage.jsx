@@ -54,7 +54,7 @@ const SkillCategoriesPage = () => {
 
   const createNewSkillCategory = async (categoryName, categoryDescription) => {
     const newSkillCategory = {
-      name: categoryName,
+      name: categoryName.trim(),
       description: categoryDescription
     };
 

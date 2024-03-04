@@ -19,6 +19,10 @@ const SkillCategoryNewDialog = ({ isOpen, onClose, onConfirm }) => {
     setCategoryDescription("");
   }
 
+  const isDisabled = () => {
+    return categoryName.trim().length === 0;
+  }
+
   return (
     <Dialog
       open={isOpen}
@@ -54,7 +58,7 @@ const SkillCategoryNewDialog = ({ isOpen, onClose, onConfirm }) => {
         }}>
           Cancel
         </Button>
-        <Button color="primary" onClick={() => {
+        <Button color="primary" disabled={isDisabled()} onClick={() => {
           reset()
           onConfirm(categoryName, categoryDescription)
         }}>
