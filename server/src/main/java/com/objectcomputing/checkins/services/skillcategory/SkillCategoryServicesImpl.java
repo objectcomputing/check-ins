@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkill;
 import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkillServices;
+import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotNull;
@@ -46,8 +47,8 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
         List<SkillCategory> categories = skillCategoryRepository.findAll();
         for (SkillCategory category : categories) {
             List<SkillCategorySkill> skillCategorySkills = skillCategorySkillServices.findAllBySkillCategoryId(category.getId());
-            List<String> skills = skillCategorySkills.stream().map(skillCategorySkill ->
-                    skillCategorySkillServices.findSkillNamesBySkillCategoryId(skillCategorySkill.getSkillCategorySkillId().getSkillCategoryId().toString())
+            List<Skill> skills = skillCategorySkills.stream().map(skillCategorySkill ->
+                    skillCategorySkillServices.findSkillsBySkillCategoryId(skillCategorySkill.getSkillCategorySkillId().getSkillCategoryId().toString())
             ).flatMap(Collection::stream).collect(Collectors.toList());
             SkillCategoryResponseDTO dto = SkillCategoryResponseDTO.create(category, skills);
             categoriesWithSkills.add(dto);
@@ -60,9 +61,6 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
     public SkillCategory update(SkillCategory skillCategory) {
         if (skillCategoryRepository.findById(skillCategory.getId()).isEmpty()) {
             throw new BadArgException(String.format("Category with %s does not exist", skillCategory.getId()));
-        }
-        if (skillCategoryRepository.findByName(skillCategory.getName()).isPresent()) {
-            throw new AlreadyExistsException(skillCategory.getName());
         }
         return skillCategoryRepository.update(skillCategory);
     }

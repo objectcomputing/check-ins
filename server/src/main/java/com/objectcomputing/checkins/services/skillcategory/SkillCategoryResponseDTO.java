@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.core.annotation.Introspected;
 
 import java.util.List;
@@ -15,16 +16,23 @@ public class SkillCategoryResponseDTO {
     private String name;
 
     private String description;
+    private List<Skill> skills;
 
-    private List<String> skills;
-
-    public static SkillCategoryResponseDTO create(SkillCategory skillCategory, List<String> skills) {
+    public static SkillCategoryResponseDTO create(SkillCategory skillCategory, List<Skill> skills) {
         SkillCategoryResponseDTO dto = new SkillCategoryResponseDTO();
         dto.setId(skillCategory.getId());
         dto.setName(skillCategory.getName());
         dto.setDescription(skillCategory.getDescription());
         dto.setSkills(skills);
         return dto;
+    }
+
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
+    }
+
+    public List<Skill> getSkills() {
+        return skills;
     }
 
     public UUID getId() {
@@ -51,20 +59,13 @@ public class SkillCategoryResponseDTO {
         this.description = description;
     }
 
-    public List<String> getSkills() {
-        return skills;
-    }
-
-    public void setSkills(List<String> skills) {
-        this.skills = skills;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SkillCategoryResponseDTO dto = (SkillCategoryResponseDTO) o;
-        return Objects.equals(id, dto.id) && Objects.equals(name, dto.name) && Objects.equals(description, dto.description) && Objects.equals(skills, dto.skills);
+        SkillCategoryResponseDTO that = (SkillCategoryResponseDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(skills, that.skills);
     }
 
     @Override

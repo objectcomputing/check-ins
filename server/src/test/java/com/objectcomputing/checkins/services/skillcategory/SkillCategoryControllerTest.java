@@ -111,7 +111,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.CONFLICT, responseException.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
@@ -169,7 +169,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
         dto.setId(skillCategory.getId());
         dto.setName(skillCategory.getName());
         dto.setDescription(skillCategory.getDescription());
-        dto.setSkills(Collections.singletonList(skill.getName()));
+        dto.setSkills(Collections.singletonList(skill));
         expectedList.add(dto);
 
         final HttpRequest<?> request = HttpRequest
