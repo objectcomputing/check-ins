@@ -28,4 +28,9 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
     public List<SkillCategorySkill> findAllBySkillCategoryId(UUID categoryId) {
         return skillCategorySkillRepository.findAllBySkillCategoryId(categoryId);
     }
+
+    @Override
+    public SkillCategorySkill save(SkillCategorySkill dto) {
+        return skillCategorySkillRepository.save(dto);
+    }
 }

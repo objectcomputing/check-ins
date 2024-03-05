@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -22,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/skills/categories")
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(RoleType.Constants.ADMIN_ROLE)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skillcategory")
@@ -32,7 +33,8 @@ public class SkillCategoryController {
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
 
-    public SkillCategoryController(SkillCategoryServices skillCategoryServices, EventLoopGroup eventLoopGroup, @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public SkillCategoryController(SkillCategoryServices skillCategoryServices, EventLoopGroup eventLoopGroup,
+                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.skillCategoryServices = skillCategoryServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;

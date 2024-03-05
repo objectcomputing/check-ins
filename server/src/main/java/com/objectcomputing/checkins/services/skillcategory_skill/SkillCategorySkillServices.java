@@ -9,4 +9,6 @@ public interface SkillCategorySkillServices {
     List<String> findSkillNamesBySkillCategoryId(String skillCategoryId);
 
     List<SkillCategorySkill> findAllBySkillCategoryId(UUID categoryId);
+
+    SkillCategorySkill save(SkillCategorySkill dto);
 }

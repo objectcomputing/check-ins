@@ -20,7 +20,8 @@ import java.util.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SkillCategoryControllerTest extends TestContainersSuite implements SkillCategoryFixture, SkillFixture, SkillCategorySkillFixture {
+public class SkillCategoryControllerTest extends TestContainersSuite
+        implements SkillCategoryFixture, SkillFixture, SkillCategorySkillFixture {
 
     @Inject
     @Client("/services/skills/categories")
