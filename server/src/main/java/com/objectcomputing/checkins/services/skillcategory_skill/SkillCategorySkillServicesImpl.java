@@ -33,4 +33,12 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
     public SkillCategorySkill save(SkillCategorySkill dto) {
         return skillCategorySkillRepository.save(dto);
     }
+
+    @Override
+    public void delete(SkillCategorySkillId dto) {
+        skillCategorySkillRepository.deleteByIds(
+                dto.getSkillCategoryId().toString(),
+                dto.getSkillId().toString()
+        );
+    }
 }

@@ -15,6 +15,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -59,4 +60,32 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
 
     }
 
+    @Test
+    public void testDelete() {
+        SkillCategory defaultSkillCategory = createDefaultSkillCategory();
+        Skill aDefaultSkill = createADefaultSkill();
+        SkillCategorySkill skillCategorySkill = createSkillCategorySkill(defaultSkillCategory.getId(), aDefaultSkill.getId());
+        SkillCategorySkillId skillCategorySkillId =  skillCategorySkill.getSkillCategorySkillId();
+        HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
+                .DELETE("/", skillCategorySkillId)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<SkillCategorySkill> response = client.toBlocking().exchange(httpRequest, SkillCategorySkill.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertFalse(response.getBody().isPresent());
+        List<SkillCategorySkill> all = getSkillCategorySkillRepository().findAll();
+        assertEquals(0, all.size());
+    }
+
+
+    @Test
+    public void testDeleteDontExist() {
+        SkillCategorySkillId skillCategorySkillId =  new SkillCategorySkillId(UUID.randomUUID(),UUID.randomUUID());
+        HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
+                .DELETE("/", skillCategorySkillId)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<SkillCategorySkill> response = client.toBlocking().exchange(httpRequest, SkillCategorySkill.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertFalse(response.getBody().isPresent());
+
+    }
 }

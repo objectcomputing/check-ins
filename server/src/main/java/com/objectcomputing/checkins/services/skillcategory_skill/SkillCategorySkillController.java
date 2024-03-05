@@ -36,7 +36,8 @@ public class SkillCategorySkillController {
         this.ioExecutorService = ioExecutorService;
     }
     @Post()
-    public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkill dto, HttpRequest<SkillCategorySkill> request) {
+    public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkill dto,
+                                                         HttpRequest<SkillCategorySkill> request) {
         return Mono
                 .fromCallable(() -> {
                     return skillCategorySkillServices.save(dto);
@@ -50,4 +51,13 @@ public class SkillCategorySkillController {
                 })
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
+
+    @Delete("/")
+    public Mono<HttpResponse> delete(@Body @Valid SkillCategorySkillId dto) {
+
+        return Mono.fromRunnable(() -> skillCategorySkillServices.delete(dto))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService)).thenReturn(HttpResponse.ok());
+    }
+
 }

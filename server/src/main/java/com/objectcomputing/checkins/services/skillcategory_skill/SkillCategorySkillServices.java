@@ -11,4 +11,6 @@ public interface SkillCategorySkillServices {
     List<SkillCategorySkill> findAllBySkillCategoryId(UUID categoryId);
 
     SkillCategorySkill save(SkillCategorySkill dto);
+
+    void delete(SkillCategorySkillId dto);
 }

@@ -22,4 +22,9 @@ public interface SkillCategorySkillRepository extends CrudRepository<SkillCatego
         List<String> findSkillNamesBySkillCategoryId(String skillCategoryId);
 
         List<SkillCategorySkill> findAllBySkillCategoryId(UUID categoryId);
+
+        @Query("DELETE FROM skillcategory_skills " +
+                "WHERE skillcategory_id = :skillcategoryId " +
+                "AND skill_id = :skillId")
+        void deleteByIds(String skillcategoryId, String skillId);
 }
