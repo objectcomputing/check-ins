@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkill;
 import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkillServices;
 import jakarta.inject.Singleton;
@@ -53,5 +54,16 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
         }
 
         return categoriesWithSkills;
+    }
+
+    @Override
+    public SkillCategory update(SkillCategory skillCategory) {
+        if (skillCategoryRepository.findById(skillCategory.getId()).isEmpty()) {
+            throw new BadArgException(String.format("Category with %s does not exist", skillCategory.getId()));
+        }
+        if (skillCategoryRepository.findByName(skillCategory.getName()).isPresent()) {
+            throw new AlreadyExistsException(skillCategory.getName());
+        }
+        return skillCategoryRepository.update(skillCategory);
     }
 }

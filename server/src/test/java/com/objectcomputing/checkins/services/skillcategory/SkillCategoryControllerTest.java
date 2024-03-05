@@ -63,6 +63,57 @@ public class SkillCategoryControllerTest extends TestContainersSuite implements 
     }
 
     @Test
+    public void testUpdateSkillCategory() {
+        SkillCategory existingCategory = createDefaultSkillCategory();
+
+        SkillCategoryUpdateDTO updateDTO = new SkillCategoryUpdateDTO();
+        updateDTO.setId(existingCategory.getId());
+        updateDTO.setName(existingCategory.getName());
+        String expectedDescription = "FOOBAR";
+        updateDTO.setDescription(expectedDescription);
+        final HttpRequest<SkillCategoryUpdateDTO> request = HttpRequest
+                .PUT("/", updateDTO)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<SkillCategory> response = client.toBlocking().exchange(request, SkillCategory.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    public void testUpdateSkillCategoryIdDoesNotExist() {
+        SkillCategory existingCategory = createDefaultSkillCategory();
+        SkillCategoryUpdateDTO updateDTO = new SkillCategoryUpdateDTO();
+        updateDTO.setId(UUID.randomUUID());
+        updateDTO.setName(existingCategory.getName());
+        String expectedDescription = "FOOBAR";
+        updateDTO.setDescription(expectedDescription);
+        final HttpRequest<SkillCategoryUpdateDTO> request = HttpRequest
+                .PUT("/", updateDTO)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    public void testUpdateSkillCategory_nameAlreadyExists() {
+        SkillCategory existingCategory1 = createDefaultSkillCategory();
+        SkillCategory another = createAnotherSkillCategory();
+
+        SkillCategoryUpdateDTO updateDTO = new SkillCategoryUpdateDTO();
+        updateDTO.setId(existingCategory1.getId());
+        updateDTO.setName(another.getName());
+        final HttpRequest<SkillCategoryUpdateDTO> request = HttpRequest
+                .PUT("/", updateDTO)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.CONFLICT, responseException.getStatus());
+    }
+
+    @Test
     public void testGetByIdHappyPath() {
         SkillCategory skillCategory = createDefaultSkillCategory();
 

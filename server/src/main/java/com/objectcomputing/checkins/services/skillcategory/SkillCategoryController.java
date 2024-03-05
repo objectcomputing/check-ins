@@ -55,6 +55,23 @@ public class SkillCategoryController {
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
+    @Put()
+    public Mono<HttpResponse<SkillCategory>> update(@Body @Valid SkillCategoryUpdateDTO dto, HttpRequest<SkillCategoryCreateDTO> request) {
+        return Mono
+                .fromCallable(() -> {
+                    SkillCategory skillCategory = new SkillCategory(dto.getId(), dto.getName(), dto.getDescription());
+                    return skillCategoryServices.update(skillCategory);
+                })
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(skillCategory -> {
+                    URI uri = URI.create(String.format("%s/%s", request.getPath(), skillCategory.getId()));
+                    return (HttpResponse<SkillCategory>) HttpResponse
+                            .ok(skillCategory)
+                            .headers(headers -> headers.location(uri));
+                })
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    }
+
     @Get("/{id}")
     public Mono<HttpResponse<SkillCategory>> getById(@NotNull UUID id) {
         return Mono.fromCallable(() -> {
