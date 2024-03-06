@@ -216,18 +216,17 @@ const EditPermissionsPage = (props) => {
   };
 
   const handleClickCreateFeedbackRequestAdmin = ({roleId, permissionId}) => {
-    let currentBool = !createFeedbackRequestPermissionsAdmin;
-    if (currentBool) {
-      console.log("Execute bool");
+    if (!createFeedbackRequestPermissionsAdmin) {
+      console.log("Change role");
       changeRolePermission("e8a4fff8-e984-4e59-be84-a713c9fa8d23", "439ad8a8-500f-4f3f-963b-a86437d5820a")
     } else {
-      console.log("Post bool");
+      console.log("Delete role");
       deleteRolePermission("e8a4fff8-e984-4e59-be84-a713c9fa8d23", "439ad8a8-500f-4f3f-963b-a86437d5820a");
     }
     // {"roleId": "e8a4fff8-e984-4e59-be84-a713c9fa8d23", "permissionId": "439ad8a8-500f-4f3f-963b-a86437d5820a"}
     changeRolePermission("e8a4fff8-e984-4e59-be84-a713c9fa8d23", "439ad8a8-500f-4f3f-963b-a86437d5820a");
     setCreateFeedbackRequestPermissionsAdmin(
-      !currentBool
+      !createFeedbackRequestPermissionsAdmin
     );
   };
   const handleClickCreateFeedbackRequestPDL = () =>
