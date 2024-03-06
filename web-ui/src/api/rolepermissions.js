@@ -20,7 +20,7 @@ export const postRolePermissionsList = async (roleData, cookie) => {
   });
 };
 
-export const deleteRolePermissionsList = async (roleData, cookie) => {
+export const deleteRolePermissionsList = async (cookie) => {
   return resolve({
     method: "delete",
     url: rolePermissionsListUrl,
