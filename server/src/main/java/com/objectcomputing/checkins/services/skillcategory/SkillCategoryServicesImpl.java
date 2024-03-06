@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.skillcategory;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkill;
 import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkillServices;
 import com.objectcomputing.checkins.services.skills.Skill;
@@ -32,8 +33,12 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
     }
 
     @Override
-    public SkillCategory read(@NotNull UUID id) {
-        return skillCategoryRepository.findById(id).orElse(null);
+    public SkillCategoryResponseDTO read(@NotNull UUID id) {
+        SkillCategory skillCategory = skillCategoryRepository.findById(id).orElseThrow(() ->
+                new NotFoundException("Category not found")
+        );
+
+        return getSkillCategoryResponseDTO(skillCategory);
     }
 
     @Override
@@ -46,11 +51,7 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
         List<SkillCategoryResponseDTO> categoriesWithSkills = new ArrayList<>();
         List<SkillCategory> categories = skillCategoryRepository.findAll();
         for (SkillCategory category : categories) {
-            List<SkillCategorySkill> skillCategorySkills = skillCategorySkillServices.findAllBySkillCategoryId(category.getId());
-            List<Skill> skills = skillCategorySkills.stream().map(skillCategorySkill ->
-                    skillCategorySkillServices.findSkillsBySkillCategoryId(skillCategorySkill.getSkillCategorySkillId().getSkillCategoryId().toString())
-            ).flatMap(Collection::stream).collect(Collectors.toList());
-            SkillCategoryResponseDTO dto = SkillCategoryResponseDTO.create(category, skills);
+            SkillCategoryResponseDTO dto = getSkillCategoryResponseDTO(category);
             categoriesWithSkills.add(dto);
         }
 
@@ -63,5 +64,13 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
             throw new BadArgException(String.format("Category with %s does not exist", skillCategory.getId()));
         }
         return skillCategoryRepository.update(skillCategory);
+    }
+
+    private SkillCategoryResponseDTO getSkillCategoryResponseDTO(SkillCategory category) {
+        List<SkillCategorySkill> skillCategorySkills = skillCategorySkillServices.findAllBySkillCategoryId(category.getId());
+        List<Skill> skills = skillCategorySkills.stream().map(skillCategorySkill ->
+                skillCategorySkillServices.findSkillsBySkillCategoryId(skillCategorySkill.getSkillCategorySkillId().getSkillCategoryId().toString())
+        ).flatMap(Collection::stream).collect(Collectors.toList());
+        return SkillCategoryResponseDTO.create(category, skills);
     }
 }

@@ -8,7 +8,6 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
@@ -75,15 +74,15 @@ public class SkillCategoryController {
     }
 
     @Get("/{id}")
-    public Mono<HttpResponse<SkillCategory>> getById(@NotNull UUID id) {
+    public Mono<HttpResponse<SkillCategoryResponseDTO>> getById(@NotNull UUID id) {
         return Mono.fromCallable(() -> {
-            SkillCategory result = skillCategoryServices.read(id);
+            SkillCategoryResponseDTO result = skillCategoryServices.read(id);
             if (result == null) {
                 throw new NotFoundException("No skill category for UUID");
             }
             return result;
         }).publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(skills -> (HttpResponse<SkillCategory>) HttpResponse.ok(skills))
+                .map(skills -> (HttpResponse<SkillCategoryResponseDTO>) HttpResponse.ok(skills))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 

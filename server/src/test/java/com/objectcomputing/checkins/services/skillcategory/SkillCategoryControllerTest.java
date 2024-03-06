@@ -117,17 +117,20 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     @Test
     public void testGetByIdHappyPath() {
         SkillCategory skillCategory = createDefaultSkillCategory();
+        Skill skill = createADefaultSkill();
+        createSkillCategorySkill(skillCategory.getId(), skill.getId());
+        SkillCategoryResponseDTO expectedDto = SkillCategoryResponseDTO.create(skillCategory, Collections.singletonList(skill));
 
         final HttpRequest<Object> request = HttpRequest
                 .GET(String.format("/%s", skillCategory.getId()))
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<SkillCategory> response = client.toBlocking().exchange(request, SkillCategory.class);
+        final HttpResponse<SkillCategoryResponseDTO> response = client.toBlocking().exchange(request, SkillCategoryResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
 
-        SkillCategory body = Objects.requireNonNull(response.body());
-        assertEquals(skillCategory, body);
+        SkillCategoryResponseDTO body = Objects.requireNonNull(response.body());
+        assertEquals(expectedDto, body);
     }
 
     @Test
@@ -137,7 +140,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, SkillCategory.class));
+                () -> client.toBlocking().exchange(request, SkillCategoryResponseDTO.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
@@ -165,11 +168,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
         createSkillCategorySkill(skillCategory.getId(), skill.getId());
 
         List<SkillCategoryResponseDTO> expectedList = new ArrayList<>();
-        SkillCategoryResponseDTO dto = new SkillCategoryResponseDTO();
-        dto.setId(skillCategory.getId());
-        dto.setName(skillCategory.getName());
-        dto.setDescription(skillCategory.getDescription());
-        dto.setSkills(Collections.singletonList(skill));
+        SkillCategoryResponseDTO dto = SkillCategoryResponseDTO.create(skillCategory, Collections.singletonList(skill));
         expectedList.add(dto);
 
         final HttpRequest<?> request = HttpRequest
@@ -189,11 +188,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
         SkillCategory skillCategory = createDefaultSkillCategory();
 
         List<SkillCategoryResponseDTO> expectedList = new ArrayList<>();
-        SkillCategoryResponseDTO dto = new SkillCategoryResponseDTO();
-        dto.setId(skillCategory.getId());
-        dto.setName(skillCategory.getName());
-        dto.setDescription(skillCategory.getDescription());
-        dto.setSkills(Collections.emptyList());
+        SkillCategoryResponseDTO dto = SkillCategoryResponseDTO.create(skillCategory, Collections.emptyList());
         expectedList.add(dto);
 
         final HttpRequest<?> request = HttpRequest
