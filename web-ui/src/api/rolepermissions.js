@@ -19,3 +19,12 @@ export const postRolePermissionsList = async (roleData, cookie) => {
     headers: { "X-CSRF-Header": cookie },
   });
 };
+
+export const deleteRolePermissionsList = async (roleData, cookie) => {
+  return resolve({
+    method: "delete",
+    url: rolePermissionsListUrl,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};

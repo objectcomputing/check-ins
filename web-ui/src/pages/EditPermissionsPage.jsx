@@ -6,6 +6,7 @@ import { getPermissionsList } from "../api/permissions";
 import {
   getRolePermissionsList,
   postRolePermissionsList,
+  deleteRolePermissionsList
 } from "../api/rolepermissions";
 import { getMemberRolesList } from "../api/memberroles";
 import { isArrayPresent, filterObjectByValOrKey } from "../helpers/checks";
@@ -171,10 +172,6 @@ const EditPermissionsPage = (props) => {
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
     if (data) {
-      // dispatch({
-      //   type: UPDATE_ROLE_PERMISSION,
-      //   payload: data,
-      // });
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -194,11 +191,43 @@ const EditPermissionsPage = (props) => {
     }
   };
 
+  const deleteRolePermission = async (roleId, permissionId) => {
+    let newSchema = { roleId: roleId, permissionId: permissionId };
+    let res = await deleteRolePermissionsList(newSchema, csrf);
+    let data = !res.error ? "Success" : null;
+    if (data) {
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: `Permission removed from Role`,
+        },
+      });
+    } else {
+      console.log(res?.error);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "warning",
+          toast: `Problem deleting permission for that role`,
+        },
+      });
+    }
+  };
+
   const handleClickCreateFeedbackRequestAdmin = ({roleId, permissionId}) => {
+    let currentBool = !createFeedbackRequestPermissionsAdmin;
+    if (currentBool) {
+      console.log("Execute bool");
+      changeRolePermission("e8a4fff8-e984-4e59-be84-a713c9fa8d23", "439ad8a8-500f-4f3f-963b-a86437d5820a")
+    } else {
+      console.log("Post bool");
+      deleteRolePermission("e8a4fff8-e984-4e59-be84-a713c9fa8d23", "439ad8a8-500f-4f3f-963b-a86437d5820a");
+    }
     // {"roleId": "e8a4fff8-e984-4e59-be84-a713c9fa8d23", "permissionId": "439ad8a8-500f-4f3f-963b-a86437d5820a"}
-    changeRolePermission(roleId, permissionId);
+    changeRolePermission("e8a4fff8-e984-4e59-be84-a713c9fa8d23", "439ad8a8-500f-4f3f-963b-a86437d5820a");
     setCreateFeedbackRequestPermissionsAdmin(
-      !createFeedbackRequestPermissionsAdmin
+      !currentBool
     );
   };
   const handleClickCreateFeedbackRequestPDL = () =>
