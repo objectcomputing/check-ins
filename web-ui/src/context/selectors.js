@@ -23,9 +23,9 @@ export const selectTeamsLoading = createSelector (
 )
 export const selectMemberProfilesLoading = createSelector (
   selectLoading,
-  (loading) => 
+  (loading) =>
   loading.memberProfiles
-  
+
 )
 
 export const selectCurrentUser = createSelector(
@@ -38,6 +38,12 @@ export const selectIsAdmin = createSelector(
   selectUserProfile,
   (userProfile) =>
     userProfile && userProfile.role && userProfile.role.includes("ADMIN")
+);
+
+export const selectHasReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.any((permission) => permission.includes("REPORT"))
 );
 
 export const selectIsPDL = createSelector(
