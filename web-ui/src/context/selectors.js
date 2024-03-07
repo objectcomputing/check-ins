@@ -43,7 +43,7 @@ export const selectIsAdmin = createSelector(
 export const selectHasReportPermission = createSelector(
     selectUserProfile,
     (userProfile) =>
-        userProfile && userProfile.role && userProfile.permissions.any((permission) => permission.includes("REPORT"))
+        userProfile && userProfile.role && userProfile.permissions.find((p) => p?.permission?.includes("REPORT"))
 );
 
 export const selectIsPDL = createSelector(
