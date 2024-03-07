@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
 import {AppContext} from "../context/AppContext";
 import {styled} from "@mui/material/styles";
@@ -48,6 +48,22 @@ const SkillCategoryEditPage = () => {
 
   const { categoryId } = useParams();
 
+  const getSelectableSkills = useCallback(() => {
+    if (category && category.skills) {
+      const result = skills.filter(skill => {
+        const skillId = skill.id;
+        for (let categorySkill of category.skills) {
+          if (categorySkill.id === skillId) {
+            return false;
+          }
+        }
+        return true;
+      });
+      return result;
+    }
+    return [];
+  }, [category, skills]);
+
   useEffect(() => {
     const retrieveSkillCategory = async (categoryId) => {
       const res = await getSkillCategory(categoryId, csrf);
@@ -94,7 +110,7 @@ const SkillCategoryEditPage = () => {
       <SelectSkillsDialog
         isOpen={addSkillsDialogOpen}
         onClose={() => setAddSkillsDialogOpen(false)}
-        selectableSkills={skills}
+        selectableSkills={getSelectableSkills()}
       />
     </Root>
   )

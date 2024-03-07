@@ -4,7 +4,7 @@ import {
   Checkbox, Dialog,
   DialogContent,
   FormGroup,
-  IconButton, List, ListItem, ListItemText,
+  IconButton, List, ListItem, ListItemButton, ListItemText,
   Slide,
   TextField,
   Toolbar,
@@ -71,12 +71,19 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills }) => {
           <FormControlLabel control={<Checkbox/>} label="Show Pending Skills"></FormControlLabel>
         </FormGroup>
         <List dense role="list">
-          {selectableSkills.map(skill => (
+          {selectableSkills && selectableSkills.map(skill => (
             <ListItem
               key={skill.id}
               role="listitem"
+              secondaryAction={
+                <Checkbox
+                  disableRipple
+                />
+              }
             >
-              <ListItemText primary={skill.name} secondary={skill.description}/>
+              <ListItemButton>
+                <ListItemText primary={skill.name} secondary={skill.description}/>
+              </ListItemButton>
             </ListItem>
           ))}
         </List>
