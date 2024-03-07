@@ -1,18 +1,9 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {AppContext} from "../context/AppContext";
 import {styled} from "@mui/material/styles";
 
-import {
-  Card,
-  CardHeader,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-  Typography
-} from "@mui/material";
+import {Card, CardHeader, IconButton, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import {getSkillCategory} from "../api/skillcategory";
 import {selectCsrfToken, selectOrderedSkills} from "../context/selectors";
@@ -50,16 +41,14 @@ const SkillCategoryEditPage = () => {
 
   const getSelectableSkills = useCallback(() => {
     if (category && category.skills) {
-      const result = skills.filter(skill => {
-        const skillId = skill.id;
-        for (let categorySkill of category.skills) {
-          if (categorySkill.id === skillId) {
-            return false;
-          }
-        }
-        return true;
+      const categorySkillIds = category.skills.reduce((map, skill) => {
+        map[skill.id] = skill.name;
+        return map;
+      }, {});
+
+      return skills.filter(skill => {
+        return !categorySkillIds[skill.id];
       });
-      return result;
     }
     return [];
   }, [category, skills]);
