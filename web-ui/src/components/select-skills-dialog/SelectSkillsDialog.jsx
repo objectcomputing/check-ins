@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from "react";
 import {
-  AppBar,
+  AppBar, Button,
   Checkbox, Dialog,
   DialogContent,
   FormGroup,
@@ -69,7 +69,8 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills }) => {
               onClose();
             }}
           ><Close/></IconButton>
-          <Typography variant="h6">Add Skills to Category</Typography>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>Add Skills to Category</Typography>
+          <Button color="inherit">Save</Button>
         </Toolbar>
       </AppBar>
       <DialogContent style={{ margin: "5rem 1rem 1rem 1rem" }}>
@@ -98,6 +99,7 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills }) => {
             <ListItem
               key={skill.id}
               role="listitem"
+              disablePadding
               secondaryAction={
                 <Checkbox
                   disableRipple

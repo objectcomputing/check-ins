@@ -90,6 +90,7 @@ const SkillCategoriesPage = () => {
       {skillCategories.map(category =>
         <SkillCategoryCard
           key={category.id}
+          id={category.id}
           name={category.name}
           description={category.description}
           skills={category.skills}
