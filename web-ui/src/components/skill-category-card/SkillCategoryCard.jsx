@@ -4,14 +4,16 @@ import PropTypes from "prop-types";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Typography from "@mui/material/Typography";
+import {Link} from "react-router-dom";
 
 const propTypes = {
+  id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
   skills: PropTypes.arrayOf(PropTypes.object),
 };
 
-const SkillCategoryCard = ({ name, description, skills }) => {
+const SkillCategoryCard = ({ id, name, description, skills }) => {
   return (
     <Card>
       <CardHeader
@@ -20,9 +22,11 @@ const SkillCategoryCard = ({ name, description, skills }) => {
         action={<div
           style={{display: "flex", gap: "1rem", margin: "0 1rem"}}>
           <Tooltip title="Edit" arrow>
-            <IconButton>
-              <EditIcon />
-            </IconButton>
+            <Link to={`/admin/skill-categories/${id}`}>
+              <IconButton>
+                <EditIcon />
+              </IconButton>
+            </Link>
           </Tooltip>
           <Tooltip title="Delete" arrow>
             <IconButton>
