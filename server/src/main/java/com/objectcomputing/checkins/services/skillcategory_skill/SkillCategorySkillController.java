@@ -39,9 +39,7 @@ public class SkillCategorySkillController {
     public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkill dto,
                                                          HttpRequest<SkillCategorySkill> request) {
         return Mono
-                .fromCallable(() -> {
-                    return skillCategorySkillServices.save(dto);
-                })
+                .fromCallable(() -> skillCategorySkillServices.save(dto))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(thing -> {
                     URI uri = URI.create(String.format("%s", request.getPath()));

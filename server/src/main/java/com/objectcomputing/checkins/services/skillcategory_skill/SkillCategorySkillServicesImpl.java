@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.skillcategory_skill;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;
 
@@ -33,6 +34,11 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
 
     @Override
     public SkillCategorySkill save(SkillCategorySkill dto) {
+        // TODO: Create test for providing bad payload
+        if (dto.getSkillCategorySkillId().getSkillCategoryId() == null
+                || dto.getSkillCategorySkillId().getSkillId() == null) {
+            throw new BadArgException("Incorrect payload");
+        }
         return skillCategorySkillRepository.save(dto);
     }
 

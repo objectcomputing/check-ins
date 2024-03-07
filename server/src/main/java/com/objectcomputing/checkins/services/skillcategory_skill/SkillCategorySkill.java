@@ -5,6 +5,7 @@ import io.micronaut.data.annotation.MappedEntity;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Table;
+import java.util.Objects;
 import java.util.UUID;
 
 @Introspected
@@ -24,5 +25,18 @@ public class SkillCategorySkill {
 
     public SkillCategorySkillId getSkillCategorySkillId() {
         return skillCategorySkillId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SkillCategorySkill that = (SkillCategorySkill) o;
+        return Objects.equals(skillCategorySkillId, that.skillCategorySkillId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(skillCategorySkillId);
     }
 }
