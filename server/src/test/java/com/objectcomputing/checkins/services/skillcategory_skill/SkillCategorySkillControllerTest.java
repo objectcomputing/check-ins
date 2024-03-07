@@ -38,10 +38,11 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
                 .POST("/", skillCategorySkill)
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<SkillCategorySkill> response = client.toBlocking().exchange(httpRequest, SkillCategorySkill.class);
+
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertTrue(response.getBody().isPresent());
-
-
+        SkillCategorySkill expected = getSkillCategorySkillRepository().findAll().get(0);
+        assertEquals(expected, response.getBody().get());
     }
 
     @Test

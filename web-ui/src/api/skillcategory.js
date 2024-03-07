@@ -1,6 +1,7 @@
 import { resolve } from "./api.js";
 
 const skillCategoryUrl = "/services/skills/categories";
+const skillCategorySkillUrl = "/services/skills/category-skills";
 
 export const createSkillCategory = async (skillCategory, cookie) => {
   return resolve({
@@ -30,3 +31,18 @@ export const getSkillCategory = async (categoryId, cookie) => {
     }
   });
 };
+
+export const createSkillCategorySkill = async (categoryId, skillId, cookie) => {
+  return resolve({
+    method: "post",
+    url: skillCategorySkillUrl,
+    responseType: "json",
+    data: {
+      skillCategorySkillId: {
+        skillCategoryId: categoryId,
+        skillId: skillId
+      }
+    },
+    headers: { "X-CSRF-Header": cookie }
+  });
+}

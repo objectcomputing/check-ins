@@ -5,10 +5,11 @@ import {styled} from "@mui/material/styles";
 
 import {Card, CardHeader, IconButton, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
-import {getSkillCategory} from "../api/skillcategory";
+import {createSkillCategorySkill, getSkillCategory} from "../api/skillcategory";
 import {selectCsrfToken, selectOrderedSkills} from "../context/selectors";
 import {Add} from "@mui/icons-material";
 import SelectSkillsDialog from "../components/select-skills-dialog/SelectSkillsDialog";
+import {UPDATE_TOAST} from "../context/actions";
 
 const PREFIX = 'SkillCategoryEditPage';
 const classes = {
@@ -31,7 +32,7 @@ const Root = styled('div')({
 });
 
 const SkillCategoryEditPage = () => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const skills = selectOrderedSkills(state);
   const [category, setCategory] = useState(null);
@@ -63,6 +64,24 @@ const SkillCategoryEditPage = () => {
       retrieveSkillCategory(categoryId).then(data => setCategory(data));
     }
   }, [categoryId, csrf]);
+
+  const saveCategorySkillIds = useCallback(async (skillIds) => {
+    if (categoryId) {
+      skillIds.forEach((skillId) => {
+        const res = createSkillCategorySkill(categoryId, skillId);
+        setAddSkillsDialogOpen(false);
+        if (res.error) {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "Failed to add skill to category"
+            }
+          });
+        }
+      });
+    }
+  }, [categoryId, dispatch]);
 
   return (
     <Root className={classes.root}>
@@ -100,6 +119,7 @@ const SkillCategoryEditPage = () => {
         isOpen={addSkillsDialogOpen}
         onClose={() => setAddSkillsDialogOpen(false)}
         selectableSkills={getSelectableSkills()}
+        onSave={saveCategorySkillIds}
       />
     </Root>
   )

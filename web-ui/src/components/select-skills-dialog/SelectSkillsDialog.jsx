@@ -22,13 +22,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  selectableSkills: PropTypes.arrayOf(PropTypes.object)
+  selectableSkills: PropTypes.arrayOf(PropTypes.object),
+  onSave: PropTypes.func
 };
 
-const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills }) => {
+const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills, onSave }) => {
 
   const [query, setQuery] = useState("");
   const [showPendingSkills, setShowPendingSkills] = useState(false);
+  const [selectedSkillIds, setSelectedSkillIds] = useState(new Set());
 
   const reset = () => {
     setQuery("");
@@ -50,6 +52,16 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills }) => {
     return [];
   }, [query, selectableSkills, showPendingSkills]);
 
+  const handleCheckboxToggle = useCallback((skill) => {
+    const newSelection = new Set(selectedSkillIds);
+    if (selectedSkillIds.has(skill.id)) {
+      newSelection.delete(skill.id);
+    }  else {
+      newSelection.add(skill.id);
+    }
+    setSelectedSkillIds(newSelection);
+  }, [selectedSkillIds]);
+
   return (
     <Dialog
       open={isOpen}
@@ -70,7 +82,10 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills }) => {
             }}
           ><Close/></IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>Add Skills to Category</Typography>
-          <Button color="inherit">Save</Button>
+          <Button color="inherit" disabled={selectedSkillIds.size === 0} onClick={() => {
+            reset();
+            onSave(selectedSkillIds);
+          }}>Save</Button>
         </Toolbar>
       </AppBar>
       <DialogContent style={{ margin: "5rem 1rem 1rem 1rem" }}>
@@ -99,9 +114,11 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills }) => {
             <ListItem
               key={skill.id}
               role="listitem"
+              onClick={() => handleCheckboxToggle(skill)}
               disablePadding
               secondaryAction={
                 <Checkbox
+                  checked={selectedSkillIds.has(skill.id)}
                   disableRipple
                 />
               }
