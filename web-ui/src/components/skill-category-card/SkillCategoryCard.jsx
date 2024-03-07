@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 const propTypes = {
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
-  skills: PropTypes.arrayOf(PropTypes.string),
+  skills: PropTypes.arrayOf(PropTypes.object),
 };
 
 const SkillCategoryCard = ({ name, description, skills }) => {
@@ -33,7 +33,7 @@ const SkillCategoryCard = ({ name, description, skills }) => {
       />
       <CardContent style={{display: "flex", gap: "0.5rem"}}>
         {(skills && skills.length > 0) ? (
-          skills.map((name) => <Chip key={name} label={name}/>)
+          skills.map((skill) => <Chip key={skill.id} label={skill.name}/>)
         ) : (
           <Typography style={{fontStyle: "italic"}} variant="body2" color="textSecondary">This category contains no skills.</Typography>
         )}

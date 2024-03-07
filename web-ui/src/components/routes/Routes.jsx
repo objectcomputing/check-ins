@@ -32,6 +32,7 @@ import EmailPage from "../../pages/EmailPage";
 import ReviewsPage from "../../pages/ReviewsPage";
 import SelfReviewsPage from "../../pages/SelfReviewsPage";
 import SkillCategoriesPage from "../../pages/SkillCategoriesPage";
+import SkillCategoryEditPage from "../../pages/SkillCategoryEditPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -101,6 +102,9 @@ export default function Routes() {
           <Route path="/admin/edit-skills">
             <Header title="Skills" />
             <EditSkillsPage />
+          </Route>
+          <Route path="/admin/skill-categories/:categoryId">
+            <SkillCategoryEditPage />
           </Route>
           <Route path="/admin/skill-categories">
             <SkillCategoriesPage />

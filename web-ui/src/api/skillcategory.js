@@ -19,3 +19,14 @@ export const getSkillCategories = async (cookie) => {
     headers: { "X-CSRF-Header": cookie }
   });
 };
+
+export const getSkillCategory = async (categoryId, cookie) => {
+  return resolve({
+    url: `${skillCategoryUrl}/${categoryId}`,
+    responseType: "json",
+    headers: {
+      "X-CSRF-Header": cookie,
+      'Content-Type': 'application/json'
+    }
+  });
+};
