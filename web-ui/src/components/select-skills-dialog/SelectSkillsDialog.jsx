@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {
   AppBar,
   Checkbox, Dialog,
@@ -28,10 +28,27 @@ const propTypes = {
 const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills }) => {
 
   const [query, setQuery] = useState("");
+  const [showPendingSkills, setShowPendingSkills] = useState(false);
 
   const reset = () => {
     setQuery("");
   }
+
+  const getFilteredSkills = useCallback(() => {
+    if (selectableSkills) {
+      return selectableSkills.filter(skill => {
+        const sanitizedQuery = query.toLowerCase().trim();
+        const nameMatches = skill.name.toLowerCase().includes(sanitizedQuery);
+        if (showPendingSkills) {
+          return nameMatches;
+        } else {
+          return nameMatches && !skill.pending;
+        }
+      });
+    }
+
+    return [];
+  }, [query, selectableSkills, showPendingSkills]);
 
   return (
     <Dialog
@@ -68,10 +85,16 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills }) => {
               endAdornment: <InputAdornment position="end" color="gray"><Search/></InputAdornment>
             }}
           />
-          <FormControlLabel control={<Checkbox/>} label="Show Pending Skills"></FormControlLabel>
+          <FormControlLabel
+            control={<Checkbox
+              checked={showPendingSkills}
+              onChange={(event) => setShowPendingSkills(event.target.checked)}
+            />}
+            label="Show Pending Skills">
+          </FormControlLabel>
         </FormGroup>
         <List dense role="list">
-          {selectableSkills && selectableSkills.map(skill => (
+          {getFilteredSkills().map(skill => (
             <ListItem
               key={skill.id}
               role="listitem"
