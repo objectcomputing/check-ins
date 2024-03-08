@@ -13,6 +13,16 @@ export const createSkillCategory = async (skillCategory, cookie) => {
   });
 };
 
+export const updateSkillCategory = async (skillCategory, cookie) => {
+  return resolve({
+    method: "put",
+    url: skillCategoryUrl,
+    responseType: "json",
+    data: skillCategory,
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
+
 export const getSkillCategories = async (cookie) => {
   return resolve({
     url: `${skillCategoryUrl}/with-skills`,

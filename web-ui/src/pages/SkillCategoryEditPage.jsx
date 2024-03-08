@@ -16,7 +16,12 @@ import {
   Typography
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
-import {createSkillCategorySkills, deleteSkillCategorySkill, getSkillCategory} from "../api/skillcategory";
+import {
+  createSkillCategorySkills,
+  deleteSkillCategorySkill,
+  getSkillCategory,
+  updateSkillCategory
+} from "../api/skillcategory";
 import {selectCsrfToken, selectOrderedSkills} from "../context/selectors";
 import {Add} from "@mui/icons-material";
 import SelectSkillsDialog from "../components/select-skills-dialog/SelectSkillsDialog";
@@ -132,14 +137,47 @@ const SkillCategoryEditPage = () => {
     }
   }, [categoryId, csrf, dispatch, refreshSkillCategory, skillToRemove]);
 
+  const updateCategoryDetails = useCallback(async () => {
+    const res = await updateSkillCategory(category, csrf);
+    if (res.error) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to update category"
+        }
+      });
+    }
+  }, [category, csrf, dispatch]);
+
   return (
     <Root className={classes.root}>
       <div>
         <Typography variant="h4">Edit Skill Category</Typography>
       </div>
-      <div style={{ margin: "2rem 0" }}>
-        <TextField value={category ? category.name : ""} label="Name"/>
-        <TextField value={category ? category.description : ""} label="Description"/>
+      <div style={{ margin: "2rem 0", display: "flex", gap: "2rem" }}>
+        <TextField
+          label="Name"
+          value={category ? category.name : ""}
+          onChange={(event) => {
+            setCategory({
+              ...category,
+              name: event.target.value
+            });
+          }}
+          onBlur={() => updateCategoryDetails()}
+        />
+        <TextField
+          label="Description"
+          value={category ? category.description : ""}
+          onChange={(event) => {
+            setCategory({
+              ...category,
+              description: event.target.value
+            });
+          }}
+          onBlur={() => updateCategoryDetails()}
+        />
       </div>
       <Card>
         <CardHeader
