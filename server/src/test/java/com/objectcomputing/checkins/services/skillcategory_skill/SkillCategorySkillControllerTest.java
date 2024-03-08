@@ -100,6 +100,5 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
         final HttpResponse<SkillCategorySkill> response = client.toBlocking().exchange(httpRequest, SkillCategorySkill.class);
         assertEquals(HttpStatus.OK, response.getStatus());
         assertFalse(response.getBody().isPresent());
-
     }
 }

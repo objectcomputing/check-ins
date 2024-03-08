@@ -102,4 +102,12 @@ public class SkillCategoryController {
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
+    @Delete("/{id}")
+    public Mono<HttpResponse<?>> delete(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> skillCategoryServices.delete(id))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService))
+                .thenReturn(HttpResponse.ok());
+    }
+
 }

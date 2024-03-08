@@ -64,6 +64,13 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
         return skillCategoryRepository.update(skillCategory);
     }
 
+    // TODO: Investigate transactional
+    @Override
+    public void delete(UUID id) {
+        skillCategorySkillServices.deleteAllByCategoryId(id);
+        skillCategoryRepository.deleteById(id);
+    }
+
     private SkillCategoryResponseDTO getSkillCategoryResponseDTO(SkillCategory category) {
         List<Skill> skills = skillCategorySkillServices.findSkillsBySkillCategoryId(category.getId().toString());
         return SkillCategoryResponseDTO.create(category, skills);

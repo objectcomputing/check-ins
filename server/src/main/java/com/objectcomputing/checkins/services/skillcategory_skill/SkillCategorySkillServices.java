@@ -11,9 +11,9 @@ public interface SkillCategorySkillServices {
 
     List<Skill> findSkillsBySkillCategoryId(String skillCategoryId);
 
-    List<SkillCategorySkill> findAllBySkillCategoryId(UUID categoryId);
-
     SkillCategorySkill save(@Valid SkillCategorySkillId dto);
 
     void delete(SkillCategorySkillId dto);
+
+    void deleteAllByCategoryId(UUID categoryId);
 }

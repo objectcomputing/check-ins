@@ -28,4 +28,6 @@ public interface SkillCategorySkillRepository extends CrudRepository<SkillCatego
                 "WHERE skillcategory_id = :skillcategoryId " +
                 "AND skill_id = :skillId")
         void deleteByIds(String skillcategoryId, String skillId);
+
+        void deleteBySkillCategoryId(UUID categoryId);
 }

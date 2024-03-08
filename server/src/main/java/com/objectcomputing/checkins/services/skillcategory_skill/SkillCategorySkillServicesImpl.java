@@ -26,12 +26,6 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
         return Objects.nonNull(skills) ? skills : Collections.emptyList();
     }
 
-
-    @Override
-    public List<SkillCategorySkill> findAllBySkillCategoryId(UUID categoryId) {
-        return skillCategorySkillRepository.findAllBySkillCategoryId(categoryId);
-    }
-
     @Override
     public SkillCategorySkill save(@Valid SkillCategorySkillId dto) {
         SkillCategorySkill skillCategorySkill = new SkillCategorySkill(dto);
@@ -44,5 +38,10 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
                 dto.getSkillCategoryId().toString(),
                 dto.getSkillId().toString()
         );
+    }
+
+    @Override
+    public void deleteAllByCategoryId(UUID categoryId) {
+        skillCategorySkillRepository.deleteBySkillCategoryId(categoryId);
     }
 }

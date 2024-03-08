@@ -206,4 +206,20 @@ public class SkillCategoryControllerTest extends TestContainersSuite
         assertEquals(expectedList, response.getBody().orElseThrow());
     }
 
+    @Test
+    public void testDeleteAllInCategory() {
+        SkillCategory category = createDefaultSkillCategory();
+        Skill skill = createADefaultSkill();
+        Skill skill2 = createASecondarySkill();
+        createSkillCategorySkill(category.getId(), skill.getId());
+        createSkillCategorySkill(category.getId(), skill2.getId());
+
+        final HttpRequest<?> request = HttpRequest
+                .DELETE(String.format("/%s", category.getId()))
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<?> response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(getSkillCategorySkillRepository().findAllBySkillCategoryId(category.getId()).isEmpty());
+    }
 }
