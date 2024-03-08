@@ -3,14 +3,12 @@ package com.objectcomputing.checkins.services.skillcategory;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkill;
 import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkillServices;
 import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Singleton
 public class SkillCategoryServicesImpl implements SkillCategoryServices {
@@ -67,10 +65,7 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
     }
 
     private SkillCategoryResponseDTO getSkillCategoryResponseDTO(SkillCategory category) {
-        List<SkillCategorySkill> skillCategorySkills = skillCategorySkillServices.findAllBySkillCategoryId(category.getId());
-        List<Skill> skills = skillCategorySkills.stream().map(skillCategorySkill ->
-                skillCategorySkillServices.findSkillsBySkillCategoryId(skillCategorySkill.getSkillCategorySkillId().getSkillCategoryId().toString())
-        ).flatMap(Collection::stream).collect(Collectors.toList());
+        List<Skill> skills = skillCategorySkillServices.findSkillsBySkillCategoryId(category.getId().toString());
         return SkillCategoryResponseDTO.create(category, skills);
     }
 }

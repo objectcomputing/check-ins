@@ -118,8 +118,10 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     public void testGetByIdHappyPath() {
         SkillCategory skillCategory = createDefaultSkillCategory();
         Skill skill = createADefaultSkill();
+        Skill skill2 = createASecondarySkill();
         createSkillCategorySkill(skillCategory.getId(), skill.getId());
-        SkillCategoryResponseDTO expectedDto = SkillCategoryResponseDTO.create(skillCategory, Collections.singletonList(skill));
+        createSkillCategorySkill(skillCategory.getId(), skill2.getId());
+        SkillCategoryResponseDTO expectedDto = SkillCategoryResponseDTO.create(skillCategory, List.of(skill, skill2));
 
         final HttpRequest<Object> request = HttpRequest
                 .GET(String.format("/%s", skillCategory.getId()))
@@ -130,6 +132,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
         assertEquals(HttpStatus.OK, response.getStatus());
 
         SkillCategoryResponseDTO body = Objects.requireNonNull(response.body());
+        assertEquals(expectedDto.getSkills().size(), body.getSkills().size());
         assertEquals(expectedDto, body);
     }
 
