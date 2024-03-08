@@ -154,21 +154,27 @@ const SkillCategoryEditPage = () => {
           dense
           role="list"
           >
-          {category && category.skills && category.skills.map(skill =>
-            <ListItem
-              key={skill.id}
-              role="listitem"
-              secondaryAction={
-                <Tooltip title="Remove skill from category" arrow>
-                  <IconButton onClick={() => setSkillToRemove(skill)}><RemoveIcon/></IconButton>
-                </Tooltip>
-              }
-            >
-              <ListItemText
-                primary={skill.name}
-                secondary={<Typography color="textSecondary" component="h6">{skill.description}</Typography>}
-              />
-            </ListItem>
+          {category && (
+            category.skills.length ? (
+              category.skills.map(skill =>
+                <ListItem
+                  key={skill.id}
+                  role="listitem"
+                  secondaryAction={
+                    <Tooltip title="Remove skill from category" arrow>
+                      <IconButton onClick={() => setSkillToRemove(skill)}><RemoveIcon/></IconButton>
+                    </Tooltip>
+                  }
+                >
+                  <ListItemText
+                    primary={skill.name}
+                    secondary={<Typography color="textSecondary" component="h6">{skill.description}</Typography>}
+                  />
+                </ListItem>
+              )
+            ) : (
+              <ListItem><ListItemText>This category contains no skills</ListItemText></ListItem>
+            )
           )}
         </List>
       </Card>
