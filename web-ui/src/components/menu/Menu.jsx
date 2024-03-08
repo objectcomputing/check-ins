@@ -137,9 +137,6 @@ function Menu() {
   const csrf = selectCsrfToken(state);
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
-
-  console.log("userProfile", userProfile);
-
   const isAdmin = selectIsAdmin(state);
   const hasReportPermission = selectHasReportPermission(state);
   const isPDL =
