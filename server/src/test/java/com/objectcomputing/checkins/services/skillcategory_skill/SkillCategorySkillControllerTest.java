@@ -34,8 +34,8 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
         SkillCategory defaultSkillCategory = createDefaultSkillCategory();
         Skill aDefaultSkill = createADefaultSkill();
         SkillCategorySkill skillCategorySkill = new SkillCategorySkill(defaultSkillCategory.getId(),aDefaultSkill.getId());
-        HttpRequest<SkillCategorySkill> httpRequest = HttpRequest
-                .POST("/", skillCategorySkill)
+        HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
+                .POST("/", skillCategorySkill.getSkillCategorySkillId())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<SkillCategorySkill> response = client.toBlocking().exchange(httpRequest, SkillCategorySkill.class);
 
@@ -48,17 +48,30 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
     @Test
     public void testCreateFail() {
         Skill aDefaultSkill = createADefaultSkill();
+        createDefaultSkillCategory();
         UUID id = UUID.randomUUID();
-        SkillCategorySkill skillCategorySkill = new SkillCategorySkill(id,aDefaultSkill.getId());
-        HttpRequest<SkillCategorySkill> httpRequest = HttpRequest
-                .POST("/", skillCategorySkill)
+        SkillCategorySkill skillCategorySkill = new SkillCategorySkill(id, aDefaultSkill.getId());
+        HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
+                .POST("/", skillCategorySkill.getSkillCategorySkillId())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(httpRequest, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
 
+    @Test
+    public void testCreateNullIds() {
+        createADefaultSkill();
+        createDefaultSkillCategory();
+        SkillCategorySkill skillCategorySkill = new SkillCategorySkill(null, null);
+        HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
+                .POST("/", skillCategorySkill.getSkillCategorySkillId())
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(httpRequest, Map.class));
 
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test

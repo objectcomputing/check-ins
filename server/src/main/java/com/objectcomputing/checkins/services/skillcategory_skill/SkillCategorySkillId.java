@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -19,19 +20,23 @@ public class SkillCategorySkillId {
     @TypeDef(type = DataType.STRING)
     @Column(name = "skillcategory_id")
     @Schema(description = "The id of the skill category", required = true)
+    @NotNull
     @JsonProperty(required = true)
-    private final UUID skillCategoryId;
+    private UUID skillCategoryId;
 
     @TypeDef(type = DataType.STRING)
     @Column(name = "skill_id")
     @Schema(description = "The id of the skill", required = true)
+    @NotNull
     @JsonProperty(required = true)
-    private final UUID skillId;
+    private UUID skillId;
 
     public SkillCategorySkillId(UUID skillCategoryId, UUID skillId) {
         this.skillCategoryId = skillCategoryId;
         this.skillId = skillId;
     }
+
+    public SkillCategorySkillId() {}
 
     public UUID getSkillCategoryId() {
         return skillCategoryId;

@@ -38,10 +38,8 @@ export const createSkillCategorySkill = async (categoryId, skillId, cookie) => {
     url: skillCategorySkillUrl,
     responseType: "json",
     data: {
-      skillCategorySkillId: {
-        skillCategoryId: categoryId,
-        skillId: skillId
-      }
+      skillCategoryId: categoryId,
+      skillId: skillId
     },
     headers: { "X-CSRF-Header": cookie }
   });

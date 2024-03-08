@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.skillcategory_skill;
 
-import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @Singleton
@@ -33,13 +33,9 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
     }
 
     @Override
-    public SkillCategorySkill save(SkillCategorySkill dto) {
-        // TODO: Create test for providing bad payload
-        if (dto.getSkillCategorySkillId().getSkillCategoryId() == null
-                || dto.getSkillCategorySkillId().getSkillId() == null) {
-            throw new BadArgException("Incorrect payload");
-        }
-        return skillCategorySkillRepository.save(dto);
+    public SkillCategorySkill save(@Valid SkillCategorySkillId dto) {
+        SkillCategorySkill skillCategorySkill = new SkillCategorySkill(dto);
+        return skillCategorySkillRepository.save(skillCategorySkill);
     }
 
     @Override

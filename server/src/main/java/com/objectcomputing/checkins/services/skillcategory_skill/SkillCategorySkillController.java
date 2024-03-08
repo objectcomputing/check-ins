@@ -35,24 +35,24 @@ public class SkillCategorySkillController {
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
     }
+
     @Post()
-    public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkill dto,
-                                                         HttpRequest<SkillCategorySkill> request) {
+    public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkillId dto,
+                                                         HttpRequest<SkillCategorySkillId> request) {
         return Mono
                 .fromCallable(() -> skillCategorySkillServices.save(dto))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(thing -> {
+                .map(skillCategorySkill -> {
                     URI uri = URI.create(String.format("%s", request.getPath()));
                     return (HttpResponse<SkillCategorySkill>) HttpResponse
-                            .created(thing)
+                            .created(skillCategorySkill)
                             .headers(headers -> headers.location(uri));
                 })
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
-    @Delete("/")
-    public Mono<HttpResponse> delete(@Body @Valid SkillCategorySkillId dto) {
-
+    @Delete()
+    public Mono<HttpResponse<?>> delete(@Body @Valid SkillCategorySkillId dto) {
         return Mono.fromRunnable(() -> skillCategorySkillServices.delete(dto))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService)).thenReturn(HttpResponse.ok());

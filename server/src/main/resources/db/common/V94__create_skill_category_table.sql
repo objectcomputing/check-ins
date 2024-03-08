@@ -8,8 +8,8 @@ CREATE TABLE skillcategories
 DROP TABLE if exists skillcategory_skills;
 CREATE TABLE skillcategory_skills
 (
-    skillcategory_id varchar,
-    skill_id         varchar,
+    skillcategory_id varchar NOT NULL,
+    skill_id         varchar NOT NULL,
     unique (skillcategory_id, skill_id),
     constraint fk_skillcategory_skillcategoryskills
         foreign key (skillcategory_id) references skillcategories (id),
