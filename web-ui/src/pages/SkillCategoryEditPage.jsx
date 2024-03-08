@@ -3,13 +3,25 @@ import {useParams} from "react-router-dom";
 import {AppContext} from "../context/AppContext";
 import {styled} from "@mui/material/styles";
 
-import {Card, CardHeader, IconButton, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
+import {
+  Button,
+  Card,
+  CardHeader, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Tooltip,
+  Typography
+} from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
-import {createSkillCategorySkills, getSkillCategory} from "../api/skillcategory";
+import {createSkillCategorySkills, deleteSkillCategorySkill, getSkillCategory} from "../api/skillcategory";
 import {selectCsrfToken, selectOrderedSkills} from "../context/selectors";
 import {Add} from "@mui/icons-material";
 import SelectSkillsDialog from "../components/select-skills-dialog/SelectSkillsDialog";
 import {UPDATE_TOAST} from "../context/actions";
+import Dialog from "@mui/material/Dialog";
 
 const PREFIX = 'SkillCategoryEditPage';
 const classes = {
@@ -37,6 +49,7 @@ const SkillCategoryEditPage = () => {
   const skills = selectOrderedSkills(state);
   const [category, setCategory] = useState(null);
   const [addSkillsDialogOpen, setAddSkillsDialogOpen] = useState(false);
+  const [skillToRemove, setSkillToRemove] = useState(null);
 
   const { categoryId } = useParams();
 
@@ -65,6 +78,22 @@ const SkillCategoryEditPage = () => {
     }
   }, [categoryId, csrf, retrieveSkillCategory]);
 
+  const refreshSkillCategory = useCallback(async () => {
+    retrieveSkillCategory(categoryId).then(data => {
+      if (data) {
+        setCategory(data);
+      } else {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Failed to refresh category"
+          }
+        });
+      }
+    });
+  }, [categoryId, dispatch, retrieveSkillCategory]);
+
   const saveCategorySkillIds = useCallback(async (skillIds) => {
     if (categoryId) {
       const res = await createSkillCategorySkills(categoryId, skillIds, csrf);
@@ -78,34 +107,48 @@ const SkillCategoryEditPage = () => {
         });
       }
 
-      retrieveSkillCategory(categoryId).then(data => {
-        if (data) {
-          setCategory(data);
-        } else {
-          dispatch({
-            type: UPDATE_TOAST,
-            payload: {
-              severity: "error",
-              toast: "Failed to retrieve category after saving skills"
-            }
-          });
-        }
+      refreshSkillCategory().then(() => {
         setAddSkillsDialogOpen(false);
       });
     }
-  }, [categoryId, csrf, dispatch, retrieveSkillCategory]);
+  }, [categoryId, csrf, dispatch, refreshSkillCategory]);
+
+  const removeSkillFromCategory = useCallback(async () => {
+    if (skillToRemove) {
+      const res = await deleteSkillCategorySkill(categoryId, skillToRemove.id, csrf);
+      if (res.payload.status !== 200) {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Failed to remove skill from category"
+          }
+        });
+      }
+
+      refreshSkillCategory().then(() => {
+        setSkillToRemove(null);
+      });
+    }
+  }, [categoryId, csrf, dispatch, refreshSkillCategory, skillToRemove]);
 
   return (
     <Root className={classes.root}>
       <div>
         <Typography variant="h4">Edit Skill Category</Typography>
       </div>
-      <TextField value={category ? category.name : ""} label="Name"/>
-      <TextField value={category ? category.description : ""} label="Description"/>
+      <div style={{ margin: "2rem 0" }}>
+        <TextField value={category ? category.name : ""} label="Name"/>
+        <TextField value={category ? category.description : ""} label="Description"/>
+      </div>
       <Card>
         <CardHeader
-          title="Selected Skills"
-          action={<IconButton onClick={() => setAddSkillsDialogOpen(true)}><Add/></IconButton>}
+          title="Category Skills"
+          action={
+            <Tooltip title="Add skills to this category" arrow>
+              <IconButton onClick={() => setAddSkillsDialogOpen(true)}><Add/></IconButton>
+            </Tooltip>
+          }
         />
         <List
           dense
@@ -116,7 +159,9 @@ const SkillCategoryEditPage = () => {
               key={skill.id}
               role="listitem"
               secondaryAction={
-                <IconButton><RemoveIcon/></IconButton>
+                <Tooltip title="Remove skill from category" arrow>
+                  <IconButton onClick={() => setSkillToRemove(skill)}><RemoveIcon/></IconButton>
+                </Tooltip>
               }
             >
               <ListItemText
@@ -133,6 +178,24 @@ const SkillCategoryEditPage = () => {
         selectableSkills={getSelectableSkills()}
         onSave={saveCategorySkillIds}
       />
+      {skillToRemove &&
+        <Dialog
+          open={!!skillToRemove}
+          onClose={() => setSkillToRemove(null)}>
+          <DialogTitle>Remove Skill?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Are you sure you want to remove "{skillToRemove.name}" from {category.name}? The skill itself will not be deleted.</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setSkillToRemove(null)} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={removeSkillFromCategory} color="error" autoFocus>
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+      }
     </Root>
   )
 };

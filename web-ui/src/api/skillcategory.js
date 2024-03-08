@@ -53,3 +53,15 @@ export const createSkillCategorySkills = async (categoryId, skillIds, cookie) =>
 
   return Promise.all(promises);
 }
+
+export const deleteSkillCategorySkill = async (categoryId, skillId, cookie) => {
+  return resolve({
+    method: "delete",
+    url: skillCategorySkillUrl,
+    data: {
+      skillCategoryId: categoryId,
+      skillId: skillId
+    },
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
