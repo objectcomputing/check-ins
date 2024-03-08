@@ -5,7 +5,7 @@ import {styled} from "@mui/material/styles";
 
 import {Card, CardHeader, IconButton, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
-import {createSkillCategorySkill, getSkillCategory} from "../api/skillcategory";
+import {createSkillCategorySkills, getSkillCategory} from "../api/skillcategory";
 import {selectCsrfToken, selectOrderedSkills} from "../context/selectors";
 import {Add} from "@mui/icons-material";
 import SelectSkillsDialog from "../components/select-skills-dialog/SelectSkillsDialog";
@@ -54,34 +54,46 @@ const SkillCategoryEditPage = () => {
     return [];
   }, [category, skills]);
 
-  useEffect(() => {
-    const retrieveSkillCategory = async (categoryId) => {
-      const res = await getSkillCategory(categoryId, csrf);
-      return !res.error ? res.payload.data : null;
-    }
+  const retrieveSkillCategory = useCallback(async (categoryId) => {
+    const res = await getSkillCategory(categoryId, csrf);
+    return !res.error ? res.payload.data : null;
+  }, [csrf]);
 
+  useEffect(() => {
     if (categoryId) {
       retrieveSkillCategory(categoryId).then(data => setCategory(data));
     }
-  }, [categoryId, csrf]);
+  }, [categoryId, csrf, retrieveSkillCategory]);
 
   const saveCategorySkillIds = useCallback(async (skillIds) => {
     if (categoryId) {
-      skillIds.forEach((skillId) => {
-        const res = createSkillCategorySkill(categoryId, skillId);
-        setAddSkillsDialogOpen(false);
-        if (res.error) {
+      const res = await createSkillCategorySkills(categoryId, skillIds, csrf);
+      if (res.error) {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Failed to add skill(s) to category"
+          }
+        });
+      }
+
+      retrieveSkillCategory(categoryId).then(data => {
+        if (data) {
+          setCategory(data);
+        } else {
           dispatch({
             type: UPDATE_TOAST,
             payload: {
               severity: "error",
-              toast: "Failed to add skill to category"
+              toast: "Failed to retrieve category after saving skills"
             }
           });
         }
+        setAddSkillsDialogOpen(false);
       });
     }
-  }, [categoryId, dispatch]);
+  }, [categoryId, csrf, dispatch, retrieveSkillCategory]);
 
   return (
     <Root className={classes.root}>

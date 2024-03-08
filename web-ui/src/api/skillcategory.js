@@ -44,3 +44,12 @@ export const createSkillCategorySkill = async (categoryId, skillId, cookie) => {
     headers: { "X-CSRF-Header": cookie }
   });
 }
+
+export const createSkillCategorySkills = async (categoryId, skillIds, cookie) => {
+  const skillIdList = [...skillIds];
+  const promises = skillIdList.map((skillId) => {
+    return createSkillCategorySkill(categoryId, skillId, cookie);
+  });
+
+  return Promise.all(promises);
+}
