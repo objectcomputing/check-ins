@@ -32,10 +32,6 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills, onSave }) => {
   const [showPendingSkills, setShowPendingSkills] = useState(false);
   const [selectedSkillIds, setSelectedSkillIds] = useState(new Set());
 
-  const reset = () => {
-    setQuery("");
-  }
-
   const getFilteredSkills = useCallback(() => {
     if (selectableSkills) {
       return selectableSkills.filter(skill => {
@@ -66,24 +62,17 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills, onSave }) => {
     <Dialog
       open={isOpen}
       fullScreen
-      onClose={() => {
-        reset();
-        onClose();
-      }}
+      onClose={onClose}
       TransitionComponent={Transition}>
       <AppBar>
         <Toolbar>
           <IconButton
             edge="start"
             color="inherit"
-            onClick={() => {
-              reset();
-              onClose();
-            }}
+            onClick={onClose}
           ><Close/></IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>Add Skills to Category</Typography>
           <Button color="inherit" disabled={selectedSkillIds.size === 0} onClick={() => {
-            reset();
             onSave(selectedSkillIds);
           }}>Save</Button>
         </Toolbar>

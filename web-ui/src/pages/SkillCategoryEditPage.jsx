@@ -216,12 +216,14 @@ const SkillCategoryEditPage = () => {
           )}
         </List>
       </Card>
-      <SelectSkillsDialog
-        isOpen={addSkillsDialogOpen}
-        onClose={() => setAddSkillsDialogOpen(false)}
-        selectableSkills={getSelectableSkills()}
-        onSave={saveCategorySkillIds}
-      />
+      {addSkillsDialogOpen &&
+        <SelectSkillsDialog
+          isOpen={addSkillsDialogOpen}
+          onClose={() => setAddSkillsDialogOpen(false)}
+          selectableSkills={getSelectableSkills()}
+          onSave={saveCategorySkillIds}
+        />
+      }
       {skillToRemove &&
         <Dialog
           open={!!skillToRemove}
