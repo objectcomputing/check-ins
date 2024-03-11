@@ -1,16 +1,21 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import { styled } from '@mui/material/styles';
 
 import { AppContext } from "../context/AppContext";
 
-import {Button, Typography} from "@mui/material";
+import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography} from "@mui/material";
 import SkillCategoryCard from "../components/skill-category-card/SkillCategoryCard";
 
 import "./SkillCategoriesPage.css";
 import {selectCsrfToken} from "../context/selectors";
-import {createSkillCategory, getSkillCategories} from "../api/skillcategory";
+import {
+  createSkillCategory,
+  deleteSkillCategory,
+  getSkillCategories
+} from "../api/skillcategory";
 import SkillCategoryNewDialog from "../components/skill-category-new-dialog/SkillCategoryNewDialog";
 import {UPDATE_TOAST} from "../context/actions";
+import Dialog from "@mui/material/Dialog";
 
 const PREFIX = 'SkillCategoriesPage';
 const classes = {
@@ -38,19 +43,38 @@ const SkillCategoriesPage = () => {
 
   const [skillCategories, setSkillCategories] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
-  useEffect(() => {
-    const retrieveSkillCategories = async () => {
-      const res = await getSkillCategories(csrf);
-      return res.error ? [] : res.payload.data;
-    }
-
+  const retrieveCategories = useCallback(async () => {
     if (csrf) {
-      retrieveSkillCategories().then((data => {
-        setSkillCategories(data);
-      }));
+      const res = await getSkillCategories(csrf);
+      const data = res.error ? [] : res.payload.data;
+      setSkillCategories(data);
     }
   }, [csrf]);
+
+  useEffect(() => {
+    retrieveCategories();
+  }, [retrieveCategories]);
+
+  const deleteCategory = useCallback(async () => {
+    if (categoryToDelete) {
+      const res = await deleteSkillCategory(categoryToDelete.id, csrf);
+      if (res.payload.status !== 200) {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Failed to remove skill from category"
+          }
+        });
+      }
+
+      retrieveCategories().then(() => {
+        setCategoryToDelete(null);
+      });
+    }
+  }, [categoryToDelete, csrf, dispatch, retrieveCategories]);
 
   const createNewSkillCategory = async (categoryName, categoryDescription) => {
     const newSkillCategory = {
@@ -94,6 +118,7 @@ const SkillCategoriesPage = () => {
           name={category.name}
           description={category.description}
           skills={category.skills}
+          onDelete={() => setCategoryToDelete(category)}
         />
       )}
       <SkillCategoryNewDialog
@@ -104,6 +129,24 @@ const SkillCategoriesPage = () => {
             .then(() => setDialogOpen(false));
         }}
       />
+      {categoryToDelete &&
+        <Dialog
+          open={!!categoryToDelete}
+          onClose={() => setCategoryToDelete(null)}>
+          <DialogTitle>Delete Category?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Are you sure you want to delete the category "{categoryToDelete.name}"? The skills in this category will not be deleted.</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setCategoryToDelete(null)} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={deleteCategory} color="error" autoFocus>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      }
     </Root>
   );
 };

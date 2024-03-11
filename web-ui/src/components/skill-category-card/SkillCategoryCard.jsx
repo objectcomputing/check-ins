@@ -11,9 +11,10 @@ const propTypes = {
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
   skills: PropTypes.arrayOf(PropTypes.object),
+  onDelete: PropTypes.func,
 };
 
-const SkillCategoryCard = ({ id, name, description, skills }) => {
+const SkillCategoryCard = ({ id, name, description, skills, onDelete }) => {
   return (
     <Card>
       <CardHeader
@@ -29,7 +30,7 @@ const SkillCategoryCard = ({ id, name, description, skills }) => {
             </Link>
           </Tooltip>
           <Tooltip title="Delete" arrow>
-            <IconButton>
+            <IconButton onClick={onDelete}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>

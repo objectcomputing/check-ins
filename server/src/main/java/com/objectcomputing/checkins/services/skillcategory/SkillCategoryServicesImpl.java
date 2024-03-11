@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySk
 import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;
 
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -64,7 +65,7 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
         return skillCategoryRepository.update(skillCategory);
     }
 
-    // TODO: Investigate transactional
+    @Transactional
     @Override
     public void delete(UUID id) {
         skillCategorySkillServices.deleteAllByCategoryId(id);

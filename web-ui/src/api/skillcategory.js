@@ -42,6 +42,14 @@ export const getSkillCategory = async (categoryId, cookie) => {
   });
 };
 
+export const deleteSkillCategory = async (categoryId, cookie) => {
+  return resolve({
+    method: "delete",
+    url: `${skillCategoryUrl}/${categoryId}`,
+    headers: {"X-CSRF-Header": cookie}
+  });
+}
+
 export const createSkillCategorySkill = async (categoryId, skillId, cookie) => {
   return resolve({
     method: "post",
