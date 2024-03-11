@@ -340,21 +340,57 @@ const EditPermissionsPage = (props) => {
     );
   };
 
-  const handleClickViewFeedbackAnswerAdmin = () =>
+  const handleClickViewFeedbackAnswerAdmin = () => {
+    if (!viewFeedbackAnswerPermissionsAdmin) {
+      changeRolePermission(adminId, viewFeedbackAnswerPermissionsId);
+    } else {
+      deleteRolePermission(adminId, viewFeedbackAnswerPermissionsId);
+    }
     setViewFeedbackAnswerPermissionsAdmin(!viewFeedbackAnswerPermissionsAdmin);
-  const handleClickViewFeedbackAnswerPDL = () =>
+  };
+  const handleClickViewFeedbackAnswerPDL = () => {
+    if (!viewFeedbackAnswerPermissionsPDL) {
+      changeRolePermission(pdlId, viewFeedbackAnswerPermissionsId);
+    } else {
+      deleteRolePermission(pdlId, viewFeedbackAnswerPermissionsId);
+    }
     setViewFeedbackAnswerPermissionsPDL(!viewFeedbackAnswerPermissionsPDL);
-  const handleClickViewFeedbackAnswerMember = () =>
+  };
+  const handleClickViewFeedbackAnswerMember = () => {
+    if (!viewFeedbackAnswerPermissionsMember) {
+      changeRolePermission(memberId, viewFeedbackAnswerPermissionsId);
+    } else {
+      deleteRolePermission(memberId, viewFeedbackAnswerPermissionsId);
+    }
     setViewFeedbackAnswerPermissionsMember(
       !viewFeedbackAnswerPermissionsMember
     );
+  };
 
-  const handleClickCreateOrgMembersPermissionsAdmin = () =>
+  const handleClickCreateOrgMembersPermissionsAdmin = () => {
+    if (!createOrgMembersPermissionsAdmin) {
+      changeRolePermission(adminId, createOrgMembersPermissionsId);
+    } else {
+      deleteRolePermission(adminId, createOrgMembersPermissionsId);
+    }
     setCreateOrgMembersPermissionsAdmin(!createOrgMembersPermissionsAdmin);
-  const handleClickCreateOrgMembersPermissionsPDL = () =>
+  };
+  const handleClickCreateOrgMembersPermissionsPDL = () => {
+    if (!createOrgMembersPermissionsPDL) {
+      changeRolePermission(pdlId, createOrgMembersPermissionsId);
+    } else {
+      deleteRolePermission(pdlId, createOrgMembersPermissionsId);
+    }
     setCreateOrgMembersPermissionsPDL(!createOrgMembersPermissionsPDL);
-  const handleClickCreateOrgMembersPermissionsMember = () =>
+  };
+  const handleClickCreateOrgMembersPermissionsMember = () => {
+    if (!createOrgMembersPermissionsMember) {
+      changeRolePermission(memberId, createOrgMembersPermissionsId);
+    } else {
+      deleteRolePermission(memberId, createOrgMembersPermissionsId);
+    }
     setCreateOrgMembersPermissionsMember(!createOrgMembersPermissionsMember);
+  };
 
   const handleClickDeleteOrgMembersPermissionsAdmin = () =>
     setDeleteOrgMembersPermissionsAdmin(!deleteOrgMembersPermissionsAdmin);
