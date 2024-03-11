@@ -86,14 +86,6 @@ public class SkillCategoryController {
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
-    @Get()
-    public Mono<HttpResponse<List<SkillCategory>>> findAll() {
-        return Mono.fromCallable(skillCategoryServices::findAll)
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(skillCategories -> (HttpResponse<List<SkillCategory>>) HttpResponse.ok(skillCategories))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
-    }
-
     @Get("/with-skills")
     public Mono<HttpResponse<List<SkillCategoryResponseDTO>>> findAllWithSkills() {
         return Mono.fromCallable(skillCategoryServices::findAllWithSkills)

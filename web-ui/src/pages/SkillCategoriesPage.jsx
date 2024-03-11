@@ -84,11 +84,7 @@ const SkillCategoriesPage = () => {
 
     let res = await createSkillCategory(newSkillCategory, csrf);
     if (!res.error) {
-      let newCategory = res.payload.data;
-      if (newCategory) {
-        const withNewCategory = [...skillCategories, newCategory];
-        setSkillCategories(withNewCategory);
-      }
+      retrieveCategories();
     } else {
       dispatch({
         type: UPDATE_TOAST,

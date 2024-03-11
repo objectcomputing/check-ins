@@ -9,8 +9,6 @@ public interface SkillCategoryServices {
 
     SkillCategoryResponseDTO read(UUID id);
 
-    List<SkillCategory> findAll();
-
     List<SkillCategoryResponseDTO> findAllWithSkills();
 
     SkillCategory update(SkillCategory skillCategory);

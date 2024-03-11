@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface SkillCategoryRepository extends CrudRepository<SkillCategory, UUID> {
 
     @NonNull
-    List<SkillCategory> findAll();
+    List<SkillCategory> findAllOrderByName();
 
     Optional<SkillCategory> findByName(String name);
 

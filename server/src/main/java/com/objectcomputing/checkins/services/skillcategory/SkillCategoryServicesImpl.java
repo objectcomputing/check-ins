@@ -41,14 +41,9 @@ public class SkillCategoryServicesImpl implements SkillCategoryServices {
     }
 
     @Override
-    public List<SkillCategory> findAll() {
-        return skillCategoryRepository.findAll();
-    }
-
-    @Override
     public List<SkillCategoryResponseDTO> findAllWithSkills() {
         List<SkillCategoryResponseDTO> categoriesWithSkills = new ArrayList<>();
-        List<SkillCategory> categories = skillCategoryRepository.findAll();
+        List<SkillCategory> categories = skillCategoryRepository.findAllOrderByName();
         for (SkillCategory category : categories) {
             SkillCategoryResponseDTO dto = getSkillCategoryResponseDTO(category);
             categoriesWithSkills.add(dto);

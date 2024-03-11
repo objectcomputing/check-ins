@@ -72,4 +72,13 @@ public class SkillCategoryResponseDTO {
     public int hashCode() {
         return Objects.hash(id, name, description, skills);
     }
+
+    @Override
+    public String toString() {
+        return "SkillCategoryResponseDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", skills=" + skills +
+                '}';
+    }
 }
