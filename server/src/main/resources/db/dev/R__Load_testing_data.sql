@@ -626,7 +626,15 @@ insert into permissions
 values
     ('ecd952a1-c7c8-47a9-b4ee-762b99276a6f', 'CAN_UPDATE_CHECKINS');
 
+insert into permissions
+(id, permission)
+values
+    ('79b6509e-4e8c-46d5-a437-875b6f153f6a', 'CAN_EDIT_SKILL_CATEGORIES');
 
+insert into permissions
+(id, permission)
+values
+    ('ef46eb01-e3fe-481f-b97c-f20ea1806c7b', 'CAN_VIEW_SKILL_CATEGORIES');
 
 -- Admin Permissions
 insert into role_permissions
@@ -713,6 +721,16 @@ insert into role_permissions
 (roleid, permissionid)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '79b6509e-4e8c-46d5-a437-875b6f153f6a'); -- CAN_EDIT_SKILL_CATEGORIES
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ef46eb01-e3fe-481f-b97c-f20ea1806c7b'); -- CAN_VIEW_SKILL_CATEGORIES
 
 -- PDL Permissions
 insert into role_permissions

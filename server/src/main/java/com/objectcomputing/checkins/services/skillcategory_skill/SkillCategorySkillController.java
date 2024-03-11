@@ -1,12 +1,12 @@
 package com.objectcomputing.checkins.services.skillcategory_skill;
 
-import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.security.annotation.Secured;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
@@ -18,7 +18,6 @@ import java.net.URI;
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/skills/category-skills")
-@Secured(RoleType.Constants.ADMIN_ROLE)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skillcategory_skills")
@@ -37,6 +36,7 @@ public class SkillCategorySkillController {
     }
 
     @Post()
+    @RequiredPermission(Permissions.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkillId dto,
                                                          HttpRequest<SkillCategorySkillId> request) {
         return Mono
@@ -52,6 +52,7 @@ public class SkillCategorySkillController {
     }
 
     @Delete()
+    @RequiredPermission(Permissions.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<?>> delete(@Body @Valid SkillCategorySkillId dto) {
         return Mono.fromRunnable(() -> skillCategorySkillServices.delete(dto))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))

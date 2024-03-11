@@ -1,9 +1,7 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.fixture.SkillCategoryFixture;
-import com.objectcomputing.checkins.services.fixture.SkillCategorySkillFixture;
-import com.objectcomputing.checkins.services.fixture.SkillFixture;
+import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -13,19 +11,25 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SkillCategoryControllerTest extends TestContainersSuite
-        implements SkillCategoryFixture, SkillFixture, SkillCategorySkillFixture {
+        implements SkillCategoryFixture, SkillFixture, SkillCategorySkillFixture, RoleFixture {
 
     @Inject
     @Client("/services/skills/categories")
     private HttpClient client;
+
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
 
     @Test
     public void testPost() {
@@ -64,6 +68,19 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
+    public void testCreateNotAllowed() {
+        SkillCategoryCreateDTO createDTO = new SkillCategoryCreateDTO();
+
+        final HttpRequest<SkillCategoryCreateDTO> request = HttpRequest
+                .POST("/", createDTO)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
+    @Test
     public void testUpdateSkillCategory() {
         SkillCategory existingCategory = createDefaultSkillCategory();
 
@@ -78,6 +95,19 @@ public class SkillCategoryControllerTest extends TestContainersSuite
         final HttpResponse<SkillCategory> response = client.toBlocking().exchange(request, SkillCategory.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    public void testUpdateNotAllowed() {
+        SkillCategoryUpdateDTO updateDTO = new SkillCategoryUpdateDTO();
+
+        final HttpRequest<SkillCategoryUpdateDTO> request = HttpRequest
+                .PUT("/", updateDTO)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test
@@ -134,6 +164,18 @@ public class SkillCategoryControllerTest extends TestContainersSuite
         SkillCategoryResponseDTO body = Objects.requireNonNull(response.body());
         assertEquals(expectedDto.getSkills().size(), body.getSkills().size());
         assertEquals(expectedDto, body);
+    }
+
+    @Test
+    public void testGetByIdNotAllowed() {
+        final HttpRequest<Object> request = HttpRequest
+                .GET(String.format("/%s", UUID.randomUUID()))
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, SkillCategoryResponseDTO.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test
@@ -195,6 +237,18 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
+    public void testFindAllNotAllowed() {
+        final HttpRequest<Object> request = HttpRequest
+                .GET("/with-skills")
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.listOf(SkillCategoryResponseDTO.class)));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
+    @Test
     public void testFindAllWithoutSkills() {
         SkillCategory skillCategory = createDefaultSkillCategory();
 
@@ -229,5 +283,17 @@ public class SkillCategoryControllerTest extends TestContainersSuite
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(getSkillCategorySkillRepository().findAllBySkillCategoryId(category.getId()).isEmpty());
+    }
+
+    @Test
+    public void testDeleteNotAllowed() {
+        final HttpRequest<?> request = HttpRequest
+                .DELETE(String.format("/%s", UUID.randomUUID()))
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.listOf(SkillCategoryResponseDTO.class)));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 }
