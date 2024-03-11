@@ -6,7 +6,7 @@ import { getPermissionsList } from "../api/permissions";
 import {
   getRolePermissionsList,
   postRolePermissionsList,
-  deleteRolePermissionsList
+  deleteRolePermissionsList,
 } from "../api/rolepermissions";
 import { getMemberRolesList } from "../api/memberroles";
 import { isArrayPresent, filterObjectByValOrKey } from "../helpers/checks";
@@ -20,10 +20,12 @@ import { selectCurrentUserId } from "../context/selectors";
 import "./EditPermissionsPage.css";
 
 const EditPermissionsPage = (props) => {
-  // const { state, dispatch } = useContext(AppContext);
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const [permissionsList, setPermissionsList] = useState([]);
+  const [adminId, setAdminId] = useState("");
+  const [pdlId, setPDLId] = useState("");
+  const [memberId, setMemberId] = useState("");
   const [rolePermissionsList, setRolePermissionsList] = useState([]);
   const currentUserId = selectCurrentUserId(state);
   const [currentUserRole, setCurrentUserRole] = useState("");
@@ -34,6 +36,36 @@ const EditPermissionsPage = (props) => {
   const [adminPermissionsList, setAdminPermissionsList] = useState([]);
   const [pdlPermissionsList, setPDLPermissionsList] = useState([]);
   const [memberPermissionsList, setMemberPermissionsList] = useState([]);
+
+  const [
+    createFeedbackRequestPermissionsId,
+    setCreateFeedbackRequestPermissionsId,
+  ] = useState("");
+  const [
+    deleteFeedbackRequestPermissionsId,
+    setDeleteFeedbackRequestPermissionsId,
+  ] = useState("");
+  const [
+    viewFeedbackRequestPermissionsId,
+    setViewFeedbackRequestPermissionsId,
+  ] = useState("");
+  const [viewFeedbackAnswerPermissionsId, setViewFeedbackAnswerPermissionsId] =
+    useState("");
+  const [createOrgMembersPermissionsId, setCreateOrgMembersPermissionsId] =
+    useState("");
+  const [deleteOrgMembersPermissionsId, setDeleteOrgMembersPermissionsId] =
+    useState("");
+  const [viewRolePermissionsId, setViewRolePermissionsId] = useState("");
+  const [assignRolePermissionsId, setAssignRolePermissionsId] = useState("");
+  const [viewPermissionsId, setViewPermissionsId] = useState("");
+  const [viewSkillsReportsId, setViewSkillsReportsId] = useState("");
+  const [viewRetentionReportsId, setViewRetentionReportsId] = useState("");
+  const [viewAnniversaryReportsId, setViewAnniversaryReportsId] = useState("");
+  const [viewBirthdayReportsId, setViewBirthdayReportsId] = useState("");
+  const [viewProfileReportsId, setViewProfileReportsId] = useState("");
+  const [updateCheckinsId, setUpdateCheckinsId] = useState("");
+  const [createCheckinsId, setCreateCheckinsId] = useState("");
+  const [viewCheckinsId, setViewCheckinsId] = useState("");
 
   const [
     createFeedbackRequestPermissionsAdmin,
@@ -217,50 +249,95 @@ const EditPermissionsPage = (props) => {
 
   const handleClickCreateFeedbackRequestAdmin = () => {
     if (!createFeedbackRequestPermissionsAdmin) {
-      console.log("Change role");
-      changeRolePermission("e8a4fff8-e984-4e59-be84-a713c9fa8d23", "439ad8a8-500f-4f3f-963b-a86437d5820a")
+      changeRolePermission(adminId, createFeedbackRequestPermissionsId);
     } else {
-      console.log("Delete role");
-      deleteRolePermission("e8a4fff8-e984-4e59-be84-a713c9fa8d23", "439ad8a8-500f-4f3f-963b-a86437d5820a");
+      deleteRolePermission(adminId, createFeedbackRequestPermissionsId);
     }
-    // {"roleId": "e8a4fff8-e984-4e59-be84-a713c9fa8d23", "permissionId": "439ad8a8-500f-4f3f-963b-a86437d5820a"}
     setCreateFeedbackRequestPermissionsAdmin(
       !createFeedbackRequestPermissionsAdmin
     );
   };
-  const handleClickCreateFeedbackRequestPDL = () =>
+  const handleClickCreateFeedbackRequestPDL = () => {
+    if (!createFeedbackRequestPermissionsPDL) {
+      changeRolePermission(pdlId, createFeedbackRequestPermissionsId);
+    } else {
+      deleteRolePermission(pdlId, createFeedbackRequestPermissionsId);
+    }
     setCreateFeedbackRequestPermissionsPDL(
       !createFeedbackRequestPermissionsPDL
     );
+  };
 
-  const handleClickCreateFeedbackRequestMember = () =>
+  const handleClickCreateFeedbackRequestMember = () => {
+    if (!createFeedbackRequestPermissionsMember) {
+      changeRolePermission(memberId, createFeedbackRequestPermissionsId);
+    } else {
+      deleteRolePermission(memberId, createFeedbackRequestPermissionsId);
+    }
     setCreateFeedbackRequestPermissionsMember(
       !createFeedbackRequestPermissionsMember
     );
+  };
 
-  const handleClickDeleteFeedbackRequestAdmin = () =>
+  const handleClickDeleteFeedbackRequestAdmin = () => {
+    if (!deleteFeedbackRequestPermissionsAdmin) {
+      changeRolePermission(adminId, deleteFeedbackRequestPermissionsId);
+    } else {
+      deleteRolePermission(adminId, deleteFeedbackRequestPermissionsId);
+    }
     setDeleteFeedbackRequestPermissionsAdmin(
       !deleteFeedbackRequestPermissionsAdmin
     );
-  const handleClickDeleteFeedbackRequestPDL = () =>
+  };
+  const handleClickDeleteFeedbackRequestPDL = () => {
+    if (!deleteFeedbackRequestPermissionsPDL) {
+      changeRolePermission(pdlId, deleteFeedbackRequestPermissionsId);
+    } else {
+      deleteRolePermission(pdlId, deleteFeedbackRequestPermissionsId);
+    }
     setDeleteFeedbackRequestPermissionsPDL(
       !deleteFeedbackRequestPermissionsPDL
     );
-  const handleClickDeleteFeedbackRequestMember = () =>
+  };
+  const handleClickDeleteFeedbackRequestMember = () => {
+    if (!deleteFeedbackRequestPermissionsMember) {
+      changeRolePermission(memberId, deleteFeedbackRequestPermissionsId);
+    } else {
+      deleteRolePermission(memberId, deleteFeedbackRequestPermissionsId);
+    }
     setDeleteFeedbackRequestPermissionsMember(
       !deleteFeedbackRequestPermissionsMember
     );
+  };
 
-  const handleClickViewFeedbackRequestAdmin = () =>
+  const handleClickViewFeedbackRequestAdmin = () => {
+    if (!viewFeedbackRequestPermissionsAdmin) {
+      changeRolePermission(adminId, viewFeedbackRequestPermissionsId);
+    } else {
+      deleteRolePermission(adminId, viewFeedbackRequestPermissionsId);
+    }
     setViewFeedbackRequestPermissionsAdmin(
       !viewFeedbackRequestPermissionsAdmin
     );
-  const handleClickViewFeedbackRequestPDL = () =>
+  };
+  const handleClickViewFeedbackRequestPDL = () => {
+    if (!viewFeedbackRequestPermissionsAdmin) {
+      changeRolePermission(pdlId, viewFeedbackRequestPermissionsId);
+    } else {
+      deleteRolePermission(pdlId, viewFeedbackRequestPermissionsId);
+    }
     setViewFeedbackRequestPermissionsPDL(!viewFeedbackRequestPermissionsPDL);
-  const handleClickViewFeedbackRequestMember = () =>
+  };
+  const handleClickViewFeedbackRequestMember = () => {
+    if (!viewFeedbackRequestPermissionsAdmin) {
+      changeRolePermission(memberId, viewFeedbackRequestPermissionsId);
+    } else {
+      deleteRolePermission(memberId, viewFeedbackRequestPermissionsId);
+    }
     setViewFeedbackRequestPermissionsMember(
       !viewFeedbackRequestPermissionsMember
     );
+  };
 
   const handleClickViewFeedbackAnswerAdmin = () =>
     setViewFeedbackAnswerPermissionsAdmin(!viewFeedbackAnswerPermissionsAdmin);
@@ -360,26 +437,6 @@ const EditPermissionsPage = (props) => {
   const handleClickViewCheckinsMember = () =>
     setViewCheckinsMember(!viewCheckinsMember);
 
-  // const permissionTypes = [
-  //   'CAN_VIEW_FEEDBACK_REQUEST',
-  //   'CAN_CREATE_FEEDBACK_REQUEST',
-  //   'CAN_DELETE_FEEDBACK_REQUEST',
-  //   'CAN_VIEW_FEEDBACK_ANSWER',
-  //   'CAN_DELETE_ORGANIZATION_MEMBERS',
-  //   'CAN_CREATE_ORGANIZATION_MEMBERS',
-  //   'CAN_VIEW_ROLE_PERMISSIONS',
-  //   'CAN_ASSIGN_ROLE_PERMISSIONS',
-  //   'CAN_VIEW_PERMISSIONS',
-  //   'CAN_VIEW_SKILLS_REPORT',
-  //   'CAN_VIEW_RETENTION_REPORT',
-  //   'CAN_VIEW_ANNIVERSARY_REPORT',
-  //   'CAN_VIEW_BIRTHDAY_REPORT',
-  //   'CAN_VIEW_PROFILE_REPORT',
-  //   'CAN_CREATE_CHECKINS',
-  //   'CAN_VIEW_CHECKINS',
-  //   'CAN_UPDATE_CHECKINS',
-  // ];
-
   useEffect(() => {
     const doTask1 = async () => {
       let res = await getRolePermissionsList(csrf);
@@ -413,12 +470,133 @@ const EditPermissionsPage = (props) => {
     }
   }, [csrf]);
 
-  // useEffect(() => {
-  //   console.log("Role Permissions");
-  //   console.log(rolePermissionsList);
-  //   console.log("Permissions List");
-  //   console.log(permissionsList);
-  // }, [rolePermissionsList, permissionsList]);
+  useEffect(() => {
+    if (isArrayPresent(rolePermissionsList)) {
+      let adminData = rolePermissionsList.filter((a) => a.role === "ADMIN");
+      if (isArrayPresent(adminData)) {
+        setAdminId(adminData[0].roleId);
+      }
+      let pdlData = rolePermissionsList.filter((a) => a.role === "PDL");
+      if (isArrayPresent(pdlData)) {
+        setPDLId(pdlData[0].roleId);
+      }
+      let memberData = rolePermissionsList.filter((a) => a.role === "PDL");
+      if (isArrayPresent(memberData)) {
+        setMemberId(memberData[0].roleId);
+      }
+    }
+
+    if (isArrayPresent(permissionsList)) {
+      let id1 = permissionsList.filter(
+        (a) => a.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+      );
+      if (isArrayPresent(id1)) {
+        setCreateFeedbackRequestPermissionsId(id1[0].id);
+      }
+      let id2 = permissionsList.filter(
+        (a) => a.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+      );
+      if (isArrayPresent(id2)) {
+        setCreateFeedbackRequestPermissionsId(id2[0].id);
+      }
+      let id3 = permissionsList.filter(
+        (a) => a.permission === "CAN_DELETE_FEEDBACK_REQUEST"
+      );
+      if (isArrayPresent(id3)) {
+        setDeleteFeedbackRequestPermissionsId(id3[0].id);
+      }
+      let id4 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_FEEDBACK_REQUEST"
+      );
+      if (isArrayPresent(id4)) {
+        setViewFeedbackRequestPermissionsId(id4[0].id);
+      }
+      let id5 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_FEEDBACK_ANSWER"
+      );
+      if (isArrayPresent(id5)) {
+        setViewFeedbackAnswerPermissionsId(id5[0].id);
+      }
+      let id6 = permissionsList.filter(
+        (a) => a.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+      );
+      if (isArrayPresent(id6)) {
+        setCreateOrgMembersPermissionsId(id6[0].id);
+      }
+      let id7 = permissionsList.filter(
+        (a) => a.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+      );
+      if (isArrayPresent(id7)) {
+        setDeleteOrgMembersPermissionsId(id7[0].id);
+      }
+      let id8 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_ROLE_PERMISSIONS"
+      );
+      if (isArrayPresent(id8)) {
+        setViewRolePermissionsId(id8[0].id);
+      }
+      let id9 = permissionsList.filter(
+        (a) => a.permission === "CAN_ASSIGN_ROLE_PERMISSIONS"
+      );
+      if (isArrayPresent(id9)) {
+        setAssignRolePermissionsId(id9[0].id);
+      }
+      let id10 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_PERMISSIONS"
+      );
+      if (isArrayPresent(id10)) {
+        setViewPermissionsId(id10[0].id);
+      }
+      let id11 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_SKILLS_REPORT"
+      );
+      if (isArrayPresent(id11)) {
+        setViewSkillsReportsId(id11[0].id);
+      }
+      let id12 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_RETENTION_REPORT"
+      );
+      if (isArrayPresent(id12)) {
+        setViewRetentionReportsId(id12[0].id);
+      }
+      let id13 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_ANNIVERSARY_REPORT"
+      );
+      if (isArrayPresent(id13)) {
+        setViewAnniversaryReportsId(id13[0].id);
+      }
+      let id14 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_BIRTHDAY_REPORT"
+      );
+      if (isArrayPresent(id14)) {
+        setViewBirthdayReportsId(id14[0].id);
+      }
+      let id15 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_PROFILE_REPORT"
+      );
+      if (isArrayPresent(id15)) {
+        setViewProfileReportsId(id15[0].id);
+      }
+      let id16 = permissionsList.filter(
+        (a) => a.permission === "CAN_UPDATE_CHECKINS"
+      );
+      if (isArrayPresent(id16)) {
+        setUpdateCheckinsId(id16[0].id);
+      }
+      let id17 = permissionsList.filter(
+        (a) => a.permission === "CAN_CREATE_CHECKINS"
+      );
+      if (isArrayPresent(id17)) {
+        setCreateCheckinsId(id17[0].id);
+      }
+      let id18 = permissionsList.filter(
+        (a) => a.permission === "CAN_VIEW_CHECKINS"
+      );
+      if (isArrayPresent(id18)) {
+        setViewCheckinsId(id18[0].id);
+      }
+    }
+  }, [rolePermissionsList, permissionsList]);
 
   useEffect(() => {
     if (isArrayPresent(memberRoles)) {
