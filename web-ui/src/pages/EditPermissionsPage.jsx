@@ -321,15 +321,16 @@ const EditPermissionsPage = (props) => {
     );
   };
   const handleClickViewFeedbackRequestPDL = () => {
-    if (!viewFeedbackRequestPermissionsAdmin) {
+    if (!viewFeedbackRequestPermissionsPDL) {
       changeRolePermission(pdlId, viewFeedbackRequestPermissionsId);
     } else {
       deleteRolePermission(pdlId, viewFeedbackRequestPermissionsId);
     }
     setViewFeedbackRequestPermissionsPDL(!viewFeedbackRequestPermissionsPDL);
   };
+
   const handleClickViewFeedbackRequestMember = () => {
-    if (!viewFeedbackRequestPermissionsAdmin) {
+    if (!viewFeedbackRequestPermissionsMember) {
       changeRolePermission(memberId, viewFeedbackRequestPermissionsId);
     } else {
       deleteRolePermission(memberId, viewFeedbackRequestPermissionsId);
