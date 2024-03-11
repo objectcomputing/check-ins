@@ -15,6 +15,7 @@ const initialState = {
         workEmail: "test@tester.com",
       },
       role: ["MEMBER"],
+      permissions: [],
       imageUrl:
         "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
     },
@@ -31,6 +32,7 @@ const adminState = {
         workEmail: "test@tester.com",
       },
       role: ["MEMBER", "ADMIN"],
+      permissions: [{ permission: "CAN_VIEW_SKILLS_REPORT"}],
       imageUrl:
         "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
     },
@@ -47,6 +49,7 @@ const pdlState = {
         workEmail: "test@tester.com",
       },
       role: ["MEMBER","PDL"],
+      permissions: [],
       imageUrl:
         "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
     },
