@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from "react";
 import {
   AppBar, Button,
-  Checkbox, Dialog,
+  Checkbox, Chip, Dialog,
   DialogContent,
   FormGroup,
   IconButton, List, ListItem, ListItemButton, ListItemText,
@@ -114,6 +114,8 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills, onSave }) => {
             >
               <ListItemButton>
                 <ListItemText primary={skill.name} secondary={skill.description}/>
+                {skill.pending && <Chip label="Pending" style={{ marginRight: "1rem" }}/>}
+                {skill.extraneous && <Chip label="Extraneous" style={{ marginRight: "1rem" }}/>}
               </ListItemButton>
             </ListItem>
           ))}
