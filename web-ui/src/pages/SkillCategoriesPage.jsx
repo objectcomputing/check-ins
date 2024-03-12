@@ -3,13 +3,15 @@ import { styled } from '@mui/material/styles';
 
 import { AppContext } from "../context/AppContext";
 
+import fileDownload from 'js-file-download';
+
 import {
   Button,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-  TextField,
+  DialogTitle, IconButton,
+  TextField, Tooltip,
   Typography
 } from "@mui/material";
 import SkillCategoryCard from "../components/skill-category-card/SkillCategoryCard";
@@ -19,7 +21,7 @@ import {selectCsrfToken, selectOrderedSkills} from "../context/selectors";
 import {
   createSkillCategory,
   deleteSkillCategory,
-  getSkillCategories
+  getSkillCategories, getSkillsCsv
 } from "../api/skillcategory";
 import SkillCategoryNewDialog from "../components/skill-category-new-dialog/SkillCategoryNewDialog";
 import {UPDATE_TOAST} from "../context/actions";
@@ -27,6 +29,7 @@ import Dialog from "@mui/material/Dialog";
 import InputAdornment from "@mui/material/InputAdornment";
 import {Search} from "@mui/icons-material";
 import Autocomplete from "@mui/material/Autocomplete";
+import DownloadIcon from "@mui/icons-material/FileDownload";
 
 const PREFIX = 'SkillCategoriesPage';
 const classes = {
@@ -110,6 +113,29 @@ const SkillCategoriesPage = () => {
     }
   }
 
+  const downloadSkills = useCallback(async () => {
+    let res = await getSkillsCsv(csrf);
+    if (!res.error && res.payload.data) {
+      fileDownload(res.payload.data, "skill_records.csv");
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: "Skills successfully exported"
+        }
+      });
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to export skills"
+        }
+      });
+    }
+
+  }, [csrf, dispatch]);
+
   const getFilteredCategories = useCallback(() => {
     if (skillCategories) {
       return skillCategories.filter(category => {
@@ -136,6 +162,11 @@ const SkillCategoriesPage = () => {
       <div className="skill-categories-header">
         <Typography variant="h4">Skill Categories</Typography>
         <div className="skill-categories-actions">
+          <Tooltip title="Download Skills" arrow>
+            <IconButton onClick={downloadSkills}>
+              <DownloadIcon/>
+            </IconButton>
+          </Tooltip>
           <TextField
             style={{ minWidth: "200px" }}
             label="Search"

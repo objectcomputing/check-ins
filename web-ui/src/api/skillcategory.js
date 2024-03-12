@@ -2,6 +2,7 @@ import { resolve } from "./api.js";
 
 const skillCategoryUrl = "/services/skills/categories";
 const skillCategorySkillUrl = "/services/skills/category-skills";
+const skillRecordsUrl = "/services/skills/records";
 
 export const createSkillCategory = async (skillCategory, cookie) => {
   return resolve({
@@ -81,5 +82,13 @@ export const deleteSkillCategorySkill = async (categoryId, skillId, cookie) => {
       skillId: skillId
     },
     headers: { "X-CSRF-Header": cookie }
+  });
+}
+
+export const getSkillsCsv = async (cookie) => {
+  return resolve({
+    url: `${skillRecordsUrl}/csv`,
+    responseType: "blob",
+    headers: { "X-CSRF-Header": cookie, "Accept": "text/csv" }
   });
 }
