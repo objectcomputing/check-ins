@@ -3,11 +3,19 @@ import { styled } from '@mui/material/styles';
 
 import { AppContext } from "../context/AppContext";
 
-import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography} from "@mui/material";
+import {
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Typography
+} from "@mui/material";
 import SkillCategoryCard from "../components/skill-category-card/SkillCategoryCard";
 
 import "./SkillCategoriesPage.css";
-import {selectCsrfToken} from "../context/selectors";
+import {selectCsrfToken, selectOrderedSkills} from "../context/selectors";
 import {
   createSkillCategory,
   deleteSkillCategory,
@@ -16,6 +24,9 @@ import {
 import SkillCategoryNewDialog from "../components/skill-category-new-dialog/SkillCategoryNewDialog";
 import {UPDATE_TOAST} from "../context/actions";
 import Dialog from "@mui/material/Dialog";
+import InputAdornment from "@mui/material/InputAdornment";
+import {Search} from "@mui/icons-material";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const PREFIX = 'SkillCategoriesPage';
 const classes = {
@@ -40,10 +51,13 @@ const Root = styled('div')({
 const SkillCategoriesPage = () => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
+  const skills = selectOrderedSkills(state);
 
   const [skillCategories, setSkillCategories] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [query, setQuery] = useState("");
+  const [skillFilter, setSkillFilter] = useState(null);
 
   const retrieveCategories = useCallback(async () => {
     if (csrf) {
@@ -96,18 +110,73 @@ const SkillCategoriesPage = () => {
     }
   }
 
+  const getFilteredCategories = useCallback(() => {
+    if (skillCategories) {
+      return skillCategories.filter(category => {
+        let nameMatches = true;
+        if (query) {
+          const sanitizedQuery = query.toLowerCase().trim();
+          nameMatches = category.name.toLowerCase().includes(sanitizedQuery);
+        }
+
+        let skillMatches = true;
+        if (skillFilter) {
+          skillMatches = category.skills.find(skill => skill.name === skillFilter.name);
+        }
+
+        return nameMatches && skillMatches;
+      });
+    }
+
+    return [];
+  }, [skillCategories, query, skillFilter]);
+
   return (
     <Root className={classes.root}>
       <div className="skill-categories-header">
         <Typography variant="h4">Skill Categories</Typography>
-        <Button
-          variant="contained"
-          onClick={() => setDialogOpen(true)}
-        >
-          New Category
-        </Button>
+        <div className="skill-categories-actions">
+          <TextField
+            style={{ minWidth: "200px" }}
+            label="Search"
+            fullWidth
+            placeholder="Category name"
+            variant="outlined"
+            size="small"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            InputProps={{
+              endAdornment: <InputAdornment position="end" color="gray"><Search/></InputAdornment>
+            }}
+          />
+          <Autocomplete
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                style={{ minWidth: "200px" }}
+                label="Filter by Skill"
+                variant="outlined"
+                size="small"
+                placeholder="Skill name"
+                fullWidth
+              />
+            )}
+            options={skills}
+            getOptionLabel={(option) => option.name}
+            filterSelectedOptions
+            value={skillFilter}
+            onChange={(_, newValue) => setSkillFilter(newValue)}
+          />
+          <Button
+            style={{ width: "300px" }}
+            variant="contained"
+            onClick={() => setDialogOpen(true)}
+          >
+            New Category
+          </Button>
+        </div>
       </div>
-      {skillCategories.map(category =>
+      {getFilteredCategories().map(category =>
         <SkillCategoryCard
           key={category.id}
           id={category.id}

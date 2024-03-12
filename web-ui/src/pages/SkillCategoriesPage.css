@@ -3,4 +3,12 @@
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.skill-categories-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
 }
