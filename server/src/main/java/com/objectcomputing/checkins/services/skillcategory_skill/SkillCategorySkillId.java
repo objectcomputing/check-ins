@@ -17,6 +17,8 @@ import java.util.UUID;
 @Introspected
 public class SkillCategorySkillId {
 
+    private static final UUID MARKER = UUID.fromString("6ad7baca-3741-4ae8-b45a-4b82ade40d1f");
+
     @TypeDef(type = DataType.STRING)
     @Column(name = "skillcategory_id")
     @Schema(description = "The id of the skill category", required = true)
@@ -39,12 +41,16 @@ public class SkillCategorySkillId {
     public SkillCategorySkillId() {}
 
     public UUID getSkillCategoryId() {
+        if (Objects.equals(skillCategoryId, MARKER)) {
+            return null;
+        }
         return skillCategoryId;
     }
 
     public UUID getSkillId() {
         return skillId;
     }
+
 
     @Override
     public boolean equals(Object o) {

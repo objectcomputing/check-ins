@@ -1284,4 +1284,9 @@ INSERT INTO skillcategory_skills -- Tools GIT
 values
 ('0778a8e7-21d8-4ca3-a0dc-cad676aac417', '84682de9-85a7-4bf7-b74b-e9054311a61a');
 
+INSERT INTO skillcategory_skills -- Tools CSS
+(skillcategory_id, skill_id)
+values
+('0778a8e7-21d8-4ca3-a0dc-cad676aac417', '6b56f0aa-09aa-4b09-bb81-03481af7e49f');
+
 
