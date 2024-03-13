@@ -46,6 +46,33 @@ export const selectHasReportPermission = createSelector(
         userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("REPORT"))
 );
 
+
+export const selectHasBirthdayAnniversaryReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_ANNIVERSARY_REPORT") || p?.permission?.includes("CAN_VIEW_BIRTHDAY_REPORT"))
+);
+
+export const selectHasCheckinsReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_CHECKINS"))
+);
+
+export const selectHasSkillsReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_SKILLS_REPORT"))
+);
+
+export const selectHasTeamSkillsReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_SKILLS_REPORT"))
+);
+
+
+
 export const selectIsPDL = createSelector(
   selectUserProfile,
   (userProfile) =>
