@@ -123,28 +123,6 @@ const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => {
     return links;
 };
 
-const getReportLinks = () => {
-    const {state} = useContext(AppContext);
-    const links = []
-
-    if (selectHasBirthdayAnniversaryReportPermission(state)) {
-        links.push(["/birthday-anniversary-reports", "Birthdays & Anniversaries"]);
-    }
-
-    if (selectHasCheckinsReportPermission(state)) {
-        links.push(["/checkins-reports", "Check-ins"]);
-    }
-
-    if (selectHasSkillsReportPermission(state)) {
-        links.push(["/skills-reports", "Skills"]);
-    }
-
-    if (selectHasTeamSkillsReportPermission(state)) {
-        links.push(["/team-skills-reports", "Team Skills"]);
-    }
-
-    return links
-};
 
 
 const isCollapsibleListOpen = (linksArr, loc) => {
@@ -176,6 +154,28 @@ function Menu() {
     const [showHoursUpload, setShowHoursUpload] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
+
+    const getReportLinks = () => {
+        const links = []
+
+        if (selectHasBirthdayAnniversaryReportPermission(state)) {
+            links.push(["/birthday-anniversary-reports", "Birthdays & Anniversaries"]);
+        }
+
+        if (selectHasCheckinsReportPermission(state)) {
+            links.push(["/checkins-reports", "Check-ins"]);
+        }
+
+        if (selectHasSkillsReportPermission(state)) {
+            links.push(["/skills-reports", "Skills"]);
+        }
+
+        if (selectHasTeamSkillsReportPermission(state)) {
+            links.push(["/team-skills-reports", "Team Skills"]);
+        }
+
+        return links
+    }
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
