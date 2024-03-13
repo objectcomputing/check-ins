@@ -104,11 +104,11 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
         final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean hasElevatedAccess = checkInServices.hasElevatedAccessPermission(teamMemberId);
 
-        if (!isAdmin && isCompleted) {
+        if (!hasElevatedAccess && isCompleted) {
             permissionsValidation.validatePermissions(true, "User is unauthorized to do this operation");
-        } else if (!isAdmin && !isCompleted) {
+        } else if (!hasElevatedAccess && !isCompleted) {
             permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId)
                             && !currentUser.getId().equals(teamMemberId),
                     "User is unauthorized to do this operation");
@@ -118,9 +118,9 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     @Override
     public void validatePermissionsRead(@Valid @NotNull ActionItem actionItem) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean hasElevatedAccess = checkInServices.hasElevatedAccessPermission(currentUser.getId());
 
-        if (!isAdmin) {
+        if (!hasElevatedAccess) {
             CheckIn checkinRecord = checkInServices.read(actionItem.getCheckinid());
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
@@ -133,7 +133,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     @Override
     public void validatePermissionsUpdate(@Valid @NotNull ActionItem actionItem) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean hasElevatedAccess = checkInServices.hasElevatedAccessPermission(currentUser.getId());
 
         if (actionItem != null) {
             final UUID checkinId = actionItem.getCheckinid();
@@ -143,9 +143,9 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
             Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
 
-            if (!isAdmin && isCompleted) {
+            if (!hasElevatedAccess && isCompleted) {
                 permissionsValidation.validatePermissions(true, "User is unauthorized to do this operation");
-            } else if (!isAdmin && !isCompleted) {
+            } else if (!hasElevatedAccess && !isCompleted) {
                 permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId) &&
                         !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
             }
@@ -155,7 +155,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     @Override
     public void validatePermissionsFindByFields(UUID checkinid, UUID createdbyid) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean hasElevatedAccess = checkInServices.hasElevatedAccessPermission(currentUser.getId());
 
         if (checkinid != null) {
             permissionsValidation.validatePermissions(!checkInServices.accessGranted(checkinid, currentUser.getId()),
@@ -163,16 +163,16 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
         } else if (createdbyid != null) {
             MemberProfile memberRecord = memberServices.getById(createdbyid);
             permissionsValidation.validatePermissions(!currentUser.getId().equals(memberRecord.getId()) &&
-                    !isAdmin, "User is unauthorized to do this operation");
+                    !hasElevatedAccess, "User is unauthorized to do this operation");
         } else {
-            permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+            permissionsValidation.validatePermissions(!hasElevatedAccess, "User is unauthorized to do this operation");
         }
     }
 
     @Override
     public void validatePermissionsDelete(@NotNull ActionItem actionItem) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean hasElevatedAccess = checkInServices.hasElevatedAccessPermission(currentUser.getId());
 
         final UUID checkinId = actionItem.getCheckinid();
         final UUID createdById = actionItem.getCreatedbyid();
@@ -181,9 +181,9 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
 
-        if (!isAdmin && isCompleted) {
+        if (!hasElevatedAccess && isCompleted) {
             permissionsValidation.validatePermissions(true, "User is unauthorized to do this operation");
-        } else if (!isAdmin && !isCompleted) {
+        } else if (!hasElevatedAccess && !isCompleted) {
             permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId)
                     && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
         }
