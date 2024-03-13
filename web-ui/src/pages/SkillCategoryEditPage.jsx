@@ -28,6 +28,8 @@ import SelectSkillsDialog from "../components/select-skills-dialog/SelectSkillsD
 import {UPDATE_TOAST} from "../context/actions";
 import Dialog from "@mui/material/Dialog";
 
+import "./SkillCategoryEditPage.css";
+
 const PREFIX = 'SkillCategoryEditPage';
 const classes = {
   root: `${PREFIX}-root`,
@@ -152,12 +154,11 @@ const SkillCategoryEditPage = () => {
 
   return (
     <Root className={classes.root}>
-      <div>
-        <Typography variant="h4">Edit Skill Category</Typography>
-      </div>
-      <div style={{ margin: "2rem 0", display: "flex", gap: "2rem" }}>
+      <Typography variant="h4">Edit Skill Category</Typography>
+      <div className="edit-skill-category-fields">
         <TextField
           label="Name"
+          style={{ width: "250px" }}
           value={category ? category.name : ""}
           onChange={(event) => {
             setCategory({
@@ -169,6 +170,7 @@ const SkillCategoryEditPage = () => {
         />
         <TextField
           label="Description"
+          style={{ width: "400px" }}
           value={category ? category.description : ""}
           onChange={(event) => {
             setCategory({

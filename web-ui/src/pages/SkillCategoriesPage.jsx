@@ -162,15 +162,15 @@ const SkillCategoriesPage = () => {
       <div className="skill-categories-header">
         <Typography variant="h4">Skill Categories</Typography>
         <div className="skill-categories-actions">
-          <Tooltip title="Download Skills" arrow>
+          <Tooltip className="download-skills-button" title="Download Skills" arrow>
             <IconButton onClick={downloadSkills}>
               <DownloadIcon/>
             </IconButton>
           </Tooltip>
           <TextField
-            style={{ minWidth: "200px" }}
+            className="search-skill-categories-field"
+            style={{ width: "auto", minWidth: "200px", maxWidth: "300px" }}
             label="Search"
-            fullWidth
             placeholder="Category name"
             variant="outlined"
             size="small"
@@ -181,15 +181,15 @@ const SkillCategoriesPage = () => {
             }}
           />
           <Autocomplete
+            className="filter-skill-categories-field"
             renderInput={(params) => (
               <TextField
                 {...params}
-                style={{ minWidth: "200px" }}
+                style={{ minWidth: "200px", maxWidth: "300px" }}
                 label="Filter by Skill"
                 variant="outlined"
                 size="small"
                 placeholder="Skill name"
-                fullWidth
               />
             )}
             options={skills}
@@ -199,7 +199,8 @@ const SkillCategoriesPage = () => {
             onChange={(_, newValue) => setSkillFilter(newValue)}
           />
           <Button
-            style={{ width: "300px" }}
+            className="new-skill-category-button"
+            style={{ whiteSpace: "nowrap" }}
             variant="contained"
             onClick={() => setDialogOpen(true)}
           >
