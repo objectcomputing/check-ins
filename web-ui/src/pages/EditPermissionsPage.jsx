@@ -10,16 +10,13 @@ import {
 } from "../api/rolepermissions";
 import { getMemberRolesList } from "../api/memberroles";
 import { isArrayPresent, filterObjectByValOrKey } from "../helpers/checks";
-
 import { UPDATE_TOAST } from "../context/actions";
-
 import { AppContext } from "../context/AppContext";
-// import { selectPermissions } from "../context/selectors";
 import { selectCurrentUserId } from "../context/selectors";
 
 import "./EditPermissionsPage.css";
 
-const EditPermissionsPage = (props) => {
+const EditPermissionsPage = () => {
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const [permissionsList, setPermissionsList] = useState([]);
@@ -735,7 +732,7 @@ const EditPermissionsPage = (props) => {
       if (isArrayPresent(pdlData)) {
         setPDLId(pdlData[0].roleId);
       }
-      let memberData = rolePermissionsList.filter((a) => a.role === "PDL");
+      let memberData = rolePermissionsList.filter((a) => a.role === "MEMBER");
       if (isArrayPresent(memberData)) {
         setMemberId(memberData[0].roleId);
       }
@@ -864,7 +861,6 @@ const EditPermissionsPage = (props) => {
           data[0].memberRoleId.roleId
         );
         if (isArrayPresent(role)) {
-          console.log("This is role", role);
           setCurrentUserRole(role[0].role);
         }
       }
@@ -875,11 +871,6 @@ const EditPermissionsPage = (props) => {
     } else {
       setIsAdminRole(false);
     }
-
-    console.log("Member Roles");
-    console.log(memberRoles);
-    console.log("Current User Role:");
-    console.log(currentUserRole);
   }, [memberRoles, currentUserRole, csrf, rolePermissionsList, currentUserId]);
 
   useEffect(() => {
@@ -890,7 +881,6 @@ const EditPermissionsPage = (props) => {
     );
     if (isArrayPresent(adminRole)) {
       setAdminPermissionsList(adminRole[0].permissions);
-      console.log("This is the admin permissions list", adminPermissionsList);
     }
   }, [rolePermissionsList, adminPermissionsList]);
 
@@ -898,7 +888,6 @@ const EditPermissionsPage = (props) => {
     let pdlRole = filterObjectByValOrKey(rolePermissionsList, "PDL", "role");
     if (isArrayPresent(pdlRole)) {
       setPDLPermissionsList(pdlRole[0].permissions);
-      console.log("This is the PDL permissions list", pdlPermissionsList);
     }
   }, [rolePermissionsList, pdlPermissionsList]);
 
@@ -910,7 +899,6 @@ const EditPermissionsPage = (props) => {
     );
     if (isArrayPresent(memberRole)) {
       setMemberPermissionsList(memberRole[0].permissions);
-      console.log("This is the Member permissions list", memberPermissionsList);
     }
   }, [rolePermissionsList, memberPermissionsList]);
 
