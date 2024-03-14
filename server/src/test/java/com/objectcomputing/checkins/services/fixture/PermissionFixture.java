@@ -33,7 +33,10 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_UPDATE_CHECKINS,
         Permissions.CAN_CREATE_PRIVATE_NOTE,
         Permissions.CAN_VIEW_PRIVATE_NOTE,
-        Permissions.CAN_UPDATE_PRIVATE_NOTE
+        Permissions.CAN_UPDATE_PRIVATE_NOTE,
+        Permissions.CAN_CREATE_CHECKIN_DOCUMENT,
+        Permissions.CAN_VIEW_CHECKIN_DOCUMENT,
+        Permissions.CAN_UPDATE_CHECKIN_DOCUMENT
     );
 
     // Add ADMIN Permissions here
@@ -58,7 +61,11 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_ASSIGN_ROLE_PERMISSIONS,
         Permissions.CAN_CREATE_PRIVATE_NOTE,
         Permissions.CAN_VIEW_PRIVATE_NOTE,
-        Permissions.CAN_UPDATE_PRIVATE_NOTE
+        Permissions.CAN_UPDATE_PRIVATE_NOTE,
+        Permissions.CAN_CREATE_CHECKIN_DOCUMENT,
+        Permissions.CAN_VIEW_CHECKIN_DOCUMENT,
+        Permissions.CAN_UPDATE_CHECKIN_DOCUMENT,
+        Permissions.CAN_DELETE_CHECKIN_DOCUMENT
     );
 
     default Permission createACustomPermission(Permissions perm) {
