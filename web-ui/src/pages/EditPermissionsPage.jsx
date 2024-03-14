@@ -392,87 +392,305 @@ const EditPermissionsPage = (props) => {
     setCreateOrgMembersPermissionsMember(!createOrgMembersPermissionsMember);
   };
 
-  const handleClickDeleteOrgMembersPermissionsAdmin = () =>
+  const handleClickDeleteOrgMembersPermissionsAdmin = () => {
+    if (!deleteOrgMembersPermissionsAdmin) {
+      changeRolePermission(adminId, deleteOrgMembersPermissionsId);
+    } else {
+      deleteRolePermission(adminId, deleteOrgMembersPermissionsId);
+    }
     setDeleteOrgMembersPermissionsAdmin(!deleteOrgMembersPermissionsAdmin);
-  const handleClickDeleteOrgMembersPermissionsPDL = () =>
+  };
+  const handleClickDeleteOrgMembersPermissionsPDL = () => {
+    if (!deleteOrgMembersPermissionsPDL) {
+      changeRolePermission(pdlId, deleteOrgMembersPermissionsId);
+    } else {
+      deleteRolePermission(pdlId, deleteOrgMembersPermissionsId);
+    }
     setDeleteOrgMembersPermissionsPDL(!deleteOrgMembersPermissionsPDL);
-  const handleClickDeleteOrgMembersPermissionsMember = () =>
+  };
+  const handleClickDeleteOrgMembersPermissionsMember = () => {
+    if (!deleteOrgMembersPermissionsMember) {
+      changeRolePermission(memberId, deleteOrgMembersPermissionsId);
+    } else {
+      deleteRolePermission(memberId, deleteOrgMembersPermissionsId);
+    }
     setDeleteOrgMembersPermissionsMember(!deleteOrgMembersPermissionsMember);
+  };
 
-  const handleClickRolePermissionsViewAdmin = () =>
+  const handleClickRolePermissionsViewAdmin = () => {
+    if (!viewRolePermissionsAdmin) {
+      changeRolePermission(adminId, viewRolePermissionsId);
+    } else {
+      deleteRolePermission(adminId, viewRolePermissionsId);
+    }
     setViewRolePermissionsAdmin(!viewRolePermissionsAdmin);
-  const handleClickRolePermissionsViewPDL = () =>
+  };
+  const handleClickRolePermissionsViewPDL = () => {
+    if (!viewRolePermissionsPDL) {
+      changeRolePermission(pdlId, viewRolePermissionsId);
+    } else {
+      deleteRolePermission(pdlId, viewRolePermissionsId);
+    }
     setViewRolePermissionsPDL(!viewRolePermissionsPDL);
-  const handleClickRolePermissionsViewMember = () =>
+  };
+  const handleClickRolePermissionsViewMember = () => {
+    if (!viewRolePermissionsMember) {
+      changeRolePermission(memberId, viewRolePermissionsId);
+    } else {
+      deleteRolePermission(memberId, viewRolePermissionsId);
+    }
     setViewRolePermissionsMember(!viewRolePermissionsMember);
+  };
 
-  const handleClickRolePermissionsAssignAdmin = () =>
+  const handleClickRolePermissionsAssignAdmin = () => {
+    if (!assignRolePermissionsAdmin) {
+      changeRolePermission(adminId, assignRolePermissionsId);
+    } else {
+      deleteRolePermission(adminId, assignRolePermissionsId);
+    }
     setAssignRolePermissionsAdmin(!assignRolePermissionsAdmin);
-  const handleClickRolePermissionsAssignPDL = () =>
+  };
+  const handleClickRolePermissionsAssignPDL = () => {
+    if (!assignRolePermissionsPDL) {
+      changeRolePermission(pdlId, assignRolePermissionsId);
+    } else {
+      deleteRolePermission(pdlId, assignRolePermissionsId);
+    }
     setAssignRolePermissionsPDL(!assignRolePermissionsPDL);
-  const handleClickRolePermissionsAssignMember = () =>
+  };
+  const handleClickRolePermissionsAssignMember = () => {
+    if (!assignRolePermissionsMember) {
+      changeRolePermission(memberId, assignRolePermissionsId);
+    } else {
+      deleteRolePermission(memberId, assignRolePermissionsId);
+    }
     setAssignRolePermissionsMember(!assignRolePermissionsMember);
+  };
 
-  const handleClickViewAdmin = () =>
+  const handleClickViewAdmin = () => {
+    if (!viewPermissionsAdmin) {
+      changeRolePermission(adminId, viewPermissionsId);
+    } else {
+      deleteRolePermission(adminId, viewPermissionsId);
+    }
     setViewPermissionsAdmin(!viewPermissionsAdmin);
-  const handleClickViewPDL = () => setViewPermissionsPDL(!viewPermissionsPDL);
-  const handleClickViewMember = () =>
+  };
+  const handleClickViewPDL = () => {
+    if (!viewPermissionsPDL) {
+      changeRolePermission(pdlId, viewPermissionsId);
+    } else {
+      deleteRolePermission(pdlId, viewPermissionsId);
+    }
+    setViewPermissionsPDL(!viewPermissionsPDL);
+  };
+  const handleClickViewMember = () => {
+    if (!viewPermissionsMember) {
+      changeRolePermission(memberId, viewPermissionsId);
+    } else {
+      deleteRolePermission(memberId, viewPermissionsId);
+    }
     setViewPermissionsMember(!viewPermissionsMember);
+  };
 
-  const handleClickViewSkillsReportsAdmin = () =>
+  const handleClickViewSkillsReportsAdmin = () => {
+    if (!viewSkillsReportsAdmin) {
+      changeRolePermission(adminId, viewSkillsReportsId);
+    } else {
+      deleteRolePermission(adminId, viewSkillsReportsId);
+    }
     setViewSkillsReportsAdmin(!viewSkillsReportsAdmin);
-  const handleClickViewSkillsReportsPDL = () =>
+  };
+  const handleClickViewSkillsReportsPDL = () => {
+    if (!viewSkillsReportsPDL) {
+      changeRolePermission(pdlId, viewSkillsReportsId);
+    } else {
+      deleteRolePermission(pdlId, viewSkillsReportsId);
+    }
     setViewSkillsReportsPDL(!viewSkillsReportsPDL);
-  const handleClickViewSkillsReportsMember = () =>
+  };
+  const handleClickViewSkillsReportsMember = () => {
+    if (!viewSkillsReportsMember) {
+      changeRolePermission(memberId, viewSkillsReportsId);
+    } else {
+      deleteRolePermission(memberId, viewSkillsReportsId);
+    }
     setViewSkillsReportsMember(!viewSkillsReportsMember);
+  };
 
-  const handleClickViewRetentionReportsAdmin = () =>
+  const handleClickViewRetentionReportsAdmin = () => {
+    if (!viewRetentionReportsAdmin) {
+      changeRolePermission(adminId, viewRetentionReportsId);
+    } else {
+      deleteRolePermission(adminId, viewRetentionReportsId);
+    }
     setViewRetentionReportsAdmin(!viewRetentionReportsAdmin);
-  const handleClickViewRetentionReportsPDL = () =>
+  };
+  const handleClickViewRetentionReportsPDL = () => {
+    if (!viewRetentionReportsPDL) {
+      changeRolePermission(pdlId, viewRetentionReportsId);
+    } else {
+      deleteRolePermission(pdlId, viewRetentionReportsId);
+    }
     setViewRetentionReportsPDL(!viewRetentionReportsPDL);
-  const handleClickViewRetentionReportsMember = () =>
+  };
+  const handleClickViewRetentionReportsMember = () => {
+    if (!viewRetentionReportsMember) {
+      changeRolePermission(memberId, viewRetentionReportsId);
+    } else {
+      deleteRolePermission(memberId, viewRetentionReportsId);
+    }
     setViewRetentionReportsMember(!viewRetentionReportsMember);
+  };
 
-  const handleClickViewAnniversaryReportsAdmin = () =>
+  const handleClickViewAnniversaryReportsAdmin = () => {
+    if (!viewAnniversaryReportsAdmin) {
+      changeRolePermission(adminId, viewAnniversaryReportsId);
+    } else {
+      deleteRolePermission(adminId, viewAnniversaryReportsId);
+    }
     setViewAnniversaryReportsAdmin(!viewAnniversaryReportsAdmin);
-  const handleClickViewAnniversaryReportsPDL = () =>
+  };
+  const handleClickViewAnniversaryReportsPDL = () => {
+    if (!viewAnniversaryReportsPDL) {
+      changeRolePermission(pdlId, viewAnniversaryReportsId);
+    } else {
+      deleteRolePermission(pdlId, viewAnniversaryReportsId);
+    }
     setViewAnniversaryReportsPDL(!viewAnniversaryReportsPDL);
-  const handleClickViewAnniversaryReportsMember = () =>
+  };
+  const handleClickViewAnniversaryReportsMember = () => {
+    if (!viewAnniversaryReportsMember) {
+      changeRolePermission(memberId, viewAnniversaryReportsId);
+    } else {
+      deleteRolePermission(memberId, viewAnniversaryReportsId);
+    }
     setViewAnniversaryReportsMember(!viewAnniversaryReportsMember);
+  };
 
-  const handleClickViewBirthdayReportsAdmin = () =>
+  const handleClickViewBirthdayReportsAdmin = () => {
+    if (!viewBirthdayReportsAdmin) {
+      changeRolePermission(adminId, viewBirthdayReportsId);
+    } else {
+      deleteRolePermission(adminId, viewBirthdayReportsId);
+    }
     setViewBirthdayReportsAdmin(!viewBirthdayReportsAdmin);
-  const handleClickViewBirthdayReportsPDL = () =>
+  };
+  const handleClickViewBirthdayReportsPDL = () => {
+    if (!viewBirthdayReportsPDL) {
+      changeRolePermission(pdlId, viewBirthdayReportsId);
+    } else {
+      deleteRolePermission(pdlId, viewBirthdayReportsId);
+    }
     setViewBirthdayReportsPDL(!viewBirthdayReportsPDL);
-  const handleClickViewBirthdayReportsMember = () =>
+  };
+  const handleClickViewBirthdayReportsMember = () => {
+    if (!viewBirthdayReportsMember) {
+      changeRolePermission(memberId, viewBirthdayReportsId);
+    } else {
+      deleteRolePermission(memberId, viewBirthdayReportsId);
+    }
     setViewBirthdayReportsMember(!viewBirthdayReportsMember);
+  };
 
-  const handleClickViewProfileReportsAdmin = () =>
+  const handleClickViewProfileReportsAdmin = () => {
+    if (!viewProfileReportsAdmin) {
+      changeRolePermission(adminId, viewProfileReportsId);
+    } else {
+      deleteRolePermission(adminId, viewProfileReportsId);
+    }
     setViewProfileReportsAdmin(!viewProfileReportsAdmin);
-  const handleClickViewProfileReportsPDL = () =>
+  };
+  const handleClickViewProfileReportsPDL = () => {
+    if (!viewProfileReportsPDL) {
+      changeRolePermission(pdlId, viewProfileReportsId);
+    } else {
+      deleteRolePermission(pdlId, viewProfileReportsId);
+    }
     setViewProfileReportsPDL(!viewProfileReportsPDL);
-  const handleClickViewProfileReportsMember = () =>
+  };
+  const handleClickViewProfileReportsMember = () => {
+    if (!viewProfileReportsMember) {
+      changeRolePermission(memberId, viewProfileReportsMember);
+    } else {
+      deleteRolePermission(memberId, viewProfileReportsMember);
+    }
     setViewProfileReportsMember(!viewProfileReportsMember);
+  };
 
-  const handleClickUpdateCheckinsAdmin = () =>
+  const handleClickUpdateCheckinsAdmin = () => {
+    if (!updateCheckinsAdmin) {
+      changeRolePermission(adminId, updateCheckinsId);
+    } else {
+      deleteRolePermission(adminId, updateCheckinsId);
+    }
     setUpdateCheckinsAdmin(!updateCheckinsAdmin);
-  const handleClickUpdateCheckinsPDL = () =>
+  };
+  const handleClickUpdateCheckinsPDL = () => {
+    if (!updateCheckinsPDL) {
+      changeRolePermission(pdlId, updateCheckinsId);
+    } else {
+      deleteRolePermission(pdlId, updateCheckinsId);
+    }
     setUpdateCheckinsPDL(!updateCheckinsPDL);
-  const handleClickUpdateCheckinsMember = () =>
+  };
+  const handleClickUpdateCheckinsMember = () => {
+    if (!updateCheckinsMember) {
+      changeRolePermission(memberId, updateCheckinsId);
+    } else {
+      deleteRolePermission(memberId, updateCheckinsId);
+    }
     setUpdateCheckinsMember(!updateCheckinsMember);
+  };
 
-  const handleClickCreateCheckinsAdmin = () =>
+  const handleClickCreateCheckinsAdmin = () => {
+    if (!createCheckinsAdmin) {
+      changeRolePermission(adminId, createCheckinsId);
+    } else {
+      deleteRolePermission(adminId, createCheckinsId);
+    }
     setCreateCheckinsAdmin(!createCheckinsAdmin);
-  const handleClickCreateCheckinsPDL = () =>
+  };
+  const handleClickCreateCheckinsPDL = () => {
+    if (!createCheckinsPDL) {
+      changeRolePermission(pdlId, createCheckinsId);
+    } else {
+      deleteRolePermission(pdlId, createCheckinsId);
+    }
     setCreateCheckinsPDL(!createCheckinsPDL);
-  const handleClickCreateCheckinsMember = () =>
+  };
+  const handleClickCreateCheckinsMember = () => {
+    if (!createCheckinsMember) {
+      changeRolePermission(memberId, createCheckinsId);
+    } else {
+      deleteRolePermission(memberId, createCheckinsId);
+    }
     setCreateCheckinsMember(!createCheckinsMember);
+  };
 
-  const handleClickViewCheckinsAdmin = () =>
+  const handleClickViewCheckinsAdmin = () => {
+    if (!viewCheckinsAdmin) {
+      changeRolePermission(adminId, viewCheckinsId);
+    } else {
+      deleteRolePermission(adminId, viewCheckinsId);
+    }
     setViewCheckinsAdmin(!viewCheckinsAdmin);
-  const handleClickViewCheckinsPDL = () => setViewCheckinsPDL(!viewCheckinsPDL);
-  const handleClickViewCheckinsMember = () =>
+  };
+  const handleClickViewCheckinsPDL = () => {
+    if (!viewCheckinsPDL) {
+      changeRolePermission(pdlId, viewCheckinsId);
+    } else {
+      deleteRolePermission(pdlId, viewCheckinsId);
+    }
+    setViewCheckinsPDL(!viewCheckinsPDL);
+  };
+  const handleClickViewCheckinsMember = () => {
+    if (!viewCheckinsMember) {
+      changeRolePermission(memberId, viewCheckinsId);
+    } else {
+      deleteRolePermission(memberId, viewCheckinsId);
+    }
     setViewCheckinsMember(!viewCheckinsMember);
+  };
 
   useEffect(() => {
     const doTask1 = async () => {
