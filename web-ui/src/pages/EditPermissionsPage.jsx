@@ -610,9 +610,9 @@ const EditPermissionsPage = (props) => {
   };
   const handleClickViewProfileReportsMember = () => {
     if (!viewProfileReportsMember) {
-      changeRolePermission(memberId, viewProfileReportsMember);
+      changeRolePermission(memberId, viewProfileReportsId);
     } else {
-      deleteRolePermission(memberId, viewProfileReportsMember);
+      deleteRolePermission(memberId, viewProfileReportsId);
     }
     setViewProfileReportsMember(!viewProfileReportsMember);
   };
@@ -749,7 +749,7 @@ const EditPermissionsPage = (props) => {
         setCreateFeedbackRequestPermissionsId(id1[0].id);
       }
       let id2 = permissionsList.filter(
-        (a) => a.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+        (a) => a.permission === "CAN_CREATE_FEEDBACK_REQUEST"
       );
       if (isArrayPresent(id2)) {
         setCreateFeedbackRequestPermissionsId(id2[0].id);
