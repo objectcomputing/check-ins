@@ -591,47 +591,83 @@ values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_PERMISSIONS');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_SKILLS_REPORT');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_RETENTION_REPORT');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_ANNIVERSARY_REPORT');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_BIRTHDAY_REPORT');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_PROFILE_REPORT');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_CREATE_CHECKINS');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_CHECKINS');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_CHECKINS_REPORT');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_UPDATE_CHECKINS');
 
@@ -651,19 +687,39 @@ values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6c144b56-3c1c-472f-8c3e-243e5a4149a1'); -- CAN_VIEW_CHECKINS_ELEVATED
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'a5a71f7d-a3f5-4126-8aaf-0ad18a06615a'); -- CAN_CREATE_CHECKINS_ELEVATED
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '0c75a6e9-f69e-4391-a04f-d8cdaea32349'); -- CAN_CREATE_PRIVATE_NOTES 
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '73330168-00a6-4a11-ae98-005566569ef7'); -- CAN_UPDATE_CHECKINS_ELEVATED
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '4de5ff17-4afc-4150-a025-fb8c3d3e734c'); -- CAN_VIEW_PRIVATE_NOTES
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '49b56886-d422-4cbf-8258-20788c01b680'); -- CAN_DELETE_CHECKINS_ELEVATED
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '82d85758-e694-47c9-af8e-6375cd44475b'); -- CAN_UPDATE_PRIVATE_NOTES
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '4ea93bb4-ae71-4d79-b315-fdbd08b55fbc'); -- CAN_CREATE_CHECKIN_DOCUMENT
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '38eb379b-07a7-4876-b645-1bb459fd0c04'); -- CAN_VIEW_CHECKIN_DOCUMENT
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '9dfa8870-5168-4c2c-adb9-b05cf821ddae'); -- CAN_UPDATE_CHECKIN_DOCUMENT
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '8164192c-4f9e-48f8-bd8a-f92398045bd4'); -- CAN_DELETE_CHECKIN_DOCUMENT
 
 
 -- PDL Permissions
@@ -693,34 +749,61 @@ values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_PERMISSIONS');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_CHECKINS');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_CREATE_CHECKINS');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_UPDATE_CHECKINS');
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6c144b56-3c1c-472f-8c3e-243e5a4149a1'); -- CAN_VIEW_CHECKINS_ELEVATED
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '0c75a6e9-f69e-4391-a04f-d8cdaea32349'); -- CAN_CREATE_PRIVATE_NOTES 
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a5a71f7d-a3f5-4126-8aaf-0ad18a06615a'); -- CAN_CREATE_CHECKINS_ELEVATED
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '4de5ff17-4afc-4150-a025-fb8c3d3e734c'); -- CAN_VIEW_PRIVATE_NOTES
 
 insert into role_permissions
-(roleid, permissionid)
+    (roleid, permissionid)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '73330168-00a6-4a11-ae98-005566569ef7'); -- CAN_UPDATE_CHECKINS_ELEVATED
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '82d85758-e694-47c9-af8e-6375cd44475b'); -- CAN_UPDATE_PRIVATE_NOTES
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '4ea93bb4-ae71-4d79-b315-fdbd08b55fbc'); -- CAN_CREATE_CHECKIN_DOCUMENT
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '38eb379b-07a7-4876-b645-1bb459fd0c04'); -- CAN_VIEW_CHECKIN_DOCUMENT
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '9dfa8870-5168-4c2c-adb9-b05cf821ddae'); -- CAN_UPDATE_CHECKIN_DOCUMENT
 
 
 -- Member permissions
@@ -750,17 +833,29 @@ values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_VIEW_PERMISSIONS');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_VIEW_CHECKINS');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_CREATE_CHECKINS');
 
 insert into role_permissions
+<<<<<<< HEAD
 (roleid, permission)
+=======
+    (roleid, permissionid)
+>>>>>>> d7679ef1a (update test data)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_UPDATE_CHECKINS');
 
