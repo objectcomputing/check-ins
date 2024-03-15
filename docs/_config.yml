@@ -1,7 +1,23 @@
 title: Check-Ins
 logo: /assets/img/logo.png
-description: Check-Ins is an open-source team engagement platform for organizations looking to create meaningful, long-term relationships with team members.
-show_downloads: true
-google_analytics:
-theme: jekyll-theme-minimal
+description: Check-Ins is an open-source team engagement platform designed to empower you and your colleagues to collaborate, grow, and thrive.
+theme: just-the-docs
+url: https://objectcomputing.github.io/check-ins
+repository: objectcomputing/check-ins # for github-metadata
 
+permalink: pretty
+
+exclude:
+  - Makefile
+  - Gemfile
+  - Gemfile.lock
+  - tmp/
+  - vendor/
+
+plugins:
+  - jemoji
+  - jekyll-avatar
+  - jekyll-mentions
+  - jekyll-seo-tag
+  - jekyll-github-metadata
+  - jekyll-include-cache
