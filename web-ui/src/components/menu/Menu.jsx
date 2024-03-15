@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
 import { reportMemberCsv } from "../../api/member"
-import { selectCsrfToken, selectIsAdmin, selectIsSupervisor } from "../../context/selectors";
+import {selectCsrfToken, selectHasReportPermission, selectIsAdmin, selectIsSupervisor} from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import fileDownload from 'js-file-download';
@@ -138,6 +138,7 @@ function Menu() {
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin = selectIsAdmin(state);
+  const hasReportPermission = selectHasReportPermission(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
   const isSupervisor = selectIsSupervisor(state);
@@ -372,7 +373,7 @@ function Menu() {
         <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
           {createListJsx(feedbackLinks, true)}
         </Collapse>
-        {isAdmin && (
+        {hasReportPermission && (
           <React.Fragment>
             <ListItem
               button
