@@ -39,18 +39,12 @@ public class MailJetNotificationController {
 
     @Post()
     public Mono<? extends HttpResponse<?>> sendEmailReceivesStatus(String subject, String content, String... recipients) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
-
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         String fromName = currentUser.getFirstName() + " " + currentUser.getLastName();
               return Mono.fromCallable(() -> emailSender.sendEmailReceivesStatus(fromName, currentUser.getWorkEmail(), subject, content, recipients))
                       .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                       .map(success -> (HttpResponse<?>) HttpResponse.ok())
                       .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
-
-
     }
 
 }
