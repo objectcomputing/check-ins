@@ -41,11 +41,11 @@ const Root = styled('div')({
     backgroundColor: "transparent",
     margin: "4rem 2rem 2rem 2rem",
     height: "100%",
-    'max-width': "100%",
-    '@media (max-width:800px)': {
+    maxWidth: "100%",
+    '@media (max-width: 800px)': {
       display: "flex",
-      'flex-direction': "column",
-      'overflow-x': "hidden",
+      flexDirection: "column",
+      overflowX: "hidden",
       margin: "2rem 5% 0 5%",
     }
   }
@@ -182,21 +182,21 @@ const SkillCategoriesPage = () => {
           />
           <Autocomplete
             className="filter-skill-categories-field"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                style={{ minWidth: "200px", maxWidth: "300px" }}
-                label="Filter by Skill"
-                variant="outlined"
-                size="small"
-                placeholder="Skill name"
-              />
-            )}
+            size="small"
+            style={{ minWidth: "200px", maxWidth: "300px" }}
             options={skills}
             getOptionLabel={(option) => option.name}
             filterSelectedOptions
             value={skillFilter}
             onChange={(_, newValue) => setSkillFilter(newValue)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Filter by Skill"
+                variant="outlined"
+                placeholder="Skill name"
+              />
+            )}
           />
           <Button
             className="new-skill-category-button"
