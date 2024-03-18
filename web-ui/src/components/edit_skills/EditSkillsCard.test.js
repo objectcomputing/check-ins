@@ -4,6 +4,7 @@ import EditSkillsPage from "../../pages/EditSkillsPage";
 import { AppContextProvider } from "../../context/AppContext";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
+import {BrowserRouter} from "react-router-dom";
 
 const initialState = {
   state: {
@@ -56,7 +57,9 @@ it("renders correctly", () => {
 it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
-      <EditSkillsPage />
+      <BrowserRouter>
+        <EditSkillsPage />
+      </BrowserRouter>
     </AppContextProvider>
   );
 });
