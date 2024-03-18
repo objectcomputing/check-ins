@@ -56,7 +56,7 @@ export const selectHasBirthdayAnniversaryReportPermission = createSelector(
 export const selectHasCheckinsReportPermission = createSelector(
     selectUserProfile,
     (userProfile) =>
-        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_CHECKINS"))
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_CHECKINS_REPORT"))
 );
 
 export const selectHasSkillsReportPermission = createSelector(
