@@ -4,6 +4,6 @@ import java.io.File;
 
 public interface MemberProfileReportServices {
 
-    File generateFile();
+    File generateFile(MemberProfileReportQueryDTO queryDTO);
 
 }

@@ -74,7 +74,7 @@ public class MemberProfileReportController {
     @RequiredPermission(Permissions.CAN_VIEW_PROFILE_REPORT)
     public Mono<MutableHttpResponse<File>> getCsvFile(@Body MemberProfileReportQueryDTO dto) {
         System.out.println(dto);
-        return Mono.defer(() -> Mono.just(memberProfileReportServices.generateFile()))
+        return Mono.defer(() -> Mono.just(memberProfileReportServices.generateFile(dto)))
                 .subscribeOn(ioScheduler)
                 .map(file -> HttpResponse
                         .ok(file)
@@ -85,7 +85,7 @@ public class MemberProfileReportController {
                 });
     }
 
-    private CsvRecord mapToCsvRecord(MemberProfile profile) {
+    private MemberProfileRecord mapToCsvRecord(MemberProfile profile) {
         MemberProfile pdlProfile = profile.getPdlId() != null ? memberProfileServices.getById(profile.getPdlId()) : null;
         MemberProfile supervisorProfile = profile.getSupervisorid() != null ? memberProfileServices.getById(profile.getSupervisorid()) : null;
 
@@ -112,7 +112,7 @@ public class MemberProfileReportController {
             tenure = years + " years " + months + " months";
         }
 
-        return new CsvRecord(profile.getFirstName(),
+        return new MemberProfileRecord(profile.getFirstName(),
                 profile.getLastName(),
                 profile.getTitle(),
                 profile.getLocation(),
@@ -125,24 +125,24 @@ public class MemberProfileReportController {
                 supervisorEmail);
     }
 
-    private Mono<File> generateCsvFile(List<CsvRecord> csvRecords) {
+    private Mono<File> generateCsvFile(List<MemberProfileRecord> memberProfileRecords) {
         File csvFile = new File("member_profiles.csv");
 
         try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, StandardCharsets.UTF_8), CSVFormat.DEFAULT.withHeader("First Name", "Last Name", "Title", "Location",
                 "Work Email", "Start Date", "Tenure",
                 "PDL Name", "PDL Email", "Supervisor Name", "Supervisor Email"))) {
-            for (CsvRecord csvRecord : csvRecords) {
-                csvPrinter.printRecord(csvRecord.getFirstName(),
-                        csvRecord.getLastName(),
-                        csvRecord.getTitle(),
-                        csvRecord.getLocation(),
-                        csvRecord.getWorkEmail(),
-                        csvRecord.getStartDate(),
-                        csvRecord.getTenure(),
-                        csvRecord.getPdlName(),
-                        csvRecord.getPdlEmail(),
-                        csvRecord.getSupervisorName(),
-                        csvRecord.getSupervisorEmail());
+            for (MemberProfileRecord memberProfileRecord : memberProfileRecords) {
+                csvPrinter.printRecord(memberProfileRecord.getFirstName(),
+                        memberProfileRecord.getLastName(),
+                        memberProfileRecord.getTitle(),
+                        memberProfileRecord.getLocation(),
+                        memberProfileRecord.getWorkEmail(),
+                        memberProfileRecord.getStartDate(),
+                        memberProfileRecord.getTenure(),
+                        memberProfileRecord.getPdlName(),
+                        memberProfileRecord.getPdlEmail(),
+                        memberProfileRecord.getSupervisorName(),
+                        memberProfileRecord.getSupervisorEmail());
             }
         } catch (IOException e) {
             throw new RuntimeException("Error generating CSV file", e);
