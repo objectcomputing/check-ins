@@ -614,6 +614,11 @@ values
 insert into permissions
 (id, permission)
 values
+    ('51dc5976-9c4e-43ba-b474-67709ba72742', 'CAN_VIEW_CHECKINS_REPORT');
+
+insert into permissions
+(id, permission)
+values
     ('d84772ac-85c5-4030-9a86-7db41770fbf3', 'CAN_CREATE_CHECKINS');   
 
 insert into permissions
@@ -698,6 +703,11 @@ insert into role_permissions
 (roleid, permissionid)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765d5c-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_PROFILE_REPORT
+
+insert into role_permissions
+(roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '51dc5976-9c4e-43ba-b474-67709ba72742'); -- CAN_VIEW_CHECKINS_REPORT
 
 insert into role_permissions
 (roleid, permissionid)
