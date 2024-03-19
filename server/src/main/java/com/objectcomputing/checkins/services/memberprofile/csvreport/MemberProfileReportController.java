@@ -7,6 +7,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -37,11 +39,14 @@ public class MemberProfileReportController {
 
     private static final Logger LOG = LoggerFactory.getLogger(com.objectcomputing.checkins.services.memberprofile.MemberProfileController.class);
     private final MemberProfileServices memberProfileServices;
+    private final MemberProfileReportServices memberProfileReportServices;
     private final Scheduler ioScheduler;
 
     public MemberProfileReportController(MemberProfileServices memberProfileServices,
+                                         MemberProfileReportServices memberProfileReportServices,
                                          @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.memberProfileServices = memberProfileServices;
+        this.memberProfileReportServices = memberProfileReportServices;
         this.ioScheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
@@ -54,6 +59,26 @@ public class MemberProfileReportController {
                 .collectList()
                 .flatMap(this::generateCsvFile)
                 .map(file -> HttpResponse.ok(file).header("Content-Disposition", "attachment; filename=member_profiles.csv"))
+                .onErrorResume(error -> {
+                    LOG.error("Something went terribly wrong during export... ", error);
+                    return Mono.just(HttpResponse.serverError());
+                });
+    }
+
+    /**
+     * Read-only POST to mimic a GET with many parameters
+     * @param dto The {@link MemberProfileReportQueryDTO} containing the UUIDs of the members to include in the generated CSV
+     * @return HTTP response with the CSV file
+     */
+    @Post(produces = MediaType.TEXT_CSV)
+    @RequiredPermission(Permissions.CAN_VIEW_PROFILE_REPORT)
+    public Mono<MutableHttpResponse<File>> getCsvFile(@Body MemberProfileReportQueryDTO dto) {
+        System.out.println(dto);
+        return Mono.defer(() -> Mono.just(memberProfileReportServices.generateFile()))
+                .subscribeOn(ioScheduler)
+                .map(file -> HttpResponse
+                        .ok(file)
+                        .header("Content-Disposition", String.format("attachment; filename=%s", file.getName())))
                 .onErrorResume(error -> {
                     LOG.error("Something went terribly wrong during export... ", error);
                     return Mono.just(HttpResponse.serverError());
