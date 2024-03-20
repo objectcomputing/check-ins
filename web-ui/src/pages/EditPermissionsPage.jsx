@@ -16,10 +16,29 @@ import { selectCurrentUserId } from "../context/selectors";
 
 import "./EditPermissionsPage.css";
 
+const groupPermissionsByCategory = (permissions) => permissions.reduce((categories, permission) => {
+  const category = permission.category;
+  const existingCategory = categories.find(cat => cat.category === category);
+
+  // If category exists, add permission to its permissions array
+  if (existingCategory) {
+    existingCategory.permissions.push(permission);
+  } else {
+    // Create a new category object and add it to categories
+    categories.push({
+      category,
+      permissions: [permission],
+    });
+  }
+
+  return categories;
+}, []);
+
 const EditPermissionsPage = () => {
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const [permissionsList, setPermissionsList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
   const [adminId, setAdminId] = useState("");
   const [pdlId, setPDLId] = useState("");
   const [memberId, setMemberId] = useState("");
@@ -704,6 +723,7 @@ const EditPermissionsPage = () => {
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
       if (data) {
         setPermissionsList(data);
+        setCategoriesList(groupPermissionsByCategory(data));
       }
     };
     const doTask3 = async () => {
