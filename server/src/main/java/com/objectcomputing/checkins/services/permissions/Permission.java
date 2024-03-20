@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.UUID;
@@ -67,6 +68,7 @@ public class Permission {
         this.description = description;
     }
 
+    @Transient
     public String getCategory() {
         return Permissions.valueOf(permission).getCategory();
     }
