@@ -38,7 +38,7 @@ const EditPermissionsPage = () => {
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const [permissionsList, setPermissionsList] = useState([]);
-  const [categoriesList, setCategoriesList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]); // eslint-disable-line no-unused-vars
   const [adminId, setAdminId] = useState("");
   const [pdlId, setPDLId] = useState("");
   const [memberId, setMemberId] = useState("");
