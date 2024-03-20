@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.permissions;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -59,11 +60,15 @@ public class Permission {
     }
 
     public String getDescription() {
-        return description;
+        return Permissions.valueOf(permission).getDescription(); //ignoring the database for now...
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getCategory() {
+        return Permissions.valueOf(permission).getCategory();
     }
 
     @Override
