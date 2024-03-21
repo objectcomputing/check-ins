@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.context.annotation.Property;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import jakarta.inject.Singleton;
+
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -80,6 +82,12 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
 
             if(suggestions.size() >= maxSuggestions) break;
         }
+
+        suggestions = suggestions.stream().filter((FeedbackSuggestionDTO suggestion) -> {
+            MemberProfile suggested = memberProfileServices.getById(suggestion.getId());
+            LocalDate terminationDate = suggested.getTerminationDate();
+            return !(terminationDate != null && terminationDate.isBefore(LocalDate.now().atStartOfDay().toLocalDate()));
+        }).collect(Collectors.toList());
         return suggestions;
     }
 }
