@@ -38,6 +38,8 @@ public class Permission {
     @Schema(description = "A more verbose description of the permission to be displayed on UI")
     private String description;
 
+    public Permission() {}
+
     public Permission(UUID id, String permission, @Nullable String description) {
         this.id = id;
         this.permission = permission;
@@ -64,7 +66,7 @@ public class Permission {
         return Permissions.valueOf(permission).getDescription(); //ignoring the database for now...
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
     }
 

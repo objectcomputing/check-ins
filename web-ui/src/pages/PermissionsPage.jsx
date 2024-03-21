@@ -3,10 +3,10 @@ import React, { useEffect, useContext, useState } from "react";
 import { getPermissionsList } from "../api/permissions";
 import {
   getRolePermissionsList,
-  postRolePermissionsList,
-  deleteRolePermissionsList,
+  postRolePermission,
+  deleteRolePermission,
 } from "../api/rolepermissions";
-import { Checkbox } from "@mui/material";
+import { Checkbox, FormControl, MenuItem, Select, InputLabel } from "@mui/material";
 import { UPDATE_TOAST } from "../context/actions";
 import { AppContext } from "../context/AppContext";
 import { selectRoles, selectHasPermissionAssignmentPermission } from "../context/selectors";
@@ -101,59 +101,36 @@ const EditPermissionsPage = () => {
     setSelectedRole(roles.find((role) => role.id === event.target.value));
   };
 
-  const addRolePermission = async (roleId, permissionId) => {
-    let newSchema = { roleId: roleId, permissionId: permissionId };
-    let res = await postRolePermissionsList(newSchema, csrf);
-    let data =
-        res.payload && res.payload.data && !res.error ? res.payload.data : null;
-    if (data) {
-      window.snackDispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "success",
-          toast: `Permission added to Role`,
-        },
-      });
-    } else {
-      window.snackDispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "warning",
-          toast: `Problem changing permission for that role`,
-        },
-      });
-    }
+  const addPermissionForRole = async (role, permission) => {
+    let newSchema = { roleId: role.id, permissionId: permission.id };
+    let res = await postRolePermission(newSchema, csrf);
+    const snackPayload = res.error
+          ? { severity: "warning", toast: `Problem adding ${permission.description} to ${role.role}` }
+          : { severity: "success", toast: `${permission.description} added to ${role.role}` };
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: snackPayload,
+        });
   };
 
-  const deleteRolePermission = async (roleId, permissionId) => {
-    let newSchema = { roleId: roleId, permissionId: permissionId };
-    let res = await deleteRolePermissionsList(newSchema, csrf);
-    let data = !res.error ? "Success" : null;
-    if (data) {
-      window.snackDispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "success",
-          toast: `Permission removed from Role`,
-        },
-      });
-    } else {
-      window.snackDispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "warning",
-          toast: `Problem deleting permission for that role`,
-        },
-      });
-    }
+  const deletePermissionForRole = async (role, permission) => {
+    let newSchema = { roleId: role.id, permissionId: permission.id };
+    let res = await deleteRolePermission(newSchema, csrf);
+    const snackPayload = res.error
+      ? { severity: "warning", toast: `Problem deleting ${permission.description} from ${role.role}` }
+      : { severity: "success", toast: `${permission.description} removed from ${role.role}` };
+    window.snackDispatch({
+      type: UPDATE_TOAST,
+      payload: snackPayload,
+    });
   };
 
-  const handleChange = async (event, roleId, permissionId) => {
+  const handleChange = async (event, role, permission) => {
     if (event?.target?.checked) {
-      await addRolePermission(roleId, permissionId);
+      await addPermissionForRole(role, permission);
       setRefresh(!refresh);
     } else {
-      await deleteRolePermission(roleId, permissionId);
+      await deletePermissionForRole(role, permission);
       setRefresh(!refresh);
     }
   };
@@ -164,15 +141,20 @@ const EditPermissionsPage = () => {
       (
         <>
         <div>
-          <label htmlFor="role">Select Role:</label>
-          <select id="role" value={selectedRole?.id || ''} onChange={handleRoleChange}>
-            <option value="">-- Please Select --</option>
-            {roles?.map((role) => (
-              <option key={role.id} value={role.id}>
-                {role.role} - {role.description}
-              </option>
-            ))}
-          </select>
+          <FormControl>
+            <InputLabel id="select-role-label">Select Role</InputLabel>
+            <Select
+              labelId="select-role-label"
+              label="Select Role"
+              value={selectedRole?.id || ''}
+              onChange={handleRoleChange}
+            >
+              <MenuItem value="">-- Please Select --</MenuItem>
+              {roles?.map((role) => (
+                <MenuItem key={role.id} value={role.id}>{role.role} - {role.description}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </div>
 
         { selectedRole && rolePermissions && categoriesList?.map((category) => (
@@ -184,7 +166,7 @@ const EditPermissionsPage = () => {
                   permission={permission.permission}
                   title={permission.description}
                   enabled={isPermissionEnabled(rolePermissions, permission)}
-                  onChange={(event) => handleChange(event, selectedRole?.id, permission.id, csrf)} />
+                  onChange={(event) => handleChange(event, selectedRole, permission)} />
               ))
             }
           </div>

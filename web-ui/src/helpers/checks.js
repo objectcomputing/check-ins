@@ -7,15 +7,6 @@
 export const isArrayPresent = (arr) => Array.isArray(arr) && arr.length;
 
 /**
- * Check for whether unique object is already in an array and return a boolean.
- * @param arr - an array
- * @returns a boolean
- */
-export const isObjectInArray = (arr, obj) => {
-  return arr.includes(obj);
-};
-
-/**
  * If a parameter is found in an object within an array, return the array with just that object.
  * @param arr - an array
  * @param value - a value
