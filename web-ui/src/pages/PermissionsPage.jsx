@@ -82,7 +82,9 @@ const EditPermissionsPage = () => {
     };
 
     if (csrf) {
-      getPermissions();
+      if(rolePermissionsList.length === 0){
+        getPermissions();
+      }
       getRolePermissions();
     }
   }, [csrf, refresh]);
