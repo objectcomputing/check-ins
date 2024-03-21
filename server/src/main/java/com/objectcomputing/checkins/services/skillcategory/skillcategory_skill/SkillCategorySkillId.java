@@ -1,5 +1,4 @@
-package com.objectcomputing.checkins.services.skillcategory_skill;
-
+package com.objectcomputing.checkins.services.skillcategory.skillcategory_skill;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;

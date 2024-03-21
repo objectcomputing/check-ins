@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.skill_record;
 
-import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkillId;
+import com.objectcomputing.checkins.services.skillcategory.skillcategory_skill.SkillCategorySkillId;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;

@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.skillcategory_skill;
+package com.objectcomputing.checkins.services.skillcategory.skillcategory_skill;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.MappedEntity;

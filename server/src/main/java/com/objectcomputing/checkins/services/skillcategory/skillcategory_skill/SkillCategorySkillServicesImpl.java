@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.skillcategory_skill;
+package com.objectcomputing.checkins.services.skillcategory.skillcategory_skill;
 
 import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;

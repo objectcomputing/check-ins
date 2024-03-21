@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 
-import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkill;
+import com.objectcomputing.checkins.services.skillcategory.skillcategory_skill.SkillCategorySkill;
 
 import java.util.UUID;
 

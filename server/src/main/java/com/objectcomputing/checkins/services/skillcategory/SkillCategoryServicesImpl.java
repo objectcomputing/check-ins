@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.skillcategory;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.skillcategory_skill.SkillCategorySkillServices;
+import com.objectcomputing.checkins.services.skillcategory.skillcategory_skill.SkillCategorySkillServices;
 import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;
 
