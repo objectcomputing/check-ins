@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,18 +20,38 @@ public class MemberProfileRecord {
     private UUID id;
 
     @Column(name = "firstname")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(firstName::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     private String firstName;
 
     @Column(name = "lastname")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(lastName::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     private String lastName;
 
     @Column(name = "title")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(title::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     private String title;
 
     @Column(name = "location")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(location::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     private String location;
 
     @Column(name = "workemail")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(workEmail::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     private String workEmail;
 
     @Column(name = "startdate")
@@ -39,20 +61,41 @@ public class MemberProfileRecord {
     private String tenure;
 
     @Column(name = "pdlname")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(pdlName::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Nullable
     private String pdlName;
 
     @Column(name = "pdlemail")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(pdlEmail::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Nullable
     private String pdlEmail;
 
     @Column(name = "supervisorname")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(supervisorName::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Nullable
     private String supervisorName;
 
     @Column(name = "supervisoremail")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(supervisorEmail::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Nullable
     private String supervisorEmail;
 
     public MemberProfileRecord(String firstName, String lastName, String title, String location,
-                               String workEmail, LocalDate startDate, String tenure, String pdlName, String pdlEmail,
-                               String supervisorName, String supervisorEmail) {
+                               String workEmail, LocalDate startDate, String tenure, @Nullable String pdlName,
+                               @Nullable String pdlEmail, @Nullable String supervisorName,
+                               @Nullable String supervisorEmail) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.title = title;
@@ -132,35 +175,39 @@ public class MemberProfileRecord {
         this.tenure = tenure;
     }
 
+    @Nullable
     public String getPdlName() {
         return pdlName;
     }
 
-    public void setPdlName(String pdlName) {
+    public void setPdlName(@Nullable String pdlName) {
         this.pdlName = pdlName;
     }
 
+    @Nullable
     public String getPdlEmail() {
         return pdlEmail;
     }
 
-    public void setPdlEmail(String pdlEmail) {
+    public void setPdlEmail(@Nullable String pdlEmail) {
         this.pdlEmail = pdlEmail;
     }
 
+    @Nullable
     public String getSupervisorName() {
         return supervisorName;
     }
 
-    public void setSupervisorName(String supervisorName) {
+    public void setSupervisorName(@Nullable String supervisorName) {
         this.supervisorName = supervisorName;
     }
 
+    @Nullable
     public String getSupervisorEmail() {
         return supervisorEmail;
     }
 
-    public void setSupervisorEmail(String supervisorEmail) {
+    public void setSupervisorEmail(@Nullable String supervisorEmail) {
         this.supervisorEmail = supervisorEmail;
     }
 }

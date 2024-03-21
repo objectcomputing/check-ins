@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Singleton
 public class MemberProfileReportServicesImpl implements MemberProfileReportServices {
@@ -27,6 +29,7 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
             List<MemberProfileRecord> allRecords = memberProfileReportRepository.findAll();
             memberRecords.addAll(allRecords);
         } else {
+            List<String> memberIds = queryDTO.getMemberIds().stream().map(UUID::toString).collect(Collectors.toList());
             List<MemberProfileRecord> filteredRecords = memberProfileReportRepository.findByIdInList(queryDTO.getMemberIds());
             memberRecords.addAll(filteredRecords);
         }
