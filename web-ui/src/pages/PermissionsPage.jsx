@@ -87,7 +87,7 @@ const EditPermissionsPage = () => {
       }
       getRolePermissions();
     }
-  }, [csrf, refresh]);
+  }, [csrf, refresh, rolePermissionsList.length]);
 
   useEffect(() => {
     if(selectedRole && rolePermissionsList) {
