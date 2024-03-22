@@ -57,12 +57,12 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
     );
 
     default Permission createACustomPermission(Permissions perm) {
-        return getPermissionRepository().save(new Permission(null, perm.name(), null));
+        return getPermissionRepository().save(new Permission(null, perm.name(), perm.getDescription()));
     }
 
     default void saveAllPermissions() {
         for(Permissions permissions : Permissions.values()) {
-            getPermissionRepository().save(new Permission(null, permissions.name(), null));
+            getPermissionRepository().save(new Permission(null, permissions.name(), permissions.getDescription()));
         }
     }
 

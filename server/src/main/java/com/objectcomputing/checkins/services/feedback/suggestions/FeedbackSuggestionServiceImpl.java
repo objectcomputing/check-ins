@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.context.annotation.Property;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import jakarta.inject.Singleton;
+
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -47,11 +49,11 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
         }
 
         List<FeedbackSuggestionDTO> suggestions = new LinkedList<>();
-        if(suggestFor.getSupervisorid() != null && !suggestFor.getSupervisorid().equals(currentUser.getId())) {
+        if(suggestFor.getSupervisorid() != null && !suggestFor.getSupervisorid().equals(currentUser.getId()) && isMemberActive(suggestFor.getSupervisorid())) {
             suggestions.add(new FeedbackSuggestionDTO("Supervisor of requestee", suggestFor.getSupervisorid()));
         }
 
-        if(suggestFor.getPdlId() != null && !suggestFor.getPdlId().equals(currentUser.getId())) {
+        if(suggestFor.getPdlId() != null && !suggestFor.getPdlId().equals(currentUser.getId()) && isMemberActive(suggestFor.getPdlId())) {
             suggestions.add(new FeedbackSuggestionDTO("PDL of requestee", suggestFor.getPdlId()));
         }
 
@@ -60,6 +62,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
         for(TeamMember currentMembership: teamMemberships){
             Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamId(), null, null);
             Set<TeamMember> leads = teamMembers.stream().filter((member)-> member.isLead()).collect(Collectors.toSet());
+            leads = filterTerminated(leads);
             for(TeamMember lead: leads) {
                 if(suggestions.size() < maxSuggestions && !lead.getMemberId().equals(id) && !lead.getMemberId().equals(currentUserId)) {
                     suggestions.add(new FeedbackSuggestionDTO("Team lead for requestee", lead.getMemberId()));
@@ -72,6 +75,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
         for(TeamMember currentMembership: teamMemberships){
             Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamId(), null, null);
             teamMembers = teamMembers.stream().filter((member)-> !member.isLead()).collect(Collectors.toSet());
+            teamMembers = filterTerminated(teamMembers);
             for(TeamMember teamMember: teamMembers) {
                 if(suggestions.size() < maxSuggestions && !teamMember.getMemberId().equals(id) && !teamMember.getMemberId().equals(currentUserId)) {
                     suggestions.add(new FeedbackSuggestionDTO("Team member for requestee", teamMember.getMemberId()));
@@ -80,6 +84,20 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
 
             if(suggestions.size() >= maxSuggestions) break;
         }
+        
         return suggestions;
+    }
+
+    private Set<TeamMember> filterTerminated(Set<TeamMember> suggestions) {
+        suggestions = suggestions.stream().filter((TeamMember suggestion) -> {
+            return isMemberActive(suggestion.getMemberId());
+        }).collect(Collectors.toSet());
+        return suggestions;
+    }
+
+    private boolean isMemberActive(UUID memberId) {
+        MemberProfile suggested = memberProfileServices.getById(memberId);
+        LocalDate terminationDate = suggested.getTerminationDate();
+        return !(terminationDate != null && terminationDate.isBefore(LocalDate.now().atStartOfDay().toLocalDate()));
     }
 }
