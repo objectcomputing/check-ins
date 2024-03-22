@@ -13,5 +13,7 @@ public interface CheckInServices {
 
     Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed);
 
-    Boolean accessGranted(UUID checkin, UUID member);
+    Boolean hasElevatedAccessPermission(UUID memberId);
+
+    Boolean accessGranted(UUID checkinId, UUID memberId);
 }

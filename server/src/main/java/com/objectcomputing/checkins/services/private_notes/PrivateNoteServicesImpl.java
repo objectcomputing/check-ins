@@ -24,7 +24,6 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     private final CheckInServices checkinServices;
-    private final CheckInRepository checkinRepo;
     private final PrivateNoteRepository privateNoteRepository;
     private final MemberProfileRepository memberRepo;
     private final MemberProfileServices memberProfileServices;
@@ -35,7 +34,6 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
                                    MemberProfileRepository memberRepo, MemberProfileServices memberProfileServices,
                                    CurrentUserServices currentUserServices) {
         this.checkinServices = checkinServices;
-        this.checkinRepo = checkinRepo;
         this.privateNoteRepository = privateNoteRepository;
         this.memberRepo = memberRepo;
         this.memberProfileServices = memberProfileServices;
@@ -45,8 +43,8 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     @Override
     public PrivateNote save(@NotNull PrivateNote privateNote) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        Boolean isAdmin = currentUserServices.isAdmin();
-        Boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
+        boolean hasElevatedAccess = checkinServices.hasElevatedAccessPermission(currentUser.getId());
+
 
         final UUID checkinId = privateNote.getCheckinid();
         final UUID createdById = privateNote.getCreatedbyid();
@@ -58,7 +56,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
 
-        if (!isAdmin) {
+        if (!hasElevatedAccess) {
 
             if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()) || isCompleted ) {
                 throw new PermissionException("User is unauthorized to do this operation");
@@ -76,14 +74,14 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     @Override
     public PrivateNote read(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        Boolean isAdmin = currentUserServices.isAdmin();
+        boolean hasElevatedAccess = checkinServices.hasElevatedAccessPermission(currentUser.getId());
         PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
 
         if (privateNoteResult == null) {
             throw new NotFoundException(String.format("Invalid private note id %s", id));
         }
 
-        if (!isAdmin) {
+        if (!hasElevatedAccess) {
             CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
             if (checkinRecord == null) {
                 throw new NotFoundException(String.format("CheckIn %s doesn't exist", privateNoteResult.getCheckinid()));
@@ -104,7 +102,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     @Override
     public PrivateNote update(@NotNull PrivateNote privateNote) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        Boolean isAdmin = currentUserServices.isAdmin();
+        boolean hasElevatedAccess = checkinServices.hasElevatedAccessPermission(currentUser.getId());
         Boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
 
         final UUID checkinId = privateNote.getCheckinid();
@@ -113,12 +111,12 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : false;
 
         validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
-        validate((isAdmin && !isPdl) || isCompleted , unauthorizedErrorMessage);
+        validate((hasElevatedAccess && !isPdl) || isCompleted , unauthorizedErrorMessage);
         validate(privateNote.getId() == null, "No private note id %s found for updating", privateNote.getId());
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
 
-        if (!isAdmin) {
+        if (!hasElevatedAccess) {
 
             if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()) || isCompleted ) {
                 throw new PermissionException("User is unauthorized to do this operation");
@@ -136,16 +134,16 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     @Override
     public Set<PrivateNote> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean hasElevatedAccess = checkinServices.hasElevatedAccessPermission(currentUser.getId());
 
         if (checkinid != null) {
             if (!checkinServices.accessGranted(checkinid, currentUser.getId()))
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (createbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
-            if (!currentUser.getId().equals(memberRecord.getId()) && !isAdmin)
+            if (!currentUser.getId().equals(memberRecord.getId()) && !hasElevatedAccess)
                 throw new PermissionException("User is unauthorized to do this operation");
-        } else if (!isAdmin) {
+        } else if (!hasElevatedAccess) {
             throw new PermissionException("User is unauthorized to do this operation");
         }
 
