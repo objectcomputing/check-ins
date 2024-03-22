@@ -95,7 +95,6 @@ class MemberProfileReportServicesImplTest {
         record1.setLocation("St. Louis");
         record1.setWorkEmail("johndoe@objectcomputing.com");
         record1.setStartDate(LocalDate.of(2024, 1, 1));
-        record1.setTenure("3 months");
         record1.setPdlName("Jane Miller");
         record1.setPdlEmail("janemiller@objectcomputing.com");
         record1.setSupervisorName("Tom Smith");
@@ -109,7 +108,6 @@ class MemberProfileReportServicesImplTest {
         record2.setLocation("St. Louis");
         record2.setWorkEmail("janemiller@objectcomputing.com");
         record2.setStartDate(LocalDate.of(2023, 1, 1));
-        record2.setTenure("1 year, 3 months");
         record2.setPdlName("Eve Williams");
         record2.setPdlEmail("evewilliams@objectcomputing.com");
         record2.setSupervisorName("Tom Smith");
@@ -123,7 +121,6 @@ class MemberProfileReportServicesImplTest {
         record3.setLocation("St. Louis");
         record3.setWorkEmail("tomsmith@objectcomputing.com");
         record3.setStartDate(LocalDate.of(2022, 1, 1));
-        record3.setTenure("2 years, 3 months");
         record3.setPdlName(null);
         record3.setPdlEmail(null);
         record3.setSupervisorName(null);

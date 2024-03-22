@@ -113,17 +113,19 @@ public class MemberProfileReportController {
             tenure = years + " years " + months + " months";
         }
 
-        return new MemberProfileRecord(profile.getFirstName(),
-                profile.getLastName(),
-                profile.getTitle(),
-                profile.getLocation(),
-                profile.getWorkEmail(),
-                startDate,
-                tenure,
-                pdlName,
-                pdlEmail,
-                supervisorName,
-                supervisorEmail);
+        MemberProfileRecord record = new MemberProfileRecord();
+        record.setFirstName(profile.getFirstName());
+        record.setLastName(profile.getLastName());
+        record.setLocation(profile.getLocation());
+        record.setWorkEmail(profile.getWorkEmail());
+        record.setStartDate(startDate);
+        //record.setPdlFirstName(pdlProfile != null ? pdlProfile.getFirstName() : null);
+        //record.setPdlLastName(pdlProfile != null ? pdlProfile.getLastName() : null);
+        record.setPdlEmail(pdlProfile != null ? pdlProfile.getWorkEmail() : null);
+        //record.setSupervisorFirstName(supervisorProfile != null ? supervisorProfile.getFirstName() : null);
+        //record.setSupervisorLastName(supervisorProfile != null ? supervisorProfile.getLastName() : null);
+        record.setSupervisorEmail(supervisorProfile != null ? supervisorProfile.getWorkEmail() : null);
+        return record;
     }
 
     private Mono<File> generateCsvFile(List<MemberProfileRecord> memberProfileRecords) {

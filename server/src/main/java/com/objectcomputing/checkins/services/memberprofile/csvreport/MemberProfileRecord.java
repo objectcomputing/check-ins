@@ -4,11 +4,9 @@ import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.UUID;
 
 @Entity
@@ -57,16 +55,21 @@ public class MemberProfileRecord {
     @Column(name = "startdate")
     private LocalDate startDate;
 
-    @Column(name = "tenure")
-    private String tenure;
-
-    @Column(name = "pdlname")
+    @Column(name = "pdlfirstname")
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(pdlName::bytea,'${aes.key}')",
+            read =  "pgp_sym_decrypt(pdlFirstName::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Nullable
-    private String pdlName;
+    private String pdlFirstName;
+
+    @Column(name = "pdllastname")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(pdlLastName::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Nullable
+    private String pdlLastName;
 
     @Column(name = "pdlemail")
     @ColumnTransformer(
@@ -76,13 +79,21 @@ public class MemberProfileRecord {
     @Nullable
     private String pdlEmail;
 
-    @Column(name = "supervisorname")
+    @Column(name = "supervisorfirstname")
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(supervisorName::bytea,'${aes.key}')",
+            read =  "pgp_sym_decrypt(supervisorFirstName::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Nullable
-    private String supervisorName;
+    private String supervisorFirstName;
+
+    @Column(name = "supervisorlastname")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(supervisorLastName::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Nullable
+    private String supervisorLastName;
 
     @Column(name = "supervisoremail")
     @ColumnTransformer(
@@ -91,23 +102,6 @@ public class MemberProfileRecord {
     )
     @Nullable
     private String supervisorEmail;
-
-    public MemberProfileRecord(String firstName, String lastName, String title, String location,
-                               String workEmail, LocalDate startDate, String tenure, @Nullable String pdlName,
-                               @Nullable String pdlEmail, @Nullable String supervisorName,
-                               @Nullable String supervisorEmail) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.title = title;
-        this.location = location;
-        this.workEmail = workEmail;
-        this.startDate = startDate;
-        this.tenure = tenure;
-        this.pdlName = pdlName;
-        this.pdlEmail = pdlEmail;
-        this.supervisorName = supervisorName;
-        this.supervisorEmail = supervisorEmail;
-    }
 
     public MemberProfileRecord() {}
 
@@ -167,21 +161,59 @@ public class MemberProfileRecord {
         this.startDate = startDate;
     }
 
+    @Transient
     public String getTenure() {
-        return tenure;
-    }
+        if (startDate == null) {
+            return null;
+        }
 
-    public void setTenure(String tenure) {
-        this.tenure = tenure;
+        LocalDate currentDate = LocalDate.now();
+        Period period = Period.between(startDate, currentDate);
+        int years = period.getYears();
+        int months = period.getMonths();
+        String yearsString = years == 1 ? "year" : "years";
+        String monthsString = months == 1 ? "month" : "months";
+
+        return years + " " + yearsString + " " + months + " " + monthsString;
     }
 
     @Nullable
-    public String getPdlName() {
-        return pdlName;
+    private String getPdlFirstName() {
+        return pdlFirstName;
     }
 
+    private void setPdlFirstName(@Nullable String pdlFirstName) {
+        this.pdlFirstName = pdlFirstName;
+    }
+
+    @Nullable
+    private String getPdlLastName() {
+        return pdlLastName;
+    }
+
+    private void setPdlLastName(@Nullable String pdlLastName) {
+        this.pdlLastName = pdlLastName;
+    }
+
+    @Transient
+    @Nullable
+    public String getPdlName() {
+        if (pdlFirstName == null || pdlLastName == null) {
+            return null;
+        }
+        return pdlFirstName + " " + pdlLastName;
+    }
+
+    @Transient
     public void setPdlName(@Nullable String pdlName) {
-        this.pdlName = pdlName;
+        if (pdlName == null) {
+            setPdlFirstName(null);
+            setPdlLastName(null);
+        } else {
+            String[] names = pdlName.split(" ");
+            setPdlFirstName(names[0]);
+            setPdlLastName(names[1]);
+        }
     }
 
     @Nullable
@@ -194,12 +226,42 @@ public class MemberProfileRecord {
     }
 
     @Nullable
-    public String getSupervisorName() {
-        return supervisorName;
+    private String getSupervisorFirstName() {
+        return supervisorFirstName;
     }
 
+    private void setSupervisorFirstName(@Nullable String supervisorFirstName) {
+        this.supervisorFirstName = supervisorFirstName;
+    }
+
+    @Nullable
+    private String getSupervisorLastName() {
+        return supervisorLastName;
+    }
+
+    private void setSupervisorLastName(@Nullable String supervisorLastName) {
+        this.supervisorLastName = supervisorLastName;
+    }
+
+    @Transient
+    @Nullable
+    public String getSupervisorName() {
+        if (supervisorFirstName == null || supervisorLastName == null) {
+            return null;
+        }
+        return supervisorFirstName + " " + supervisorLastName;
+    }
+
+    @Transient
     public void setSupervisorName(@Nullable String supervisorName) {
-        this.supervisorName = supervisorName;
+        if (supervisorName == null) {
+            setSupervisorFirstName(null);
+            setSupervisorLastName(null);
+        } else {
+            String[] names = supervisorName.split(" ");
+            setSupervisorFirstName(names[0]);
+            setSupervisorLastName(names[1]);
+        }
     }
 
     @Nullable

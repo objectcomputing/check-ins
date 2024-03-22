@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -16,7 +17,6 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import java.io.File;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -159,8 +159,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
             assertNull(record.getPdlEmail());
         } else {
             MemberProfile pdl = getMemberProfileRepository().findById(memberProfile.getPdlId()).orElseThrow();
-            // TODO: Compare PDL's full name
-            assertEquals(pdl.getFirstName(), record.getPdlName());
+            assertEquals(MemberProfileUtils.getFullName(pdl), record.getPdlName());
             assertEquals(pdl.getWorkEmail(), record.getPdlEmail());
         }
 
@@ -169,8 +168,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
             assertNull(record.getSupervisorEmail());
         } else {
             MemberProfile supervisor = getMemberProfileRepository().findById(memberProfile.getSupervisorid()).orElseThrow();
-            // TODO: Compare supervisor's full name
-            assertEquals(supervisor.getFirstName(), record.getSupervisorName());
+            assertEquals(MemberProfileUtils.getFullName(supervisor), record.getSupervisorName());
             assertEquals(supervisor.getWorkEmail(), record.getSupervisorEmail());
         }
     }
