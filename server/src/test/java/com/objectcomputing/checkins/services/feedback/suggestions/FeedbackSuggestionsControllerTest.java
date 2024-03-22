@@ -151,13 +151,44 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
 
         assertNotNull(JSON.toString(response.getBody().get()));
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.getBody().get().size(), 3 );
+        assertEquals( 3, response.getBody().get().size() );
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
         assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
         assertContentEqualsEntity(idealThree, response.getBody().get().get(2));
 
     }
 
+    @Test
+    void testDoesNotIncludeTerminatedTeamMembers() {
+        Team team = createDefaultTeam();
+        MemberProfile pdlProfile = createADefaultMemberProfile();
+        createAndAssignRole(RoleType.PDL, pdlProfile);
+        MemberProfile supervisor = createADefaultSupervisor();
+        createAndAssignRole(RoleType.ADMIN, supervisor);
+        MemberProfile requestee = createAProfileWithSupervisorAndPDL(supervisor, pdlProfile);
+        MemberProfile requesteeTeamLead = createAnUnrelatedUser();
+        MemberProfile teamMemberofRequestee = createASecondDefaultMemberProfile();
+        MemberProfile termedTeamMemberofRequestee = createAPastTerminatedMemberProfile();
+        createLeadTeamMember(team, requesteeTeamLead);
+        createDefaultTeamMember(team, requestee);
+        createDefaultTeamMember(team, teamMemberofRequestee);
+        createDefaultTeamMember(team, termedTeamMemberofRequestee);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", requestee.getId()))
+                .basicAuth(teamMemberofRequestee.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackSuggestionDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackSuggestionDTO.class));
 
 
+        FeedbackSuggestionDTO idealOne = createFeedbackSuggestion(supervisorReason, supervisor.getId());
+        FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
+        FeedbackSuggestionDTO idealThree = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
+
+        assertNotNull(JSON.toString(response.getBody().get()));
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals( 3, response.getBody().get().size() );
+        assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
+        assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
+        assertContentEqualsEntity(idealThree, response.getBody().get().get(2));
+    }
 }
