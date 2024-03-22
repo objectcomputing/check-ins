@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.permissions;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -11,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.UUID;
@@ -36,6 +38,8 @@ public class Permission {
     @Schema(description = "A more verbose description of the permission to be displayed on UI")
     private String description;
 
+    public Permission() {}
+
     public Permission(UUID id, String permission, @Nullable String description) {
         this.id = id;
         this.permission = permission;
@@ -59,11 +63,16 @@ public class Permission {
     }
 
     public String getDescription() {
-        return description;
+        return Permissions.valueOf(permission).getDescription(); //ignoring the database for now...
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
+    }
+
+    @Transient
+    public String getCategory() {
+        return Permissions.valueOf(permission).getCategory();
     }
 
     @Override
