@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
@@ -14,6 +15,9 @@ public interface MemberProfileReportRepository extends CrudRepository<MemberProf
     @NonNull
     List<MemberProfileRecord> findAll();
 
-    List<MemberProfileRecord> findByIdInList(List<UUID> memberIds);
+    @Query("SELECT * " +
+            "FROM member_profile_record " +
+            "WHERE id IN (:memberIds)")
+    List<MemberProfileRecord> findByIds(List<String> memberIds);
 
 }

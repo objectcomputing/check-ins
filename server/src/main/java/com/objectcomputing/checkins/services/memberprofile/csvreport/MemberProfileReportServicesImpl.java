@@ -30,7 +30,7 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
             memberRecords.addAll(allRecords);
         } else {
             List<String> memberIds = queryDTO.getMemberIds().stream().map(UUID::toString).collect(Collectors.toList());
-            List<MemberProfileRecord> filteredRecords = memberProfileReportRepository.findByIdInList(queryDTO.getMemberIds());
+            List<MemberProfileRecord> filteredRecords = memberProfileReportRepository.findByIds(memberIds);
             memberRecords.addAll(filteredRecords);
         }
 

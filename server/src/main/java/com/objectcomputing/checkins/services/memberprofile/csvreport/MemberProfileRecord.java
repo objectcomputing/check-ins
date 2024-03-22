@@ -178,20 +178,20 @@ public class MemberProfileRecord {
     }
 
     @Nullable
-    private String getPdlFirstName() {
+    public String getPdlFirstName() {
         return pdlFirstName;
     }
 
-    private void setPdlFirstName(@Nullable String pdlFirstName) {
+    public void setPdlFirstName(@Nullable String pdlFirstName) {
         this.pdlFirstName = pdlFirstName;
     }
 
     @Nullable
-    private String getPdlLastName() {
+    public String getPdlLastName() {
         return pdlLastName;
     }
 
-    private void setPdlLastName(@Nullable String pdlLastName) {
+    public void setPdlLastName(@Nullable String pdlLastName) {
         this.pdlLastName = pdlLastName;
     }
 
@@ -226,20 +226,20 @@ public class MemberProfileRecord {
     }
 
     @Nullable
-    private String getSupervisorFirstName() {
+    public String getSupervisorFirstName() {
         return supervisorFirstName;
     }
 
-    private void setSupervisorFirstName(@Nullable String supervisorFirstName) {
+    public void setSupervisorFirstName(@Nullable String supervisorFirstName) {
         this.supervisorFirstName = supervisorFirstName;
     }
 
     @Nullable
-    private String getSupervisorLastName() {
+    public String getSupervisorLastName() {
         return supervisorLastName;
     }
 
-    private void setSupervisorLastName(@Nullable String supervisorLastName) {
+    public void setSupervisorLastName(@Nullable String supervisorLastName) {
         this.supervisorLastName = supervisorLastName;
     }
 

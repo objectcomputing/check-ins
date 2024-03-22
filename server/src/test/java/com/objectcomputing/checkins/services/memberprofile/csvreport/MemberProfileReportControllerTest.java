@@ -121,7 +121,6 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
         MemberProfile member4 = createAProfileWithSupervisorAndPDL(member2, member3);
 
         List<MemberProfileRecord> records = getMemberProfileReportRepository().findAll();
-        List<MemberProfile> allMembers = getMemberProfileRepository().findAll();
 
         assertEquals(4, records.size());
         assertMemberProfileMatchesRecord(member1, records.get(0));
@@ -137,8 +136,8 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
         MemberProfile member3 = createADefaultMemberProfileForPdl(member1);
         MemberProfile member4 = createAProfileWithSupervisorAndPDL(member2, member3);
 
-        List<UUID> selectedMemberIds = List.of(member2.getId(), member4.getId());
-        List<MemberProfileRecord> records = getMemberProfileReportRepository().findByIdInList(selectedMemberIds);
+        List<String> selectedMemberIds = List.of(member2.getId().toString(), member4.getId().toString());
+        List<MemberProfileRecord> records = getMemberProfileReportRepository().findByIds(selectedMemberIds);
 
         assertEquals(2, records.size());
         assertMemberProfileMatchesRecord(member2, records.get(0));
@@ -152,7 +151,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
         assertEquals(memberProfile.getLocation(), record.getLocation());
         assertEquals(memberProfile.getWorkEmail(), record.getWorkEmail());
         assertEquals(memberProfile.getStartDate(), record.getStartDate());
-        // TODO: Determine how to compare tenure
+        assertNotNull(record.getTenure());
 
         if (memberProfile.getPdlId() == null) {
             assertNull(record.getPdlName());
