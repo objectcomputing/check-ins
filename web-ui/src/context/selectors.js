@@ -14,6 +14,7 @@ export const selectTeams = (state) => state.teams;
 export const selectGuilds = (state) => state.guilds;
 export const selectLoading = (state) => state.loading;
 export const selectReviewPeriods = (state) => state.reviewPeriods;
+export const selectPermissions = (state) => state.permissions;
 
 export const selectTeamsLoading = createSelector (
   selectLoading,
@@ -38,6 +39,12 @@ export const selectIsAdmin = createSelector(
   selectUserProfile,
   (userProfile) =>
     userProfile && userProfile.role && userProfile.role.includes("ADMIN")
+);
+
+export const selectHasPermissionAssignmentPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_ASSIGN_ROLE_PERMISSIONS"))
 );
 
 export const selectHasReportPermission = createSelector(

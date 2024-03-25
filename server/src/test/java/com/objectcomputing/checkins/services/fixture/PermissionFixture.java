@@ -51,16 +51,18 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permissions.CAN_CREATE_CHECKINS,
         Permissions.CAN_VIEW_CHECKINS,
         Permissions.CAN_UPDATE_CHECKINS,
-        Permissions.CAN_ASSIGN_ROLE_PERMISSIONS
+        Permissions.CAN_ASSIGN_ROLE_PERMISSIONS,
+        Permissions.CAN_VIEW_SKILL_CATEGORIES,
+        Permissions.CAN_EDIT_SKILL_CATEGORIES
     );
 
     default Permission createACustomPermission(Permissions perm) {
-        return getPermissionRepository().save(new Permission(null, perm.name(), null));
+        return getPermissionRepository().save(new Permission(null, perm.name(), perm.getDescription()));
     }
 
     default void saveAllPermissions() {
         for(Permissions permissions : Permissions.values()) {
-            getPermissionRepository().save(new Permission(null, permissions.name(), null));
+            getPermissionRepository().save(new Permission(null, permissions.name(), permissions.getDescription()));
         }
     }
 

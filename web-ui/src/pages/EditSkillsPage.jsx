@@ -4,12 +4,13 @@ import { AppContext } from "../context/AppContext";
 import { selectOrderedSkills, selectPendingSkills } from "../context/selectors";
 import EditSkillsCard from "../components/edit_skills/EditSkillsCard";
 import EditSkillsModal from "../components/edit_skills/EditSkillsModal";
+import {Link} from "react-router-dom";
 
 import { Button, TextField } from "@mui/material";
 
 import "./EditSkillsPage.css";
 
-const EditSkillsPage = (props) => {
+const EditSkillsPage = () => {
   const { state } = useContext(AppContext);
 
   const [searchText, setSearchText] = useState("");
@@ -48,8 +49,11 @@ const EditSkillsPage = (props) => {
             />
           </div>
         </div>
-        <div className="combine-skills">
+        <div className="skill-actions-container">
           <Button onClick={handleOpen}>Combine Skills</Button>
+          <Link to="/admin/skill-categories">
+            <Button>Categorize Skills</Button>
+          </Link>
         </div>
       </div>
 
