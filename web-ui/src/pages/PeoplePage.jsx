@@ -36,8 +36,7 @@ const Root = styled('div')({
 
 const PeoplePage = () => {
   const { state } = useContext(AppContext);
-  const loading= selectMemberProfilesLoading(state)
-  const { userProfile } = state;
+  const loading = selectMemberProfilesLoading(state)
 
   const [searchText, setSearchText] = useState("");
 
