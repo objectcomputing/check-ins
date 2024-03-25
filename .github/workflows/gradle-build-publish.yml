@@ -9,7 +9,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v44
+      - uses: actions/checkout@v4
       - name: Set up Node 14
         uses: actions/setup-node@v2-beta
         with:
