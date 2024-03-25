@@ -22,9 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Singleton
 public class CheckInServicesImpl implements CheckInServices {
@@ -48,10 +46,10 @@ public class CheckInServicesImpl implements CheckInServices {
         this.permissionServices = permissionServices;
     }
 
+    @Override
     public Boolean hasElevatedAccessPermission(@NotNull UUID memberId) {
         boolean hasElevatedAccess = false;
         List<Permission> userPermissions = permissionServices.findUserPermissions(memberId);
-        System.out.println("USER PERMISSIONS " + userPermissions);
         if (userPermissions.size() > 0) {
             hasElevatedAccess = userPermissions.stream().map(Permission::getPermission).anyMatch(str -> str.equals(Permissions.ELEVATED_ACCESS.name()));
             LOG.debug("Member has elevated access permisson: {}", hasElevatedAccess);
@@ -63,16 +61,13 @@ public class CheckInServicesImpl implements CheckInServices {
     public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
         Boolean grantAccess = false;
 
-        memberRepo.findById(memberId).orElseThrow(() -> {
-            throw new NotFoundException(String.format("Member %s not found", memberId));
-        });
-        CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> {
-            throw new NotFoundException(String.format("Checkin %s not found", checkinId));
-        });
+        memberRepo.findById(memberId).orElseThrow(() -> new NotFoundException(String.format("Member %s not found", memberId)));
+
+        CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> new NotFoundException(String.format("Checkin %s not found", checkinId)));
 
         boolean hasElevatedAccess = hasElevatedAccessPermission(memberId);
         
-        // the check for Admin as a role should be removed when permissions are fully implemented
+        // TODO: the check for Admin as a role should be removed when permissions are fully implemented
         boolean isAdmin = false;
         if (roleServices.findByRole(RoleType.ADMIN.name()).isPresent()){
             isAdmin = roleServices.findUserRoles(memberId)
@@ -83,9 +78,8 @@ public class CheckInServicesImpl implements CheckInServices {
         if(hasElevatedAccess || isAdmin){
             grantAccess = true;
         } else {
-            MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
-                throw new NotFoundException(String.format("Team member not found %s not found", checkinRecord.getTeamMemberId()));
-            });
+            MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() ->
+                new NotFoundException(String.format("Team member not found %s not found", checkinRecord.getTeamMemberId())));
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
 
             LOG.debug("Member: {}", memberId);
