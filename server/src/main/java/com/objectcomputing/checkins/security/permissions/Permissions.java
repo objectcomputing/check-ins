@@ -17,7 +17,9 @@ public enum Permissions {
     CAN_VIEW_PROFILE_REPORT("View profile report", "Reporting"),
     CAN_CREATE_CHECKINS("Create check-ins", "Check-ins"),
     CAN_VIEW_CHECKINS("View check-ins", "Check-ins"),
-    CAN_UPDATE_CHECKINS("Update check-ins", "Check-ins");
+    CAN_UPDATE_CHECKINS("Update check-ins", "Check-ins"),
+    CAN_EDIT_SKILL_CATEGORIES("Edit skill categories", "Skills"),
+    CAN_VIEW_SKILL_CATEGORIES("View skill categories", "Skills");
 
     private final String description;
     private final String category;

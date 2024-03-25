@@ -32,6 +32,8 @@ import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 import EmailPage from "../../pages/EmailPage";
 import ReviewsPage from "../../pages/ReviewsPage";
 import SelfReviewsPage from "../../pages/SelfReviewsPage";
+import SkillCategoriesPage from "../../pages/SkillCategoriesPage";
+import SkillCategoryEditPage from "../../pages/SkillCategoryEditPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -105,6 +107,12 @@ export default function Routes() {
           <Route path="/admin/permissions">
             <Header title="Permissions" />
             <EditPermissionsPage />
+          </Route>
+          <Route path="/admin/skill-categories/:categoryId">
+            <SkillCategoryEditPage />
+          </Route>
+          <Route path="/admin/skill-categories">
+            <SkillCategoriesPage />
           </Route>
           <Route path="/checkins-reports">
             <Header title="Check-in Report" />
