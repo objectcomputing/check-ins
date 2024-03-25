@@ -5,7 +5,6 @@ import { AppContext } from "../context/AppContext";
 import {
   selectMemberProfilesLoading,
   selectNormalizedMembers,
-  selectNormalizedMembersAdmin,
 } from "../context/selectors";
 import { TextField, Grid } from "@mui/material";
 import "./PeoplePage.css";
@@ -42,13 +41,7 @@ const PeoplePage = () => {
 
   const [searchText, setSearchText] = useState("");
 
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-
-  const normalizedMembers = isAdmin
-    ? selectNormalizedMembersAdmin(state, searchText)
-    : selectNormalizedMembers(state, searchText);
-
+  const normalizedMembers = selectNormalizedMembers(state, searchText);
 
   const createMemberCards = normalizedMembers.map((member, index) => {
     return (
