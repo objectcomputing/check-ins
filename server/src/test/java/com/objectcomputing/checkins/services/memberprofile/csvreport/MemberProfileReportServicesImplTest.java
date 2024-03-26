@@ -64,6 +64,27 @@ class MemberProfileReportServicesImplTest {
         assertRecordEquals(expectedRecords.get(2), csvRecord3);
     }
 
+    @Test
+    void testGenerateFileWithSelectedMemberProfiles() throws IOException {
+        List<MemberProfileRecord> allRecords = createSampleRecords();
+        MemberProfileRecord expectedRecord = allRecords.get(1);
+        when(memberProfileReportRepository
+                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString())), any()))
+                .thenReturn(List.of(expectedRecord));
+
+        // Generate a file with selected members
+        MemberProfileReportQueryDTO dto = new MemberProfileReportQueryDTO();
+        dto.setMemberIds(List.of(expectedRecord.getId()));
+        File file = memberProfileReportServices.generateFile(dto);
+        assertNotNull(file);
+
+        List<CSVRecord> records = parseRecordsFromFile(file);
+
+        assertEquals(1, records.size());
+        CSVRecord csvRecord1 = records.get(0);
+        assertRecordEquals(expectedRecord, csvRecord1);
+    }
+
     private static void assertRecordEquals(MemberProfileRecord record, CSVRecord csvRecord) {
         assertEquals(record.getFirstName(), csvRecord.get("First Name"));
         assertEquals(record.getLastName(), csvRecord.get("Last Name"));
