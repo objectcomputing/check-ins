@@ -15,9 +15,22 @@ public interface MemberProfileReportRepository extends CrudRepository<MemberProf
     @NonNull
     List<MemberProfileRecord> findAll();
 
-    @Query("SELECT * " +
+    @Query(value =
+            "SELECT id," +
+                    "PGP_SYM_DECRYPT(cast(firstname as bytea), :aesKey) as firstName, " +
+                    "PGP_SYM_DECRYPT(cast(lastName as bytea), :aesKey) as lastName," +
+                    "PGP_SYM_DECRYPT(cast(title as bytea), :aesKey) as title, " +
+                    "PGP_SYM_DECRYPT(cast(location as bytea), :aesKey) as location, " +
+                    "PGP_SYM_DECRYPT(cast(workEmail as bytea), :aesKey) as workEmail, " +
+                    "startDate, " +
+                    "PGP_SYM_DECRYPT(cast(pdlfirstname as bytea), :aesKey) as pdlFirstName, " +
+                    "PGP_SYM_DECRYPT(cast(pdllastname as bytea), :aesKey) as pdlLastName, " +
+                    "PGP_SYM_DECRYPT(cast(pdlemail as bytea), :aesKey) as pdlEmail, " +
+                    "PGP_SYM_DECRYPT(cast(supervisorfirstname as bytea), :aesKey) as supervisorFirstName, " +
+                    "PGP_SYM_DECRYPT(cast(supervisorlastname as bytea), :aesKey) as supervisorLastName, " +
+                    "PGP_SYM_DECRYPT(cast(supervisoremail as bytea), :aesKey) as supervisorEmail " +
             "FROM member_profile_record " +
             "WHERE id IN (:memberIds)")
-    List<MemberProfileRecord> findByIds(List<String> memberIds);
+    List<MemberProfileRecord> findAllByMemberIds(List<String> memberIds, String aesKey);
 
 }

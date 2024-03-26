@@ -16,8 +16,8 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -136,12 +136,14 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
         MemberProfile member3 = createADefaultMemberProfileForPdl(member1);
         MemberProfile member4 = createAProfileWithSupervisorAndPDL(member2, member3);
 
-        List<String> selectedMemberIds = List.of(member2.getId().toString(), member4.getId().toString());
-        List<MemberProfileRecord> records = getMemberProfileReportRepository().findByIds(selectedMemberIds);
+        List<String> selectedMemberIds = new ArrayList<>();
+        selectedMemberIds.add(member2.getId().toString());
+        selectedMemberIds.add(member4.getId().toString());
+        List<MemberProfileRecord> records = getMemberProfileReportRepository().findAllByMemberIds(selectedMemberIds, key);
 
         assertEquals(2, records.size());
-        assertMemberProfileMatchesRecord(member2, records.get(0));
-        assertMemberProfileMatchesRecord(member4, records.get(1));
+        assertMemberProfileMatchesRecord(member4, records.get(0));
+        assertMemberProfileMatchesRecord(member2, records.get(1));
     }
 
     private void assertMemberProfileMatchesRecord(MemberProfile memberProfile, MemberProfileRecord record) {

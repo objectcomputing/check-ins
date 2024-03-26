@@ -2,7 +2,9 @@ package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
+import io.micronaut.data.model.DataType;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -15,6 +17,7 @@ import java.util.UUID;
 public class MemberProfileRecord {
 
     @Id
+    @TypeDef(type = DataType.STRING)
     private UUID id;
 
     @Column(name = "firstname")
@@ -198,10 +201,10 @@ public class MemberProfileRecord {
     @Transient
     @Nullable
     public String getPdlName() {
-        if (pdlFirstName == null || pdlLastName == null) {
+        if (getPdlFirstName() == null || getPdlLastName() == null) {
             return null;
         }
-        return pdlFirstName + " " + pdlLastName;
+        return getPdlFirstName() + " " + getPdlLastName();
     }
 
     @Transient
@@ -246,10 +249,10 @@ public class MemberProfileRecord {
     @Transient
     @Nullable
     public String getSupervisorName() {
-        if (supervisorFirstName == null || supervisorLastName == null) {
+        if (getSupervisorFirstName() == null || getSupervisorLastName() == null) {
             return null;
         }
-        return supervisorFirstName + " " + supervisorLastName;
+        return getSupervisorFirstName() + " " + getSupervisorLastName();
     }
 
     @Transient
