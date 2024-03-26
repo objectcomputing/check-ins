@@ -123,6 +123,7 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
       </Typography>
       <Root>
         <Slider
+          data-testid="discrete-slider"
           min={0.5}
           max={marks.length + 0.5}
           value={startPos}

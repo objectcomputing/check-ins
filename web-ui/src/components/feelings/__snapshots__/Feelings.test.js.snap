@@ -39,6 +39,7 @@ exports[`renders correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-0"
         id="feelings-input-0"
         name="feeling"
         onClick={[Function]}
@@ -76,6 +77,7 @@ exports[`renders correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-1"
         id="feelings-input-1"
         name="feeling"
         onClick={[Function]}
@@ -113,6 +115,7 @@ exports[`renders correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-2"
         id="feelings-input-2"
         name="feeling"
         onClick={[Function]}
@@ -150,6 +153,7 @@ exports[`renders correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-3"
         id="feelings-input-3"
         name="feeling"
         onClick={[Function]}
@@ -187,6 +191,7 @@ exports[`renders correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-4"
         id="feelings-input-4"
         name="feeling"
         onClick={[Function]}
@@ -240,6 +245,7 @@ exports[`renders message correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-0"
         id="feelings-input-0"
         name="feeling"
         onClick={[Function]}
@@ -277,6 +283,7 @@ exports[`renders message correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-1"
         id="feelings-input-1"
         name="feeling"
         onClick={[Function]}
@@ -314,6 +321,7 @@ exports[`renders message correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-2"
         id="feelings-input-2"
         name="feeling"
         onClick={[Function]}
@@ -351,6 +359,7 @@ exports[`renders message correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-3"
         id="feelings-input-3"
         name="feeling"
         onClick={[Function]}
@@ -388,6 +397,7 @@ exports[`renders message correctly 1`] = `
         </svg>
       </div>
       <input
+        data-testid="feelings-input-4"
         id="feelings-input-4"
         name="feeling"
         onClick={[Function]}

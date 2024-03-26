@@ -3,7 +3,7 @@ import FeedbackResponseCard from "./FeedbackResponseCard";
 import {AppContextProvider} from "../../../context/AppContext";
 
 it("renders correctly for text responses", () => {
-  shallowSnapshot(
+  snapshot(
     <AppContextProvider>
       <FeedbackResponseCard
         responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"
@@ -15,7 +15,7 @@ it("renders correctly for text responses", () => {
 });
 
 it("renders correctly for radio button responses", () => {
-  shallowSnapshot(
+  snapshot(
     <AppContextProvider>
       <FeedbackResponseCard
         responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"
@@ -27,7 +27,7 @@ it("renders correctly for radio button responses", () => {
 });
 
 it("renders correctly for slider responses", () => {
-  shallowSnapshot(
+  snapshot(
     <AppContextProvider>
       <FeedbackResponseCard
         responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"

@@ -325,7 +325,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -346,6 +346,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -366,7 +367,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -387,6 +388,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -407,7 +409,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -428,6 +430,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -448,7 +451,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -469,6 +472,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -501,7 +505,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -522,6 +526,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -542,7 +547,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -563,6 +568,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -583,7 +589,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -604,6 +610,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -624,7 +631,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -645,6 +652,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -677,7 +685,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -698,6 +706,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -718,7 +727,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -739,6 +748,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -759,7 +769,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -780,6 +790,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -800,7 +811,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -821,6 +832,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -853,7 +865,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -874,6 +886,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -894,7 +907,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -915,6 +928,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -935,7 +949,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -956,6 +970,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -976,7 +991,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -997,6 +1012,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -1029,7 +1045,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root Mui-checked emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -1050,6 +1066,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -1070,7 +1087,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -1091,6 +1108,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -1111,7 +1129,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -1132,6 +1150,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg
@@ -1152,7 +1171,7 @@ exports[`renders correctly 1`] = `
           className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeMedium emotion-12"
         >
           <span
-            className="MuiCheckbox-root MuiCheckbox-colorPrimary MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root emotion-13"
+            className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium emotion-13"
             onBlur={[Function]}
             onContextMenu={[Function]}
             onDragLeave={[Function]}
@@ -1173,6 +1192,7 @@ exports[`renders correctly 1`] = `
               className="PrivateSwitchBase-input emotion-14"
               data-indeterminate={false}
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             <svg

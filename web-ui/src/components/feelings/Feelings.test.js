@@ -1,6 +1,6 @@
 import React from "react";
 import Feelings from "./Feelings";
-import { mount } from "enzyme";
+import { render, screen, fireEvent } from "@testing-library/react";
 
 it("renders correctly", () => {
   snapshot(<Feelings />);
@@ -14,8 +14,10 @@ it("renders message correctly", () => {
 
 it("calls onSelect correctly", () => {
   const onSelect = jest.fn();
-  const wrapper = mount(<Feelings onSelect={onSelect} />);
-  const find = wrapper.find("#feelings-input-0");
-  find.at(0).simulate("click");
+  render(<Feelings onSelect={onSelect} />);
+
+  const input = screen.getByTestId('feelings-input-0');
+  fireEvent.click(input);
+
   expect(onSelect.mock.calls.length).toBe(1);
 });

@@ -171,7 +171,7 @@ exports[`renders the component 1`] = `
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: calc(133% - 24px);
+  max-width: calc(133% - 32px);
   position: absolute;
   left: 0;
   top: 0;
@@ -415,9 +415,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-8:focus::-ms-input-p
 
 .emotion-10 {
   float: unset;
+  width: auto;
   overflow: hidden;
   display: block;
-  width: auto;
   padding: 0;
   height: 11px;
   font-size: 0.75em;
@@ -449,13 +449,15 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-8:focus::-ms-input-p
         className="MuiFormControl-root MuiTextField-root FeedbackRecipientSelector-searchInput emotion-3"
       >
         <label
-          className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-4"
+          className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-4"
           data-shrink={true}
+          htmlFor=":r0:"
+          id=":r0:-label"
         >
           Search employees...
         </label>
         <div
-          className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedStart emotion-5"
+          className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedStart emotion-5"
           onClick={[Function]}
         >
           <div
@@ -474,15 +476,16 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-8:focus::-ms-input-p
               viewBox="0 0 24 24"
             >
               <path
-                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"
               />
             </svg>
           </div>
           <input
             aria-invalid={false}
             autoFocus={false}
-            className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedStart emotion-8"
+            className="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedStart emotion-8"
             disabled={false}
+            id=":r0:"
             onAnimationStart={[Function]}
             onBlur={[Function]}
             onChange={[Function]}

@@ -15,24 +15,27 @@ exports[`renders correctly 1`] = `
   box-shadow: none;
 }
 
-.emotion-0 .MuiButtonGroup-grouped:not(:first-of-type) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+.emotion-0 .MuiButtonGroup-grouped:hover {
+  box-shadow: none;
 }
 
-.emotion-0 .MuiButtonGroup-grouped:not(:last-of-type) {
+.emotion-0 .MuiButtonGroup-firstButton,
+.emotion-0 .MuiButtonGroup-middleButton {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right: 1px solid #bdbdbd;
   border-color: #1565c0;
 }
 
-.emotion-0 .MuiButtonGroup-grouped:not(:last-of-type).Mui-disabled {
+.emotion-0 .MuiButtonGroup-firstButton.Mui-disabled,
+.emotion-0 .MuiButtonGroup-middleButton.Mui-disabled {
   border-right: 1px solid rgba(0, 0, 0, 0.26);
 }
 
-.emotion-0 .MuiButtonGroup-grouped:hover {
-  box-shadow: none;
+.emotion-0 .MuiButtonGroup-lastButton,
+.emotion-0 .MuiButtonGroup-middleButton {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .emotion-1 {
@@ -243,7 +246,7 @@ exports[`renders correctly 1`] = `
     role="group"
   >
     <button
-      className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-1"
+      className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-firstButton emotion-1"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -266,7 +269,7 @@ exports[`renders correctly 1`] = `
     <button
       aria-haspopup="menu"
       aria-label="select merge strategy"
-      className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-2"
+      className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-lastButton emotion-2"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
