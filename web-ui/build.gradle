@@ -4,7 +4,7 @@ plugins {
 }
 
 node {
-    version = '14.17.6' // https://nodejs.org/en/
+    version = '20.11.1' // https://nodejs.org/en/
     yarnVersion = '1.22.5' // https://yarnpkg.com/en/
     download = true
 }

@@ -181,7 +181,7 @@ exports[`renders the feedback tips component. 1`] = `
       className="FeedbackSubmissionTips-button"
     >
       <button
-        className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root  emotion-2"
+        className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary emotion-2"
         disabled={false}
         onBlur={[Function]}
         onClick={[Function]}

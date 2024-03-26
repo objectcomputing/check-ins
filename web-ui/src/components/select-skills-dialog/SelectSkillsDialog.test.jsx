@@ -1,7 +1,7 @@
 import React from "react";
+import ReactDOM from "react-dom";
+import {AppContextProvider} from "../../context/AppContext";
 import SelectSkillsDialog from "./SelectSkillsDialog";
-import EnzymeToJson from 'enzyme-to-json';
-import { mount } from 'enzyme';
 
 const skill = {
   id: "skill-id",
@@ -11,17 +11,17 @@ const skill = {
   extraneous: true
 };
 
-it("renders correctly", () => {
-  const dialog = mount(
-    <SelectSkillsDialog
-      isOpen={true}
-      onClose={jest.fn()}
-      selectableSkills={[skill]}
-      onSave={jest.fn()}
-    />
-  );
-  expect(EnzymeToJson(dialog)).toMatchSnapshot({});
+describe("SelectSkillsDialog", () => {
+  it("renders correctly", () => {
+    snapshot(
+    <AppContextProvider>
+      <SelectSkillsDialog
+        isOpen={true}
+        onClose={jest.fn()}
+        selectableSkills={[skill]}
+        onSave={jest.fn()}
+      />
+    </AppContextProvider>
+    );
+  });
 });
-
-
-
