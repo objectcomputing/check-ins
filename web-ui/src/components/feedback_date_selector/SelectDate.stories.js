@@ -1,8 +1,8 @@
 import React from 'react';
 import SelectDate from './SelectDate';
 import {AppContextProvider} from '../../context/AppContext';
-import {LocalizationProvider} from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 export default {
     title: 'Check-Ins/SelectDate',
