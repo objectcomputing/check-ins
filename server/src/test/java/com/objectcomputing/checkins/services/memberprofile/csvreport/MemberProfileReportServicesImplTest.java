@@ -138,8 +138,8 @@ class MemberProfileReportServicesImplTest {
         record3.setId(UUID.randomUUID());
         record3.setFirstName("Tom");
         record3.setLastName("Smith");
-        record3.setTitle("Manager");
-        record3.setLocation("St. Louis");
+        record3.setTitle("Manager, HR, and Head of Sales");
+        record3.setLocation("New York City, New York");
         record3.setWorkEmail("tomsmith@objectcomputing.com");
         record3.setStartDate(LocalDate.of(2022, 1, 1));
         record3.setPdlName(null);
