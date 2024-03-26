@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders the component 1`] = `
+exports[`FeedbackRecipientSelector renders the component 1`] = `
 .emotion-0 {
   box-sizing: border-box;
   -webkit-flex-direction: row;
@@ -436,6 +436,15 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-8:focus::-ms-input-p
   visibility: visible;
 }
 
+.emotion-11 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.334;
+  letter-spacing: 0em;
+}
+
 <div
   className="MuiGrid-root feedback-recipient-selector emotion-0"
 >
@@ -513,7 +522,32 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-8:focus::-ms-input-p
   </div>
   <div
     className="selected-recipients-container"
-  />
+  >
+    <h5
+      className="MuiTypography-root MuiTypography-h5 emotion-11"
+      style={
+        Object {
+          "color": "#454545",
+          "fontWeight": "bold",
+          "marginBottom": "1em",
+        }
+      }
+    >
+      0
+       recipient
+      s
+       selected
+    </h5>
+    <p
+      style={
+        Object {
+          "color": "gray",
+        }
+      }
+    >
+      Click on recipients to request feedback from them
+    </p>
+  </div>
   <div
     className="selectable-recipients-container"
   >

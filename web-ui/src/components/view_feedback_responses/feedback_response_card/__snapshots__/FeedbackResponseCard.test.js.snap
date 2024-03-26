@@ -426,43 +426,129 @@ exports[`renders correctly for radio button responses 1`] = `
 `;
 
 exports[`renders correctly for slider responses 1`] = `
-<ContextProvider
-  value={
-    Object {
-      "dispatch": [Function],
-      "state": Object {
-        "checkins": Array [],
-        "csrf": undefined,
-        "guilds": Array [],
-        "index": 0,
-        "loading": Object {
-          "memberProfiles": false,
-          "teams": false,
-        },
-        "memberProfiles": Array [],
-        "memberSkills": Array [],
-        "reviewPeriods": Array [],
-        "roles": Array [],
-        "skills": Array [],
-        "teams": Array [],
-        "terminatedMembers": Array [],
-        "toast": Object {
-          "severity": "",
-          "toast": "",
-        },
-        "userProfile": Object {},
-        "userRoles": Array [],
-      },
-    }
-  }
+.emotion-0 {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+.emotion-1 {
+  padding: 16px;
+}
+
+.emotion-1:last-child {
+  padding-bottom: 24px;
+}
+
+.emotion-2 {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-3 {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  object-fit: cover;
+  color: transparent;
+  text-indent: 10000px;
+}
+
+.emotion-4 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+}
+
+<div
+  className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card emotion-0"
 >
-  <FeedbackResponseCard
-    answer="Neither Agree nor Disagree"
-    inputType="SLIDER"
-    responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"
-    sentiment={0.5}
-  />
-</ContextProvider>
+  <div
+    className="MuiCardContent-root response-card-content emotion-1"
+  >
+    <div
+      className="response-card-recipient-info"
+    >
+      <div
+        className="MuiAvatar-root MuiAvatar-circular avatar-photo emotion-2"
+      >
+        <img
+          className="MuiAvatar-img emotion-3"
+          src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+        />
+      </div>
+      <p
+        className="MuiTypography-root MuiTypography-body1 responder-name emotion-4"
+      />
+    </div>
+    <input
+      className="feedback-answer-slider"
+      disabled={true}
+      marks={
+        Array [
+          Object {
+            "label": "Strongly Disagree",
+            "value": 0,
+          },
+          Object {
+            "label": "Disagree",
+            "value": 1,
+          },
+          Object {
+            "label": "Neither Agree nor Disagree",
+            "value": 2,
+          },
+          Object {
+            "label": "Agree",
+            "value": 3,
+          },
+          Object {
+            "label": "Strongly Agree",
+            "value": 4,
+          },
+        ]
+      }
+      max={4}
+      min={0}
+      onChange={[Function]}
+      step={1}
+      type="range"
+      value={2}
+    />
+  </div>
+</div>
 `;
 
 exports[`renders correctly for text responses 1`] = `

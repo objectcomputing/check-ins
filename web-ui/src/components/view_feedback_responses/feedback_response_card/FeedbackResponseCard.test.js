@@ -2,6 +2,23 @@ import React from "react";
 import FeedbackResponseCard from "./FeedbackResponseCard";
 import {AppContextProvider} from "../../../context/AppContext";
 
+import {jest} from "@jest/globals";
+
+jest.mock("@mui/material/Slider", () => (props: any) => {
+  const { onChange, 'data-testid': testId, ...rest } = props;
+
+  return (
+    <input
+      data-testid={testId}
+      type="range"
+      onChange={event => {
+        onChange(null, parseInt(event.target.value, 10));
+      }}
+      {...rest}
+    />
+  );
+});
+
 it("renders correctly for text responses", () => {
   snapshot(
     <AppContextProvider>
