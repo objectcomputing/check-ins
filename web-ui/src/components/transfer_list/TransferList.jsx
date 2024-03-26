@@ -127,8 +127,9 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
     setChecked(not(checked, rightChecked));
   }
 
-  const downloadMemberCsv = () => {
-    const res = reportSelectedMembersCsv(rightList, csrf);
+  const downloadMemberCsv = async () => {
+    const memberIds = rightList.map(member => member.id);
+    const res = await reportSelectedMembersCsv(memberIds, csrf);
     if (!res.error) {
       fileDownload(res?.payload?.data, "members.csv");
       dispatch({
