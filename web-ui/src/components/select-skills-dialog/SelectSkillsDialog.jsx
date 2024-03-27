@@ -64,6 +64,7 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills, onSave }) => {
       fullScreen
       onClose={onClose}
       TransitionComponent={Transition}>
+      <div>
       <AppBar>
         <Toolbar>
           <IconButton
@@ -121,6 +122,7 @@ const SelectSkillsDialog = ({ isOpen, onClose, selectableSkills, onSave }) => {
           ))}
         </List>
       </DialogContent>
+      </div>
     </Dialog>
   );
 };

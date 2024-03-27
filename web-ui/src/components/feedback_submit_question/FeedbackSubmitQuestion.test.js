@@ -3,7 +3,7 @@ import FeedbackSubmitQuestion from "./FeedbackSubmitQuestion";
 import {AppContextProvider} from "../../context/AppContext";
 
 it("renders the feedback submit question as text", () => {
-  shallowSnapshot(
+  snapshot(
     <AppContextProvider value={{ state: {} }}>
       <FeedbackSubmitQuestion
         question={{
@@ -27,7 +27,7 @@ it("renders the feedback submit question as text", () => {
 });
 
 it("renders the feedback submit question as radio buttons", () => {
-  shallowSnapshot(
+  snapshot(
     <AppContextProvider value={{ state: {} }}>
       <FeedbackSubmitQuestion
         question={{
@@ -51,7 +51,7 @@ it("renders the feedback submit question as radio buttons", () => {
 });
 
 it("renders the feedback submit question as a slider", () => {
-  shallowSnapshot(
+  snapshot(
     <AppContextProvider value={{ state: {} }}>
       <FeedbackSubmitQuestion
         question={{

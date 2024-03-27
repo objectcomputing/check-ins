@@ -31,17 +31,13 @@ FeedbackRequestLoader.args = {
     type: "feedback_requests",
 }
 
-export const FeedbackRequestLoader = Template.bind({});
-FeedbackRequestLoader.args = {
-    type: "received_requests",
-}
-export const FeedbackRequestLoader = Template.bind({});
-FeedbackRequestLoader.args = {
+export const RecievedRequestLoader = Template.bind({});
+RecievedRequestLoader.args = {
     type: "received_requests",
 }
 
-export const FeedbackRequestLoader = Template.bind({});
-FeedbackRequestLoader.args = {
+export const FeedbackResponsesLoader = Template.bind({});
+FeedbackResponsesLoader.args = {
     type: "view_feedback_responses",
 }
 

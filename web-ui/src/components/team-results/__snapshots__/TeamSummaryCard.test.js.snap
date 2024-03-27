@@ -94,7 +94,7 @@ exports[`renders correctly 1`] = `
   padding: 8px;
 }
 
-.emotion-6>:not(:first-of-type) {
+.emotion-6>:not(style)~:not(style) {
   margin-left: 8px;
 }
 
@@ -105,15 +105,15 @@ exports[`renders correctly 1`] = `
     className="MuiCardHeader-root emotion-1"
   >
     <div
-      className="TeamSummaryCard-header MuiCardHeader-content emotion-2"
+      className="MuiCardHeader-content TeamSummaryCard-header emotion-2"
     >
       <span
-        className="MuiTypography-root MuiTypography-h5 TeamSummaryCard-title MuiCardHeader-title emotion-3"
+        className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title emotion-3"
       >
         string
       </span>
       <span
-        className="MuiTypography-root MuiTypography-body1 TeamSummaryCard-title MuiCardHeader-subheader emotion-4"
+        className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title emotion-4"
       >
         <div
           aria-label="string"
@@ -244,7 +244,7 @@ exports[`renders correctly for ADMIN 1`] = `
   padding: 8px;
 }
 
-.emotion-6>:not(:first-of-type) {
+.emotion-6>:not(style)~:not(style) {
   margin-left: 8px;
 }
 
@@ -262,24 +262,27 @@ exports[`renders correctly for ADMIN 1`] = `
   box-shadow: none;
 }
 
-.emotion-7 .MuiButtonGroup-grouped:not(:first-of-type) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+.emotion-7 .MuiButtonGroup-grouped:hover {
+  box-shadow: none;
 }
 
-.emotion-7 .MuiButtonGroup-grouped:not(:last-of-type) {
+.emotion-7 .MuiButtonGroup-firstButton,
+.emotion-7 .MuiButtonGroup-middleButton {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right: 1px solid #bdbdbd;
   border-color: #1565c0;
 }
 
-.emotion-7 .MuiButtonGroup-grouped:not(:last-of-type).Mui-disabled {
+.emotion-7 .MuiButtonGroup-firstButton.Mui-disabled,
+.emotion-7 .MuiButtonGroup-middleButton.Mui-disabled {
   border-right: 1px solid rgba(0, 0, 0, 0.26);
 }
 
-.emotion-7 .MuiButtonGroup-grouped:hover {
-  box-shadow: none;
+.emotion-7 .MuiButtonGroup-lastButton,
+.emotion-7 .MuiButtonGroup-middleButton {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .emotion-8 {
@@ -502,15 +505,15 @@ exports[`renders correctly for ADMIN 1`] = `
     className="MuiCardHeader-root emotion-1"
   >
     <div
-      className="TeamSummaryCard-header MuiCardHeader-content emotion-2"
+      className="MuiCardHeader-content TeamSummaryCard-header emotion-2"
     >
       <span
-        className="MuiTypography-root MuiTypography-h5 TeamSummaryCard-title MuiCardHeader-title emotion-3"
+        className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title emotion-3"
       >
         string
       </span>
       <span
-        className="MuiTypography-root MuiTypography-body1 TeamSummaryCard-title MuiCardHeader-subheader emotion-4"
+        className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title emotion-4"
       >
         <div
           aria-label="string"
@@ -551,7 +554,7 @@ exports[`renders correctly for ADMIN 1`] = `
         role="group"
       >
         <button
-          className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-8"
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-firstButton emotion-8"
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
@@ -577,7 +580,7 @@ exports[`renders correctly for ADMIN 1`] = `
         <button
           aria-haspopup="menu"
           aria-label="select merge strategy"
-          className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-10"
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-lastButton emotion-10"
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
@@ -710,7 +713,7 @@ exports[`renders correctly for team lead 1`] = `
   padding: 8px;
 }
 
-.emotion-6>:not(:first-of-type) {
+.emotion-6>:not(style)~:not(style) {
   margin-left: 8px;
 }
 
@@ -721,15 +724,15 @@ exports[`renders correctly for team lead 1`] = `
     className="MuiCardHeader-root emotion-1"
   >
     <div
-      className="TeamSummaryCard-header MuiCardHeader-content emotion-2"
+      className="MuiCardHeader-content TeamSummaryCard-header emotion-2"
     >
       <span
-        className="MuiTypography-root MuiTypography-h5 TeamSummaryCard-title MuiCardHeader-title emotion-3"
+        className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title emotion-3"
       >
         stuff
       </span>
       <span
-        className="MuiTypography-root MuiTypography-body1 TeamSummaryCard-title MuiCardHeader-subheader emotion-4"
+        className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title emotion-4"
       >
         <div
           aria-label=""
@@ -741,9 +744,7 @@ exports[`renders correctly for team lead 1`] = `
           onMouseOver={[Function]}
           onTouchEnd={[Function]}
           onTouchStart={[Function]}
-        >
-          
-        </div>
+        />
       </span>
     </div>
   </div>

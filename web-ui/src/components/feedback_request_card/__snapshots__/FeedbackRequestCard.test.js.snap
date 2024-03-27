@@ -559,7 +559,7 @@ exports[`renders correctly 1`] = `
                   Sample Template
                 </p>
                 <button
-                  className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root response-link red-text emotion-13"
+                  className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary response-link red-text emotion-13"
                   disabled={false}
                   onBlur={[Function]}
                   onClick={[Function]}

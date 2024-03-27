@@ -109,7 +109,7 @@ exports[`renders correctly 1`] = `
       Would you mind creating a new issue and explaining what happened?
     </h1>
     <button
-      className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root create-new-issue-button emotion-0"
+      className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary create-new-issue-button emotion-0"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
