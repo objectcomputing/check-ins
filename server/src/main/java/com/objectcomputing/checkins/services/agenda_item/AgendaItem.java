@@ -48,9 +48,10 @@ public class AgendaItem {
     @Schema(description = "description of the agenda item")
     private String description;
 
+    @NotNull
     @Column(name = "priority")
     @Schema(description = "Allow for a user defined display order")
-    private double priority;
+    private Double priority;
 
     public AgendaItem(UUID checkinid, UUID createdbyid, String description) {
         this(null, checkinid, createdbyid, description);
@@ -60,11 +61,9 @@ public class AgendaItem {
         this(id, checkinid, createdbyid, description, 1.0);
     }
 
-    public AgendaItem(UUID checkinid, UUID createdbyid, String description, double priority) {
-        this(null, checkinid, createdbyid, description, priority);
-    }
+    public AgendaItem() {}
 
-    public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, String description, double priority) {
+    public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, @Nullable String description, Double priority) {
         this.id = id;
         this.checkinid = checkinid;
         this.createdbyid = createdbyid;
@@ -96,19 +95,21 @@ public class AgendaItem {
         this.createdbyid = createdbyid;
     }
 
+    @Nullable
     public String getDescription() {
         return this.description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
     }
 
-    public double getPriority() {
+    @SuppressWarnings("unused")
+    public Double getPriority() {
         return priority;
     }
 
-    public void setPriority(double priority) {
+    public void setPriority(Double priority) {
         this.priority = priority;
     }
 
