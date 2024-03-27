@@ -17,6 +17,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "employee_hours")
 public class EmployeeHours {
+
     @Id
     @Column(name = "id")
     @AutoPopulated
@@ -30,22 +31,23 @@ public class EmployeeHours {
     @Schema(description = "employee id", required = true)
     private String employeeId;
 
-
     @NotNull
     @Column(name="contributionhours")
     @TypeDef(type = DataType.FLOAT)
-    @Schema(description ="contribution hours of employee", required=true)
-    private float contributionHours;
+    @Schema(description ="contribution hours of employee", required = true)
+    private Float contributionHours;
 
+    @NotNull
     @Column(name="billablehours")
     @TypeDef(type = DataType.FLOAT)
     @Schema(description ="billable hours of employee")
-    private float billableHours;
+    private Float billableHours;
 
+    @NotNull
     @Column(name="ptohours")
     @TypeDef(type = DataType.FLOAT)
     @Schema(description ="PTO hours of employee")
-    private float ptoHours;
+    private Float ptoHours;
 
     @Column(name="updateddate")
     @NotNull
@@ -55,29 +57,28 @@ public class EmployeeHours {
     @Column(name="targethours")
     @NotNull
     @Schema(description = "Target hours for an employee", required = true)
-    private float targetHours;
+    private Float targetHours;
 
     @Column(name="asofdate")
     @Schema(description = "as of Date")
     private LocalDate asOfDate;
 
-
-
-    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate,float targetHours, LocalDate asOfDate) {
+    public EmployeeHours(UUID id, String employeeId, Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate) {
         this.id = id;
         this.employeeId = employeeId;
         this.contributionHours = contributionHours;
         this.billableHours = billableHours;
         this.ptoHours = ptoHours;
-        this.updatedDate=updatedDate;
-        this.targetHours= targetHours;
-        this.asOfDate= asOfDate;
+        this.updatedDate = updatedDate;
+        this.targetHours = targetHours;
+        this.asOfDate = asOfDate;
     }
 
-    public EmployeeHours(@NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate, float targetHours, LocalDate asOfDate) {
-        this(null,employeeId,contributionHours,billableHours,ptoHours,updatedDate,targetHours,asOfDate);
+    public EmployeeHours(@NotNull String employeeId, @NotNull Float contributionHours, @NotNull Float billableHours, @NotNull Float ptoHours, LocalDate updatedDate, @NotNull Float targetHours, LocalDate asOfDate) {
+        this(null, employeeId, contributionHours, billableHours, ptoHours, updatedDate, targetHours, asOfDate);
     }
 
+    public EmployeeHours() {}
 
     public UUID getId() {
         return id;
@@ -95,27 +96,27 @@ public class EmployeeHours {
         this.employeeId = employeeId;
     }
 
-    public float getContributionHours() {
+    public Float getContributionHours() {
         return contributionHours;
     }
 
-    public void setContributionHours(float contributionHours) {
+    public void setContributionHours(Float contributionHours) {
         this.contributionHours = contributionHours;
     }
 
-    public float getBillableHours() {
+    public Float getBillableHours() {
         return billableHours;
     }
 
-    public void setBillableHours(float billableHours) {
+    public void setBillableHours(Float billableHours) {
         this.billableHours = billableHours;
     }
 
-    public float getPtoHours() {
+    public Float getPtoHours() {
         return ptoHours;
     }
 
-    public void setPtoHours(float ptoHours) {
+    public void setPtoHours(Float ptoHours) {
         this.ptoHours = ptoHours;
     }
 
