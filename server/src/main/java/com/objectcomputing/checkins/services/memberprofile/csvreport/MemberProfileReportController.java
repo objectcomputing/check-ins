@@ -45,7 +45,6 @@ public class MemberProfileReportController {
     @Post(produces = MediaType.TEXT_CSV)
     @RequiredPermission(Permissions.CAN_VIEW_PROFILE_REPORT)
     public Mono<MutableHttpResponse<File>> getCsvFile(@Nullable @Body MemberProfileReportQueryDTO dto) {
-        System.out.println(dto);
         return Mono.defer(() -> Mono.just(memberProfileReportServices.generateFile(dto)))
                 .subscribeOn(ioScheduler)
                 .map(file -> HttpResponse

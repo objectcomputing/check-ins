@@ -33,41 +33,6 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
     }
 
     @Test
-    public void testGETReportSucceeds() {
-        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        assignAdminRole(memberProfileOfAdmin);
-
-        createADefaultMemberProfile();
-
-        final HttpRequest<Object> request = HttpRequest.
-            GET("/csv").basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
-        HttpResponse<File> response = client.toBlocking().exchange(request, File.class);
-
-        assertNotNull(response);
-        assertEquals(200, response.getStatus().getCode());
-
-        File responseBody = response.getBody().orElse(null);
-        assertNotNull(responseBody);
-    }
-
-    @Test
-    public void testGETReportNoPermissions() {
-        MemberProfile memberProfileOfPdl = createAnUnrelatedUser();
-        assignPdlRole(memberProfileOfPdl);
-
-        createADefaultMemberProfile();
-
-        final HttpRequest<Object> request = HttpRequest.
-            GET("/csv").basicAuth(memberProfileOfPdl.getWorkEmail(), PDL_ROLE);
-
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, File.class));
-
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
-    }
-
-    @Test
     public void testGetReportWithAllMemberProfiles() {
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
