@@ -272,9 +272,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
 
 .emotion-7 {
   float: unset;
+  width: auto;
   overflow: hidden;
   display: block;
-  width: auto;
   padding: 0;
   height: 11px;
   font-size: 0.75em;
@@ -404,23 +404,23 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
       className="MuiFormControl-root MuiTextField-root feedback-template-search emotion-0"
     >
       <label
-        className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-1"
+        className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-1"
         data-shrink={false}
-        htmlFor="mui-2"
-        id="mui-2-label"
+        htmlFor=":r1:"
+        id=":r1:-label"
       >
         Search Templates...
       </label>
       <div
-        className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedEnd emotion-2"
+        className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedEnd emotion-2"
         onClick={[Function]}
       >
         <input
           aria-invalid={false}
           autoFocus={false}
-          className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedEnd emotion-3"
+          className="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd emotion-3"
           disabled={false}
-          id="mui-2"
+          id=":r1:"
           onAnimationStart={[Function]}
           onBlur={[Function]}
           onChange={[Function]}
@@ -446,7 +446,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
             viewBox="0 0 24 24"
           >
             <path
-              d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+              d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"
             />
           </svg>
         </div>
@@ -468,7 +468,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
       className="ad-hoc-button"
     >
       <button
-        className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root  emotion-8"
+        className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary emotion-8"
         disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
@@ -514,7 +514,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
         viewBox="0 0 24 24"
       >
         <path
-          d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"
+          d="M11 18h2v-2h-2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4"
         />
       </svg>
     </div>

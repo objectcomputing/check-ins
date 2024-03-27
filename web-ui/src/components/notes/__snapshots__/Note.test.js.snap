@@ -101,8 +101,8 @@ exports[`renders correctly 1`] = `
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-7:empty:before {
@@ -126,7 +126,7 @@ exports[`renders correctly 1`] = `
         viewBox="0 0 24 24"
       >
         <path
-          d="M3 18h12v-2H3v2zM3 6v2h18V6H3zm0 7h18v-2H3v2z"
+          d="M3 18h12v-2H3zM3 6v2h18V6zm0 7h18v-2H3z"
         />
       </svg>
     </div>

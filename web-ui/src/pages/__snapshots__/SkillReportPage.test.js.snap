@@ -63,7 +63,7 @@ exports[`renders correctly 1`] = `
 }
 
 .emotion-0 .MuiOutlinedInput-root .MuiAutocomplete-input {
-  padding: 7.5px 4px 7.5px 6px;
+  padding: 7.5px 4px 7.5px 5px;
 }
 
 .emotion-0 .MuiOutlinedInput-root .MuiAutocomplete-endAdornment {
@@ -71,11 +71,13 @@ exports[`renders correctly 1`] = `
 }
 
 .emotion-0 .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
-  padding: 6px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 6px;
 }
 
 .emotion-0 .MuiOutlinedInput-root.MuiInputBase-sizeSmall .MuiAutocomplete-input {
-  padding: 2.5px 4px 2.5px 6px;
+  padding: 2.5px 4px 2.5px 8px;
 }
 
 .emotion-0 .MuiFilledInput-root {
@@ -112,12 +114,31 @@ exports[`renders correctly 1`] = `
   padding-top: 8px;
 }
 
+.emotion-0 .MuiFilledInput-root.MuiInputBase-hiddenLabel {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.emotion-0 .MuiFilledInput-root.MuiInputBase-hiddenLabel .MuiAutocomplete-input {
+  padding-top: 16px;
+  padding-bottom: 17px;
+}
+
+.emotion-0 .MuiFilledInput-root.MuiInputBase-hiddenLabel.MuiInputBase-sizeSmall .MuiAutocomplete-input {
+  padding-top: 8px;
+  padding-bottom: 9px;
+}
+
 .emotion-0 .MuiAutocomplete-input {
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
   text-overflow: ellipsis;
+  opacity: 0;
+}
+
+.emotion-0 .MuiAutocomplete-input {
   opacity: 1;
 }
 
@@ -343,7 +364,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
 .emotion-5 {
   position: absolute;
   right: 0;
-  top: calc(50% - 14px);
+  top: 50%;
+  -webkit-transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  transform: translate(0, -50%);
 }
 
 .emotion-6 {
@@ -462,9 +487,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
 
 .emotion-9 {
   float: unset;
+  width: auto;
   overflow: hidden;
   display: block;
-  width: auto;
   padding: 0;
   height: 11px;
   font-size: 0.75em;
@@ -591,7 +616,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
         className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root fullWidth emotion-1"
       >
         <label
-          className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-2"
+          className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-2"
           data-shrink={false}
           htmlFor="skillSelect"
           id="skillSelect-label"
@@ -599,7 +624,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
           Skills *
         </label>
         <div
-          className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot emotion-3"
+          className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot emotion-3"
           onClick={[Function]}
         >
           <input
@@ -610,8 +635,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             autoCapitalize="none"
             autoComplete="off"
             autoFocus={false}
-            className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused emotion-4"
-            disabled={false}
+            className="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused emotion-4"
             id="skillSelect"
             onAnimationStart={[Function]}
             onBlur={[Function]}
@@ -682,7 +706,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
       className="SkillsSearch-actions fullWidth"
     >
       <button
-        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-10"
+        className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary emotion-10"
         disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
