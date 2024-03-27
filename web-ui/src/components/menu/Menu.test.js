@@ -2,8 +2,6 @@ import React from "react";
 import Menu from "./Menu";
 import { MemoryRouter } from "react-router-dom";
 import { AppContextProvider } from "../../context/AppContext";
-import { createSerializer } from "enzyme-to-json";
-import { mount } from "enzyme";
 
 const initialState = {
   state: {
@@ -57,38 +55,33 @@ const pdlState = {
 };
 
 describe('<Menu />', () => {
-  expect.addSnapshotSerializer(createSerializer({mode: 'deep'}));
-
   it('renders correctly', () => {
-    const component = mount(
+    snapshot(
       <AppContextProvider value={initialState}>
         <MemoryRouter initialEntries={['/guilds']} keyLength={0}>
           <Menu />
         </MemoryRouter>
       </AppContextProvider>
     );
-    expect(component).toMatchSnapshot();
   });
 
   it('renders correctly for admin', () => {
-    const component = mount(
+    snapshot(
       <AppContextProvider value={adminState}>
         <MemoryRouter initialEntries={['/guilds']} keyLength={0}>
           <Menu />
         </MemoryRouter>
       </AppContextProvider>
     );
-    expect(component).toMatchSnapshot();
   });
 
   it('renders correctly for pdl', () => {
-    const component = mount(
+    snapshot(
       <AppContextProvider value={pdlState}>
         <MemoryRouter initialEntries={['/guilds']} keyLength={0}>
           <Menu />
         </MemoryRouter>
       </AppContextProvider>
     );
-    expect(component).toMatchSnapshot();
   });
 });

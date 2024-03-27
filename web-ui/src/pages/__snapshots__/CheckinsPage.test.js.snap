@@ -425,6 +425,21 @@ exports[`renders correctly 1`] = `
   vertical-align: top;
 }
 
+.emotion-13 .clearButton {
+  opacity: 1;
+}
+
+@media (pointer: fine) {
+  .emotion-13 .clearButton {
+    opacity: 0;
+  }
+
+  .emotion-13:hover .clearButton,
+  .emotion-13:focus-within .clearButton {
+    opacity: 1;
+  }
+}
+
 .emotion-14 {
   color: rgba(0, 0, 0, 0.6);
   font-family: "Roboto","Helvetica","Arial",sans-serif;
@@ -439,18 +454,22 @@ exports[`renders correctly 1`] = `
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: calc(100% - 24px);
+  max-width: calc(133% - 32px);
   position: absolute;
   left: 0;
   top: 0;
-  -webkit-transform: translate(14px, 16px) scale(1);
-  -moz-transform: translate(14px, 16px) scale(1);
-  -ms-transform: translate(14px, 16px) scale(1);
-  transform: translate(14px, 16px) scale(1);
+  -webkit-transform: translate(14px, -9px) scale(0.75);
+  -moz-transform: translate(14px, -9px) scale(0.75);
+  -ms-transform: translate(14px, -9px) scale(0.75);
+  transform: translate(14px, -9px) scale(0.75);
   -webkit-transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,-webkit-transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
   z-index: 1;
-  pointer-events: none;
+  pointer-events: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .emotion-14.Mui-focused {
@@ -485,6 +504,7 @@ exports[`renders correctly 1`] = `
   align-items: center;
   position: relative;
   border-radius: 4px;
+  padding-right: 14px;
 }
 
 .emotion-15.Mui-disabled {
@@ -534,6 +554,7 @@ exports[`renders correctly 1`] = `
   -webkit-animation-duration: 10ms;
   animation-duration: 10ms;
   padding: 16.5px 14px;
+  padding-right: 0;
 }
 
 .emotion-16::-webkit-input-placeholder {
@@ -644,16 +665,16 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
 
 .emotion-18 {
   float: unset;
+  width: auto;
   overflow: hidden;
   display: block;
-  width: auto;
   padding: 0;
   height: 11px;
   font-size: 0.75em;
   visibility: hidden;
-  max-width: 0.01px;
-  -webkit-transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-  transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  max-width: 100%;
+  -webkit-transition: max-width 100ms cubic-bezier(0.0, 0, 0.2, 1) 50ms;
+  transition: max-width 100ms cubic-bezier(0.0, 0, 0.2, 1) 50ms;
   white-space: nowrap;
 }
 
@@ -1114,12 +1135,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
               Location: 
               <br />
               Supervisor: 
-              
               <br />
               Current PDL: 
-              
               <br />
-              
             </p>
           </div>
         </div>
@@ -1163,47 +1181,46 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
               viewBox="0 0 24 24"
             >
               <path
-                d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"
               />
             </svg>
           </button>
           <div
             className="MuiFormControl-root MuiTextField-root emotion-13"
-            style={
-              Object {
-                "width": "18em",
-              }
-            }
+            onClick={[Function]}
           >
             <label
-              className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-14"
-              data-shrink={false}
-              htmlFor="mui-1"
-              id="mui-1-label"
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-14"
+              data-shrink={true}
+              htmlFor=":r1:"
+              id=":r1:-label"
             >
               Check-In Date
             </label>
             <div
-              className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl emotion-15"
+              className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedEnd Mui-readOnly MuiInputBase-readOnly emotion-15"
               onClick={[Function]}
             >
               <input
                 aria-invalid={false}
                 aria-label="Choose date, selected date is Oct 21, 2020"
-                aria-readonly={true}
+                autoComplete="off"
                 autoFocus={false}
-                className="MuiOutlinedInput-input MuiInputBase-input emotion-16"
-                id="mui-1"
+                className="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd Mui-readOnly MuiInputBase-readOnly emotion-16"
+                disabled={false}
+                id=":r1:"
+                inputMode="text"
                 onAnimationStart={[Function]}
                 onBlur={[Function]}
                 onChange={[Function]}
-                onClick={[Function]}
                 onFocus={[Function]}
                 onKeyDown={[Function]}
+                onPaste={[Function]}
+                placeholder="MMMM DD, YYYY @hh:mm aaaa"
                 readOnly={true}
                 required={false}
                 type="text"
-                value="10/21/2020 12:00 am"
+                value="October 21, 2020 @12:00 amAM"
               />
               <fieldset
                 aria-hidden={true}
@@ -1274,7 +1291,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
           onTouchStart={[Function]}
         >
           <button
-            className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root Mui-disabled CheckinsPage-addButton emotion-22"
+            className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary CheckinsPage-addButton emotion-22"
             disabled={true}
             onBlur={[Function]}
             onClick={[Function]}
@@ -1293,7 +1310,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
             type="button"
           >
             <span
-              className="MuiButton-startIcon MuiButton-iconSizeMedium emotion-23"
+              className="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium emotion-23"
             >
               <svg
                 aria-hidden={true}
@@ -1303,7 +1320,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
                 viewBox="0 0 24 24"
               >
                 <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"
                 />
               </svg>
             </span>
@@ -1335,7 +1352,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
                 viewBox="0 0 24 24"
               >
                 <path
-                  d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"
+                  d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5zm4-3H19v1h1.5V11H19v2h-1.5V7h3zM9 9.5h1v-1H9zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm10 5.5h1v-3h-1z"
                 />
               </svg>
             </div>

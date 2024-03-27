@@ -146,7 +146,7 @@ exports[`renders correctly when 'kudosFrom' prop is not provided 1`] = `
 }
 
 <div
-  className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 Kudos-display MuiCard-root emotion-0"
+  className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root Kudos-display emotion-0"
 >
   <div
     className="MuiBox-root emotion-1"
@@ -363,7 +363,7 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
 }
 
 <div
-  className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 Kudos-display MuiCard-root emotion-0"
+  className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root Kudos-display emotion-0"
 >
   <div
     className="MuiBox-root emotion-1"

@@ -539,6 +539,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-13:focus::-ms-input-
 
 .emotion-15 {
   float: unset;
+  width: auto;
   overflow: hidden;
   padding: 0;
   line-height: 11px;
@@ -881,9 +882,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
 
 .emotion-25 {
   float: unset;
+  width: auto;
   overflow: hidden;
   display: block;
-  width: auto;
   padding: 0;
   height: 11px;
   font-size: 0.75em;
@@ -1045,8 +1046,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
   border-radius: 50%;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-42 {
@@ -1129,8 +1130,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-43:empty:before {
@@ -1174,8 +1175,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
   margin: 0px;
 }
 
@@ -1187,8 +1188,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
   display: block;
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
   margin: 0px;
 }
 
@@ -1210,7 +1211,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
         className="MuiSwitch-root MuiSwitch-sizeMedium emotion-3"
       >
         <span
-          className="MuiSwitch-switchBase MuiSwitch-colorPrimary MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root emotion-4"
+          className="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary emotion-4"
           onBlur={[Function]}
           onContextMenu={[Function]}
           onDragLeave={[Function]}
@@ -1227,8 +1228,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
         >
           <input
             checked={false}
-            className="MuiSwitch-input PrivateSwitchBase-input emotion-5"
+            className="PrivateSwitchBase-input MuiSwitch-input emotion-5"
             onChange={[Function]}
+            required={false}
             type="checkbox"
           />
           <span
@@ -1252,7 +1254,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
         className="MuiFormControl-root MuiTextField-root ViewFeedbackPage-searchField emotion-9"
       >
         <div
-          className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedStart emotion-10"
+          className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedStart emotion-10"
           onClick={[Function]}
         >
           <div
@@ -1276,15 +1278,17 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
               viewBox="0 0 24 24"
             >
               <path
-                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"
               />
             </svg>
           </div>
           <input
+            aria-describedby=":r0:-helper-text"
             aria-invalid={false}
             autoFocus={false}
-            className="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedStart emotion-13"
+            className="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedStart emotion-13"
             disabled={false}
+            id=":r0:"
             onAnimationStart={[Function]}
             onBlur={[Function]}
             onChange={[Function]}
@@ -1310,6 +1314,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
         </div>
         <p
           className="MuiFormHelperText-root MuiFormHelperText-sizeMedium MuiFormHelperText-contained emotion-16"
+          id=":r0:-helper-text"
         >
           <span
             className="notranslate"
@@ -1326,7 +1331,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
           className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root emotion-18"
         >
           <label
-            className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-19"
+            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined emotion-19"
             data-shrink={false}
             htmlFor="select-time"
             id="select-time-label"
@@ -1334,27 +1339,28 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
             Show requests sent within
           </label>
           <div
-            className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall emotion-20"
+            className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall emotion-20"
             onClick={[Function]}
-            variant="outlined"
           >
             <div
+              aria-controls=":r2:"
               aria-expanded="false"
               aria-haspopup="listbox"
               aria-labelledby="select-time-label select-time"
-              className="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputSizeSmall emotion-21"
+              className="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall emotion-21"
               id="select-time"
               onBlur={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
               onMouseDown={[Function]}
-              role="button"
+              role="combobox"
               tabIndex={0}
             >
               Past 3 months
             </div>
             <input
               aria-hidden={true}
+              aria-invalid={false}
               autoFocus={false}
               className="MuiSelect-nativeInput emotion-22"
               disabled={false}
@@ -1398,7 +1404,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
           className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root emotion-18"
         >
           <label
-            className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-19"
+            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined emotion-19"
             data-shrink={false}
             htmlFor="select-sort-method"
             id="select-sort-method-label"
@@ -1406,27 +1412,28 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-21:focus::-ms-input-
             Sort by
           </label>
           <div
-            className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall emotion-20"
+            className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall emotion-20"
             onClick={[Function]}
-            variant="outlined"
           >
             <div
+              aria-controls=":r4:"
               aria-expanded="false"
               aria-haspopup="listbox"
               aria-labelledby="select-sort-method-label select-sort-method"
-              className="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputSizeSmall emotion-21"
+              className="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall emotion-21"
               id="select-sort-method"
               onBlur={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
               onMouseDown={[Function]}
-              role="button"
+              role="combobox"
               tabIndex={0}
             >
               Date request was sent
             </div>
             <input
               aria-hidden={true}
+              aria-invalid={false}
               autoFocus={false}
               className="MuiSelect-nativeInput emotion-22"
               disabled={false}

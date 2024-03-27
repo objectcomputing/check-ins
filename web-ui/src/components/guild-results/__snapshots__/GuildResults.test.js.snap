@@ -240,9 +240,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
 
 .emotion-6 {
   float: unset;
+  width: auto;
   overflow: hidden;
   display: block;
-  width: auto;
   padding: 0;
   height: 11px;
   font-size: 0.75em;
@@ -472,7 +472,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   padding: 8px;
 }
 
-.emotion-17>:not(:first-of-type) {
+.emotion-17>:not(style)~:not(style) {
   margin-left: 8px;
 }
 
@@ -490,24 +490,27 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   box-shadow: none;
 }
 
-.emotion-18 .MuiButtonGroup-grouped:not(:first-of-type) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+.emotion-18 .MuiButtonGroup-grouped:hover {
+  box-shadow: none;
 }
 
-.emotion-18 .MuiButtonGroup-grouped:not(:last-of-type) {
+.emotion-18 .MuiButtonGroup-firstButton,
+.emotion-18 .MuiButtonGroup-middleButton {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right: 1px solid #bdbdbd;
   border-color: #1565c0;
 }
 
-.emotion-18 .MuiButtonGroup-grouped:not(:last-of-type).Mui-disabled {
+.emotion-18 .MuiButtonGroup-firstButton.Mui-disabled,
+.emotion-18 .MuiButtonGroup-middleButton.Mui-disabled {
   border-right: 1px solid rgba(0, 0, 0, 0.26);
 }
 
-.emotion-18 .MuiButtonGroup-grouped:hover {
-  box-shadow: none;
+.emotion-18 .MuiButtonGroup-lastButton,
+.emotion-18 .MuiButtonGroup-middleButton {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .emotion-19 {
@@ -704,23 +707,23 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
       className="MuiFormControl-root MuiTextField-root GuildResults-searchInput emotion-1"
     >
       <label
-        className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-2"
+        className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-2"
         data-shrink={false}
-        htmlFor="mui-1"
-        id="mui-1-label"
+        htmlFor=":r0:"
+        id=":r0:-label"
       >
         Search guilds...
       </label>
       <div
-        className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl emotion-3"
+        className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl emotion-3"
         onClick={[Function]}
       >
         <input
           aria-invalid={false}
           autoFocus={false}
-          className="MuiOutlinedInput-input MuiInputBase-input emotion-4"
+          className="MuiInputBase-input MuiOutlinedInput-input emotion-4"
           disabled={false}
-          id="mui-1"
+          id=":r0:"
           onAnimationStart={[Function]}
           onBlur={[Function]}
           onChange={[Function]}
@@ -748,7 +751,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
       className="guild-actions"
     >
       <button
-        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-7"
+        className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary emotion-7"
         disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
@@ -767,7 +770,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
         type="button"
       >
         <span
-          className="MuiButton-startIcon MuiButton-iconSizeMedium emotion-8"
+          className="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium emotion-8"
         >
           <svg
             aria-hidden={true}
@@ -777,7 +780,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             viewBox="0 0 24 24"
           >
             <path
-              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3m-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3m0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5m8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5"
             />
           </svg>
         </span>
@@ -798,15 +801,15 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
         className="MuiCardHeader-root emotion-12"
       >
         <div
-          className="GuildSummaryCard-header MuiCardHeader-content emotion-13"
+          className="MuiCardHeader-content GuildSummaryCard-header emotion-13"
         >
           <span
-            className="MuiTypography-root MuiTypography-h5 GuildSummaryCard-title MuiCardHeader-title emotion-14"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title GuildSummaryCard-title emotion-14"
           >
             string
           </span>
           <span
-            className="MuiTypography-root MuiTypography-body1 GuildSummaryCard-title MuiCardHeader-subheader emotion-15"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader GuildSummaryCard-title emotion-15"
           >
             <div
               aria-label="string"
@@ -847,7 +850,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             role="group"
           >
             <button
-              className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-19"
+              className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-firstButton emotion-19"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
@@ -873,7 +876,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             <button
               aria-haspopup="menu"
               aria-label="select merge strategy"
-              className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-21"
+              className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-lastButton emotion-21"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
@@ -917,15 +920,15 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
         className="MuiCardHeader-root emotion-12"
       >
         <div
-          className="GuildSummaryCard-header MuiCardHeader-content emotion-13"
+          className="MuiCardHeader-content GuildSummaryCard-header emotion-13"
         >
           <span
-            className="MuiTypography-root MuiTypography-h5 GuildSummaryCard-title MuiCardHeader-title emotion-14"
+            className="MuiTypography-root MuiTypography-h5 MuiCardHeader-title GuildSummaryCard-title emotion-14"
           >
             stuff
           </span>
           <span
-            className="MuiTypography-root MuiTypography-body1 GuildSummaryCard-title MuiCardHeader-subheader emotion-15"
+            className="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader GuildSummaryCard-title emotion-15"
           >
             <div
               aria-label=""
@@ -937,9 +940,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
               onMouseOver={[Function]}
               onTouchEnd={[Function]}
               onTouchStart={[Function]}
-            >
-              
-            </div>
+            />
           </span>
         </div>
       </div>
@@ -966,7 +967,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             role="group"
           >
             <button
-              className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-19"
+              className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-firstButton emotion-19"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
@@ -992,7 +993,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             <button
               aria-haspopup="menu"
               aria-label="select merge strategy"
-              className="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButtonBase-root MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary emotion-21"
+              className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-lastButton emotion-21"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
@@ -1287,9 +1288,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
 
 .emotion-6 {
   float: unset;
+  width: auto;
   overflow: hidden;
   display: block;
-  width: auto;
   padding: 0;
   height: 11px;
   font-size: 0.75em;
@@ -1468,8 +1469,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-14:empty:before {
@@ -1508,20 +1509,23 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
       className="MuiFormControl-root MuiTextField-root GuildResults-searchInput emotion-1"
     >
       <label
-        className="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary emotion-2"
+        className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-2"
         data-shrink={false}
+        htmlFor=":r5:"
+        id=":r5:-label"
       >
         Search guilds...
       </label>
       <div
-        className="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-formControl emotion-3"
+        className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl emotion-3"
         onClick={[Function]}
       >
         <input
           aria-invalid={false}
           autoFocus={false}
-          className="MuiOutlinedInput-input MuiInputBase-input emotion-4"
+          className="MuiInputBase-input MuiOutlinedInput-input emotion-4"
           disabled={false}
+          id=":r5:"
           onAnimationStart={[Function]}
           onBlur={[Function]}
           onChange={[Function]}
@@ -1549,7 +1553,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
       className="guild-actions"
     >
       <button
-        className="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  emotion-7"
+        className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary emotion-7"
         disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
@@ -1568,7 +1572,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
         type="button"
       >
         <span
-          className="MuiButton-startIcon MuiButton-iconSizeMedium emotion-8"
+          className="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium emotion-8"
         >
           <svg
             aria-hidden={true}
@@ -1578,7 +1582,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             viewBox="0 0 24 24"
           >
             <path
-              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3m-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3m0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5m8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5"
             />
           </svg>
         </span>
