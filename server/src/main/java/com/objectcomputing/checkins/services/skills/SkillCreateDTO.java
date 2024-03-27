@@ -12,15 +12,16 @@ public class SkillCreateDTO {
     @Schema(required = true, description = "name of the skill")
     private String name;
 
+    @NotNull
     @Schema(required = true, description = "whether the skill is accepted or not")
-    private boolean pending;
+    private Boolean pending;
 
     @Schema(description = "the description of the skill")
     private String description;
 
     @NotNull
     @Schema(description = "the skill is extraneous (or not)", required = true)
-    private boolean extraneous = false;
+    private Boolean extraneous = false;
 
     public String getName() {
         return name;
