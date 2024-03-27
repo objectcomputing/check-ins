@@ -88,7 +88,7 @@ public class Skill {
         this.name = name;
     }
 
-    public Boolean getPending() {
+    public Boolean isPending() {
         return pending;
     }
 
@@ -104,8 +104,7 @@ public class Skill {
         this.description = description;
     }
 
-    @SuppressWarnings("unused")
-    public Boolean getExtraneous() {
+    public Boolean isExtraneous() {
         return extraneous;
     }
 

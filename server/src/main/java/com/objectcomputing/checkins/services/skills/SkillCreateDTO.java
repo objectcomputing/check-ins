@@ -31,11 +31,11 @@ public class SkillCreateDTO {
         this.name = name;
     }
 
-    public boolean isPending() {
+    public Boolean isPending() {
         return pending;
     }
 
-    public void setPending(boolean pending) {
+    public void setPending(Boolean pending) {
         this.pending = pending;
     }
 
@@ -47,11 +47,11 @@ public class SkillCreateDTO {
         this.description = description;
     }
 
-    public boolean isExtraneous() {
+    public Boolean isExtraneous() {
         return extraneous;
     }
 
-    public void setExtraneous(boolean extraneous) {
+    public void setExtraneous(Boolean extraneous) {
         this.extraneous = extraneous;
     }
 }
