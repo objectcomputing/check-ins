@@ -1,7 +1,7 @@
 import { resolve } from "./api.js";
 
 const memberProfileUrl = "/services/member-profiles";
-const csvReportUrl = "/services/reports/member/csv";
+const memberProfileReportUrl = "/services/reports/member";
 
 
 export const getAllMembers = async (cookie) => {
@@ -98,9 +98,23 @@ export const deleteMember = async (id, cookie) => {
   });
 };
 
-export const reportMemberCsv = async (cookie) => {
+export const reportAllMembersCsv = async (cookie) => {
   return resolve({
-    url: csvReportUrl,
+    url: memberProfileReportUrl,
+    method: "post",
+    data: {},
+    responseType: 'blob',
+    headers: { "X-CSRF-Header": cookie, 'Accept': 'text/csv' },
+  });
+};
+
+export const reportSelectedMembersCsv = async (memberIds, cookie) => {
+  return resolve({
+    url: memberProfileReportUrl,
+    method: "post",
+    data: {
+      memberIds: memberIds
+    },
     responseType: 'blob',
     headers: { "X-CSRF-Header": cookie, 'Accept': 'text/csv' },
   });

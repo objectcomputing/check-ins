@@ -16,6 +16,7 @@ import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepo
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.csvreport.MemberProfileReportRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
@@ -187,5 +188,9 @@ public interface RepositoryFixture {
 
     default SkillCategorySkillRepository getSkillCategorySkillRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(SkillCategorySkillRepository.class);
+    }
+
+    default MemberProfileReportRepository getMemberProfileReportRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(MemberProfileReportRepository.class);
     }
 }

@@ -118,7 +118,7 @@ VALUES
 INSERT INTO member_profile -- Revolver Ocelot
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
-('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Shalashaska','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
+('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Head of Sales, HR, Management','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
 
 INSERT INTO member_profile -- Huey Emmerich
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
