@@ -20,6 +20,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Group, GroupAdd } from "@mui/icons-material";
 
 import "./TeamSkillReportPage.css";
+import MemberSelector from "../components/member_selector/MemberSelector";
 
 const TeamSkillReportPage = () => {
   const { state } = useContext(AppContext);
@@ -163,6 +164,7 @@ const TeamSkillReportPage = () => {
 
   return (
     <div className="team-skill-report-page">
+      <MemberSelector/>
       <div className="filter-section">
         <div className="button-parent">
           <div className="button">
