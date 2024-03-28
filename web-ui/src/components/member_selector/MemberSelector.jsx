@@ -92,6 +92,13 @@ const MemberSelector = (onChange) => {
     setDialogOpen(false);
   }, [checked, members, selectedMembers]);
 
+  const removeMember = useCallback((member) => {
+    const selected = [...selectedMembers]
+    const indexToRemove = selected.findIndex(selectedMember => selectedMember.id === member.id);
+    selected.splice(indexToRemove, 1);
+    setSelectedMembers(selected);
+  }, [selectedMembers]);
+
   return (
     <>
       <Card className="member-selector-card">
@@ -115,7 +122,7 @@ const MemberSelector = (onChange) => {
                 role="listitem"
                 secondaryAction={
                   <Tooltip title="Deselect member" arrow>
-                    <IconButton><RemoveIcon/></IconButton>
+                    <IconButton onClick={() => removeMember(member)}><RemoveIcon/></IconButton>
                   </Tooltip>
                 }
               >
