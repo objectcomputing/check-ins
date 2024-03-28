@@ -3,6 +3,8 @@ package com.objectcomputing.checkins.services.checkins;
 import java.util.Set;
 import java.util.UUID;
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+
 public interface CheckInServices {
 
     CheckIn save(CheckIn checkIn);
@@ -13,7 +15,11 @@ public interface CheckInServices {
 
     Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed);
 
-    Boolean hasElevatedAccessPermission(UUID memberId);
+    Boolean hasPermission(UUID memberId, Permissions permission);
 
     Boolean accessGranted(UUID checkinId, UUID memberId);
+
+    Boolean canViewAllCheckins(UUID memberId);
+
+    Boolean canUpdateAllCheckins(UUID memberId);
 }

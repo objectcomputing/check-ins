@@ -47,14 +47,14 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
-    public Boolean hasElevatedAccessPermission(@NotNull UUID memberId) {
-        boolean hasElevatedAccess = false;
+    public Boolean hasPermission(@NotNull UUID memberId, @NotNull Permissions permission) {
+        boolean hasPermission = false;
         List<Permission> userPermissions = permissionServices.findUserPermissions(memberId);
         if (userPermissions.size() > 0) {
-            hasElevatedAccess = userPermissions.stream().map(Permission::getPermission).anyMatch(str -> str.equals(Permissions.ELEVATED_ACCESS.name()));
-            LOG.debug("Member has elevated access permisson: {}", hasElevatedAccess);
+            hasPermission = userPermissions.stream().map(Permission::getPermission).anyMatch(str -> str.equals(permission.name()));
+            LOG.debug("Member has elevated access permisson: {}", hasPermission);
         }
-        return hasElevatedAccess;
+        return hasPermission;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> new NotFoundException(String.format("Checkin %s not found", checkinId)));
 
-        boolean hasElevatedAccess = hasElevatedAccessPermission(memberId);
+        boolean canViewAllCheckins = canViewAllCheckins(memberId);
         
         // TODO: the check for Admin as a role should be removed when permissions are fully implemented
         boolean isAdmin = false;
@@ -75,7 +75,7 @@ public class CheckInServicesImpl implements CheckInServices {
             LOG.debug("Member is Admin: {}", isAdmin);
         }
 
-        if(hasElevatedAccess || isAdmin){
+        if(canViewAllCheckins || isAdmin){
             grantAccess = true;
         } else {
             MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() ->
@@ -100,7 +100,7 @@ public class CheckInServicesImpl implements CheckInServices {
     public CheckIn save(@NotNull CheckIn checkIn) {
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean hasElevatedAccess = hasElevatedAccessPermission(currentUser.getId());
+        boolean canUpdateAllCheckins = canUpdateAllCheckins(currentUser.getId());
 
         final UUID memberId = checkIn.getTeamMemberId();
         final UUID pdlId = checkIn.getPdlId();
@@ -112,7 +112,7 @@ public class CheckInServicesImpl implements CheckInServices {
         validate(memberProfileOfTeamMember.isEmpty(), "Member %s doesn't exist", memberId);
         validate(!pdlId.equals(memberProfileOfTeamMember.get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
         validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
-        if (!hasElevatedAccess) {
+        if (!canUpdateAllCheckins) {
             validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
         }
 
@@ -122,12 +122,12 @@ public class CheckInServicesImpl implements CheckInServices {
     @Override
     public CheckIn read(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean hasElevatedAccess = hasElevatedAccessPermission(currentUser.getId());
+        boolean canViewAllCheckins = canViewAllCheckins(currentUser.getId());
 
         CheckIn result = checkinRepo.findById(id).orElse(null);
         validate((result == null), "Invalid checkin id %s", id);
 
-        if (!hasElevatedAccess) {
+        if (!canViewAllCheckins) {
             // Limit read to Subject of check-in, PDL of subject and user with elevated access
             validate(!accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
         }
@@ -145,7 +145,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         Optional<MemberProfile> memberProfileOfTeamMember = memberRepo.findById(memberId);
-        boolean hasElevatedAccess = hasElevatedAccessPermission(currentUser.getId());
+        boolean canUpdateAllCheckins = canUpdateAllCheckins(currentUser.getId());
 
         validate(id == null, "Unable to find checkin record with id %s", checkIn.getId());
         Optional<CheckIn> associatedCheckin = checkinRepo.findById(id);
@@ -154,7 +154,7 @@ public class CheckInServicesImpl implements CheckInServices {
         validate(associatedCheckin.isEmpty(), "Checkin %s doesn't exist", id);
         validate(!pdlId.equals(memberProfileOfTeamMember.get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
         validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
-        if (!hasElevatedAccess) {
+        if (!canUpdateAllCheckins) {
             // Limit update to subject of check-in, PDL of subject and user with elevated access
             validate(!accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
             // Update is only allowed if the check in is not completed unless made by user with elevated access
@@ -167,7 +167,7 @@ public class CheckInServicesImpl implements CheckInServices {
     @Override
     public Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean hasElevatedAccess = hasElevatedAccessPermission(currentUser.getId());
+        boolean canViewAllCheckins = canViewAllCheckins(currentUser.getId());
 
         Set<CheckIn> checkIn = new HashSet<>();
         checkinRepo.findAll().forEach(checkIn::add);
@@ -176,7 +176,7 @@ public class CheckInServicesImpl implements CheckInServices {
             Optional<MemberProfile> memberToSearch = memberRepo.findById(teamMemberId);
             if (memberToSearch.isPresent()) {
                 // Limit findByTeamMemberId to Subject of check-in, PDL of subject and user with elevated access
-                validate((!hasElevatedAccess && currentUser != null &&
+                validate((!canViewAllCheckins && currentUser != null &&
                                 !currentUser.getId().equals(teamMemberId) &&
                                 !currentUser.getId().equals(memberToSearch.get().getPdlId())),
                         "You are not authorized to perform this operation");
@@ -184,11 +184,11 @@ public class CheckInServicesImpl implements CheckInServices {
             } else checkIn.clear();
         } else if (pdlId != null) {
             // Limit findByPdlId to Subject of check-in, PDL of subject and user with elevated access
-            validate(!hasElevatedAccess && !currentUser.getId().equals(pdlId), "You are not authorized to perform this operation");
+            validate(!canViewAllCheckins && !currentUser.getId().equals(pdlId), "You are not authorized to perform this operation");
             checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
         } else if (completed != null) {
             checkIn.retainAll(checkinRepo.findByCompleted(completed));
-            if (!hasElevatedAccess) {
+            if (!canViewAllCheckins) {
                 // Limit findByCompleted to retrieve only the records pertinent to current user (if not user with elevated access)
                 checkIn = checkIn.stream()
                         .filter(c -> c.getTeamMemberId().equals(currentUser.getId()) || c.getPdlId().equals(currentUser.getId()))
@@ -196,7 +196,7 @@ public class CheckInServicesImpl implements CheckInServices {
             }
         } else {
             // Limit findAll to only user with elevated access
-            validate(!hasElevatedAccess, "You are not authorized to perform this operation");
+            validate(!canViewAllCheckins, "You are not authorized to perform this operation");
         }
 
         return checkIn;
@@ -206,5 +206,15 @@ public class CheckInServicesImpl implements CheckInServices {
         if (isError) {
             throw new BadArgException(String.format(message, args));
         }
+    }
+
+    @Override
+    public Boolean canViewAllCheckins(UUID memberId) {
+        return hasPermission(memberId, Permissions.CAN_VIEW_ALL_CHECKINS);
+    }
+
+    @Override
+    public Boolean canUpdateAllCheckins(UUID memberId) {
+        return hasPermission(memberId, Permissions.CAN_UPDATE_ALL_CHECKINS);
     }
 }

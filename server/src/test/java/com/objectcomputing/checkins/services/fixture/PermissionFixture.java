@@ -51,7 +51,16 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_UPDATE_CHECKINS,
         Permission.CAN_ASSIGN_ROLE_PERMISSIONS,
         Permission.CAN_VIEW_SKILL_CATEGORIES,
-        Permission.CAN_EDIT_SKILL_CATEGORIES
+        Permission.CAN_EDIT_SKILL_CATEGORIES,
+        Permission.CAN_VIEW_PRIVATE_NOTE,
+        Permission.CAN_CREATE_PRIVATE_NOTE,
+        Permission.CAN_UPDATE_PRIVATE_NOTE,
+        Permission.CAN_CREATE_CHECKIN_DOCUMENT,
+        Permission.CAN_VIEW_CHECKIN_DOCUMENT,
+        Permission.CAN_UPDATE_CHECKIN_DOCUMENT,
+        Permission.CAN_DELETE_CHECKIN_DOCUMENT,
+        Permission.CAN_VIEW_ALL_CHECKINS,
+        Permission.CAN_UPDATE_ALL_CHECKINS
     );
 
 
