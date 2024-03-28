@@ -18,8 +18,9 @@ public class AnniversaryReportResponseDTO {
     @Schema(description = "anniversary date this entry is associated with", required = true)
     private String anniversary;
 
+    @NotNull
     @Schema(description = "years of service this entry is associated with")
-    private double yearsOfService;
+    private Double yearsOfService;
 
     @NotNull
     @Schema(description = "id of the member profile this entry is associated with", required = true)
@@ -41,11 +42,11 @@ public class AnniversaryReportResponseDTO {
         this.anniversary = anniversary;
     }
 
-    public double getYearsOfService() {
+    public Double getYearsOfService() {
         return yearsOfService;
     }
 
-    public void setYearsOfService(double yearsOfService) {
+    public void setYearsOfService(Double yearsOfService) {
         this.yearsOfService = yearsOfService;
     }
 

@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
 
@@ -49,7 +48,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
             for(EmployeeHours hours: employeeHoursList) {
                 employeeHours.add(hours);
             }
-            responseDTO.setRecordCountInserted(employeeHours.size());
+            responseDTO.setRecordCountInserted((long) employeeHours.size());
             responseDTO.setEmployeehoursSet(employeeHours);
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);

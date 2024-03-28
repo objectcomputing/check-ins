@@ -33,9 +33,10 @@ public class ReviewPeriod {
     @Schema(description = "The name of the review period", required = true)
     private String name;
 
+    @NotNull
     @Column(name = "open")
     @Schema(description = "Whether or not the review period is open")
-    private boolean open = true;
+    private Boolean open = true;
 
     @Column(name = "review_template_id")
     @TypeDef(type = DataType.STRING)
@@ -56,12 +57,12 @@ public class ReviewPeriod {
         this(name, true, null, null);
     }
 
-    public ReviewPeriod(UUID id, String name, boolean open) {
+    public ReviewPeriod(UUID id, String name, Boolean open) {
         this(name, open, null, null);
         this.id = id;
     }
 
-    public ReviewPeriod(String name, boolean open, UUID reviewTemplateId, UUID selfReviewTemplateId) {
+    public ReviewPeriod(String name, Boolean open, @Nullable UUID reviewTemplateId, @Nullable UUID selfReviewTemplateId) {
         this.name = name;
         this.open = open;
         this.reviewTemplateId = reviewTemplateId;
@@ -84,17 +85,19 @@ public class ReviewPeriod {
         this.name = name;
     }
 
-    public boolean isOpen() { return open; }
+    public Boolean isOpen() { return open; }
 
-    public void setOpen(boolean open) { this.open = open; }
+    public void setOpen(Boolean open) { this.open = open; }
 
+    @Nullable
     public UUID getReviewTemplateId() { return reviewTemplateId; }
 
-    public void setReviewTemplateId(UUID reviewTemplateId) { this.reviewTemplateId = reviewTemplateId; }
+    public void setReviewTemplateId(@Nullable UUID reviewTemplateId) { this.reviewTemplateId = reviewTemplateId; }
 
+    @Nullable
     public UUID getSelfReviewTemplateId() { return selfReviewTemplateId; }
 
-    public void setSelfReviewTemplateId(UUID selfReviewTemplateId) { this.selfReviewTemplateId = selfReviewTemplateId; }
+    public void setSelfReviewTemplateId(@Nullable UUID selfReviewTemplateId) { this.selfReviewTemplateId = selfReviewTemplateId; }
 
     @Override
     public boolean equals(Object o) {

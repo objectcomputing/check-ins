@@ -135,3 +135,6 @@ mail-jet:
 ---
 github-credentials:
   github_token: ${ GITHUB_TOKEN }
+---
+jackson:
+  serialization-inclusion: ALWAYS

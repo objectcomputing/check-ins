@@ -13,8 +13,9 @@ public class ReviewPeriodCreateDTO {
     @Schema(required = true, description = "name of the review period")
     private String name;
 
+    @NotNull
     @Schema(required = true, description = "whether the review is open")
-    private boolean open;
+    private Boolean open;
 
     private UUID reviewTemplateId;
 
@@ -28,11 +29,11 @@ public class ReviewPeriodCreateDTO {
         this.name = name;
     }
 
-    public boolean isOpen() {
+    public Boolean isOpen() {
         return open;
     }
 
-    public void setOpen(boolean open) {
+    public void setOpen(Boolean open) {
         this.open = open;
     }
 
