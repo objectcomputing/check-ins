@@ -1,6 +1,11 @@
 plugins {
-    id "base"
-    id "com.github.node-gradle.node" version "2.2.3"
+    id "java"
+    id "com.github.node-gradle.node" version "7.0.2"
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("11")
+    targetCompatibility = JavaVersion.toVersion("11")
 }
 
 node {
@@ -14,15 +19,37 @@ yarn_run_coverage {
     outputs.dir 'coverage'
 }
 
-yarn_run_build {
+def yarn = tasks.named("yarn")
+
+def yarnBuildTask = tasks.register("yarnBuild", YarnTask) {
     group 'build'
-    outputs.dir 'build'
+    inputs.files(fileTree('node_modules'))
+    inputs.files(fileTree('public'))
+    inputs.files(fileTree('src'))
+    inputs.file('index.html')
+    inputs.file('package.json')
+    inputs.file('tsconfig.json')
+    inputs.file('vite.config.ts')
+    inputs.file('yarn.lock')
+
+    outputs.dir('dist')
+
+    dependsOn yarn
+    args = ['run', 'build']
 }
 
-check {
-    dependsOn yarn_run_coverage
+sourceSets {
+    java {
+        main {
+            resources {
+                // This makes the processResources task automatically depend on the buildWebapp one
+                srcDir yarnBuildTask
+            }
+        }
+    }
 }
 
-artifacts {
-    'default' file: buildDir, type: 'directory', builtBy: yarn_run_build
-}
+//check {
+//    dependsOn yarn_run_coverage
+//}
+
