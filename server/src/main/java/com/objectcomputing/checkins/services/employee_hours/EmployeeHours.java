@@ -63,7 +63,7 @@ public class EmployeeHours {
     @Schema(description = "as of Date")
     private LocalDate asOfDate;
 
-    public EmployeeHours(UUID id, String employeeId, Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate) {
+    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate) {
         this.id = id;
         this.employeeId = employeeId;
         this.contributionHours = contributionHours;
