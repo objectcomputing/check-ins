@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {
   AppBar,
@@ -44,9 +44,21 @@ const propTypes = {
 const MemberSelector = (onChange) => {
   const { state } = useContext(AppContext);
   const members = selectCurrentMembers(state);
-  const [selectedMembers, setSelectedMembers] = useState([members[0], members[1]]);
+  const [selectedMembers, setSelectedMembers] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Contains set of ids of checked members for instant add/remove operations
+  const [checked, setChecked] = useState(new Set());
+
   const [nameQuery, setNameQuery] = useState("");
+
+  // Reset dialog when it is closed
+  useEffect(() => {
+    if (!dialogOpen) {
+      setChecked(new Set());
+      setNameQuery("");
+    }
+  }, [dialogOpen]);
 
   const getSelectableMembers = useCallback(() => {
     // Only include members that are not already selected
@@ -63,11 +75,32 @@ const MemberSelector = (onChange) => {
     return selectableMembers;
   }, [members, selectedMembers, nameQuery]);
 
+  const handleCheckboxToggle = useCallback((member) => {
+    const newChecked = new Set(checked);
+    if (checked.has(member.id)) {
+      newChecked.delete(member.id);
+    } else {
+      newChecked.add(member.id);
+    }
+    setChecked(newChecked);
+  }, [checked]);
+
+  const addMembers = useCallback(() => {
+    const membersToAdd = members.filter(member => checked.has(member.id));
+    const selected = [...selectedMembers, ...membersToAdd];
+    setSelectedMembers(selected);
+    setDialogOpen(false);
+  }, [checked, members, selectedMembers]);
+
   return (
     <>
-      <Card>
+      <Card className="member-selector-card">
         <CardHeader
-          title="Selected Members"
+          title={
+            <Typography variant="h5">Selected Members
+              <Typography variant="h6" display="inline" color="textSecondary"> ({selectedMembers.length})</Typography>
+            </Typography>
+          }
           action={
             <Tooltip title="Add members" arrow>
               <IconButton onClick={() => setDialogOpen(true)}><AddIcon/></IconButton>
@@ -114,7 +147,7 @@ const MemberSelector = (onChange) => {
               <CloseIcon/>
             </IconButton>
             <Typography variant="h6" flexGrow={1}>Select Members</Typography>
-            <Button color="inherit">
+            <Button color="inherit" disabled={checked.size === 0} onClick={addMembers}>
               Add
             </Button>
           </Toolbar>
@@ -136,8 +169,9 @@ const MemberSelector = (onChange) => {
                 key={member.id}
                 role="listitem"
                 disablePadding
+                onClick={() => handleCheckboxToggle(member)}
                 secondaryAction={
-                  <Checkbox disableRipple/>
+                  <Checkbox checked={checked.has(member.id)} disableRipple/>
                 }
               >
                 <ListItemButton>

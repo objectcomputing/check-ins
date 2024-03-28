@@ -1,3 +1,8 @@
 .member-selector-dialog .member-selector-dialog-content {
     margin: 5rem 1rem 1rem 1rem;
 }
+
+/* Workaround for bleeding style applied to MuiCardHeader-action */
+.member-selector-card .MuiCardHeader-action {
+    padding: 0;
+}
