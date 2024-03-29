@@ -389,15 +389,17 @@ export const selectNormalizedMembers = createSelector(
   selectCurrentMembers,
   (state, searchText) => searchText,
   (currentMembers, searchText) =>
-    currentMembers?.filter((member) => {
-      let normName = member.name
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      let normSearchText = searchText
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      return normName.toLowerCase().includes(normSearchText.toLowerCase());
-    })
+    currentMembers
+      ?.filter((member) => {
+        let normName = member.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        let normSearchText = searchText
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        return normName.toLowerCase().includes(normSearchText.toLowerCase());
+      })
+      .sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectNormalizedMembersAdmin = createSelector(
