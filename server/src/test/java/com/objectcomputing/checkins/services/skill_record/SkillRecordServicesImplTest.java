@@ -4,10 +4,7 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -21,9 +18,10 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @MicronautTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SkillRecordServicesImplTest {
 
@@ -47,6 +45,7 @@ class SkillRecordServicesImplTest {
     }
 
     @Test
+    @Order(1)
     void testFileGeneration() throws IOException {
         SkillRecord record1 = new SkillRecord();
         record1.setName("Java");
@@ -56,7 +55,7 @@ class SkillRecordServicesImplTest {
         record1.setCategoryName("Languages, Libraries, and Frameworks");
 
         when(skillRecordRepository.findAll()).thenReturn(Collections.singletonList(record1));
-        File tmpFile = File.createTempFile("skills",".csv");
+        File tmpFile = File.createTempFile("foobar",".csv");
         tmpFile.deleteOnExit();
         when(skillRecordFileProvider.provideFile()).thenReturn(tmpFile);
         File file = skillRecordServices.generateFile();
@@ -83,6 +82,7 @@ class SkillRecordServicesImplTest {
     }
 
     @Test
+    @Order(2)
     void testNoFileGenerated() throws IOException {
         SkillRecord record1 = new SkillRecord();
         record1.setName("Java");

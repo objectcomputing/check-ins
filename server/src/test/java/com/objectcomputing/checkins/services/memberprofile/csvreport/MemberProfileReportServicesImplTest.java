@@ -101,7 +101,7 @@ class MemberProfileReportServicesImplTest {
                 .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString())), any()))
                 .thenReturn(List.of(expectedRecord));
 
-        when(memberProfileFileProvider.provideFile()).thenThrow(new IOException());
+        when(memberProfileFileProvider.provideFile()).thenThrow(new RuntimeException());
         // Generate a file with selected members
         MemberProfileReportQueryDTO dto = new MemberProfileReportQueryDTO();
         dto.setMemberIds(List.of(expectedRecord.getId()));
