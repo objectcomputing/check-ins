@@ -39,6 +39,10 @@ public class MemberRoleServicesImpl implements MemberRoleServices {
         return memberRoleRepository.findById(memberRoleId);
     }
 
+    public Optional<MemberRole> findByMemberId(UUID memberId) {
+        return memberRoleRepository.findByMemberId(memberId);
+    }
+
     public void removeAllByRoleId(UUID roleId){
         memberRoleRepository.deleteByRoleId(roleId);
     }

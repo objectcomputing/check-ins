@@ -16,7 +16,6 @@ import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepo
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
@@ -161,10 +160,6 @@ public interface RepositoryFixture {
 
     default MemberRoleRepository getMemberRoleRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(MemberRoleRepository.class);
-    }
-
-    default PermissionRepository getPermissionRepository() {
-        return getEmbeddedServer().getApplicationContext().getBean(PermissionRepository.class);
     }
 
     default RolePermissionRepository getRolePermissionRepository() {

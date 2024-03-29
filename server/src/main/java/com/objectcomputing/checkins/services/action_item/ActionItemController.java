@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -11,7 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 
 import java.net.URI;
@@ -36,7 +37,7 @@ public class ActionItemController {
      * @return {@link HttpResponse <ActionItem>}
      */
     @Post()
-    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS)
+    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
                                                      HttpRequest<ActionItemCreateDTO> request) {
         ActionItem newActionItem = actionItemServices.save(new ActionItem(actionItem.getCheckinid(),
@@ -54,7 +55,7 @@ public class ActionItemController {
      * @return {@link HttpResponse< ActionItem >}
      */
     @Put()
-    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<ActionItem> request) {
         ActionItem updatedActionItem = actionItemServices.update(actionItem);
         return HttpResponse
@@ -71,7 +72,7 @@ public class ActionItemController {
      * @param id, id of {@link ActionItem} to delete
      */
     @Delete("/{id}")
-    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<?> deleteActionItem(UUID id) {
         actionItemServices.delete(id);
         return HttpResponse
@@ -85,7 +86,7 @@ public class ActionItemController {
      * @return {@link ActionItem}
      */
     @Get("/{id}")
-    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public ActionItem readActionItem(UUID id) {
         return actionItemServices.read(id);
     }
@@ -98,7 +99,7 @@ public class ActionItemController {
      * @return {@link List < CheckIn > list of checkins}
      */
     @Get("/{?checkinid,createdbyid}")
-    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Set<ActionItem> findActionItems(@Nullable UUID checkinid,
                                            @Nullable UUID createdbyid) {
         return actionItemServices.findByFields(checkinid, createdbyid);
