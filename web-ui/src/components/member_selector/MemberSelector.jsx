@@ -16,7 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import {getAvatarURL} from "../../api/api";
 import {AppContext} from "../../context/AppContext";
-import {selectCurrentMembers, selectGuilds, selectTeams} from "../../context/selectors";
+import {selectCurrentMembers, selectGuilds, selectSkills, selectTeams} from "../../context/selectors";
 import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
 import CloseIcon from "@mui/icons-material/Close";
@@ -46,8 +46,6 @@ const propTypes = {
 const MemberSelector = (onChange) => {
   const { state } = useContext(AppContext);
   const members = selectCurrentMembers(state);
-  const teams = selectTeams(state);
-  const guilds = selectGuilds(state);
 
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -58,7 +56,7 @@ const MemberSelector = (onChange) => {
   const [nameQuery, setNameQuery] = useState("");
   const [filterType, setFilterType] = useState(FilterType.TEAM)
   const [filter, setFilter] = useState(null);
-  const [filterOptions, setFilterOptions] = useState([]);
+  const [filterOptions, setFilterOptions] = useState(null);
 
   // Reset dialog when it is closed
   useEffect(() => {
@@ -68,19 +66,61 @@ const MemberSelector = (onChange) => {
     }
   }, [dialogOpen]);
 
-  const getFilterOptions = useCallback(() => {
-    switch (filterType) {
-      case FilterType.TEAM:
-        return teams;
-      case FilterType.GUILD:
-        return guilds;
-      case FilterType.TITLE:
-
-        return;
-      case FilterType.LOCATION:
-        return;
+  // Change filter options when filter type is changed
+  useEffect(() => {
+    const getFilterOptions = () => {
+      switch (filterType) {
+        case FilterType.TEAM:
+          const teams = selectTeams(state);
+          return {
+            options: teams,
+            label: (team) => team.name,
+            equals: (team1, team2) => team1.id === team2.id
+          };
+        case FilterType.GUILD:
+          const guilds = selectGuilds(state);
+          return {
+            options: guilds,
+            label: (guild) => guild.name,
+            equals: (guild1, guild2) => guild1.id === guild2.id
+          };
+        case FilterType.TITLE:
+          // Create a list of unique titles from current members
+          let titles = members
+            .filter(member => !!member.title)
+            .map(member => member.title);
+          titles = [...new Set(titles)];
+          return {
+            options: titles,
+            label: (title) => title,
+            equals: (title1, title2) => title1 === title2
+          };
+        case FilterType.LOCATION:
+          let locations = members
+            .filter(member => !!member.location)
+            .map(member => member.location);
+          locations = [...new Set(locations)];
+          return {
+            options: locations,
+            label: (location) => location,
+            equals: (location1, location2) => location1 === location2
+          };
+        case FilterType.SKILLS:
+          let skills = selectSkills(state);
+          return {
+            options: skills,
+            label: (skill) => skill.name,
+            equals: (skill1, skill2) => skill1.id === skill2.id
+          };
+        default:
+          console.warn(`No filter implementation for FilterType ${filterType}`);
+          return null;
+      }
     }
-  }, [filterType, teams, guilds, ]);
+
+    setFilterOptions(getFilterOptions());
+
+  }, [filterType, members, state]);
 
   const getSelectableMembers = useCallback(() => {
     // TODO: Make it so this filter doesn't need to happen when changing queries
@@ -128,7 +168,7 @@ const MemberSelector = (onChange) => {
         <CardHeader
           title={
             <Typography variant="h5">Selected Members
-              <Typography variant="h6" display="inline" color="textSecondary"> ({selectedMembers.length})</Typography>
+              <span style={{ color: "gray", fontSize: "0.75em" }}> ({selectedMembers.length})</span>
             </Typography>
           }
           action={
@@ -203,17 +243,27 @@ const MemberSelector = (onChange) => {
                   placeholder="Search"
                 />
               )}
-              options={[]}
               disablePortal
+              disabled={!filterOptions}
+              options={filterOptions ? filterOptions.options : []}
+              getOptionLabel={filterOptions ? filterOptions.label : () => ""}
+              isOptionEqualToValue={filterOptions ? filterOptions.equals : () => false}
+              value={filter}
+              onChange={(_, value) => setFilter(value)}
             />
             <FormControl>
               <InputLabel id="member-filter-label">Filter by</InputLabel>
               <Select
                 labelId="member-filter-label"
                 label="Filter by"
+                value={filterType}
+                onChange={(event) => {
+                  setFilter(null);
+                  setFilterType(event.target.value);
+                }}
               >
-                {Object.entries(FilterType).map(([filterType, filterName]) =>
-                  <MenuItem key={filterType} value={filterType}>{filterName}</MenuItem>
+                {Object.values(FilterType).map((name) =>
+                  <MenuItem key={name} value={name}>{name}</MenuItem>
                 )}
               </Select>
             </FormControl>
