@@ -10,7 +10,7 @@ rewrite {
     activeRecipe("org.openrewrite.java.micronaut.Micronaut2to3Migration")
 }
 
-version "0.6.0"
+version "0.7.0"
 group "com.objectcomputing.checkins"
 
 repositories {

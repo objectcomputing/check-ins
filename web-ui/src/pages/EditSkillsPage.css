@@ -6,10 +6,11 @@
   margin: 1rem;
 }
 
-.combine-skills {
+.skill-actions-container {
   align-items: center;
   display: flex;
   justify-content: flex-end;
+  gap: 1rem;
 }
 
 .search {
@@ -18,18 +19,11 @@
   align-items: center;
   margin-left: 1rem;
   margin-right: 1rem;
+  flex-wrap: wrap;
 }
 
 .show-all-skills {
   align-items: center;
   display: flex;
   margin-top: 1rem;
-}
-
-.edit-permissions {
-  display: block;
-  float: left;
-  position: relative;
-  width: auto;
-  margin: 2%;
 }

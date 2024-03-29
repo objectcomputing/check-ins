@@ -41,6 +41,12 @@ export const selectIsAdmin = createSelector(
     userProfile && userProfile.role && userProfile.role.includes("ADMIN")
 );
 
+export const selectHasPermissionAssignmentPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_ASSIGN_ROLE_PERMISSIONS"))
+);
+
 export const selectHasReportPermission = createSelector(
     selectUserProfile,
     (userProfile) =>
@@ -383,15 +389,17 @@ export const selectNormalizedMembers = createSelector(
   selectCurrentMembers,
   (state, searchText) => searchText,
   (currentMembers, searchText) =>
-    currentMembers?.filter((member) => {
-      let normName = member.name
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      let normSearchText = searchText
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      return normName.toLowerCase().includes(normSearchText.toLowerCase());
-    })
+    currentMembers
+      ?.filter((member) => {
+        let normName = member.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        let normSearchText = searchText
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        return normName.toLowerCase().includes(normSearchText.toLowerCase());
+      })
+      .sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectNormalizedMembersAdmin = createSelector(
@@ -432,15 +440,6 @@ export const selectMyGuilds = createSelector(
   (id, guilds) =>
     guilds?.filter((guild) =>
       guild.guildMembers?.some((member) => member.memberId === id)
-    )
-);
-
-export const selectMyPermissions = createSelector(
-  selectCurrentUserId,
-  selectPermissions,
-  (id, permissions) =>
-  permissions?.filter((permission) =>
-    permission.permissions?.some((member) => member.memberId === id)
     )
 );
 

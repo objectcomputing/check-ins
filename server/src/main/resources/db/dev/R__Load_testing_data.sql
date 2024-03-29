@@ -118,7 +118,7 @@ VALUES
 INSERT INTO member_profile -- Revolver Ocelot
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
-('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Shalashaska','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
+('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Head of Sales, HR, Management','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04');
 
 INSERT INTO member_profile -- Huey Emmerich
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
@@ -625,6 +625,16 @@ insert into role_permissions
 (roleid, permission)
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_UPDATE_CHECKINS'); -- CAN_UPDATE_CHECKINS
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_EDIT_SKILL_CATEGORIES'); -- CAN_EDIT_SKILL_CATEGORIES
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_SKILL_CATEGORIES'); -- CAN_VIEW_SKILL_CATEGORIES
 
 -- PDL Permissions
 insert into role_permissions
@@ -1149,3 +1159,38 @@ INSERT INTO member_skills -- Revolver Ocelot, React
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
 ('e2de59a8-71be-4972-86be-608538503195', '105f2968-a182-45a3-892c-eeff76383fe0', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '3', '2022-05-01');
+
+
+-- Skill Categories
+INSERT INTO skillcategories
+(id, name, description)
+VALUES
+('38cd877f-1c50-4167-a592-eed3847ebf0b', 'Languages', 'Programming languages');
+
+INSERT INTO skillcategories
+(id, name, description)
+VALUES
+('ad2a7de0-aad8-4bde-837a-566aaef1fa7c', 'Essential Skills', 'General skills useful for the workplace');
+
+INSERT INTO skillcategories
+(id, name, description)
+VALUES
+('0778a8e7-21d8-4ca3-a0dc-cad676aac417', 'Tools', 'Software tools');
+
+-- SkillCategory
+INSERT INTO skillcategory_skills -- Languages CSS
+(skillcategory_id, skill_id)
+values
+('38cd877f-1c50-4167-a592-eed3847ebf0b', '6b56f0aa-09aa-4b09-bb81-03481af7e49f');
+
+INSERT INTO skillcategory_skills -- Tools GIT
+(skillcategory_id, skill_id)
+values
+('0778a8e7-21d8-4ca3-a0dc-cad676aac417', '84682de9-85a7-4bf7-b74b-e9054311a61a');
+
+INSERT INTO skillcategory_skills -- Tools CSS
+(skillcategory_id, skill_id)
+values
+('0778a8e7-21d8-4ca3-a0dc-cad676aac417', '6b56f0aa-09aa-4b09-bb81-03481af7e49f');
+
+

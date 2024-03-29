@@ -214,8 +214,8 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  1`] = `
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
   border-radius: 50%;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-7 {
@@ -298,8 +298,8 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  1`] = `
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-8:empty:before {
@@ -343,8 +343,8 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  1`] = `
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
   margin: 0px;
 }
 
@@ -356,8 +356,8 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  1`] = `
   display: block;
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
   margin: 0px;
 }
 
@@ -554,8 +554,8 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  2`] = `
   display: block;
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 <div
@@ -664,8 +664,8 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  3`] = `
   display: block;
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 <div
@@ -766,8 +766,8 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  4`] = `
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-1:empty:before {
@@ -816,8 +816,8 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  4`] = `
   display: block;
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 <div
@@ -927,8 +927,8 @@ exports[`renders correctly when 'guild' is passed as prop  1`] = `
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-4:empty:before {
@@ -1116,8 +1116,8 @@ exports[`renders correctly when 'people' is passed as prop  1`] = `
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
   border-radius: 50%;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-4 {
@@ -1148,8 +1148,8 @@ exports[`renders correctly when 'people' is passed as prop  1`] = `
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-6:empty:before {
@@ -1171,8 +1171,8 @@ exports[`renders correctly when 'people' is passed as prop  1`] = `
   display: block;
   background-color: rgba(0, 0, 0, 0.11);
   height: 1.2em;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 <div
@@ -1306,8 +1306,8 @@ exports[`renders correctly when 'team' is passed as prop  1`] = `
   -ms-transform: scale(1, 0.60);
   transform: scale(1, 0.60);
   border-radius: 4px/6.7px;
-  -webkit-animation: animation-0 1.5s ease-in-out 0.5s infinite;
-  animation: animation-0 1.5s ease-in-out 0.5s infinite;
+  -webkit-animation: animation-0 2s ease-in-out 0.5s infinite;
+  animation: animation-0 2s ease-in-out 0.5s infinite;
 }
 
 .emotion-4:empty:before {

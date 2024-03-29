@@ -19,9 +19,7 @@ exports[`renders correctly 1`] = `
     />
     <div
       className="my-anniversary-gift-text"
-    >
-      
-    </div>
+    />
     <div
       className="my-anniversary-gift-box"
     />

@@ -19,14 +19,6 @@ export const getAllUserRoles = async (cookie) => {
   });
 };
 
-export const getCurrentUserRole = async (memberId, cookie) => {
-  return resolve({
-    url: `${roleURL}/${memberId}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
-  });
-};
-
 export const removeUserFromRole = async (roleId, memberId, cookie) => {
   return resolve({
     method: "delete",

@@ -5,8 +5,8 @@ import EditPermissionsPageRoles from "./EditPermissionsPageRoles";
 import { getPermissionsList } from "../api/permissions";
 import {
   getRolePermissionsList,
-  postRolePermissionsList,
-  deleteRolePermissionsList,
+  postRolePermission,
+  deleteRolePermission,
 } from "../api/rolepermissions";
 import { getMemberRolesList } from "../api/memberroles";
 import { isArrayPresent, filterObjectByValOrKey } from "../helpers/checks";
@@ -216,7 +216,7 @@ const EditPermissionsPage = () => {
 
   const changeRolePermission = async (roleId, permissionId) => {
     let newSchema = { roleId: roleId, permissionId: permissionId };
-    let res = await postRolePermissionsList(newSchema, csrf);
+    let res = await postRolePermission(newSchema, csrf);
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
     if (data) {
@@ -241,7 +241,7 @@ const EditPermissionsPage = () => {
 
   const deleteRolePermission = async (roleId, permissionId) => {
     let newSchema = { roleId: roleId, permissionId: permissionId };
-    let res = await deleteRolePermissionsList(newSchema, csrf);
+    let res = await deleteRolePermission(newSchema, csrf);
     let data = !res.error ? "Success" : null;
     if (data) {
       window.snackDispatch({

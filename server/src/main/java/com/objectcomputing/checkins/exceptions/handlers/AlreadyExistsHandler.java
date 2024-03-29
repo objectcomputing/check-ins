@@ -15,7 +15,7 @@ import jakarta.inject.Singleton;
 @Produces
 @Singleton
 @Requires(classes = {AlreadyExistsException.class, ExceptionHandler.class})
-public class AlreadyExistsHandler implements ExceptionHandler<AlreadyExistsException, HttpResponse> {
+public class AlreadyExistsHandler implements ExceptionHandler<AlreadyExistsException, HttpResponse<?>> {
 
     @Override
     public HttpResponse<?> handle(HttpRequest request, AlreadyExistsException e) {

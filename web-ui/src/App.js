@@ -8,8 +8,8 @@ import Menu from "./components/menu/Menu";
 import ErrorFallback from "./pages/ErrorBoundaryPage";
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import "./App.css";

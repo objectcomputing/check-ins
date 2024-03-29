@@ -9,7 +9,7 @@ import { selectCsrfToken, selectCheckinsForMember, selectProfile } from "../../c
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import {MobileDateTimePicker} from "@mui/lab";
+import { MobileDateTimePicker } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 
 import "./Checkin.css";
