@@ -4,19 +4,19 @@ import {
   AppBar,
   Avatar, Button,
   Card,
-  CardHeader, Checkbox, DialogContent,
-  IconButton,
+  CardHeader, Checkbox, DialogContent, FormGroup,
+  IconButton, InputLabel,
   List,
   ListItem,
   ListItemAvatar, ListItemButton,
-  ListItemText, TextField, Toolbar,
+  ListItemText, MenuItem, Select, TextField, Toolbar,
   Tooltip, Typography
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import {getAvatarURL} from "../../api/api";
 import {AppContext} from "../../context/AppContext";
-import {selectCurrentMembers} from "../../context/selectors";
+import {selectCurrentMembers, selectGuilds, selectTeams} from "../../context/selectors";
 import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
 import CloseIcon from "@mui/icons-material/Close";
@@ -24,17 +24,19 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 
 import "./MemberSelector.css";
+import FormControl from "@mui/material/FormControl";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const DialogTransition = React.forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props}/>
 ));
 
-const FilterOption = Object.freeze({
-  GUILD: "GUILD",
-  TEAM: "TEAM",
-  TITLE: "TITLE",
-  LOCATION: "LOCATION",
-  SKILLS: "SKILLS",
+const FilterType = Object.freeze({
+  GUILD: "Guild",
+  TEAM: "Team",
+  TITLE: "Title",
+  LOCATION: "Location",
+  SKILLS: "Skills",
 });
 
 const propTypes = {
@@ -44,6 +46,9 @@ const propTypes = {
 const MemberSelector = (onChange) => {
   const { state } = useContext(AppContext);
   const members = selectCurrentMembers(state);
+  const teams = selectTeams(state);
+  const guilds = selectGuilds(state);
+
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -51,6 +56,9 @@ const MemberSelector = (onChange) => {
   const [checked, setChecked] = useState(new Set());
 
   const [nameQuery, setNameQuery] = useState("");
+  const [filterType, setFilterType] = useState(FilterType.TEAM)
+  const [filter, setFilter] = useState(null);
+  const [filterOptions, setFilterOptions] = useState([]);
 
   // Reset dialog when it is closed
   useEffect(() => {
@@ -60,7 +68,22 @@ const MemberSelector = (onChange) => {
     }
   }, [dialogOpen]);
 
+  const getFilterOptions = useCallback(() => {
+    switch (filterType) {
+      case FilterType.TEAM:
+        return teams;
+      case FilterType.GUILD:
+        return guilds;
+      case FilterType.TITLE:
+
+        return;
+      case FilterType.LOCATION:
+        return;
+    }
+  }, [filterType, teams, guilds, ]);
+
   const getSelectableMembers = useCallback(() => {
+    // TODO: Make it so this filter doesn't need to happen when changing queries
     // Only include members that are not already selected
     let selectableMembers = members.filter(member =>
       !selectedMembers.includes(member)
@@ -160,16 +183,41 @@ const MemberSelector = (onChange) => {
           </Toolbar>
         </AppBar>
         <DialogContent className="member-selector-dialog-content">
-          <TextField
-            label="Name"
-            placeholder="Search by member name"
-            variant="outlined"
-            value={nameQuery}
-            onChange={(event) => setNameQuery(event.target.value)}
-            InputProps={{
-              endAdornment: <InputAdornment position="end" color="gray"><SearchIcon/></InputAdornment>
-            }}
-          />
+          <FormGroup row>
+            <TextField
+              label="Name"
+              placeholder="Search by member name"
+              variant="outlined"
+              value={nameQuery}
+              onChange={(event) => setNameQuery(event.target.value)}
+              InputProps={{
+                endAdornment: <InputAdornment position="end" color="gray"><SearchIcon/></InputAdornment>
+              }}
+            />
+            <Autocomplete
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Filter Members"
+                  placeholder="Search"
+                />
+              )}
+              options={[]}
+              disablePortal
+            />
+            <FormControl>
+              <InputLabel id="member-filter-label">Filter by</InputLabel>
+              <Select
+                labelId="member-filter-label"
+                label="Filter by"
+              >
+                {Object.entries(FilterType).map(([filterType, filterName]) =>
+                  <MenuItem key={filterType} value={filterType}>{filterName}</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </FormGroup>
           <List dense role="list">
             {getSelectableMembers().map(member => (
               <ListItem
