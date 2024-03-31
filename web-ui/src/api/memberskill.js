@@ -1,4 +1,3 @@
-// import axios from "axios";
 import { resolve } from "./api.js";
 
 const memberSkillUrl = "/services/member-skills";
@@ -25,11 +24,8 @@ export const getSelectedMemberSkills = async (id, cookie) => {
 
 export const getSkillMembers = async (id, cookie) => {
   return resolve({
-    url: memberSkillUrl,
+    url: `${memberSkillUrl}?skillid=${encodeURIComponent(id)}`,
     responseType: "json",
-    params: {
-      skillid: id,
-    },
     headers: { "X-CSRF-Header": cookie },
   });
 };

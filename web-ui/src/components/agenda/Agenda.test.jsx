@@ -25,8 +25,8 @@ const initialState = {
 
 const history = createMemoryHistory(`/checkins/${mockMemberId}/${mockCheckinId}`);
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+vi.mock('react-router-dom', async () => ({
+  ...await vi.importActual('react-router-dom'), // use actual for all non-hook parts
   useParams: () => ({
     memberId: mockMemberId,
     checkinId: mockCheckinId,
@@ -34,12 +34,18 @@ jest.mock('react-router-dom', () => ({
   useRouteMatch: () => ({ url: `/checkins/${mockMemberId}/${mockCheckinId}` }),
 }));
 
-it("renders correctly", () => {
-  snapshot(
-    <Router history={history} >
-    <AppContextProvider value={initialState}>
-      <Agenda checkinId="394810298371" memberName="mr. test" />
-    </AppContextProvider>
-    </Router>
-  );
+global.requestAnimationFrame = function (callback) {
+  setTimeout(callback, 0);
+};
+
+describe('Agenda', () => {
+  it("renders correctly", () => {
+    snapshot(
+      <Router history={history} >
+        <AppContextProvider value={initialState}>
+          <Agenda checkinId="394810298371" memberName="mr. test" />
+        </AppContextProvider>
+      </Router>
+    );
+  });
 });

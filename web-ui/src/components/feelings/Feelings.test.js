@@ -13,7 +13,7 @@ it("renders message correctly", () => {
 });
 
 it("calls onSelect correctly", () => {
-  const onSelect = jest.fn();
+  const onSelect = vi.fn();
   render(<Feelings onSelect={onSelect} />);
 
   const input = screen.getByTestId('feelings-input-0');

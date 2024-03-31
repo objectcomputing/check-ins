@@ -43,19 +43,21 @@ const initialState = {
   },
 };
 
-it("renders correctly", async () => {
-  const customHistory = createBrowserHistory();
-  snapshot(
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-    <Router history={customHistory}>
-      <AppContextProvider value={initialState}>
-        <CheckinsHistory
-          checkins={initialState.state.checkins}
-          index={initialState.state.index}
-          history={customHistory}
-        />
-      </AppContextProvider>
-    </Router>
-    </LocalizationProvider>
-  );
+describe("CheckinHistory", () => {
+  it("renders correctly", async () => {
+    const customHistory = createBrowserHistory();
+    snapshot(
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <Router history={customHistory}>
+          <AppContextProvider value={initialState}>
+            <CheckinsHistory
+              checkins={initialState.state.checkins}
+              index={initialState.state.index}
+              history={customHistory}
+            />
+          </AppContextProvider>
+        </Router>
+      </LocalizationProvider>
+    );
+  });
 });

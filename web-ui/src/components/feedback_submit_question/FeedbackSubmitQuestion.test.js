@@ -20,7 +20,7 @@ it("renders the feedback submit question as text", () => {
           requestId: "abc"
         }}
         requestId="abc"
-        onAnswerChange={jest.fn()}
+        onAnswerChange={vi.fn()}
       />
     </AppContextProvider>
   );
@@ -44,7 +44,7 @@ it("renders the feedback submit question as radio buttons", () => {
           requestId: "abc"
         }}
         requestId="abc"
-        onAnswerChange={jest.fn()}
+        onAnswerChange={vi.fn()}
       />
     </AppContextProvider>
   );
@@ -68,7 +68,7 @@ it("renders the feedback submit question as a slider", () => {
           requestId: "abc"
         }}
         requestId="abc"
-        onAnswerChange={jest.fn()}
+        onAnswerChange={vi.fn()}
       />
     </AppContextProvider>
   );

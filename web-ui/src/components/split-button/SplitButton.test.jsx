@@ -4,6 +4,6 @@ import renderer from "react-test-renderer";
 
 it("renders correctly", () => {
   snapshot(
-    <SplitButton options={['One', 'Two', 'Three']} onClick={jest.fn()} />
+    <SplitButton options={['One', 'Two', 'Three']} onClick={vi.fn()} />
   );
 });

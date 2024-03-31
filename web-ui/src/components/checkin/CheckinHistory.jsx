@@ -30,7 +30,7 @@ const CheckinsHistory = () => {
       return new Date(year, month - 1, day, hour, minute, 0);
     }
     // return new date unless you are running a Jest test
-    return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
+    return process.env.VITEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
   };
 
   const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");

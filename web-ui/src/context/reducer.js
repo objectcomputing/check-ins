@@ -33,26 +33,26 @@ import {
 } from "./actions";
 
 export const initialState = {
-  checkins: [],
+  checkins: null,
   csrf: undefined,
   index: 0,
   loading : {
     teams: false,
     memberProfiles: false,
   },
-  memberProfiles: [],
+  memberProfiles: null,
   terminatedMembers: [],
-  memberSkills: [],
-  roles: [],
-  userRoles: [],
-  skills: [],
-  teams: [],
-  guilds: [],
+  memberSkills: null,
+  roles: null,
+  userRoles: null,
+  skills: null,
+  teams: null,
+  guilds: null,
   toast: {
     severity: "",
     toast: "",
   },
-  userProfile: {},
+  userProfile: null,
   reviewPeriods: [],
 };
 

@@ -13,10 +13,12 @@ const initialState = {
   },
 };
 
-it("renders correctly", () => {
-  snapshot(
-    <AppContextProvider value={initialState}>
-      <AvatarComponent />
-    </AppContextProvider>
-  );
+describe("AvatarComponent", () => {
+  it("renders correctly", () => {
+    snapshot(
+      <AppContextProvider value={initialState}>
+        <AvatarComponent />
+      </AppContextProvider>
+    );
+  });
 });
