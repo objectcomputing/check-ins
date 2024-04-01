@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.memberprofile;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,9 +21,4 @@ public interface MemberProfileServices {
 
     List<MemberProfile> getSupervisorsForId(UUID id);
 
-    Optional<MemberProfile> findById(UUID memberId);
-
-    Optional<MemberProfile> findByWorkEmail(String recipientEmail);
-
-    MemberProfile save(MemberProfile memberProfile);
 }
