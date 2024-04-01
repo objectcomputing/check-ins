@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="home-page"
+  >
+    <div
+      class="celebrations"
+    >
+      <h1>
+        No events currently available...
+      </h1>
+    </div>
+  </div>
+</div>
+`;

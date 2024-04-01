@@ -1,0 +1,838 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="people-page css-c6u97s"
+  >
+    <div
+      class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-zow5z4-MuiGrid-root"
+    >
+      <div
+        class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 PeoplePage-search css-1idn90j-MuiGrid-root"
+      >
+        <div
+          class="MuiFormControl-root MuiTextField-root PeoplePage-searchInput css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+        >
+          <label
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+            data-shrink="false"
+            for=":r0:"
+            id=":r0:-label"
+          >
+            Select employees...
+          </label>
+          <div
+            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
+          >
+            <input
+              aria-invalid="false"
+              class="MuiInputBase-input MuiOutlinedInput-input css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"
+              id=":r0:"
+              placeholder="Member Name"
+              type="text"
+              value=""
+            />
+            <fieldset
+              aria-hidden="true"
+              class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+            >
+              <legend
+                class="css-yjsfm1"
+              >
+                <span>
+                  Select employees...
+                </span>
+              </legend>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiGrid-root MuiGrid-item PeoplePage-members css-13i4rnv-MuiGrid-root"
+      >
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          >
+            <div
+              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+            >
+              <span
+                class="MuiSkeleton-root MuiSkeleton-circular MuiSkeleton-pulse css-wkdwxb-MuiSkeleton-root"
+                style="width: 45px; height: 45px;"
+              />
+            </div>
+            <div
+              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            >
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                  style="height: 43px;"
+                />
+              </span>
+              <span
+                class="MuiTypography-root MuiTypography-body2 MuiCardHeader-subheader css-83ijpv-MuiTypography-root"
+              >
+                <span
+                  class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+                />
+              </span>
+            </div>
+          </div>
+          <span
+            class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+            style="height: 118px;"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

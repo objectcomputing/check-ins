@@ -9,7 +9,7 @@ const mockCheckinId = "837465917381";
 
 const history = createMemoryHistory(`/checkins/${mockMemberId}/${mockCheckinId}`);
 
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async () => ({
   ...await vi.importActual('react-router-dom'), // use actual for all non-hook parts
   useParams: () => ({
     memberId: mockMemberId,

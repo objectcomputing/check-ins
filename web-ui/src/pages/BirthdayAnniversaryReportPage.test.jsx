@@ -3,10 +3,8 @@ import BirthdayAnniversaryReportPage from "./BirthdayAnniversaryReportPage";
 import { AppContextProvider } from "../context/AppContext";
 
 it("renders correctly", () => {
-  const mockDate = new Date(2022, 1, 1)
-  const spy = jest
-    .spyOn(global, 'Date')
-    .mockImplementation(() => mockDate)
+  const mockDate = new Date(2022, 1, 1);
+  const spy = vi.spyOn(global, 'Date').mockImplementation(() => mockDate);
 
   snapshot(
     <AppContextProvider>
@@ -14,5 +12,5 @@ it("renders correctly", () => {
     </AppContextProvider>
   );
 
-  spy.mockRestore()
+  spy.mockRestore();
 });

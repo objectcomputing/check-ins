@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders the feedback submit question as a slider 1`] = `
+<div>
+  <div
+    class="feedback-submit-question"
+  >
+    <p
+      class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      style="padding-bottom: 1rem;"
+    >
+      Do you think the project is going well so far?
+    </p>
+  </div>
+</div>
+`;
+
+exports[`renders the feedback submit question as radio buttons 1`] = `
+<div>
+  <div
+    class="feedback-submit-question"
+  >
+    <p
+      class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      style="padding-bottom: 1rem;"
+    >
+      Do you think the project is going well so far?
+    </p>
+  </div>
+</div>
+`;
+
+exports[`renders the feedback submit question as text 1`] = `
+<div>
+  <div
+    class="feedback-submit-question"
+  >
+    <p
+      class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      style="padding-bottom: 1rem;"
+    >
+      How is the project going so far?
+    </p>
+  </div>
+</div>
+`;

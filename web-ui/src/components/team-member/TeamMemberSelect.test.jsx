@@ -1,6 +1,6 @@
 import React from "react";
 import TeamMemberSelect from "./TeamMemberSelect";
-import { render, fireEvent, screen } from "@testing-library/react";
+import { render, fireEvent, screen, act } from "@testing-library/react";
 
 let teamMembers;
 
@@ -30,7 +30,6 @@ it("clicks single item", (done) => {
   const handleChange = (teamMembers) => {
     expect(teamMembers).toHaveLength(1);
     expect(teamMembers[0].name === name);
-    done();
   };
   render(
     <TeamMemberSelect
@@ -39,7 +38,9 @@ it("clicks single item", (done) => {
       singleSelect
     />
   );
-  fireEvent.click(screen.getByText(name));
+  act(() => {
+    fireEvent.click(screen.getByText(name));
+  });
 });
 
 it("clicks multiple items", (done) => {
@@ -51,12 +52,13 @@ it("clicks multiple items", (done) => {
     } else if (teamMembers.length === 2) {
       expect(teamMembers[0].name === name1);
       expect(teamMembers[1].name === name2);
-      done();
     }
   };
   render(
     <TeamMemberSelect teamMembers={teamMembers} onChange={handleChange} />
   );
-  fireEvent.click(screen.getByText(name1));
-  fireEvent.click(screen.getByText(name2));
+  act(() => {
+    fireEvent.click(screen.getByText(name1));
+    fireEvent.click(screen.getByText(name2));
+  });
 });
