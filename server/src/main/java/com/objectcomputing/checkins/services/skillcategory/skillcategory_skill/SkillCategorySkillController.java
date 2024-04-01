@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.skillcategory.skillcategory_skill;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -39,7 +39,7 @@ public class SkillCategorySkillController {
     }
 
     @Post()
-    @RequiredPermission(Permissions.CAN_EDIT_SKILL_CATEGORIES)
+    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkillId dto,
                                                          HttpRequest<SkillCategorySkillId> request) {
         return Mono
@@ -55,7 +55,7 @@ public class SkillCategorySkillController {
     }
 
     @Delete()
-    @RequiredPermission(Permissions.CAN_EDIT_SKILL_CATEGORIES)
+    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<?>> delete(@Body @Valid SkillCategorySkillId dto) {
         return Mono.fromRunnable(() -> skillCategorySkillServices.delete(dto))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))

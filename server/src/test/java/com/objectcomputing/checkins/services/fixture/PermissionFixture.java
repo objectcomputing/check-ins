@@ -51,7 +51,9 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permission.CAN_CREATE_CHECKINS,
         Permission.CAN_VIEW_CHECKINS,
         Permission.CAN_UPDATE_CHECKINS,
-        Permission.CAN_ASSIGN_ROLE_PERMISSIONS
+        Permission.CAN_ASSIGN_ROLE_PERMISSIONS,
+        Permission.CAN_VIEW_SKILL_CATEGORIES,
+        Permission.CAN_EDIT_SKILL_CATEGORIES
     );
 
 

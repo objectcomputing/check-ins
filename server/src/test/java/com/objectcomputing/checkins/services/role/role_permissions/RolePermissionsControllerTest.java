@@ -61,7 +61,7 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         assertEquals(adminRole.getId(), actual.get(0).getRoleId());
         assertEquals(adminRole.getRole(), actual.get(0).getRole());
         assertNotNull(actual.get(0).getDescription());
-        assertEquals(17, actual.get(0).getPermissions().size());
+        assertEquals(19, actual.get(0).getPermissions().size());
         List<Permission> assigned = actual.get(0).getPermissions();
         for(Permission permission: adminPermissions) {
             Permission stored = permission;
