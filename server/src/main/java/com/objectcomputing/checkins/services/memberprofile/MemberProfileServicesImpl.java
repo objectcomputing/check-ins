@@ -53,11 +53,15 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public MemberProfile getById(@NotNull UUID id) {
-        Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
-        if (memberProfile.isEmpty()) {
+        Optional<MemberProfile> optional = memberProfileRepository.findById(id);
+        if (optional.isEmpty()) {
             throw new NotFoundException("No member profile for id " + id);
         }
-        return memberProfile.get();
+        MemberProfile memberProfile = optional.get();
+        if (!currentUserServices.isAdmin()) {
+            memberProfile.clearBirthYear();
+        }
+        return memberProfile;
     }
 
     @Override
@@ -70,7 +74,11 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable Boolean terminated) {
         HashSet<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
                 nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId), terminated));
-
+        if (!currentUserServices.isAdmin()) {
+            for (MemberProfile memberProfile : memberProfiles) {
+                memberProfile.clearBirthYear();
+            }
+        }
         return memberProfiles;
     }
 
@@ -139,6 +147,13 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     @Override
     @Cacheable
     public List<MemberProfile> getSupervisorsForId(UUID id) {
-        return memberProfileRepository.findSupervisorsForId(id);
+        List<MemberProfile> supervisorsForId = memberProfileRepository.findSupervisorsForId(id);
+        if (!currentUserServices.isAdmin()) {
+            for (MemberProfile memberProfile : supervisorsForId) {
+                memberProfile.clearBirthYear();
+            }
+        }
+        return supervisorsForId;
     }
+
 }
