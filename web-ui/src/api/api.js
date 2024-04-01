@@ -1,4 +1,3 @@
-// import fetch from "node-fetch";
 import { UPDATE_TOAST } from "../context/actions";
 
 export const BASE_API_URL = process.env.REACT_APP_API_URL
