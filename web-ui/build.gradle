@@ -49,7 +49,7 @@ sourceSets {
     }
 }
 
-//check {
-//    dependsOn yarn_run_coverage
-//}
+check {
+   dependsOn yarn_run_coverage
+}
 
