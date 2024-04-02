@@ -152,8 +152,8 @@ const AppContextProvider = (props) => {
         dispatch({ type: UPDATE_TERMINATED_MEMBERS, payload: profiles });
       }
     }
-    dispatch({type: UPDATE_PEOPLE_LOADING, payload:true})
     if (csrf && userProfile && !memberProfiles) {
+      dispatch({type: UPDATE_PEOPLE_LOADING, payload:true})
       getMemberProfiles();
       if (userProfile.role?.includes("ADMIN")) { 
         getTerminatedMembers();

@@ -5,7 +5,6 @@ const permissionsListUrl = "/services/permissions"
 export const getPermissionsList = async (cookie) => {
     return resolve({
       url: permissionsListUrl,
-      responseType: "json",
-      headers: { "X-CSRF-Header": cookie },
+      headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
     });
   };

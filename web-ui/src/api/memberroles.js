@@ -5,7 +5,6 @@ const memberRolesUrl = "/services/roles/members"
 export const getMemberRolesList = async (cookie) => {
     return resolve({
       url: memberRolesUrl,
-      responseType: "json",
-      headers: { "X-CSRF-Header": cookie },
+      headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
     });
   };

@@ -1,7 +1,8 @@
 import { UPDATE_TOAST } from "../context/actions";
+import qs from 'qs';
 
-export const BASE_API_URL = process.env.REACT_APP_API_URL
-  ? process.env.REACT_APP_API_URL
+export const BASE_API_URL = import.meta.env.VITE_APP_API_URL
+  ? import.meta.env.VITE_APP_API_URL
   : "http://localhost:8080";
 
 export const getAvatarURL = (email) =>
@@ -10,7 +11,7 @@ export const getAvatarURL = (email) =>
   encodeURIComponent(email);
 
 function fetchAbsolute(fetch) {
-  return baseUrl => (url, ...otherParams) => url.startsWith('/') ? fetch(baseUrl + url, { credentials: 'include', ...otherParams }) : fetch(url, { credentials: 'include', ...otherParams })
+  return baseUrl => (url, otherParams) => url.startsWith('/') ? fetch(baseUrl + url, { credentials: 'include', ...otherParams }) : fetch(url, { credentials: 'include', ...otherParams })
 }
 
 let myFetch = null;
@@ -55,8 +56,16 @@ export const getMyFetch = async () => {
 }
 
 export const resolve = async (payload) => {
-  const { url, ...rest} = payload;
+  let { url } = payload;
+  const { params = null, data = null, ...rest} = payload;
   const myFetch = await getMyFetch();
+
+  // Convert params to fetch style...
+  params && (url = `${url}?` + qs.stringify(params, { arrayFormat: 'repeat' }));
+
+  // Convert data to body...
+  data && (rest.body = JSON.stringify(data));
+
   const promise = myFetch(url, rest);
   const resolved = {
     payload: null,
@@ -77,7 +86,17 @@ export const resolve = async (payload) => {
       });
     }
   } else {
-    resolved.payload.data = await resolved.payload.json();
+    const contentType = resolved.payload.headers.get("Content-Type");
+    const contentLength = resolved.payload.headers.get("Content-Length");
+    if(contentLength && contentLength > 0) {
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        resolved.payload.data = await resolved.payload.json();
+      } else {
+        resolved.payload.data = await resolved.payload.text();
+      }
+    } else {
+      resolved.payload.data = null;
+    }
   }
   return resolved;
 };
