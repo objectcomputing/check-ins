@@ -71,8 +71,8 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
 
   const [nameQuery, setNameQuery] = useState("");
   const [filterType, setFilterType] = useState(FilterType.TEAM)
-  const [filter, setFilter] = useState(null);
   const [filterOptions, setFilterOptions] = useState(null);
+  const [filter, setFilter] = useState(null);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [directReportsOnly, setDirectReportsOnly] = useState(false);
 
@@ -82,6 +82,19 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
     const membersToAdd = members.filter(member => checked.has(member.id));
     onSubmit(membersToAdd);
   }, [checked, members, onSubmit]);
+
+  // Reset the dialog when it closes
+  useEffect(() => {
+    if (!open) {
+      // Reset all state except for the chosen filter type and its corresponding options
+      setChecked(new Set());
+      setNameQuery("");
+      setFilter(null);
+      setFilteredMembers([]);
+      setDirectReportsOnly(false);
+      setSelectableMembers([]);
+    }
+  }, [open]);
 
   // Change filter options when filter type is changed
   useEffect(() => {
@@ -315,15 +328,6 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
                 endAdornment: <InputAdornment position="end" color="gray"><SearchIcon/></InputAdornment>
               }}
             />
-            {filterType === FilterType.MANAGER &&
-              <FormControlLabel
-                control={<Checkbox
-                  checked={directReportsOnly}
-                  onChange={(event) => setDirectReportsOnly(event.target.checked)}
-                />}
-                label="Direct reports only"
-              />
-            }
             <Autocomplete
               className="filter-input"
               renderInput={(params) => (
@@ -358,6 +362,16 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
                 )}
               </Select>
             </FormControl>
+            {filterType === FilterType.MANAGER &&
+              <FormControlLabel
+                className="direct-reports-only-checkbox"
+                control={<Checkbox
+                  checked={directReportsOnly}
+                  onChange={(event) => setDirectReportsOnly(event.target.checked)}
+                />}
+                label="Direct reports only"
+              />
+            }
           </div>
           <Checkbox
             className="toggle-selectable-members-checkbox"

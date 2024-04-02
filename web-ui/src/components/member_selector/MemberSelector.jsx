@@ -57,13 +57,16 @@ const MemberSelector = ({ onChange, listHeight, className, style }) => {
         style={style}>
         <CardHeader
           title={
-            <Typography variant="h5">Selected Members
-              <span style={{ color: "gray", fontSize: "0.75em" }}> ({selectedMembers.length})</span>
-            </Typography>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <Typography variant="h5">Selected Members</Typography>
+              <Typography variant="h6" color="gray" fontSize="0.75em" >({selectedMembers.length})</Typography>
+            </div>
           }
           action={
             <Tooltip title="Add members" arrow>
-              <IconButton onClick={() => setDialogOpen(true)}><AddIcon/></IconButton>
+              <IconButton style={{ marginRight: "8px" }} onClick={() => setDialogOpen(true)}>
+                <AddIcon/>
+              </IconButton>
             </Tooltip>
           }
         />
@@ -95,14 +98,12 @@ const MemberSelector = ({ onChange, listHeight, className, style }) => {
           }
         </List>
       </Card>
-      {dialogOpen &&
-        <MemberSelectorDialog
-          open={dialogOpen}
-          selectedMembers={selectedMembers}
-          onClose={() => setDialogOpen(false)}
-          onSubmit={(membersToAdd) => addMembers(membersToAdd)}
-        />
-      }
+      <MemberSelectorDialog
+        open={dialogOpen}
+        selectedMembers={selectedMembers}
+        onClose={() => setDialogOpen(false)}
+        onSubmit={(membersToAdd) => addMembers(membersToAdd)}
+      />
     </>
   );
 };

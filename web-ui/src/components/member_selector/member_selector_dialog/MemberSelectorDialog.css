@@ -4,6 +4,8 @@
     align-items: center;
     gap: 2rem;
     flex-grow: 1;
+    padding-top: 2px;
+    margin-left: 10px;
 }
 
 .member-selector-dialog .member-selector-dialog-content {
@@ -37,6 +39,10 @@
     flex-direction: row;
     gap: 0.5rem;
     flex-wrap: wrap;
+}
+
+.member-selector-dialog .direct-reports-only-checkbox {
+    margin-left: 0;
 }
 
 .member-selector-dialog .toggle-selectable-members-checkbox {
