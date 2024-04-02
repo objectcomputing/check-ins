@@ -1,3 +1,11 @@
+.member-selector-dialog .toolbar-title-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    flex-grow: 1;
+}
+
 .member-selector-dialog .member-selector-dialog-content {
     margin: 5rem 1rem 1rem 1rem;
 }
@@ -16,34 +24,61 @@
     justify-content: space-between;
     gap: 0.5rem;
     padding-bottom: 1rem;
+    flex-wrap: nowrap;
 }
 
 .member-selector-dialog .name-search-field {
     width: 350px;
+    margin-right: 3rem;
 }
 
-.member-selector-dialog .filter-container {
+.member-selector-dialog .filter-input-container {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.member-selector-dialog .toggle-selectable-members-checkbox {
+    margin-right: 16px;
+    align-self: center;
 }
 
 @media screen and (max-width: 600px) {
+    .member-selector-dialog .toolbar-title-container {
+        flex-direction: column;
+        gap: 0;
+        align-items: flex-start;
+    }
+
+    .member-selector-dialog .toolbar-title-container .toolbar-title {
+        font-size: 1.5em;
+    }
+
+    .member-selector-dialog .toolbar-title-container .selected-count-label {
+        font-size: 1em;
+    }
+
     .member-selector-dialog .member-selector-dialog-content {
         margin: 4rem 0 0 0;
     }
 
     .member-selector-dialog .dialog-form-group {
-        flex-direction: column;
+        gap: 1rem;
     }
 
-    .member-selector-dialog .filter-container {
+    .member-selector-dialog .filter-input-container {
         flex-direction: column;
         gap: 0.5rem;
+        flex-grow: 1;
     }
 
-    .member-selector-dialog .dialog-form-group {
-        flex-direction: column;
+    .member-selector-dialog .name-search-field {
+        margin-right: 0;
+    }
+
+    .member-selector-dialog .toggle-selectable-members-checkbox {
+        align-self: flex-end;
     }
 
     .member-selector-dialog .name-search-field,

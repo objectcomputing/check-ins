@@ -271,6 +271,11 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
     setChecked(newChecked);
   }, [checked, selectableMembers]);
 
+  const visibleChecked = useCallback(() => {
+    // Find only the checked members that are currently visible
+    return selectableMembers.filter(member => checked.has(member.id));
+  }, [selectableMembers, checked]);
+
   return (
     <Dialog
       className="member-selector-dialog"
@@ -284,7 +289,10 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
           <IconButton edge="start" color="inherit" onClick={onClose}>
             <CloseIcon/>
           </IconButton>
-          <Typography variant="h6" flexGrow={1}>Select Members</Typography>
+          <div className="toolbar-title-container">
+            <Typography className="toolbar-title" variant="h5">Select Members</Typography>
+            <Typography className="selected-count-label" variant="body1">{checked.size} selected</Typography>
+          </div>
           <Button
             color="inherit"
             disabled={checked.size === 0}
@@ -295,18 +303,18 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
       </AppBar>
       <DialogContent className="member-selector-dialog-content">
         <FormGroup className="dialog-form-group">
-          <TextField
-            className="name-search-field"
-            label="Name"
-            placeholder="Search by member name"
-            variant="outlined"
-            value={nameQuery}
-            onChange={(event) => setNameQuery(event.target.value)}
-            InputProps={{
-              endAdornment: <InputAdornment position="end" color="gray"><SearchIcon/></InputAdornment>
-            }}
-          />
-          <div className="filter-container">
+          <div className="filter-input-container">
+            <TextField
+              className="name-search-field"
+              label="Name"
+              placeholder="Search by member name"
+              variant="outlined"
+              value={nameQuery}
+              onChange={(event) => setNameQuery(event.target.value)}
+              InputProps={{
+                endAdornment: <InputAdornment position="end" color="gray"><SearchIcon/></InputAdornment>
+              }}
+            />
             {filterType === FilterType.MANAGER &&
               <FormControlLabel
                 control={<Checkbox
@@ -352,14 +360,15 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
             </FormControl>
           </div>
           <Checkbox
-            style={{ marginRight: "16px" }}
+            className="toggle-selectable-members-checkbox"
             onChange={(event) => handleToggleAll(event.target.checked)}
-            checked={selectableMembers.length > 0 && checked.size === selectableMembers.length }
-            indeterminate={checked.size > 0 && checked.size !== selectableMembers.length}
+            checked={selectableMembers.length > 0 && visibleChecked().length === selectableMembers.length}
+            indeterminate={visibleChecked().length > 0 && visibleChecked().length !== selectableMembers.length}
+            disabled={selectableMembers.length === 0}
           />
         </FormGroup>
         <Divider/>
-        <List dense role="list" sx={{ maxHeight: "75vh", overflow: "auto" }}>
+        <List dense role="list" sx={{ maxHeight: "80vh", overflow: "auto" }}>
           {selectableMembers.map(member => (
             <ListItem
               key={member.id}
