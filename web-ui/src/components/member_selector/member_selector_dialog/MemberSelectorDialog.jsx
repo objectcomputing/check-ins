@@ -255,8 +255,9 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
         </Toolbar>
       </AppBar>
       <DialogContent className="member-selector-dialog-content">
-        <FormGroup row>
+        <FormGroup className="dialog-form-group">
           <TextField
+            className="name-search-field"
             label="Name"
             placeholder="Search by member name"
             variant="outlined"
@@ -266,39 +267,42 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
               endAdornment: <InputAdornment position="end" color="gray"><SearchIcon/></InputAdornment>
             }}
           />
-          <Autocomplete
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                label="Filter Members"
-                placeholder="Search"
-              />
-            )}
-            disablePortal
-            disabled={!filterOptions}
-            options={filterOptions ? filterOptions.options : []}
-            getOptionLabel={filterOptions ? filterOptions.label : () => ""}
-            isOptionEqualToValue={filterOptions ? filterOptions.equals : () => false}
-            value={filter}
-            onChange={(_, value) => setFilter(value)}
-          />
-          <FormControl>
-            <InputLabel id="member-filter-label">Filter by</InputLabel>
-            <Select
-              labelId="member-filter-label"
-              label="Filter by"
-              value={filterType}
-              onChange={(event) => {
-                setFilter(null);
-                setFilterType(event.target.value);
-              }}
-            >
-              {Object.values(FilterType).map((name) =>
-                <MenuItem key={name} value={name}>{name}</MenuItem>
+          <div className="filter-container">
+            <Autocomplete
+              className="filter-input"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Filter Members"
+                  placeholder="Search"
+                />
               )}
-            </Select>
-          </FormControl>
+              disablePortal
+              disabled={!filterOptions}
+              options={filterOptions ? filterOptions.options : []}
+              getOptionLabel={filterOptions ? filterOptions.label : () => ""}
+              isOptionEqualToValue={filterOptions ? filterOptions.equals : () => false}
+              value={filter}
+              onChange={(_, value) => setFilter(value)}
+            />
+            <FormControl className="filter-type-select">
+              <InputLabel id="member-filter-label">Filter by</InputLabel>
+              <Select
+                labelId="member-filter-label"
+                label="Filter by"
+                value={filterType}
+                onChange={(event) => {
+                  setFilter(null);
+                  setFilterType(event.target.value);
+                }}
+              >
+                {Object.values(FilterType).map((name) =>
+                  <MenuItem key={name} value={name}>{name}</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </div>
         </FormGroup>
         <List dense role="list">
           {getSelectableMembers().map(member => (

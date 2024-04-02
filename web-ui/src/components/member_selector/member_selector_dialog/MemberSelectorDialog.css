@@ -1,3 +1,53 @@
 .member-selector-dialog .member-selector-dialog-content {
     margin: 5rem 1rem 1rem 1rem;
 }
+
+.member-selector-dialog .filter-type-select {
+    width: 150px;
+}
+
+.member-selector-dialog .filter-input {
+    width: 350px;
+}
+
+.member-selector-dialog .dialog-form-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.member-selector-dialog .name-search-field {
+    width: 350px;
+}
+
+.member-selector-dialog .filter-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+@media screen and (max-width: 600px) {
+    .member-selector-dialog .member-selector-dialog-content {
+        margin: 4rem 0 0 0;
+    }
+
+    .member-selector-dialog .dialog-form-group {
+        flex-direction: column;
+    }
+
+    .member-selector-dialog .filter-container {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .member-selector-dialog .dialog-form-group {
+        flex-direction: column;
+    }
+
+    .member-selector-dialog .name-search-field,
+    .member-selector-dialog .filter-input,
+    .member-selector-dialog .filter-type-select {
+        width: 100%;
+    }
+}
