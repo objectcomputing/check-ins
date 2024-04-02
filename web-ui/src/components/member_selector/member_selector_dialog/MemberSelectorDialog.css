@@ -15,6 +15,7 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 0.5rem;
+    padding-bottom: 1rem;
 }
 
 .member-selector-dialog .name-search-field {

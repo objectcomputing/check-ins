@@ -39,6 +39,7 @@ import {getSkillMembers} from "../../../api/memberskill";
 
 import "./MemberSelectorDialog.css";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import Divider from "@mui/material/Divider";
 
 const DialogTransition = React.forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props}/>
@@ -74,6 +75,8 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
   const [filterOptions, setFilterOptions] = useState(null);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [directReportsOnly, setDirectReportsOnly] = useState(false);
+
+  const [selectableMembers, setSelectableMembers] = useState([]);
 
   const handleSubmit = useCallback(() => {
     const membersToAdd = members.filter(member => checked.has(member.id));
@@ -230,16 +233,18 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
     });
   }, [state, csrf, members, filterType, filter, selectedMembers, showError, directReportsOnly]);
 
-  const getSelectableMembers = useCallback(() => {
+  useEffect(() => {
+    let selectable = [...filteredMembers];
+
     // Search by member name
     if (nameQuery) {
-      return filteredMembers.filter(member => {
+      selectable = selectable.filter(member => {
         const sanitizedQuery = nameQuery.trim().toLowerCase();
         return member.name.toLowerCase().includes(sanitizedQuery);
       });
     }
 
-    return filteredMembers;
+    setSelectableMembers(selectable);
   }, [nameQuery, filteredMembers]);
 
   const handleCheckboxToggle = useCallback((member) => {
@@ -251,6 +256,20 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
     }
     setChecked(newChecked);
   }, [checked]);
+
+  const handleToggleAll = useCallback((toggle) => {
+    const newChecked = new Set(checked);
+    if (toggle) {
+      selectableMembers.forEach(member => {
+        newChecked.add(member.id);
+      });
+    } else {
+      selectableMembers.forEach(member => {
+        newChecked.delete(member.id);
+      });
+    }
+    setChecked(newChecked);
+  }, [checked, selectableMembers]);
 
   return (
     <Dialog
@@ -332,9 +351,16 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
               </Select>
             </FormControl>
           </div>
+          <Checkbox
+            style={{ marginRight: "16px" }}
+            onChange={(event) => handleToggleAll(event.target.checked)}
+            checked={selectableMembers.length > 0 && checked.size === selectableMembers.length }
+            indeterminate={checked.size > 0 && checked.size !== selectableMembers.length}
+          />
         </FormGroup>
-        <List dense role="list">
-          {getSelectableMembers().map(member => (
+        <Divider/>
+        <List dense role="list" sx={{ maxHeight: "75vh", overflow: "auto" }}>
+          {selectableMembers.map(member => (
             <ListItem
               key={member.id}
               role="listitem"
