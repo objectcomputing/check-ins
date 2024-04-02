@@ -90,7 +90,7 @@ const CheckinsHistory = () => {
               />
             </IconButton>
             <MobileDateTimePicker
-              renderInput={props => <TextField style={{width: '18em'}} {...props}/>}
+              slotProps={{ textField: { style: {width: '18em'} } }}
               format="MMMM dd, yyyy @hh:mm aaaa"
               value={getCheckinDate()}
               onChange={pickDate}
