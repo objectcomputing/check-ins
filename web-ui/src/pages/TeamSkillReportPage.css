@@ -1,14 +1,5 @@
-.button {
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 2rem;
-}
-
-.button-parent {
-  display: flex;
+.team-skill-report-page {
+  margin: 1rem 3rem;
 }
 
 .filter-section {
@@ -34,8 +25,7 @@
 .team-skill-autocomplete {
   display: flex;
   flex-direction: column;
-  margin-left: 1rem;
-  width: 30%;
+  width: 50%;
 }
 
 @media (max-width: 850px) {
@@ -68,8 +58,4 @@
 
 .team-skill-report-page .inactive {
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
-}
-
-.team-skill-report-page .team-skill-member-selector {
-  margin: 1rem 2rem;
 }
