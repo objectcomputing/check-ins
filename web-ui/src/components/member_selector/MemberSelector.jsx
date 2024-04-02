@@ -81,6 +81,10 @@ const MemberSelector = (onChange) => {
   const [filterOptions, setFilterOptions] = useState(null);
   const [filteredMembers, setFilteredMembers] = useState([]);
 
+  useEffect(() => {
+    onChange(selectedMembers);
+  }, [selectedMembers, onChange]);
+
   // Reset dialog when it is closed
   useEffect(() => {
     if (!dialogOpen) {
@@ -223,9 +227,7 @@ const MemberSelector = (onChange) => {
     });
   }, [state, csrf, members, filterType, filter, selectedMembers, showError]);
 
-  const getSelectableMembers = useCallback(async () => {
-    console.log(filteredMembers);
-
+  const getSelectableMembers = useCallback(() => {
     // Search by member name
     if (nameQuery) {
       return filteredMembers.filter(member => {
@@ -368,7 +370,7 @@ const MemberSelector = (onChange) => {
             </FormControl>
           </FormGroup>
           <List dense role="list">
-            {filteredMembers.map(member => (
+            {getSelectableMembers().map(member => (
               <ListItem
                 key={member.id}
                 role="listitem"
