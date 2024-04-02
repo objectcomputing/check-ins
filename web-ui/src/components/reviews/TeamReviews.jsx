@@ -312,7 +312,9 @@ const TeamReviews = ({ periodId }) => {
     }
   }, [csrf, period, teamMembers]);
 
-  useEffect(loadReviews, [loadReviews]);
+  useEffect(() => {
+    loadReviews();
+  }, [csrf, period, teamMembers]);
 
   const reloadReviews = useCallback(() => {
     loadedReviews.current = false;
