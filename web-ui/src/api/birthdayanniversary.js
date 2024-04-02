@@ -7,23 +7,20 @@ const celebrationsToday = "/services/today";
 export const getAnniversary = async (month, cookie) => {
   return resolve({
     url: `${anniversaryReportUrl}?month=${month}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };
 
 export const getTodaysCelebrations = async (cookie) => {
   return resolve({
     url: celebrationsToday,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 }; 
 
 export const getBirthday = async (month, cookie) => {
   return resolve({
     url: `${birthdayReportUrl}?month=${month}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };

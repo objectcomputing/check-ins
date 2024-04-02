@@ -43,12 +43,14 @@ const Roles = () => {
   const [roleToMemberMap, setRoleToMemberMap] = useState({});
   const [selectedRole, setSelectedRole] = useState("");
 
-  memberProfiles.sort((a, b) => a.name.localeCompare(b.name));
+  memberProfiles?.sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
       const memberMap = {};
-      for (const member of memberProfiles) {
-        memberMap[member.id] = member;
+      if(memberProfiles && memberProfiles.length > 0) {
+        for (const member of memberProfiles) {
+          memberMap[member.id] = member;
+        }
       }
 
       const newRoleToMemberMap = {};
@@ -220,9 +222,9 @@ const Roles = () => {
                   <Modal open={showAddUser} onClose={closeAddUser}>
                     <div className="role-modal">
                       <Autocomplete
-                        options={memberProfiles.filter(
+                        options={memberProfiles?.filter(
                           (member) => !roleToMemberMap[role].includes(member.id)
-                        )}
+                        ) || []}
                         value={selectedMember}
                         onChange={(event, newValue) =>
                           setSelectedMember(newValue)

@@ -30,7 +30,14 @@ const CheckinsHistory = () => {
       return new Date(year, month - 1, day, hour, minute, 0);
     }
     // return new date unless you are running a Jest test
-    return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
+    let currentDate = null;
+    try {
+      currentDate = process?.env?.VITEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
+    } catch (e) {
+      currentDate = new Date();
+    }
+
+    return currentDate;
   };
 
   const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");
@@ -83,7 +90,7 @@ const CheckinsHistory = () => {
               />
             </IconButton>
             <MobileDateTimePicker
-              renderInput={props => <TextField style={{width: '18em'}} {...props}/>}
+              slotProps={{ textField: { style: {width: '18em'} } }}
               format="MMMM dd, yyyy @hh:mm aaaa"
               value={getCheckinDate()}
               onChange={pickDate}

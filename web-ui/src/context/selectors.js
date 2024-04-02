@@ -1,17 +1,17 @@
 import { createSelector } from "reselect";
 
-export const selectMemberProfiles = (state) => state.memberProfiles;
+export const selectMemberProfiles = (state) => state.memberProfiles || [];
 export const selectTerminatedMembers = (state) => state.terminatedMembers;
-export const selectMemberSkills = (state) => state.memberSkills;
-export const selectSkills = (state) => state.skills;
+export const selectMemberSkills = (state) => state.memberSkills || [];
+export const selectSkills = (state) => state.skills || [];
 export const selectTeamMembers = (state) => state.teamMembers;
-export const selectUserProfile = (state) => state.userProfile;
-export const selectCheckins = (state) => state.checkins;
+export const selectUserProfile = (state) => state.userProfile || {};
+export const selectCheckins = (state) => state.checkins || [];
 export const selectCsrfToken = (state) => state.csrf;
-export const selectRoles = (state) => state.roles;
-export const selectUserRoles = (state) => state.userRoles;
-export const selectTeams = (state) => state.teams;
-export const selectGuilds = (state) => state.guilds;
+export const selectRoles = (state) => state.roles || [];
+export const selectUserRoles = (state) => state.userRoles || [];
+export const selectTeams = (state) => state.teams || [];
+export const selectGuilds = (state) => state.guilds || [];
 export const selectLoading = (state) => state.loading;
 export const selectReviewPeriods = (state) => state.reviewPeriods;
 export const selectPermissions = (state) => state.permissions;
@@ -93,7 +93,7 @@ export const selectCurrentMembers = createSelector(
           today <= new Date(profile.terminationDate)
         );
       })
-      .sort((a, b) => a.lastName.localeCompare(b.lastName))
+      .sort((a, b) => a?.lastName?.localeCompare(b?.lastName))
 );
 
 export const selectCurrentMemberIds = createSelector(
