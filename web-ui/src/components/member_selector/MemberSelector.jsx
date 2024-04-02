@@ -18,12 +18,16 @@ import {getAvatarURL} from "../../api/api";
 
 import "./MemberSelector.css";
 import MemberSelectorDialog from "./member_selector_dialog/MemberSelectorDialog";
+import Divider from "@mui/material/Divider";
 
 const propTypes = {
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  listHeight: PropTypes.number,
+  className: PropTypes.string,
+  style: PropTypes.object
 };
 
-const MemberSelector = ({ onChange }) => {
+const MemberSelector = ({ onChange, listHeight, className, style }) => {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -48,7 +52,9 @@ const MemberSelector = ({ onChange }) => {
 
   return (
     <>
-      <Card className="member-selector-card">
+      <Card
+        className={"member-selector-card" + (className ? ` ${className}` : "")}
+        style={style}>
         <CardHeader
           title={
             <Typography variant="h5">Selected Members
@@ -61,7 +67,8 @@ const MemberSelector = ({ onChange }) => {
             </Tooltip>
           }
         />
-        <List dense role="list">
+        <Divider/>
+        <List dense role="list" sx={{ maxHeight: listHeight || 400, overflow: "auto" }}>
           {selectedMembers.length
             ? (selectedMembers.map(member =>
               <ListItem
