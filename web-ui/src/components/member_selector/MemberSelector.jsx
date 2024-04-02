@@ -1,260 +1,43 @@
-import React, {useCallback, useContext, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {
-  AppBar,
   Avatar,
-  Button,
   Card,
   CardHeader,
-  Checkbox,
-  DialogContent,
-  FormGroup,
   IconButton,
-  InputLabel,
   List,
   ListItem,
   ListItemAvatar,
-  ListItemButton,
   ListItemText,
-  MenuItem,
-  Select,
-  TextField,
-  Toolbar,
   Tooltip,
   Typography
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import {getAvatarURL} from "../../api/api";
-import {AppContext} from "../../context/AppContext";
-import {
-  selectCsrfToken,
-  selectCurrentMembers,
-  selectGuilds,
-  selectSkills,
-  selectTeams
-} from "../../context/selectors";
-import Dialog from "@mui/material/Dialog";
-import Slide from "@mui/material/Slide";
-import CloseIcon from "@mui/icons-material/Close";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
 
 import "./MemberSelector.css";
-import FormControl from "@mui/material/FormControl";
-import Autocomplete from "@mui/material/Autocomplete";
-import {getMembersByTeam} from "../../api/team";
-import {UPDATE_TOAST} from "../../context/actions";
-import {getMembersByGuild} from "../../api/guild";
-import {getSkillMembers} from "../../api/memberskill";
-
-const DialogTransition = React.forwardRef((props, ref) => (
-  <Slide direction="up" ref={ref} {...props}/>
-));
-
-const FilterType = Object.freeze({
-  GUILD: "Guild",
-  TEAM: "Team",
-  TITLE: "Title",
-  LOCATION: "Location",
-  SKILLS: "Skills",
-});
+import MemberSelectorDialog from "./member_selector_dialog/MemberSelectorDialog";
 
 const propTypes = {
   onChange: PropTypes.func
 };
 
-const MemberSelector = (onChange) => {
-  const { state, dispatch } = useContext(AppContext);
-  const csrf = selectCsrfToken(state);
-  const members = selectCurrentMembers(state);
-
+const MemberSelector = ({ onChange }) => {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Contains set of ids of checked members for instant add/remove operations
-  const [checked, setChecked] = useState(new Set());
-
-  const [nameQuery, setNameQuery] = useState("");
-  const [filterType, setFilterType] = useState(FilterType.TEAM)
-  const [filter, setFilter] = useState(null);
-  const [filterOptions, setFilterOptions] = useState(null);
-  const [filteredMembers, setFilteredMembers] = useState([]);
-
   useEffect(() => {
-    onChange(selectedMembers);
+    if (onChange) {
+      onChange(selectedMembers);
+    }
   }, [selectedMembers, onChange]);
 
-  // Reset dialog when it is closed
-  useEffect(() => {
-    if (!dialogOpen) {
-      setChecked(new Set());
-      setNameQuery("");
-      setFilter(null);
-    }
-  }, [dialogOpen]);
-
-  // Change filter options when filter type is changed
-  useEffect(() => {
-    const getFilterOptions = () => {
-      switch (filterType) {
-        case FilterType.TEAM:
-          const teams = selectTeams(state);
-          return {
-            options: teams,
-            label: (team) => team.name,
-            equals: (team1, team2) => team1.id === team2.id
-          };
-        case FilterType.GUILD:
-          const guilds = selectGuilds(state);
-          return {
-            options: guilds,
-            label: (guild) => guild.name,
-            equals: (guild1, guild2) => guild1.id === guild2.id
-          };
-        case FilterType.TITLE:
-          // Create a list of unique titles from current members
-          let titles = members
-            .filter(member => !!member.title)
-            .map(member => member.title);
-          titles = [...new Set(titles)];
-          return {
-            options: titles,
-            label: (title) => title,
-            equals: (title1, title2) => title1 === title2
-          };
-        case FilterType.LOCATION:
-          let locations = members
-            .filter(member => !!member.location)
-            .map(member => member.location);
-          locations = [...new Set(locations)];
-          return {
-            options: locations,
-            label: (location) => location,
-            equals: (location1, location2) => location1 === location2
-          };
-        case FilterType.SKILLS:
-          let skills = selectSkills(state);
-          return {
-            options: skills,
-            label: (skill) => skill.name,
-            equals: (skill1, skill2) => skill1.id === skill2.id
-          };
-        default:
-          console.warn(`Cannot get options for FilterType ${filterType}; no implementation provided`);
-          return null;
-      }
-    }
-
-    setFilterOptions(getFilterOptions());
-
-  }, [filterType, members, state]);
-
-  const showError = useCallback((message) => {
-    dispatch({
-      type: UPDATE_TOAST,
-      payload: {
-        severity: "error",
-        toast: message
-      }
-    });
-  }, [dispatch]);
-
-  // Filters the list of members based on the selected filter type and filter
-  useEffect(() => {
-    const getFilteredMembers = async () => {
-      // Exclude members that are already selected
-      let filteredMemberList = members.filter(member =>
-        !selectedMembers.includes(member)
-      );
-
-      // If a filter is selected, use it to filter the list of selectable members
-      if (filter) {
-        switch (filterType) {
-          case FilterType.TEAM:
-            const teamId = filter.id;
-            const teamRes = await getMembersByTeam(teamId, csrf);
-            if (!teamRes.error) {
-              const teamMembers = teamRes.payload.data;
-              // Collect team member ids into a set for instant lookup when filtering
-              const memberIdsForTeam = new Set(teamMembers.map(teamMember => teamMember.memberId));
-              filteredMemberList = filteredMemberList.filter(member => memberIdsForTeam.has(member.id));
-              break;
-            } else {
-              showError(`Could not retrieve members for team ${filter.name}`);
-            }
-            break;
-          case FilterType.GUILD:
-            const guildId = filter.id;
-            const guildRes = await getMembersByGuild(guildId, csrf);
-            if (!guildRes.error) {
-              const guildMembers = guildRes.payload.data;
-              // Collect guild member ids into a set for instant lookup when filtering
-              const memberIdsForGuild = new Set(guildMembers.map(guildMember => guildMember.memberId));
-              filteredMemberList = filteredMemberList.filter(member => memberIdsForGuild.has(member.id));
-            } else {
-              showError(`Could not retrieve members for guild ${filter.name}`);
-            }
-            break;
-          case FilterType.TITLE:
-            filteredMemberList = filteredMemberList.filter(member => member.title === filter);
-            break;
-          case FilterType.LOCATION:
-            filteredMemberList = filteredMemberList.filter(member => member.location === filter);
-            break;
-          case FilterType.SKILLS:
-            const skillId = filter.id;
-            const skillRes = await getSkillMembers(skillId, csrf);
-            if (!skillRes.error) {
-              const memberSkills = skillRes.payload.data;
-              // Collect member skill ids into a set for instant lookup when filtering
-              const memberIdsForSkill = new Set(memberSkills.map(memberSkill => memberSkill.memberid));
-              filteredMemberList = filteredMemberList.filter(member => memberIdsForSkill.has(member.id));
-            } else {
-              showError(`Could not retrieve members with skill ${filter.name}`);
-            }
-            break;
-          default:
-            console.warn(`Cannot filter members based on FilterType ${filterType}; no implementation provided`);
-        }
-      }
-
-      return filteredMemberList;
-    }
-
-    getFilteredMembers().then(filtered => {
-      setFilteredMembers(filtered);
-    });
-  }, [state, csrf, members, filterType, filter, selectedMembers, showError]);
-
-  const getSelectableMembers = useCallback(() => {
-    // Search by member name
-    if (nameQuery) {
-      return filteredMembers.filter(member => {
-        const sanitizedQuery = nameQuery.trim().toLowerCase();
-        return member.name.toLowerCase().includes(sanitizedQuery);
-      });
-    }
-
-    return filteredMembers;
-  }, [nameQuery, filteredMembers]);
-
-  const handleCheckboxToggle = useCallback((member) => {
-    const newChecked = new Set(checked);
-    if (checked.has(member.id)) {
-      newChecked.delete(member.id);
-    } else {
-      newChecked.add(member.id);
-    }
-    setChecked(newChecked);
-  }, [checked]);
-
-  const addMembers = useCallback(() => {
-    const membersToAdd = members.filter(member => checked.has(member.id));
+  const addMembers = useCallback((membersToAdd) => {
     const selected = [...selectedMembers, ...membersToAdd];
     setSelectedMembers(selected);
     setDialogOpen(false);
-  }, [checked, members, selectedMembers]);
+  }, [selectedMembers]);
 
   const removeMember = useCallback((member) => {
     const selected = [...selectedMembers]
@@ -305,95 +88,14 @@ const MemberSelector = (onChange) => {
           }
         </List>
       </Card>
-      <Dialog
-        className="member-selector-dialog"
-        open={dialogOpen}
-        fullScreen
-        onClose={() => setDialogOpen(false)}
-        TransitionComponent={DialogTransition}
-      >
-        <AppBar>
-          <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={() => setDialogOpen(false)}>
-              <CloseIcon/>
-            </IconButton>
-            <Typography variant="h6" flexGrow={1}>Select Members</Typography>
-            <Button color="inherit" disabled={checked.size === 0} onClick={addMembers}>
-              Add
-            </Button>
-          </Toolbar>
-        </AppBar>
-        <DialogContent className="member-selector-dialog-content">
-          <FormGroup row>
-            <TextField
-              label="Name"
-              placeholder="Search by member name"
-              variant="outlined"
-              value={nameQuery}
-              onChange={(event) => setNameQuery(event.target.value)}
-              InputProps={{
-                endAdornment: <InputAdornment position="end" color="gray"><SearchIcon/></InputAdornment>
-              }}
-            />
-            <Autocomplete
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  label="Filter Members"
-                  placeholder="Search"
-                />
-              )}
-              disablePortal
-              disabled={!filterOptions}
-              options={filterOptions ? filterOptions.options : []}
-              getOptionLabel={filterOptions ? filterOptions.label : () => ""}
-              isOptionEqualToValue={filterOptions ? filterOptions.equals : () => false}
-              value={filter}
-              onChange={(_, value) => setFilter(value)}
-            />
-            <FormControl>
-              <InputLabel id="member-filter-label">Filter by</InputLabel>
-              <Select
-                labelId="member-filter-label"
-                label="Filter by"
-                value={filterType}
-                onChange={(event) => {
-                  setFilter(null);
-                  setFilterType(event.target.value);
-                }}
-              >
-                {Object.values(FilterType).map((name) =>
-                  <MenuItem key={name} value={name}>{name}</MenuItem>
-                )}
-              </Select>
-            </FormControl>
-          </FormGroup>
-          <List dense role="list">
-            {getSelectableMembers().map(member => (
-              <ListItem
-                key={member.id}
-                role="listitem"
-                disablePadding
-                onClick={() => handleCheckboxToggle(member)}
-                secondaryAction={
-                  <Checkbox checked={checked.has(member.id)} disableRipple/>
-                }
-              >
-                <ListItemButton>
-                  <ListItemAvatar>
-                    <Avatar src={getAvatarURL(member.workEmail)}/>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={<Typography fontWeight="bold">{member.name}</Typography>}
-                    secondary={<Typography color="textSecondary" component="h6">{member.title}</Typography>}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </DialogContent>
-      </Dialog>
+      {dialogOpen &&
+        <MemberSelectorDialog
+          open={dialogOpen}
+          selectedMembers={selectedMembers}
+          onClose={() => setDialogOpen(false)}
+          onSubmit={(membersToAdd) => addMembers(membersToAdd)}
+        />
+      }
     </>
   );
 };
