@@ -29,7 +29,7 @@ import {
   selectCsrfToken,
   selectCurrentMembers,
   selectGuilds,
-  selectSkills,
+  selectSkills, selectSubordinates, selectSupervisors, selectTeamMembersBySupervisorId,
   selectTeams
 } from "../../../context/selectors";
 import {UPDATE_TOAST} from "../../../context/actions";
@@ -38,6 +38,7 @@ import {getMembersByGuild} from "../../../api/guild";
 import {getSkillMembers} from "../../../api/memberskill";
 
 import "./MemberSelectorDialog.css";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const DialogTransition = React.forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props}/>
@@ -48,7 +49,8 @@ const FilterType = Object.freeze({
   TEAM: "Team",
   TITLE: "Title",
   LOCATION: "Location",
-  SKILLS: "Skills",
+  SKILL: "Skill",
+  MANAGER: "Manager",
 });
 
 const propTypes = {
@@ -71,6 +73,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
   const [filter, setFilter] = useState(null);
   const [filterOptions, setFilterOptions] = useState(null);
   const [filteredMembers, setFilteredMembers] = useState([]);
+  const [directReportsOnly, setDirectReportsOnly] = useState(false);
 
   const handleSubmit = useCallback(() => {
     const membersToAdd = members.filter(member => checked.has(member.id));
@@ -116,12 +119,19 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
             label: (location) => location,
             equals: (location1, location2) => location1 === location2
           };
-        case FilterType.SKILLS:
+        case FilterType.SKILL:
           let skills = selectSkills(state);
           return {
             options: skills,
             label: (skill) => skill.name,
             equals: (skill1, skill2) => skill1.id === skill2.id
+          };
+        case FilterType.MANAGER:
+          const supervisors = selectSupervisors(state);
+          return {
+            options: supervisors,
+            label: (supervisor) => supervisor.name,
+            equals: (supervisor1, supervisor2) => supervisor1.id === supervisor2.id
           };
         default:
           console.warn(`Cannot get options for FilterType ${filterType}; no implementation provided`);
@@ -185,7 +195,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
           case FilterType.LOCATION:
             filteredMemberList = filteredMemberList.filter(member => member.location === filter);
             break;
-          case FilterType.SKILLS:
+          case FilterType.SKILL:
             const skillId = filter.id;
             const skillRes = await getSkillMembers(skillId, csrf);
             if (!skillRes.error) {
@@ -196,6 +206,16 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
             } else {
               showError(`Could not retrieve members with skill ${filter.name}`);
             }
+            break;
+          case FilterType.MANAGER:
+            const managerId = filter.id;
+            // Determine whether to include all subordinates or only direct subordinates
+            const subordinates = directReportsOnly
+              ? selectTeamMembersBySupervisorId(state, managerId)
+              : selectSubordinates(state, managerId);
+            // Collect subordinate ids into a set for instant lookup when filtering
+            const subordinateIds = new Set(subordinates.map(member => member.id));
+            filteredMemberList = filteredMemberList.filter(member => subordinateIds.has(member.id));
             break;
           default:
             console.warn(`Cannot filter members based on FilterType ${filterType}; no implementation provided`);
@@ -208,7 +228,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
     getFilteredMembers().then(filtered => {
       setFilteredMembers(filtered);
     });
-  }, [state, csrf, members, filterType, filter, selectedMembers, showError]);
+  }, [state, csrf, members, filterType, filter, selectedMembers, showError, directReportsOnly]);
 
   const getSelectableMembers = useCallback(() => {
     // Search by member name
@@ -268,6 +288,15 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
             }}
           />
           <div className="filter-container">
+            {filterType === FilterType.MANAGER &&
+              <FormControlLabel
+                control={<Checkbox
+                  checked={directReportsOnly}
+                  onChange={(event) => setDirectReportsOnly(event.target.checked)}
+                />}
+                label="Direct reports only"
+              />
+            }
             <Autocomplete
               className="filter-input"
               renderInput={(params) => (
@@ -275,7 +304,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
                   {...params}
                   variant="outlined"
                   label="Filter Members"
-                  placeholder="Search"
+                  placeholder={`Search for ${filterType.toLowerCase()}`}
                 />
               )}
               disablePortal
