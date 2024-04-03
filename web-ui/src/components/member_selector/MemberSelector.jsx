@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {
   Avatar,
   Card,
-  CardHeader,
+  CardHeader, Collapse,
   IconButton,
   List,
   ListItem,
@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {getAvatarURL} from "../../api/api";
 
 import "./MemberSelector.css";
@@ -30,6 +32,7 @@ const propTypes = {
 const MemberSelector = ({ onChange, listHeight, className, style }) => {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   useEffect(() => {
     if (onChange) {
@@ -56,47 +59,54 @@ const MemberSelector = ({ onChange, listHeight, className, style }) => {
         className={"member-selector-card" + (className ? ` ${className}` : "")}
         style={style}>
         <CardHeader
+          avatar={
+            <IconButton onClick={() => setExpanded(!expanded)}>
+              {expanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+            </IconButton>
+          }
           title={
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <Typography variant="h5">Selected Members</Typography>
-              <Typography variant="h6" color="gray" fontSize="0.75em" >({selectedMembers.length})</Typography>
+            <div className="member-selector-card-title-container">
+              <Typography className="member-selector-card-title" variant="h5" noWrap>Selected Members</Typography>
+              <Typography className="member-selector-card-count" variant="h6" color="gray">({selectedMembers.length})</Typography>
             </div>
           }
           action={
             <Tooltip title="Add members" arrow>
-              <IconButton style={{ marginRight: "8px" }} onClick={() => setDialogOpen(true)}>
+              <IconButton style={{ margin: "4px 8px 0 0" }} onClick={() => setDialogOpen(true)}>
                 <AddIcon/>
               </IconButton>
             </Tooltip>
           }
         />
-        <Divider/>
-        <List dense role="list" sx={{ maxHeight: listHeight || 400, overflow: "auto" }}>
-          {selectedMembers.length
-            ? (selectedMembers.map(member =>
-              <ListItem
-                key={member.id}
-                role="listitem"
-                secondaryAction={
-                  <Tooltip title="Deselect member" arrow>
-                    <IconButton onClick={() => removeMember(member)}><RemoveIcon/></IconButton>
-                  </Tooltip>
-                }
-              >
-                <ListItemAvatar>
-                  <Avatar src={getAvatarURL(member.workEmail)}/>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={<Typography fontWeight="bold">{member.name}</Typography>}
-                  secondary={<Typography color="textSecondary" component="h6">{member.title}</Typography>}
-                />
-              </ListItem>
-            ))
-            : (
-              <ListItem><ListItemText style={{ color: "gray" }}>No members selected</ListItemText></ListItem>
-            )
-          }
-        </List>
+        <Collapse in={expanded}>
+          <Divider/>
+          <List dense role="list" sx={{ maxHeight: listHeight || 400, overflow: "auto" }}>
+            {selectedMembers.length
+              ? (selectedMembers.map(member =>
+                <ListItem
+                  key={member.id}
+                  role="listitem"
+                  secondaryAction={
+                    <Tooltip title="Deselect member" arrow>
+                      <IconButton onClick={() => removeMember(member)}><RemoveIcon/></IconButton>
+                    </Tooltip>
+                  }
+                >
+                  <ListItemAvatar>
+                    <Avatar src={getAvatarURL(member.workEmail)}/>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={<Typography fontWeight="bold">{member.name}</Typography>}
+                    secondary={<Typography color="textSecondary" component="h6">{member.title}</Typography>}
+                  />
+                </ListItem>
+              ))
+              : (
+                <ListItem><ListItemText style={{ color: "gray" }}>No members selected</ListItemText></ListItem>
+              )
+            }
+          </List>
+        </Collapse>
       </Card>
       <MemberSelectorDialog
         open={dialogOpen}
