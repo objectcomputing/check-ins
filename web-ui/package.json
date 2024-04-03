@@ -90,6 +90,7 @@
     "msw": "^2.2.13",
     "prettier": "2.8.1",
     "prop-types": "^15.8.1",
+    "raf": "^3.4.1",
     "react-test-renderer": "^18.2.0",
     "storybook": "^8.0.4",
     "vite": "^5.2.6",
