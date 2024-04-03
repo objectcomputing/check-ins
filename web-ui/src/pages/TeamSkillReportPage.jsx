@@ -182,6 +182,10 @@ const TeamSkillReportPage = () => {
             }
             <SearchResults searchResults={searchResultsCopy} />
           </div>
+          <div className="search-results">
+            <Typography variant="h5" fontWeight="bold">All Employees With Selected Skills</Typography>
+            <SearchResults searchResults={allSearchResults} />
+          </div>
         </div>
       )}
     </div>
