@@ -29,8 +29,8 @@ describe("MemberSelectorDialog", () => {
         <MemberSelectorDialog
           open={true}
           selectedMembers={members}
-          onClose={jest.fn()}
-          onSubmit={jest.fn()}
+          onClose={vi.fn()}
+          onSubmit={vi.fn()}
         />
       </AppContextProvider>
     );

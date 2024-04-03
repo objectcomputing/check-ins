@@ -32,7 +32,7 @@ it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
       <MemberSelector
-        onChange={jest.fn()}
+        onChange={vi.fn()}
         listHeight={300}
         className="test-class"
         style={{ margin: "10px" }}
