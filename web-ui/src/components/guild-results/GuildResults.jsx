@@ -52,7 +52,7 @@ const GuildResults = () => {
         <GuildsActions />
       </div>
       <div className="guilds">
-        {guilds.length?
+        {guilds?.length?
           guilds?.map((guild, index) =>
             guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
               <GuildSummaryCard

@@ -1,16 +1,15 @@
 import "isomorphic-fetch";
 import React from "react";
-import fetch from "jest-fetch-mock";
+import createFetchMock from 'vitest-fetch-mock';;
 import requestAnimationFrame from "raf/polyfill";
-import renderer from "react-test-renderer";
-import "@testing-library/jest-dom";
-import {jest} from '@jest/globals';
+import { render } from "@testing-library/react";
+import '@testing-library/jest-dom';
 
-const mockModule = jest.requireActual("react-dom");
+const mockModule = await vi.importActual("react-dom");
 
 const mockClone = React.cloneElement;
 
-jest.mock("react-dom", () => {
+vi.mock("react-dom", () => {
   return {
     __esModule: true, // Use it when dealing with esModules
     ...mockModule,
@@ -22,11 +21,16 @@ jest.mock("react-dom", () => {
     },
   };
 });
-jest.mock("react-transition-group/cjs/Transition");
+vi.mock("react-transition-group/cjs/Transition");
+
+const fetchMocker = createFetchMock(vi);
+fetchMocker.enableMocks();
 
 global.snapshot = (component, options) =>
-  expect(renderer.create(component, options).toJSON()).toMatchSnapshot();
+  expect(render(component, options).container).toMatchSnapshot();
+global.rootSnapshot = (component, options) =>
+  expect(render(component, options).baseElement).toMatchSnapshot();
 
-global.window = {};
-global.fetch = fetch;
+global.window = global.window || {};
 global.window.requestAnimationFrame = global.requestAnimationFrame = requestAnimationFrame;
+//global.window.addEventListener = global.addEventListener;

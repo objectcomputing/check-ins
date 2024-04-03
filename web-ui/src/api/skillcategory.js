@@ -6,61 +6,53 @@ const skillRecordsUrl = "/services/skills/records";
 
 export const createSkillCategory = async (skillCategory, cookie) => {
   return resolve({
-    method: "post",
+    method: "POST",
     url: skillCategoryUrl,
-    responseType: "json",
     data: skillCategory,
-    headers: { "X-CSRF-Header": cookie }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 };
 
 export const updateSkillCategory = async (skillCategory, cookie) => {
   return resolve({
-    method: "put",
+    method: "PUT",
     url: skillCategoryUrl,
-    responseType: "json",
     data: skillCategory,
-    headers: { "X-CSRF-Header": cookie }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 }
 
 export const getSkillCategories = async (cookie) => {
   return resolve({
     url: `${skillCategoryUrl}/with-skills`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };
 
 export const getSkillCategory = async (categoryId, cookie) => {
   return resolve({
     url: `${skillCategoryUrl}/${categoryId}`,
-    responseType: "json",
-    headers: {
-      "X-CSRF-Header": cookie,
-      'Content-Type': 'application/json'
-    }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json"},
   });
 };
 
 export const deleteSkillCategory = async (categoryId, cookie) => {
   return resolve({
-    method: "delete",
+    method: "DELETE",
     url: `${skillCategoryUrl}/${categoryId}`,
-    headers: {"X-CSRF-Header": cookie}
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 }
 
 export const createSkillCategorySkill = async (categoryId, skillId, cookie) => {
   return resolve({
-    method: "post",
+    method: "POST",
     url: skillCategorySkillUrl,
-    responseType: "json",
     data: {
       skillCategoryId: categoryId,
       skillId: skillId
     },
-    headers: { "X-CSRF-Header": cookie }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 }
 
@@ -75,20 +67,19 @@ export const createSkillCategorySkills = async (categoryId, skillIds, cookie) =>
 
 export const deleteSkillCategorySkill = async (categoryId, skillId, cookie) => {
   return resolve({
-    method: "delete",
+    method: "DELETE",
     url: skillCategorySkillUrl,
     data: {
       skillCategoryId: categoryId,
       skillId: skillId
     },
-    headers: { "X-CSRF-Header": cookie }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 }
 
 export const getSkillsCsv = async (cookie) => {
   return resolve({
     url: `${skillRecordsUrl}/csv`,
-    responseType: "blob",
     headers: { "X-CSRF-Header": cookie, "Accept": "text/csv" }
   });
 }

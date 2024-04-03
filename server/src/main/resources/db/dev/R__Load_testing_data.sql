@@ -22,7 +22,9 @@ delete from template_questions;
 delete from review_periods;
 delete from feedback_templates;
 delete from member_profile;
+delete from skillcategory_skills;
 delete from skills;
+delete from skillcategories;
 
 -- Member Profiles
 INSERT INTO member_profile -- Gina Bremehr

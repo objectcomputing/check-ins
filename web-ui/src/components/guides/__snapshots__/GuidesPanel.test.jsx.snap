@@ -1,0 +1,157 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+  >
+    <div
+      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+          data-testid="PictureAsPdfIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5zm4-3H19v1h1.5V11H19v2h-1.5V7h3zM9 9.5h1v-1H9zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm10 5.5h1v-3h-1z"
+          />
+        </svg>
+      </div>
+      <div
+        class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+      >
+        <span
+          class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+        >
+          Team Member Resources
+        </span>
+      </div>
+    </div>
+    <ul
+      class="MuiList-root MuiList-padding MuiList-dense css-h4y409-MuiList-root"
+    >
+      <a
+        class="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding MuiListItem-button css-qyxyi3-MuiButtonBase-root-MuiListItem-root"
+        href="/pdfs/Expectations_Discussion_Guide_for_Team_Members.pdf"
+        tabindex="0"
+        target="_blank"
+      >
+        <li
+          class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        >
+          <div
+            class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
+          >
+            <span
+              class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
+            >
+              Expectations Discussion Guide for Team Members
+            </span>
+          </div>
+        </li>
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </a>
+      <a
+        class="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding MuiListItem-button css-qyxyi3-MuiButtonBase-root-MuiListItem-root"
+        href="/pdfs/Expectations_Worksheet.pdf"
+        tabindex="0"
+        target="_blank"
+      >
+        <li
+          class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        >
+          <div
+            class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
+          >
+            <span
+              class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
+            >
+              Expectations Worksheet
+            </span>
+          </div>
+        </li>
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </a>
+      <a
+        class="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding MuiListItem-button css-qyxyi3-MuiButtonBase-root-MuiListItem-root"
+        href="/pdfs/Feedback_Discussion_Guide_for_Team_Members.pdf"
+        tabindex="0"
+        target="_blank"
+      >
+        <li
+          class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        >
+          <div
+            class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
+          >
+            <span
+              class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
+            >
+              Feedback Discussion Guide for Team Members
+            </span>
+          </div>
+        </li>
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </a>
+      <a
+        class="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding MuiListItem-button css-qyxyi3-MuiButtonBase-root-MuiListItem-root"
+        href="/pdfs/Development_Discussion_Guide_for_Team_Members.pdf"
+        tabindex="0"
+        target="_blank"
+      >
+        <li
+          class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        >
+          <div
+            class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
+          >
+            <span
+              class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
+            >
+              Development Discussion Guide for Team Members
+            </span>
+          </div>
+        </li>
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </a>
+      <a
+        class="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding MuiListItem-button css-qyxyi3-MuiButtonBase-root-MuiListItem-root"
+        href="/pdfs/Individual_Development_Plan.pdf"
+        tabindex="0"
+        target="_blank"
+      >
+        <li
+          class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        >
+          <div
+            class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
+          >
+            <span
+              class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
+            >
+              Individual Development Plan
+            </span>
+          </div>
+        </li>
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </a>
+    </ul>
+  </div>
+</div>
+`;
