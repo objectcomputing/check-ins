@@ -14,6 +14,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 import "./TeamSkillReportPage.css";
 import MemberSelector from "../components/member_selector/MemberSelector";
+import Typography from "@mui/material/Typography";
 
 const TeamSkillReportPage = () => {
   const { state } = useContext(AppContext);
@@ -53,7 +54,7 @@ const TeamSkillReportPage = () => {
   };
 
   function skillsToSkillLevel(skills) {
-    return skills.map((skill, index) => {
+    return skills.map((skill) => {
       return {
         id: skill.id,
         level: skill.skilllevel,
@@ -175,8 +176,10 @@ const TeamSkillReportPage = () => {
             />
           </div>
           <div className="search-results">
-            <h2>Search Results</h2>
-            {!searchResultsCopy.length && <h4>No Matches</h4>}
+            <Typography variant="h5" fontWeight="bold">Search Results</Typography>
+            {!searchResultsCopy.length &&
+              <Typography variant="body1" color="textSecondary">No Matches</Typography>
+            }
             <SearchResults searchResults={searchResultsCopy} />
           </div>
         </div>

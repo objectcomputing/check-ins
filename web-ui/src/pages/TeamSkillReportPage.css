@@ -2,60 +2,32 @@
   margin: 1rem 3rem;
 }
 
-.filter-section {
-  display: flex;
-  flex-direction: column;
+.team-skill-report-page .select-skills-section {
+  width: 50%;
 }
 
-.member-skills-card {
+.team-skill-report-page .member-skills-card {
   max-height: 20rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.search-results {
-  margin: 1rem;
+.team-skill-report-page .search-results {
+  margin-top: 2rem;
 }
 
-.search-results .MuiChip-root {
+.team-skill-report-page .search-results .MuiChip-root {
   margin: 0.25rem;
 }
 
-.team-skill-autocomplete {
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-}
-
 @media (max-width: 850px) {
-  .button-parent {
-    justify-content: center;
+  .team-skill-report-page {
+    margin: 0.5rem 1rem;
   }
-  .team-skill-autocomplete {
-    width: unset;
+
+  .team-skill-report-page .select-skills-section {
+    width: 100%;
   }
 }
 
-.team-skill-report-page .active {
-  background: linear-gradient(
-    95deg,
-    rgb(242, 113, 33) 0%,
-    rgb(233, 64, 87) 50%,
-    rgb(138, 35, 135) 100%
-  );
-  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
-}
-
-.team-skill-report-page .circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  height: 3rem;
-  width: 3rem;
-}
-
-.team-skill-report-page .inactive {
-  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
-}
