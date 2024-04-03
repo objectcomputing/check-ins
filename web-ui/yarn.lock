@@ -3040,13 +3040,13 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.5.2.tgz#db7257d727c891905947bd1c1a99da20e03c2ebd"
   integrity sha512-YAh82Wh4TIrxYLmfGcixwD18oIjyC1pFQC2Y01F2lzV2HTMiYrI0nze0FD0ocB//CKS/7jIUgae+adPqxK5yCQ==
 
-"@tinymce/tinymce-react@^4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@tinymce/tinymce-react/-/tinymce-react-4.3.2.tgz#fbe05e35e948b0e577eddf639bfe7ee2158fdc10"
-  integrity sha512-wJHZhPf2Mk3yTtdVC/uIGh+kvDgKuTw/qV13uzdChTNo68JI1l7jYMrSQOpyimDyn5LHAw0E1zFByrm1WHAVeA==
+"@tinymce/tinymce-react@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@tinymce/tinymce-react/-/tinymce-react-5.0.0.tgz#b87913de5d26d7832776d0376b4276907a38a34f"
+  integrity sha512-5lT0nZ9L/qVO7OWyns4KIF3MDeagHThRFTP1YGuvS4QNtgEc1gWAt9aCswRBptZYMKCXgXNvStVUmq/TVxODGQ==
   dependencies:
     prop-types "^15.6.2"
-    tinymce "^6.0.0 || ^5.5.1"
+    tinymce "^7.0.0 || ^6.0.0 || ^5.5.1"
 
 "@types/aria-query@^5.0.1":
   version "5.0.4"
@@ -9970,10 +9970,10 @@ tinybench@^2.5.1:
   resolved "https://registry.yarnpkg.com/tinybench/-/tinybench-2.6.0.tgz#1423284ee22de07c91b3752c048d2764714b341b"
   integrity sha512-N8hW3PG/3aOoZAN5V/NSAEDz0ZixDSSt5b/a05iqtpgfLWMSVuCo7w0k2vVvEjdrIoeGqZzweX2WlyioNIHchA==
 
-"tinymce@^6.0.0 || ^5.5.1":
-  version "6.8.1"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-6.8.1.tgz#840f514b4a175f55042cbe2fce548b10fc38208b"
-  integrity sha512-WYPvMXIjBrXM/oBiqGCbT2a8ptiO3TWXm/xxPWDCl8SxRKMW7Rfp0Lk190E9fXmX6uh9lJMRCnmKHzvryz0ftA==
+"tinymce@^7.0.0 || ^6.0.0 || ^5.5.1":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-7.0.0.tgz#d35441e15f8011cf549b39e58b64648798816e92"
+  integrity sha512-ggXLfTRrUALAcjeJSRrZcJDOl6MgC2tPXe/zNOEkQXvTDgcKqFypPRoPpfpK5wejexjyaI/7dwETOntJ5MPBFg==
 
 tinypool@^0.8.2:
   version "0.8.3"
