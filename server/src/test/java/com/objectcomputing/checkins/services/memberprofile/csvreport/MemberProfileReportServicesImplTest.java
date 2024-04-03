@@ -31,6 +31,9 @@ class MemberProfileReportServicesImplTest {
     @Mock
     private MemberProfileReportRepository memberProfileReportRepository;
 
+    @Mock
+    private MemberProfileFileProvider memberProfileFileProvider;
+
     @InjectMocks
     private MemberProfileReportServicesImpl memberProfileReportServices;
 
@@ -48,6 +51,9 @@ class MemberProfileReportServicesImplTest {
     void testGenerateFileWithAllMemberProfiles() throws IOException {
         List<MemberProfileRecord> expectedRecords = createSampleRecords();
         when(memberProfileReportRepository.findAll()).thenReturn(expectedRecords);
+        File tmpFile = File.createTempFile("member",".csv");
+        tmpFile.deleteOnExit();
+        when(memberProfileFileProvider.provideFile()).thenReturn(tmpFile);
 
         // Generate a file with all members
         File file = memberProfileReportServices.generateFile(null);
@@ -71,7 +77,9 @@ class MemberProfileReportServicesImplTest {
         when(memberProfileReportRepository
                 .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString())), any()))
                 .thenReturn(List.of(expectedRecord));
-
+        File tmpFile = File.createTempFile("member",".csv");
+        tmpFile.deleteOnExit();
+        when(memberProfileFileProvider.provideFile()).thenReturn(tmpFile);
         // Generate a file with selected members
         MemberProfileReportQueryDTO dto = new MemberProfileReportQueryDTO();
         dto.setMemberIds(List.of(expectedRecord.getId()));
@@ -84,6 +92,26 @@ class MemberProfileReportServicesImplTest {
         CSVRecord csvRecord1 = records.get(0);
         assertRecordEquals(expectedRecord, csvRecord1);
     }
+
+    @Test
+    void testGenerateFileNotGenerated() throws IOException {
+        List<MemberProfileRecord> allRecords = createSampleRecords();
+        MemberProfileRecord expectedRecord = allRecords.get(1);
+        when(memberProfileReportRepository
+                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString())), any()))
+                .thenReturn(List.of(expectedRecord));
+
+        when(memberProfileFileProvider.provideFile()).thenThrow(new RuntimeException());
+        // Generate a file with selected members
+        MemberProfileReportQueryDTO dto = new MemberProfileReportQueryDTO();
+        dto.setMemberIds(List.of(expectedRecord.getId()));
+
+        assertThrows(RuntimeException.class, () -> {
+            memberProfileReportServices.generateFile(dto);
+        });
+    }
+
+
 
     private static void assertRecordEquals(MemberProfileRecord record, CSVRecord csvRecord) {
         assertEquals(record.getFirstName(), csvRecord.get("First Name"));

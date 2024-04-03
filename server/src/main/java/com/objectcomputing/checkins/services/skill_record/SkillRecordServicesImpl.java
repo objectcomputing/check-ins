@@ -14,9 +14,11 @@ import java.util.List;
 public class SkillRecordServicesImpl implements SkillRecordServices {
 
     private final SkillRecordRepository skillRecordRepository;
+    private final SkillRecordFileProvider skillRecordFileProvider;
 
-    public SkillRecordServicesImpl(SkillRecordRepository skillRecordRepository) {
+    public SkillRecordServicesImpl(SkillRecordRepository skillRecordRepository, SkillRecordFileProvider skillRecordFileProvider) {
         this.skillRecordRepository = skillRecordRepository;
+        this.skillRecordFileProvider = skillRecordFileProvider;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class SkillRecordServicesImpl implements SkillRecordServices {
         String[] headers = { "name", "description", "extraneous", "pending", "category_name" };
         CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader(headers).withQuote('"');
 
-        File csvFile = new File("skill_records.csv");
+        File csvFile = skillRecordFileProvider.provideFile();
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csvFile, StandardCharsets.UTF_8), csvFormat)) {
             for (SkillRecord record : skillRecords) {
                 printer.printRecord(record.getName(), record.getDescription(), record.isExtraneous(), record.isPending(), record.getCategoryName());
