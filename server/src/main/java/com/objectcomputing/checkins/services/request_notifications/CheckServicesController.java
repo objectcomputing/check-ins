@@ -59,7 +59,8 @@ public class CheckServicesController {
             System.out.println("Hosted Domain" + hostedDomain);
             String prettyString = payload.toPrettyString();
             System.out.println(prettyString);
-//            boolean emailVerified = payload.getEmailVerified();
+            boolean emailVerified = payload.getEmailVerified();
+            System.out.println("emailVerified:" + emailVerified);
 //            String name = (String) payload.get("name");
 //            String pictureUrl = (String) payload.get("picture");
 //            String locale = (String) payload.get("locale");
