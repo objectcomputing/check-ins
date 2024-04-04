@@ -55,6 +55,10 @@ public class CheckServicesController {
             // Get profile information from payload
             String email = payload.getEmail();
             System.out.println("Email:"+ email);
+            String hostedDomain = payload.getHostedDomain();
+            System.out.println("Hosted Domain" + hostedDomain);
+            String prettyString = payload.toPrettyString();
+            System.out.println(prettyString);
 //            boolean emailVerified = payload.getEmailVerified();
 //            String name = (String) payload.get("name");
 //            String pictureUrl = (String) payload.get("picture");
