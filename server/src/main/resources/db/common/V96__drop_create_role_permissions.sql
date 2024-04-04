@@ -17,7 +17,6 @@ FROM role_permissions rp
 
 
 DROP TABLE role_permissions;
-DROP TABLE permissions;
 
 ALTER TABLE tmp_role_permissions
     RENAME TO role_permissions;
