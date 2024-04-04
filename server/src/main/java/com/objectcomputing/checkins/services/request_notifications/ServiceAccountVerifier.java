@@ -27,8 +27,6 @@ public class ServiceAccountVerifier {
 
     public void verify(String authorization) {
         try {
-            LOG.info(authorization);
-            LOG.info(webAddress);
             GoogleIdToken idToken = verifier.verify(authorization);
             //only one service account
             assert idToken.getPayload().getEmail().equals("sa-checkins@oci-intern-2019.iam.gserviceaccount.com");
