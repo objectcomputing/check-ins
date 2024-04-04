@@ -1,11 +1,13 @@
 package com.objectcomputing.checkins.services.request_notifications;
 
 import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.context.annotation.Property;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.time.LocalDate;
 import java.util.*;
@@ -21,7 +23,8 @@ public class CheckServicesImpl implements CheckServices {
     private String notificationContent;
     private final MemberProfileServices memberProfileServices;
 
-    public CheckServicesImpl(FeedbackRequestRepository feedbackReqRepository, EmailSender emailSender,
+    public CheckServicesImpl(FeedbackRequestRepository feedbackReqRepository,
+                             @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                              @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
                              @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
                              MemberProfileServices memberProfileServices) {
