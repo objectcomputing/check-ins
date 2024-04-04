@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 
-;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 
 import java.net.URI;

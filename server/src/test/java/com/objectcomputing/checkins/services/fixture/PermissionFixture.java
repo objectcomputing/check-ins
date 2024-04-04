@@ -59,26 +59,16 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
 
 
     default void setPermissionsForAdmin(UUID roleID) {
-        List<Permission> permissions = List.of(Permission.values());
-        for(Permission adminPermission : adminPermissions) {
-            Optional<Permission> permission = permissions.stream().filter(s -> s.name().equals(adminPermission.name())).findFirst();
-            permission.ifPresent(value -> setRolePermission(roleID, value));
-        }
+        adminPermissions.forEach(permission -> setRolePermission(roleID, permission));
+
     }
 
     default void setPermissionsForPdl(UUID roleID) {
-        List<Permission> permissions = List.of(Permission.values());
-        for(Permission pdlPermission : pdlPermissions) {
-            Optional<Permission> permission = permissions.stream().filter(s -> s.name().equals(pdlPermission.name())).findFirst();
-            permission.ifPresent(value -> setRolePermission(roleID, value));
-        }
+        pdlPermissions.forEach(permission -> setRolePermission(roleID, permission));
     }
 
     default void setPermissionsForMember(UUID roleID) {
-        List<Permission> permissions = List.of(Permission.values());
-        for(Permission memberPermission : memberPermissions) {
-            Optional<Permission> permission = permissions.stream().filter(s -> s.name().equals(memberPermission.name())).findFirst();
-            permission.ifPresent(value -> setRolePermission(roleID, value));
-        }
+        memberPermissions.forEach(permission -> setRolePermission(roleID, permission));
+
     }
 }

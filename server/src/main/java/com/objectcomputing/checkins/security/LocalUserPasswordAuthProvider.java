@@ -4,7 +4,6 @@ import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
@@ -35,16 +34,14 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
 
     private final CurrentUserServices currentUserServices;
     private final UsersStore usersStore;
-    private final PermissionServices permissionServices;
     private final RoleServices roleServices;
     private final MemberRoleServices memberRoleServices;
 
     private final RolePermissionServices rolePermissionServices;
 
-    public LocalUserPasswordAuthProvider(CurrentUserServices currentUserServices, UsersStore usersStore, PermissionServices permissionServices, RoleServices roleServices, MemberRoleServices memberRoleServices, RolePermissionServices rolePermissionServices) {
+    public LocalUserPasswordAuthProvider(CurrentUserServices currentUserServices, UsersStore usersStore, RoleServices roleServices, MemberRoleServices memberRoleServices, RolePermissionServices rolePermissionServices) {
         this.currentUserServices = currentUserServices;
         this.usersStore = usersStore;
-        this.permissionServices = permissionServices;
         this.roleServices = roleServices;
         this.memberRoleServices = memberRoleServices;
         this.rolePermissionServices = rolePermissionServices;

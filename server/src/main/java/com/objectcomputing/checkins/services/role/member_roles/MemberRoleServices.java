@@ -22,8 +22,6 @@ public interface MemberRoleServices {
     @NonNull
     Optional<MemberRole> findById(@NotNull MemberRoleId memberRoleId);
 
-    Optional<MemberRole> findByMemberId(@NotNull UUID memberId);
-
     void removeAllByRoleId(UUID roleId);
 
 

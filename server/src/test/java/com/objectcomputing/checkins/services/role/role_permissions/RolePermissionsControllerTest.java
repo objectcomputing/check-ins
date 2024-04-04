@@ -84,7 +84,7 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         MemberProfile sender = createADefaultMemberProfile();
         assignAdminRole(sender);
 
-        Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).get();
+        Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).orElseThrow();
         Permission birthdayPermission = Permission.CAN_VIEW_BIRTHDAY_REPORT;
 
         RolePermissionDTO dto = new RolePermissionDTO(memberRole.getId(), birthdayPermission);
@@ -102,7 +102,7 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         MemberProfile sender = createADefaultMemberProfile();
         assignAdminRole(sender);
 
-        Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).get();
+        Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).orElseThrow();
         Permission birthdayPermission = Permission.CAN_VIEW_BIRTHDAY_REPORT;
         setRolePermission(memberRole.getId(), birthdayPermission);
 
