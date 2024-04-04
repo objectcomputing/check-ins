@@ -374,7 +374,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid checkin id %s", randomCheckinID), error);
+        assertEquals(String.format("Checkin %s not found", randomCheckinID), error);
     }
 
     @Test

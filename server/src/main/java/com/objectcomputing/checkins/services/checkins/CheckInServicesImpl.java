@@ -59,11 +59,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
     @Override
     public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
-        Boolean grantAccess = false;
-
         memberRepo.findById(memberId).orElseThrow(() -> new NotFoundException(String.format("Member %s not found", memberId)));
-
-        CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> new NotFoundException(String.format("Checkin %s not found", checkinId)));
 
         boolean canViewAllCheckins = canViewAllCheckins(memberId);
         
@@ -75,9 +71,11 @@ public class CheckInServicesImpl implements CheckInServices {
             LOG.debug("Member is Admin: {}", isAdmin);
         }
 
+        Boolean grantAccess = false;
         if(canViewAllCheckins || isAdmin){
             grantAccess = true;
         } else {
+            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> new NotFoundException(String.format("Checkin %s not found", checkinId)));
             MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() ->
                 new NotFoundException(String.format("Team member not found %s not found", checkinRecord.getTeamMemberId())));
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
@@ -98,20 +96,22 @@ public class CheckInServicesImpl implements CheckInServices {
 
     @Override
     public CheckIn save(@NotNull CheckIn checkIn) {
+        validate(checkIn.getId() != null, "Found unexpected id for checkin %s", checkIn.getId());
+
+        final UUID memberId = checkIn.getTeamMemberId();
+        final UUID pdlId = checkIn.getPdlId();
+        validate(memberId.equals(pdlId), "Team member id %s can't be same as PDL id", checkIn.getTeamMemberId());
+
+        Optional<MemberProfile> memberProfileOfTeamMember = memberRepo.findById(memberId);
+        validate(memberProfileOfTeamMember.isEmpty(), "Member %s doesn't exist", memberId);
+        validate(!pdlId.equals(memberProfileOfTeamMember.get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
+
+        LocalDateTime chkInDate = checkIn.getCheckInDate();
+        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean canUpdateAllCheckins = canUpdateAllCheckins(currentUser.getId());
 
-        final UUID memberId = checkIn.getTeamMemberId();
-        final UUID pdlId = checkIn.getPdlId();
-        LocalDateTime chkInDate = checkIn.getCheckInDate();
-        Optional<MemberProfile> memberProfileOfTeamMember = memberRepo.findById(memberId);
-
-        validate(checkIn.getId() != null, "Found unexpected id for checkin %s", checkIn.getId());
-        validate(memberId.equals(pdlId), "Team member id %s can't be same as PDL id", checkIn.getTeamMemberId());
-        validate(memberProfileOfTeamMember.isEmpty(), "Member %s doesn't exist", memberId);
-        validate(!pdlId.equals(memberProfileOfTeamMember.get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
-        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
         if (!canUpdateAllCheckins) {
             validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
         }
@@ -120,44 +120,40 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
-    public CheckIn read(@NotNull UUID id) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canViewAllCheckins = canViewAllCheckins(currentUser.getId());
+    public CheckIn read(@NotNull UUID checkinId) {
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
-        CheckIn result = checkinRepo.findById(id).orElse(null);
-        validate((result == null), "Invalid checkin id %s", id);
+        validate(!accessGranted(checkinId, currentUserId), "You are not authorized to perform this operation");
 
-        if (!canViewAllCheckins) {
-            // Limit read to Subject of check-in, PDL of subject and user with elevated access
-            validate(!accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
-        }
-
-        return result;
+        return checkinRepo.findById(checkinId).orElse(null);
     }
 
     @Override
     public CheckIn update(@NotNull CheckIn checkIn) {
-
         final UUID id = checkIn.getId();
+        validate(id == null, "Unable to find checkin record with id %s", checkIn.getId());
+        
         final UUID memberId = checkIn.getTeamMemberId();
+        validate(memberId == null, "Invalid checkin %s", checkIn.getId());
+
+        Optional<MemberProfile> memberProfileOfTeamMember = memberRepo.findById(memberId);
+        validate(memberProfileOfTeamMember.isEmpty(), "Member %s doesn't exist", memberId);
+
         final UUID pdlId = checkIn.getPdlId();
+        validate(!pdlId.equals(memberProfileOfTeamMember.get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
+
         LocalDateTime chkInDate = checkIn.getCheckInDate();
+        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        Optional<MemberProfile> memberProfileOfTeamMember = memberRepo.findById(memberId);
         boolean canUpdateAllCheckins = canUpdateAllCheckins(currentUser.getId());
 
-        validate(id == null, "Unable to find checkin record with id %s", checkIn.getId());
-        Optional<CheckIn> associatedCheckin = checkinRepo.findById(id);
-        validate(memberId == null, "Invalid checkin %s", checkIn.getId());
-        validate(memberProfileOfTeamMember.isEmpty(), "Member %s doesn't exist", memberId);
-        validate(associatedCheckin.isEmpty(), "Checkin %s doesn't exist", id);
-        validate(!pdlId.equals(memberProfileOfTeamMember.get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
-        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
         if (!canUpdateAllCheckins) {
-            // Limit update to subject of check-in, PDL of subject and user with elevated access
+            Optional<CheckIn> associatedCheckin = checkinRepo.findById(id);
+            validate(associatedCheckin.isEmpty(), "Checkin %s doesn't exist", id);
+            // Limit update to subject of check-in, PDL of subject and user with canViewAllCheckins permission
             validate(!accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
-            // Update is only allowed if the check in is not completed unless made by user with elevated access
+            // Update is only allowed if the check in is not completed unless made by user with canUpdateAllCheckins permission
             validate(associatedCheckin.get().isCompleted(), "Checkin with id %s is complete and cannot be updated", checkIn.getId());
         }
 
@@ -167,39 +163,41 @@ public class CheckInServicesImpl implements CheckInServices {
     @Override
     public Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canViewAllCheckins = canViewAllCheckins(currentUser.getId());
+        final UUID currentUserId = currentUser.getId();
+        boolean canViewAllCheckins = canViewAllCheckins(currentUserId);
 
-        Set<CheckIn> checkIn = new HashSet<>();
-        checkinRepo.findAll().forEach(checkIn::add);
+        Set<CheckIn> checkIns = new HashSet<>();
 
-        if (teamMemberId != null) {
-            Optional<MemberProfile> memberToSearch = memberRepo.findById(teamMemberId);
-            if (memberToSearch.isPresent()) {
-                // Limit findByTeamMemberId to Subject of check-in, PDL of subject and user with elevated access
-                validate((!canViewAllCheckins && currentUser != null &&
-                                !currentUser.getId().equals(teamMemberId) &&
-                                !currentUser.getId().equals(memberToSearch.get().getPdlId())),
-                        "You are not authorized to perform this operation");
-                checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
-            } else checkIn.clear();
-        } else if (pdlId != null) {
-            // Limit findByPdlId to Subject of check-in, PDL of subject and user with elevated access
-            validate(!canViewAllCheckins && !currentUser.getId().equals(pdlId), "You are not authorized to perform this operation");
-            checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
-        } else if (completed != null) {
-            checkIn.retainAll(checkinRepo.findByCompleted(completed));
+        if (teamMemberId != null) { // find by teamMemberId
+            Optional<MemberProfile> teamMemberProfile = memberRepo.findById(teamMemberId);
+            if (teamMemberProfile.isPresent()) {
+                boolean currentUserExists = currentUser != null;
+                boolean currentUserIsCheckinParticipant = currentUserId.equals(teamMemberId) || currentUserId.equals(teamMemberProfile.get().getPdlId());
+
+                validate((currentUserExists && !canViewAllCheckins && !currentUserIsCheckinParticipant), "You are not authorized to perform this operation");
+
+                checkinRepo.findByTeamMemberId(teamMemberId).forEach(checkIns::add);
+            }
+        } else if (pdlId != null) { // find by pdlId
+            boolean currentUserIsPdl = currentUserId.equals(pdlId);
+
+            validate(!canViewAllCheckins && !currentUserIsPdl, "You are not authorized to perform this operation");
+
+            checkinRepo.findByPdlId(pdlId).forEach(checkIns::add);
+        } else if (completed != null) { // find completed
+            checkinRepo.findByCompleted(completed).forEach(checkIns::add);;
             if (!canViewAllCheckins) {
-                // Limit findByCompleted to retrieve only the records pertinent to current user (if not user with elevated access)
-                checkIn = checkIn.stream()
-                        .filter(c -> c.getTeamMemberId().equals(currentUser.getId()) || c.getPdlId().equals(currentUser.getId()))
+                // Limit findByCompleted to retrieve only the records pertinent to current user (if not user with canViewAllCheckins permission)
+                checkIns = checkIns.stream()
+                        .filter(checkIn -> checkIn.getTeamMemberId().equals(currentUserId) || checkIn.getPdlId().equals(currentUserId))
                         .collect(Collectors.toSet());
             }
-        } else {
-            // Limit findAll to only user with elevated access
+        } else { // find all
             validate(!canViewAllCheckins, "You are not authorized to perform this operation");
+            checkinRepo.findAll().forEach(checkIns::add);
         }
 
-        return checkIn;
+        return checkIns;
     }
 
     private void validate(boolean isError, String message, Object... args) {
