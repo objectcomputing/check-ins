@@ -4,13 +4,9 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServicesImpl;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
@@ -18,7 +14,8 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CheckServicesImplTest {
@@ -30,13 +27,15 @@ class CheckServicesImplTest {
     @InjectMocks
     private CheckServicesImpl checkServices;
 
-    @BeforeAll
-    void initMocks() {
-        MockitoAnnotations.initMocks(this);
-    }
+    AutoCloseable openMocks;
+
     @BeforeEach
-    void resetMocks() {
-        Mockito.reset(feedbackRequestServices, feedbackRequestRepository);
+    void initMocks() {
+        openMocks = MockitoAnnotations.openMocks(this);
+    }
+    @AfterEach
+    void resetMocks() throws Exception {
+        openMocks.close();
     }
 
 
