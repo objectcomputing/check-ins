@@ -93,9 +93,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
-        feedbackRequest.setStatus("sent");
+        String status = feedbackRequest.getSendDate().equals(LocalDate.now()) ? "sent" : "pending";
+        feedbackRequest.setStatus(status);
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
-        sendNewRequestEmail(storedRequest);
+        if (feedbackRequest.getSendDate().equals(LocalDate.now())) {
+            sendNewRequestEmail(storedRequest);
+        }
         return storedRequest;
     }
 
