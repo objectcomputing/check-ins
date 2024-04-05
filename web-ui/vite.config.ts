@@ -5,6 +5,9 @@ import react from "@vitejs/plugin-react-swc"
 export default defineConfig({
   base: "/",
   plugins: [react()],
+  optimizeDeps: {
+    exclude: ['@nivo/bar', '@nivo/line', '@nivo/pie', '@nivo/tooltip', '@nivo/legends', '@nivo/scales', '@nivo/colors', '@nivo/core', '@nivo/axes', '@nivo/annotations', '@nivo/stream', '@nivo/sankey', '@nivo/waffle', '@nivo/sunburst', '@nivo/parallel', '@nivo/heatmap', '@nivo/calendar', '@nivo/radar', '@nivo/treemap', '@nivo/bullet', '@nivo/chord', '@nivo/voronoi'],
+  },
   test: {
     globals: true,
     environment: "jsdom",
