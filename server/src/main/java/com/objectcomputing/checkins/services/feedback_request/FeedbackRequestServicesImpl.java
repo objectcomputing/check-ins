@@ -93,13 +93,13 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
-
+        feedbackRequest.setStatus("sent");
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
         sendNewRequestEmail(storedRequest);
         return storedRequest;
     }
 
-    private void sendNewRequestEmail(FeedbackRequest storedRequest) {
+    public void sendNewRequestEmail(FeedbackRequest storedRequest) {
         MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         String senderName = creator.getFirstName() + " " + creator.getLastName();
