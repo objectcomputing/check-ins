@@ -88,7 +88,9 @@ export const resolve = async (payload) => {
   } else {
     const contentType = resolved.payload.headers.get("Content-Type");
     const contentLength = resolved.payload.headers.get("Content-Length");
-    if(contentLength && contentLength > 0) {
+    if (contentType && contentType.indexOf("text/csv") !== -1) {
+      resolved.payload.data = await resolved.payload.blob();
+    } else if (contentLength && contentLength > 0) {
       if (contentType && contentType.indexOf("application/json") !== -1) {
         resolved.payload.data = await resolved.payload.json();
       } else {
