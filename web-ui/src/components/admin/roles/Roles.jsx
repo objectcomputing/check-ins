@@ -75,12 +75,7 @@ const Roles = () => {
 
   const getRoleStats = (role) => {
     let members = roleToMemberMap[role];
-    if (isArrayPresent(members)) {
-      let statNumber = members.length;
-      return statNumber;
-    } else {
-      return 0;
-    }
+    return isArrayPresent(members) ? members.length : 0;
   }
 
   const removeFromRole = async (member, role) => {
