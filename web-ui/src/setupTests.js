@@ -3,6 +3,7 @@ import React from "react";
 import createFetchMock from 'vitest-fetch-mock';;
 import requestAnimationFrame from "raf/polyfill";
 import { render } from "@testing-library/react";
+import {screen} from '@testing-library/dom';
 import '@testing-library/jest-dom';
 
 const mockModule = await vi.importActual("react-dom");
@@ -30,6 +31,11 @@ global.snapshot = (component, options) =>
   expect(render(component, options).container).toMatchSnapshot();
 global.rootSnapshot = (component, options) =>
   expect(render(component, options).baseElement).toMatchSnapshot();
+global.waitForSnapshot = async (testId, component, options) => {
+  const rendered = render(component, options);
+  await screen.findByTestId(testId);
+  expect(rendered.container).toMatchSnapshot();
+}
 
 global.window = global.window || {};
 global.window.requestAnimationFrame = global.requestAnimationFrame = requestAnimationFrame;
