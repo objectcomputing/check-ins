@@ -163,7 +163,7 @@ const EditSkillsCard = ({ skill }) => {
     <Card className="pending-skills-card">
       <CardHeader subheader={description} title={name} />
       <CardContent>
-        <div>{members && submittedBy(members)}</div>
+        <div data-testid="skill-submitted-by" >{members && submittedBy(members)}</div>
       </CardContent>
       <CardActions>
         {skill.pending && <Button onClick={acceptSkill}>Accept</Button>}

@@ -70,13 +70,13 @@ afterAll(() => server.close());
 
 describe("EditSkillsCard", () => {
   it("renders correctly with skill", async () => {
-    act(() => snapshot(
-      <AppContextProvider value={initialState}>
+    await waitForSnapshot("skill-submitted-by",
+      (<AppContextProvider value={initialState}>
         <BrowserRouter>
           <EditSkillsCard skill={pendingSkill} />
         </BrowserRouter>
-      </AppContextProvider>
-    ));
+      </AppContextProvider>)
+    );
   });
 
   it("renders correctly", () => {
