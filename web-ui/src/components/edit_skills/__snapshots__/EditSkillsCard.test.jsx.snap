@@ -122,10 +122,10 @@ exports[`EditSkillsCard > renders correctly with skill 1`] = `
     <div
       class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
     >
-      <div
-        data-testid="skill-submitted-by"
-      >
-        <div>
+      <div>
+        <div
+          data-testid="skill-submitted-by"
+        >
           Submitted by: 
           <div
             class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-filledDefault css-gavykb-MuiChip-root"

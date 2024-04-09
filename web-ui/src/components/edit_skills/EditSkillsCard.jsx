@@ -142,20 +142,20 @@ const EditSkillsCard = ({ skill }) => {
     if (second) {
       const secondProfile = selectProfileMap(state)[second];
       return rest.length ? (
-        <div>
+        <div data-testid="skill-submitted-by">
           Submitted By: {chip(firstProfile)} {chip(secondProfile)}
           {rest && ` and ${rest.length} others`}.
         </div>
       ) : (
-        <div>
+        <div data-testid="skill-submitted-by">
           Submitted By: {chip(firstProfile)} {chip(secondProfile)}
         </div>
       );
     } else
       return firstProfile ? (
-        <div>Submitted by: {chip(firstProfile)}</div>
+        <div data-testid="skill-submitted-by">Submitted by: {chip(firstProfile)}</div>
       ) : (
-        <div>Submitted by: Unknown</div>
+        <div data-testid="skill-submitted-by">Submitted by: Unknown</div>
       );
   };
 
@@ -163,7 +163,7 @@ const EditSkillsCard = ({ skill }) => {
     <Card className="pending-skills-card">
       <CardHeader subheader={description} title={name} />
       <CardContent>
-        <div data-testid="skill-submitted-by" >{members && submittedBy(members)}</div>
+        <div>{members && submittedBy(members)}</div>
       </CardContent>
       <CardActions>
         {skill.pending && <Button onClick={acceptSkill}>Accept</Button>}
