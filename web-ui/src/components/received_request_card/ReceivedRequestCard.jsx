@@ -77,12 +77,13 @@ const ReceivedRequestCard = ({ request }) => {
           Canceled
         </Typography>
       );
-    } else
+    } else if (request.status !== "pending") {
       return (
         <Typography className={classes.yellowTypography}>
           Not Submitted
         </Typography>
       );
+    }
   };
 
   return (
