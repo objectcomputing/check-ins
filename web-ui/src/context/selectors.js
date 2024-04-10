@@ -43,12 +43,12 @@ export const selectIsAdmin = createSelector(
 export const selectHasPermissionAssignmentPermission = createSelector(
     selectUserProfile,
     (userProfile) =>
-        userProfile && userProfile.role && userProfile.permissions.some((p) => p && p?.includes("CAN_ASSIGN_ROLE_PERMISSIONS"))
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p.length > 0 && p.includes("CAN_ASSIGN_ROLE_PERMISSIONS"))
 );
 
 export const selectHasReportPermission = createSelector(
     selectUserProfile,
-    (userProfile) => userProfile && userProfile.role && userProfile.permissions.some((p) => p && p?.includes("REPORT"))
+    (userProfile) => userProfile && userProfile.role && userProfile.permissions.some((p) => p.length > 0 && p.includes("REPORT"))
 
 );
 
