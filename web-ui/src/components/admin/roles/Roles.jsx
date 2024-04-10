@@ -28,6 +28,8 @@ import {
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Autocomplete from '@mui/material/Autocomplete';
 
+import { isArrayPresent } from './../../../helpers/checks';
+
 import "./Roles.css";
 
 const Roles = () => {
@@ -43,12 +45,14 @@ const Roles = () => {
   const [roleToMemberMap, setRoleToMemberMap] = useState({});
   const [selectedRole, setSelectedRole] = useState("");
 
-  memberProfiles.sort((a, b) => a.name.localeCompare(b.name));
+  memberProfiles?.sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
       const memberMap = {};
-      for (const member of memberProfiles) {
-        memberMap[member.id] = member;
+      if(memberProfiles && memberProfiles.length > 0) {
+        for (const member of memberProfiles) {
+          memberMap[member.id] = member;
+        }
       }
 
       const newRoleToMemberMap = {};
@@ -68,6 +72,11 @@ const Roles = () => {
     }, [userRoles, memberProfiles, roles]);
 
   const uniqueRoles = Object.keys(roleToMemberMap);
+
+  const getRoleStats = (role) => {
+    let members = roleToMemberMap[role];
+    return isArrayPresent(members) ? members.length : 0;
+  }
 
   const removeFromRole = async (member, role) => {
     const members = roleToMemberMap[role];
@@ -182,6 +191,9 @@ const Roles = () => {
                       <Typography variant="h5" component="h5">
                         {role.description || ""}
                       </Typography>
+                      <Typography variant="h5" component="h5">
+                        {getRoleStats(role)} Users
+                      </Typography>
                     </div>
                   }
                   subheader={
@@ -220,9 +232,9 @@ const Roles = () => {
                   <Modal open={showAddUser} onClose={closeAddUser}>
                     <div className="role-modal">
                       <Autocomplete
-                        options={memberProfiles.filter(
+                        options={memberProfiles?.filter(
                           (member) => !roleToMemberMap[role].includes(member.id)
-                        )}
+                        ) || []}
                         value={selectedMember}
                         onChange={(event, newValue) =>
                           setSelectedMember(newValue)

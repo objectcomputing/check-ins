@@ -1,0 +1,146 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="css-tzn2yc"
+  >
+    <div
+      class="user-page"
+    >
+      <div
+        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-zow5z4-MuiGrid-root"
+      >
+        <div
+          class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 Users-search css-1idn90j-MuiGrid-root"
+        >
+          <div
+            class="MuiFormControl-root MuiTextField-root Users-searchInput css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+          >
+            <label
+              class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+              data-shrink="false"
+              for=":r0:"
+              id=":r0:-label"
+            >
+              Select employees...
+            </label>
+            <div
+              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
+            >
+              <input
+                aria-invalid="false"
+                class="MuiInputBase-input MuiOutlinedInput-input css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"
+                id=":r0:"
+                placeholder="Member Name"
+                type="text"
+                value=""
+              />
+              <fieldset
+                aria-hidden="true"
+                class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              >
+                <legend
+                  class="css-yjsfm1"
+                >
+                  <span>
+                    Select employees...
+                  </span>
+                </legend>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <div
+          class="checkbox-row"
+        >
+          <label
+            for="includeterminated"
+          >
+            Include Terminated Members
+          </label>
+          <input
+            id="includeterminated"
+            type="checkbox"
+          />
+        </div>
+        <div
+          class="MuiGrid-root MuiGrid-item Users-members css-13i4rnv-MuiGrid-root"
+        >
+          <div
+            class="MuiBox-root css-1nzqmto"
+          >
+            <div
+              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root member-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+            >
+              <a
+                href="/profile/9876"
+                style="color: black; text-decoration: none;"
+              >
+                <div
+                  class="MuiCardHeader-root AdminMemberCard-header css-185gdzj-MuiCardHeader-root"
+                >
+                  <div
+                    class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+                  >
+                    <div
+                      class="MuiAvatar-root MuiAvatar-circular large css-1wlk0hk-MuiAvatar-root"
+                    >
+                      <img
+                        class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                        src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+                  >
+                    <h2
+                      class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+                    >
+                      Current User
+                    </h2>
+                    <h3
+                      class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+                    />
+                  </div>
+                </div>
+              </a>
+              <div
+                class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+              >
+                <div
+                  class="MuiContainer-root MuiContainer-maxWidthLg MuiContainer-fixed info-container css-1ss2ei0-MuiContainer-root"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body2 css-r40f8v-MuiTypography-root"
+                  >
+                    <a
+                      href="mailto:undefined"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    />
+                    <br />
+                    Location: 
+                    <br />
+                    Supervisor:
+                     
+                    <br />
+                    PDL:
+                     
+                    <a
+                      href="/profile/8765"
+                      style="text-decoration: none; color: rgba(0, 0, 0, 0.6);"
+                    />
+                    <br />
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -4,49 +4,44 @@ const agendaURL = "/services/agenda-items";
 
 export const createAgendaItem = async (agendaItem, cookie) => {
   return resolve({
-    method: "post",
+    method: "POST",
     url: agendaURL,
-    responseType: "json",
     data: agendaItem,
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 };
 
 export const updateAgendaItem = async (agendaItem, cookie) => {
   return resolve({
-    method: "put",
+    method: "PUT",
     url: agendaURL,
-    responseType: "json",
     data: agendaItem,
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 };
 
 export const deleteAgendaItem = async (id, cookie) => {
   return resolve({
-    method: "delete",
+    method: "DELETE",
     url: `${agendaURL}/${id}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };
 
 export const getAgendaItem = async (checkinId, createdById, cookie) => {
   return resolve({
     url: agendaURL,
-    responseType: "json",
     params: {
       checkinid: checkinId,
       createdbyid: createdById,
     },
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };
 
 export const getAgendaItemById = async (id, cookie) => {
   return resolve({
     url: `${agendaURL}/?id=${id}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };

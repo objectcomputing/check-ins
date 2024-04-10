@@ -18,12 +18,15 @@ import java.util.stream.Collectors;
 public class MemberProfileReportServicesImpl implements MemberProfileReportServices {
 
     private final MemberProfileReportRepository memberProfileReportRepository;
+    private final MemberProfileFileProvider memberProfileFileProvider;
 
     @Value("${aes.key}")
     private String key;
 
-    public MemberProfileReportServicesImpl(MemberProfileReportRepository memberProfileReportRepository) {
+    public MemberProfileReportServicesImpl(MemberProfileReportRepository memberProfileReportRepository,
+                                           MemberProfileFileProvider memberProfileFileProvider) {
         this.memberProfileReportRepository = memberProfileReportRepository;
+        this.memberProfileFileProvider = memberProfileFileProvider;
     }
 
     @Override
@@ -37,14 +40,14 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
             List<MemberProfileRecord> filteredRecords = memberProfileReportRepository.findAllByMemberIds(memberIds, key);
             memberRecords.addAll(filteredRecords);
         }
-
         return createCsv(memberRecords);
+
     }
 
     private File createCsv(List<MemberProfileRecord> memberRecords) {
-        File csvFile = new File("member_profiles.csv");
-        CSVFormat csvFormat = getCsvFormat();
 
+        File csvFile = memberProfileFileProvider.provideFile();
+        CSVFormat csvFormat = getCsvFormat();
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csvFile, StandardCharsets.UTF_8), csvFormat)) {
             for (MemberProfileRecord record : memberRecords) {
                 printer.printRecord(
@@ -69,8 +72,8 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
     }
 
     public static CSVFormat getCsvFormat() {
-        String[] headers = { "First Name", "Last Name", "Title", "Location", "Work Email", "Start Date", "Tenure",
-                "PDL Name", "PDL Email", "Supervisor Name", "Supervisor Email" };
+        String[] headers = {"First Name", "Last Name", "Title", "Location", "Work Email", "Start Date", "Tenure",
+                "PDL Name", "PDL Email", "Supervisor Name", "Supervisor Email"};
         return CSVFormat.DEFAULT
                 .withHeader(headers)
                 .withQuote('"');

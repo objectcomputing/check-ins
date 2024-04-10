@@ -31,5 +31,5 @@ jobs:
         with:
           arguments: publish
         env:
-          REACT_APP_API_URL: https://checkins.objectcomputing.com
+          VITE_APP_API_URL: https://checkins.objectcomputing.com
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

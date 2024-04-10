@@ -1,42 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SkillCategoryNewDialog renders correctly 1`] = `
-.emotion-0 {
-  position: fixed;
-  z-index: 1300;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  left: 0;
-}
-
-@media print {
-  .emotion-0 {
-    position: absolute!important;
-  }
-}
-
+exports[`SkillCategoryNewDialog > renders correctly 1`] = `
 <div
-  className="MuiDialog-root MuiModal-root emotion-0"
-  onClick={[Function]}
-  onClose={[Function]}
-  onKeyDown={[Function]}
-  role="presentation"
-  style={
-    Object {
-      "webkitTransition": "",
-    }
-  }
->
-  <div
-    data-testid="sentinelStart"
-    onFocus={[Function]}
-    tabIndex={0}
-  />
-  <div
-    data-testid="sentinelEnd"
-    onFocus={[Function]}
-    tabIndex={0}
-  />
-</div>
+  aria-hidden="true"
+/>
 `;

@@ -128,7 +128,7 @@ const Notes = (props) => {
                     'alignright alignjustify | bullist numlist outdent indent | ' +
                     'removeformat | help'
                 }}
-                tinymceScriptSrc={process.env.PUBLIC_URL + '/js/tinymce/tinymce.min.js'}
+                tinymceScriptSrc={import.meta.env.VITE_APP_API_URL + '/js/tinymce/tinymce.min.js'}
               />
             )}
           

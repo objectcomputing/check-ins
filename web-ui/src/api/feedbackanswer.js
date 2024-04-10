@@ -6,19 +6,17 @@ const questionsAndAnswersUrl = "/services/feedback/questions-and-answers";
 
 export const createFeedbackAnswer = async (feedbackAnswer, cookie) => {
   return resolve({
-    method: "post",
+    method: "POST",
     url: feedbackAnswerUrl,
-    responseType: "json",
     data: feedbackAnswer,
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 };
 
 export const getFeedbackAnswerById = async (feedbackAnswerId, cookie) => {
   return resolve({
     url: `${feedbackAnswerUrl}/${feedbackAnswerId}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };
 
@@ -28,16 +26,14 @@ export const getAnswersFromRequest = async (feedbackRequestId, cookie) => {
     params: {
       requestId: feedbackRequestId
     },
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 }
 
 export const getQuestionAndAnswer = async (requestId, cookie) => {
   return resolve({
     url: `${questionsAndAnswersUrl}/${requestId}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 }
 

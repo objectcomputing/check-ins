@@ -9,8 +9,8 @@ describe("SkillCategoryNewDialog", () => {
       <AppContextProvider>
         <SkillCategoryNewDialog
           isOpen={true}
-          onClose={jest.fn()}
-          onConfirm={jest.fn()}
+          onClose={vi.fn()}
+          onConfirm={vi.fn()}
         />
       </AppContextProvider>
     );
