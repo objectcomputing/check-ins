@@ -44,7 +44,7 @@ class CheckServicesImplTest {
         FeedbackRequest retrievedRequest = new FeedbackRequest();
         retrievedRequest.setStatus("pending");
         List<FeedbackRequest> list = Collections.singletonList(retrievedRequest);
-        when(feedbackRequestRepository.findBySendDateBeforeAndStatusEqual(any(),eq("pending"))).thenReturn(list);
+        when(feedbackRequestRepository.findBySendDateNotAfterAndStatusEqual(any(),eq("pending"))).thenReturn(list);
         checkServices.sendScheduledEmails();
         verify(feedbackRequestServices).sendNewRequestEmail(retrievedRequest);
         retrievedRequest.setStatus("sent");

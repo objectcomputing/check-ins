@@ -45,6 +45,6 @@ public interface FeedbackRequestRepository extends CrudRepository<FeedbackReques
             , nativeQuery = true)
     List<FeedbackRequest> findByValues(@Nullable String creatorId, @Nullable String requesteeId, @Nullable String recipientId, @Nullable LocalDate oldestDate, @Nullable String reviewPeriodId, @Nullable String templateId);
 
-    List<FeedbackRequest> findBySendDateBeforeAndStatusEqual(LocalDate sendDate, String status);
+    List<FeedbackRequest> findBySendDateNotAfterAndStatusEqual(LocalDate sendDate, String status);
 }
 
