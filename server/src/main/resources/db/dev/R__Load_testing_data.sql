@@ -21,6 +21,7 @@ delete from feedback_requests;
 delete from template_questions;
 delete from review_periods;
 delete from feedback_templates;
+delete from member_history;
 delete from member_profile;
 delete from skillcategory_skills;
 delete from skills;
