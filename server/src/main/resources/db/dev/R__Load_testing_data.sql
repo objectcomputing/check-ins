@@ -1093,7 +1093,7 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status) -- requestee: Zach Brown, recipient: Michael Kimberlin
 VALUES
-('ab2da7fc-fac2-11eb-9a03-0242ac130004', '59b790d2-fabc-11eb-9a03-0242ac130003', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '6207b3fd-042d-49aa-9e28-dcc04f537c2d' ,'18ef2032-c264-411e-a8e1-ddda9a714bae', '2024-04-10', '2024-04-11', null, 'pending');
+('ab2da7fc-fac2-11eb-9a03-0242ac130004', '59b790d2-fabc-11eb-9a03-0242ac130003', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '6207b3fd-042d-49aa-9e28-dcc04f537c2d' ,'18ef2032-c264-411e-a8e1-ddda9a714bae', (NOW())::date, (NOW() + INTERVAL '1 DAY')::date, null, 'pending');
 ---- Creator: Zack Brown
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status) -- requestee: Faux Freddy, recipient: Zack Brown
