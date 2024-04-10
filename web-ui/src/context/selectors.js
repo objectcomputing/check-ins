@@ -234,7 +234,7 @@ export const selectMostRecentCheckin = createSelector(
 
 export const selectPDLCheckinMap = createSelector(selectCheckins, (checkins) =>
   checkins.reduce((accu, currentCheckin) => {
-    if (accu[currentCheckin.pdlId] === undefined) {
+    if (accu[currentCheckin.pdlId] === undefined || accu[currentCheckin.pdlId] === null) {
       accu[currentCheckin.pdlId] = [];
     }
     accu[currentCheckin.pdlId].push(currentCheckin);
