@@ -48,11 +48,8 @@ export const selectHasPermissionAssignmentPermission = createSelector(
 
 export const selectHasReportPermission = createSelector(
     selectUserProfile,
-    (userProfile) => {
-        console.log(userProfile.permissions);
+    (userProfile) => userProfile && userProfile.role && userProfile.permissions.some((p) => p?.includes("REPORT"))
 
-        return userProfile && userProfile.role && userProfile.permissions.some((p) => p?.includes("REPORT"))
-    }
 );
 
 export const selectIsPDL = createSelector(
