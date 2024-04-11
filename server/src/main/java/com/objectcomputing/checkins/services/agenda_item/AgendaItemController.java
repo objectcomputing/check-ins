@@ -119,7 +119,7 @@ public class AgendaItemController {
     @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Mono<HttpResponse<AgendaItem>> readAgendaItem(UUID id) {
         return Mono.fromCallable(() -> agendaItemServices.read(id))
-                .switchIfEmpty(Mono.error(new NotFoundException("No agennda item for UUID")))
+                .switchIfEmpty(Mono.error(new NotFoundException("No agenda item for UUID")))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(agendaItem -> (HttpResponse<AgendaItem>)HttpResponse.ok(agendaItem))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));

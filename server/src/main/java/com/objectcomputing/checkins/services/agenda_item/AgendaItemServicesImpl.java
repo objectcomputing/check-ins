@@ -11,6 +11,10 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
 import javax.validation.constraints.NotNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,6 +22,7 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
 public class AgendaItemServicesImpl implements AgendaItemServices {
+    public static final Logger LOG = LoggerFactory.getLogger(AgendaItemServicesImpl.class);
 
     private final CheckInRepository checkinRepo;
     private final AgendaItemRepository agendaItemRepository;
@@ -40,33 +45,42 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     @Override
     public AgendaItem save(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canUpdateAllCheckins = checkInServices.canUpdateAllCheckins(currentUser.getId());
 
         if (agendaItem != null) {
+            validate(agendaItem.getId() != null, "Found unexpected id %s for agenda item", agendaItem.getId());
+
             final UUID checkinId = agendaItem.getCheckinid();
-            final UUID createById = agendaItem.getCreatedbyid();
+            validate(checkinId == null, "Invalid agenda item %s, checkinId null", agendaItem);
+
+            final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+            boolean canUpdateAllCheckins = checkInServices.canUpdateAllCheckins(currentUserId);
+            if (!canUpdateAllCheckins) {
+                CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+                validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
+                
+                boolean isCompleted = checkinRecord != null && checkinRecord.isCompleted();
+                if (isCompleted) {
+                    throw new BadArgException("User is unauthorized to do this operation");
+                } else {
+                    final UUID createById = agendaItem.getCreatedbyid();
+                    validate(createById == null, "Invalid agenda item %s, createById null", agendaItem);
+                    validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+
+                    final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+                    boolean currentUserIsCheckinParticipant = currentUserId.equals(pdlId) || currentUserId.equals(createById);
+                    validate(!currentUserIsCheckinParticipant, "User is unauthorized to do this operation");
+                }
+            }
+
             double lastDisplayOrder = 0;
             try {
                 lastDisplayOrder = agendaItemRepository.findMaxPriorityByCheckinid(agendaItem.getCheckinid()).orElse(Double.valueOf(0));
             } catch (NullPointerException npe) {
-                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
-                //nothing needs to happen here.
+                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0.
+                LOG.debug("No existing agenda items for check-in %s", checkinId);
             }
             agendaItem.setPriority(lastDisplayOrder+1);
-            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
-            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            validate(checkinId == null || createById == null, "Invalid agenda item %s", agendaItem);
-            validate(agendaItem.getId() != null, "Found unexpected id %s for agenda item", agendaItem.getId());
-            validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
-            validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
-            if (!canUpdateAllCheckins && isCompleted) {
-                validate(true, "User is unauthorized to do this operation");
-            } else if (!canUpdateAllCheckins && !isCompleted) {
-                validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
-            }
-
+            
             agendaItemRet = agendaItemRepository.save(agendaItem);
         }
         return agendaItemRet;
@@ -74,8 +88,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
     @Override
     public AgendaItem read(@NotNull UUID id) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canViewAllCheckins = checkInServices.canViewAllCheckins(currentUser.getId());
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean canViewAllCheckins = checkInServices.canViewAllCheckins(currentUserId);
 
         AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElse(null);
         validate(agendaItemResult == null, "Invalid agenda item id %s", id);
@@ -83,7 +97,9 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             CheckIn checkinRecord = checkinRepo.findById(agendaItemResult.getCheckinid()).orElse(null);
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+            
+            boolean currentUserIsCheckinParticipant = currentUserId.equals(pdlId) || currentUserId.equals(createById);
+            validate(!currentUserIsCheckinParticipant, "User is unauthorized to do this operation");
         }
 
         return agendaItemResult;
@@ -93,24 +109,34 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     @Override
     public AgendaItem update(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canUpdateAllCheckins = checkInServices.canUpdateAllCheckins(currentUser.getId());
 
         if (agendaItem != null) {
             final UUID id = agendaItem.getId();
-            final UUID checkinId = agendaItem.getCheckinid();
-            final UUID createById = agendaItem.getCreatedbyid();
-            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
-            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            validate(checkinId == null || createById == null, "Invalid agenda item %s", agendaItem);
             validate(id == null || agendaItemRepository.findById(id).isEmpty(), "Unable to locate agenda item to update with id %s", agendaItem.getId());
-            validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
-            validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
-            if (!canUpdateAllCheckins && isCompleted) {
-                validate(true, "User is unauthorized to do this operation");
-            } else if (!canUpdateAllCheckins && !isCompleted) {
-                validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+
+            final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+            boolean canUpdateAllCheckins = checkInServices.canUpdateAllCheckins(currentUserId);
+
+            if (!canUpdateAllCheckins) {
+                final UUID checkinId = agendaItem.getCheckinid();
+                validate(checkinId == null, "Invalid agenda item %s, checkinId null", agendaItem);
+                validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
+
+                CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+                boolean isCompleted = checkinRecord != null && checkinRecord.isCompleted();
+
+                if (isCompleted) {
+                    throw new BadArgException("User is unauthorized to do this operation");
+                } else {
+                    final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+
+                    final UUID createById = agendaItem.getCreatedbyid();
+                    validate(createById == null, "Invalid agenda item %s, createById null", agendaItem);
+                    validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+                    
+                    boolean currentUserIsCheckinParticipant = currentUserId.equals(pdlId) || currentUserId.equals(createById);
+                    validate(!currentUserIsCheckinParticipant, "User is unauthorized to do this operation");
+                }
             }
 
             agendaItemRet = agendaItemRepository.update(agendaItem);
@@ -121,13 +147,14 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     @Override
     public Set<AgendaItem> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canViewAllCheckins = checkInServices.canViewAllCheckins(currentUser.getId());
+        final UUID currentUserId = currentUser.getId();
+        boolean canViewAllCheckins = checkInServices.canViewAllCheckins(currentUserId);
 
         if (checkinid != null) {
-            validate(!checkInServices.accessGranted(checkinid, currentUser.getId()), "User is unauthorized to do this operation");
+            validate(!checkInServices.accessGranted(checkinid, currentUserId), "User is unauthorized to do this operation");
         } else if (createbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
-            validate(!currentUser.getId().equals(memberRecord.getId()) && !canViewAllCheckins, "User is unauthorized to do this operation");
+            validate(!currentUserId.equals(memberRecord.getId()) && !canViewAllCheckins, "User is unauthorized to do this operation");
         } else {
             validate(!canViewAllCheckins, "User is unauthorized to do this operation");
         }
@@ -137,21 +164,26 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
     @Override
     public void delete(@NotNull UUID id) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canUpdateAllCheckins = checkInServices.canUpdateAllCheckins(currentUser.getId());
-        AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElse(null);
-        validate(agendaItemResult == null, "Invalid agenda item id %s", id);
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean canUpdateAllCheckins = checkInServices.canUpdateAllCheckins(currentUserId);
 
-        CheckIn checkinRecord = checkinRepo.findById(agendaItemResult.getCheckinid()).orElse(null);
-        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-        final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-        if (!canUpdateAllCheckins && isCompleted) {
-            validate(true, "User is unauthorized to do this operation");
-        } else if (!canUpdateAllCheckins && !isCompleted) {
-            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+        if (!canUpdateAllCheckins) {
+            AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElse(null);
+            validate(agendaItemResult == null, "Invalid agenda item id %s", id);
+
+            CheckIn checkinRecord = checkinRepo.findById(agendaItemResult.getCheckinid()).orElse(null);
+            boolean isCompleted = checkinRecord != null && checkinRecord.isCompleted();
+
+            if(isCompleted) {
+                throw new BadArgException("User is unauthorized to do this operation");
+            } else {
+                final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+                final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+
+                boolean currentUserIsCheckinParticipant = currentUserId.equals(pdlId) || currentUserId.equals(createById);
+                validate(!currentUserIsCheckinParticipant, "User is unauthorized to do this operation");
+            }
         }
-
         agendaItemRepository.deleteById(id);
     }
 
