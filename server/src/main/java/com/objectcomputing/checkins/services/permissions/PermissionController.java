@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.permissions;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
@@ -44,7 +44,7 @@ public class PermissionController {
      *
      * @return {@link List < Permission > list order by Permissions}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_PERMISSIONS)
+    @RequiredPermission(Permission.CAN_VIEW_PERMISSIONS)
     @Get("/OrderByPermission")
     public Mono<HttpResponse<List<Permission>>> listOrderByPermission() {
 
@@ -59,7 +59,7 @@ public class PermissionController {
      *
      * @return {@link List < Permission > list of all Permissions}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_PERMISSIONS)
+    @RequiredPermission(Permission.CAN_VIEW_PERMISSIONS)
     @Get
     public Mono<HttpResponse<List<Permission>>> getAllPermissions() {
 

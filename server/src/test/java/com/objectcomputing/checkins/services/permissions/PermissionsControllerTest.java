@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.permissions;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.PermissionFixture;
@@ -37,15 +36,13 @@ public class PermissionsControllerTest extends TestContainersSuite implements Pe
     void testGetAllPermissionsEnsureAlphabeticalOrder() {
         // create role and permissions
         Role memberRole = createRole(new Role(RoleType.MEMBER.name(), "Member Role"));
-        Permission someTestPermission = createACustomPermission(Permissions.CAN_VIEW_ROLE_PERMISSIONS);
-        Permission someOtherPermission = createACustomPermission(Permissions.CAN_VIEW_PERMISSIONS);
         setPermissionsForMember(memberRole.getId());
 
         // assign role to user
         MemberProfile user = createADefaultMemberProfile();
         assignMemberRole(user);
 
-        List<Permission> expected = new ArrayList<>(Arrays.asList(someOtherPermission, someTestPermission));
+        List<Permission> expected = List.of(Permission.values());
         final HttpRequest<Object> request = HttpRequest.
                 GET("/OrderByPermission").basicAuth(user.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
 
@@ -71,15 +68,13 @@ public class PermissionsControllerTest extends TestContainersSuite implements Pe
     void testGetAllPermissions() {
         // create role and permissions
         Role memberRole = createRole(new Role(RoleType.MEMBER.name(), "Member Role"));
-        Permission someTestPermission = createACustomPermission(Permissions.CAN_VIEW_ROLE_PERMISSIONS);
-        Permission someOtherPermission = createACustomPermission(Permissions.CAN_VIEW_PERMISSIONS);
         setPermissionsForMember(memberRole.getId());
 
         // assign role to user
         MemberProfile user = createADefaultMemberProfile();
         assignMemberRole(user);
 
-        List<Permission> expected = new ArrayList<>(Arrays.asList(someTestPermission, someOtherPermission));
+        List<Permission> expected = List.of(Permission.values());
         final HttpRequest<Object> request = HttpRequest.
                 GET("/").basicAuth(user.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
 

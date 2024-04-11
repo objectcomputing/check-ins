@@ -7,7 +7,7 @@ const initialState = {
     userProfile: {
       name: "holmes",
       role: ["PDL"],
-      permissions: [{permission:"CAN_ASSIGN_ROLE_PERMISSIONS"}],
+      permissions: ["CAN_ASSIGN_ROLE_PERMISSIONS"],
       imageUrl:
         "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
     },

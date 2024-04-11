@@ -1,6 +1,10 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -43,7 +47,7 @@ public class MemberProfileReportController {
      * @return HTTP response with the CSV file
      */
     @Post(produces = MediaType.TEXT_CSV)
-    @RequiredPermission(Permissions.CAN_VIEW_PROFILE_REPORT)
+    @RequiredPermission(Permission.CAN_VIEW_PROFILE_REPORT)
     public Mono<MutableHttpResponse<File>> getCsvFile(@Nullable @Body MemberProfileReportQueryDTO dto) {
         return Mono.defer(() -> Mono.just(memberProfileReportServices.generateFile(dto)))
                 .subscribeOn(ioScheduler)

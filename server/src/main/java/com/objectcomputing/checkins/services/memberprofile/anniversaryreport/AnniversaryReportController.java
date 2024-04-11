@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.anniversaryreport;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -51,7 +52,7 @@ public class AnniversaryReportController {
      */
 
     @Get("/{?month}")
-    @RequiredPermission(Permissions.CAN_VIEW_ANNIVERSARY_REPORT)
+    @RequiredPermission(Permission.CAN_VIEW_ANNIVERSARY_REPORT)
     public Mono<HttpResponse<List<AnniversaryReportResponseDTO>>> findByValue(@Nullable String[] month) {
 
         return Mono.fromCallable(() -> anniversaryServices.findByValue(month))

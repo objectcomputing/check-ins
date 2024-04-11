@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.PermissionFixture;
@@ -57,15 +57,14 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
 
-        RolePermissionsResponseDTO actual = response.getBody().get().get(0);
-        assertEquals(adminRole.getId(), actual.getRoleId());
-        assertEquals(adminRole.getRole(), actual.getRole());
-        assertNotNull(actual.getDescription());
-        assertEquals(adminPermissions.size(), actual.getPermissions().size());
-
-        List<Permission> assigned = actual.getPermissions();
-        for (Permissions permission : adminPermissions) {
-            Permission stored = getPermissionRepository().findByPermission(permission.name()).get(0);
+        List<RolePermissionsResponseDTO> actual = response.getBody().get();
+        assertEquals(adminRole.getId(), actual.get(0).getRoleId());
+        assertEquals(adminRole.getRole(), actual.get(0).getRole());
+        assertNotNull(actual.get(0).getDescription());
+        assertEquals(19, actual.get(0).getPermissions().size());
+        List<Permission> assigned = actual.get(0).getPermissions();
+        for(Permission permission: adminPermissions) {
+            Permission stored = permission;
             assertTrue(assigned.contains(stored));
         }
     }
@@ -86,16 +85,16 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         assignAdminRole(sender);
 
         Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).orElseThrow();
-        Permission birthdayPermission = getPermissionRepository().findByPermission(Permissions.CAN_VIEW_BIRTHDAY_REPORT.name()).get(0);
+        Permission birthdayPermission = Permission.CAN_VIEW_BIRTHDAY_REPORT;
 
-        RolePermissionDTO dto = new RolePermissionDTO(memberRole.getId(), birthdayPermission.getId());
+        RolePermissionDTO dto = new RolePermissionDTO(memberRole.getId(), birthdayPermission);
 
         final HttpRequest<?> request = HttpRequest.POST("/", dto)
                 .basicAuth(sender.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<?> response = client.toBlocking().exchange(request, Map.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(1, getRolePermissionRepository().findByIds(memberRole.getId().toString(), birthdayPermission.getId().toString()).size());
+        assertEquals(1, getRolePermissionRepository().findByIds(memberRole.getId().toString(), birthdayPermission).size());
     }
 
     @Test
@@ -104,14 +103,14 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         assignAdminRole(sender);
 
         Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).orElseThrow();
-        Permission birthdayPermission = getPermissionRepository().findByPermission(Permissions.CAN_VIEW_BIRTHDAY_REPORT.name()).get(0);
-        setRolePermission(memberRole.getId(), birthdayPermission.getId());
+        Permission birthdayPermission = Permission.CAN_VIEW_BIRTHDAY_REPORT;
+        setRolePermission(memberRole.getId(), birthdayPermission);
 
-        final HttpRequest<?> request = HttpRequest.DELETE("/", new RolePermissionDTO(memberRole.getId(), birthdayPermission.getId()))
+        final HttpRequest<?> request = HttpRequest.DELETE("/", new RolePermissionDTO(memberRole.getId(), birthdayPermission))
                 .basicAuth(sender.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<?> response = client.toBlocking().exchange(request, Map.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(0, getRolePermissionRepository().findByIds(memberRole.getId().toString(), birthdayPermission.getId().toString()).size());
+        assertEquals(0, getRolePermissionRepository().findByIds(memberRole.getId().toString(), birthdayPermission).size());
     }
 }

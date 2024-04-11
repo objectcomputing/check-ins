@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.skill_record;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -35,7 +35,7 @@ public class SkillRecordController {
         this.ioScheduler = Schedulers.fromExecutor(ioExecutorService);
     }
 
-    @RequiredPermission(Permissions.CAN_VIEW_SKILL_CATEGORIES)
+    @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
     @Get(value = "/csv", produces = MediaType.TEXT_CSV)
     public Mono<MutableHttpResponse<File>> generateCsv() {
         return Mono.defer(() -> Mono.just(skillRecordServices.generateFile()))

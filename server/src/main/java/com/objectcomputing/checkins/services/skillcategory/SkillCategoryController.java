@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -42,7 +42,7 @@ public class SkillCategoryController {
     }
 
     @Post()
-    @RequiredPermission(Permissions.CAN_EDIT_SKILL_CATEGORIES)
+    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategory>> create(@Body @Valid SkillCategoryCreateDTO dto, HttpRequest<SkillCategoryCreateDTO> request) {
         return Mono
                 .fromCallable(() -> {
@@ -60,7 +60,7 @@ public class SkillCategoryController {
     }
 
     @Put()
-    @RequiredPermission(Permissions.CAN_EDIT_SKILL_CATEGORIES)
+    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategory>> update(@Body @Valid SkillCategoryUpdateDTO dto, HttpRequest<SkillCategoryCreateDTO> request) {
         return Mono
                 .fromCallable(() -> {
@@ -78,7 +78,7 @@ public class SkillCategoryController {
     }
 
     @Get("/{id}")
-    @RequiredPermission(Permissions.CAN_VIEW_SKILL_CATEGORIES)
+    @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategoryResponseDTO>> getById(@NotNull UUID id) {
         return Mono.fromCallable(() -> {
             SkillCategoryResponseDTO result = skillCategoryServices.read(id);
@@ -92,7 +92,7 @@ public class SkillCategoryController {
     }
 
     @Get("/with-skills")
-    @RequiredPermission(Permissions.CAN_VIEW_SKILL_CATEGORIES)
+    @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
     public Mono<HttpResponse<List<SkillCategoryResponseDTO>>> findAllWithSkills() {
         return Mono.fromCallable(skillCategoryServices::findAllWithSkills)
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -101,7 +101,7 @@ public class SkillCategoryController {
     }
 
     @Delete("/{id}")
-    @RequiredPermission(Permissions.CAN_EDIT_SKILL_CATEGORIES)
+    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<?>> delete(@NotNull UUID id) {
         return Mono.fromRunnable(() -> skillCategoryServices.delete(id))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))

@@ -1174,25 +1174,17 @@ describe("Selectors", () => {
     it("selectHasReportPermission should return false when user does not have a 'REPORT' permission", () => {
 
 
-        const testState1 = {
-            userProfile: {
-                firstName: "Big",
-                lastName: "Boss",
-                role: "ADMIN",
-                permissions: [{permission: "CAN_VIEW_SKILLS_REPORT"}, {permission: "CAN_VIEW_PERMISSIONS"}],
-            }
-        };
-        const testState2 = {
+        const testState = {
             userProfile: {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: [{permission: "CAN_VIEW_FEEDBACK_REQUEST"}, {permission: "CAN_VIEW_FEEDBACK_ANSWER"}],
+                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
             }
         };
 
 
-        expect(selectHasReportPermission(testState2)).toBe(false);
+        expect(selectHasReportPermission(testState)).toBe(false);
     });
 
 
