@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
 import {reportAllMembersCsv} from "../../api/member"
-import {selectCsrfToken, selectHasReportPermission, selectIsAdmin, selectIsSupervisor, selectHasReportPermission, selectHasBirthdayAnniversaryReportPermission, selectHasCheckinsReportPermission, selectHasSkillsReportPermission} from "../../context/selectors";
+import {selectCsrfToken, selectHasReportPermission, selectIsAdmin, selectIsSupervisor, selectHasBirthdayAnniversaryReportPermission, selectHasCheckinsReportPermission, selectHasSkillsReportPermission, selectHasTeamSkillsReportPermission} from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import fileDownload from 'js-file-download';
