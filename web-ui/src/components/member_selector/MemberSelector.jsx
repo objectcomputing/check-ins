@@ -24,12 +24,14 @@ import Divider from "@mui/material/Divider";
 
 const propTypes = {
   onChange: PropTypes.func,
+  title: PropTypes.string,
+  outlined: PropTypes.bool,
   listHeight: PropTypes.number,
   className: PropTypes.string,
   style: PropTypes.object
 };
 
-const MemberSelector = ({ onChange, listHeight, className, style }) => {
+const MemberSelector = ({ onChange, title, outlined, listHeight, className, style }) => {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
@@ -56,6 +58,7 @@ const MemberSelector = ({ onChange, listHeight, className, style }) => {
   return (
     <>
       <Card
+        variant={outlined ? "outlined" : "elevation"}
         className={"member-selector-card" + (className ? ` ${className}` : "")}
         style={style}>
         <CardHeader
@@ -66,7 +69,7 @@ const MemberSelector = ({ onChange, listHeight, className, style }) => {
           }
           title={
             <div className="member-selector-card-title-container">
-              <Typography className="member-selector-card-title" variant="h5" noWrap>Selected Members</Typography>
+              <Typography className="member-selector-card-title" variant="h5" noWrap>{title || "Selected Members"}</Typography>
               <Typography className="member-selector-card-count" variant="h6" color="gray">({selectedMembers.length})</Typography>
             </div>
           }

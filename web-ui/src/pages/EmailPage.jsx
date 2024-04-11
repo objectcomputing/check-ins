@@ -29,6 +29,8 @@ import {sendEmail} from "../api/notifications";
 import "./EmailPage.css";
 import TransferList from "../components/transfer_list/TransferList";
 import {getAvatarURL} from "../api/api";
+import MemberSelector from "../components/member_selector/MemberSelector.jsx";
+import {selectCsrfToken, selectMemberProfiles} from "../context/selectors.js";
 
 
 const Root = styled("div")({
@@ -261,21 +263,27 @@ const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, r
           Send Test Email
         </Button>
       </div>
-      <TransferList
-        leftList={recipientOptions}
-        rightList={recipients}
-        leftLabel="Select Recipients"
-        rightLabel="Recipients"
-        onListsChanged={(lists) => onRecipientsChange(lists)}
-        disabled={emailSent}
+      <MemberSelector
+        onChange={(selectedMembers) => onRecipientsChange(selectedMembers)}
+        title="Recipients"
+        outlined
       />
+      {/*<TransferList*/}
+      {/*  leftList={recipientOptions}*/}
+      {/*  rightList={recipients}*/}
+      {/*  leftLabel="Select Recipients"*/}
+      {/*  rightLabel="Recipients"*/}
+      {/*  onListsChanged={(lists) => onRecipientsChange(lists)}*/}
+      {/*  disabled={emailSent}*/}
+      {/*/>*/}
     </>
   );
 }
 
 const EmailPage = () => {
   const { state } = useContext(AppContext);
-  const { memberProfiles, csrf } = state;
+  const csrf = selectCsrfToken(state);
+  const memberProfiles = selectMemberProfiles(state);
   const [currentStep, setCurrentStep] = useState(0);
   const [emailFormat, setEmailFormat] = useState(null);
   const [emailContents, setEmailContents] = useState("");
@@ -445,9 +453,8 @@ const EmailPage = () => {
               recipientOptions={recipientOptions}
               recipients={recipients}
               emailSent={emailSent}
-              onRecipientsChange={({ left, right }) => {
-                setRecipientOptions(left);
-                setRecipients(right);
+              onRecipientsChange={(recipients) => {
+                setRecipients(recipients);
               }}
             />
           )}
