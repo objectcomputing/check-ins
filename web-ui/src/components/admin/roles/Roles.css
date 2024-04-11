@@ -139,8 +139,12 @@
 }
 
 .roles-content .roles .roles-top-search-fields .role-select {
+  width: 50%;
   margin-right: 2rem;
-  margin-top: 12px;
+}
+
+.roles-content .roles .roles-top-search-fields .member-role-search {
+  width: 50%;
 }
 
 @media screen and (max-width: 600px) {
