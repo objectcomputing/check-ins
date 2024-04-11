@@ -241,10 +241,12 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
       return filteredMemberList;
     }
 
-    getFilteredMembers().then(filtered => {
-      setFilteredMembers(filtered);
-    });
-  }, [state, csrf, members, filterType, filter, selectedMembers, showError, directReportsOnly]);
+    if (open) {
+      getFilteredMembers().then(filtered => {
+        setFilteredMembers(filtered);
+      });
+    }
+  }, [state, csrf, members, filterType, filter, selectedMembers, showError, directReportsOnly, open]);
 
   useEffect(() => {
     let selectable = [...filteredMembers];
