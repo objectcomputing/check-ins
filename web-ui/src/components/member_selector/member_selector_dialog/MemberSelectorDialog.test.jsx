@@ -1,6 +1,7 @@
 import React from "react";
 import MemberSelectorDialog from "./MemberSelectorDialog";
 import {AppContextProvider} from "../../../context/AppContext";
+import {render, screen} from "@testing-library/react";
 
 const currentUserProfile = {
   id: 9876,
@@ -54,24 +55,10 @@ const initialState = {
   },
 };
 
-const createPortal = vi.fn((element) => {
-  return element;
-});
-
-vi.mock('react-dom', async (importOriginal) => {
-  return {
-    ...(await importOriginal('react-dom'))(),
-    createPortal
-  };
-});
-
 describe("MemberSelectorDialog", () => {
-  afterEach(() => {
-    createPortal.mockClear();
-  });
 
   it("renders correctly", async () => {
-    rootSnapshot(
+    const component = (
       <AppContextProvider value={initialState}>
         <MemberSelectorDialog
           open={true}
@@ -81,5 +68,9 @@ describe("MemberSelectorDialog", () => {
         />
       </AppContextProvider>
     );
+
+    const rendered = render(component);
+    await screen.findByRole("dialog", {});
+    expect(rendered.baseElement).toMatchSnapshot();
   });
 });
