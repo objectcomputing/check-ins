@@ -19,7 +19,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardHeader,
   List,
   ListSubheader,
   Modal,
@@ -44,7 +43,6 @@ import AddIcon from "@mui/icons-material/Add";
 import {isArrayPresent} from './../../../helpers/checks';
 
 import "./Roles.css";
-import {selectProfile} from "../../../context/selectors";
 import EditIcon from "@mui/icons-material/Edit";
 
 const Roles = () => {
