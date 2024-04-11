@@ -1,8 +1,19 @@
 import React from "react";
-import {render, screen} from "@testing-library/react";
+import {render, screen, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {AppContextProvider} from "../../../context/AppContext.jsx";
 import MemberSelectorDialog from "./MemberSelectorDialog.jsx";
+import {setupServer} from "msw/node";
+import {http, HttpResponse} from "msw";
+
+const managerProfile = {
+  name: "Jane Doe",
+  id: "3p45j3k45",
+  startDate: [2017, 2, 11],
+  location: "STL",
+  title: "Manager",
+  workEmail: "janedoe@objectcomputing.com",
+};
 
 const currentUserProfile = {
   id: 9876,
@@ -10,6 +21,25 @@ const currentUserProfile = {
   name: "Current User",
   firstName: "Current",
   lastName: "User",
+  supervisorId: managerProfile.id
+};
+
+const memberProfile = {
+  name: "Bob Jones",
+  id: "2o34i2j34",
+  startDate: [2018, 1, 10],
+  location: "STL",
+  title: "Engineer",
+  workEmail: "bobjones@objectcomputing.com",
+  supervisorId: currentUserProfile.id
+};
+
+const testGuild = {
+  id: 111,
+  name: "Test Guild",
+  description: "A guild used for testing.",
+  guildLeads: [{id: 124, name: managerProfile.name}],
+  guildMembers: []
 };
 
 const initialState = {
@@ -24,35 +54,31 @@ const initialState = {
   },
   memberProfiles: [
     currentUserProfile,
-    {
-      name: "Bob Jones",
-      id: "2o34i2j34",
-      startDate: [2018, 1, 10],
-      location: "STL",
-      title: "Engineer",
-      workEmail: "bobjones@objectcomputing.com",
-    },
-    {
-      name: "Jane Doe",
-      id: "3p45j3k45",
-      startDate: [2017, 2, 11],
-      location: "STL",
-      title: "Manager",
-      workEmail: "janedoe@objectcomputing.com",
-    }
+    memberProfile,
+    managerProfile
   ],
   skills: [
     { id: "918275", name: "skill1", description: "first" },
     { id: "9183455", name: "skill2", description: "second" },
   ],
   checkins: [],
-  guilds: [],
+  guilds: [testGuild],
   teams: [],
   roles: [],
   userRoles: [],
   memberSkills: [],
   index: 0,
 };
+
+const server = setupServer(
+  http.get(`http://localhost:8080/services/guilds/members?guildId=${testGuild.id}`, () =>
+    HttpResponse.json([{memberId: memberProfile2.id, guildId: testGuild.id}])
+  )
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 describe("MemberSelectorDialog", () => {
 
@@ -88,20 +114,51 @@ describe("MemberSelectorDialog", () => {
     memberList = await screen.findAllByRole("listitem", {});
     expect(memberList).toHaveLength(1);
 
-    await screen.findByRole("button", { name: /Bob Jones/ });
+    within(memberList[0]).getByText(memberProfile.name, {});
   });
 
   it("Filters the list of members by guild", async () => {
     let memberList = await screen.findAllByRole("listitem", {});
     expect(memberList).toHaveLength(initialState.memberProfiles.length);
-    const filterField = await screen.findByRole("combobox", { name: /filter members/i });
-    const filterTypeField = await screen.findByRole("combobox", { name: /filter by/i });
 
-    await userEvent.selectOptions(filterTypeField, "Guild");
+    const filterField = await screen.findByRole("combobox", { name: /filter members/i });
+    let filterTypeField = await screen.findByRole("combobox", { name: /filter by/i });
+    expect(filterField.innerHTML).toBe("");
+    expect(filterTypeField.innerHTML).toBe("Team");
+
+    await userEvent.click(filterTypeField);
+    let optionToSelect = await screen.findByRole("option", { name: /guild/i });
+    await userEvent.click(optionToSelect);
+    expect(filterTypeField.innerHTML).toBe("Guild");
+
+    await userEvent.click(filterField);
+    optionToSelect = await screen.findByRole("option", { name: testGuild.name });
+    await userEvent.click(optionToSelect);
+    expect(filterField.value).toBe(testGuild.name);
+
+    memberList = await screen.findAllByRole("listitem", {});
+    expect(memberList).toHaveLength(1);
+    within(memberList[0]).getByText(managerProfile.name, {});
   });
 
-  it("Filters the list of members by manager (with indirect reports)", () => {
+  it("Filters the list of members by manager (with indirect reports)", async () => {
+    let memberList = await screen.findAllByRole("listitem", {});
+    expect(memberList).toHaveLength(initialState.memberProfiles.length);
 
+    const filterField = await screen.findByRole("combobox", { name: /filter members/i });
+    let filterTypeField = await screen.findByRole("combobox", { name: /filter by/i });
+    expect(filterField.innerHTML).toBe("");
+    expect(filterTypeField.innerHTML).toBe("Team");
+
+    await userEvent.click(filterTypeField);
+    let optionToSelect = await screen.findByRole("option", { name: /manager/i });
+    await userEvent.click(optionToSelect);
+    expect(filterTypeField.innerHTML).toBe("Manager");
+
+    await userEvent.click(filterField);
+    optionToSelect = await screen.findByRole("option", { name: managerProfile.name });
+    await userEvent.click(optionToSelect);
+    expect(filterField.value).toBe(managerProfile.name);
   });
 
 });
