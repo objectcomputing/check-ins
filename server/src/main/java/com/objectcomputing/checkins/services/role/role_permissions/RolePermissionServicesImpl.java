@@ -6,10 +6,10 @@ import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 
 import jakarta.inject.Singleton;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import javax.validation.constraints.NotBlank;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class RolePermissionServicesImpl implements RolePermissionServices {
@@ -36,7 +36,7 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
             List<Permission> permissionsAssociatedWithRole = new ArrayList<>();
             for(RolePermission rolePermission : records) {
                 if(role.getId().equals(rolePermission.getRoleId())) {
-                    Optional<Permission> permission = permissions.stream().filter(s-> s.getId().equals(rolePermission.getPermissionId())).findFirst();
+                    Optional<Permission> permission = permissions.stream().filter(s-> s.equals(rolePermission.getPermission())).findFirst();
                     permission.ifPresent(permissionsAssociatedWithRole::add);
                 }
             }
@@ -53,14 +53,33 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
     }
 
     @Override
-    public RolePermission save(UUID roleId, UUID permissionId) {
-        rolePermissionRepository.saveByIds(roleId.toString(), permissionId.toString());
-        RolePermission saved = rolePermissionRepository.findByIds(roleId.toString(), permissionId.toString()).get(0);
+    public RolePermission save(UUID roleId, Permission permissionId) {
+        rolePermissionRepository.saveByIds(roleId.toString(), permissionId);
+        RolePermission saved = rolePermissionRepository.findByIds(roleId.toString(), permissionId).get(0);
         return saved;
     }
 
     @Override
-    public void delete(UUID roleId, UUID permissionId) {
-        rolePermissionRepository.deleteByIds(roleId.toString(), permissionId.toString());
+    public void delete(UUID roleId, Permission permissionId) {
+        rolePermissionRepository.deleteByIds(roleId.toString(), permissionId);
+    }
+
+    @Override
+    public List<RolePermission> findByRoleId(UUID roleId) {
+        return rolePermissionRepository.findByRoleId(roleId);
+    }
+
+    @Override
+    public List<Permission> findUserPermissions(@NotBlank UUID id) {
+
+        Set<Role> memberRoles = roleServices.findUserRoles(id);
+
+        return memberRoles.stream().map(role ->
+                findByRoleId(role.getId())
+                    .stream()
+                    .map(RolePermission::getPermission)
+                    .collect(Collectors.toList()))
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
     }
 }

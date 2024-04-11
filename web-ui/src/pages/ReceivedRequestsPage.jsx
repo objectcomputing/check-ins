@@ -131,7 +131,7 @@ const ReceivedRequestsPage = () => {
                     setReceivedRequests(
                         data.filter(
                             (req) =>
-                                req.submitDate === undefined &&
+                                !req.submitDate &&
                                 req.status !== 'canceled'
                         )
                     )

@@ -39,6 +39,7 @@ public class MemberRoleServicesImpl implements MemberRoleServices {
         return memberRoleRepository.findById(memberRoleId);
     }
 
+
     public void removeAllByRoleId(UUID roleId){
         memberRoleRepository.deleteByRoleId(roleId);
     }

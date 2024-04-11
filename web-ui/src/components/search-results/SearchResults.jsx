@@ -30,7 +30,7 @@ const SearchResults = ({ searchResults }) => {
   return (
     <div className="results-section">
       <List>
-        {searchResults === undefined ? (
+        { !searchResults ? (
           <div />
         ) : (
           searchResults.map((member, index) => {

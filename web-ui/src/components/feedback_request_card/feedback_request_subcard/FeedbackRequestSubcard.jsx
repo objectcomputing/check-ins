@@ -209,6 +209,12 @@ const FeedbackRequestSubcard = ({ request }) => {
           Submitted {submitDate}
         </Typography>
       );
+    } else if (requestStatus === "pending") {
+      return (
+        <Typography className={classes.grayTypography}>
+          Scheduled for send on {sendDate}
+        </Typography>
+      );
     } else if (requestStatus === "canceled") {
         return (
           <Typography className={classes.grayTypography}>

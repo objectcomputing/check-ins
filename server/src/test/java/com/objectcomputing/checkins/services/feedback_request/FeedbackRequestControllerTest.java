@@ -34,8 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class FeedbackRequestControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture, ReviewPeriodFixture {
 
@@ -209,8 +208,9 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
+
     @Test
-    void testCreateFeedbackRequestSendsEmail() {
+    void testCreateFeedbackRequestSendsEmailNow() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
@@ -219,6 +219,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //create feedback request
         final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+        feedbackRequest.setSendDate(LocalDate.now());
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -231,6 +232,30 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertTrue(response.getBody().isPresent());
         String correctContent = createEmailContent(feedbackRequest, response.getBody().get().getId(), pdlMemberProfile, employeeMemberProfile);
         verify(emailSender).sendEmail(fromName, pdlMemberProfile.getWorkEmail(), notificationSubject, correctContent, recipient.getWorkEmail());
+    }
+
+    @Test
+    public void testCreateFeedbackRequestSendsEmailFuture() {
+        //create two member profiles: one for normal employee, one for PDL of normal employee
+        final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final MemberProfile recipient = createADefaultRecipient();
+
+        //create feedback request
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+        feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+
+        //verify appropriate email was not sent
+        assertTrue(response.getBody().isPresent());
+        verifyNoInteractions(emailSender);
     }
 
     @Test
