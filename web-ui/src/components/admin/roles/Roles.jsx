@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "../../../context/AppContext";
 import {
-  UPDATE_ROLES,
+  SET_ROLES,
   SET_USER_ROLES,
   UPDATE_TOAST,
 } from "../../../context/actions";
 import {
   addUserToRole,
   addNewRole,
-  removeUserFromRole,
+  removeUserFromRole, updateRole,
 } from "../../../api/roles";
 
 import RoleUserCards from "./RoleUserCards";
@@ -21,31 +21,52 @@ import {
   CardContent,
   CardHeader,
   List,
+  ListSubheader,
   Modal,
   TextField,
   Typography,
+  Autocomplete,
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+  FormHelperText,
+  Divider
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import Autocomplete from '@mui/material/Autocomplete';
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
 
 import { isArrayPresent } from './../../../helpers/checks';
 
 import "./Roles.css";
+import {selectProfile} from "../../../context/selectors";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, memberProfiles, roles, userRoles } = state;
 
   const [showAddUser, setShowAddUser] = useState(false);
-  const [showAddRole, setShowAddRole] = useState(false);
-  const [newRole, setNewRole] = useState("");
-  // const [editRole, setEditRole] = useState(false);
+  const [showEditRole, setShowEditRole] = useState(false);
+  const [editedRole, setEditedRole] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [selectedMember, setSelectedMember] = useState({});
+  const [selectedRoles, setSelectedRoles] = useState([]);
   const [roleToMemberMap, setRoleToMemberMap] = useState({});
-  const [selectedRole, setSelectedRole] = useState("");
+  const [currentRole, setCurrentRole] = useState("");
 
   memberProfiles?.sort((a, b) => a.name.localeCompare(b.name));
+
+  useEffect(() => {
+    if (roles) {
+      setSelectedRoles(roles.map(roleObj => roleObj.role));
+    }
+  }, [roles]);
 
   useEffect(() => {
       const memberMap = {};
@@ -104,7 +125,7 @@ const Roles = () => {
   };
 
   const addToRole = async (member) => {
-    const role = roles.find((role) => role.role === selectedRole);
+    const role = roles.find((role) => role.role === currentRole);
     let res = await addUserToRole(role.id, member.id, csrf);
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
@@ -118,28 +139,29 @@ const Roles = () => {
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: `${member.name} added to ${selectedRole}s`,
+          toast: `${member.name} added to ${currentRole.role}s`,
         },
       });
     }
     setSelectedMember({});
   };
 
-  const addRole = async (member, role) => {
-    let res = await addNewRole(selectedRole, member.id, csrf);
+  const saveRole = async (role) => {
+    let res = role.id ? await updateRole(role, csrf) : await addNewRole(role, csrf);
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
     if (data) {
-      setShowAddRole(false);
+      setShowEditRole(false);
+      const updatedRoles = [...roles.filter((role) => role?.id !== data.id), data];
       dispatch({
-        type: UPDATE_ROLES,
-        payload: data,
+        type: SET_ROLES,
+        payload: updatedRoles,
       });
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: `${member.name} added to ${selectedRole}s`,
+          toast: `Role Updated: ${role.role}`,
         },
       });
     }
@@ -149,152 +171,183 @@ const Roles = () => {
     setShowAddUser(false);
   };
 
-  const closeAddRole = () => {
-    setShowAddRole(false);
+  const closeEditRole = () => {
+    setShowEditRole(false);
   };
 
-  // const closeEditRole = () => {
-  //   setEditRole(false);
-  // };
+  const setRoleName = (event) => {
+    setEditedRole({ ...editedRole, role: event?.target?.value });
+  }
+
+  const setRoleDescription = (event) => {
+    setEditedRole({ ...editedRole, description: event?.target?.value });
+  }
 
   return (
     <div className="roles-content">
       <div className="roles">
         <div className="roles-top">
           <div className="roles-top-left">
-            <h2>Roles</h2>
-            <TextField
-              className="role-search"
-              label="Search Roles"
-              placeholder="Role"
-              fullWidth={true}
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value);
-              }}
-            />
+            <div className="roles-top-search-fields">
+              <FormControl size="small" className="role-select">
+                <InputLabel id="roles-select-label">Roles</InputLabel>
+                <Select
+                  labelId="roles-select-label"
+                  multiple
+                  value={selectedRoles}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setSelectedRoles(typeof value === "string" ? value.split(",") : value)
+                  }}
+                  input={<OutlinedInput label="Roles"/>}
+                  renderValue={(selected) => selected.join(", ")}
+                >
+                  {roles?.map((roleObj) => (
+                    <MenuItem key={roleObj.role} value={roleObj.role}>
+                      <Checkbox checked={selectedRoles.indexOf(roleObj.role) > -1}/>
+                      <ListItemText primary={roleObj.role}/>
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{`Showing ${selectedRoles.length}/${roles?.length} roles`}</FormHelperText>
+              </FormControl>
+              <TextField
+                className="member-role-search"
+                label="Search members"
+                placeholder="Member Name"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                }}
+                InputProps={{
+                  endAdornment: <InputAdornment color="gray" position="end"><SearchIcon/></InputAdornment>
+                }}
+              />
+            </div>
           </div>
-          {/* <Button color="primary" onClick={() => setShowAddRole(true)}>
-            Add New Role
-          </Button> */}
+          <div className="roles-top-right">
+            <Button
+              className="role-add"
+              color="primary"
+              endIcon={<AddIcon />}
+              onClick={() => {
+                setShowEditRole(true);
+                setEditedRole({});
+              }}
+            >
+              Add Role
+            </Button>
+          </div>
         </div>
-        <div className="roles-bot">
-          {uniqueRoles.map((role) =>
-            role.toLowerCase().includes(searchText.toLowerCase()) ? (
-              <Card className="role" key={role}>
-                <CardHeader
-                  title={
-                    <div className="role-header">
-                      <Typography variant="h4" component="h3">
-                        {role}
-                      </Typography>
-                      <Typography variant="h5" component="h5">
-                        {role.description || ""}
-                      </Typography>
-                      <Typography variant="h5" component="h5">
-                        {getRoleStats(role)} Users
-                      </Typography>
-                    </div>
-                  }
-                  subheader={
-                    <div>
-                      <div className="role-buttons">
-                        <Button
-                          className="role-add"
-                          color="primary"
-                          onClick={() => {
-                            setShowAddUser(true);
-                            setSelectedRole(role);
-                          }}
-                        >
-                          <span>Add User</span>
-                          <PersonAddIcon />
-                        </Button>
-                        {/* <Button className="role-edit" color="primary">
-                        <span>Edit Role</span> <EditIcon />
-                      </Button> */}
-                      </div>
-                    </div>
-                  }
+        <Modal open={showAddUser} onClose={closeAddUser}>
+          <div className="role-modal">
+            <Autocomplete
+              options={memberProfiles?.filter((member) => {
+                return !currentRole.memberIds?.includes(member.id);
+              }) || []}
+              value={selectedMember}
+              onChange={(event, newValue) =>
+                setSelectedMember(newValue)
+              }
+              getOptionLabel={(option) => option.name || ""}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  className="fullWidth"
+                  label="User To Add"
+                  placeholder={`Select User to add to ${currentRole.role}s`}
                 />
+              )}
+            />
+            <Button
+              color="primary"
+              onClick={() => addToRole(selectedMember)}
+            >
+              Save
+            </Button>
+          </div>
+        </Modal>
+        <div className="roles-bot">
+          {roles?.map((roleObj) =>
+            selectedRoles.includes(roleObj.role) ? (
+              <Card className="role" key={`${roleObj.role}-card`} >
                 <CardContent className="role-card">
-                  {
-                    <List>
+                  <List style={{ paddingTop: 0 }}>
+                    <div>
+                      <ListSubheader style={{ padding: 0 }}>
+                        <div className="role-header">
+                          <div className="role-header-title">
+                            <Typography variant="h4" color="black">
+                              {roleObj.role}
+                            </Typography>
+                            <Typography variant="subtitle1" style={{
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }} >
+                              {roleObj.description || ""}
+                            </Typography>
+                            <Typography variant="subtitle2" style={{ fontSize: "0.75rem" }}>
+                              {getRoleStats(roleObj.role)} Users
+                            </Typography>
+                          </div>
+                          <div className="role-header-buttons">
+                            <Button
+                              className="role-add"
+                              color="primary"
+                              onClick={() => {
+                                setShowAddUser(true);
+                                setCurrentRole(roleObj);
+                              }}
+                            >
+                              <PersonAddIcon/>
+                            </Button>
+                            <Button
+                              className="role-edit"
+                              color="secondary"
+                              onClick={() => {
+                                setShowEditRole(true);
+                                setEditedRole(roleObj);
+                              }}
+                            >
+                              <EditIcon />
+                            </Button>
+                          </div>
+                        </div>
+                        <Divider />
+                      </ListSubheader>
                       <RoleUserCards
-                        role={role}
-                        roleToMemberMap={roleToMemberMap}
-                        removeFromRole={removeFromRole}
+                        roleMembers={roleToMemberMap[roleObj.role]}
+                        onRemove={(member) => removeFromRole(member, roleObj.role)}
+                        memberQuery={searchText}
                       />
-                    </List>
-                  }
+                    </div>
+                  </List>
                 </CardContent>
                 <CardActions>
-                  <Modal open={showAddUser} onClose={closeAddUser}>
+                  <Modal open={showEditRole} onClose={closeEditRole}>
                     <div className="role-modal">
-                      <Autocomplete
-                        options={memberProfiles?.filter(
-                          (member) => !roleToMemberMap[role].includes(member.id)
-                        ) || []}
-                        value={selectedMember}
-                        onChange={(event, newValue) =>
-                          setSelectedMember(newValue)
-                        }
-                        getOptionLabel={(option) => option.name || ""}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            className="fullWidth"
-                            label="User To Add"
-                            placeholder={`Select User to add to ${selectedRole}s`}
-                          />
-                        )}
+                      <TextField
+                        className="fullWidth"
+                        label="Role Name"
+                        placeholder="Set new role name"
+                        onChange={setRoleName}
+                        value={editedRole?.role || ""}
+                        variant="outlined"
                       />
-                      <Button
-                        color="primary"
-                        onClick={() => addToRole(selectedMember)}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </Modal>
-                  <Modal open={showAddRole} onClose={closeAddRole}>
-                    <div className="role-modal">
                       <TextField
                         className="fullWidth"
                         label="Role Description"
                         placeholder="Set new role description"
-                        onChange={setNewRole}
-                        value={newRole ? newRole : ""}
+                        onChange={setRoleDescription}
+                        value={editedRole?.description || ""}
                         variant="outlined"
                       />
-                      <Button color="primary" onClick={() => addRole(newRole)}>
+                      <Button color="primary" onClick={() => saveRole(editedRole)}>
                         Save
                       </Button>
                     </div>
                   </Modal>
-                  {/* <Modal open={} onClose={closeEditRole}>
-                  <div className="edit-role-modal">
-                    <TextField
-                      id="role-description"
-                      label="description"
-                      required
-                      className="halfWidth"
-                      placeholder="Pdl Description"
-                      value={
-                        editedMember.firstName ? editedMember.firstName : ""
-                      }
-                      onChange={(e) =>
-                        setMember({
-                          ...editedMember,
-                          firstName: e.target.value,
-                        })
-                      }
-                    />
-                    <Button onClick={() => addToRole(selectedMember)}>
-                      Save
-                    </Button>
-                  </div>
-                </Modal> */}
                 </CardActions>
               </Card>
             ) : null
