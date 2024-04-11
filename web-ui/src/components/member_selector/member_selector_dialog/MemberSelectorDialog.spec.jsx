@@ -21,7 +21,7 @@ const currentUserProfile = {
   name: "Current User",
   firstName: "Current",
   lastName: "User",
-  supervisorId: managerProfile.id
+  supervisorid: managerProfile.id
 };
 
 const memberProfile = {
@@ -31,7 +31,7 @@ const memberProfile = {
   location: "STL",
   title: "Engineer",
   workEmail: "bobjones@objectcomputing.com",
-  supervisorId: currentUserProfile.id
+  supervisorid: currentUserProfile.id
 };
 
 const testGuild = {
@@ -72,7 +72,7 @@ const initialState = {
 
 const server = setupServer(
   http.get(`http://localhost:8080/services/guilds/members?guildId=${testGuild.id}`, () =>
-    HttpResponse.json([{memberId: memberProfile2.id, guildId: testGuild.id}])
+    HttpResponse.json([{memberId: managerProfile.id, guildId: testGuild.id}])
   )
 );
 
@@ -126,16 +126,19 @@ describe("MemberSelectorDialog", () => {
     expect(filterField.innerHTML).toBe("");
     expect(filterTypeField.innerHTML).toBe("Team");
 
+    // Set the filter type to guild
     await userEvent.click(filterTypeField);
     let optionToSelect = await screen.findByRole("option", { name: /guild/i });
     await userEvent.click(optionToSelect);
     expect(filterTypeField.innerHTML).toBe("Guild");
 
+    // Select a guild to use as the filter
     await userEvent.click(filterField);
     optionToSelect = await screen.findByRole("option", { name: testGuild.name });
     await userEvent.click(optionToSelect);
     expect(filterField.value).toBe(testGuild.name);
 
+    // Only members in the guild should be visible
     memberList = await screen.findAllByRole("listitem", {});
     expect(memberList).toHaveLength(1);
     within(memberList[0]).getByText(managerProfile.name, {});
@@ -150,15 +153,34 @@ describe("MemberSelectorDialog", () => {
     expect(filterField.innerHTML).toBe("");
     expect(filterTypeField.innerHTML).toBe("Team");
 
+    // Set filter type to manager
     await userEvent.click(filterTypeField);
     let optionToSelect = await screen.findByRole("option", { name: /manager/i });
     await userEvent.click(optionToSelect);
     expect(filterTypeField.innerHTML).toBe("Manager");
 
+    // Select a manager to use as the filter
     await userEvent.click(filterField);
     optionToSelect = await screen.findByRole("option", { name: managerProfile.name });
     await userEvent.click(optionToSelect);
     expect(filterField.value).toBe(managerProfile.name);
+
+    // All subordinates of the selected manager should be visible
+    memberList = await screen.findAllByRole("listitem", {});
+    expect(memberList).toHaveLength(2);
+    screen.getByText(memberProfile.name, {});
+    screen.getByText(currentUserProfile.name, {});
+
+    // Change the checkbox to only show direct reports
+    const checkbox = await screen.findByRole("checkbox", { name: /direct reports only/i });
+    expect(checkbox).not.toBeChecked();
+    await userEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+
+    // Only direct reports should be visible
+    memberList = await screen.findAllByRole("listitem", {});
+    expect(memberList).toHaveLength(1);
+    screen.getByText(currentUserProfile.name, {});
   });
 
 });
