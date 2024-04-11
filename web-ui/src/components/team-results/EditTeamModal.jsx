@@ -32,6 +32,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
     if (
       currentUser?.id &&
       (editedTeam.teamMembers === undefined ||
+        editedTeam.teamMembers === null ||
         editedTeam.teamMembers.length === 0 ||
         editedTeam.teamMembers.filter(member => member.lead === true).length === 0)
     ) {

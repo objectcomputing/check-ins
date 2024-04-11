@@ -3,9 +3,9 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -28,14 +28,13 @@ public class CurrentUserController {
 
     private final CurrentUserServices currentUserServices;
     private final RoleServices roleServices;
-    private final PermissionServices permissionServices;
 
-    public CurrentUserController(CurrentUserServices currentUserServices,
-                                 RoleServices roleServices, PermissionServices permissionServices) {
+    private final RolePermissionServices rolePermissionServices;
+
+    public CurrentUserController(CurrentUserServices currentUserServices, RoleServices roleServices, RolePermissionServices rolePermissionServices) {
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
-        this.permissionServices = permissionServices;
-
+        this.rolePermissionServices = rolePermissionServices;
     }
 
     /**
@@ -58,10 +57,10 @@ public class CurrentUserController {
         String lastName = name != null ? name.substring(name.indexOf(' ') + 1).trim() : "";
 
         MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
-        List<Permission> permissions = permissionServices.findUserPermissions(user.getId());
+        List<Permission> permissions = rolePermissionServices.findUserPermissions(user.getId());
 
         Set<Role> roles = roleServices.findUserRoles(user.getId());
-        List<String> rolesAsString = roles.stream().map(o -> o.getRole()).collect(Collectors.toList());
+        List<String> rolesAsString = roles.stream().map(Role::getRole).collect(Collectors.toList());
 
         return HttpResponse
                 .ok()

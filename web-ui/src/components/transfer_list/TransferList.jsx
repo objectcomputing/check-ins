@@ -26,7 +26,8 @@ import {getMembersByTeam} from "../../api/team";
 import {getMembersByGuild} from "../../api/guild";
 import {UPDATE_TOAST} from "../../context/actions";
 import {selectMappedUserRoles} from "../../context/selectors";
-import {CSVLink} from "react-csv";
+import {reportSelectedMembersCsv} from "../../api/member";
+import fileDownload from "js-file-download";
 
 const not = (a, b) => a.filter((value) => b.indexOf(value) === -1);
 const intersection = (a, b) => a.filter((value) => b.indexOf(value) !== -1);
@@ -126,6 +127,29 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
     setChecked(not(checked, rightChecked));
   }
 
+  const downloadMemberCsv = async () => {
+    const memberIds = rightList.map(member => member.id);
+    const res = await reportSelectedMembersCsv(memberIds, csrf);
+    if (!res.error) {
+      fileDownload(res?.payload?.data, "members.csv");
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: `Member export has been saved!`,
+        },
+      });
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to export to CSV",
+        },
+      });
+    }
+  }
+
   useEffect(() => {
     const getFilteredOptions = async (members) => {
       let filterMembers;
@@ -208,21 +232,6 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
     }
   },[leftList, recipientFilter, recipientQuery, recipientFilterVisible, csrf, dispatch, checked, mappedUserRoles]);
 
-  const getCsvData = (members) => {
-    return members.map((member) => {
-      return { firstName: member.firstName, lastName: member.lastName, title: member.title, workEmail: member.workEmail };
-    });
-  }
-
-  const getCsvHeaders = () => {
-    return [
-      { label: "First Name", key: "firstName" },
-      { label: "Last Name", key: "lastName" },
-      { label: "Title", key: "title" },
-      { label: "Email", key: "workEmail" }
-    ];
-  }
-
   const customList = (title, items, emptyMessage, includeFilter) => {
     items = items.sort((a, b) => a.name.localeCompare(b.name));
     return (
@@ -247,16 +256,9 @@ const TransferList = ({ leftList, rightList, leftLabel, rightLabel, onListsChang
                 :
                 <Tooltip arrow title="Download CSV">
                   <div>
-                    <CSVLink
-                      data={getCsvData(items)}
-                      headers={getCsvHeaders()}
-                      filename="members.csv"
-                      enclosingCharacter=""
-                    >
-                      <IconButton style={{ marginTop: "-8px" }}>
-                        <DownloadIcon/>
-                      </IconButton>
-                    </CSVLink>
+                    <IconButton onClick={downloadMemberCsv} disabled={!rightList?.length} style={{ marginTop: "-8px" }}>
+                      <DownloadIcon/>
+                    </IconButton>
                   </div>
                 </Tooltip>
               }

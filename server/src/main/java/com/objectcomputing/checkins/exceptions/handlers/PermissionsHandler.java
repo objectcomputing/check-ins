@@ -15,7 +15,7 @@ import jakarta.inject.Singleton;
 @Produces
 @Singleton
 @Requires(classes = {PermissionException.class, ExceptionHandler.class})
-public class PermissionsHandler implements ExceptionHandler<PermissionException, HttpResponse> {
+public class PermissionsHandler implements ExceptionHandler<PermissionException, HttpResponse<?>> {
 
     @Override
     public HttpResponse<?> handle(HttpRequest request, PermissionException e) {

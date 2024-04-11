@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services;
 
 import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
+import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -35,6 +36,9 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
 
     @Inject
     private Flyway flyway;
+
+    @Value("${aes.key}")
+    protected String key;
 
     private final boolean shouldResetDBAfterEachTest;
 

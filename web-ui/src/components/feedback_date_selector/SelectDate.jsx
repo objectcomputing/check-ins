@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import DateFnsUtils from "@date-io/date-fns";
 import PropTypes from "prop-types";
 import {TextField} from "@mui/material";
-import {MobileDatePicker} from "@mui/lab";
+import { MobileDatePicker } from "@mui/x-date-pickers";
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = 'SelectDate';
@@ -72,6 +72,7 @@ const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
             minDate={dateUtils.date()}
             onChange={handleSendDateChange}
           />
+          <br/>
           <MobileDatePicker
             renderInput={props => <TextField className= {classes.picker} placeholder="No due date" {...props}/>}
             disableToolbar

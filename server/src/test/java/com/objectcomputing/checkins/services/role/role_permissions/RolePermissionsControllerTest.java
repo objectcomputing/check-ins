@@ -1,12 +1,7 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerCreateDTO;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
-import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.PermissionFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
@@ -14,7 +9,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
-import com.tc.text.StringFormatter;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -28,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,7 +45,7 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         MemberProfile user = createADefaultMemberProfile();
         assignAdminRole(user);
 
-        Role adminRole = getRoleRepository().findByRole(RoleType.ADMIN.name()).get();
+        Role adminRole = getRoleRepository().findByRole(RoleType.ADMIN.name()).orElseThrow();
 
         final HttpRequest<Object> request = HttpRequest.
                 GET("/").basicAuth(user.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
@@ -68,10 +61,10 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         assertEquals(adminRole.getId(), actual.get(0).getRoleId());
         assertEquals(adminRole.getRole(), actual.get(0).getRole());
         assertNotNull(actual.get(0).getDescription());
-        assertEquals(17, actual.get(0).getPermissions().size());
+        assertEquals(19, actual.get(0).getPermissions().size());
         List<Permission> assigned = actual.get(0).getPermissions();
-        for(Permissions permission: adminPermissions) {
-            Permission stored = getPermissionRepository().findByPermission(permission.name()).get(0);
+        for(Permission permission: adminPermissions) {
+            Permission stored = permission;
             assertTrue(assigned.contains(stored));
         }
     }
@@ -91,17 +84,17 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         MemberProfile sender = createADefaultMemberProfile();
         assignAdminRole(sender);
 
-        Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).get();
-        Permission birthdayPermission = getPermissionRepository().findByPermission(Permissions.CAN_VIEW_BIRTHDAY_REPORT.name()).get(0);
+        Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).orElseThrow();
+        Permission birthdayPermission = Permission.CAN_VIEW_BIRTHDAY_REPORT;
 
-        RolePermissionDTO dto = new RolePermissionDTO(memberRole.getId(), birthdayPermission.getId());
+        RolePermissionDTO dto = new RolePermissionDTO(memberRole.getId(), birthdayPermission);
 
         final HttpRequest<?> request = HttpRequest.POST("/", dto)
                 .basicAuth(sender.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpResponse response = client.toBlocking().exchange(request, Map.class);
+        final HttpResponse<?> response = client.toBlocking().exchange(request, Map.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(1, getRolePermissionRepository().findByIds(memberRole.getId().toString(), birthdayPermission.getId().toString()).size());
+        assertEquals(1, getRolePermissionRepository().findByIds(memberRole.getId().toString(), birthdayPermission).size());
     }
 
     @Test
@@ -109,15 +102,15 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         MemberProfile sender = createADefaultMemberProfile();
         assignAdminRole(sender);
 
-        Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).get();
-        Permission birthdayPermission = getPermissionRepository().findByPermission(Permissions.CAN_VIEW_BIRTHDAY_REPORT.name()).get(0);
-        setRolePermission(memberRole.getId(), birthdayPermission.getId());
+        Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).orElseThrow();
+        Permission birthdayPermission = Permission.CAN_VIEW_BIRTHDAY_REPORT;
+        setRolePermission(memberRole.getId(), birthdayPermission);
 
-        final HttpRequest<?> request = HttpRequest.DELETE("/", new RolePermissionDTO(memberRole.getId(), birthdayPermission.getId()))
+        final HttpRequest<?> request = HttpRequest.DELETE("/", new RolePermissionDTO(memberRole.getId(), birthdayPermission))
                 .basicAuth(sender.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpResponse response = client.toBlocking().exchange(request, Map.class);
+        final HttpResponse<?> response = client.toBlocking().exchange(request, Map.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(0, getRolePermissionRepository().findByIds(memberRole.getId().toString(), birthdayPermission.getId().toString()).size());
+        assertEquals(0, getRolePermissionRepository().findByIds(memberRole.getId().toString(), birthdayPermission).size());
     }
 }

@@ -5,20 +5,18 @@ const hoursUrl = `/services/employee/hours`;
 export const getEmployeeHours = async (cookie, employeeId) => {
   return resolve({
     url: hoursUrl,
-    responseType: "json",
     params: {
       employeeId,
     },
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };
 
 export const postEmployeeHours = async (cookie, file) => {
   return resolve({
-    method: "post",
+    method: "POST",
     url: hoursUrl + "/upload",
-    responseType: "json",
     data: file,
-    headers: { "Content-Type": "multipart/form-data", "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "multipart/form-data" },
   });
 };

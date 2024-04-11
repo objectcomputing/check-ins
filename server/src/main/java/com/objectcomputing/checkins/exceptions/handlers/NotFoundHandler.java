@@ -14,7 +14,7 @@ import jakarta.inject.Singleton;
 @Produces
 @Singleton
 @Requires(classes = {NotFoundException.class, ExceptionHandler.class})
-public class NotFoundHandler implements ExceptionHandler<NotFoundException, HttpResponse> {
+public class NotFoundHandler implements ExceptionHandler<NotFoundException, HttpResponse<?>> {
 
     @Override
     public HttpResponse<?> handle(HttpRequest request, NotFoundException e) {

@@ -4,14 +4,12 @@ const githubURL = `/services/github-issue`;
 
 export const newGitHubIssue = async (body, title, cookie) => {
   return resolve({
-    method: "post",
+    method: "POST",
     url: githubURL,
-    responseType: "json",
     data: {
       body: body,
       title: title,
     },
-    withCredentials: true,
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 };
