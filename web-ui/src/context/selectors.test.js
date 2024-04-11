@@ -1195,7 +1195,7 @@ describe("Selectors", () => {
                 firstName: "Big",
                 lastName: "Boss",
                 role: "ADMIN",
-                permissions: [{permission: "CAN_VIEW_BIRTHDAY_REPORT"}, {permission: "CAN_VIEW_ANNIVERSARY_REPORT"}],
+                permissions: ["CAN_VIEW_BIRTHDAY_REPORT", "CAN_VIEW_ANNIVERSARY_REPORT"],
             }
         };
         const testState2 = {
@@ -1203,7 +1203,7 @@ describe("Selectors", () => {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: [{permission: "CAN_VIEW_FEEDBACK_REQUEST"}, {permission: "CAN_VIEW_FEEDBACK_ANSWER"}],
+                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
             }
         };
 
@@ -1215,70 +1215,46 @@ describe("Selectors", () => {
     it("selectHasCheckinsReportPermission should return false when user does not have 'CAN_VIEW_CHECKINS' permission", () => {
 
 
-        const testState1 = {
-            userProfile: {
-                firstName: "Big",
-                lastName: "Boss",
-                role: "ADMIN",
-                permissions: [{permission: "CAN_VIEW_CHECKINS"}, {permission: "CAN_VIEW_ANNIVERSARY_REPORT"}],
-            }
-        };
-        const testState2 = {
+        const testState = {
             userProfile: {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: [{permission: "CAN_VIEW_FEEDBACK_REQUEST"}, {permission: "CAN_VIEW_FEEDBACK_ANSWER"}],
+                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
             }
         };
 
-        expect(selectHasReportPermission(testState2)).toBe(false);
+        expect(selectHasReportPermission(testState)).toBe(false);
     });
 
     it("selectHasSkillsReportPermission should return false when user does not have 'CAN_VIEW_SKILLS_REPORT' permission", () => {
 
 
-        const testState1 = {
-            userProfile: {
-                firstName: "Big",
-                lastName: "Boss",
-                role: "ADMIN",
-                permissions: [{permission: "CAN_VIEW_SKILLS_REPORT"}, {permission: "CAN_VIEW_ANNIVERSARY_REPORT"}],
-            }
-        };
-        const testState2 = {
+        const testState = {
             userProfile: {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: [{permission: "CAN_VIEW_FEEDBACK_REQUEST"}, {permission: "CAN_VIEW_FEEDBACK_ANSWER"}],
+                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
             }
         };
 
-        expect(selectHasReportPermission(testState2)).toBe(false);
+        expect(selectHasReportPermission(testState)).toBe(false);
     });
 
     it("selectHasTeamSkillsReportPermission should return false when user does not have 'CAN_VIEW_SKILLS_REPORT' permission", () => {
 
 
-        const testState1 = {
-            userProfile: {
-                firstName: "Big",
-                lastName: "Boss",
-                role: "ADMIN",
-                permissions: [{permission: "CAN_VIEW_SKILLS_REPORT"}, {permission: "CAN_VIEW_ANNIVERSARY_REPORT"}],
-            }
-        };
-        const testState2 = {
+        const testState = {
             userProfile: {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: [{permission: "CAN_VIEW_FEEDBACK_REQUEST"}, {permission: "CAN_VIEW_FEEDBACK_ANSWER"}],
+                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
             }
         };
 
-        expect(selectHasReportPermission(testState2)).toBe(false);
+        expect(selectHasReportPermission(testState)).toBe(false);
     });
 
 
