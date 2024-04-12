@@ -264,6 +264,7 @@ const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, r
         </Button>
       </div>
       <MemberSelector
+        selected={recipients}
         onChange={(selectedMembers) => onRecipientsChange(selectedMembers)}
         title="Recipients"
         outlined

@@ -23,6 +23,7 @@ import MemberSelectorDialog from "./member_selector_dialog/MemberSelectorDialog"
 import Divider from "@mui/material/Divider";
 
 const propTypes = {
+  selected: PropTypes.arrayOf(PropTypes.object),
   onChange: PropTypes.func,
   title: PropTypes.string,
   outlined: PropTypes.bool,
@@ -31,8 +32,10 @@ const propTypes = {
   style: PropTypes.object
 };
 
-const MemberSelector = ({ onChange, title, outlined, listHeight, className, style }) => {
-  const [selectedMembers, setSelectedMembers] = useState([]);
+const MemberSelector = ({ selected, onChange, title, outlined, listHeight, className, style }) => {
+  const isControlled = !!selected && Array.isArray(selected);
+
+  const [selectedMembers, setSelectedMembers] = useState(isControlled ? selected : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
 
