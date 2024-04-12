@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.fixture.PermissionFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.PermissionDTO;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
@@ -53,7 +54,6 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         final HttpResponse<List<RolePermissionsResponseDTO>> response =
                 client.toBlocking().exchange(request, Argument.listOf(RolePermissionsResponseDTO.class));
 
-
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
 
@@ -62,9 +62,9 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         assertEquals(adminRole.getRole(), actual.get(0).getRole());
         assertNotNull(actual.get(0).getDescription());
         assertEquals(19, actual.get(0).getPermissions().size());
-        List<Permission> assigned = actual.get(0).getPermissions();
+        List<PermissionDTO> assigned = actual.get(0).getPermissions();
         for(Permission permission: adminPermissions) {
-            Permission stored = permission;
+            PermissionDTO stored = new PermissionDTO(permission);
             assertTrue(assigned.contains(stored));
         }
     }
