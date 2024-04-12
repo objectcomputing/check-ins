@@ -17,7 +17,7 @@ public class RolePermissionsResponseDTO {
     @Schema(description = "id of the role", required = true)
     private UUID roleId;
 
-    @NotNull
+    @Nullable
     @Schema(description = "The name of the role", required = true)
     private String role;
 
@@ -37,11 +37,12 @@ public class RolePermissionsResponseDTO {
         this.roleId = roleId;
     }
 
+    @Nullable
     public String getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(@Nullable String role) {
         this.role = role;
     }
 

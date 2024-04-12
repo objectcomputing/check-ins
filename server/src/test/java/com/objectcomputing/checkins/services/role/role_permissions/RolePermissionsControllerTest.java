@@ -87,7 +87,7 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         Role memberRole = getRoleRepository().findByRole(RoleType.MEMBER.name()).orElseThrow();
         Permission birthdayPermission = Permission.CAN_VIEW_BIRTHDAY_REPORT;
 
-        RolePermissionDTO dto = new RolePermissionDTO(memberRole.getId(), new PermissionDTO(birthdayPermission));
+        RolePermissionDTO dto = new RolePermissionDTO(memberRole.getId(), birthdayPermission);
 
         final HttpRequest<?> request = HttpRequest.POST("/", dto)
                 .basicAuth(sender.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
@@ -106,7 +106,7 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         Permission birthdayPermission = Permission.CAN_VIEW_BIRTHDAY_REPORT;
         setRolePermission(memberRole.getId(), birthdayPermission);
 
-        final HttpRequest<?> request = HttpRequest.DELETE("/", new RolePermissionDTO(memberRole.getId(), new PermissionDTO(birthdayPermission)))
+        final HttpRequest<?> request = HttpRequest.DELETE("/", new RolePermissionDTO(memberRole.getId(), birthdayPermission))
                 .basicAuth(sender.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<?> response = client.toBlocking().exchange(request, Map.class);
 
