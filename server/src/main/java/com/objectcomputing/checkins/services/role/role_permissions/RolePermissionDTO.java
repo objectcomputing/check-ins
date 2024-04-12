@@ -14,12 +14,12 @@ public class RolePermissionDTO {
     @Schema(description = "id of the role", required = true)
     private UUID roleId;
 
-    @Schema(description = "id of the permission", required = true)
-    private Permission permissionId;
+    @Schema(description = "the permission", required = true)
+    private Permission permission;
 
-    public RolePermissionDTO(UUID roleId, Permission permissionId) {
+    public RolePermissionDTO(UUID roleId, Permission permission) {
         this.roleId = roleId;
-        this.permissionId = permissionId;
+        this.permission = permission;
     }
 
     public UUID getRoleId() {
@@ -30,19 +30,19 @@ public class RolePermissionDTO {
         this.roleId = roleId;
     }
 
-    public Permission getPermissionId() {
-        return permissionId;
+    public Permission getPermission() {
+        return permission;
     }
 
-    public void setPermissionId(Permission permissionId) {
-        this.permissionId = permissionId;
+    public void setPermission(Permission permission) {
+        this.permission = permission;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("RolePermissionCreateDTO{");
         sb.append("roleId=").append(roleId);
-        sb.append(", permissionId=").append(permissionId);
+        sb.append(", permission=").append(permission);
         sb.append('}');
         return sb.toString();
     }

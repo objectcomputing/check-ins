@@ -58,7 +58,7 @@ public class RolePermissionController {
     @RequiredPermission(Permission.CAN_ASSIGN_ROLE_PERMISSIONS)
     @Post("/")
     public Mono<HttpResponse<RolePermissionDTO>> save(@Body @Valid RolePermissionDTO rolePermission) {
-        return Mono.fromCallable(() -> rolePermissionServices.save(rolePermission.getRoleId(), rolePermission.getPermissionId()))
+        return Mono.fromCallable(() -> rolePermissionServices.save(rolePermission.getRoleId(), rolePermission.getPermission()))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedRolePermission -> (HttpResponse<RolePermissionDTO>) HttpResponse
                         .created(fromEntity(savedRolePermission)))
@@ -69,7 +69,7 @@ public class RolePermissionController {
     @Delete("/")
     public Mono<MutableHttpResponse<Object>> delete(@Body RolePermissionDTO dto) {
 
-        return Mono.fromRunnable(() -> rolePermissionServices.delete(dto.getRoleId(), dto.getPermissionId()))
+        return Mono.fromRunnable(() -> rolePermissionServices.delete(dto.getRoleId(), dto.getPermission()))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .subscribeOn(scheduler).thenReturn(HttpResponse.ok());
     }
