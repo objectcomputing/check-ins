@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.PermissionDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -15,9 +16,9 @@ public class RolePermissionDTO {
     private UUID roleId;
 
     @Schema(description = "the permission", required = true)
-    private Permission permission;
+    private PermissionDTO permission;
 
-    public RolePermissionDTO(UUID roleId, Permission permission) {
+    public RolePermissionDTO(UUID roleId, PermissionDTO permission) {
         this.roleId = roleId;
         this.permission = permission;
     }
@@ -30,11 +31,11 @@ public class RolePermissionDTO {
         this.roleId = roleId;
     }
 
-    public Permission getPermission() {
+    public PermissionDTO getPermission() {
         return permission;
     }
 
-    public void setPermission(Permission permission) {
+    public void setPermission(PermissionDTO permission) {
         this.permission = permission;
     }
 

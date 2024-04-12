@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,12 +43,12 @@ public class PermissionsControllerTest extends TestContainersSuite implements Pe
         MemberProfile user = createADefaultMemberProfile();
         assignMemberRole(user);
 
-        List<Permission> expected = List.of(Permission.values());
+        List<PermissionDTO> expected = List.of(Permission.values()).stream().map((permission) -> new PermissionDTO(permission)).collect(Collectors.toList());
         final HttpRequest<Object> request = HttpRequest.
                 GET("/OrderByPermission").basicAuth(user.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
 
-        final HttpResponse<List<Permission>> response =
-                client.toBlocking().exchange(request, Argument.listOf(Permission.class));
+        final HttpResponse<List<PermissionDTO>> response =
+                client.toBlocking().exchange(request, Argument.listOf(PermissionDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
@@ -74,12 +75,12 @@ public class PermissionsControllerTest extends TestContainersSuite implements Pe
         MemberProfile user = createADefaultMemberProfile();
         assignMemberRole(user);
 
-        List<Permission> expected = List.of(Permission.values());
+        List<PermissionDTO> expected = List.of(Permission.values()).stream().map((permission) -> new PermissionDTO(permission)).collect(Collectors.toList());
         final HttpRequest<Object> request = HttpRequest.
                 GET("/").basicAuth(user.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
 
-        final HttpResponse<List<Permission>> response =
-                client.toBlocking().exchange(request, Argument.listOf(Permission.class));
+        final HttpResponse<List<PermissionDTO>> response =
+                client.toBlocking().exchange(request, Argument.listOf(PermissionDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
@@ -87,7 +88,7 @@ public class PermissionsControllerTest extends TestContainersSuite implements Pe
     }
 
     @Test
-    void getAllPermissionsnIsNotAuthenticatedThrowsError() {
+    void getAllPermissionsIsNotAuthenticatedThrowsError() {
         final HttpRequest<Object> request = HttpRequest.GET("/");
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
