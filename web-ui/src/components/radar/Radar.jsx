@@ -1,56 +1,33 @@
 import React from "react";
 
-import { ResponsiveRadar } from "@nivo/radar";
+import { Radar, RadarChart, PolarGrid, Legend, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 
-const MyResponsiveRadar = ({ data, selectedMembers }) => (
-  <ResponsiveRadar
-    data={data}
-    keys={selectedMembers.map((member) => member.name)}
-    indexBy="skill"
-    maxValue="auto"
-    margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
-    curve="linearClosed"
-    borderWidth={2}
-    borderColor={{ from: "color" }}
-    gridLevels={5}
-    gridShape="circular"
-    gridLabelOffset={36}
-    enableDots={true}
-    dotSize={10}
-    dotColor={{ theme: "background" }}
-    dotBorderWidth={2}
-    dotBorderColor={{ from: "color" }}
-    enableDotLabel={true}
-    dotLabel="value"
-    dotLabelYOffset={-12}
-    colors={{ scheme: "nivo" }}
-    fillOpacity={0.25}
-    blendMode="multiply"
-    animate={true}
-    motionConfig="wobbly"
-    isInteractive={true}
-    legends={[
-      {
-        anchor: "top-left",
-        direction: "column",
-        translateX: -50,
-        translateY: -40,
-        itemWidth: 80,
-        itemHeight: 20,
-        itemTextColor: "#999",
-        symbolSize: 12,
-        symbolShape: "circle",
-        effects: [
-          {
-            on: "hover",
-            style: {
-              itemTextColor: "#000",
-            },
-          },
-        ],
-      },
-    ]}
-  />
-);
 
-export default MyResponsiveRadar;
+
+const MyRadar = ({ data, selectedMembers }) => (
+
+        <ResponsiveContainer width="100%" height="100%">
+        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+            <PolarGrid />
+            <PolarAngleAxis dataKey="skill" />
+            <PolarRadiusAxis domain={[0,5]}/>
+            {selectedMembers.map((member) => (
+                <Radar
+                    name={member.name}
+                    dataKey={member.name}
+                    fill={member.color}
+                    fillOpacity={0.6}
+                />
+            ))}
+            <Legend />
+        </RadarChart>
+    </ResponsiveContainer>
+)
+
+
+//So this works pretty well but two problems: the color randomizes every time you hit search. It would be better to assign a color for a member and just pass that through.
+//Also when fewer than 2 skills or 2 people are selected, the radar chart doesn't render.
+// It would be better to show a message like "Please select at least 2 people and 2 skills to generate a radar chart."
+//Or create some other kind of chart
+export default MyRadar;
+

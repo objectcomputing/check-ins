@@ -15,6 +15,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import "./TeamSkillReportPage.css";
 import MemberSelector from "../components/member_selector/MemberSelector";
 import Typography from "@mui/material/Typography";
+import MyRadar from "../components/radar/Radar";
 
 const TeamSkillReportPage = () => {
   const { state } = useContext(AppContext);
@@ -170,7 +171,7 @@ const TeamSkillReportPage = () => {
       {showRadar && (
         <div>
           <div style={{ height: "400px" }}>
-            <MyResponsiveRadar
+            <MyRadar
               data={chartData || []}
               selectedMembers={selectedMembers}
             />
