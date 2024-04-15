@@ -1179,7 +1179,7 @@ describe("Selectors", () => {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
+                permissions: [{"permission": "CAN_VIEW_FEEDBACK_REQUEST"}, {"permission": "CAN_VIEW_FEEDBACK_ANSWER"}],
             }
         };
 
@@ -1195,7 +1195,7 @@ describe("Selectors", () => {
                 firstName: "Big",
                 lastName: "Boss",
                 role: "ADMIN",
-                permissions: ["CAN_VIEW_BIRTHDAY_REPORT", "CAN_VIEW_ANNIVERSARY_REPORT"],
+                permissions: [{"permission": "CAN_VIEW_BIRTHDAY_REPORT"}, {"permission": "CAN_VIEW_ANNIVERSARY_REPORT"}],
             }
         };
         const testState2 = {
@@ -1203,7 +1203,7 @@ describe("Selectors", () => {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
+                permissions: [{"permission": "CAN_VIEW_FEEDBACK_REQUEST"}, {"permission": "CAN_VIEW_FEEDBACK_ANSWER"}],
             }
         };
 
@@ -1220,7 +1220,7 @@ describe("Selectors", () => {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
+                permissions: [{"permission": "CAN_VIEW_FEEDBACK_REQUEST"},  {"permission": "CAN_VIEW_FEEDBACK_ANSWER"}],
             }
         };
 
@@ -1235,7 +1235,7 @@ describe("Selectors", () => {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
+                permissions: [{"permission": "CAN_VIEW_FEEDBACK_REQUEST"}, {"permission": "CAN_VIEW_FEEDBACK_ANSWER"}],
             }
         };
 
@@ -1250,7 +1250,7 @@ describe("Selectors", () => {
                 firstName: "Huey",
                 lastName: "Emmerich",
                 role: "MEMBER",
-                permissions: ["CAN_VIEW_FEEDBACK_REQUEST", "CAN_VIEW_FEEDBACK_ANSWER"],
+                permissions: [{"permission": "CAN_VIEW_FEEDBACK_REQUEST"}, {"permission": "CAN_VIEW_FEEDBACK_ANSWER"}],
             }
         };
 
