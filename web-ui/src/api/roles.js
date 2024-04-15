@@ -41,9 +41,16 @@ export const addNewRole = async (role, cookie) => {
   return resolve({
     method: "POST",
     url: roleURL,
-    data: {
-      role: role,
-    },
+    data: role,
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
+  });
+};
+
+export const updateRole = async (role, cookie) => {
+  return resolve({
+    method: "PUT",
+    url: roleURL,
+    data: role,
     headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 };

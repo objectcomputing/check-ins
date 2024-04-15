@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
-;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
@@ -57,10 +56,10 @@ public class RolePermissionController {
 
     @RequiredPermission(Permission.CAN_ASSIGN_ROLE_PERMISSIONS)
     @Post("/")
-    public Mono<HttpResponse<RolePermissionDTO>> save(@Body @Valid RolePermissionDTO rolePermission) {
-        return Mono.fromCallable(() -> rolePermissionServices.save(rolePermission.getRoleId(), rolePermission.getPermissionId()))
+    public Mono<HttpResponse<RolePermissionResponseDTO>> save(@Body @Valid RolePermissionDTO rolePermission) {
+        return Mono.fromCallable(() -> rolePermissionServices.save(rolePermission.getRoleId(), Permission.fromName(rolePermission.getPermission())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedRolePermission -> (HttpResponse<RolePermissionDTO>) HttpResponse
+                .map(savedRolePermission -> (HttpResponse<RolePermissionResponseDTO>) HttpResponse
                         .created(fromEntity(savedRolePermission)))
                 .subscribeOn(scheduler);
     }
@@ -69,12 +68,12 @@ public class RolePermissionController {
     @Delete("/")
     public Mono<MutableHttpResponse<Object>> delete(@Body RolePermissionDTO dto) {
 
-        return Mono.fromRunnable(() -> rolePermissionServices.delete(dto.getRoleId(), dto.getPermissionId()))
+        return Mono.fromRunnable(() -> rolePermissionServices.delete(dto.getRoleId(), Permission.fromName(dto.getPermission())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .subscribeOn(scheduler).thenReturn(HttpResponse.ok());
     }
 
-    private RolePermissionDTO fromEntity(RolePermission rolePermission) {
-        return new RolePermissionDTO(rolePermission.getRoleId(), rolePermission.getPermission());
+    private RolePermissionResponseDTO fromEntity(RolePermission rolePermission) {
+        return new RolePermissionResponseDTO(rolePermission.getRoleId(), rolePermission.getPermission());
     }
 }

@@ -1,8 +1,11 @@
 package com.objectcomputing.checkins.services.permissions;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.micronaut.core.annotation.Introspected;
 
 @Introspected
+@JsonSerialize(using = PermissionSerializer.class)
 public enum Permission {
   CAN_VIEW_FEEDBACK_REQUEST("View feedback requests", "Feedback"),
   CAN_CREATE_FEEDBACK_REQUEST("Create feedback requests", "Feedback"),
@@ -34,13 +37,23 @@ public enum Permission {
     this.category = category;
   }
 
-
   public String getDescription() {
     return description;
   }
 
   public String getCategory() {
     return category;
+  }
+
+  // Use the fromName method as @JsonCreator
+  @JsonCreator
+  public static Permission fromName(String name) {
+    for (Permission permission : values()) {
+      if (permission.name().equalsIgnoreCase(name)) {
+        return permission;
+      }
+    }
+    throw new UnsupportedOperationException(String.format("Unknown permission: '%s'", name));
   }
 }
 

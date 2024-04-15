@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.PermissionDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -9,18 +8,18 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class RolePermissionDTO {
+public class RolePermissionResponseDTO {
 
     @NotNull
     @Schema(description = "id of the role", required = true)
     private UUID roleId;
 
     @Schema(description = "the permission", required = true)
-    private String permission;
+    private Permission permission;
 
-    public RolePermissionDTO(UUID roleId, Permission permission) {
+    public RolePermissionResponseDTO(UUID roleId, Permission permission) {
         this.roleId = roleId;
-        this.permission = permission.name();
+        this.permission = permission;
     }
 
     public UUID getRoleId() {
@@ -31,11 +30,11 @@ public class RolePermissionDTO {
         this.roleId = roleId;
     }
 
-    public String getPermission() {
+    public Permission getPermission() {
         return permission;
     }
 
-    public void setPermission(String permission) {
+    public void setPermission(Permission permission) {
         this.permission = permission;
     }
 
