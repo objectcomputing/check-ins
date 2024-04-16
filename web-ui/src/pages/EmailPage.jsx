@@ -266,6 +266,7 @@ const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, r
         onChange={(selectedMembers) => onRecipientsChange(selectedMembers)}
         title="Recipients"
         outlined
+        exportable
         disabled={emailSent}
       />
     </>

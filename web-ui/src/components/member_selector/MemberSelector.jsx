@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {
   Avatar,
@@ -21,6 +21,12 @@ import {getAvatarURL} from "../../api/api";
 import "./MemberSelector.css";
 import MemberSelectorDialog from "./member_selector_dialog/MemberSelectorDialog";
 import Divider from "@mui/material/Divider";
+import DownloadIcon from "@mui/icons-material/FileDownload";
+import {reportSelectedMembersCsv} from "../../api/member.js";
+import {AppContext} from "../../context/AppContext.jsx";
+import {selectCsrfToken} from "../../context/selectors.js";
+import fileDownload from "js-file-download";
+import {UPDATE_TOAST} from "../../context/actions.js";
 
 const propTypes = {
   /** The members that are currently selected. Use to make this a controlled component. */
@@ -31,6 +37,8 @@ const propTypes = {
   title: PropTypes.string,
   /** Set to true to use the outlined variant of the card. Default is the elevated variant. */
   outlined: PropTypes.bool,
+  /** If true, include a button to export the list of members to a CSV file. False by default. */
+  exportable: PropTypes.bool,
   /** Adjusts the height of the scrollable list of selected members (in pixels) */
   listHeight: PropTypes.number,
   /** If true, members cannot be added to or removed from the current selection. False by default. */
@@ -41,8 +49,11 @@ const propTypes = {
   style: PropTypes.object
 };
 
-const MemberSelector = ({selected, onChange, title = "Selected Members", outlined = false, listHeight = 400, disabled = false, className, style }) => {
+const MemberSelector = ({selected, onChange, title = "Selected Members", outlined = false, exportable = false, listHeight = 400, disabled = false, className, style }) => {
   const isControlled = !!selected && Array.isArray(selected);
+
+  const { state, dispatch } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
 
   const [selectedMembers, setSelectedMembers] = useState(isControlled ? selected : []);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -75,6 +86,33 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
     setSelectedMembers(selected);
   }, [selectedMembers]);
 
+  const downloadMemberCsv = useCallback(async () => {
+    if (!exportable) {
+      return;
+    }
+
+    const memberIds = selectedMembers.map(member => member.id);
+    const res = await reportSelectedMembersCsv(memberIds, csrf);
+    if (res && !res.error) {
+      fileDownload(res.payload.data, "members.csv");
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: "Member export has been saved"
+        }
+      });
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to export members to CSV"
+        }
+      });
+    }
+  }, [selectedMembers, csrf, dispatch]);
+
   return (
     <>
       <Card
@@ -94,6 +132,18 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
             </div>
           }
           action={
+          <>
+            {exportable &&
+              <Tooltip title="Download CSV" arrow>
+                <IconButton
+                  style={{ margin: "4px 8px 0 0" }}
+                  onClick={downloadMemberCsv}
+                  disabled={!selectedMembers.length}
+                >
+                  <DownloadIcon/>
+                </IconButton>
+              </Tooltip>
+            }
             <Tooltip title="Add members" arrow>
               <IconButton
                 style={{ margin: "4px 8px 0 0" }}
@@ -103,6 +153,7 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
                 <AddIcon/>
               </IconButton>
             </Tooltip>
+          </>
           }
         />
         <Collapse in={expanded}>
