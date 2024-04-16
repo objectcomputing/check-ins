@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.PermissionDTO;
 import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
@@ -45,7 +46,7 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
             rolePermissionsResponseDTO.setRoleId(role.getId());
             rolePermissionsResponseDTO.setRole(role.getRole());
             rolePermissionsResponseDTO.setDescription(role.getDescription());
-            rolePermissionsResponseDTO.setPermissions(permissionsAssociatedWithRole);
+            rolePermissionsResponseDTO.setPermissions(permissionsAssociatedWithRole.stream().map((Permission permission) -> new PermissionDTO(permission)).collect(Collectors.toList()));
             roleInfo.add(rolePermissionsResponseDTO);
         }
 

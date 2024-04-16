@@ -43,14 +43,41 @@ export const selectIsAdmin = createSelector(
 export const selectHasPermissionAssignmentPermission = createSelector(
     selectUserProfile,
     (userProfile) =>
-        userProfile && userProfile.role && userProfile.permissions.some((p) => p.length > 0 && p.includes("CAN_ASSIGN_ROLE_PERMISSIONS"))
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_ASSIGN_ROLE_PERMISSIONS"))
 );
 
 export const selectHasReportPermission = createSelector(
     selectUserProfile,
-    (userProfile) => userProfile && userProfile.role && userProfile.permissions.some((p) => p.length > 0 && p.includes("REPORT"))
+    (userProfile) => userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("REPORT"))
 
 );
+
+
+export const selectHasBirthdayAnniversaryReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_ANNIVERSARY_REPORT")|| p?.permission?.includes("CAN_VIEW_BIRTHDAY_REPORT"))
+);
+
+export const selectHasCheckinsReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_CHECKINS_REPORT"))
+);
+
+export const selectHasSkillsReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_SKILLS_REPORT"))
+);
+
+export const selectHasTeamSkillsReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_VIEW_SKILLS_REPORT"))
+);
+
+
 
 export const selectIsPDL = createSelector(
     selectUserProfile,
