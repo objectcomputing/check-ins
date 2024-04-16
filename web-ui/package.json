@@ -18,7 +18,6 @@
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@mui/styles": "^5.15.14",
     "@mui/x-date-pickers": "^7.0.0",
-    "@testing-library/dom": "^10.0.0",
     "@tinymce/tinymce-react": "^5.0.0",
     "axios": "^1.6.8",
     "canvas-confetti": "^1.6.0",
