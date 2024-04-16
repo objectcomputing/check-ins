@@ -1151,6 +1151,10 @@ INSERT INTO skills -- Git
 VALUES
 ('84682de9-85a7-4bf7-b74b-e9054311a61a', 'Git', true, 'Version control system', false);
 
+INSERT INTO skills -- Java
+(id, name, pending, description, extraneous)
+VALUES
+('06c03df3-85fe-4fc3-979e-9f1f6ba74a03', 'Java', false, 'Object-oriented programming language', false);
 
 -- Member Skills
 INSERT INTO member_skills -- Big Boss, React
@@ -1158,7 +1162,7 @@ INSERT INTO member_skills -- Big Boss, React
 VALUES
 ('99b7b700-bba3-440b-8df5-c1b668e9e7e0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '5', '2022-06-01');
 
-INSERT INTO member_skills -- Big Boss, 
+INSERT INTO member_skills -- Big Boss, CSS
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
 ('daad16fa-2268-4e72-a2ad-e13aa8b8665b', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '6b56f0aa-09aa-4b09-bb81-03481af7e49f', '4', '2022-06-01');
@@ -1168,6 +1172,15 @@ INSERT INTO member_skills -- Revolver Ocelot, React
 VALUES
 ('e2de59a8-71be-4972-86be-608538503195', '105f2968-a182-45a3-892c-eeff76383fe0', 'f057af45-e627-499c-8a71-1e6b4ab2fcd2', '3', '2022-05-01');
 
+INSERT INTO member_skills -- Faux Freddy, Java
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('722c3545-4f5d-459a-b66c-3ff98d5de11b', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '06c03df3-85fe-4fc3-979e-9f1f6ba74a03', '2', '2022-07-01');
+
+INSERT INTO member_skills -- Revolver Ocelot, Java
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('d27b679c-3aa8-4c4d-b08e-4eda63cea23f', '105f2968-a182-45a3-892c-eeff76383fe0', '06c03df3-85fe-4fc3-979e-9f1f6ba74a03', '5', '2022-08-01');
 
 -- Skill Categories
 INSERT INTO skillcategories

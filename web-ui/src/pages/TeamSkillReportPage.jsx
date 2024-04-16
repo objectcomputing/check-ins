@@ -2,7 +2,6 @@ import React, {useContext, useState} from "react";
 
 import {reportSkills} from "../api/memberskill.js";
 import SearchResults from "../components/search-results/SearchResults";
-import MyResponsiveRadar from "../components/radar/Radar";
 import {UPDATE_TOAST} from "../context/actions";
 import {AppContext} from "../context/AppContext";
 import {selectCsrfToken, selectOrderedMemberFirstName, selectOrderedSkills, selectSkill,} from "../context/selectors";
@@ -15,7 +14,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import "./TeamSkillReportPage.css";
 import MemberSelector from "../components/member_selector/MemberSelector";
 import Typography from "@mui/material/Typography";
-import MyRadar from "../components/radar/Radar";
+import MemberSkillRadar from "../components/radar/Radar";
 
 const TeamSkillReportPage = () => {
   const { state } = useContext(AppContext);
@@ -171,7 +170,7 @@ const TeamSkillReportPage = () => {
       {showRadar && (
         <div>
           <div style={{ height: "400px" }}>
-            <MyRadar
+            <MemberSkillRadar
               data={chartData || []}
               selectedMembers={selectedMembers}
             />
