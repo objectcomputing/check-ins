@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
 import {reportAllMembersCsv} from "../../api/member"
-import {selectCsrfToken, selectHasReportPermission, selectIsAdmin, selectIsSupervisor} from "../../context/selectors";
+import {selectCsrfToken, selectHasReportPermission, selectIsAdmin, selectIsSupervisor, selectHasBirthdayAnniversaryReportPermission, selectHasCheckinsReportPermission, selectHasSkillsReportPermission, selectHasTeamSkillsReportPermission} from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 
 import fileDownload from 'js-file-download';
@@ -117,13 +117,6 @@ const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => {
   return links;
 };
 
-const reportsLinks = [
-  ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
-  ["/checkins-reports", "Check-ins"],
-  ["/skills-reports", "Skills"],
-  ["/team-skills-reports", "Team Skills"],
-];
-
 const isCollapsibleListOpen = (linksArr, loc) => {
   for (let i = 0; i < linksArr.length; i++) {
     if (linksArr[i][0] === loc) return true;
@@ -154,9 +147,31 @@ function Menu() {
   const [selectedFile, setSelectedFile] = useState(null);
   const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+    const getReportLinks = () => {
+        const links = []
+
+        if (selectHasBirthdayAnniversaryReportPermission(state)) {
+            links.push(["/birthday-anniversary-reports", "Birthdays & Anniversaries"]);
+        }
+
+        if (selectHasCheckinsReportPermission(state)) {
+            links.push(["/checkins-reports", "Check-ins"]);
+        }
+
+        if (selectHasSkillsReportPermission(state)) {
+            links.push(["/skills-reports", "Skills"]);
+        }
+
+        if (selectHasTeamSkillsReportPermission(state)) {
+            links.push(["/team-skills-reports", "Team Skills"]);
+        }
+
+        return links
+    }
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
 
   const downloadMembers = async () => {
     let res = await reportAllMembersCsv(csrf);
@@ -231,7 +246,7 @@ function Menu() {
     isCollapsibleListOpen(adminLinks, location.pathname)
   );
   const [reportsOpen, setReportsOpen] = useState(
-    isCollapsibleListOpen(reportsLinks, location.pathname)
+    isCollapsibleListOpen(getReportLinks(), location.pathname)
   );
   const [feedbackOpen, setFeedbackOpen] = useState(
     isCollapsibleListOpen(feedbackLinks, location.pathname)
@@ -383,7 +398,7 @@ function Menu() {
               <ListItemText primary="REPORTS" />
             </ListItem>
             <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
-              {createListJsx(reportsLinks, true)}
+              {createListJsx(getReportLinks(), true)}
             </Collapse>
           </React.Fragment>
         )}

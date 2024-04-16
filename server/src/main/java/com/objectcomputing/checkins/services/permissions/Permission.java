@@ -21,6 +21,7 @@ public enum Permission {
   CAN_VIEW_ANNIVERSARY_REPORT("View anniversary report", "Reporting"),
   CAN_VIEW_BIRTHDAY_REPORT("View birthday report", "Reporting"),
   CAN_VIEW_PROFILE_REPORT("View profile report", "Reporting"),
+  CAN_VIEW_CHECKINS_REPORT("View checkins report", "Reporting"),
   CAN_CREATE_CHECKINS("Create check-ins", "Check-ins"),
   CAN_VIEW_CHECKINS("View check-ins", "Check-ins"),
   CAN_UPDATE_CHECKINS("Update check-ins", "Check-ins"),
