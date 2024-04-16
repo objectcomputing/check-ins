@@ -172,7 +172,7 @@ const TeamSkillReportPage = () => {
           <div style={{ height: "400px" }}>
             <MemberSkillRadar
               data={chartData || []}
-              selectedMembers={selectedMembers}
+              members={selectedMembers}
             />
           </div>
           <div className="search-results">
