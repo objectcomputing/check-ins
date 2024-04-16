@@ -14,7 +14,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import "./TeamSkillReportPage.css";
 import MemberSelector from "../components/member_selector/MemberSelector";
 import Typography from "@mui/material/Typography";
-import MemberSkillRadar from "../components/radar/Radar";
+import MemberSkillRadar from "../components/member_skill_radar/MemberSkillRadar.jsx";
 
 const TeamSkillReportPage = () => {
   const { state } = useContext(AppContext);
