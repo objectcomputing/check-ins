@@ -50,7 +50,7 @@ public class CheckInServicesImpl implements CheckInServices {
     public Boolean hasPermission(@NotNull UUID memberId, @NotNull Permissions permission) {
         boolean hasPermission = false;
         List<Permission> userPermissions = permissionServices.findUserPermissions(memberId);
-        if (userPermissions.size() > 0) {
+        if (!userPermissions.isEmpty()) {
             hasPermission = userPermissions.stream().map(Permission::getPermission).anyMatch(str -> str.equals(permission.name()));
             LOG.debug("Member has elevated access permisson: {}", hasPermission);
         }
@@ -109,11 +109,12 @@ public class CheckInServicesImpl implements CheckInServices {
         LocalDateTime chkInDate = checkIn.getCheckInDate();
         validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
 
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canUpdateAllCheckins = canUpdateAllCheckins(currentUser.getId());
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean canUpdateAllCheckins = canUpdateAllCheckins(currentUserId);
 
         if (!canUpdateAllCheckins) {
-            validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
+            boolean currentUserIsCheckinParticipant = currentUserId.equals(checkIn.getTeamMemberId()) || currentUserId.equals(checkIn.getPdlId());
+            validate((!currentUserIsCheckinParticipant), "You are not authorized to perform this operation");
         }
 
         return checkinRepo.save(checkIn);

@@ -28,7 +28,6 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     private final MemberProfileRepository memberRepo;
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
-    final String unauthorizedErrorMessage ="User is unauthorized to do this operation";
 
     public PrivateNoteServicesImpl(CheckInServices checkinServices, CheckInRepository checkinRepo, PrivateNoteRepository privateNoteRepository,
                                    MemberProfileRepository memberRepo, MemberProfileServices memberProfileServices,
@@ -42,27 +41,29 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     @Override
     public PrivateNote save(@NotNull PrivateNote privateNote) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canUpdateAllCheckins = checkinServices.canUpdateAllCheckins(currentUser.getId());
-
-
-        final UUID checkinId = privateNote.getCheckinid();
-        final UUID createdById = privateNote.getCreatedbyid();
-        CheckIn checkinRecord = checkinServices.read(checkinId);
-        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : false;
-
         validate(privateNote.getId() != null, "Found unexpected id %s for private note", privateNote.getId());
-        validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
-        validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
+
+        final UUID createdById = privateNote.getCreatedbyid();
+        validate(createdById == null, "Invalid private note %s, createdById null", privateNote);
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
 
-        if (!canUpdateAllCheckins) {
+        final UUID checkinId = privateNote.getCheckinid();
+        validate(checkinId == null, "Invalid private note %s, checkinId null", privateNote);
 
-            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()) || isCompleted ) {
+        CheckIn checkinRecord = checkinServices.read(checkinId);
+        validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
+
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean canUpdateAllCheckins = checkinServices.canUpdateAllCheckins(currentUserId);
+        if (!canUpdateAllCheckins) {
+            boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : false;
+            boolean allowedToView = checkinServices.accessGranted(checkinRecord.getId(), currentUserId);
+            if (!allowedToView || isCompleted ) {
                 throw new PermissionException("User is unauthorized to do this operation");
             }
 
-            if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
+            boolean currentUserIsCheckinSubject = currentUserId.equals(checkinRecord.getTeamMemberId());
+            if(currentUserIsCheckinSubject) {
                 throw new PermissionException("User is unauthorized to do this operation");
             }
 
@@ -73,25 +74,25 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     @Override
     public PrivateNote read(@NotNull UUID id) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canViewAllCheckins = checkinServices.canViewAllCheckins(currentUser.getId());
-        PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
+        PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
         if (privateNoteResult == null) {
             throw new NotFoundException(String.format("Invalid private note id %s", id));
         }
 
+        boolean canViewAllCheckins = checkinServices.canViewAllCheckins(currentUserId);
         if (!canViewAllCheckins) {
             CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
             if (checkinRecord == null) {
                 throw new NotFoundException(String.format("CheckIn %s doesn't exist", privateNoteResult.getCheckinid()));
             }
 
-            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
+            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUserId)) {
                 throw new PermissionException("User is unauthorized to do this operation");
             }
 
-            if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
+            if(currentUserId.equals(checkinRecord.getTeamMemberId())) {
                 throw new PermissionException("User is unauthorized to do this operation");
             }
         }
@@ -101,47 +102,48 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     @Override
     public PrivateNote update(@NotNull PrivateNote privateNote) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canUpdateAllCheckins = checkinServices.canUpdateAllCheckins(currentUser.getId());
-        Boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
+        validate(privateNote.getId() == null, "No private note id %s found for updating", privateNote.getId());
 
         final UUID checkinId = privateNote.getCheckinid();
-        final UUID createdById = privateNote.getCreatedbyid();
-        CheckIn checkinRecord = checkinServices.read(checkinId);
-        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : false;
+        validate(checkinId == null, "Invalid private note %s, checkinId null", privateNote);
 
-        validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
-        validate((canUpdateAllCheckins && !isPdl) || isCompleted , unauthorizedErrorMessage);
-        validate(privateNote.getId() == null, "No private note id %s found for updating", privateNote.getId());
-        validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
+        final UUID createdById = privateNote.getCreatedbyid();
+        validate(createdById == null, "Invalid private note %s, createById null", privateNote);
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
 
-        if (!canUpdateAllCheckins) {
+        CheckIn checkinRecord = checkinServices.read(checkinId);
+        validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
 
-            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()) || isCompleted ) {
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean canUpdateAllCheckins = checkinServices.canUpdateAllCheckins(currentUserId);
+        if (!canUpdateAllCheckins) {
+            boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : false;
+            boolean allowedToView = checkinServices.accessGranted(checkinRecord.getId(), currentUserId);
+
+            if (!allowedToView || isCompleted ) {
                 throw new PermissionException("User is unauthorized to do this operation");
             }
 
-            if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
+            boolean currentUserIsCheckinSubject = currentUserId.equals(checkinRecord.getTeamMemberId());
+            if(currentUserIsCheckinSubject) {
                 throw new PermissionException("User is unauthorized to do this operation");
             }
         }
 
         return privateNoteRepository.update(privateNote);
-
     }
 
     @Override
     public Set<PrivateNote> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean canViewAllCheckins = checkinServices.canViewAllCheckins(currentUser.getId());
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean canViewAllCheckins = checkinServices.canViewAllCheckins(currentUserId);
 
         if (checkinid != null) {
-            if (!checkinServices.accessGranted(checkinid, currentUser.getId()))
+            if (!checkinServices.accessGranted(checkinid, currentUserId))
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (createbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
-            if (!currentUser.getId().equals(memberRecord.getId()) && !canViewAllCheckins)
+            if (!currentUserId.equals(memberRecord.getId()) && !canViewAllCheckins)
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (!canViewAllCheckins) {
             throw new PermissionException("User is unauthorized to do this operation");

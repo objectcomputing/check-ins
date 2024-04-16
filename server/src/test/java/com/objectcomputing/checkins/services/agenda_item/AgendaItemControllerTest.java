@@ -333,10 +333,6 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        AgendaItem agendaItem = createADefaultAgendaItem(checkIn, memberProfile);
-
         final HttpRequest<?> request = HttpRequest.GET("/")
                 .basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
