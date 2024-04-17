@@ -213,7 +213,7 @@ const ViewFeedbackPage = () => {
   }, [currentUserId, teamMembers, csrf, state, isSupervisor]);
 
   const getFilteredFeedbackRequests = useCallback(() => {
-    if (feedbackRequests === undefined) {
+    if (!feedbackRequests) {
       return null;
     } else if (feedbackRequests.length === 0) {
       return <Typography className={classes.notFoundMessage} variant="h5">No feedback requests found</Typography>

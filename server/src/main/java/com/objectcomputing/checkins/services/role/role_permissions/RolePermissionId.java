@@ -15,21 +15,21 @@ public class RolePermissionId {
     @TypeDef(type = DataType.STRING)
     private final UUID roleId;
 
-    @Column(name = "permissionid")
+    @Column(name = "permission")
     @TypeDef(type = DataType.STRING)
-    private final UUID permissionId;
+    private final String permission;
 
-    public RolePermissionId(UUID roleId, UUID permissionId) {
+    public RolePermissionId(UUID roleId, String permission) {
         this.roleId = roleId;
-        this.permissionId = permissionId;
+        this.permission = permission;
     }
 
     public UUID getRoleId() {
         return roleId;
     }
 
-    public UUID getPermissionId() {
-        return permissionId;
+    public String getPermission() {
+        return permission;
     }
 
     @Override
@@ -37,11 +37,11 @@ public class RolePermissionId {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RolePermissionId that = (RolePermissionId) o;
-        return Objects.equals(roleId, that.roleId) && Objects.equals(permissionId, that.permissionId);
+        return Objects.equals(roleId, that.roleId) && Objects.equals(permission, that.permission);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roleId, permissionId);
+        return Objects.hash(roleId, permission);
     }
 }

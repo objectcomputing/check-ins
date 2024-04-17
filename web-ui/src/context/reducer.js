@@ -21,7 +21,7 @@ import {
   UPDATE_SKILLS,
   UPDATE_GUILD,
   UPDATE_GUILDS,
-  UPDATE_ROLES,
+  ADD_ROLE,
   UPDATE_TEAMS,
   UPDATE_TEAM_MEMBERS,
   UPDATE_TOAST,
@@ -209,7 +209,7 @@ export const reducer = (state, action) => {
     case DELETE_ROLE:
       state.roles = state.roles.filter((role) => role.id !== action.payload);
       break;
-    case UPDATE_ROLES:
+    case ADD_ROLE:
       state.roles = [...state.roles, action.payload];
       break;
     case ADD_GUILD:

@@ -12,15 +12,16 @@ public class SkillCreateDTO {
     @Schema(required = true, description = "name of the skill")
     private String name;
 
+    @NotNull
     @Schema(required = true, description = "whether the skill is accepted or not")
-    private boolean pending;
+    private Boolean pending;
 
     @Schema(description = "the description of the skill")
     private String description;
 
     @NotNull
     @Schema(description = "the skill is extraneous (or not)", required = true)
-    private boolean extraneous = false;
+    private Boolean extraneous = false;
 
     public String getName() {
         return name;
@@ -30,11 +31,11 @@ public class SkillCreateDTO {
         this.name = name;
     }
 
-    public boolean isPending() {
+    public Boolean isPending() {
         return pending;
     }
 
-    public void setPending(boolean pending) {
+    public void setPending(Boolean pending) {
         this.pending = pending;
     }
 
@@ -46,11 +47,11 @@ public class SkillCreateDTO {
         this.description = description;
     }
 
-    public boolean isExtraneous() {
+    public Boolean isExtraneous() {
         return extraneous;
     }
 
-    public void setExtraneous(boolean extraneous) {
+    public void setExtraneous(Boolean extraneous) {
         this.extraneous = extraneous;
     }
 }

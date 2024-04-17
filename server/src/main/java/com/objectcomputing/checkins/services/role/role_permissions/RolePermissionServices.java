@@ -1,12 +1,19 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.UUID;
 
 public interface RolePermissionServices {
-    List<RolePermissionsResponseDTO> findAll();
+  List<RolePermissionsResponseDTO> findAll();
 
-    RolePermission save(UUID roleId, UUID permissionId);
+  RolePermission save(UUID roleId, Permission permissionId);
 
-    void delete(UUID roleId, UUID permissionId);
+  void delete(UUID roleId, Permission permissionId);
+
+  List<RolePermission> findByRoleId(UUID roleId);
+
+  List<Permission> findUserPermissions(@NotBlank UUID id);
 }

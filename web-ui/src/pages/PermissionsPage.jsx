@@ -50,7 +50,11 @@ const PermissionEditor = ({
   );
 };
 
-const isPermissionEnabled = (rolePermissions, permission) => rolePermissions.some((current) => current.id === permission.id);
+const isPermissionEnabled = (rolePermissions, permission) => {
+  return rolePermissions.some((current) => {
+    return current.permission === permission.permission;
+  });
+}
 
 const EditPermissionsPage = () => {
   const { state } = useContext(AppContext);
@@ -102,7 +106,7 @@ const EditPermissionsPage = () => {
   };
 
   const addPermissionForRole = async (role, permission) => {
-    let newSchema = { roleId: role.id, permissionId: permission.id };
+    let newSchema = { roleId: role.id, permission: permission.permission };
     let res = await postRolePermission(newSchema, csrf);
     const snackPayload = res.error
           ? { severity: "warning", toast: `Problem adding ${permission.description} to ${role.role}` }
@@ -114,7 +118,7 @@ const EditPermissionsPage = () => {
   };
 
   const deletePermissionForRole = async (role, permission) => {
-    let newSchema = { roleId: role.id, permissionId: permission.id };
+    let newSchema = { roleId: role.id, permission: permission.permission };
     let res = await deleteRolePermission(newSchema, csrf);
     const snackPayload = res.error
       ? { severity: "warning", toast: `Problem deleting ${permission.description} from ${role.role}` }
@@ -162,7 +166,7 @@ const EditPermissionsPage = () => {
             <h3>{category?.category}:</h3>
             { category?.permissions?.map((permission)=> (
                 <PermissionEditor
-                  key={permission.id}
+                  key={permission.permission}
                   permission={permission.permission}
                   title={permission.description}
                   enabled={isPermissionEnabled(rolePermissions, permission)}

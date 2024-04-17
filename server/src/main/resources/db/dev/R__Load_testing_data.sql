@@ -21,6 +21,8 @@ delete from feedback_requests;
 delete from template_questions;
 delete from review_periods;
 delete from feedback_templates;
+delete from emails;
+delete from member_history;
 delete from member_profile;
 delete from skillcategory_skills;
 delete from skills;
@@ -159,7 +161,7 @@ VALUES
 INSERT INTO member_roles
     (roleid, memberid)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498'); -- Geetika Sharma 
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498'); -- Geetika Sharma
 
 INSERT INTO member_roles
     (roleid, memberid)
@@ -542,279 +544,188 @@ VALUES
 ('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2021-01-29', '2021-02-02', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'));
 
 
--- Permissions
-insert into permissions
-    (id, permission)
-values
-    ('439ad8a8-500f-4f3f-963b-a86437d5820a', 'CAN_CREATE_ORGANIZATION_MEMBERS');
-
-insert into permissions
-    (id, permission)
-values
-    ('0f299d11-df47-406f-a426-8e3160eaeb21', 'CAN_DELETE_ORGANIZATION_MEMBERS');
-
-insert into permissions
-    (id, permission)
-values
-    ('008f6641-0b0a-4e89-84f0-c580f912b80d', 'CAN_VIEW_FEEDBACK_REQUEST');
-
-insert into permissions
-    (id, permission)
-values
-    ('1bf32dfe-a204-4c80-889e-829ca66c999b', 'CAN_CREATE_FEEDBACK_REQUEST');
-
-insert into permissions
-    (id, permission)
-values
-    ('a574feb9-f2d4-4cbf-9353-bfaccdffa74f', 'CAN_DELETE_FEEDBACK_REQUEST');
-
-insert into permissions
-    (id, permission)
-values
-    ('26a2f861-3f7d-4dc3-8762-716b184a3a47', 'CAN_VIEW_FEEDBACK_ANSWER');
-
-insert into permissions
-    (id, permission)
-values
-    ('1fd790d9-df9a-4201-818b-3a9ac5e5be3b', 'CAN_VIEW_ROLE_PERMISSIONS');
-
-insert into permissions
-    (id, permission)
-values
-    ('ba001065-bfef-41cc-a03d-6e168ba1c244', 'CAN_ASSIGN_ROLE_PERMISSIONS');
-
-insert into permissions
-(id, permission)
-values
-    ('f6961946-a792-4a16-b675-d8cf7980c17a', 'CAN_VIEW_PERMISSIONS');
-
-insert into permissions
-(id, permission)
-values
-    ('f7e815de-8849-11ee-b9d1-0242ac120002', 'CAN_VIEW_SKILLS_REPORT');
-
-insert into permissions
-(id, permission)
-values
-    ('f7e81958-8849-11ee-b9d1-0242ac120002', 'CAN_VIEW_RETENTION_REPORT');
-
-insert into permissions
-(id, permission)
-values
-    ('056e32b2-8d07-11ee-b9d1-0242ac120002', 'CAN_VIEW_ANNIVERSARY_REPORT');
-
-insert into permissions
-(id, permission)
-values
-    ('2d765f78-8d07-11ee-b9d1-0242ac120002', 'CAN_VIEW_BIRTHDAY_REPORT');
-
-insert into permissions
-(id, permission)
-values
-    ('2d765d5c-8d07-11ee-b9d1-0242ac120002', 'CAN_VIEW_PROFILE_REPORT');
-
-insert into permissions
-(id, permission)
-values
-    ('d84772ac-85c5-4030-9a86-7db41770fbf3', 'CAN_CREATE_CHECKINS');   
-
-insert into permissions
-(id, permission)
-values
-    ('d04bd772-4a37-4cc3-91da-8fc7de08f3be', 'CAN_VIEW_CHECKINS');
-
-insert into permissions
-(id, permission)
-values
-    ('ecd952a1-c7c8-47a9-b4ee-762b99276a6f', 'CAN_UPDATE_CHECKINS');
-
-insert into permissions
-(id, permission)
-values
-    ('79b6509e-4e8c-46d5-a437-875b6f153f6a', 'CAN_EDIT_SKILL_CATEGORIES');
-
-insert into permissions
-(id, permission)
-values
-    ('ef46eb01-e3fe-481f-b97c-f20ea1806c7b', 'CAN_VIEW_SKILL_CATEGORIES');
-
 -- Admin Permissions
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '439ad8a8-500f-4f3f-963b-a86437d5820a'); -- CAN_CREATE_ORGANIZATION_MEMBERS
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_CREATE_ORGANIZATION_MEMBERS');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '0f299d11-df47-406f-a426-8e3160eaeb21'); -- CAN_DELETE_ORGANIZATION_MEMBERS
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_DELETE_ORGANIZATION_MEMBERS');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '008f6641-0b0a-4e89-84f0-c580f912b80d'); -- CAN_VIEW_FEEDBACK_REQUEST
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_FEEDBACK_REQUEST');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1bf32dfe-a204-4c80-889e-829ca66c999b'); -- CAN_CREATE_FEEDBACK_REQUEST
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_CREATE_FEEDBACK_REQUEST');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_DELETE_FEEDBACK_REQUEST');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '26a2f861-3f7d-4dc3-8762-716b184a3a47'); -- CAN_VIEW_FEEDBACK_ANSWER
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_FEEDBACK_ANSWER');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1fd790d9-df9a-4201-818b-3a9ac5e5be3b'); -- CAN_VIEW_ROLE_PERMISSIONS
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_ROLE_PERMISSIONS');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ba001065-bfef-41cc-a03d-6e168ba1c244'); -- CAN_ASSIGN_ROLE_PERMISSIONS
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ASSIGN_ROLE_PERMISSIONS');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f6961946-a792-4a16-b675-d8cf7980c17a'); -- CAN_VIEW_PERMISSIONS
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_PERMISSIONS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f7e815de-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_SKILLS_REPORT
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_SKILLS_REPORT');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'f7e81958-8849-11ee-b9d1-0242ac120002'); -- CAN_VIEW_RETENTION_REPORT
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_RETENTION_REPORT');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '056e32b2-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_ANNIVERSARY_REPORT
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_ANNIVERSARY_REPORT');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765f78-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_BIRTHDAY_REPORT
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_BIRTHDAY_REPORT');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2d765d5c-8d07-11ee-b9d1-0242ac120002'); -- CAN_VIEW_PROFILE_REPORT
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_PROFILE_REPORT');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'd84772ac-85c5-4030-9a86-7db41770fbf3'); -- CAN_CREATE_CHECKINS
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_CREATE_CHECKINS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'd04bd772-4a37-4cc3-91da-8fc7de08f3be'); -- CAN_VIEW_CHECKINS
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_CHECKINS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_CHECKINS_REPORT');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '79b6509e-4e8c-46d5-a437-875b6f153f6a'); -- CAN_EDIT_SKILL_CATEGORIES
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_UPDATE_CHECKINS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ef46eb01-e3fe-481f-b97c-f20ea1806c7b'); -- CAN_VIEW_SKILL_CATEGORIES
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_EDIT_SKILL_CATEGORIES');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_SKILL_CATEGORIES');
 
 -- PDL Permissions
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '008f6641-0b0a-4e89-84f0-c580f912b80d'); -- CAN_VIEW_FEEDBACK_REQUEST
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_FEEDBACK_REQUEST');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '1bf32dfe-a204-4c80-889e-829ca66c999b'); -- CAN_CREATE_FEEDBACK_REQUEST
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_CREATE_FEEDBACK_REQUEST');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_DELETE_FEEDBACK_REQUEST');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '26a2f861-3f7d-4dc3-8762-716b184a3a47'); -- CAN_VIEW_FEEDBACK_ANSWER
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_FEEDBACK_ANSWER');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'f6961946-a792-4a16-b675-d8cf7980c17a'); -- CAN_VIEW_PERMISSIONS
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_PERMISSIONS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'd04bd772-4a37-4cc3-91da-8fc7de08f3be'); -- CAN_VIEW_CHECKINS
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_CHECKINS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'd84772ac-85c5-4030-9a86-7db41770fbf3'); -- CAN_CREATE_CHECKINS
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_CREATE_CHECKINS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_UPDATE_CHECKINS');
 
 -- Member permissions
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '008f6641-0b0a-4e89-84f0-c580f912b80d'); -- CAN_VIEW_FEEDBACK_REQUEST
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_VIEW_FEEDBACK_REQUEST');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '1bf32dfe-a204-4c80-889e-829ca66c999b'); -- CAN_CREATE_FEEDBACK_REQUEST
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_CREATE_FEEDBACK_REQUEST');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'a574feb9-f2d4-4cbf-9353-bfaccdffa74f'); -- CAN_DELETE_FEEDBACK_REQUEST
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_DELETE_FEEDBACK_REQUEST');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '26a2f861-3f7d-4dc3-8762-716b184a3a47'); -- CAN_VIEW_FEEDBACK_ANSWER
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_VIEW_FEEDBACK_ANSWER');
 
 insert into role_permissions
-    (roleid, permissionid)
+    (roleid, permission)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'f6961946-a792-4a16-b675-d8cf7980c17a'); -- CAN_VIEW_PERMISSIONS
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_VIEW_PERMISSIONS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'd04bd772-4a37-4cc3-91da-8fc7de08f3be'); -- CAN_VIEW_CHECKINS
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_VIEW_CHECKINS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'd84772ac-85c5-4030-9a86-7db41770fbf3'); -- CAN_CREATE_CHECKINS
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_CREATE_CHECKINS');
 
 insert into role_permissions
-(roleid, permissionid)
+(roleid, permission)
 values
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'ecd952a1-c7c8-47a9-b4ee-762b99276a6f'); -- CAN_UPDATE_CHECKINS
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_UPDATE_CHECKINS');
 
 -- Feedback Templates
 ---- Quarter 1 Feedback Template
@@ -1090,6 +1001,10 @@ INSERT INTO feedback_requests
 VALUES
 ('ab2da7fc-fac2-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3' ,'18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-08-01', '2021-08-05', null, 'pending');
 
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status) -- requestee: Zach Brown, recipient: Michael Kimberlin
+VALUES
+('ab2da7fc-fac2-11eb-9a03-0242ac130004', '59b790d2-fabc-11eb-9a03-0242ac130003', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '6207b3fd-042d-49aa-9e28-dcc04f537c2d' ,'18ef2032-c264-411e-a8e1-ddda9a714bae', (NOW())::date, (NOW() + INTERVAL '1 DAY')::date, null, 'pending');
 ---- Creator: Zack Brown
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status) -- requestee: Faux Freddy, recipient: Zack Brown

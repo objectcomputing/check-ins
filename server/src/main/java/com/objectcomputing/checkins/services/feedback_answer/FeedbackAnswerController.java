@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -76,7 +77,7 @@ public class FeedbackAnswerController {
      * @param id {@link UUID} ID of the feedback answer
      * @return {@link FeedbackAnswerResponseDTO}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_ANSWER)
+    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
     @Get("/{id}")
     public Mono<HttpResponse<FeedbackAnswerResponseDTO>> getById(UUID id) {
         return Mono.fromCallable(() -> feedbackAnswerServices.getById(id))
@@ -95,7 +96,7 @@ public class FeedbackAnswerController {
      * @param requestId The attached {@link UUID} of the request that corresponds with the answer
      * @return {@link FeedbackAnswerResponseDTO}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_ANSWER)
+    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
     @Get("/{?questionId,requestId}")
     public Mono<HttpResponse<List<FeedbackAnswerResponseDTO>>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
         return Mono.fromCallable(() -> feedbackAnswerServices.findByValues(questionId, requestId))

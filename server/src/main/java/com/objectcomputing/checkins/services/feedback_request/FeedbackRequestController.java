@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
-import com.objectcomputing.checkins.security.permissions.Permissions;
+;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
@@ -54,7 +55,7 @@ public class FeedbackRequestController {
      * @param requestBody {@link FeedbackRequestCreateDTO} New feedback request to create
      * @return {@link FeedbackRequestResponseDTO}
      */
-    @RequiredPermission(Permissions.CAN_CREATE_FEEDBACK_REQUEST)
+    @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
     @Post()
     public Mono<HttpResponse<FeedbackRequestResponseDTO>> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackReqServices.save(fromDTO(requestBody)))
@@ -88,7 +89,7 @@ public class FeedbackRequestController {
      * @param id {@link UUID} of the feedback request to be deleted
      * @return {@link HttpResponse}
      */
-    @RequiredPermission(Permissions.CAN_DELETE_FEEDBACK_REQUEST)
+    @RequiredPermission(Permission.CAN_DELETE_FEEDBACK_REQUEST)
     @Delete("/{id}")
     public Mono<? extends HttpResponse<?>> delete(@NotNull UUID id) {
         return Mono.fromCallable(() -> feedbackReqServices.delete(id))
@@ -103,7 +104,7 @@ public class FeedbackRequestController {
      * @param id {@link UUID} ID of the request
      * @return {@link FeedbackRequestResponseDTO}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_REQUEST)
+    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_REQUEST)
     @Get("/{id}")
     public Mono<HttpResponse<FeedbackRequestResponseDTO>> getById(UUID id) {
         return Mono.fromCallable(() -> feedbackReqServices.getById(id))
@@ -124,7 +125,7 @@ public class FeedbackRequestController {
      * @param oldestDate The date that filters out any requests that were made before that date
      * @return list of {@link FeedbackRequestResponseDTO}
      */
-    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK_REQUEST)
+    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_REQUEST)
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,requesteeIds}")
     public Mono<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable List<UUID> requesteeIds) {
         return Mono.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, requesteeIds))
