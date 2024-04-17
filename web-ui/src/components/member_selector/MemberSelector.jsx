@@ -16,6 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {getAvatarURL} from "../../api/api";
 
 import "./MemberSelector.css";
@@ -53,6 +54,10 @@ const MemberSelector = ({ onChange, listHeight, className, style }) => {
     setSelectedMembers(selected);
   }, [selectedMembers]);
 
+  const clearMembers = useCallback(() => {
+    setSelectedMembers([]);
+  }, []);
+
   return (
     <>
       <Card
@@ -71,11 +76,18 @@ const MemberSelector = ({ onChange, listHeight, className, style }) => {
             </div>
           }
           action={
-            <Tooltip title="Add members" arrow>
-              <IconButton style={{ margin: "4px 8px 0 0" }} onClick={() => setDialogOpen(true)}>
-                <AddIcon/>
-              </IconButton>
-            </Tooltip>
+            <>
+              <Tooltip title="Remove all" arrow>
+                <IconButton style={{ margin: "4px 8px 0 0" }} onClick={clearMembers}>
+                  <HighlightOffIcon/>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Add members" arrow>
+                <IconButton style={{ margin: "4px 8px 0 0" }} onClick={() => setDialogOpen(true)}>
+                  <AddIcon/>
+                </IconButton>
+              </Tooltip>
+            </>
           }
         />
         <Collapse in={expanded}>
