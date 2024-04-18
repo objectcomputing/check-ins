@@ -90,31 +90,32 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
     setSelectedMembers(selected);
   }, [selectedMembers]);
 
-  const downloadMemberCsv = useCallback(async () => {
+  const downloadMemberCsv = useCallback(() => {
     if (!exportable) {
       return;
     }
 
     const memberIds = selectedMembers.map(member => member.id);
-    const res = await reportSelectedMembersCsv(memberIds, csrf);
-    if (res && !res.error) {
-      fileDownload(res.payload.data, "members.csv");
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "success",
-          toast: "Member export has been saved"
-        }
-      });
-    } else {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Failed to export members to CSV"
-        }
-      });
-    }
+    reportSelectedMembersCsv(memberIds, csrf).then(res => {
+      if (res && !res.error) {
+        fileDownload(res.payload.data, "members.csv");
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "success",
+            toast: "Member export has been saved"
+          }
+        });
+      } else {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Failed to export members to CSV"
+          }
+        });
+      }
+    });
   }, [selectedMembers, csrf, dispatch]);
 
   const clearMembers = useCallback(() => {
@@ -141,28 +142,12 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
           }
           action={
           <>
-            {exportable &&
-              <Tooltip title="Download CSV" arrow>
-                <IconButton
-                  style={{ margin: "4px 8px 0 0" }}
-                  onClick={downloadMemberCsv}
-                  disabled={!selectedMembers.length}
-                >
-                  <DownloadIcon/>
-                </IconButton>
-              </Tooltip>
-            }
             <Tooltip title="Add members" arrow>
               <IconButton
                 style={{ margin: "4px 8px 0 0" }}
                 onClick={() => setDialogOpen(true)}
                 disabled={disabled}
               >
-                <AddIcon/>
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Add members" arrow>
-              <IconButton style={{ margin: "4px 8px 0 0" }} onClick={() => setDialogOpen(true)}>
                 <AddIcon/>
               </IconButton>
             </Tooltip>
@@ -186,6 +171,20 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
                 </ListItemIcon>
                 <ListItemText>Remove all</ListItemText>
               </MenuItem>
+              {exportable &&
+                <MenuItem
+                  onClick={() => {
+                    setMenuAnchor(null);
+                    downloadMemberCsv();
+                  }}
+                  disabled={!selectedMembers.length}
+                >
+                  <ListItemIcon>
+                    <DownloadIcon fontSize="small"/>
+                  </ListItemIcon>
+                  <ListItemText>Download</ListItemText>
+                </MenuItem>
+              }
             </Menu>
           </>
           }
