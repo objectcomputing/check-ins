@@ -22,7 +22,7 @@ const propTypes = {
 
 const MemberSkillRadar = ({ data, members }) => {
 
-  const [colors, setColors] = useState({});  // Maps member id to object of colors for radar
+  const [colors, setColors] = useState({});  // Maps member id to corresponding radar color
   const [colorOptions, setColorOptions] = useState(RADAR_COLORS);  // List of predefined colors to choose from
 
   useEffect(() => {
