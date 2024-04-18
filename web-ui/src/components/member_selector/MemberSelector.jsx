@@ -4,11 +4,12 @@ import {
   Avatar,
   Card,
   CardHeader, Collapse,
+  Divider,
   IconButton,
   List,
   ListItem,
-  ListItemAvatar,
-  ListItemText,
+  ListItemAvatar, ListItemIcon,
+  ListItemText, Menu, MenuItem,
   Tooltip,
   Typography
 } from "@mui/material";
@@ -16,17 +17,19 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {getAvatarURL} from "../../api/api";
 
-import "./MemberSelector.css";
 import MemberSelectorDialog from "./member_selector_dialog/MemberSelectorDialog";
-import Divider from "@mui/material/Divider";
 import DownloadIcon from "@mui/icons-material/FileDownload";
 import {reportSelectedMembersCsv} from "../../api/member.js";
 import {AppContext} from "../../context/AppContext.jsx";
 import {selectCsrfToken} from "../../context/selectors.js";
 import fileDownload from "js-file-download";
 import {UPDATE_TOAST} from "../../context/actions.js";
+
+import "./MemberSelector.css";
 
 const propTypes = {
   /** The members that are currently selected. Use to make this a controlled component. */
@@ -58,6 +61,7 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
   const [selectedMembers, setSelectedMembers] = useState(isControlled ? selected : []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
+  const [menuAnchor, setMenuAnchor] = useState(null);
 
   // When the selected members change, fire the onChange event
   useEffect(() => {
@@ -113,6 +117,10 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
     }
   }, [selectedMembers, csrf, dispatch]);
 
+  const clearMembers = useCallback(() => {
+    setSelectedMembers([]);
+  }, []);
+
   return (
     <>
       <Card
@@ -153,6 +161,32 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
                 <AddIcon/>
               </IconButton>
             </Tooltip>
+            <Tooltip title="Add members" arrow>
+              <IconButton style={{ margin: "4px 8px 0 0" }} onClick={() => setDialogOpen(true)}>
+                <AddIcon/>
+              </IconButton>
+            </Tooltip>
+            <IconButton style={{ margin: "4px 8px 0 0" }} onClick={(event) => setMenuAnchor(event.currentTarget)}>
+              <MoreVertIcon/>
+            </IconButton>
+            <Menu
+              anchorEl={menuAnchor}
+              open={!!menuAnchor}
+              onClose={() => setMenuAnchor(null)}
+            >
+              <MenuItem
+                onClick={() => {
+                  setMenuAnchor(null);
+                  clearMembers();
+                }}
+                disabled={!selectedMembers.length}
+              >
+                <ListItemIcon>
+                  <HighlightOffIcon fontSize="small"/>
+                </ListItemIcon>
+                <ListItemText>Remove all</ListItemText>
+              </MenuItem>
+            </Menu>
           </>
           }
         />

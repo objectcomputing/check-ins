@@ -163,7 +163,7 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     function getAllTheCheckins() {
-      if (userProfile && userProfile.role?.includes("ADMIN") && id && csrf) {
+      if (userProfile && userProfile.permissions?.some((p) => p?.permission?.includes("CAN_VIEW_CHECKINS_REPORT")) && id && csrf) {
         getAllCheckinsForAdmin(dispatch, csrf);
       } else if (id && csrf) {
         getCheckins(id, pdlId, dispatch, csrf);
