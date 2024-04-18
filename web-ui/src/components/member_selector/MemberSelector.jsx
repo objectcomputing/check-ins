@@ -4,11 +4,12 @@ import {
   Avatar,
   Card,
   CardHeader, Collapse,
+  Divider,
   IconButton,
   List,
   ListItem,
-  ListItemAvatar,
-  ListItemText,
+  ListItemAvatar, ListItemIcon,
+  ListItemText, Menu, MenuItem,
   Tooltip,
   Typography
 } from "@mui/material";
@@ -16,12 +17,13 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {getAvatarURL} from "../../api/api";
 
-import "./MemberSelector.css";
 import MemberSelectorDialog from "./member_selector_dialog/MemberSelectorDialog";
-import Divider from "@mui/material/Divider";
+
+import "./MemberSelector.css";
 
 const propTypes = {
   onChange: PropTypes.func,
@@ -34,6 +36,7 @@ const MemberSelector = ({ onChange, listHeight, className, style }) => {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
+  const [menuAnchor, setMenuAnchor] = useState(null);
 
   useEffect(() => {
     if (onChange) {
@@ -77,16 +80,32 @@ const MemberSelector = ({ onChange, listHeight, className, style }) => {
           }
           action={
             <>
-              <Tooltip title="Remove all" arrow>
-                <IconButton style={{ margin: "4px 8px 0 0" }} onClick={clearMembers}>
-                  <HighlightOffIcon/>
-                </IconButton>
-              </Tooltip>
               <Tooltip title="Add members" arrow>
                 <IconButton style={{ margin: "4px 8px 0 0" }} onClick={() => setDialogOpen(true)}>
                   <AddIcon/>
                 </IconButton>
               </Tooltip>
+              <IconButton style={{ margin: "4px 8px 0 0" }} onClick={(event) => setMenuAnchor(event.currentTarget)}>
+                <MoreVertIcon/>
+              </IconButton>
+              <Menu
+                anchorEl={menuAnchor}
+                open={!!menuAnchor}
+                onClose={() => setMenuAnchor(null)}
+              >
+                <MenuItem
+                  onClick={() => {
+                    setMenuAnchor(null);
+                    clearMembers();
+                  }}
+                  disabled={!selectedMembers.length}
+                >
+                  <ListItemIcon>
+                    <HighlightOffIcon fontSize="small"/>
+                  </ListItemIcon>
+                  <ListItemText>Remove all</ListItemText>
+                </MenuItem>
+              </Menu>
             </>
           }
         />
