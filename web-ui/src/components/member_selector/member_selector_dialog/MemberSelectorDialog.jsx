@@ -28,9 +28,9 @@ import {AppContext} from "../../../context/AppContext";
 import {
   selectCsrfToken,
   selectCurrentMembers,
-  selectGuilds,
+  selectGuilds, selectMappedUserRoles, selectRoles,
   selectSkills, selectSubordinates, selectSupervisors, selectTeamMembersBySupervisorId,
-  selectTeams
+  selectTeams,
 } from "../../../context/selectors";
 import {UPDATE_TOAST} from "../../../context/actions";
 import {getMembersByTeam} from "../../../api/team";
@@ -50,6 +50,7 @@ const FilterType = Object.freeze({
   TEAM: "Team",
   TITLE: "Title",
   LOCATION: "Location",
+  ROLE: "Role",
   SKILL: "Skill",
   MANAGER: "Manager",
 });
@@ -135,6 +136,13 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
             label: (location) => location,
             equals: (location1, location2) => location1 === location2
           };
+        case FilterType.ROLE:
+          const roles = selectRoles(state);
+          return {
+            options: roles,
+            label: (role) => role.role,
+            equals: (role1, role2) => role1.id === role2.id
+          };
         case FilterType.SKILL:
           let skills = selectSkills(state);
           return {
@@ -210,6 +218,12 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
             break;
           case FilterType.LOCATION:
             filteredMemberList = filteredMemberList.filter(member => member.location === filter);
+            break;
+          case FilterType.ROLE:
+            const mappedUserRoles = selectMappedUserRoles(state);
+            filteredMemberList = filteredMemberList.filter(member =>
+              member.id in mappedUserRoles && mappedUserRoles[member.id].has(filter.role)
+            );
             break;
           case FilterType.SKILL:
             const skillId = filter.id;
@@ -382,7 +396,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
           />
         </FormGroup>
         <Divider/>
-        <List dense role="list" sx={{ maxHeight: "80vh", overflow: "auto" }}>
+        <List dense role="list" sx={{ height: "85%", overflowY: "scroll" }}>
           {selectableMembers.map(member => (
             <ListItem
               key={member.id}
@@ -405,6 +419,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
             </ListItem>
           ))}
         </List>
+        <Divider/>
       </DialogContent>
     </Dialog>
   );

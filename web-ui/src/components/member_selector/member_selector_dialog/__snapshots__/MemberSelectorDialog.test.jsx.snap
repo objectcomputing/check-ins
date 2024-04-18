@@ -301,8 +301,11 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
             class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
           />
           <ul
-            class="MuiList-root MuiList-padding MuiList-dense css-2ltt2v-MuiList-root"
+            class="MuiList-root MuiList-padding MuiList-dense css-1vjk1cp-MuiList-root"
             role="list"
+          />
+          <hr
+            class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
           />
         </div>
       </div>
