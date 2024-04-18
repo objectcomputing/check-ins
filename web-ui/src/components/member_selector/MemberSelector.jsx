@@ -164,7 +164,7 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
                   setMenuAnchor(null);
                   clearMembers();
                 }}
-                disabled={!selectedMembers.length}
+                disabled={disabled || !selectedMembers.length}
               >
                 <ListItemIcon>
                   <HighlightOffIcon fontSize="small"/>
