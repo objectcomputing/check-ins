@@ -27,9 +27,9 @@ import {UPDATE_TOAST} from "../context/actions";
 import {sendEmail} from "../api/notifications";
 
 import "./EmailPage.css";
-import TransferList from "../components/transfer_list/TransferList";
 import {getAvatarURL} from "../api/api";
-
+import MemberSelector from "../components/member_selector/MemberSelector.jsx";
+import {selectCsrfToken} from "../context/selectors.js";
 
 const Root = styled("div")({
   margin: "2rem"
@@ -217,7 +217,7 @@ const ComposeEmailStep = ({ emailFormat, emailContents, emailSubject, onSubjectC
   return <></>
 }
 
-const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, recipientOptions, recipients, onRecipientsChange, emailSent }) => {
+const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, recipients, onRecipientsChange, emailSent }) => {
 
   const [emailError, setEmailError] = useState(false);
 
@@ -261,12 +261,12 @@ const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, r
           Send Test Email
         </Button>
       </div>
-      <TransferList
-        leftList={recipientOptions}
-        rightList={recipients}
-        leftLabel="Select Recipients"
-        rightLabel="Recipients"
-        onListsChanged={(lists) => onRecipientsChange(lists)}
+      <MemberSelector
+        selected={recipients}
+        onChange={(selectedMembers) => onRecipientsChange(selectedMembers)}
+        title="Recipients"
+        outlined
+        exportable
         disabled={emailSent}
       />
     </>
@@ -275,28 +275,17 @@ const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, r
 
 const EmailPage = () => {
   const { state } = useContext(AppContext);
-  const { memberProfiles, csrf } = state;
+  const csrf = selectCsrfToken(state);
   const [currentStep, setCurrentStep] = useState(0);
   const [emailFormat, setEmailFormat] = useState(null);
   const [emailContents, setEmailContents] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
-  const [recipientOptions, setRecipientOptions] = useState([]);
   const [recipients, setRecipients] = useState([]);
   const [testEmail, setTestEmail] = useState("");
   const [testEmailSent, setTestEmailSent] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
-  const [activeMembers, setActiveMembers] = useState([]);
   const [emailSent, setEmailSent] = useState(false);
   const steps = ["Choose Email Format", "Compose Email", "Select Recipients"];
-
-  useEffect(() => {
-    const unterminatedMembers = memberProfiles.filter(member => member.terminationDate === null);
-    setActiveMembers(unterminatedMembers);
-  }, [memberProfiles]);
-
-  useEffect(() => {
-    setRecipientOptions(activeMembers);
-  }, [activeMembers]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -442,12 +431,10 @@ const EmailPage = () => {
               testEmail={testEmail}
               onTestEmailChange={(address) => setTestEmail(address)}
               onSendTestEmail={sendTestEmail}
-              recipientOptions={recipientOptions}
               recipients={recipients}
               emailSent={emailSent}
-              onRecipientsChange={({ left, right }) => {
-                setRecipientOptions(left);
-                setRecipients(right);
+              onRecipientsChange={(recipients) => {
+                setRecipients(recipients);
               }}
             />
           )}

@@ -28,15 +28,43 @@ const initialState = {
   },
 };
 
-it("renders correctly", () => {
-  snapshot(
-    <AppContextProvider value={initialState}>
-      <MemberSelector
-        onChange={vi.fn()}
-        listHeight={300}
-        className="test-class"
-        style={{ margin: "10px" }}
-      />
-    </AppContextProvider>
-  );
+describe("MemberSelector", () => {
+  it("renders correctly with default props", () => {
+    snapshot(
+      <AppContextProvider value={initialState}>
+        <MemberSelector
+          onChange={vi.fn()}
+        />
+      </AppContextProvider>
+    );
+  });
+
+  it("renders correctly as a controlled component", () => {
+    snapshot(
+      <AppContextProvider value={initialState}>
+        <MemberSelector
+          selected={initialState.state.memberProfiles}
+          onChange={vi.fn()}
+          title="Custom Title"
+          outlined
+          exportable
+          listHeight={300}
+          className="test-class"
+          style={{ margin: "10px" }}
+        />
+      </AppContextProvider>
+    );
+  });
+
+  it("renders correctly when disabled", () => {
+    snapshot(
+      <AppContextProvider value={initialState}>
+        <MemberSelector
+          selected={initialState.state.memberProfiles}
+          onChange={vi.fn()}
+          disabled
+        />
+      </AppContextProvider>
+    );
+  });
 });
