@@ -1,7 +1,17 @@
 import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 
-import {Radar, RadarChart, PolarGrid, Legend, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip} from "recharts";
+import {
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Tooltip
+} from "recharts";
+import {RADAR_COLORS} from "./RadarColors.jsx";
 
 const propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
@@ -12,25 +22,30 @@ const propTypes = {
 
 const MemberSkillRadar = ({ data, members }) => {
 
-  const [colors, setColors] = useState({});
-
-  // Calculates a pair of colors for the fill and stroke
-  const calculateColors = () => {
-    const hue = Math.random() * 360;
-    return {
-      fill: `hsl(${hue}, 100%, 50%)`,
-      stroke: `hsl(${hue}, 100%, 30%)`  // Use a darker version of the same color
-    };
-  }
+  const [colors, setColors] = useState({});  // Maps member id to corresponding radar color
+  const [colorOptions, setColorOptions] = useState(RADAR_COLORS);  // List of predefined colors to choose from
 
   useEffect(() => {
     const updatedColors = {...colors};
+    const updatedColorOptions = [...colorOptions];
     members.forEach((member) => {
+      // Only get a new color if the member doesn't have one already
       if (!(member.name in colors)) {
-        updatedColors[member.name] = calculateColors();
+        // Use predefined colors until all those colors have been used
+        if (updatedColorOptions.length > 0) {
+          // Choose a random color from the list
+          const colorIndex = Math.floor(Math.random() * updatedColorOptions.length);
+          updatedColors[member.name] = updatedColorOptions[colorIndex];
+          updatedColorOptions.splice(colorIndex, 1);  // Prevent using this color again
+        } else {
+          // Generate a random color using HSL
+          const hue = Math.random() * 360;
+          updatedColors[member.name] = `hsl(${hue}, 100%, 50%)`;
+        }
       }
     });
     setColors(updatedColors);
+    setColorOptions(updatedColorOptions);
   }, [members]);
 
   return (
@@ -45,8 +60,8 @@ const MemberSkillRadar = ({ data, members }) => {
             key={member.name}
             name={member.name}
             dataKey={member.name}
-            fill={colors[member.name] && colors[member.name].fill}
-            stroke={colors[member.name] && colors[member.name].stroke}
+            fill={colors[member.name]}
+            stroke={colors[member.name]}
             fillOpacity={0.6}
           />
         ))}
