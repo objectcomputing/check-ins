@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.checkins;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-;
+
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 

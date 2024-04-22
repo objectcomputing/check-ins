@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
-;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
