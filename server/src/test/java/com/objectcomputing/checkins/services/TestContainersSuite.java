@@ -28,7 +28,7 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
         postgres = new PostgreSQLContainer<>("postgres:11.16");
         postgres.waitingFor(Wait.forLogMessage(".*database system is ready to accept connections\\n", 1));
         postgres.start();
-//        System.setProperties("FROM_ADDRESS", "moshirim@objectcomputing.com");
+        Runtime.getRuntime().addShutdownHook(new Thread(postgres::stop));
     }
 
     @Inject
