@@ -60,7 +60,7 @@ public class BirthDayServicesImpl implements BirthDayServices{
         LocalDate today = LocalDate.now();
         List<MemberProfile> results = memberProfiles
                 .stream()
-                .filter(member -> member.getBirthDate() != null && today.getDayOfMonth() == member.getBirthDate().getDayOfMonth() && today.getMonthValue() == member.getBirthDate().getMonthValue())
+                .filter(member -> member.getBirthDate() != null && today.getMonthValue() == member.getBirthDate().getMonthValue())
                 .collect(Collectors.toList());
         return profileToBirthDateResponseDto(results);
     }
