@@ -76,7 +76,7 @@ const modalStyles = {
   padding: '1rem',
   transform: 'translate(-50%, -50%)',
   border: '2px solid #fff',
-
+  // flex-box related properties
   display: 'flex',
   flexDirection: 'column',
   gap: '1rem'
