@@ -127,7 +127,7 @@ const SearchBirthdayAnniversaryResults = ({
           hasSearched &&
           anniversary && (
             <Card>
-              <CardHeader title="No Anniversaries found for the selected month" />
+              <CardHeader title="No anniversaries found for the selected month" />
             </Card>
           )}
         {searchAnniversaryResults.length > 0 && (
