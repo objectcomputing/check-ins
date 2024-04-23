@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext } from 'react';
 
-import { AppContext } from "../../context/AppContext";
-import { getAvatarURL } from "../../api/api";
-import { selectProfile } from "../../context/selectors";
+import { AppContext } from '../../context/AppContext';
+import { getAvatarURL } from '../../api/api';
+import { selectProfile } from '../../context/selectors';
 
 import {
   Avatar,
@@ -10,14 +10,14 @@ import {
   CardHeader,
   Container,
   List,
-  Typography,
-} from "@mui/material";
+  Typography
+} from '@mui/material';
 
 const SearchBirthdayAnniversaryResults = ({
   hasSearched,
   results,
   anniversary,
-  birthday,
+  birthday
 }) => {
   if (anniversary) {
     results.sort((a, b) => a.tenure - b.tenure);
@@ -30,33 +30,33 @@ const SearchBirthdayAnniversaryResults = ({
   }
 
   const { state } = useContext(AppContext);
-  const getMemberProfile = (member) => selectProfile(state, member.userId);
+  const getMemberProfile = member => selectProfile(state, member.userId);
   const BirthdayMap = () => {
     if (birthday && results.length) {
-      return results.map((member) => {
+      return results.map(member => {
         return (
           <Card
-            className={"member-birthday-anniversary-card"}
+            className={'member-birthday-anniversary-card'}
             key={`card-${member.userId}`}
           >
             <CardHeader
               title={
                 <Typography variant="h5" component="h2">
-                  {getMemberProfile(member).name || ""}
+                  {getMemberProfile(member).name || ''}
                 </Typography>
               }
               subheader={
                 <Typography color="textSecondary" component="h3">
-                  {getMemberProfile(member).title || ""}
+                  {getMemberProfile(member).title || ''}
                   <br />
-                  Birthday: {member.birthDay || ""}
+                  Birthday: {member.birthDay || ''}
                 </Typography>
               }
               disableTypography
               avatar={
                 <Avatar
-                  className={"large"}
-                  src={getAvatarURL(getMemberProfile(member).workEmail || "")}
+                  className={'large'}
+                  src={getAvatarURL(getMemberProfile(member).workEmail || '')}
                 />
               }
             />
@@ -70,32 +70,32 @@ const SearchBirthdayAnniversaryResults = ({
     if (anniversary && results.length) {
       return (
         results.length &&
-        results.map((member) => {
+        results.map(member => {
           return (
             <Card
-              className={"member-birthday-anniversary-card"}
+              className={'member-birthday-anniversary-card'}
               key={`card-${member.userId}`}
             >
               <CardHeader
                 title={
                   <Typography variant="h5" component="h2">
-                    {getMemberProfile(member).name || ""}
+                    {getMemberProfile(member).name || ''}
                   </Typography>
                 }
                 subheader={
                   <Typography color="textSecondary" component="h3">
-                    {getMemberProfile(member).title || ""}
+                    {getMemberProfile(member).title || ''}
                     <br />
-                    Anniversary: {member.anniversary || ""}
+                    Anniversary: {member.anniversary || ''}
                     <br />
-                    Tenure: {member.yearsOfService || ""}
+                    Tenure: {member.yearsOfService || ''}
                   </Typography>
                 }
                 disableTypography
                 avatar={
                   <Avatar
-                    className={"large"}
-                    src={getAvatarURL(getMemberProfile(member).workEmail || "")}
+                    className={'large'}
+                    src={getAvatarURL(getMemberProfile(member).workEmail || '')}
                   />
                 }
               />
