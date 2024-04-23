@@ -114,7 +114,7 @@ const SearchBirthdayAnniversaryResults = ({
             <CardHeader title="No birthdays found for the selected month" />
           </Card>
         )}
-        {birthday && results.length && (
+        {birthday && results.length > 0 && (
           <Card>
             <CardHeader title="Birthdays" />
             <Container fixed>
@@ -127,7 +127,7 @@ const SearchBirthdayAnniversaryResults = ({
             <CardHeader title="No anniversaries found for the selected month" />
           </Card>
         )}
-        {anniversary && results.length && (
+        {anniversary && results.length > 0 && (
           <Card>
             <CardHeader title="Anniversaries" />
             <Container fixed>
