@@ -7,7 +7,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 import "./BirthdayAnniversaryReportPage.css";
 
-import { getAnniversary, getBirthday } from "../api/birthdayanniversary";
+import { getAnniversaries, getBirthdays } from "../api/birthdayanniversary";
 import { UPDATE_TOAST } from "../context/actions";
 import SearchBirthdayAnniversaryResults from "../components/search-results/SearchBirthdayAnniversaryResults";
 import { sortAnniversaries, sortBirthdays } from "../context/util";
@@ -63,22 +63,18 @@ const BirthdayAnniversaryReportPage = () => {
       return;
     }
     if (!birthday) {
-      anniversaryResults = await getAnniversary(months, csrf);
-      setSearchAnniversaryResults(
-        sortAnniversaries(anniversaryResults.payload.data)
-      );
+      anniversaryResults = await getAnniversaries(months, csrf);
+      setSearchAnniversaryResults(sortAnniversaries(anniversaryResults));
       setSearchBirthdayResults([]);
     } else if (!anniversary) {
-      birthdayResults = await getBirthday(months, csrf);
-      setSearchBirthdayResults(sortBirthdays(birthdayResults.payload.data));
+      birthdayResults = await getBirthdays(months, csrf);
+      setSearchBirthdayResults(sortBirthdays(birthdayResults));
       setSearchAnniversaryResults([]);
     } else {
-      anniversaryResults = await getAnniversary(months, csrf);
-      birthdayResults = await getBirthday(months, csrf);
-      setSearchBirthdayResults(sortBirthdays(birthdayResults.payload.data));
-      setSearchAnniversaryResults(
-        sortAnniversaries(anniversaryResults.payload.data)
-      );
+      anniversaryResults = await getAnniversaries(months, csrf);
+      birthdayResults = await getBirthdays(months, csrf);
+      setSearchBirthdayResults(sortBirthdays(birthdayResults));
+      setSearchAnniversaryResults(sortAnniversaries(anniversaryResults));
     }
     setHasSearched(true);
   };
@@ -94,7 +90,7 @@ const BirthdayAnniversaryReportPage = () => {
           multiple
           id="monthSelect"
           options={months}
-          defaultValue={months[currentMonth].month}
+          defaultValue={[months[currentMonth].month]}
           value={selectedMonths}
           onChange={onMonthChange}
           isOptionEqualToValue={(option, value) => {
