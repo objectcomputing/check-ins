@@ -6,14 +6,9 @@
 export const formatBirthday = (dateStr) => {
     const months = ["January", "February", "March", "April", "May", "June", 
                     "July", "August", "September", "October", "November", "December"];
-    
-    // Split the input string by '/'
     const [month, day] = dateStr.split('/').map(Number);
-
-    // Get the month name
     const monthName = months[month - 1];
 
-    // Determine the ordinal suffix
     let suffix = 'th';
     if (day % 10 === 1 && day !== 11) {
         suffix = 'st';
