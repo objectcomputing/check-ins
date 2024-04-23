@@ -83,6 +83,7 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
         return rolePermissionRepository.findByRole(role);
     }
 
+    @Cacheable
     @Override
     public List<Permission> findUserPermissions(@NotBlank UUID id) {
 
