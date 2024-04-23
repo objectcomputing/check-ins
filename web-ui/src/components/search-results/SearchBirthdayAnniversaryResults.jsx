@@ -112,7 +112,7 @@ const SearchBirthdayAnniversaryResults = ({
       <List>
         {searchBirthdayResults.length === 0 && hasSearched && birthday && (
           <Card>
-            <CardHeader title="No Birthdays found for the selected month" />
+            <CardHeader title="No birthdays found for the selected month" />
           </Card>
         )}
         {searchBirthdayResults.length > 0 && (
@@ -123,11 +123,13 @@ const SearchBirthdayAnniversaryResults = ({
             </Container>
           </Card>
         )}
-        {searchAnniversaryResults.length === 0 && hasSearched && anniversary && (
-          <Card>
-            <CardHeader title="No Anniversaries found for the selected month" />
-          </Card>
-        )}
+        {searchAnniversaryResults.length === 0 &&
+          hasSearched &&
+          anniversary && (
+            <Card>
+              <CardHeader title="No anniversaries found for the selected month" />
+            </Card>
+          )}
         {searchAnniversaryResults.length > 0 && (
           <Card>
             <CardHeader title="Anniversaries" />
