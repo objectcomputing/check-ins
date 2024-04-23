@@ -11,7 +11,8 @@ exports[`SelfReviewsPage renders correctly 1`] = `
       <h4
         class="MuiTypography-root MuiTypography-h4 SelfReviewPage-requestHeader css-5lbw0b-MuiTypography-root"
       >
-        Self-Reviews for 
+        Self-Reviews for
+         
         <b>
           undefined undefined
         </b>

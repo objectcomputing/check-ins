@@ -221,7 +221,7 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
   const loadFeedbackTemplates = useCallback(async () => {
     const res = await getAllFeedbackTemplates(csrf);
     const templates = res.payload.data;
-    templates.sort((t1, t2) => t1.title.localeCompare(t2.title));
+    templates?.sort((t1, t2) => t1.title.localeCompare(t2.title));
     setTemplates(templates);
   }, [csrf, dispatch]);
 
