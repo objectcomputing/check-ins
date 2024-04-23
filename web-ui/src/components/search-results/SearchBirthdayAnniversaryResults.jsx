@@ -32,7 +32,7 @@ const SearchBirthdayAnniversaryResults = ({
   const { state } = useContext(AppContext);
   const getMemberProfile = (member) => selectProfile(state, member.userId);
   const BirthdayMap = () => {
-    if (birthday && results.length > 0) {
+    if (birthday && results.length) {
       return results.map((member) => {
         return (
           <Card
@@ -67,9 +67,9 @@ const SearchBirthdayAnniversaryResults = ({
   };
 
   const AnniversaryMap = () => {
-    if (anniversary && results.length > 0) {
+    if (anniversary && results.length) {
       return (
-        results.length > 0 &&
+        results.length &&
         results.map((member) => {
           return (
             <Card
@@ -114,7 +114,7 @@ const SearchBirthdayAnniversaryResults = ({
             <CardHeader title="No birthdays found for the selected month" />
           </Card>
         )}
-        {birthday && results.length > 0 && (
+        {birthday && results.length && (
           <Card>
             <CardHeader title="Birthdays" />
             <Container fixed>
@@ -127,7 +127,7 @@ const SearchBirthdayAnniversaryResults = ({
             <CardHeader title="No anniversaries found for the selected month" />
           </Card>
         )}
-        {anniversary && results.length > 0 && (
+        {anniversary && results.length && (
           <Card>
             <CardHeader title="Anniversaries" />
             <Container fixed>
