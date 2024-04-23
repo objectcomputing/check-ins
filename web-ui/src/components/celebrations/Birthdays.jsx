@@ -49,7 +49,6 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
 
   const createBirthdayCards = birthdays.map((bday, index) => {
     let user = selectProfile(state, bday.userId);
-    let birthday = formatBirthday(bday.birthDay);
     if (user) {
       return (
         <Card className={"birthdays-card"} key={index}>
