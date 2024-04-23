@@ -7,7 +7,8 @@ import {
   selectHasReportPermission,
   selectIsAdmin,
   selectIsSupervisor,
-  selectHasBirthdayAnniversaryReportPermission,
+  selectHasAnniversaryReportPermission,
+  selectHasBirthdayReportPermission,
   selectHasCheckinsReportPermission,
   selectHasSkillsReportPermission,
   selectHasTeamSkillsReportPermission
@@ -159,8 +160,11 @@ function Menu() {
   const getReportLinks = () => {
     const links = [];
 
-    if (selectHasBirthdayAnniversaryReportPermission(state)) {
+    if (selectHasAnniversaryReportPermission(state)) {
       links.push(['/anniversary-reports', 'Anniversaries']);
+    }
+
+    if (selectHasBirthdayReportPermission(state)) {
       links.push(['/birthday-reports', 'Birthdays']);
     }
 
