@@ -109,6 +109,7 @@ const Root = styled('div')(({theme}) => ({
 const ReviewPeriods = ({onPeriodSelected, mode}) => {
   const {state, dispatch} = useContext(AppContext);
 
+  const [canSave, setCanSave] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -217,14 +218,24 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
     handleConfirmClose();
   }, [csrf, periods, dispatch, toDelete, handleConfirmClose]);
 
-  const loadTemplates = useCallback(async () => {
+  const loadFeedbackTemplates = useCallback(async () => {
     const res = await getAllFeedbackTemplates(csrf);
     const templates = res.payload.data;
+    templates.sort((t1, t2) => t1.title.localeCompare(t2.title));
     setTemplates(templates);
   }, [csrf, dispatch]);
 
   useEffect(() => {
-    loadTemplates();
+    const valid = Boolean(
+      periodToAdd.name &&
+        periodToAdd.reviewTemplateId &&
+        periodToAdd.selfReviewTemplateId
+    );
+    setCanSave(valid);
+  }, [periodToAdd]);
+
+  useEffect(() => {
+    loadFeedbackTemplates();
 
     const getAllReviewPeriods = async () => {
       setLoading(true);
@@ -424,19 +435,22 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
           <div style={{margin: '1rem 0'}}>
             <FormControl fullWidth>
               <InputLabel id="template-label" required>
-                Template ID
+                Review Template
               </InputLabel>
               <Select
-                label="Template ID"
+                label="Review Template"
                 labelId="template-label"
                 onChange={handleReviewTemplateChange}
+                required
                 value={
                   periodToAdd.reviewTemplateId
                     ? periodToAdd.reviewTemplateId
                     : ''
                 }
               >
-                <MenuItem value="">-- Please Select --</MenuItem>
+                <MenuItem key="empty" value="">
+                  -- Please Select --
+                </MenuItem>
                 {templates.map(template => (
                   <MenuItem key={`template-${template.id}`} value={template.id}>
                     {template.title}
@@ -447,19 +461,22 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
           </div>
           <FormControl fullWidth>
             <InputLabel id="template-label" required>
-              Self Review Template ID
+              Self-Review Template
             </InputLabel>
             <Select
-              label="Self Review Template ID"
+              label="Self-Review Template"
               labelId="template-label"
               onChange={handleSelfReviewTemplateChange}
+              required
               value={
                 periodToAdd.selfReviewTemplateId
                   ? periodToAdd.selfReviewTemplateId
                   : ''
               }
             >
-              <MenuItem value="">-- Please Select --</MenuItem>
+              <MenuItem key="empty" value="">
+                -- Please Select --
+              </MenuItem>
               {templates.map(template => (
                 <MenuItem key={`template-${template.id}`} value={template.id}>
                   {template.title}
@@ -472,6 +489,7 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
               Cancel
             </Button>
             <Button
+              disabled={!canSave}
               onClick={() => addReviewPeriod(periodToAdd.name)}
               color="primary"
             >
