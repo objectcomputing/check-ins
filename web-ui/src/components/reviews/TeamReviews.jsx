@@ -6,8 +6,8 @@ import React, {
   useRef
 } from 'react';
 import PropTypes from 'prop-types';
-import {useLocation, useHistory} from 'react-router-dom';
-import {styled} from '@mui/material/styles';
+import { useLocation, useHistory } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
@@ -31,9 +31,9 @@ import Tooltip from '@mui/material/Tooltip';
 import Skeleton from '@mui/material/Skeleton';
 import TeamMemberReview from './TeamMemberReview';
 import SelectUserModal from './SelectUserModal';
-import {UPDATE_REVIEW_PERIODS, UPDATE_TOAST} from '../../context/actions';
-import {AppContext} from '../../context/AppContext';
-import {getReviewPeriods} from '../../api/reviewperiods.js';
+import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from '../../context/actions';
+import { AppContext } from '../../context/AppContext';
+import { getReviewPeriods } from '../../api/reviewperiods.js';
 import {
   createFeedbackRequest,
   findReviewRequestsByPeriodAndTeamMembers,
@@ -49,7 +49,7 @@ import {
   selectCurrentMembers,
   selectSubordinates
 } from '../../context/selectors';
-import {getAvatarURL} from '../../api/api.js';
+import { getAvatarURL } from '../../api/api.js';
 import DateFnsUtils from '@date-io/date-fns';
 const dateUtils = new DateFnsUtils();
 
@@ -72,7 +72,7 @@ const classes = {
   periodModal: `${PREFIX}-periodModal`
 };
 
-const Root = styled('div')(({theme}) => ({
+const Root = styled('div')(({ theme }) => ({
   [`& .${classes.actionButtons}`]: {
     margin: '0.5em 0 0 1em',
     ['@media (max-width:820px)']: {
@@ -94,8 +94,8 @@ const Root = styled('div')(({theme}) => ({
   }
 }));
 
-const TeamReviews = ({periodId}) => {
-  const {state, dispatch} = useContext(AppContext);
+const TeamReviews = ({ periodId }) => {
+  const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const location = useLocation();
   const history = useHistory();
@@ -147,7 +147,7 @@ const TeamReviews = ({periodId}) => {
 
   const getReviewStatus = useCallback(
     teamMemberId => {
-      let reviewStates = {submitted: false, inProgress: false};
+      let reviewStates = { submitted: false, inProgress: false };
       if (reviews && reviews[teamMemberId]) {
         reviewStates = reviews[teamMemberId].reduce((states, review) => {
           switch (review?.status) {
@@ -234,7 +234,7 @@ const TeamReviews = ({periodId}) => {
           ? res.payload.data
           : null;
       if (data) {
-        dispatch({type: UPDATE_REVIEW_PERIODS, payload: data});
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: data });
       }
     };
     if (csrf) {
@@ -265,7 +265,7 @@ const TeamReviews = ({periodId}) => {
           ? res.payload.data
           : null;
       if (data) {
-        setReviews({...reviews, [selectedMemberProfile.id]: [data]});
+        setReviews({ ...reviews, [selectedMemberProfile.id]: [data] });
       }
       creatingReview.current = false;
     };
@@ -294,7 +294,7 @@ const TeamReviews = ({periodId}) => {
         ...query,
         [key]: value
       };
-      history.push({...location, search: queryString.stringify(newQuery)});
+      history.push({ ...location, search: queryString.stringify(newQuery) });
     },
     [history, location, query]
   );
@@ -391,8 +391,8 @@ const TeamReviews = ({periodId}) => {
       await getReviewRequests(teamMemberIdBatches);
       loadingReviews.current = false;
       loadedReviews.current = true;
-      setSelfReviews({...newSelfReviews});
-      setReviews({...newReviews});
+      setSelfReviews({ ...newSelfReviews });
+      setReviews({ ...newReviews });
     }
   }, [csrf, period, teamMembers]);
 
@@ -444,7 +444,7 @@ const TeamReviews = ({periodId}) => {
               ? res.payload.data
               : null;
           if (data) {
-            const newReviews = {...reviews};
+            const newReviews = { ...reviews };
             newReviews[selectedMemberProfile?.id].push(data);
             setReviews(newReviews);
           } else {
@@ -517,7 +517,7 @@ const TeamReviews = ({periodId}) => {
       </div>
       {!selectedTeamMember && loadedReviews.current && (
         <>
-          <List sx={{width: '100%', bgcolor: 'background.paper'}}>
+          <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
             {teamMembers && teamMembers.length > 0
               ? teamMembers
                   .sort((a, b) => {
@@ -575,7 +575,7 @@ const TeamReviews = ({periodId}) => {
                   ))
               : null}
           </List>
-          <Accordion style={{marginTop: '1rem'}}>
+          <Accordion style={{ marginTop: '1rem' }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
@@ -584,7 +584,7 @@ const TeamReviews = ({periodId}) => {
               <Typography>Completed Reviews</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <List sx={{width: '100%', bgcolor: 'background.paper'}}>
+              <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
                 {teamMembers && teamMembers.length > 0
                   ? teamMembers
                       .sort((a, b) => {
@@ -662,8 +662,8 @@ const TeamReviews = ({periodId}) => {
               />
             </ListItemAvatar>
             <ListItemText
-              primary={<Skeleton variant="text" sx={{fontSize: '1rem'}} />}
-              secondary={<Skeleton variant="text" sx={{fontSize: '1rem'}} />}
+              primary={<Skeleton variant="text" sx={{ fontSize: '1rem' }} />}
+              secondary={<Skeleton variant="text" sx={{ fontSize: '1rem' }} />}
             />
           </ListItem>
         </>

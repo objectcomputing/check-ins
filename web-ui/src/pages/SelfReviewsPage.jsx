@@ -1,10 +1,10 @@
-import React, {useContext, useCallback, useEffect, useState} from 'react';
-import {styled} from '@mui/material/styles';
+import React, { useContext, useCallback, useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import {useLocation, useHistory} from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
-import {AppContext} from '../context/AppContext';
-import {selectCurrentUser} from '../context/selectors';
+import { AppContext } from '../context/AppContext';
+import { selectCurrentUser } from '../context/selectors';
 import ReviewPeriods from '../components/reviews/periods/ReviewPeriods';
 import SelfReview from '../components/reviews/SelfReview';
 
@@ -16,7 +16,7 @@ const classes = {
   stepContainer: `${PREFIX}-stepContainer`
 };
 
-const Root = styled('div')(({theme}) => ({
+const Root = styled('div')(({ theme }) => ({
   [`&.${classes.root}`]: {
     backgroundColor: 'transparent',
     padding: '4rem 2rem 0 2rem',
@@ -59,7 +59,7 @@ const Root = styled('div')(({theme}) => ({
 }));
 
 const SelfReviewPage = () => {
-  const {state} = useContext(AppContext);
+  const { state } = useContext(AppContext);
   const memberProfile = selectCurrentUser(state);
   const location = useLocation();
   const history = useHistory();
@@ -72,7 +72,7 @@ const SelfReviewPage = () => {
         ...query,
         [key]: value
       };
-      history.push({...location, search: queryString.stringify(newQuery)});
+      history.push({ ...location, search: queryString.stringify(newQuery) });
     },
     [history, location, query]
   );

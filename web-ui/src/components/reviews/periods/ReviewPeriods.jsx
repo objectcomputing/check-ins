@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -29,17 +29,17 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import {styled} from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
-import {findSelfReviewRequestsByPeriodAndTeamMember} from '../../../api/feedback.js';
-import {getAllFeedbackTemplates} from '../../../api/feedbacktemplate.js';
+import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
+import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
 import {
   getReviewPeriods,
   createReviewPeriod,
   updateReviewPeriod,
   removeReviewPeriod
 } from '../../../api/reviewperiods.js';
-import {AppContext} from '../../../context/AppContext';
+import { AppContext } from '../../../context/AppContext';
 import {
   UPDATE_REVIEW_PERIODS,
   ADD_REVIEW_PERIOD
@@ -89,7 +89,7 @@ const modalActionStyles = {
   justifyContent: 'flex-end'
 };
 
-const Root = styled('div')(({theme}) => ({
+const Root = styled('div')(({ theme }) => ({
   [`& .${classes.actionButtons}`]: {
     margin: '0.5em 0 0 1em',
     ['@media (max-width:820px)']: {
@@ -106,14 +106,14 @@ const Root = styled('div')(({theme}) => ({
   }
 }));
 
-const ReviewPeriods = ({onPeriodSelected, mode}) => {
-  const {state, dispatch} = useContext(AppContext);
+const ReviewPeriods = ({ onPeriodSelected, mode }) => {
+  const { state, dispatch } = useContext(AppContext);
 
   const [canSave, setCanSave] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [periodToAdd, setPeriodToAdd] = useState({name: '', open: true});
+  const [periodToAdd, setPeriodToAdd] = useState({ name: '', open: true });
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [toDelete, setToDelete] = useState(null);
@@ -144,10 +144,10 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
         const res = await createReviewPeriod(periodToAdd, csrf);
         const data =
           res && res.payload && res.payload.data ? res.payload.data : null;
-        data && dispatch({type: ADD_REVIEW_PERIOD, payload: data});
+        data && dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
       }
       handleClose();
-      setPeriodToAdd({name: '', open: true});
+      setPeriodToAdd({ name: '', open: true });
     },
     [
       csrf,
@@ -170,7 +170,7 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
       const res = await updateReviewPeriod(toUpdate, csrf);
       const data =
         res && res.payload && res.payload.data ? res.payload.data : null;
-      data && dispatch({type: UPDATE_REVIEW_PERIODS, payload: [...periods]});
+      data && dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
     },
     [csrf, state, periods, dispatch]
   );
@@ -249,7 +249,7 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
           ? res.payload.data
           : null;
       if (data) {
-        dispatch({type: UPDATE_REVIEW_PERIODS, payload: data});
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: data });
         setLoading(false);
       }
     };
@@ -341,7 +341,7 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
           </Button>
         ) : null}
       </div>
-      <List sx={{width: '100%', bgcolor: 'background.paper'}}>
+      <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {loading ? (
           <>
             <ListItem key="skeleton-period">
@@ -354,8 +354,10 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
                 />
               </ListItemAvatar>
               <ListItemText
-                primary={<Skeleton variant="text" sx={{fontSize: '1rem'}} />}
-                secondary={<Skeleton variant="text" sx={{fontSize: '1rem'}} />}
+                primary={<Skeleton variant="text" sx={{ fontSize: '1rem' }} />}
+                secondary={
+                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                }
               />
             </ListItem>
           </>
@@ -368,7 +370,7 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
                 ? -1
                 : 1;
             })
-            .map(({name, open, id}, i) => (
+            .map(({ name, open, id }, i) => (
               <>
                 <ListItem
                   secondaryAction={
@@ -429,10 +431,10 @@ const ReviewPeriods = ({onPeriodSelected, mode}) => {
             required
             value={periodToAdd.name ? periodToAdd.name : ''}
             onChange={e =>
-              setPeriodToAdd({...periodToAdd, name: e.target.value})
+              setPeriodToAdd({ ...periodToAdd, name: e.target.value })
             }
           />
-          <div style={{margin: '1rem 0'}}>
+          <div style={{ margin: '1rem 0' }}>
             <FormControl fullWidth>
               <InputLabel id="template-label" required>
                 Review Template

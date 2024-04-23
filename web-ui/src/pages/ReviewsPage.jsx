@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {styled} from '@mui/material/styles';
-import {useLocation, useHistory} from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
+import { useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import ReviewPeriods from '../components/reviews/periods/ReviewPeriods';
 import TeamReviews from '../components/reviews/TeamReviews';
@@ -13,7 +13,7 @@ const classes = {
   stepContainer: `${PREFIX}-stepContainer`
 };
 
-const Root = styled('div')(({theme}) => ({
+const Root = styled('div')(({ theme }) => ({
   [`&.${classes.root}`]: {
     backgroundColor: 'transparent',
     margin: '4rem 2rem 2rem 2rem',
@@ -55,7 +55,7 @@ const ReviewPage = () => {
         ...query,
         [key]: value
       };
-      history.push({...location, search: queryString.stringify(newQuery)});
+      history.push({ ...location, search: queryString.stringify(newQuery) });
     },
     [history, location, query]
   );
