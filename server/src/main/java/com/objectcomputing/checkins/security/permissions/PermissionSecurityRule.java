@@ -40,15 +40,15 @@ public class PermissionSecurityRule implements SecurityRule {
     public Publisher<SecurityRuleResult> check(HttpRequest<?> request, @Nullable RouteMatch<?> routeMatch, @Nullable Authentication authentication) {
 
         if (routeMatch instanceof MethodBasedRouteMatch) {
-            MethodBasedRouteMatch methodBasedRouteMatch = (MethodBasedRouteMatch) routeMatch;    if (methodBasedRouteMatch.hasAnnotation(RequiredPermission.class)) {
-
+            MethodBasedRouteMatch methodBasedRouteMatch = (MethodBasedRouteMatch) routeMatch;
+            if (methodBasedRouteMatch.hasAnnotation(RequiredPermission.class)) {
 
                 AnnotationValue<RequiredPermission> requiredPermissionAnnotation = methodBasedRouteMatch.getAnnotation(RequiredPermission.class);
                 Optional<String> optionalPermission = requiredPermissionAnnotation != null ? requiredPermissionAnnotation.stringValue("value") : Optional.empty();
 
                 Map<String, Object> claims = authentication != null ? authentication.getAttributes() : null;
 
-                if (optionalPermission.isPresent() && claims != null && claims.containsKey("permissions")) {
+                if (optionalPermission.isPresent() && claims != null && claims.containsKey("roles")) {
 
                     final Permission requiredPermission = Permission.valueOf(optionalPermission.get());
                     final Set<Permission> userPermissions = new HashSet<>();
@@ -56,9 +56,11 @@ public class PermissionSecurityRule implements SecurityRule {
                     JSONArray jsonArray = new JSONArray(claims.get("roles").toString());
                     final List<String> roles = jsonArray.toList().stream().map(Object::toString).collect(Collectors.toList());
 
+
                     roles.forEach(role -> rolePermissionServices.findByRole(role)
                         .forEach(rolePermission -> userPermissions.add(rolePermission.getPermission()))
                     );
+
 
                    return Mono.just(userPermissions.contains(requiredPermission)
                             ? SecurityRuleResult.ALLOWED
