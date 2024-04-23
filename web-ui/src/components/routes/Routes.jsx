@@ -3,7 +3,8 @@ import { Switch, Route } from "react-router-dom";
 
 import { AppContext } from "../../context/AppContext";
 
-import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReportPage";
+import AnniversaryReportPage from "../../pages/AnniversaryReportPage";
+import BirthdayReportPage from "../../pages/BirthdayReportPage";
 import CheckinsPage from "../../pages/CheckinsPage";
 import CheckinsReportPage from "../../pages/CheckinsReportPage";
 import EditSkillsPage from "../../pages/EditSkillsPage";
@@ -126,9 +127,13 @@ export default function Routes() {
             <Header title="Team Skill Report" />
             <TeamSkillReportPage />
           </Route>
-          <Route path="/birthday-anniversary-reports">
-            <Header title="Birthday & Anniversary Report" />
-            <BirthdayAnniversaryReportPage />
+          <Route path="/anniversary-reports">
+            <Header title="Anniversary Report" />
+            <AnniversaryReportPage />
+          </Route>
+          <Route path="/birthday-reports">
+            <Header title="Birthday Report" />
+            <BirthdayReportPage />
           </Route>
           <Route path="/annual-review-reports">
             <Header title="Annual Review Report" />
