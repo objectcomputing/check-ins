@@ -51,7 +51,7 @@
     "build-storybook": "storybook build",
     "build": "vite build",
     "coverage": "vitest run --coverage --watch=false",
-    "format": "prettier --write '{public,src}/**/*.{css,html,js,jsx}'",
+    "format": "prettier --write 'src/**/*.{css,html,js,jsx}'",
     "serve": "vite preview",
     "start": "vite",
     "storybook": "storybook dev -p 6006",
