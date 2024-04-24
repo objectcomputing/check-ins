@@ -20,6 +20,7 @@ export const sortAnniversaries = anniversaryData => {
 };
 
 function monthDayToDayOfYear(monthDayString) {
+  if (!monthDayString) return 0;
   const [month, day] = monthDayString.split('/');
   const now = new Date();
   const date = new Date(now.getFullYear(), Number(month) - 1, Number(day));
