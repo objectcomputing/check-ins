@@ -28,7 +28,6 @@ export default [
     },
     rules: {
       // Override default rules here.
-      'no-unused-vars': 'off',
       'react-hooks/exhaustive-deps': 'warn',
       ...vitestPlugin.configs.recommended.rules,
       'vitest/expect-expect': 'off',
