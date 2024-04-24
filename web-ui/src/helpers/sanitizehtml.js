@@ -1,11 +1,11 @@
-import sanitizeHTML from 'sanitize-html';
+import DOMPurify from 'dompurify';
 
 //This function is a helper function that sanitizes user inputs on
 //Quill/rich text editor elements to prevent XSS attacks. It is used in
 //Notes and PrivateNotes to prevent bad content from being uploaded to the
 //server or rendered on the DOM.
 export const sanitizeQuillElements = htmlInput => {
-  const cleaner = sanitizeHTML(htmlInput, {
+  const cleaner = DOMPurify.sanitize(htmlInput, {
     allowedTags: [
       'b',
       'i',
