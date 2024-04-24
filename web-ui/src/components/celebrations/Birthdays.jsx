@@ -1,4 +1,3 @@
-import { getDayOfYear } from 'date-fns';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -43,26 +42,10 @@ const Root = styled('div')({
   }
 });
 
-function monthDayToDayOfYear(monthDayString) {
-  const [month, day] = monthDayString.split('/');
-  const now = new Date();
-  const date = new Date(now.getFullYear(), Number(month) - 1, Number(day));
-  return getDayOfYear(date);
-}
-
 const Birthdays = ({ birthdays, xPos = 0.75 }) => {
   const { state } = useContext(AppContext);
 
   const loading = selectMemberProfilesLoading(state);
-
-  //TODO: Maybe you don't need this sort because HomePage.jsx
-  //TODO: already calls a sortBirthdays function defined in util.js.
-  console.log('Birthdays.jsx loading: birthdays =', birthdays);
-  birthdays.sort((a, b) => {
-    const aDayOfYear = monthDayToDayOfYear(a.birthday);
-    const bDayOfYear = monthDayToDayOfYear(b.birthday);
-    return bDayOfYear - aDayOfYear;
-  });
 
   const createBirthdayCards = birthdays.map((bday, index) => {
     let user = selectProfile(state, bday.userId);
