@@ -1,22 +1,22 @@
-import React, { useContext, useState } from "react";
-import { styled } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import React, { useContext, useState } from 'react';
+import { styled } from '@mui/material/styles';
+import { Link } from 'react-router-dom';
 
-import MemberModal from "./MemberModal";
-import { AppContext } from "../../context/AppContext";
-import { UPDATE_MEMBER_PROFILES } from "../../context/actions";
-import { selectProfileMap } from "../../context/selectors";
-import { getAvatarURL } from "../../api/api.js";
+import MemberModal from './MemberModal';
+import { AppContext } from '../../context/AppContext';
+import { UPDATE_MEMBER_PROFILES } from '../../context/actions';
+import { selectProfileMap } from '../../context/selectors';
+import { getAvatarURL } from '../../api/api.js';
 
-import { Card, CardActions, CardHeader, Tooltip } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import { Card, CardActions, CardHeader, Tooltip } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 
-import "./MemberSummaryCard.css";
-import SplitButton from "../split-button/SplitButton";
+import './MemberSummaryCard.css';
+import SplitButton from '../split-button/SplitButton';
 
-import { updateMember, deleteMember } from "../../api/member.js";
-import { DELETE_MEMBER_PROFILE, UPDATE_TOAST } from "../../context/actions.js";
+import { updateMember, deleteMember } from '../../api/member.js';
+import { DELETE_MEMBER_PROFILE, UPDATE_TOAST } from '../../context/actions.js';
 
 import {
   Box,
@@ -28,25 +28,25 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Typography,
-} from "@mui/material";
+  Typography
+} from '@mui/material';
 
-const PREFIX = "AdminMemberCard";
+const PREFIX = 'AdminMemberCard';
 const classes = {
-  header: `${PREFIX}-header`,
+  header: `${PREFIX}-header`
 };
 
 const StyledBox = styled(Box)(() => ({
   [`& .${classes.header}`]: {
-    cursor: "pointer",
-  },
+    cursor: 'pointer'
+  }
 }));
 
 const AdminMemberCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
   const { memberProfiles, userProfile, csrf } = state;
   const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
   const {
     location,
     name,
@@ -54,7 +54,7 @@ const AdminMemberCard = ({ member, index }) => {
     title,
     supervisorid,
     pdlId,
-    terminationDate,
+    terminationDate
   } = member;
   const memberId = member?.id;
   const supervisorProfile = selectProfileMap(state)[supervisorid];
@@ -70,7 +70,7 @@ const AdminMemberCard = ({ member, index }) => {
   const handleClose = () => setOpen(false);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
-  const options = isAdmin ? ["Edit", "Delete"] : ["Edit"];
+  const options = isAdmin ? ['Edit', 'Delete'] : ['Edit'];
 
   const handleAction = (e, index) => {
     if (index === 0) {
@@ -87,9 +87,9 @@ const AdminMemberCard = ({ member, index }) => {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "success",
-          toast: "Member deleted",
-        },
+          severity: 'success',
+          toast: 'Member deleted'
+        }
       });
     }
     handleCloseDeleteConfirmation();
@@ -97,9 +97,9 @@ const AdminMemberCard = ({ member, index }) => {
 
   return (
     <StyledBox display="flex" flexWrap="wrap">
-      <Card className={"member-card"}>
+      <Card className={'member-card'}>
         <Link
-          style={{ color: "black", textDecoration: "none" }}
+          style={{ color: 'black', textDecoration: 'none' }}
           to={`/profile/${member.id}`}
         >
           <CardHeader
@@ -117,16 +117,16 @@ const AdminMemberCard = ({ member, index }) => {
             disableTypography
             avatar={
               !terminationDate ? (
-                <Avatar className={"large"} src={getAvatarURL(workEmail)} />
+                <Avatar className={'large'} src={getAvatarURL(workEmail)} />
               ) : (
-                <Avatar className={"large"}>
+                <Avatar className={'large'}>
                   <Tooltip
                     open={tooltipIsOpen}
                     onOpen={() => setTooltipIsOpen(true)}
                     onClose={() => setTooltipIsOpen(false)}
                     enterTouchDelay={0}
                     placement="top-start"
-                    title={"This member has been terminated"}
+                    title={'This member has been terminated'}
                   >
                     <PriorityHighIcon />
                   </Tooltip>
@@ -136,7 +136,7 @@ const AdminMemberCard = ({ member, index }) => {
           />
         </Link>
         <CardContent>
-          <Container fixed className={"info-container"}>
+          <Container fixed className={'info-container'}>
             <Typography variant="body2" color="textSecondary" component="p">
               <a
                 href={`mailto:${workEmail}`}
@@ -148,26 +148,26 @@ const AdminMemberCard = ({ member, index }) => {
               <br />
               Location: {location}
               <br />
-              Supervisor:{" "}
+              Supervisor:{' '}
               {supervisorid && (
                 <Link
                   to={`/profile/${supervisorid}`}
                   style={{
-                    textDecoration: "none",
-                    color: "rgba(0, 0, 0, 0.6)",
+                    textDecoration: 'none',
+                    color: 'rgba(0, 0, 0, 0.6)'
                   }}
                 >
                   {supervisorProfile?.name}
                 </Link>
               )}
               <br />
-              PDL:{" "}
+              PDL:{' '}
               {pdlId && (
                 <Link
                   to={`/profile/${pdlId}`}
                   style={{
-                    textDecoration: "none",
-                    color: "rgba(0, 0, 0, 0.6)",
+                    textDecoration: 'none',
+                    color: 'rgba(0, 0, 0, 0.6)'
                   }}
                 >
                   {pdlProfile?.name}
@@ -209,7 +209,7 @@ const AdminMemberCard = ({ member, index }) => {
               member={member}
               open={open}
               onClose={handleClose}
-              onSave={async (member) => {
+              onSave={async member => {
                 let res = await updateMember(member, csrf);
                 let data =
                   res.payload && res.payload.data && !res.error
@@ -218,12 +218,12 @@ const AdminMemberCard = ({ member, index }) => {
                 if (data) {
                   const copy = [...memberProfiles];
                   const index = copy.findIndex(
-                    (profile) => profile.id === data.id
+                    profile => profile.id === data.id
                   );
                   copy[index] = data;
                   dispatch({
                     type: UPDATE_MEMBER_PROFILES,
-                    payload: copy,
+                    payload: copy
                   });
                   handleClose();
                 }

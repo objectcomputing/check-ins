@@ -1,15 +1,15 @@
-import React, { useContext, useState, useCallback, useEffect } from "react";
+import React, { useContext, useState, useCallback, useEffect } from 'react';
 
-import { AppContext } from "../context/AppContext";
-import AnnualReviewReport from "../components/annual-review-report/AnnualReviewReport";
+import { AppContext } from '../context/AppContext';
+import AnnualReviewReport from '../components/annual-review-report/AnnualReviewReport';
 import {
   selectCurrentMembers,
-  selectCurrentUserId,
-} from "../context/selectors";
-import { TextField } from "@mui/material";
+  selectCurrentUserId
+} from '../context/selectors';
+import { TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import "./AnnualReviewReportPage.css";
+import './AnnualReviewReportPage.css';
 
 const AnnualReviewReportPage = () => {
   const { state } = useContext(AppContext);
@@ -20,17 +20,20 @@ const AnnualReviewReportPage = () => {
   const [unsubmitted, setUnsubmitted] = useState(false);
 
   useEffect(() => {
-    if(users && users.length > 0) {
-      const filtered = users.filter((user) => user.id !== currentUserId);
+    if (users && users.length > 0) {
+      const filtered = users.filter(user => user.id !== currentUserId);
       setFilteredUsers(filtered);
     } else {
       setFilteredUsers([]);
     }
   }, [users, currentUserId]);
 
-  const onUserChange = useCallback((event, newValue) => {
-    setSelectedUser(newValue);
-  }, [setSelectedUser]);
+  const onUserChange = useCallback(
+    (event, newValue) => {
+      setSelectedUser(newValue);
+    },
+    [setSelectedUser]
+  );
 
   const handleUnsubmitted = useCallback(() => {
     setUnsubmitted(!unsubmitted);
@@ -45,8 +48,8 @@ const AnnualReviewReportPage = () => {
           fullWidth
           options={filteredUsers}
           onChange={onUserChange}
-          getOptionLabel={(option) => option.name}
-          renderInput={(params) => (
+          getOptionLabel={option => option.name}
+          renderInput={params => (
             <TextField
               {...params}
               label="Select User..."
@@ -57,9 +60,19 @@ const AnnualReviewReportPage = () => {
       </div>
       <div className="checkbox-row">
         <label htmlFor="unsubmitted">Include unsubmitted feedback</label>
-        <input id="unsubmitted" onClick={handleUnsubmitted} value={unsubmitted} type="checkbox" />
+        <input
+          id="unsubmitted"
+          onClick={handleUnsubmitted}
+          value={unsubmitted}
+          type="checkbox"
+        />
       </div>
-      { selectedUser && (<AnnualReviewReport userId={selectedUser?.id} includeUnsubmitted={unsubmitted} />) }
+      {selectedUser && (
+        <AnnualReviewReport
+          userId={selectedUser?.id}
+          includeUnsubmitted={unsubmitted}
+        />
+      )}
     </div>
   );
 };

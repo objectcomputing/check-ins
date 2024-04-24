@@ -23,14 +23,11 @@ const birthdays = [
   ]
 const hideMyBirthday= false
 
-it("renders correctly", () => {
+it('renders correctly', () => {
   snapshot(
     <AppContextProvider>
       <BrowserRouter>
-        <Birthdays
-            birthdays={birthdays}
-            hideMyBirthday={hideMyBirthday}
-        />
+        <Birthdays birthdays={birthdays} hideMyBirthday={hideMyBirthday} />
       </BrowserRouter>
     </AppContextProvider>
   );

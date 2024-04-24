@@ -1,5 +1,5 @@
 .checkin {
-  font-family: "Shadows Into Light", cursive;
+  font-family: 'Shadows Into Light', cursive;
   font-size: calc(1rem + 1vw);
   margin-top: 0px;
   padding-top: 10px;
@@ -7,9 +7,9 @@
 }
 
 @media print {
-    nav {
-        display: none;
-    }
+  nav {
+    display: none;
+  }
 }
 
 .hours-upload-modal .buttons {

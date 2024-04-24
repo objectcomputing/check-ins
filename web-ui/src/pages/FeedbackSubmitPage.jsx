@@ -1,16 +1,20 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, { useContext, useEffect, useRef } from 'react';
 import { styled } from '@mui/material/styles';
-import { useState } from 'react'
-import "./FeedbackRequestPage.css";
-import FeedbackSubmissionTips from "../components/feedback_submission_tips/FeedbackSubmissionTips";
-import FeedbackSubmitForm from "../components/feedback_submit_form/FeedbackSubmitForm";
-import {useHistory, useLocation} from "react-router-dom";
-import {selectCsrfToken, selectCurrentUser, selectProfile} from "../context/selectors";
-import {AppContext} from "../context/AppContext";
-import {getFeedbackRequestById} from "../api/feedback";
-import Typography from "@mui/material/Typography";
-import {UPDATE_TOAST} from "../context/actions";
-import * as queryString from "query-string";
+import { useState } from 'react';
+import './FeedbackRequestPage.css';
+import FeedbackSubmissionTips from '../components/feedback_submission_tips/FeedbackSubmissionTips';
+import FeedbackSubmitForm from '../components/feedback_submit_form/FeedbackSubmitForm';
+import { useHistory, useLocation } from 'react-router-dom';
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectProfile
+} from '../context/selectors';
+import { AppContext } from '../context/AppContext';
+import { getFeedbackRequestById } from '../api/feedback';
+import Typography from '@mui/material/Typography';
+import { UPDATE_TOAST } from '../context/actions';
+import * as queryString from 'query-string';
 
 const PREFIX = 'FeedbackSubmitPage';
 const classes = {
@@ -19,12 +23,13 @@ const classes = {
 
 const Root = styled('div')({
   [`& .${classes.announcement}`]: {
-    textAlign: "center",
-    marginTop: "3em",
-    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
-      fontSize: "22px"
+    textAlign: 'center',
+    marginTop: '3em',
+    ['@media (max-width: 800px)']: {
+      // eslint-disable-line no-useless-computed-key
+      fontSize: '22px'
     }
-  },
+  }
 });
 
 const FeedbackSubmitPage = () => {
@@ -41,18 +46,17 @@ const FeedbackSubmitPage = () => {
   const [requestSubmitted, setRequestSubmitted] = useState(false);
   const [requestCanceled, setRequestCanceled] = useState(false);
   const feedbackRequestFetched = useRef(false);
-  
+
   useEffect(() => {
     if (!requestQuery) {
-      history.push("/checkins");
+      history.push('/checkins');
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: "No request present",
-        },
+          severity: 'error',
+          toast: 'No request present'
+        }
       });
-
     }
     async function getFeedbackRequest(cookie) {
       if (!currentUserId || !cookie || feedbackRequestFetched.current) {
@@ -61,42 +65,49 @@ const FeedbackSubmitPage = () => {
 
       // make call to the API
       let res = await getFeedbackRequestById(requestQuery, cookie);
-      return (
-        res.payload &&
+      return res.payload &&
         res.payload.data &&
         res.payload.status === 200 &&
-        !res.error)
+        !res.error
         ? res.payload.data
         : null;
     }
 
-    if (csrf && currentUserId && requestQuery && !feedbackRequestFetched.current) {
-      getFeedbackRequest(csrf).then((request) => {
+    if (
+      csrf &&
+      currentUserId &&
+      requestQuery &&
+      !feedbackRequestFetched.current
+    ) {
+      getFeedbackRequest(csrf).then(request => {
         if (request) {
           if (request.recipientId !== currentUserId) {
-            history.push("/checkins");
+            history.push('/checkins');
             window.snackDispatch({
               type: UPDATE_TOAST,
               payload: {
-                severity: "error",
-                toast: "You are not authorized to perform this operation.",
-              },
+                severity: 'error',
+                toast: 'You are not authorized to perform this operation.'
+              }
             });
-          } else if (request.status.toLowerCase() === "submitted" || request.submitDate) {
+          } else if (
+            request.status.toLowerCase() === 'submitted' ||
+            request.submitDate
+          ) {
             setRequestSubmitted(true);
-          } else if (request.status.toLowerCase() === "canceled") {
+          } else if (request.status.toLowerCase() === 'canceled') {
             setRequestCanceled(true);
           } else {
-              setFeedbackRequest(request);
+            setFeedbackRequest(request);
           }
         } else {
-          history.push("/checkins");
+          history.push('/checkins');
           window.snackDispatch({
             type: UPDATE_TOAST,
             payload: {
-              severity: "error",
-              toast: "Can't find feedback request with that ID",
-            },
+              severity: 'error',
+              toast: "Can't find feedback request with that ID"
+            }
           });
         }
       });
@@ -109,25 +120,38 @@ const FeedbackSubmitPage = () => {
     }
 
     if (feedbackRequestFetched.current) {
-      const requesteeProfile = selectProfile(state, feedbackRequest?.requesteeId);
+      const requesteeProfile = selectProfile(
+        state,
+        feedbackRequest?.requesteeId
+      );
       setRequestee(requesteeProfile);
     }
   }, [feedbackRequest, state]);
 
   return (
     <Root className="feedback-submit-page">
-      {requestCanceled ?
-        <Typography className={classes.announcement} variant="h3">This feedback request has been canceled.</Typography> :
-        (requestSubmitted ?
-          <Typography className={classes.announcement} variant="h3">You have already submitted this feedback form. Thank you!</Typography> :
-          <>
-            {feedbackRequestFetched.current && (showTips ?
-              <FeedbackSubmissionTips onNextClick={() => setShowTips(false)}/> :
-              <FeedbackSubmitForm requesteeName={requestee?.name} requestId={requestQuery} request={feedbackRequest}/>
-            )}
-          </>
-        )
-      }
+      {requestCanceled ? (
+        <Typography className={classes.announcement} variant="h3">
+          This feedback request has been canceled.
+        </Typography>
+      ) : requestSubmitted ? (
+        <Typography className={classes.announcement} variant="h3">
+          You have already submitted this feedback form. Thank you!
+        </Typography>
+      ) : (
+        <>
+          {feedbackRequestFetched.current &&
+            (showTips ? (
+              <FeedbackSubmissionTips onNextClick={() => setShowTips(false)} />
+            ) : (
+              <FeedbackSubmitForm
+                requesteeName={requestee?.name}
+                requestId={requestQuery}
+                request={feedbackRequest}
+              />
+            ))}
+        </>
+      )}
     </Root>
   );
 };

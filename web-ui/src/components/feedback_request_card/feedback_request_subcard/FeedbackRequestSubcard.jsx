@@ -1,27 +1,41 @@
-import React, {useContext, useCallback, useState} from "react";
-import { styled } from "@mui/material/styles";
-import PropTypes from "prop-types";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import { sendReminderNotification } from "../../../api/notifications";
-import {cancelFeedbackRequest, updateFeedbackRequest} from "../../../api/feedback";
-import IconButton from "@mui/material/IconButton";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import TrashIcon from "@mui/icons-material/Delete";
-import { AppContext } from "../../../context/AppContext";
-import { selectCsrfToken, selectProfile } from "../../../context/selectors";
-import {Avatar, Button, Card, CardActions, CardContent, CardHeader, Modal, Menu, Tooltip, Alert} from "@mui/material";
-import { UPDATE_TOAST } from "../../../context/actions";
-import DateFnsAdapter from "@date-io/date-fns";
-import { getAvatarURL } from "../../../api/api";
-import { makeStyles } from "@mui/styles";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import MenuItem from "@mui/material/MenuItem";
+import React, { useContext, useCallback, useState } from 'react';
+import { styled } from '@mui/material/styles';
+import PropTypes from 'prop-types';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import { sendReminderNotification } from '../../../api/notifications';
+import {
+  cancelFeedbackRequest,
+  updateFeedbackRequest
+} from '../../../api/feedback';
+import IconButton from '@mui/material/IconButton';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import TrashIcon from '@mui/icons-material/Delete';
+import { AppContext } from '../../../context/AppContext';
+import { selectCsrfToken, selectProfile } from '../../../context/selectors';
+import {
+  Avatar,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Modal,
+  Menu,
+  Tooltip,
+  Alert
+} from '@mui/material';
+import { UPDATE_TOAST } from '../../../context/actions';
+import DateFnsAdapter from '@date-io/date-fns';
+import { getAvatarURL } from '../../../api/api';
+import { makeStyles } from '@mui/styles';
+import MoreIcon from '@mui/icons-material/MoreVert';
+import MenuItem from '@mui/material/MenuItem';
 
-import "./FeedbackRequestSubcard.css";
+import './FeedbackRequestSubcard.css';
 
-const PREFIX = "FeedbackRequestSubcard";
+const PREFIX = 'FeedbackRequestSubcard';
 const classes = {
   redTypography: `${PREFIX}-redTypography`,
   yellowTypography: `${PREFIX}-yellowTypography`,
@@ -31,36 +45,36 @@ const classes = {
 };
 
 // TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
-const Root = styled("div")({
+const Root = styled('div')({
   [`& .${classes.redTypography}`]: {
-    color: "#FF0000",
+    color: '#FF0000'
   },
   [`& .${classes.yellowTypography}`]: {
-    color: "#EE8C00",
+    color: '#EE8C00'
   },
   [`& .${classes.greenTypography}`]: {
-    color: "#006400",
+    color: '#006400'
   },
   [`& .${classes.darkGrayTypography}`]: {
-    color: "#333333",
+    color: '#333333'
   },
   [`& .${classes.grayTypography}`]: {
-    color: "gray"
+    color: 'gray'
   }
 });
 
 const useResponsiveStyles = makeStyles({
   marginMobile: {
     '@media (max-width:960px)': {
-      marginBottom: "0.5vh",
-      marginTop: "2vh",
-    },
-  },
+      marginBottom: '0.5vh',
+      marginTop: '2vh'
+    }
+  }
 });
 const dateFns = new DateFnsAdapter();
 
 const propTypes = {
-  request: PropTypes.object.isRequired,
+  request: PropTypes.object.isRequired
 };
 
 const FeedbackRequestSubcard = ({ request }) => {
@@ -70,13 +84,13 @@ const FeedbackRequestSubcard = ({ request }) => {
   let { submitDate, dueDate, sendDate } = request;
   const recipient = selectProfile(state, request?.recipientId);
   submitDate = submitDate
-    ? dateFns.format(new Date(submitDate.join("/")), "LLLL dd, yyyy")
+    ? dateFns.format(new Date(submitDate.join('/')), 'LLLL dd, yyyy')
     : null;
 
-  sendDate = dateFns.format(new Date(sendDate.join("/")), "LLLL dd, yyyy");
+  sendDate = dateFns.format(new Date(sendDate.join('/')), 'LLLL dd, yyyy');
   dueDate = dueDate
-    ? dateFns.format(new Date(dueDate.join("/")), "LLLL dd, yyyy")
-    : null
+    ? dateFns.format(new Date(dueDate.join('/')), 'LLLL dd, yyyy')
+    : null;
 
   const [requestStatus, setRequestStatus] = useState(request?.status);
   const [requestDueDate, setRequestDueDate] = useState(dueDate);
@@ -99,17 +113,17 @@ const FeedbackRequestSubcard = ({ request }) => {
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "success",
-            toast: "Notification sent!",
-          },
+            severity: 'success',
+            toast: 'Notification sent!'
+          }
         });
       } else {
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "error",
-            toast: "Notification could not be sent :(",
-          },
+            severity: 'error',
+            toast: 'Notification could not be sent :('
+          }
         });
       }
     };
@@ -118,42 +132,47 @@ const FeedbackRequestSubcard = ({ request }) => {
     }
   }, [recipientId, recipientEmail, csrf]);
 
-  const handleCancelClick = useCallback((feedbackRequest) => {
-    const cancelRequest = async (feedbackRequest) => {
-      const res = await cancelFeedbackRequest(feedbackRequest, csrf);
-      const cancellationResponse =
-        res && res.payload && res.payload.status === 200 && !res.error ? res.payload.data : null;
-      if (cancellationResponse) {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "success",
-            toast: "Feedback request canceled",
-          },
-        });
-      } else {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "error",
-            toast:
-              "There was an error deleting the feedback request. Please contact your administrator.",
-          },
+  const handleCancelClick = useCallback(
+    feedbackRequest => {
+      const cancelRequest = async feedbackRequest => {
+        const res = await cancelFeedbackRequest(feedbackRequest, csrf);
+        const cancellationResponse =
+          res && res.payload && res.payload.status === 200 && !res.error
+            ? res.payload.data
+            : null;
+        if (cancellationResponse) {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'success',
+              toast: 'Feedback request canceled'
+            }
+          });
+        } else {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'error',
+              toast:
+                'There was an error deleting the feedback request. Please contact your administrator.'
+            }
+          });
+        }
+        return cancellationResponse;
+      };
+
+      setCancelingRequest(false);
+      if (csrf) {
+        cancelRequest(feedbackRequest).then(res => {
+          if (res) {
+            setRequestStatus(res.status);
+            setRequestDueDate(res.dueDate);
+          }
         });
       }
-      return cancellationResponse;
-    };
-
-    setCancelingRequest(false);
-    if (csrf) {
-      cancelRequest(feedbackRequest).then((res) => {
-        if (res) {
-          setRequestStatus(res.status);
-          setRequestDueDate(res.dueDate);
-        }
-      });
-    }
-  }, [csrf]);
+    },
+    [csrf]
+  );
 
   const handleEnableEditsClick = useCallback(() => {
     setEnableEditsDialog(false);
@@ -161,21 +180,23 @@ const FeedbackRequestSubcard = ({ request }) => {
     const enableFeedbackEdits = async () => {
       const requestWithEditsEnabled = {
         ...request,
-        status: "sent",
+        status: 'sent',
         submitDate: null
-      }
+      };
 
       const res = await updateFeedbackRequest(requestWithEditsEnabled, csrf);
-      return res && res.payload && res.payload.data && !res.error ? res.payload.data : null;
-    }
+      return res && res.payload && res.payload.data && !res.error
+        ? res.payload.data
+        : null;
+    };
 
     if (csrf) {
-      enableFeedbackEdits().then((res) => {
+      enableFeedbackEdits().then(res => {
         if (res) {
           window.snackDispatch({
             type: UPDATE_TOAST,
             payload: {
-              severity: "success",
+              severity: 'success',
               toast: `Enabled edits for ${recipient?.name}'s feedback`
             }
           });
@@ -183,8 +204,8 @@ const FeedbackRequestSubcard = ({ request }) => {
           window.snackDispatch({
             type: UPDATE_TOAST,
             payload: {
-              severity: "error",
-              toast: "Could not enable edits for this feedback request"
+              severity: 'error',
+              toast: 'Could not enable edits for this feedback request'
             }
           });
         }
@@ -209,18 +230,16 @@ const FeedbackRequestSubcard = ({ request }) => {
           Submitted {submitDate}
         </Typography>
       );
-    } else if (requestStatus === "pending") {
+    } else if (requestStatus === 'pending') {
       return (
         <Typography className={classes.grayTypography}>
           Scheduled for send on {sendDate}
         </Typography>
       );
-    } else if (requestStatus === "canceled") {
-        return (
-          <Typography className={classes.grayTypography}>
-            Canceled
-          </Typography>
-        );
+    } else if (requestStatus === 'canceled') {
+      return (
+        <Typography className={classes.grayTypography}>Canceled</Typography>
+      );
     } else {
       return (
         <Typography className={classes.yellowTypography}>
@@ -236,7 +255,7 @@ const FeedbackRequestSubcard = ({ request }) => {
       <Grid
         container
         spacing={8}
-        style={{ paddingLeft: "16px", paddingRight: "16px" }}
+        style={{ paddingLeft: '16px', paddingRight: '16px' }}
         className="person-row"
       >
         <Grid item xs={12}>
@@ -248,7 +267,7 @@ const FeedbackRequestSubcard = ({ request }) => {
           >
             <Grid item s={2}>
               <Avatar
-                style={{ marginRight: "1em" }}
+                style={{ marginRight: '1em' }}
                 src={getAvatarURL(recipientEmail)}
               />
             </Grid>
@@ -266,39 +285,41 @@ const FeedbackRequestSubcard = ({ request }) => {
                 Sent on {sendDate}
               </Typography>
               <Typography variant="body2">
-                {requestDueDate ? `Due on ${requestDueDate}` : "No due date"}
+                {requestDueDate ? `Due on ${requestDueDate}` : 'No due date'}
               </Typography>
             </Grid>
             <Grid item xs={6} md>
               <Submitted />
             </Grid>
             <Grid item xs={6} md className="align-end">
-              {request && !request.submitDate && requestStatus !== "canceled" && (
-                <>
-                  <Tooltip
-                    title="Cancel Request"
-                    aria-label="Cancel Request"
-                  >
-                    <IconButton
-                      onClick={() => setCancelingRequest(true)}
-                      aria-label="Cancel Request"
-                      label="Cancel Request"
+              {request &&
+                !request.submitDate &&
+                requestStatus !== 'canceled' && (
+                  <>
+                    <Tooltip title="Cancel Request" aria-label="Cancel Request">
+                      <IconButton
+                        onClick={() => setCancelingRequest(true)}
+                        aria-label="Cancel Request"
+                        label="Cancel Request"
+                      >
+                        <TrashIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip
+                      title={'Send Reminder'}
+                      aria-label={'Send Reminder'}
                     >
-                      <TrashIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title={"Send Reminder"} aria-label={"Send Reminder"}>
-                    <IconButton
-                      onClick={handleReminderClick}
-                      aria-label="Send Reminder"
-                      label="Send Reminder"
-                      size="large"
-                    >
-                      <NotificationsActiveIcon />
-                    </IconButton>
-                  </Tooltip>
-                </>
-              )}
+                      <IconButton
+                        onClick={handleReminderClick}
+                        aria-label="Send Reminder"
+                        label="Send Reminder"
+                        size="large"
+                      >
+                        <NotificationsActiveIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                )}
               {request && request.submitDate && request.id ? (
                 <>
                   <Button
@@ -307,42 +328,70 @@ const FeedbackRequestSubcard = ({ request }) => {
                   >
                     View response
                   </Button>
-                  <IconButton onClick={(event) => setExpandMenuAnchor(event.currentTarget)}>
-                    <MoreIcon/>
+                  <IconButton
+                    onClick={event => setExpandMenuAnchor(event.currentTarget)}
+                  >
+                    <MoreIcon />
                   </IconButton>
                   <Menu
                     anchorEl={expandMenuAnchor}
                     open={!!expandMenuAnchor}
                     onClose={() => setExpandMenuAnchor(false)}
                     anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "center"
+                      vertical: 'bottom',
+                      horizontal: 'center'
                     }}
                     transformOrigin={{
-                      vertical: "top",
-                      horizontal: "center"
+                      vertical: 'top',
+                      horizontal: 'center'
                     }}
                   >
-                    <MenuItem onClick={() => {
-                      setExpandMenuAnchor(null);
-                      setEnableEditsDialog(true);
-                    }}>Enable Edits</MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setExpandMenuAnchor(null);
+                        setEnableEditsDialog(true);
+                      }}
+                    >
+                      Enable Edits
+                    </MenuItem>
                   </Menu>
-                  <Modal open={enableEditsDialog} onClose={() => setEnableEditsDialog(false)}>
+                  <Modal
+                    open={enableEditsDialog}
+                    onClose={() => setEnableEditsDialog(false)}
+                  >
                     <Card className="feedback-request-enable-edits-modal">
-                      <CardHeader title={<Typography variant="h5" fontWeight="bold">Enable Feedback Edits</Typography>}/>
+                      <CardHeader
+                        title={
+                          <Typography variant="h5" fontWeight="bold">
+                            Enable Feedback Edits
+                          </Typography>
+                        }
+                      />
                       <CardContent>
                         <Typography variant="body1">
-                          Are you sure you want <b>{recipient?.name}</b> to be able to make changes to this feedback submission?
-                          This will allow them to edit their original responses and resubmit them.
+                          Are you sure you want <b>{recipient?.name}</b> to be
+                          able to make changes to this feedback submission? This
+                          will allow them to edit their original responses and
+                          resubmit them.
                         </Typography>
-                        <Alert style={{marginTop: "1rem"}} severity="warning">
-                          {recipient?.name}'s feedback for this request will be inaccessible until they submit their answers again.
+                        <Alert style={{ marginTop: '1rem' }} severity="warning">
+                          {recipient?.name}'s feedback for this request will be
+                          inaccessible until they submit their answers again.
                         </Alert>
                       </CardContent>
                       <CardActions>
-                        <Button style={{ color: "gray" }} onClick={() => setEnableEditsDialog(false)}>Cancel</Button>
-                        <Button color="primary" onClick={handleEnableEditsClick}>Enable Edits</Button>
+                        <Button
+                          style={{ color: 'gray' }}
+                          onClick={() => setEnableEditsDialog(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          color="primary"
+                          onClick={handleEnableEditsClick}
+                        >
+                          Enable Edits
+                        </Button>
                       </CardActions>
                     </Card>
                   </Modal>
@@ -351,19 +400,40 @@ const FeedbackRequestSubcard = ({ request }) => {
             </Grid>
           </Grid>
         </Grid>
-        {request && !request.submitDate && requestStatus !== "canceled" && (
-          <Modal open={cancelingRequest} onClose={() => setCancelingRequest(false)}>
+        {request && !request.submitDate && requestStatus !== 'canceled' && (
+          <Modal
+            open={cancelingRequest}
+            onClose={() => setCancelingRequest(false)}
+          >
             <Card className="cancel-feedback-request-modal">
-              <CardHeader title={<Typography variant="h5" fontWeight="bold">Cancel Feedback Request</Typography>}/>
+              <CardHeader
+                title={
+                  <Typography variant="h5" fontWeight="bold">
+                    Cancel Feedback Request
+                  </Typography>
+                }
+              />
               <CardContent>
                 <Typography variant="body1">
-                  Are you sure you want to cancel the feedback request sent to <b>{recipient?.name}</b> on <b>{sendDate}</b>?
-                  The recipient will not be able to respond to this request once it is canceled.
+                  Are you sure you want to cancel the feedback request sent to{' '}
+                  <b>{recipient?.name}</b> on <b>{sendDate}</b>? The recipient
+                  will not be able to respond to this request once it is
+                  canceled.
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button color="secondary" onClick={() => setCancelingRequest(false)}>No, Keep Feedback Request</Button>
-                <Button color="primary" onClick={() => handleCancelClick(request)}>Yes, Cancel Feedback Request</Button>
+                <Button
+                  color="secondary"
+                  onClick={() => setCancelingRequest(false)}
+                >
+                  No, Keep Feedback Request
+                </Button>
+                <Button
+                  color="primary"
+                  onClick={() => handleCancelClick(request)}
+                >
+                  Yes, Cancel Feedback Request
+                </Button>
               </CardActions>
             </Card>
           </Modal>

@@ -1,18 +1,20 @@
-import React, { useContext } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import React, { useContext } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import { UPDATE_CHECKIN } from '../../context/actions';
+import { AppContext } from '../../context/AppContext';
+import { updateCheckin } from '../../api/checkins';
 import {
-  UPDATE_CHECKIN,
-} from "../../context/actions";
-import { AppContext } from "../../context/AppContext";
-import { updateCheckin } from "../../api/checkins";
-import { selectCsrfToken, selectCheckinsForMember, selectProfile } from "../../context/selectors";
-import IconButton from "@mui/material/IconButton";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { MobileDateTimePicker } from "@mui/x-date-pickers";
-import TextField from "@mui/material/TextField";
+  selectCsrfToken,
+  selectCheckinsForMember,
+  selectProfile
+} from '../../context/selectors';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { MobileDateTimePicker } from '@mui/x-date-pickers';
+import TextField from '@mui/material/TextField';
 
-import "./Checkin.css";
+import './Checkin.css';
 
 const CheckinsHistory = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -32,7 +34,9 @@ const CheckinsHistory = () => {
     // return new date unless you are running a Jest test
     let currentDate = null;
     try {
-      currentDate = process?.env?.VITEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
+      currentDate = process?.env?.VITEST_WORKER_ID
+        ? new Date(2020, 9, 21)
+        : new Date();
     } catch (e) {
       currentDate = new Date();
     }
@@ -40,9 +44,9 @@ const CheckinsHistory = () => {
     return currentDate;
   };
 
-  const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");
+  const leftArrowClass = 'arrow ' + (index > 0 ? 'enabled' : 'disabled');
   const rightArrowClass =
-    "arrow " + (index < checkins.length - 1 ? "enabled" : "disabled");
+    'arrow ' + (index < checkins.length - 1 ? 'enabled' : 'disabled');
 
   const previousCheckin = () => {
     if (index > 0) {
@@ -56,7 +60,7 @@ const CheckinsHistory = () => {
     }
   };
 
-  const pickDate = async (date) => {
+  const pickDate = async date => {
     if (csrf) {
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
@@ -65,52 +69,55 @@ const CheckinsHistory = () => {
       const minutes = date.getMinutes();
       const checkin = checkins[index];
       const dateArray = [year, month, day, hours, minutes, 0];
-      const res = await updateCheckin({
-        ...checkin,
-        pdlId: selectedProfile?.pdlId,
-        checkInDate: dateArray,
-      }, csrf);
-      const updatedCheckin = res.payload && res.payload.data && !res.error
-        ? res.payload.data : null;
-      updatedCheckin && dispatch({type: UPDATE_CHECKIN, payload: updatedCheckin});
+      const res = await updateCheckin(
+        {
+          ...checkin,
+          pdlId: selectedProfile?.pdlId,
+          checkInDate: dateArray
+        },
+        csrf
+      );
+      const updatedCheckin =
+        res.payload && res.payload.data && !res.error ? res.payload.data : null;
+      updatedCheckin &&
+        dispatch({ type: UPDATE_CHECKIN, payload: updatedCheckin });
     }
   };
 
   return (
-      getCheckinDate() && (
-          <div className="date-picker">
-            <IconButton
-              disabled={index <= 0}
-              aria-label="Previous Check-in`"
-              onClick={previousCheckin}
-              size="large">
-              <ArrowBackIcon
-                className={leftArrowClass}
-                style={{ fontSize: "1.2em" }}
-              />
-            </IconButton>
-            <MobileDateTimePicker
-              slotProps={{ textField: { style: {width: '18em'} } }}
-              format="MMMM dd, yyyy @hh:mm aaaa"
-              value={getCheckinDate()}
-              onChange={pickDate}
-              label="Check-In Date"
-              showTodayButton
-              disabled={
-                !checkins?.length ||
-                checkins[index]?.completed
-              }
-            />
-            <IconButton
-              disabled={index >= checkins.length - 1}
-              aria-label="Next Check-in`"
-              onClick={nextCheckin}
-              size="large">
-              <ArrowForwardIcon
-                className={rightArrowClass}
-                style={{ fontSize: "1.2em" }}
-              />
-            </IconButton>
+    getCheckinDate() && (
+      <div className="date-picker">
+        <IconButton
+          disabled={index <= 0}
+          aria-label="Previous Check-in`"
+          onClick={previousCheckin}
+          size="large"
+        >
+          <ArrowBackIcon
+            className={leftArrowClass}
+            style={{ fontSize: '1.2em' }}
+          />
+        </IconButton>
+        <MobileDateTimePicker
+          slotProps={{ textField: { style: { width: '18em' } } }}
+          format="MMMM dd, yyyy @hh:mm aaaa"
+          value={getCheckinDate()}
+          onChange={pickDate}
+          label="Check-In Date"
+          showTodayButton
+          disabled={!checkins?.length || checkins[index]?.completed}
+        />
+        <IconButton
+          disabled={index >= checkins.length - 1}
+          aria-label="Next Check-in`"
+          onClick={nextCheckin}
+          size="large"
+        >
+          <ArrowForwardIcon
+            className={rightArrowClass}
+            style={{ fontSize: '1.2em' }}
+          />
+        </IconButton>
       </div>
     )
   );

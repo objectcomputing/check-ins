@@ -1,25 +1,25 @@
-import React from "react";
-import MemberProfilePage from "./MemberProfilePage";
-import { AppContextProvider } from "../context/AppContext";
-import { createMemoryHistory } from "history";
-import { Router } from "react-router-dom";
+import React from 'react';
+import MemberProfilePage from './MemberProfilePage';
+import { AppContextProvider } from '../context/AppContext';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router-dom';
 
 const initialState = {
   state: {
     memberProfiles: [
-      { name: "homie test", firstName: "homie", lastName: "test", id: "123" },
-      { name: "mr. test", firstName: "mr", lastName: "test", id: "1234" },
+      { name: 'homie test', firstName: 'homie', lastName: 'test', id: '123' },
+      { name: 'mr. test', firstName: 'mr', lastName: 'test', id: '1234' }
     ],
     userProfile: {
       memberProfile: {
-        id: "1234",
-        name: "mr. test",
-      },
-    },
-  },
+        id: '1234',
+        name: 'mr. test'
+      }
+    }
+  }
 };
 
-it("renders correctly", () => {
+it('renders correctly', () => {
   const history = createMemoryHistory(`/profile/1234`);
   snapshot(
     <Router history={history}>

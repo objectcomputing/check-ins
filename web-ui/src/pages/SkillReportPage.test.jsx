@@ -1,8 +1,8 @@
-import React from "react";
-import SkillReportPage from "./SkillReportPage";
-import { AppContextProvider } from "../context/AppContext";
+import React from 'react';
+import SkillReportPage from './SkillReportPage';
+import { AppContextProvider } from '../context/AppContext';
 
-it("renders correctly", () => {
+it('renders correctly', () => {
   snapshot(
     <AppContextProvider>
       <SkillReportPage />

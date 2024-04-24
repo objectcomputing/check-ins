@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext } from 'react';
 
-import { selectIsAdmin } from "../../context/selectors";
-import { AppContext } from "../../context/AppContext";
+import { selectIsAdmin } from '../../context/selectors';
+import { AppContext } from '../../context/AppContext';
 
-import { format } from "date-fns";
-import { Card, CardContent, CardHeader, Typography } from "@mui/material";
-import AssignmentIcon from "@mui/icons-material/Assignment";
+import { format } from 'date-fns';
+import { Card, CardContent, CardHeader, Typography } from '@mui/material';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 const OpportunityCard = ({ opportunity }) => {
   const { state } = useContext(AppContext);
@@ -25,12 +25,12 @@ const OpportunityCard = ({ opportunity }) => {
         }
       />
       <CardContent className="opportunity-card">
-        {description || ""}
+        {description || ''}
         <br />
         {url ? <a href={url}>More Information</a> : null}
         <br />
         {expiresOn
-          ? `Expires on ${format(new Date(expiresOn), "MM/dd/yyy")}`
+          ? `Expires on ${format(new Date(expiresOn), 'MM/dd/yyy')}`
           : null}
         <br />
         {isAdmin && pending ? `Pending: ${pending}` : null}

@@ -1,17 +1,17 @@
-import { resolve } from "./api.js";
+import { resolve } from './api.js';
 
-const checkinsUrl = "/services/check-ins";
-const checkinsNoteUrl = "/services/checkin-notes";
-const checkinsPrivateNoteUrl = "/services/private-notes";
+const checkinsUrl = '/services/check-ins';
+const checkinsNoteUrl = '/services/checkin-notes';
+const checkinsPrivateNoteUrl = '/services/private-notes';
 
 export const getMemberCheckinsByPDL = async (memberId, pdlId, cookie) => {
   return resolve({
     url: checkinsUrl,
     params: {
       teamMemberId: memberId,
-      pdlId: pdlId,
+      pdlId: pdlId
     },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
@@ -19,16 +19,16 @@ export const getCheckinByMemberId = async (id, cookie) => {
   return resolve({
     url: checkinsUrl,
     params: {
-      teamMemberId: id,
+      teamMemberId: id
     },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
-export const getAllCheckins = async (cookie) => {
+export const getAllCheckins = async cookie => {
   return resolve({
     url: checkinsUrl,
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
@@ -36,9 +36,9 @@ export const getCheckinByPdlId = async (id, cookie) => {
   return resolve({
     url: checkinsUrl,
     params: {
-      pdlId: id,
+      pdlId: id
     },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
@@ -47,10 +47,14 @@ export const createCheckin = async (
   cookie
 ) => {
   return resolve({
-    method: "POST",
+    method: 'POST',
     url: checkinsUrl,
     data: { teamMemberId, pdlId, checkInDate, completed },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
@@ -58,9 +62,9 @@ export const getNoteByCheckinId = async (id, cookie) => {
   return resolve({
     url: checkinsNoteUrl,
     params: {
-      checkinid: id,
+      checkinid: id
     },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
@@ -69,10 +73,14 @@ export const updateCheckin = async (
   cookie
 ) => {
   return resolve({
-    method: "PUT",
+    method: 'PUT',
     url: checkinsUrl,
     data: { completed, id, teamMemberId, pdlId, checkInDate },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
@@ -81,10 +89,14 @@ export const createCheckinNote = async (
   cookie
 ) => {
   return resolve({
-    method: "POST",
+    method: 'POST',
     url: checkinsNoteUrl,
     data: { checkinid, createdbyid, description },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
@@ -93,10 +105,14 @@ export const updateCheckinNote = async (
   cookie
 ) => {
   return resolve({
-    method: "PUT",
+    method: 'PUT',
     url: checkinsNoteUrl,
     data: { id, checkinid, createdbyid, description },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
@@ -104,9 +120,9 @@ export const getPrivateNoteByCheckinId = async (id, cookie) => {
   return resolve({
     url: checkinsPrivateNoteUrl,
     params: {
-      checkinid: id,
+      checkinid: id
     },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
@@ -115,10 +131,14 @@ export const createPrivateNote = async (
   cookie
 ) => {
   return resolve({
-    method: "POST",
+    method: 'POST',
     url: checkinsPrivateNoteUrl,
     data: { checkinid, createdbyid, description },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
@@ -127,9 +147,13 @@ export const updatePrivateNote = async (
   cookie
 ) => {
   return resolve({
-    method: "PUT",
+    method: 'PUT',
     url: checkinsPrivateNoteUrl,
     data: { id, checkinid, createdbyid, description },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };

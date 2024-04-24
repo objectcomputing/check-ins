@@ -133,8 +133,8 @@ const TeamReviews = ({ periodId }) => {
             currentMembers.filter(member => member?.id !== currentUser?.id)
           )
         : includeAll
-        ? setTeamMembers(subordinates)
-        : setTeamMembers(myTeam);
+          ? setTeamMembers(subordinates)
+          : setTeamMembers(myTeam);
     }
   }, [
     isAdmin,

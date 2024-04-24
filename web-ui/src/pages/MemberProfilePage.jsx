@@ -1,20 +1,26 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { selectCurrentUserId, selectIsAdmin, selectProfile, selectTerminatedMembers, selectSupervisorHierarchyIds } from "../context/selectors";
-import { AppContext } from "../context/AppContext";
-import { getSelectedMemberSkills } from "../api/memberskill";
-import { getTeamByMember } from "../api/team";
-import { getGuildsForMember } from "../api/guild";
-import { getAvatarURL } from "../api/api.js";
-import ProfilePage from "./ProfilePage";
-import { levelList } from "../context/util";
+import {
+  selectCurrentUserId,
+  selectIsAdmin,
+  selectProfile,
+  selectTerminatedMembers,
+  selectSupervisorHierarchyIds
+} from '../context/selectors';
+import { AppContext } from '../context/AppContext';
+import { getSelectedMemberSkills } from '../api/memberskill';
+import { getTeamByMember } from '../api/team';
+import { getGuildsForMember } from '../api/guild';
+import { getAvatarURL } from '../api/api.js';
+import ProfilePage from './ProfilePage';
+import { levelList } from '../context/util';
 import {
   selectOrderedPdls,
-  selectOrderedMemberFirstName,
-} from "../context/selectors";
+  selectOrderedMemberFirstName
+} from '../context/selectors';
 
-import "./MemberProfilePage.css";
+import './MemberProfilePage.css';
 
 import {
   Avatar,
@@ -26,9 +32,9 @@ import {
   Container,
   Grid,
   Tooltip,
-  Typography,
-} from "@mui/material";
-import { useHistory } from "react-router-dom";
+  Typography
+} from '@mui/material';
+import { useHistory } from 'react-router-dom';
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
@@ -40,19 +46,24 @@ const MemberProfilePage = () => {
   const sortedMembers = selectOrderedMemberFirstName(state);
   const isAdmin = selectIsAdmin(state);
   const currentUserId = selectCurrentUserId(state);
-  const pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId);
-  const supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid);
+  const pdlInfo =
+    sortedPdls && sortedPdls.find(pdl => pdl?.id === selectedMember?.pdlId);
+  const supervisorInfo =
+    sortedMembers &&
+    sortedMembers.find(
+      memberProfile => memberProfile?.id === selectedMember?.supervisorid
+    );
   const supervisorChain = selectSupervisorHierarchyIds(selectedMember)(state);
   const currentUserIsPdl = pdlInfo?.id === currentUserId;
   const currentUserIsSupervisor = supervisorChain.includes(currentUserId);
-  const canRequestFeedback = isAdmin || currentUserIsPdl || currentUserIsSupervisor;
-
+  const canRequestFeedback =
+    isAdmin || currentUserIsPdl || currentUserIsSupervisor;
 
   useEffect(() => {
     // in the case of a terminated member, member details will still display
     const member = selectProfile(state, memberId);
     const terminatedMember = selectTerminatedMembers(state)?.filter(
-      (terminatedMember) => terminatedMember.id === memberId
+      terminatedMember => terminatedMember.id === memberId
     );
     if (member) {
       setSelectedMember(member);
@@ -99,9 +110,9 @@ const MemberProfilePage = () => {
       let res = await getSelectedMemberSkills(memberId, csrf);
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : [];
-      let memberSkills = skills.filter((skill) => {
+      let memberSkills = skills.filter(skill => {
         //filter out memberSkills and set level
-        return data.some((mSkill) => {
+        return data.some(mSkill => {
           if (mSkill.skillid === skill.id) {
             skill.skilllevel = levelList[mSkill.skilllevel || 3];
             return skill;
@@ -159,25 +170,44 @@ const MemberProfilePage = () => {
                       color="textSecondary"
                       component="div"
                     >
-                      <h4>Email: {selectedMember.workEmail || ""}</h4>
-                      <h4>Location: {selectedMember.location || ""}</h4>
-                      <h4>Bio: {selectedMember.bioText || ""}</h4>
-                      <h4>{(supervisorInfo && "Supervisor: " + supervisorInfo.firstName + " " + supervisorInfo.lastName) || ("")}</h4>
-                      <h4>{(pdlInfo && "PDL: " + pdlInfo.firstName + " " + pdlInfo.lastName) || ("")}</h4>
+                      <h4>Email: {selectedMember.workEmail || ''}</h4>
+                      <h4>Location: {selectedMember.location || ''}</h4>
+                      <h4>Bio: {selectedMember.bioText || ''}</h4>
+                      <h4>
+                        {(supervisorInfo &&
+                          'Supervisor: ' +
+                            supervisorInfo.firstName +
+                            ' ' +
+                            supervisorInfo.lastName) ||
+                          ''}
+                      </h4>
+                      <h4>
+                        {(pdlInfo &&
+                          'PDL: ' +
+                            pdlInfo.firstName +
+                            ' ' +
+                            pdlInfo.lastName) ||
+                          ''}
+                      </h4>
                     </Typography>
                   </Container>
-                  {canRequestFeedback && <Container fixed sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        history.push(`/feedback/request?for=${memberId}`);
-                      }}
+                  {canRequestFeedback && (
+                    <Container
+                      fixed
+                      sx={{ display: 'flex', justifyContent: 'center' }}
                     >
-                      Request Feedback
-                    </Button>
-                  </Container>}
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={e => {
+                          e.stopPropagation();
+                          history.push(`/feedback/request?for=${memberId}`);
+                        }}
+                      >
+                        Request Feedback
+                      </Button>
+                    </Container>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -186,7 +216,7 @@ const MemberProfilePage = () => {
             <Card>
               <CardHeader
                 title="Skills"
-                titleTypographyProps={{ variant: "h5", component: "h1" }}
+                titleTypographyProps={{ variant: 'h5', component: 'h1' }}
               />
               <CardContent>
                 <div className="profile-skills">
@@ -209,7 +239,7 @@ const MemberProfilePage = () => {
                             key={skill.id}
                             label={
                               skill.name +
-                              " - " +
+                              ' - ' +
                               skill.skilllevel.toLowerCase()
                             }
                           />
@@ -220,7 +250,7 @@ const MemberProfilePage = () => {
                           color="primary"
                           key={skill.id}
                           label={
-                            skill.name + " - " + skill.skilllevel.toLowerCase()
+                            skill.name + ' - ' + skill.skilllevel.toLowerCase()
                           }
                         />
                       )
@@ -231,7 +261,7 @@ const MemberProfilePage = () => {
             <Card>
               <CardHeader
                 title="Teams"
-                titleTypographyProps={{ variant: "h5", component: "h1" }}
+                titleTypographyProps={{ variant: 'h5', component: 'h1' }}
               />
               <CardContent>
                 <div className="profile-teams">
@@ -241,7 +271,7 @@ const MemberProfilePage = () => {
                     </div>
                   )}
                   {teams.length > 0 &&
-                    teams.map((team) => (
+                    teams.map(team => (
                       <Chip
                         className="chip"
                         color="primary"
@@ -255,7 +285,7 @@ const MemberProfilePage = () => {
             <Card>
               <CardHeader
                 title="Guilds"
-                titleTypographyProps={{ variant: "h5", component: "h1" }}
+                titleTypographyProps={{ variant: 'h5', component: 'h1' }}
               />
               <CardContent>
                 <div className="profile-guilds">
@@ -265,7 +295,7 @@ const MemberProfilePage = () => {
                     </div>
                   )}
                   {guilds.length > 0 &&
-                    guilds.map((guild) => (
+                    guilds.map(guild => (
                       <Chip
                         className="chip"
                         color="primary"

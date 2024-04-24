@@ -1,6 +1,6 @@
 .skills-report-page {
-    margin: 2rem;
-    align-items: center;
+  margin: 2rem;
+  align-items: center;
 }
 
 .member-skills-card {
@@ -12,18 +12,18 @@
 }
 
 .skills-list {
-    margin: 1rem;
+  margin: 1rem;
 }
 
 .search {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-left: 1rem;
-    margin-right: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 .results-section {
-    align-items: center;
-    justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 }

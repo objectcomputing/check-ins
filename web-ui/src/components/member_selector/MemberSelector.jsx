@@ -1,35 +1,39 @@
-import React, {useCallback, useContext, useEffect, useState} from "react";
-import PropTypes from "prop-types";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Avatar,
   Card,
-  CardHeader, Collapse,
+  CardHeader,
+  Collapse,
   Divider,
   IconButton,
   List,
   ListItem,
-  ListItemAvatar, ListItemIcon,
-  ListItemText, Menu, MenuItem,
+  ListItemAvatar,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Tooltip,
   Typography
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import {getAvatarURL} from "../../api/api";
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { getAvatarURL } from '../../api/api';
 
-import MemberSelectorDialog from "./member_selector_dialog/MemberSelectorDialog";
-import DownloadIcon from "@mui/icons-material/FileDownload";
-import {reportSelectedMembersCsv} from "../../api/member.js";
-import {AppContext} from "../../context/AppContext.jsx";
-import {selectCsrfToken} from "../../context/selectors.js";
-import fileDownload from "js-file-download";
-import {UPDATE_TOAST} from "../../context/actions.js";
+import MemberSelectorDialog from './member_selector_dialog/MemberSelectorDialog';
+import DownloadIcon from '@mui/icons-material/FileDownload';
+import { reportSelectedMembersCsv } from '../../api/member.js';
+import { AppContext } from '../../context/AppContext.jsx';
+import { selectCsrfToken } from '../../context/selectors.js';
+import fileDownload from 'js-file-download';
+import { UPDATE_TOAST } from '../../context/actions.js';
 
-import "./MemberSelector.css";
+import './MemberSelector.css';
 
 const propTypes = {
   /** The members that are currently selected. Use to make this a controlled component. */
@@ -52,13 +56,25 @@ const propTypes = {
   style: PropTypes.object
 };
 
-const MemberSelector = ({selected, onChange, title = "Selected Members", outlined = false, exportable = false, listHeight = 400, disabled = false, className, style }) => {
+const MemberSelector = ({
+  selected,
+  onChange,
+  title = 'Selected Members',
+  outlined = false,
+  exportable = false,
+  listHeight = 400,
+  disabled = false,
+  className,
+  style
+}) => {
   const isControlled = !!selected && Array.isArray(selected);
 
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
-  const [selectedMembers, setSelectedMembers] = useState(isControlled ? selected : []);
+  const [selectedMembers, setSelectedMembers] = useState(
+    isControlled ? selected : []
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -77,18 +93,26 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
     }
   }, [disabled]);
 
-  const addMembers = useCallback((membersToAdd) => {
-    const selected = [...selectedMembers, ...membersToAdd];
-    setSelectedMembers(selected);
-    setDialogOpen(false);
-  }, [selectedMembers]);
+  const addMembers = useCallback(
+    membersToAdd => {
+      const selected = [...selectedMembers, ...membersToAdd];
+      setSelectedMembers(selected);
+      setDialogOpen(false);
+    },
+    [selectedMembers]
+  );
 
-  const removeMember = useCallback((member) => {
-    const selected = [...selectedMembers]
-    const indexToRemove = selected.findIndex(selectedMember => selectedMember.id === member.id);
-    selected.splice(indexToRemove, 1);
-    setSelectedMembers(selected);
-  }, [selectedMembers]);
+  const removeMember = useCallback(
+    member => {
+      const selected = [...selectedMembers];
+      const indexToRemove = selected.findIndex(
+        selectedMember => selectedMember.id === member.id
+      );
+      selected.splice(indexToRemove, 1);
+      setSelectedMembers(selected);
+    },
+    [selectedMembers]
+  );
 
   const downloadMemberCsv = useCallback(() => {
     if (!exportable) {
@@ -98,20 +122,20 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
     const memberIds = selectedMembers.map(member => member.id);
     reportSelectedMembersCsv(memberIds, csrf).then(res => {
       if (res && !res.error) {
-        fileDownload(res.payload.data, "members.csv");
+        fileDownload(res.payload.data, 'members.csv');
         dispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "success",
-            toast: "Member export has been saved"
+            severity: 'success',
+            toast: 'Member export has been saved'
           }
         });
       } else {
         dispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "error",
-            toast: "Failed to export members to CSV"
+            severity: 'error',
+            toast: 'Failed to export members to CSV'
           }
         });
       }
@@ -125,75 +149,95 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
   return (
     <>
       <Card
-        variant={outlined ? "outlined" : "elevation"}
-        className={"member-selector-card" + (className ? ` ${className}` : "")}
-        style={style}>
+        variant={outlined ? 'outlined' : 'elevation'}
+        className={'member-selector-card' + (className ? ` ${className}` : '')}
+        style={style}
+      >
         <CardHeader
           avatar={
             <IconButton onClick={() => setExpanded(!expanded)}>
-              {expanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+              {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </IconButton>
           }
           title={
             <div className="member-selector-card-title-container">
-              <Typography className="member-selector-card-title" variant="h5" noWrap>{title}</Typography>
-              <Typography className="member-selector-card-count" variant="h6" color="gray">({selectedMembers.length})</Typography>
+              <Typography
+                className="member-selector-card-title"
+                variant="h5"
+                noWrap
+              >
+                {title}
+              </Typography>
+              <Typography
+                className="member-selector-card-count"
+                variant="h6"
+                color="gray"
+              >
+                ({selectedMembers.length})
+              </Typography>
             </div>
           }
           action={
-          <>
-            <Tooltip title="Add members" arrow>
+            <>
+              <Tooltip title="Add members" arrow>
+                <IconButton
+                  style={{ margin: '4px 8px 0 0' }}
+                  onClick={() => setDialogOpen(true)}
+                  disabled={disabled}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
               <IconButton
-                style={{ margin: "4px 8px 0 0" }}
-                onClick={() => setDialogOpen(true)}
-                disabled={disabled}
+                style={{ margin: '4px 8px 0 0' }}
+                onClick={event => setMenuAnchor(event.currentTarget)}
               >
-                <AddIcon/>
+                <MoreVertIcon />
               </IconButton>
-            </Tooltip>
-            <IconButton style={{ margin: "4px 8px 0 0" }} onClick={(event) => setMenuAnchor(event.currentTarget)}>
-              <MoreVertIcon/>
-            </IconButton>
-            <Menu
-              anchorEl={menuAnchor}
-              open={!!menuAnchor}
-              onClose={() => setMenuAnchor(null)}
-            >
-              <MenuItem
-                onClick={() => {
-                  setMenuAnchor(null);
-                  clearMembers();
-                }}
-                disabled={disabled || !selectedMembers.length}
+              <Menu
+                anchorEl={menuAnchor}
+                open={!!menuAnchor}
+                onClose={() => setMenuAnchor(null)}
               >
-                <ListItemIcon>
-                  <HighlightOffIcon fontSize="small"/>
-                </ListItemIcon>
-                <ListItemText>Remove all</ListItemText>
-              </MenuItem>
-              {exportable &&
                 <MenuItem
                   onClick={() => {
                     setMenuAnchor(null);
-                    downloadMemberCsv();
+                    clearMembers();
                   }}
-                  disabled={!selectedMembers.length}
+                  disabled={disabled || !selectedMembers.length}
                 >
                   <ListItemIcon>
-                    <DownloadIcon fontSize="small"/>
+                    <HighlightOffIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText>Download</ListItemText>
+                  <ListItemText>Remove all</ListItemText>
                 </MenuItem>
-              }
-            </Menu>
-          </>
+                {exportable && (
+                  <MenuItem
+                    onClick={() => {
+                      setMenuAnchor(null);
+                      downloadMemberCsv();
+                    }}
+                    disabled={!selectedMembers.length}
+                  >
+                    <ListItemIcon>
+                      <DownloadIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Download</ListItemText>
+                  </MenuItem>
+                )}
+              </Menu>
+            </>
           }
         />
         <Collapse in={expanded}>
-          <Divider/>
-          <List dense role="list" sx={{ maxHeight: listHeight, overflow: "auto" }}>
-            {selectedMembers.length
-              ? (selectedMembers.map(member =>
+          <Divider />
+          <List
+            dense
+            role="list"
+            sx={{ maxHeight: listHeight, overflow: 'auto' }}
+          >
+            {selectedMembers.length ? (
+              selectedMembers.map(member => (
                 <ListItem
                   key={member.id}
                   role="listitem"
@@ -203,24 +247,33 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
                         onClick={() => removeMember(member)}
                         disabled={disabled}
                       >
-                        <RemoveIcon/>
+                        <RemoveIcon />
                       </IconButton>
                     </Tooltip>
                   }
                 >
                   <ListItemAvatar>
-                    <Avatar src={getAvatarURL(member.workEmail)}/>
+                    <Avatar src={getAvatarURL(member.workEmail)} />
                   </ListItemAvatar>
                   <ListItemText
-                    primary={<Typography fontWeight="bold">{member.name}</Typography>}
-                    secondary={<Typography color="textSecondary" component="h6">{member.title}</Typography>}
+                    primary={
+                      <Typography fontWeight="bold">{member.name}</Typography>
+                    }
+                    secondary={
+                      <Typography color="textSecondary" component="h6">
+                        {member.title}
+                      </Typography>
+                    }
                   />
                 </ListItem>
               ))
-              : (
-                <ListItem><ListItemText style={{ color: "gray" }}>No members selected</ListItemText></ListItem>
-              )
-            }
+            ) : (
+              <ListItem>
+                <ListItemText style={{ color: 'gray' }}>
+                  No members selected
+                </ListItemText>
+              </ListItem>
+            )}
           </List>
         </Collapse>
       </Card>
@@ -228,7 +281,7 @@ const MemberSelector = ({selected, onChange, title = "Selected Members", outline
         open={dialogOpen}
         selectedMembers={selectedMembers}
         onClose={() => setDialogOpen(false)}
-        onSubmit={(membersToAdd) => addMembers(membersToAdd)}
+        onSubmit={membersToAdd => addMembers(membersToAdd)}
       />
     </>
   );

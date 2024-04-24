@@ -42,7 +42,7 @@
 }
 
 .error-boundary {
-  background-image: url("https://media.giphy.com/media/tvGOBZKNEX0ac/giphy.gif");
+  background-image: url('https://media.giphy.com/media/tvGOBZKNEX0ac/giphy.gif');
   background-size: cover;
   display: flex;
   justify-content: center;
