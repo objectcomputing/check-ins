@@ -17,7 +17,9 @@ import { Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 
-import './Birthdays.css';
+import { formatBirthday } from "../../helpers/celebration.js";
+
+import "./Birthdays.css";
 
 const PREFIX = 'MemberSummaryCard';
 const classes = {
@@ -60,6 +62,11 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
                 <Typography variant="h5" component="h2">
                   Happy Birthday{' '}
                   <span>{user.firstName + ' ' + user.lastName}!</span>
+                </Typography>
+              }
+              subheader={
+                <Typography color="textSecondary" component="h3">
+                   {formatBirthday(bday.birthDay)}
                 </Typography>
               }
               disableTypography
