@@ -24,7 +24,7 @@ exports[`FeedbackResponseCard > renders correctly for radio button responses 1`]
         />
       </div>
       <div
-        class="MuiFormGroup-root MuiFormGroup-row feedback-answer-radio css-qfz70r-MuiFormGroup-root"
+        class="MuiFormGroup-root MuiFormGroup-row MuiRadioGroup-root MuiRadioGroup-row feedback-answer-radio css-qfz70r-MuiFormGroup-root"
         role="radiogroup"
       >
         <label
