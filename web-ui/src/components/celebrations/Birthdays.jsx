@@ -54,6 +54,9 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
   const { state } = useContext(AppContext);
 
   const loading = selectMemberProfilesLoading(state);
+
+  //TODO: Maybe you don't need this sort because HomePage.jsx
+  //TODO: already calls a sortBirthdays function defined in util.js.
   console.log('Birthdays.jsx loading: birthdays =', birthdays);
   birthdays.sort((a, b) => {
     const aDayOfYear = monthDayToDayOfYear(a.birthday);
