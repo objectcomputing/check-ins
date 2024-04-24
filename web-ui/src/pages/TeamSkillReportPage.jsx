@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 
 import { reportSkills } from '../api/memberskill.js';
 import SearchResults from '../components/search-results/SearchResults';
-import MyResponsiveRadar from '../components/radar/Radar';
 import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
 import {
