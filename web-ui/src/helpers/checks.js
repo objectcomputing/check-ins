@@ -39,21 +39,22 @@ export function sortMembersBySkill(searchResults) {
   if (isArrayPresent(searchResults)) {
     // Sort the array by the number of skills
     const sortedArray = searchResults.sort((a, b) => {
-      // // If number of skills is not the same, sort by skill level
+      // If number of skills is not the same, sort by number of skills
       if (a.skills.length !== b.skills.length) {
-        for (let i = 0; i < a.skills.length; i++) {
-          return b.skills.length - a.skills.length;
-        }
+        return b.skills.length - a.skills.length;
       } else {
         // If skill numbers are the same but skill levels are not, sort by skill level
-        const levelIndexA = skillLevelsOrder.indexOf(a.skills[0].level);
-        const levelIndexB = skillLevelsOrder.indexOf(b.skills[0].level);
+        const scoreA = a.skills.reduce((acc, skill) => {
+          const level = skillLevelsOrder.indexOf(skill.level);
+          return acc + level;
+        });
+        const scoreB = b.skills.reduce((acc, skill) => {
+          const level = skillLevelsOrder.indexOf(skill.level);
+          return acc + level;
+        });
 
-        if (
-          a.skills.length === b.skills.length &&
-          levelIndexA !== levelIndexB
-        ) {
-          return levelIndexA - levelIndexB;
+        if (scoreA !== scoreB) {
+          return scoreA - scoreB;
         } else {
           // If skills and levels are the same, sort alphabetically by name
           return a.name.localeCompare(b.name);
