@@ -21,3 +21,47 @@ export function filterObjectByValOrKey(arr, value, key) {
       : (a) => Object.keys(a).some((k) => a[k] === value)
   );
 }
+
+/**
+ * Sort Search Results for team members by Skill, Level & Name
+ * @param searchResults - an array of team members
+ * @returns a sorted array
+ */
+export function sortMembersBySkill(searchResults) {
+  const skillLevelsOrder = [
+    "EXPERT",
+    "ADVANCED",
+    "INTERMEDIATE",
+    "NOVICE",
+    "INTERESTED",
+  ];
+
+  if (isArrayPresent(searchResults)) {
+    // Sort the array by the number of skills
+    const sortedArray = searchResults.sort((a, b) => {
+      // // If number of skills is not the same, sort by skill level
+      if (a.skills.length !== b.skills.length) {
+        for (let i = 0; i < a.skills.length; i++) {
+          return b.skills.length - a.skills.length;
+        }
+      } else {
+        // If skill numbers are the same but skill levels are not, sort by skill level
+        const levelIndexA = skillLevelsOrder.indexOf(a.skills[0].level);
+        const levelIndexB = skillLevelsOrder.indexOf(b.skills[0].level);
+
+        if (
+          a.skills.length === b.skills.length &&
+          levelIndexA !== levelIndexB
+        ) {
+          return levelIndexA - levelIndexB;
+        } else {
+          // If skills and levels are the same, sort alphabetically by name
+          return a.name.localeCompare(b.name);
+        }
+      }
+    });
+    return sortedArray;
+  } else {
+    return [];
+  }
+}

@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { reportSkills } from "../api/memberskill.js";
 import SearchResults from "../components/search-results/SearchResults";
+import { sortMembersBySkill } from "../helpers/checks.js";
 
 import {
   selectOrderedSkills,
@@ -11,7 +12,7 @@ import {
 } from "../context/selectors";
 
 import { Button, TextField } from "@mui/material";
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete from "@mui/material/Autocomplete";
 
 import "./SkillReportPage.css";
 
@@ -23,9 +24,8 @@ const SkillReportPage = (props) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchRequestDTO] = useState([]);
   const [searchSkills, setSearchSkills] = useState([]);
-  const [editedSearchRequest, setEditedSearchRequest] = useState(
-    searchRequestDTO
-  );
+  const [editedSearchRequest, setEditedSearchRequest] =
+    useState(searchRequestDTO);
 
   const handleSearch = async (searchRequestDTO) => {
     let res = await reportSkills(searchRequestDTO, csrf);
@@ -37,11 +37,14 @@ const SkillReportPage = (props) => {
           : undefined;
     }
     // Filter out skills of terminated members
-    memberSkillsFound = memberSkillsFound.filter(memberSkill => memberIds.includes(memberSkill.id));
+    memberSkillsFound = memberSkillsFound.filter((memberSkill) =>
+      memberIds.includes(memberSkill.id)
+    );
     if (memberSkillsFound && memberIds) {
-      setSearchResults(memberSkillsFound);
+      let newSort = sortMembersBySkill(memberSkillsFound);
+      setSearchResults(newSort);
     } else {
-      setSearchResults(undefined);
+      setSearchResults([]);
     }
   };
 
@@ -105,7 +108,9 @@ const SkillReportPage = (props) => {
           </Button>
         </div>
       </div>
-      <SearchResults searchResults={searchResults} />
+      <SearchResults
+        searchResults={searchResults}
+      />
     </div>
   );
 };
