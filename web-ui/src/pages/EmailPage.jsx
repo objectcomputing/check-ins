@@ -424,7 +424,9 @@ const EmailPage = () => {
       if (res && res.payload && res.payload.status === 201 && !res.error) {
         setEmailSent(true);
         toastStatus = 'success';
-        toastMessage = `Sent email to ${recipients.length} member${recipients.length === 1 ? '' : 's'}`;
+        toastMessage = `Sent email to ${recipients.length} member${
+          recipients.length === 1 ? '' : 's'
+        }`;
       } else {
         toastStatus = 'error';
         toastMessage = 'Failed to send email';

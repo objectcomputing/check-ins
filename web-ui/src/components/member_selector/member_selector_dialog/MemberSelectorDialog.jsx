@@ -54,7 +54,7 @@ const DialogTransition = React.forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props} />
 ));
 
-const FilterType = Object.freeze({
+export const FilterType = Object.freeze({
   GUILD: 'Guild',
   TEAM: 'Team',
   TITLE: 'Title',
@@ -65,22 +65,45 @@ const FilterType = Object.freeze({
 });
 
 const propTypes = {
+  initialFilters: PropTypes.arrayOf(
+    PropTypes.shape({
+      type: PropTypes.oneOf(Object.values(FilterType)),
+      value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.bool
+      ])
+    })
+  ),
+  memberDescriptor: PropTypes.string,
   open: PropTypes.bool.isRequired,
   selectedMembers: PropTypes.arrayOf(PropTypes.object).isRequired,
   onClose: PropTypes.func,
   onSubmit: PropTypes.func
 };
 
-const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
+const MemberSelectorDialog = ({
+  open,
+  memberDescriptor = 'Members',
+  initialFilters = [],
+  selectedMembers,
+  onClose,
+  onSubmit
+}) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const members = selectCurrentMembers(state);
+
+  // Use the first initial filter as the default filter type
+  const [initialFilter] = initialFilters;
 
   // Contains set of ids of checked members for instant add/remove operations
   const [checked, setChecked] = useState(new Set());
 
   const [nameQuery, setNameQuery] = useState('');
-  const [filterType, setFilterType] = useState(FilterType.TEAM);
+  const [filterType, setFilterType] = useState(
+    initialFilter?.type || FilterType.TEAM
+  );
   const [filterOptions, setFilterOptions] = useState(null);
   const [filter, setFilter] = useState(null);
   const [filteredMembers, setFilteredMembers] = useState([]);
@@ -93,7 +116,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
     onSubmit(membersToAdd);
   }, [checked, members, onSubmit]);
 
-  // Reset the dialog when it closes
+  // Reset the dialog when it closes, or set the initial filter when it opens
   useEffect(() => {
     if (!open) {
       // Reset all state except for the chosen filter type and its corresponding options
@@ -103,6 +126,12 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
       setFilteredMembers([]);
       setDirectReportsOnly(false);
       setSelectableMembers([]);
+    } else {
+      // If the dialog is opened with initial filters, set the initial filter
+      if (initialFilter && initialFilter.type === FilterType.ROLE) {
+        setFilterType(initialFilter.type);
+        setFilter(selectRoles(state).find(role => role.role === 'PDL'));
+      }
     }
   }, [open]);
 
@@ -374,7 +403,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
           </IconButton>
           <div className="toolbar-title-container">
             <Typography className="toolbar-title" variant="h5">
-              Select Members
+              Select {memberDescriptor}
             </Typography>
             <Typography className="selected-count-label" variant="body1">
               {checked.size} selected
@@ -418,7 +447,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
                 />
               )}
               disablePortal
-              disabled={!filterOptions}
+              disabled={!filterOptions || !!initialFilter}
               options={filterOptions ? filterOptions.options : []}
               getOptionLabel={filterOptions ? filterOptions.label : () => ''}
               isOptionEqualToValue={
@@ -437,6 +466,7 @@ const MemberSelectorDialog = ({ open, selectedMembers, onClose, onSubmit }) => {
                   setFilter(null);
                   setFilterType(event.target.value);
                 }}
+                disabled={!!initialFilter}
               >
                 {Object.values(FilterType).map(name => (
                   <MenuItem key={name} value={name}>

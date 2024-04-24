@@ -25,7 +25,9 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getAvatarURL } from '../../api/api';
 
-import MemberSelectorDialog from './member_selector_dialog/MemberSelectorDialog';
+import MemberSelectorDialog, {
+  FilterType
+} from './member_selector_dialog/MemberSelectorDialog';
 import DownloadIcon from '@mui/icons-material/FileDownload';
 import { reportSelectedMembersCsv } from '../../api/member.js';
 import { AppContext } from '../../context/AppContext.jsx';
@@ -36,6 +38,17 @@ import { UPDATE_TOAST } from '../../context/actions.js';
 import './MemberSelector.css';
 
 const propTypes = {
+  /** An array of filters to apply to the member list in the dialog. */
+  initialFilters: PropTypes.arrayOf(
+    PropTypes.shape({
+      type: PropTypes.oneOf(Object.values(FilterType)),
+      value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.bool
+      ])
+    })
+  ),
   /** The members that are currently selected. Use to make this a controlled component. */
   selected: PropTypes.arrayOf(PropTypes.object),
   /** Listener for whenever the list of selected members changes. Passes the updated list as an argument. */
@@ -57,6 +70,7 @@ const propTypes = {
 };
 
 const MemberSelector = ({
+  initialFilters = [],
   selected,
   onChange,
   title = 'Selected Members',
@@ -78,6 +92,13 @@ const MemberSelector = ({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [filters, setFilters] = useState(initialFilters);
+
+  const isFilteredByRole = filters.some(
+    filter => filter.type === FilterType.ROLE
+  );
+  const roleFilter = filters.find(filter => filter.type === FilterType.ROLE);
+  const memberDescriptor = isFilteredByRole ? roleFilter.value : 'members';
 
   // When the selected members change, fire the onChange event
   useEffect(() => {
@@ -179,7 +200,7 @@ const MemberSelector = ({
           }
           action={
             <>
-              <Tooltip title="Add members" arrow>
+              <Tooltip title={`Add ${memberDescriptor}`} arrow>
                 <IconButton
                   style={{ margin: '4px 8px 0 0' }}
                   onClick={() => setDialogOpen(true)}
@@ -270,7 +291,7 @@ const MemberSelector = ({
             ) : (
               <ListItem>
                 <ListItemText style={{ color: 'gray' }}>
-                  No members selected
+                  No {memberDescriptor} selected
                 </ListItemText>
               </ListItem>
             )}
@@ -279,6 +300,8 @@ const MemberSelector = ({
       </Card>
       <MemberSelectorDialog
         open={dialogOpen}
+        initialFilters={filters}
+        memberDescriptor={memberDescriptor}
         selectedMembers={selectedMembers}
         onClose={() => setDialogOpen(false)}
         onSubmit={membersToAdd => addMembers(membersToAdd)}
