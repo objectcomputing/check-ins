@@ -1,3 +1,4 @@
+import { getDayOfYear } from 'date-fns';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -17,9 +18,9 @@ import { Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 
-import { formatBirthday } from "../../helpers/celebration.js";
+import { formatBirthday } from '../../helpers/celebration.js';
 
-import "./Birthdays.css";
+import './Birthdays.css';
 
 const PREFIX = 'MemberSummaryCard';
 const classes = {
@@ -42,10 +43,23 @@ const Root = styled('div')({
   }
 });
 
+function monthDayToDayOfYear(monthDayString) {
+  const [month, day] = monthDayString.split('/');
+  const now = new Date();
+  const date = new Date(now.getFullYear(), Number(month) - 1, Number(day));
+  return getDayOfYear(date);
+}
+
 const Birthdays = ({ birthdays, xPos = 0.75 }) => {
   const { state } = useContext(AppContext);
 
   const loading = selectMemberProfilesLoading(state);
+  console.log('Birthdays.jsx loading: birthdays =', birthdays);
+  birthdays.sort((a, b) => {
+    const aDayOfYear = monthDayToDayOfYear(a.birthday);
+    const bDayOfYear = monthDayToDayOfYear(b.birthday);
+    return bDayOfYear - aDayOfYear;
+  });
 
   const createBirthdayCards = birthdays.map((bday, index) => {
     let user = selectProfile(state, bday.userId);
@@ -66,7 +80,7 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
               }
               subheader={
                 <Typography color="textSecondary" component="h3">
-                   {formatBirthday(bday.birthDay)}
+                  {formatBirthday(bday.birthDay)}
                 </Typography>
               }
               disableTypography
