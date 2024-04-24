@@ -48,13 +48,14 @@
     "universal-cookie": "^4.0.4"
   },
   "scripts": {
-    "start": "vite",
+    "build-storybook": "storybook build",
     "build": "vite build",
-    "serve": "vite preview",
-    "test": "vitest",
     "coverage": "vitest run --coverage --watch=false",
+    "format": "prettier --write '{public,src}/**/*.{css,html,js,jsx}'",
+    "serve": "vite preview",
+    "start": "vite",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "test": "vitest"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -88,7 +89,7 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^24.0.0",
     "msw": "^2.2.13",
-    "prettier": "2.8.1",
+    "prettier": "3.2.5",
     "prop-types": "^15.8.1",
     "react-test-renderer": "^18.2.0",
     "storybook": "^8.0.4",
