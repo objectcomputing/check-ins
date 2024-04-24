@@ -43,15 +43,15 @@ export function sortMembersBySkill(searchResults) {
       if (a.skills.length !== b.skills.length) {
         return b.skills.length - a.skills.length;
       } else {
-        // If skill numbers are the same but skill levels are not, sort by skill level
+        // If the number of skill are the same, sort by total skill level
         const scoreA = a.skills.reduce((acc, skill) => {
           const level = skillLevelsOrder.indexOf(skill.level);
           return acc + level;
-        });
+        }, 0);
         const scoreB = b.skills.reduce((acc, skill) => {
           const level = skillLevelsOrder.indexOf(skill.level);
           return acc + level;
-        });
+        }, 0);
 
         if (scoreA !== scoreB) {
           return scoreA - scoreB;
