@@ -33,7 +33,7 @@ const SearchResults = ({ searchResults }) => {
         {searchResults.map((member, i) => {
           return (
             <div key={`search-result-${i}`}>
-              <Card className={"member-skills-card"} key={`card-${member?.id}`}>
+              <Card className={'member-skills-card'} key={`card-${member?.id}`}>
                 <CardHeader
                   title={
                     <Typography variant="h5" component="h2">

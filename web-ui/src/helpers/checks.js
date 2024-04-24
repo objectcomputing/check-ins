@@ -29,11 +29,11 @@ export function filterObjectByValOrKey(arr, value, key) {
  */
 export function sortMembersBySkill(searchResults) {
   const skillLevelsOrder = [
-    "EXPERT",
-    "ADVANCED",
-    "INTERMEDIATE",
-    "NOVICE",
-    "INTERESTED",
+    'EXPERT',
+    'ADVANCED',
+    'INTERMEDIATE',
+    'NOVICE',
+    'INTERESTED'
   ];
 
   if (isArrayPresent(searchResults)) {

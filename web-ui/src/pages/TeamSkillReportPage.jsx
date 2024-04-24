@@ -1,22 +1,22 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 
-import { reportSkills } from "../api/memberskill.js";
-import SearchResults from "../components/search-results/SearchResults";
-import MyResponsiveRadar from "../components/radar/Radar";
-import { UPDATE_TOAST } from "../context/actions";
-import { AppContext } from "../context/AppContext";
+import { reportSkills } from '../api/memberskill.js';
+import SearchResults from '../components/search-results/SearchResults';
+import MyResponsiveRadar from '../components/radar/Radar';
+import { UPDATE_TOAST } from '../context/actions';
+import { AppContext } from '../context/AppContext';
 import {
   selectCsrfToken,
   selectOrderedMemberFirstName,
   selectOrderedSkills,
-  selectSkill,
-} from "../context/selectors";
-import { levelMap } from "../context/util";
-import { sortMembersBySkill } from "../helpers/checks.js";
+  selectSkill
+} from '../context/selectors';
+import { levelMap } from '../context/util';
+import { sortMembersBySkill } from '../helpers/checks.js';
 
-import { Button, TextField } from "@mui/material";
+import { Button, TextField } from '@mui/material';
 
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete from '@mui/material/Autocomplete';
 
 import './TeamSkillReportPage.css';
 import MemberSelector from '../components/member_selector/MemberSelector';
@@ -48,8 +48,8 @@ const TeamSkillReportPage = () => {
     }
     if (memberSkillsFound && memberProfiles) {
       setAllSearchResults(memberSkillsFound);
-      let membersSelected = memberSkillsFound.filter((mSkill) =>
-        selectedMembers.some((member) => member.id === mSkill.id)
+      let membersSelected = memberSkillsFound.filter(mSkill =>
+        selectedMembers.some(member => member.id === mSkill.id)
       );
       let newSort = sortMembersBySkill(membersSelected);
       setSearchResults(newSort);
