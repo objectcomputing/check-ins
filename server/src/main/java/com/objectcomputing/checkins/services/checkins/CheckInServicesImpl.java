@@ -2,14 +2,13 @@ package com.objectcomputing.checkins.services.checkins;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import com.objectcomputing.checkins.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,25 +32,25 @@ public class CheckInServicesImpl implements CheckInServices {
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
     private final RoleServices roleServices;
-    private final PermissionServices permissionServices;
+    private final RolePermissionServices rolePermissionServices;
 
     public CheckInServicesImpl(CheckInRepository checkinRepo,
                                MemberProfileRepository memberRepo,
                                CurrentUserServices currentUserServices,
-                               RoleServices roleServices, PermissionServices permissionServices) {
+                               RoleServices roleServices, RolePermissionServices rolePermissionServices) {
         this.checkinRepo = checkinRepo;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
-        this.permissionServices = permissionServices;
+        this.rolePermissionServices = rolePermissionServices;
     }
 
     @Override
-    public Boolean hasPermission(@NotNull UUID memberId, @NotNull Permissions permission) {
+    public Boolean hasPermission(@NotNull UUID memberId, @NotNull Permission permission) {
         boolean hasPermission = false;
-        List<Permission> userPermissions = permissionServices.findUserPermissions(memberId);
+        List<Permission> userPermissions = rolePermissionServices.findUserPermissions(memberId);
         if (!userPermissions.isEmpty()) {
-            hasPermission = userPermissions.stream().map(Permission::getPermission).anyMatch(str -> str.equals(permission.name()));
+            hasPermission = userPermissions.stream().map(Permission::name).anyMatch(str -> str.equals(permission.name()));
             LOG.debug("Member has elevated access permisson: {}", hasPermission);
         }
         return hasPermission;
@@ -209,11 +208,11 @@ public class CheckInServicesImpl implements CheckInServices {
 
     @Override
     public Boolean canViewAllCheckins(UUID memberId) {
-        return hasPermission(memberId, Permissions.CAN_VIEW_ALL_CHECKINS);
+        return hasPermission(memberId, Permission.CAN_VIEW_ALL_CHECKINS);
     }
 
     @Override
     public Boolean canUpdateAllCheckins(UUID memberId) {
-        return hasPermission(memberId, Permissions.CAN_UPDATE_ALL_CHECKINS);
+        return hasPermission(memberId, Permission.CAN_UPDATE_ALL_CHECKINS);
     }
 }

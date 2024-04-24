@@ -28,7 +28,13 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_VIEW_PERMISSIONS,
         Permission.CAN_VIEW_CHECKINS,
         Permission.CAN_CREATE_CHECKINS,
-        Permission.CAN_UPDATE_CHECKINS
+        Permission.CAN_UPDATE_CHECKINS,
+        Permission.CAN_VIEW_PRIVATE_NOTE,
+        Permission.CAN_CREATE_PRIVATE_NOTE,
+        Permission.CAN_UPDATE_PRIVATE_NOTE,
+        Permission.CAN_CREATE_CHECKIN_DOCUMENT,
+        Permission.CAN_VIEW_CHECKIN_DOCUMENT,
+        Permission.CAN_UPDATE_CHECKIN_DOCUMENT
     );
 
     // Add ADMIN Permissions here
