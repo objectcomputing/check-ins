@@ -138,30 +138,6 @@ exports[`renders correctly 1`] = `
         />
       </button>
     </div>
-    <div
-      class="checkbox-row"
-    >
-      <label
-        for="birthday"
-      >
-        Include Birthdays
-      </label>
-      <input
-        checked=""
-        id="birthday"
-        type="checkbox"
-      />
-      <label
-        for="anniversary"
-      >
-        Include Anniversaries
-      </label>
-      <input
-        checked=""
-        id="anniversary"
-        type="checkbox"
-      />
-    </div>
     <div>
       <div
         class="search-results"
