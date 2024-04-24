@@ -9,9 +9,9 @@
 }
 
 @media print {
-    :root {
-      --nav-width: 0px;
-    }
+  :root {
+    --nav-width: 0px;
+  }
 
   .App {
     padding-left: 0;

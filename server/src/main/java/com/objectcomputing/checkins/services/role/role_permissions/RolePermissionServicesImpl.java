@@ -6,6 +6,9 @@ import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.CacheInvalidate;
+import io.micronaut.cache.annotation.Cacheable;
 import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotBlank;
@@ -13,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
+@CacheConfig("role-permission-cache")
 public class RolePermissionServicesImpl implements RolePermissionServices {
 
     private final RolePermissionRepository rolePermissionRepository;
@@ -53,6 +57,7 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
         return roleInfo;
     }
 
+    @CacheInvalidate(all = true)
     @Override
     public RolePermission save(UUID roleId, Permission permissionId) {
         rolePermissionRepository.saveByIds(roleId.toString(), permissionId);
@@ -60,6 +65,7 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
         return saved;
     }
 
+    @CacheInvalidate(all = true)
     @Override
     public void delete(UUID roleId, Permission permissionId) {
         rolePermissionRepository.deleteByIds(roleId.toString(), permissionId);
@@ -70,6 +76,14 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
         return rolePermissionRepository.findByRoleId(roleId);
     }
 
+
+    @Cacheable
+    @Override
+    public List<RolePermission> findByRole(String role) {
+        return rolePermissionRepository.findByRole(role);
+    }
+
+    @Cacheable
     @Override
     public List<Permission> findUserPermissions(@NotBlank UUID id) {
 

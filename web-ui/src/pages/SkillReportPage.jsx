@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 
 import { AppContext } from "../context/AppContext";
 import { reportSkills } from "../api/memberskill.js";
@@ -8,15 +8,15 @@ import { sortMembersBySkill } from "../helpers/checks.js";
 import {
   selectOrderedSkills,
   selectCsrfToken,
-  selectCurrentMemberIds,
-} from "../context/selectors";
+  selectCurrentMemberIds
+} from '../context/selectors';
 
 import { Button, TextField } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import "./SkillReportPage.css";
+import './SkillReportPage.css';
 
-const SkillReportPage = (props) => {
+const SkillReportPage = props => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const skills = selectOrderedSkills(state);
@@ -27,7 +27,7 @@ const SkillReportPage = (props) => {
   const [editedSearchRequest, setEditedSearchRequest] =
     useState(searchRequestDTO);
 
-  const handleSearch = async (searchRequestDTO) => {
+  const handleSearch = async searchRequestDTO => {
     let res = await reportSkills(searchRequestDTO, csrf);
     let memberSkillsFound;
     if (res && res.payload) {
@@ -52,7 +52,7 @@ const SkillReportPage = (props) => {
     return skills.map((skill, index) => {
       let skillLevel = {
         id: skill.id,
-        level: skill.skilllevel,
+        level: skill.skilllevel
       };
       return skillLevel;
     });
@@ -65,7 +65,7 @@ const SkillReportPage = (props) => {
     let newSearchRequest = {
       skills: skills,
       members: members,
-      inclusive: inclusive,
+      inclusive: inclusive
     };
     setEditedSearchRequest(newSearchRequest);
     return newSearchRequest;
@@ -87,8 +87,8 @@ const SkillReportPage = (props) => {
           filterSelectedOptions
           value={searchSkills ? searchSkills : []}
           onChange={onSkillsChange}
-          getOptionLabel={(option) => option.name}
-          renderInput={(params) => (
+          getOptionLabel={option => option.name}
+          renderInput={params => (
             <TextField
               {...params}
               className="fullWidth"

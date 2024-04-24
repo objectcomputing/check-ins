@@ -1,16 +1,16 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 
-import AddGuildModal from "./EditGuildModal";
-import { createGuild } from "../../api/guild";
-import { AppContext } from "../../context/AppContext";
-import { ADD_GUILD } from "../../context/actions";
+import AddGuildModal from './EditGuildModal';
+import { createGuild } from '../../api/guild';
+import { AppContext } from '../../context/AppContext';
+import { ADD_GUILD } from '../../context/actions';
 
-import { Button } from "@mui/material";
-import GroupIcon from "@mui/icons-material/Group";
+import { Button } from '@mui/material';
+import GroupIcon from '@mui/icons-material/Group';
 
-import "./GuildResults.css";
+import './GuildResults.css';
 
-const displayName = "GuildsActions";
+const displayName = 'GuildsActions';
 
 const GuildsActions = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -22,7 +22,7 @@ const GuildsActions = () => {
 
   const handleClose = () => setOpen(false);
 
-  const isAdmin = userProfile?.role?.includes("ADMIN");
+  const isAdmin = userProfile?.role?.includes('ADMIN');
 
   return (
     <div className="guild-actions">
@@ -34,7 +34,7 @@ const GuildsActions = () => {
           <AddGuildModal
             open={open}
             onClose={handleClose}
-            onSave={async (guild) => {
+            onSave={async guild => {
               if (csrf) {
                 let res = await createGuild(guild, csrf);
                 let data =

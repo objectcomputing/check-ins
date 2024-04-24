@@ -1,10 +1,10 @@
-import React, { useEffect, useContext, useState } from "react";
-import MemberIcon from "./MemberIcon";
-import { AppContext } from "../../context/AppContext";
-import { getMembersByTeam, getTeamsByMember } from "../../api/team";
-import { getMember } from "../../api/member";
+import React, { useEffect, useContext, useState } from 'react';
+import MemberIcon from './MemberIcon';
+import { AppContext } from '../../context/AppContext';
+import { getMembersByTeam, getTeamsByMember } from '../../api/team';
+import { getMember } from '../../api/member';
 
-import "./TeamMember.css";
+import './TeamMember.css';
 
 const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
@@ -15,7 +15,7 @@ const TeamMemberContainer = () => {
       : undefined;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
-    imageUrl: null,
+    imageUrl: null
   });
   const [teamMembers, setTeamMembers] = useState({});
   const [teams, setTeams] = useState([]);
@@ -28,7 +28,7 @@ const TeamMemberContainer = () => {
     pdlId,
     role,
     startDate,
-    workEmail,
+    workEmail
   } = selectedProfile;
 
   const [pdl, setPDL] = useState();
@@ -40,7 +40,7 @@ const TeamMemberContainer = () => {
         let res = await getMember(pdlId, csrf);
         let pdlProfile =
           res.payload.data && !res.error ? res.payload.data : undefined;
-        setPDL(pdlProfile ? pdlProfile.name : "");
+        setPDL(pdlProfile ? pdlProfile.name : '');
       }
     }
     if (csrf) {
@@ -70,7 +70,7 @@ const TeamMemberContainer = () => {
         const teamMemberMap = Object.assign(
           {},
           ...(await Promise.all(
-            teams.map(async (team) => {
+            teams.map(async team => {
               let res = await getMembersByTeam(team.uuid, csrf);
               let data =
                 res && res.payload && res.payload.status === 200
@@ -79,7 +79,7 @@ const TeamMemberContainer = () => {
               if (data && !res.error) {
                 return {
                   [team.uuid]: await Promise.all(
-                    data.map(async (member) => {
+                    data.map(async member => {
                       let res = await getMember(member.memberid, csrf);
                       let data =
                         res &&
@@ -90,7 +90,7 @@ const TeamMemberContainer = () => {
                           : null;
                       return data;
                     })
-                  ),
+                  )
                 };
               } else {
                 return { [team.uuid]: [] };
@@ -106,8 +106,8 @@ const TeamMemberContainer = () => {
     }
   }, [csrf, teams]);
 
-  let teamProfile = (profiles) => {
-    let team = profiles.map((profile) => {
+  let teamProfile = profiles => {
+    let team = profiles.map(profile => {
       return (
         <MemberIcon
           key={`profile-${profile.workEmail}`}
@@ -121,7 +121,7 @@ const TeamMemberContainer = () => {
   };
   let team = teamProfile(currentTeam);
 
-  const mapTeams = teams.map((team) => {
+  const mapTeams = teams.map(team => {
     return (
       <div
         key={`team-${team.uuid}`}
@@ -136,32 +136,32 @@ const TeamMemberContainer = () => {
     <div>
       <div className="team-names">{mapTeams}</div>
       {name && (
-        <div className="flex-row" style={{ minWidth: "800px" }}>
+        <div className="flex-row" style={{ minWidth: '800px' }}>
           <div className="image-div">
             <img
               alt="Profile"
-              src={imageUrl ? imageUrl : "/default_profile.jpg"}
+              src={imageUrl ? imageUrl : '/default_profile.jpg'}
             />
           </div>
           <div className="team-member-info">
-            <div style={{ textAlign: "left" }}>
+            <div style={{ textAlign: 'left' }}>
               <h2 style={{ margin: 0 }}>{name}</h2>
-              <div style={{ display: "flex" }}>
-                <div style={{ marginRight: "50px", textAlign: "left" }}>
+              <div style={{ display: 'flex' }}>
+                <div style={{ marginRight: '50px', textAlign: 'left' }}>
                   <p>Role: {role}</p>
                   <p>PDL: {pdl}</p>
                   <p>Location: {location}</p>
                 </div>
                 <div>
                   <p>
-                    Start Date:{" "}
+                    Start Date:{' '}
                     {startDate && startDate.length === 3
                       ? new Date(
                           startDate[0],
                           startDate[1] - 1,
                           startDate[2]
                         ).toLocaleDateString()
-                      : ""}
+                      : ''}
                   </p>
                   <p>Email: {workEmail}</p>
                   <p>Bio: {bioText}</p>
@@ -171,7 +171,7 @@ const TeamMemberContainer = () => {
           </div>
         </div>
       )}
-      <div className="flex-row" style={{ flexWrap: "wrap" }}>
+      <div className="flex-row" style={{ flexWrap: 'wrap' }}>
         {team}
       </div>
     </div>

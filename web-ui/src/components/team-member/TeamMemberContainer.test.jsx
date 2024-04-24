@@ -1,15 +1,15 @@
-import React from "react";
-import TeamMemberContainer from "./TeamMemberContainer";
-import { AppContextProvider } from "../../context/AppContext";
+import React from 'react';
+import TeamMemberContainer from './TeamMemberContainer';
+import { AppContextProvider } from '../../context/AppContext';
 
 const testProfile = [
-  { name: "holmes", image_url: "" },
-  { name: "homie", image_url: "" },
+  { name: 'holmes', image_url: '' },
+  { name: 'homie', image_url: '' }
 ];
 
-it("renders correctly", () => {
+it('renders correctly', () => {
   snapshot(
-    <AppContextProvider >
+    <AppContextProvider>
       <TeamMemberContainer profiles={testProfile} />
     </AppContextProvider>
   );

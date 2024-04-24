@@ -1,10 +1,10 @@
-import React from "react";
-import MyAnniversary from "./MyAnniversary";
-import MyBirthday from "./MyBirthday";
+import React from 'react';
+import MyAnniversary from './MyAnniversary';
+import MyBirthday from './MyBirthday';
 
-import "./DoubleCelebration.css";
+import './DoubleCelebration.css';
 
-const DoubleCelebration = (props) => {
+const DoubleCelebration = props => {
   const { hideMyBirthday, hideMyAnniversary, me, myAnniversary } = props;
 
   return (

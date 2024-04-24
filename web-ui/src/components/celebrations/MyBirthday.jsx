@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
-import { randomConfetti } from "../../context/util";
+import { randomConfetti } from '../../context/util';
 
-import "./MyBirthday.css";
-import "./Birthdays.css";
+import './MyBirthday.css';
+import './Birthdays.css';
 
-const MyBirthday = (props) => {
+const MyBirthday = props => {
   const { me, hideMyBirthday } = props;
 
   return (

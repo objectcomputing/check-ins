@@ -1,8 +1,8 @@
-import React from "react";
-import MemberIcon from "./MemberIcon";
+import React from 'react';
+import MemberIcon from './MemberIcon';
 
-const profile = { image_url: "nope" };
+const profile = { image_url: 'nope' };
 
-it("renders correctly", () => {
+it('renders correctly', () => {
   snapshot(<MemberIcon profile={profile} />);
 });

@@ -1,14 +1,14 @@
-import React, { useContext, useState, useEffect, useCallback } from "react";
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 
-import { AppContext } from "../../context/AppContext";
+import { AppContext } from '../../context/AppContext';
 import {
   selectCurrentUser,
-  selectCurrentMembers,
-} from "../../context/selectors";
+  selectCurrentMembers
+} from '../../context/selectors';
 
-import { Button, Modal, TextField } from "@mui/material";
+import { Button, Modal, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import "./EditGuildModal.css";
+import './EditGuildModal.css';
 
 const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
@@ -19,8 +19,8 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   const guildMembers = guild?.guildMembers;
 
   const findExistingMember = useCallback(
-    (member) =>
-      guildMembers?.find((current) => current.memberId === member.memberId),
+    member =>
+      guildMembers?.find(current => current.memberId === member.memberId),
     [guildMembers]
   );
 
@@ -33,7 +33,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
       currentUser?.id &&
       (editedGuild.guildMembers === undefined ||
         editedGuild.guildMembers.length === 0 ||
-        editedGuild.guildMembers.filter((member) => member.lead === true)
+        editedGuild.guildMembers.filter(member => member.lead === true)
           .length === 0)
     ) {
       setGuild({
@@ -41,7 +41,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
         guildMembers: [
           ...new Set(
             editedGuild?.guildMembers?.filter(
-              (member) =>
+              member =>
                 member.lead === false && member.memberId !== currentUser.id
             )
           ),
@@ -50,9 +50,9 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
             name: `${currentUser.firstName} ${currentUser.lastName}`,
             memberId: currentUser.id,
             guildId: editedGuild.id,
-            lead: true,
-          },
-        ],
+            lead: true
+          }
+        ]
       });
     }
   }, [editedGuild, currentUser, findExistingMember]);
@@ -60,82 +60,83 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   useEffect(() => {
     if (!editedGuild || !editedGuild.guildMembers || !currentMembers) return;
     let guildMemberNames = editedGuild.guildMembers.map(
-      (guildMember) => guildMember.name
+      guildMember => guildMember.name
     );
     setGuildMemberOptions(
-      currentMembers.filter((member) => !guildMemberNames.includes(member.name))
+      currentMembers.filter(member => !guildMemberNames.includes(member.name))
     );
   }, [currentMembers, editedGuild]);
 
   const onLeadsChange = (event, newValue) => {
     let extantMembers =
       editedGuild && editedGuild.guildMembers
-        ? editedGuild.guildMembers.filter((guildMember) => !guildMember.lead)
+        ? editedGuild.guildMembers.filter(guildMember => !guildMember.lead)
         : [];
-    newValue = newValue.map((newLead) => ({
+    newValue = newValue.map(newLead => ({
       id: newLead.memberId ? newLead.id : undefined,
       name: newLead.name,
       memberId: newLead.memberId ? newLead.memberId : newLead.id,
       guildId: editedGuild.id,
-      lead: true,
+      lead: true
     }));
-    newValue.forEach((newLead) => {
+    newValue.forEach(newLead => {
       extantMembers = extantMembers.filter(
-        (member) => member.memberId !== newLead.memberId
+        member => member.memberId !== newLead.memberId
       );
     });
     extantMembers = [...new Set(extantMembers)];
     newValue = [...new Set(newValue)];
     setGuild({
       ...editedGuild,
-      guildMembers: [...extantMembers, ...newValue].map((member) => {
+      guildMembers: [...extantMembers, ...newValue].map(member => {
         const existing = findExistingMember(member);
         if (existing) {
           return { ...member, id: existing.id };
         } else {
           return member;
         }
-      }),
+      })
     });
   };
 
   const onGuildMembersChange = (event, newValue) => {
     let extantLeads =
       editedGuild && editedGuild.guildMembers
-        ? editedGuild.guildMembers.filter((guildMember) => guildMember.lead)
+        ? editedGuild.guildMembers.filter(guildMember => guildMember.lead)
         : [];
-    newValue = newValue.map((newMember) => ({
+    newValue = newValue.map(newMember => ({
       id: newMember.memberId ? newMember.id : undefined,
       name: newMember.name,
       memberId: newMember.memberId ? newMember.memberId : newMember.id,
       guildId: editedGuild.id,
-      lead: false,
+      lead: false
     }));
-    newValue.forEach((newMember) => {
+    newValue.forEach(newMember => {
       extantLeads = extantLeads.filter(
-        (lead) => lead.memberId !== newMember.memberId
+        lead => lead.memberId !== newMember.memberId
       );
     });
     extantLeads = [...new Set(extantLeads)];
     newValue = [...new Set(newValue)];
     setGuild({
       ...editedGuild,
-      guildMembers: [...extantLeads, ...newValue].map((member) => {
+      guildMembers: [...extantLeads, ...newValue].map(member => {
         const existing = findExistingMember(member);
         if (existing) {
           return { ...member, id: existing.id };
         } else {
           return member;
         }
-      }),
+      })
     });
   };
 
-  const readyToEdit = (guild) => {
+  const readyToEdit = guild => {
     let numLeads = 0;
     if (guild && guild.guildMembers) {
-      numLeads = guild.guildMembers.filter((guildMember) => guildMember.lead)
-        .length;
+      numLeads = guild.guildMembers.filter(
+        guildMember => guildMember.lead
+      ).length;
     }
     return guild.name && numLeads > 0;
   };
@@ -155,16 +156,16 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           required
           className="halfWidth"
           placeholder="Awesome Guild"
-          value={editedGuild.name ? editedGuild.name : ""}
-          onChange={(e) => setGuild({ ...editedGuild, name: e.target.value })}
+          value={editedGuild.name ? editedGuild.name : ''}
+          onChange={e => setGuild({ ...editedGuild, name: e.target.value })}
         />
         <TextField
           id="guild-description-input"
           label="Description"
           className="fullWidth"
           placeholder="What do they do?"
-          value={editedGuild.description ? editedGuild.description : ""}
-          onChange={(e) =>
+          value={editedGuild.description ? editedGuild.description : ''}
+          onChange={e =>
             setGuild({ ...editedGuild, description: e.target.value })
           }
         />
@@ -173,10 +174,8 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           label="Link to Compass Page"
           className="fullWidth"
           placeholder="https://www.compass.objectcomputing.com/guilds/..."
-          value={editedGuild.link ? editedGuild.link: ""}
-          onChange={(e) =>
-            setGuild({ ...editedGuild, link: e.target.value })
-          }
+          value={editedGuild.link ? editedGuild.link : ''}
+          onChange={e => setGuild({ ...editedGuild, link: e.target.value })}
         />
         <Autocomplete
           id="guildLeadSelect"
@@ -185,14 +184,12 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           required
           value={
             editedGuild.guildMembers
-              ? editedGuild.guildMembers.filter(
-                  (guildMember) => guildMember.lead
-                )
+              ? editedGuild.guildMembers.filter(guildMember => guildMember.lead)
               : []
           }
           onChange={onLeadsChange}
-          getOptionLabel={(option) => option.name}
-          renderInput={(params) => (
+          getOptionLabel={option => option.name}
+          renderInput={params => (
             <TextField
               {...params}
               className="fullWidth"
@@ -207,16 +204,16 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           value={
             editedGuild.guildMembers
               ? editedGuild.guildMembers.filter(
-                  (guildMember) => !guildMember.lead
+                  guildMember => !guildMember.lead
                 )
               : []
           }
           onChange={onGuildMembersChange}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={option => option.name}
           isOptionEqualToValue={(option, value) =>
             value ? value.id === option.id : false
           }
-          renderInput={(params) => (
+          renderInput={params => (
             <TextField
               {...params}
               className="fullWidth"

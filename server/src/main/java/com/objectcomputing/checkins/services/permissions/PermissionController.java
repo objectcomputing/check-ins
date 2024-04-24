@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.permissions;
 
-;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;

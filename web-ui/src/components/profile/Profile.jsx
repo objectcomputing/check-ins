@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Avatar, Typography } from "@mui/material";
-import { AppContext } from "../../context/AppContext";
-import { selectProfileMap } from "../../context/selectors";
-import { getAvatarURL } from "../../api/api.js";
-import { getMember } from "../../api/member";
+import { Avatar, Typography } from '@mui/material';
+import { AppContext } from '../../context/AppContext';
+import { selectProfileMap } from '../../context/selectors';
+import { getAvatarURL } from '../../api/api.js';
+import { getMember } from '../../api/member';
 
 const PREFIX = 'Profile';
 
@@ -19,36 +19,36 @@ const classes = {
 
 const Root = styled('div')(() => ({
   [`& .${classes.profileInfo}`]: {
-    display: "flex",
-    flexDirection: "row",
-    margin: "14px",
+    display: 'flex',
+    flexDirection: 'row',
+    margin: '14px'
   },
   [`& .${classes.profileImage}`]: {
-    marginRight: "20px",
-    marginTop: "10px",
-    marginBottom: "10px",
-    cursor: "pointer",
-    width: "160px",
-    height: "160px",
+    marginRight: '20px',
+    marginTop: '10px',
+    marginBottom: '10px',
+    cursor: 'pointer',
+    width: '160px',
+    height: '160px'
   },
   [`&.${classes.flexRow}`]: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: "16px",
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: '16px'
   },
   [`& .${classes.header}`]: {
-    display: "flex",
-    flexDirection: "row",
-    marginBottom: "16px",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'row',
+    marginBottom: '16px',
+    alignItems: 'center'
   },
   [`& .${classes.title}`]: {
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column'
   },
   [`& .${classes.smallAvatar}`]: {
-    marginRight: "16px",
+    marginRight: '16px'
   }
 }));
 
@@ -61,9 +61,9 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
     ? userProfile
     : {};
 
-  const [pdl, setPDL] = useState("");
-  const [checkinPdl, setCheckinPdl] = useState("");
-  const [supervisor, setSupervisor] = useState("");
+  const [pdl, setPDL] = useState('');
+  const [checkinPdl, setCheckinPdl] = useState('');
+  const [supervisor, setSupervisor] = useState('');
 
   const areSamePdls = checkinPdl && pdl && checkinPdl === pdl;
 
@@ -74,7 +74,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
         let res = await getMember(pdlId, csrf);
         let pdlProfile =
           res.payload.data && !res.error ? res.payload.data : undefined;
-        setPDL(pdlProfile ? pdlProfile.name : "");
+        setPDL(pdlProfile ? pdlProfile.name : '');
       }
     }
     if (csrf) {
@@ -89,7 +89,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
         let res = await getMember(checkinPdlId, csrf);
         let checkinPdlProfile =
           res.payload.data && !res.error ? res.payload.data : undefined;
-        setCheckinPdl(checkinPdlProfile ? checkinPdlProfile.name : "");
+        setCheckinPdl(checkinPdlProfile ? checkinPdlProfile.name : '');
       }
     }
     if (csrf) {
@@ -104,7 +104,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
         let res = await getMember(supervisorid, csrf);
         let supervisorProfile =
           res.payload.data && !res.error ? res.payload.data : undefined;
-        setSupervisor(supervisorProfile ? supervisorProfile.name : "");
+        setSupervisor(supervisorProfile ? supervisorProfile.name : '');
       }
     }
     if (csrf) {

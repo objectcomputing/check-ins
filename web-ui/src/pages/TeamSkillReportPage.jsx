@@ -18,9 +18,10 @@ import { Button, TextField } from "@mui/material";
 
 import Autocomplete from "@mui/material/Autocomplete";
 
-import "./TeamSkillReportPage.css";
-import MemberSelector from "../components/member_selector/MemberSelector";
-import Typography from "@mui/material/Typography";
+import './TeamSkillReportPage.css';
+import MemberSelector from '../components/member_selector/MemberSelector';
+import Typography from '@mui/material/Typography';
+import MemberSkillRadar from '../components/member_skill_radar/MemberSkillRadar.jsx';
 
 const TeamSkillReportPage = () => {
   const { state } = useContext(AppContext);
@@ -36,7 +37,7 @@ const TeamSkillReportPage = () => {
   const [editedSearchRequest, setEditedSearchRequest] = useState([]);
   const [showRadar, setShowRadar] = useState(false);
 
-  const handleSearch = async (searchRequestDTO) => {
+  const handleSearch = async searchRequestDTO => {
     let res = await reportSkills(searchRequestDTO, csrf);
     let memberSkillsFound;
     if (res && res.payload) {
@@ -60,10 +61,10 @@ const TeamSkillReportPage = () => {
   };
 
   function skillsToSkillLevel(skills) {
-    return skills.map((skill) => {
+    return skills.map(skill => {
       return {
         id: skill.id,
-        level: skill.skilllevel,
+        level: skill.skilllevel
       };
     });
   }
@@ -71,7 +72,7 @@ const TeamSkillReportPage = () => {
   function createRequest(editedSearchRequest) {
     let newSearchRequest = {
       skills: skillsToSkillLevel(searchSkills),
-      members: [],
+      members: []
     };
     setEditedSearchRequest(newSearchRequest);
     return newSearchRequest;
@@ -84,10 +85,10 @@ const TeamSkillReportPage = () => {
 
   const skillMap = {};
 
-  const selectedMembersCopy = selectedMembers.map((member) => ({ ...member }));
-  let searchResultsCopy = searchResults.map((result) => ({ ...result }));
-  const filteredResults = searchResultsCopy.filter((result) => {
-    return selectedMembersCopy.some((member) => {
+  const selectedMembersCopy = selectedMembers.map(member => ({ ...member }));
+  let searchResultsCopy = searchResults.map(result => ({ ...result }));
+  const filteredResults = searchResultsCopy.filter(result => {
+    return selectedMembersCopy.some(member => {
       return result.name === member.name;
     });
   });
@@ -129,23 +130,22 @@ const TeamSkillReportPage = () => {
       <MemberSelector
         className="team-skill-member-selector"
         listHeight={300}
-        onChange={(selected) => setSelectedMembers(selected)}
+        onChange={selected => setSelectedMembers(selected)}
       />
       <div className="select-skills-section">
         <Autocomplete
           id="skillSelect"
           multiple
           options={skills.filter(
-            (skill) =>
-              !searchSkills.map((sSkill) => sSkill.id).includes(skill.id)
+            skill => !searchSkills.map(sSkill => sSkill.id).includes(skill.id)
           )}
           value={searchSkills ? searchSkills : []}
           onChange={onSkillsChange}
           isOptionEqualToValue={(option, value) =>
             value ? value.id === option.id : false
           }
-          getOptionLabel={(option) => option.name}
-          renderInput={(params) => (
+          getOptionLabel={option => option.name}
+          renderInput={params => (
             <TextField
               {...params}
               className="fullWidth"
@@ -160,9 +160,9 @@ const TeamSkillReportPage = () => {
               window.snackDispatch({
                 type: UPDATE_TOAST,
                 payload: {
-                  severity: "error",
-                  toast: "Must select a skill",
-                },
+                  severity: 'error',
+                  toast: 'Must select a skill'
+                }
               });
               return;
             }
@@ -175,10 +175,10 @@ const TeamSkillReportPage = () => {
       </div>
       {showRadar && (
         <div>
-          <div style={{ height: "400px" }}>
-            <MyResponsiveRadar
+          <div style={{ height: '400px' }}>
+            <MemberSkillRadar
               data={chartData || []}
-              selectedMembers={selectedMembers}
+              members={selectedMembers}
             />
           </div>
           <div className="search-results">

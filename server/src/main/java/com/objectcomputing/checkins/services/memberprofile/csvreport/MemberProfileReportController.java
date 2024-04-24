@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
-;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;

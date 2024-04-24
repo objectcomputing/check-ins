@@ -1,18 +1,18 @@
-import React from "react";
-import Feelings from "./Feelings";
-import { render, screen, fireEvent } from "@testing-library/react";
+import React from 'react';
+import Feelings from './Feelings';
+import { render, screen, fireEvent } from '@testing-library/react';
 
-it("renders correctly", () => {
+it('renders correctly', () => {
   snapshot(<Feelings />);
 });
 
-const message = "le test";
+const message = 'le test';
 
-it("renders message correctly", () => {
+it('renders message correctly', () => {
   snapshot(<Feelings message={message} />);
 });
 
-it("calls onSelect correctly", () => {
+it('calls onSelect correctly', () => {
   const onSelect = vi.fn();
   render(<Feelings onSelect={onSelect} />);
 

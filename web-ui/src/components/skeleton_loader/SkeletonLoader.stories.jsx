@@ -1,44 +1,41 @@
 import React from 'react';
 import SkeletonLoader from './SkeletonLoader';
 
-
 export default {
   component: SkeletonLoader,
-  title: 'Check Ins/SkeletonLoader',
-}
+  title: 'Check Ins/SkeletonLoader'
+};
 
-const Template = (args) => {
+const Template = args => {
   return <SkeletonLoader {...args} />;
-}
+};
 
 export const TeamLoader = Template.bind({});
 TeamLoader.args = {
-    type: "team",
-}
+  type: 'team'
+};
 
 export const GuildLoader = Template.bind({});
 GuildLoader.args = {
-  type: "guild",
-}
+  type: 'guild'
+};
 
 export const PeopleLoader = Template.bind({});
 PeopleLoader.args = {
-    type: "people",
-}
+  type: 'people'
+};
 
 export const FeedbackRequestLoader = Template.bind({});
 FeedbackRequestLoader.args = {
-    type: "feedback_requests",
-}
+  type: 'feedback_requests'
+};
 
 export const RecievedRequestLoader = Template.bind({});
 RecievedRequestLoader.args = {
-    type: "received_requests",
-}
+  type: 'received_requests'
+};
 
 export const FeedbackResponsesLoader = Template.bind({});
 FeedbackResponsesLoader.args = {
-    type: "view_feedback_responses",
-}
-
-
+  type: 'view_feedback_responses'
+};

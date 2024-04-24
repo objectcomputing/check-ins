@@ -4,7 +4,7 @@
  * @returns a boolean
  */
 
-export const isArrayPresent = (arr) => Array.isArray(arr) && arr.length;
+export const isArrayPresent = arr => Array.isArray(arr) && arr.length;
 
 /**
  * If a parameter is found in an object within an array, return the array with just that object.
@@ -17,8 +17,8 @@ export const isArrayPresent = (arr) => Array.isArray(arr) && arr.length;
 export function filterObjectByValOrKey(arr, value, key) {
   return arr.filter(
     key
-      ? (a) => a[key].indexOf(value) > -1
-      : (a) => Object.keys(a).some((k) => a[k] === value)
+      ? a => a[key].indexOf(value) > -1
+      : a => Object.keys(a).some(k => a[k] === value)
   );
 }
 

@@ -81,6 +81,7 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
         List<String> rolesAsString = userRoles.stream().map(Role::getRole).collect(Collectors.toList());
 
         Map<String, Object> attributes = new HashMap<>();
+        attributes.put("roles", rolesAsString);
         attributes.put("permissions", permissionsAsString);
         attributes.put("email", memberProfile.getWorkEmail());
 

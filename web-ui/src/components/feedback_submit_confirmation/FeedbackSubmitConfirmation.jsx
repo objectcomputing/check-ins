@@ -1,30 +1,35 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import Typography from "@mui/material/Typography";
+import Typography from '@mui/material/Typography';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import {selectCsrfToken, selectCurrentUser, selectProfile} from "../../context/selectors";
-import { AppContext } from "../../context/AppContext";
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectProfile
+} from '../../context/selectors';
+import { AppContext } from '../../context/AppContext';
 import { useLocation } from 'react-router-dom';
 import queryString from 'query-string';
-import "./FeedbackSubmitConfirmation.css";
-import { green } from "@mui/material/colors";
-import {getFeedbackRequestById} from "../../api/feedback";
+import './FeedbackSubmitConfirmation.css';
+import { green } from '@mui/material/colors';
+import { getFeedbackRequestById } from '../../api/feedback';
 
 const PREFIX = 'FeedbackSubmitConfirmation';
 const classes = {
-  announcement: `${PREFIX}-announcement`,
+  announcement: `${PREFIX}-announcement`
 };
 
 const Root = styled('div')({
   [`& .${classes.announcement}`]: {
-    textAlign: "center",
-    ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
-      fontSize: "x-large",
-    },
-  },
+    textAlign: 'center',
+    ['@media (max-width:820px)']: {
+      // eslint-disable-line no-useless-computed-key
+      fontSize: 'x-large'
+    }
+  }
 });
 
-const FeedbackSubmitConfirmation = (props) => {
+const FeedbackSubmitConfirmation = props => {
   const { state } = useContext(AppContext);
   const location = useLocation();
   const query = queryString.parse(location?.search);
@@ -34,7 +39,7 @@ const FeedbackSubmitConfirmation = (props) => {
   const [feedbackRequest, setFeedbackRequest] = useState(null);
   const feedbackRequestFetched = useRef(false);
 
-  const [requestee, setRequestee] = useState(null)
+  const [requestee, setRequestee] = useState(null);
 
   useEffect(() => {
     async function getFeedbackRequest(cookie) {
@@ -44,17 +49,21 @@ const FeedbackSubmitConfirmation = (props) => {
 
       // make call to the API
       let res = await getFeedbackRequestById(requestQuery, cookie);
-      return (
-        res.payload &&
+      return res.payload &&
         res.payload.data &&
         res.payload.status === 200 &&
-        !res.error)
+        !res.error
         ? res.payload.data
         : null;
     }
 
-    if (csrf && currentUserId && requestQuery && !feedbackRequestFetched.current) {
-      getFeedbackRequest(csrf).then((request) => {
+    if (
+      csrf &&
+      currentUserId &&
+      requestQuery &&
+      !feedbackRequestFetched.current
+    ) {
+      getFeedbackRequest(csrf).then(request => {
         if (request) {
           setFeedbackRequest(request);
         }
@@ -68,17 +77,24 @@ const FeedbackSubmitConfirmation = (props) => {
     }
 
     if (feedbackRequestFetched.current) {
-      const requesteeProfile = selectProfile(state, feedbackRequest?.requesteeId);
+      const requesteeProfile = selectProfile(
+        state,
+        feedbackRequest?.requesteeId
+      );
       setRequestee(requesteeProfile);
     }
   }, [feedbackRequest, state]);
 
   return (
     <Root className="submit-confirmation">
-      <CheckCircleIcon style={{ color: green[500], fontSize: '40vh' }}>checkmark-image</CheckCircleIcon>
-      <Typography className={classes.announcement} variant="h3">Thank you for your feedback on <b>{requestee?.name}</b></Typography>
+      <CheckCircleIcon style={{ color: green[500], fontSize: '40vh' }}>
+        checkmark-image
+      </CheckCircleIcon>
+      <Typography className={classes.announcement} variant="h3">
+        Thank you for your feedback on <b>{requestee?.name}</b>
+      </Typography>
     </Root>
   );
-}
+};
 
 export default FeedbackSubmitConfirmation;

@@ -15,5 +15,7 @@ public interface RolePermissionServices {
 
   List<RolePermission> findByRoleId(UUID roleId);
 
+  List<RolePermission> findByRole(String role);
+
   List<Permission> findUserPermissions(@NotBlank UUID id);
 }

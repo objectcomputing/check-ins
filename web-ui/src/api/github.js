@@ -1,15 +1,19 @@
-import { resolve } from "./api.js";
+import { resolve } from './api.js';
 
 const githubURL = `/services/github-issue`;
 
 export const newGitHubIssue = async (body, title, cookie) => {
   return resolve({
-    method: "POST",
+    method: 'POST',
     url: githubURL,
     data: {
       body: body,
-      title: title,
+      title: title
     },
-    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };

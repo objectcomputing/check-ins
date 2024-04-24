@@ -33,4 +33,7 @@ public interface RolePermissionRepository extends CrudRepository<RolePermission,
     List<RolePermission> findAll();
 
     List<RolePermission> findByRoleId(UUID roleId);
+
+    @Query("SELECT * FROM role_permissions rp_ INNER JOIN role r_ ON rp_.roleid = r_.id WHERE role = :role")
+    List<RolePermission> findByRole(String role);
 }

@@ -13,7 +13,6 @@ import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 
 import java.net.URI;
