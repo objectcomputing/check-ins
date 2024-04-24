@@ -1,6 +1,8 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from 'react';
 import {
-  Alert, Avatar, AvatarGroup,
+  Alert,
+  Avatar,
+  AvatarGroup,
   Button,
   Card,
   CardActions,
@@ -10,36 +12,44 @@ import {
   Step,
   StepLabel,
   Stepper,
-  TextField, Tooltip,
-  Typography,
-} from "@mui/material";
-import {styled} from "@mui/material/styles";
-import LeftArrowIcon from "@mui/icons-material/KeyboardArrowLeft";
-import RightArrowIcon from "@mui/icons-material/KeyboardArrowRight";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import SendIcon from "@mui/icons-material/Send";
-import EditIcon from "@mui/icons-material/Edit";
-import CheckIcon from "@mui/icons-material/CheckCircle";
-import {AppContext} from "../context/AppContext";
-import mjml2html from "mjml-browser";
-import ReactHtmlParser from "react-html-parser";
-import {UPDATE_TOAST} from "../context/actions";
-import {sendEmail} from "../api/notifications";
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import LeftArrowIcon from '@mui/icons-material/KeyboardArrowLeft';
+import RightArrowIcon from '@mui/icons-material/KeyboardArrowRight';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import SendIcon from '@mui/icons-material/Send';
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/CheckCircle';
+import { AppContext } from '../context/AppContext';
+import mjml2html from 'mjml-browser';
+import ReactHtmlParser from 'react-html-parser';
+import { UPDATE_TOAST } from '../context/actions';
+import { sendEmail } from '../api/notifications';
 
-import "./EmailPage.css";
-import {getAvatarURL} from "../api/api";
-import MemberSelector from "../components/member_selector/MemberSelector.jsx";
-import {selectCsrfToken} from "../context/selectors.js";
+import './EmailPage.css';
+import { getAvatarURL } from '../api/api';
+import MemberSelector from '../components/member_selector/MemberSelector.jsx';
+import { selectCsrfToken } from '../context/selectors.js';
 
-const Root = styled("div")({
-  margin: "2rem"
+const Root = styled('div')({
+  margin: '2rem'
 });
 
-const ChooseEmailFormatStep = ({ emailFormat, onEmailFormatChange, emailContents, emailSent }) => {
+const ChooseEmailFormatStep = ({
+  emailFormat,
+  onEmailFormatChange,
+  emailContents,
+  emailSent
+}) => {
+  const [formatDialog, setFormatDialog] = useState({
+    open: false,
+    format: null
+  });
 
-  const [formatDialog, setFormatDialog] = useState({open: false, format: null});
-
-  const handleFormatButtonClick = (format) => {
+  const handleFormatButtonClick = format => {
     // Do nothing if the same button is clicked again
     if (format === emailFormat) {
       return;
@@ -47,58 +57,106 @@ const ChooseEmailFormatStep = ({ emailFormat, onEmailFormatChange, emailContents
 
     // If the user tries to change the email format after composing an email, warn with dialog
     if (emailFormat && emailContents.length > 0 && format !== emailFormat) {
-      setFormatDialog({open: true, format: format});
+      setFormatDialog({ open: true, format: format });
     } else {
       onEmailFormatChange(format);
     }
-  }
+  };
 
   return (
     <>
       <div className="email-format-container">
         <Button
           className="email-format-button"
-          style={emailFormat === "file" ? { borderColor: "green", backgroundColor: "#f7fff7" } : {}}
+          style={
+            emailFormat === 'file'
+              ? { borderColor: 'green', backgroundColor: '#f7fff7' }
+              : {}
+          }
           disabled={emailSent}
-          onClick={() => handleFormatButtonClick("file")}>
+          onClick={() => handleFormatButtonClick('file')}
+        >
           <div className="email-format-button-content">
-            {emailFormat === "file" &&
-              <CheckIcon style={{ position: "absolute", right: "1rem", top: "1rem", color: "green" }}/>
-            }
-            <UploadFileIcon sx={{ fontSize: "80px", marginBottom: "1rem" }}/>
-            <Typography variant="h6" fontWeight="bold">MJML File</Typography>
-            <Typography variant="body2" color="gray">Create an email with a custom format using MJML</Typography>
+            {emailFormat === 'file' && (
+              <CheckIcon
+                style={{
+                  position: 'absolute',
+                  right: '1rem',
+                  top: '1rem',
+                  color: 'green'
+                }}
+              />
+            )}
+            <UploadFileIcon sx={{ fontSize: '80px', marginBottom: '1rem' }} />
+            <Typography variant="h6" fontWeight="bold">
+              MJML File
+            </Typography>
+            <Typography variant="body2" color="gray">
+              Create an email with a custom format using MJML
+            </Typography>
           </div>
         </Button>
         <Button
           className="email-format-button"
-          style={emailFormat === "text" ? { borderColor: "green", backgroundColor: "#f7fff7" } : {}}
+          style={
+            emailFormat === 'text'
+              ? { borderColor: 'green', backgroundColor: '#f7fff7' }
+              : {}
+          }
           disabled={emailSent}
-          onClick={() => handleFormatButtonClick("text")}>
+          onClick={() => handleFormatButtonClick('text')}
+        >
           <div className="email-format-button-content">
-            {emailFormat === "text" &&
-              <CheckIcon style={{position: "absolute", right: "1rem", top: "1rem", color: "green"}}/>
-            }
-            <EditIcon sx={{ fontSize: "80px", marginBottom: "1rem" }} />
-            <Typography variant="h6" fontWeight="bold">Text</Typography>
-            <Typography variant="body2" color="gray">Write a simple email with no formatting</Typography>
+            {emailFormat === 'text' && (
+              <CheckIcon
+                style={{
+                  position: 'absolute',
+                  right: '1rem',
+                  top: '1rem',
+                  color: 'green'
+                }}
+              />
+            )}
+            <EditIcon sx={{ fontSize: '80px', marginBottom: '1rem' }} />
+            <Typography variant="h6" fontWeight="bold">
+              Text
+            </Typography>
+            <Typography variant="body2" color="gray">
+              Write a simple email with no formatting
+            </Typography>
           </div>
         </Button>
       </div>
       <Modal open={formatDialog.open}>
         <Card className="change-email-format-confirmation-dialog">
-          <CardHeader title={<Typography variant="h5" fontWeight="bold">Change Email Format</Typography>}/>
+          <CardHeader
+            title={
+              <Typography variant="h5" fontWeight="bold">
+                Change Email Format
+              </Typography>
+            }
+          />
           <CardContent>
-            <Typography>You are attempting to change the format of this email, but you have already written a draft in the following step. Changing the format will reset this draft.</Typography>
+            <Typography>
+              You are attempting to change the format of this email, but you
+              have already written a draft in the following step. Changing the
+              format will reset this draft.
+            </Typography>
           </CardContent>
           <CardActions>
-            <Button style={{ color: "gray" }} onClick={() => setFormatDialog({open: false, format: null})}>
+            <Button
+              style={{ color: 'gray' }}
+              onClick={() => setFormatDialog({ open: false, format: null })}
+            >
               Cancel
             </Button>
-            <Button color="secondary" onClick={() => {
-              onEmailFormatChange(formatDialog.format);
-              setFormatDialog({open: false, format: null});
-            }}>
+            <Button
+              color="secondary"
+              onClick={() => {
+                onEmailFormatChange(formatDialog.format);
+                setFormatDialog({ open: false, format: null });
+              }}
+            >
               Discard Email Draft
             </Button>
           </CardActions>
@@ -106,41 +164,48 @@ const ChooseEmailFormatStep = ({ emailFormat, onEmailFormatChange, emailContents
       </Modal>
     </>
   );
-}
+};
 
-const ComposeEmailStep = ({ emailFormat, emailContents, emailSubject, onSubjectChange, onEmailContentsChange, emailSent }) => {
-
+const ComposeEmailStep = ({
+  emailFormat,
+  emailContents,
+  emailSubject,
+  onSubjectChange,
+  onEmailContentsChange,
+  emailSent
+}) => {
   const [emailPreview, setEmailPreview] = useState(null);
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = event => {
     if (event.target.files && event.target.files[0]) {
       const fileReader = new FileReader();
-      fileReader.onload = (e) => {
+      fileReader.onload = e => {
         const mjmlContent = e.target.result.toString();
         const { html } = mjml2html(mjmlContent);
         onEmailContentsChange(html);
-      }
+      };
 
       const file = event.target.files[0];
       fileReader.readAsText(file);
     }
-  }
+  };
 
   useEffect(() => {
-    if (emailContents && emailFormat === "file") {
+    if (emailContents && emailFormat === 'file') {
       const preview = ReactHtmlParser(emailContents);
       setEmailPreview(preview);
     }
   }, [emailFormat, emailContents]);
 
-  if (emailFormat === "file") {
+  if (emailFormat === 'file') {
     return (
       <>
         <div className="email-subject-container">
           <Typography
             variant="body1"
             fontWeight="bold"
-            style={{marginRight: "1rem", marginTop: "6px"}}>
+            style={{ marginRight: '1rem', marginTop: '6px' }}
+          >
             Subject:
           </Typography>
           <TextField
@@ -148,23 +213,28 @@ const ComposeEmailStep = ({ emailFormat, emailContents, emailSubject, onSubjectC
             placeholder="Write a subject for the email"
             disabled={emailSent}
             value={emailSubject}
-            onChange={(event) => {
+            onChange={event => {
               onSubjectChange(event.target.value);
             }}
           />
         </div>
 
-        {emailContents
-          ? emailPreview
-          : <>
-            <Typography variant="body1">Select a MJML file to render the email. The file must have a .mjml extension.</Typography>
+        {emailContents ? (
+          emailPreview
+        ) : (
+          <>
+            <Typography variant="body1">
+              Select a MJML file to render the email. The file must have a .mjml
+              extension.
+            </Typography>
             <Button
               variant="contained"
               component="label"
-              startIcon={<UploadFileIcon/>}
-              style={{ marginBottom: "2rem" }}
+              startIcon={<UploadFileIcon />}
+              style={{ marginBottom: '2rem' }}
               disableElevation
-              disabled={emailSent}>
+              disabled={emailSent}
+            >
               Choose File
               <input
                 type="file"
@@ -177,17 +247,18 @@ const ComposeEmailStep = ({ emailFormat, emailContents, emailSubject, onSubjectC
               <Typography variant="h6">Preview not available</Typography>
             </div>
           </>
-        }
+        )}
       </>
     );
-  } else if (emailFormat === "text") {
+  } else if (emailFormat === 'text') {
     return (
       <>
         <div className="email-subject-container">
           <Typography
             variant="body1"
             fontWeight="bold"
-            style={{marginRight: "1rem", marginTop: "6px"}}>
+            style={{ marginRight: '1rem', marginTop: '6px' }}
+          >
             Subject:
           </Typography>
           <TextField
@@ -195,7 +266,7 @@ const ComposeEmailStep = ({ emailFormat, emailContents, emailSubject, onSubjectC
             placeholder="Write a subject for the email"
             disabled={emailSent}
             value={emailSubject}
-            onChange={(event) => {
+            onChange={event => {
               onSubjectChange(event.target.value);
             }}
           />
@@ -208,31 +279,42 @@ const ComposeEmailStep = ({ emailFormat, emailContents, emailSubject, onSubjectC
           maxRows={20}
           placeholder="Write your email here..."
           value={emailContents}
-          onChange={(event) => onEmailContentsChange(event.target.value)}
+          onChange={event => onEmailContentsChange(event.target.value)}
         />
       </>
     );
   }
 
-  return <></>
-}
+  return <></>;
+};
 
-const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, recipients, onRecipientsChange, emailSent }) => {
-
+const SelectRecipientsStep = ({
+  testEmail,
+  onTestEmailChange,
+  onSendTestEmail,
+  recipients,
+  onRecipientsChange,
+  emailSent
+}) => {
   const [emailError, setEmailError] = useState(false);
 
   const handleSendButtonClick = () => {
-    let regEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/
+    let regEmail =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/;
     if (!regEmail.test(testEmail)) {
       setEmailError(true);
     } else {
       onSendTestEmail(testEmail);
     }
-  }
+  };
 
   return (
     <>
-      <Typography variant="body1">To test this email and see how it will appear in an inbox, you can send it to an email address you have access to. If you are satisfied with this email, then select recipients from the list below.</Typography>
+      <Typography variant="body1">
+        To test this email and see how it will appear in an inbox, you can send
+        it to an email address you have access to. If you are satisfied with
+        this email, then select recipients from the list below.
+      </Typography>
       <div className="send-test-email-container">
         <TextField
           className="send-test-email-input"
@@ -241,20 +323,20 @@ const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, r
           variant="outlined"
           value={testEmail}
           error={emailError}
-          helperText={emailError ? "Invalid email address" : ""}
-          onChange={(event) => {
+          helperText={emailError ? 'Invalid email address' : ''}
+          onChange={event => {
             onTestEmailChange(event.target.value);
             setEmailError(false);
           }}
           InputProps={{
-            style: {borderTopRightRadius: 0, borderBottomRightRadius: 0}
+            style: { borderTopRightRadius: 0, borderBottomRightRadius: 0 }
           }}
         />
         <Button
           className="send-test-email-button"
           variant="contained"
           disableElevation
-          endIcon={<SendIcon/>}
+          endIcon={<SendIcon />}
           disabled={testEmail.trim().length === 0 || emailError}
           onClick={handleSendButtonClick}
         >
@@ -263,7 +345,7 @@ const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, r
       </div>
       <MemberSelector
         selected={recipients}
-        onChange={(selectedMembers) => onRecipientsChange(selectedMembers)}
+        onChange={selectedMembers => onRecipientsChange(selectedMembers)}
         title="Recipients"
         outlined
         exportable
@@ -271,40 +353,45 @@ const SelectRecipientsStep = ({ testEmail, onTestEmailChange, onSendTestEmail, r
       />
     </>
   );
-}
+};
 
 const EmailPage = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const [currentStep, setCurrentStep] = useState(0);
   const [emailFormat, setEmailFormat] = useState(null);
-  const [emailContents, setEmailContents] = useState("");
-  const [emailSubject, setEmailSubject] = useState("");
+  const [emailContents, setEmailContents] = useState('');
+  const [emailSubject, setEmailSubject] = useState('');
   const [recipients, setRecipients] = useState([]);
-  const [testEmail, setTestEmail] = useState("");
+  const [testEmail, setTestEmail] = useState('');
   const [testEmailSent, setTestEmailSent] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-  const steps = ["Choose Email Format", "Compose Email", "Select Recipients"];
+  const steps = ['Choose Email Format', 'Compose Email', 'Select Recipients'];
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentStep]);
 
   const sendTestEmail = () => {
-
     if (!emailSubject.trim() || !emailContents || !csrf) {
       return;
     }
 
-    sendEmail(`Test Email - ${emailSubject}`, emailContents, emailFormat === "file", [testEmail], csrf).then(res => {
+    sendEmail(
+      `Test Email - ${emailSubject}`,
+      emailContents,
+      emailFormat === 'file',
+      [testEmail],
+      csrf
+    ).then(res => {
       let toastMessage, toastStatus;
       if (res && res.payload && res.payload.status === 201 && !res.error) {
         setTestEmailSent(true);
-        toastStatus = "success";
+        toastStatus = 'success';
         toastMessage = `Sent a test email to ${testEmail}`;
       } else {
-        toastStatus = "error";
+        toastStatus = 'error';
         toastMessage = `Failed to send test email to ${testEmail}`;
       }
       window.snackDispatch({
@@ -315,7 +402,7 @@ const EmailPage = () => {
         }
       });
     });
-  }
+  };
 
   const sendEmailToAllRecipients = () => {
     setConfirmationDialogOpen(false);
@@ -324,17 +411,23 @@ const EmailPage = () => {
       return;
     }
 
-    const recipientEmails = recipients.map((member) => member.workEmail);
+    const recipientEmails = recipients.map(member => member.workEmail);
 
-    sendEmail(emailSubject, emailContents, emailFormat === "file", recipientEmails, csrf).then(res => {
+    sendEmail(
+      emailSubject,
+      emailContents,
+      emailFormat === 'file',
+      recipientEmails,
+      csrf
+    ).then(res => {
       let toastMessage, toastStatus;
       if (res && res.payload && res.payload.status === 201 && !res.error) {
         setEmailSent(true);
-        toastStatus = "success";
-        toastMessage = `Sent email to ${recipients.length} member${recipients.length === 1 ? "" : "s"}`;
+        toastStatus = 'success';
+        toastMessage = `Sent email to ${recipients.length} member${recipients.length === 1 ? '' : 's'}`;
       } else {
-        toastStatus = "error";
-        toastMessage = "Failed to send email";
+        toastStatus = 'error';
+        toastMessage = 'Failed to send email';
       }
       window.snackDispatch({
         type: UPDATE_TOAST,
@@ -344,7 +437,7 @@ const EmailPage = () => {
         }
       });
     });
-  }
+  };
 
   const handleNextClick = () => {
     switch (currentStep) {
@@ -358,7 +451,7 @@ const EmailPage = () => {
       default:
         console.warn(`Invalid step in stepper: ${currentStep}`);
     }
-  }
+  };
 
   const nextButtonEnabled = () => {
     switch (currentStep) {
@@ -372,9 +465,9 @@ const EmailPage = () => {
         console.warn(`Invalid step in stepper: ${currentStep}`);
         return false;
     }
-  }
+  };
 
-  const stepCompleted = (step) => {
+  const stepCompleted = step => {
     if (emailSent) {
       return true;
     }
@@ -391,7 +484,7 @@ const EmailPage = () => {
     }
 
     return false;
-  }
+  };
 
   return (
     <Root className="email-page">
@@ -403,14 +496,14 @@ const EmailPage = () => {
         ))}
       </Stepper>
       <Card className="current-step-content-card">
-        <CardHeader title={steps[currentStep]}/>
+        <CardHeader title={steps[currentStep]} />
         <CardContent>
           {currentStep === 0 && (
             <ChooseEmailFormatStep
               emailFormat={emailFormat}
-              onEmailFormatChange={(format) => {
+              onEmailFormatChange={format => {
                 setEmailFormat(format);
-                setEmailContents("");
+                setEmailContents('');
               }}
               emailContents={emailContents}
               emailSent={emailSent}
@@ -420,20 +513,20 @@ const EmailPage = () => {
             <ComposeEmailStep
               emailFormat={emailFormat}
               emailContents={emailContents}
-              onEmailContentsChange={(content) => setEmailContents(content)}
+              onEmailContentsChange={content => setEmailContents(content)}
               emailSubject={emailSubject}
-              onSubjectChange={(subject) => setEmailSubject(subject)}
+              onSubjectChange={subject => setEmailSubject(subject)}
               emailSent={emailSent}
             />
           )}
           {currentStep === 2 && (
             <SelectRecipientsStep
               testEmail={testEmail}
-              onTestEmailChange={(address) => setTestEmail(address)}
+              onTestEmailChange={address => setTestEmail(address)}
               onSendTestEmail={sendTestEmail}
               recipients={recipients}
               emailSent={emailSent}
-              onRecipientsChange={(recipients) => {
+              onRecipientsChange={recipients => {
                 setRecipients(recipients);
               }}
             />
@@ -444,52 +537,71 @@ const EmailPage = () => {
         <Button
           className="stepper-button"
           variant="outlined"
-          startIcon={<LeftArrowIcon/>}
+          startIcon={<LeftArrowIcon />}
           disabled={currentStep === 0}
           onClick={() => {
             if (currentStep > 0) {
               setCurrentStep(currentStep - 1);
             }
-          }}>
+          }}
+        >
           Back
         </Button>
         <Button
           className="stepper-button"
           variant="contained"
-          color={currentStep === steps.length - 1 ? "success" : "primary"}
-          endIcon={currentStep === steps.length - 1 ? <SendIcon/> : <RightArrowIcon/>}
+          color={currentStep === steps.length - 1 ? 'success' : 'primary'}
+          endIcon={
+            currentStep === steps.length - 1 ? <SendIcon /> : <RightArrowIcon />
+          }
           disabled={!nextButtonEnabled()}
-          onClick={handleNextClick}>
-          {currentStep === steps.length - 1 ? "Send" : "Next"}
+          onClick={handleNextClick}
+        >
+          {currentStep === steps.length - 1 ? 'Send' : 'Next'}
         </Button>
       </div>
       <Modal open={confirmationDialogOpen}>
         <Card className="send-email-to-all-confirmation-dialog">
-          <CardHeader title={<Typography variant="h5" fontWeight="bold">Send Email</Typography>}/>
+          <CardHeader
+            title={
+              <Typography variant="h5" fontWeight="bold">
+                Send Email
+              </Typography>
+            }
+          />
           <CardContent>
             <Typography variant="body1">
-              You are about to send this email to {recipients.length} member{recipients.length === 1 ? "" : "s"} in Check-Ins. Are you sure?
+              You are about to send this email to {recipients.length} member
+              {recipients.length === 1 ? '' : 's'} in Check-Ins. Are you sure?
             </Typography>
             <div className="recipient-group-container">
               <AvatarGroup max={16}>
-                {recipients.map((member) => (
+                {recipients.map(member => (
                   <Tooltip key={member.id} title={member.name} arrow>
-                    <Avatar src={getAvatarURL(member.workEmail)}/>
+                    <Avatar src={getAvatarURL(member.workEmail)} />
                   </Tooltip>
                 ))}
               </AvatarGroup>
             </div>
-            {!testEmailSent &&
-              <Alert severity="warning" style={{marginTop: "1rem"}}>
-                Caution: You have not sent a test email to check the email formatting.
+            {!testEmailSent && (
+              <Alert severity="warning" style={{ marginTop: '1rem' }}>
+                Caution: You have not sent a test email to check the email
+                formatting.
               </Alert>
-            }
+            )}
           </CardContent>
           <CardActions>
-            <Button style={{ color: "gray" }} onClick={() => setConfirmationDialogOpen(false)}>
+            <Button
+              style={{ color: 'gray' }}
+              onClick={() => setConfirmationDialogOpen(false)}
+            >
               Cancel
             </Button>
-            <Button color="primary" onClick={emailContents && sendEmailToAllRecipients} disabled={!emailContents}>
+            <Button
+              color="primary"
+              onClick={emailContents && sendEmailToAllRecipients}
+              disabled={!emailContents}
+            >
               Send
             </Button>
           </CardActions>

@@ -367,8 +367,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
               return !!a.open === !!b.open
                 ? ('' + a.name).localeCompare(b.name)
                 : !!a.open
-                ? -1
-                : 1;
+                  ? -1
+                  : 1;
             })
             .map(({ name, open, id }, i) => (
               <>

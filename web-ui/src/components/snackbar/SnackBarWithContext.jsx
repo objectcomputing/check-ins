@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import Snackbar from "@mui/material/Snackbar";
+import React, { useContext } from 'react';
+import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { AppContext } from "../../context/AppContext";
-import { UPDATE_TOAST } from "../../context/actions";
+import { AppContext } from '../../context/AppContext';
+import { UPDATE_TOAST } from '../../context/actions';
 
 const SnackBarWithContext = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -13,23 +13,28 @@ const SnackBarWithContext = () => {
     dispatch({
       type: UPDATE_TOAST,
       payload: {
-        severity: "",
-        toast: "",
-      },
+        severity: '',
+        toast: ''
+      }
     });
   };
 
   return (
     <Snackbar
       autoHideDuration={25000}
-      anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-      open={toast !== "" && severity !== ""}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      open={toast !== '' && severity !== ''}
       onClose={closeToast}
-      style={{ bottom: "10%" }}
+      style={{ bottom: '10%' }}
       toast={toast}
     >
-      {severity === "" ? null : (
-        <MuiAlert onClose={closeToast} severity={severity} elevation={6} variant="filled">
+      {severity === '' ? null : (
+        <MuiAlert
+          onClose={closeToast}
+          severity={severity}
+          elevation={6}
+          variant="filled"
+        >
           {toast}
         </MuiAlert>
       )}

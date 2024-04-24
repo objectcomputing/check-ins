@@ -1,50 +1,51 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState } from 'react';
 
-import EditPermissionsPageRoles from "./EditPermissionsPageRoles";
+import EditPermissionsPageRoles from './EditPermissionsPageRoles';
 
-import { getPermissionsList } from "../api/permissions";
+import { getPermissionsList } from '../api/permissions';
 import {
   getRolePermissionsList,
   postRolePermission,
-  deleteRolePermission,
-} from "../api/rolepermissions";
-import { getMemberRolesList } from "../api/memberroles";
-import { isArrayPresent, filterObjectByValOrKey } from "../helpers/checks";
-import { UPDATE_TOAST } from "../context/actions";
-import { AppContext } from "../context/AppContext";
-import { selectCurrentUserId } from "../context/selectors";
+  deleteRolePermission
+} from '../api/rolepermissions';
+import { getMemberRolesList } from '../api/memberroles';
+import { isArrayPresent, filterObjectByValOrKey } from '../helpers/checks';
+import { UPDATE_TOAST } from '../context/actions';
+import { AppContext } from '../context/AppContext';
+import { selectCurrentUserId } from '../context/selectors';
 
-import "./EditPermissionsPage.css";
+import './EditPermissionsPage.css';
 
-const groupPermissionsByCategory = (permissions) => permissions.reduce((categories, permission) => {
-  const category = permission.category;
-  const existingCategory = categories.find(cat => cat.category === category);
+const groupPermissionsByCategory = permissions =>
+  permissions.reduce((categories, permission) => {
+    const category = permission.category;
+    const existingCategory = categories.find(cat => cat.category === category);
 
-  // If category exists, add permission to its permissions array
-  if (existingCategory) {
-    existingCategory.permissions.push(permission);
-  } else {
-    // Create a new category object and add it to categories
-    categories.push({
-      category,
-      permissions: [permission],
-    });
-  }
+    // If category exists, add permission to its permissions array
+    if (existingCategory) {
+      existingCategory.permissions.push(permission);
+    } else {
+      // Create a new category object and add it to categories
+      categories.push({
+        category,
+        permissions: [permission]
+      });
+    }
 
-  return categories;
-}, []);
+    return categories;
+  }, []);
 
 const EditPermissionsPage = () => {
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const [permissionsList, setPermissionsList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]); // eslint-disable-line no-unused-vars
-  const [adminId, setAdminId] = useState("");
-  const [pdlId, setPDLId] = useState("");
-  const [memberId, setMemberId] = useState("");
+  const [adminId, setAdminId] = useState('');
+  const [pdlId, setPDLId] = useState('');
+  const [memberId, setMemberId] = useState('');
   const [rolePermissionsList, setRolePermissionsList] = useState([]);
   const currentUserId = selectCurrentUserId(state);
-  const [currentUserRole, setCurrentUserRole] = useState("");
+  const [currentUserRole, setCurrentUserRole] = useState('');
   const [memberRoles, setMemberRoles] = useState([]);
 
   const [isAdminRole, setIsAdminRole] = useState(false);
@@ -55,106 +56,106 @@ const EditPermissionsPage = () => {
 
   const [
     createFeedbackRequestPermissionsId,
-    setCreateFeedbackRequestPermissionsId,
-  ] = useState("");
+    setCreateFeedbackRequestPermissionsId
+  ] = useState('');
   const [
     deleteFeedbackRequestPermissionsId,
-    setDeleteFeedbackRequestPermissionsId,
-  ] = useState("");
+    setDeleteFeedbackRequestPermissionsId
+  ] = useState('');
   const [
     viewFeedbackRequestPermissionsId,
-    setViewFeedbackRequestPermissionsId,
-  ] = useState("");
+    setViewFeedbackRequestPermissionsId
+  ] = useState('');
   const [viewFeedbackAnswerPermissionsId, setViewFeedbackAnswerPermissionsId] =
-    useState("");
+    useState('');
   const [createOrgMembersPermissionsId, setCreateOrgMembersPermissionsId] =
-    useState("");
+    useState('');
   const [deleteOrgMembersPermissionsId, setDeleteOrgMembersPermissionsId] =
-    useState("");
-  const [viewRolePermissionsId, setViewRolePermissionsId] = useState("");
-  const [assignRolePermissionsId, setAssignRolePermissionsId] = useState("");
-  const [viewPermissionsId, setViewPermissionsId] = useState("");
-  const [viewSkillsReportsId, setViewSkillsReportsId] = useState("");
-  const [viewRetentionReportsId, setViewRetentionReportsId] = useState("");
-  const [viewAnniversaryReportsId, setViewAnniversaryReportsId] = useState("");
-  const [viewBirthdayReportsId, setViewBirthdayReportsId] = useState("");
-  const [viewProfileReportsId, setViewProfileReportsId] = useState("");
-  const [updateCheckinsId, setUpdateCheckinsId] = useState("");
-  const [createCheckinsId, setCreateCheckinsId] = useState("");
-  const [viewCheckinsId, setViewCheckinsId] = useState("");
+    useState('');
+  const [viewRolePermissionsId, setViewRolePermissionsId] = useState('');
+  const [assignRolePermissionsId, setAssignRolePermissionsId] = useState('');
+  const [viewPermissionsId, setViewPermissionsId] = useState('');
+  const [viewSkillsReportsId, setViewSkillsReportsId] = useState('');
+  const [viewRetentionReportsId, setViewRetentionReportsId] = useState('');
+  const [viewAnniversaryReportsId, setViewAnniversaryReportsId] = useState('');
+  const [viewBirthdayReportsId, setViewBirthdayReportsId] = useState('');
+  const [viewProfileReportsId, setViewProfileReportsId] = useState('');
+  const [updateCheckinsId, setUpdateCheckinsId] = useState('');
+  const [createCheckinsId, setCreateCheckinsId] = useState('');
+  const [viewCheckinsId, setViewCheckinsId] = useState('');
 
   const [
     createFeedbackRequestPermissionsAdmin,
-    setCreateFeedbackRequestPermissionsAdmin,
+    setCreateFeedbackRequestPermissionsAdmin
   ] = useState(false);
   const [
     createFeedbackRequestPermissionsPDL,
-    setCreateFeedbackRequestPermissionsPDL,
+    setCreateFeedbackRequestPermissionsPDL
   ] = useState(false);
   const [
     createFeedbackRequestPermissionsMember,
-    setCreateFeedbackRequestPermissionsMember,
+    setCreateFeedbackRequestPermissionsMember
   ] = useState(false);
 
   const [
     deleteFeedbackRequestPermissionsAdmin,
-    setDeleteFeedbackRequestPermissionsAdmin,
+    setDeleteFeedbackRequestPermissionsAdmin
   ] = useState(false);
   const [
     deleteFeedbackRequestPermissionsPDL,
-    setDeleteFeedbackRequestPermissionsPDL,
+    setDeleteFeedbackRequestPermissionsPDL
   ] = useState(false);
   const [
     deleteFeedbackRequestPermissionsMember,
-    setDeleteFeedbackRequestPermissionsMember,
+    setDeleteFeedbackRequestPermissionsMember
   ] = useState(false);
 
   const [
     viewFeedbackRequestPermissionsAdmin,
-    setViewFeedbackRequestPermissionsAdmin,
+    setViewFeedbackRequestPermissionsAdmin
   ] = useState(false);
   const [
     viewFeedbackRequestPermissionsPDL,
-    setViewFeedbackRequestPermissionsPDL,
+    setViewFeedbackRequestPermissionsPDL
   ] = useState(false);
   const [
     viewFeedbackRequestPermissionsMember,
-    setViewFeedbackRequestPermissionsMember,
+    setViewFeedbackRequestPermissionsMember
   ] = useState(false);
 
   const [
     viewFeedbackAnswerPermissionsAdmin,
-    setViewFeedbackAnswerPermissionsAdmin,
+    setViewFeedbackAnswerPermissionsAdmin
   ] = useState(false);
   const [
     viewFeedbackAnswerPermissionsPDL,
-    setViewFeedbackAnswerPermissionsPDL,
+    setViewFeedbackAnswerPermissionsPDL
   ] = useState(false);
   const [
     viewFeedbackAnswerPermissionsMember,
-    setViewFeedbackAnswerPermissionsMember,
+    setViewFeedbackAnswerPermissionsMember
   ] = useState(false);
 
   const [
     createOrgMembersPermissionsAdmin,
-    setCreateOrgMembersPermissionsAdmin,
+    setCreateOrgMembersPermissionsAdmin
   ] = useState(false);
   const [createOrgMembersPermissionsPDL, setCreateOrgMembersPermissionsPDL] =
     useState(false);
   const [
     createOrgMembersPermissionsMember,
-    setCreateOrgMembersPermissionsMember,
+    setCreateOrgMembersPermissionsMember
   ] = useState(false);
 
   const [
     deleteOrgMembersPermissionsAdmin,
-    setDeleteOrgMembersPermissionsAdmin,
+    setDeleteOrgMembersPermissionsAdmin
   ] = useState(false);
   const [deleteOrgMembersPermissionsPDL, setDeleteOrgMembersPermissionsPDL] =
     useState(false);
   const [
     deleteOrgMembersPermissionsMember,
-    setDeleteOrgMembersPermissionsMember,
+    setDeleteOrgMembersPermissionsMember
   ] = useState(false);
 
   const [viewRolePermissionsAdmin, setViewRolePermissionsAdmin] =
@@ -223,18 +224,18 @@ const EditPermissionsPage = () => {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "success",
-          toast: `Permission added to Role`,
-        },
+          severity: 'success',
+          toast: `Permission added to Role`
+        }
       });
     } else {
       console.log(res?.error);
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "warning",
-          toast: `Problem changing permission for that role`,
-        },
+          severity: 'warning',
+          toast: `Problem changing permission for that role`
+        }
       });
     }
   };
@@ -242,23 +243,23 @@ const EditPermissionsPage = () => {
   const deleteRolePermission = async (roleId, permissionId) => {
     let newSchema = { roleId: roleId, permissionId: permissionId };
     let res = await deleteRolePermission(newSchema, csrf);
-    let data = !res.error ? "Success" : null;
+    let data = !res.error ? 'Success' : null;
     if (data) {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "success",
-          toast: `Permission removed from Role`,
-        },
+          severity: 'success',
+          toast: `Permission removed from Role`
+        }
       });
     } else {
       console.log(res?.error);
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "warning",
-          toast: `Problem deleting permission for that role`,
-        },
+          severity: 'warning',
+          toast: `Problem deleting permission for that role`
+        }
       });
     }
   };
@@ -744,15 +745,15 @@ const EditPermissionsPage = () => {
 
   useEffect(() => {
     if (isArrayPresent(rolePermissionsList)) {
-      let adminData = rolePermissionsList.filter((a) => a.role === "ADMIN");
+      let adminData = rolePermissionsList.filter(a => a.role === 'ADMIN');
       if (isArrayPresent(adminData)) {
         setAdminId(adminData[0].roleId);
       }
-      let pdlData = rolePermissionsList.filter((a) => a.role === "PDL");
+      let pdlData = rolePermissionsList.filter(a => a.role === 'PDL');
       if (isArrayPresent(pdlData)) {
         setPDLId(pdlData[0].roleId);
       }
-      let memberData = rolePermissionsList.filter((a) => a.role === "MEMBER");
+      let memberData = rolePermissionsList.filter(a => a.role === 'MEMBER');
       if (isArrayPresent(memberData)) {
         setMemberId(memberData[0].roleId);
       }
@@ -760,109 +761,109 @@ const EditPermissionsPage = () => {
 
     if (isArrayPresent(permissionsList)) {
       let id1 = permissionsList.filter(
-        (a) => a.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+        a => a.permission === 'CAN_CREATE_ORGANIZATION_MEMBERS'
       );
       if (isArrayPresent(id1)) {
         setCreateFeedbackRequestPermissionsId(id1[0].id);
       }
       let id2 = permissionsList.filter(
-        (a) => a.permission === "CAN_CREATE_FEEDBACK_REQUEST"
+        a => a.permission === 'CAN_CREATE_FEEDBACK_REQUEST'
       );
       if (isArrayPresent(id2)) {
         setCreateFeedbackRequestPermissionsId(id2[0].id);
       }
       let id3 = permissionsList.filter(
-        (a) => a.permission === "CAN_DELETE_FEEDBACK_REQUEST"
+        a => a.permission === 'CAN_DELETE_FEEDBACK_REQUEST'
       );
       if (isArrayPresent(id3)) {
         setDeleteFeedbackRequestPermissionsId(id3[0].id);
       }
       let id4 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_FEEDBACK_REQUEST"
+        a => a.permission === 'CAN_VIEW_FEEDBACK_REQUEST'
       );
       if (isArrayPresent(id4)) {
         setViewFeedbackRequestPermissionsId(id4[0].id);
       }
       let id5 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_FEEDBACK_ANSWER"
+        a => a.permission === 'CAN_VIEW_FEEDBACK_ANSWER'
       );
       if (isArrayPresent(id5)) {
         setViewFeedbackAnswerPermissionsId(id5[0].id);
       }
       let id6 = permissionsList.filter(
-        (a) => a.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+        a => a.permission === 'CAN_CREATE_ORGANIZATION_MEMBERS'
       );
       if (isArrayPresent(id6)) {
         setCreateOrgMembersPermissionsId(id6[0].id);
       }
       let id7 = permissionsList.filter(
-        (a) => a.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+        a => a.permission === 'CAN_DELETE_ORGANIZATION_MEMBERS'
       );
       if (isArrayPresent(id7)) {
         setDeleteOrgMembersPermissionsId(id7[0].id);
       }
       let id8 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_ROLE_PERMISSIONS"
+        a => a.permission === 'CAN_VIEW_ROLE_PERMISSIONS'
       );
       if (isArrayPresent(id8)) {
         setViewRolePermissionsId(id8[0].id);
       }
       let id9 = permissionsList.filter(
-        (a) => a.permission === "CAN_ASSIGN_ROLE_PERMISSIONS"
+        a => a.permission === 'CAN_ASSIGN_ROLE_PERMISSIONS'
       );
       if (isArrayPresent(id9)) {
         setAssignRolePermissionsId(id9[0].id);
       }
       let id10 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_PERMISSIONS"
+        a => a.permission === 'CAN_VIEW_PERMISSIONS'
       );
       if (isArrayPresent(id10)) {
         setViewPermissionsId(id10[0].id);
       }
       let id11 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_SKILLS_REPORT"
+        a => a.permission === 'CAN_VIEW_SKILLS_REPORT'
       );
       if (isArrayPresent(id11)) {
         setViewSkillsReportsId(id11[0].id);
       }
       let id12 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_RETENTION_REPORT"
+        a => a.permission === 'CAN_VIEW_RETENTION_REPORT'
       );
       if (isArrayPresent(id12)) {
         setViewRetentionReportsId(id12[0].id);
       }
       let id13 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_ANNIVERSARY_REPORT"
+        a => a.permission === 'CAN_VIEW_ANNIVERSARY_REPORT'
       );
       if (isArrayPresent(id13)) {
         setViewAnniversaryReportsId(id13[0].id);
       }
       let id14 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_BIRTHDAY_REPORT"
+        a => a.permission === 'CAN_VIEW_BIRTHDAY_REPORT'
       );
       if (isArrayPresent(id14)) {
         setViewBirthdayReportsId(id14[0].id);
       }
       let id15 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_PROFILE_REPORT"
+        a => a.permission === 'CAN_VIEW_PROFILE_REPORT'
       );
       if (isArrayPresent(id15)) {
         setViewProfileReportsId(id15[0].id);
       }
       let id16 = permissionsList.filter(
-        (a) => a.permission === "CAN_UPDATE_CHECKINS"
+        a => a.permission === 'CAN_UPDATE_CHECKINS'
       );
       if (isArrayPresent(id16)) {
         setUpdateCheckinsId(id16[0].id);
       }
       let id17 = permissionsList.filter(
-        (a) => a.permission === "CAN_CREATE_CHECKINS"
+        a => a.permission === 'CAN_CREATE_CHECKINS'
       );
       if (isArrayPresent(id17)) {
         setCreateCheckinsId(id17[0].id);
       }
       let id18 = permissionsList.filter(
-        (a) => a.permission === "CAN_VIEW_CHECKINS"
+        a => a.permission === 'CAN_VIEW_CHECKINS'
       );
       if (isArrayPresent(id18)) {
         setViewCheckinsId(id18[0].id);
@@ -873,7 +874,7 @@ const EditPermissionsPage = () => {
   useEffect(() => {
     if (isArrayPresent(memberRoles)) {
       let data = memberRoles.filter(
-        (a) => a.memberRoleId.memberId === currentUserId
+        a => a.memberRoleId.memberId === currentUserId
       );
       if (isArrayPresent(data)) {
         let role = filterObjectByValOrKey(
@@ -886,7 +887,7 @@ const EditPermissionsPage = () => {
       }
     }
 
-    if (currentUserRole === "ADMIN") {
+    if (currentUserRole === 'ADMIN') {
       setIsAdminRole(true);
     } else {
       setIsAdminRole(false);
@@ -896,8 +897,8 @@ const EditPermissionsPage = () => {
   useEffect(() => {
     let adminRole = filterObjectByValOrKey(
       rolePermissionsList,
-      "ADMIN",
-      "role"
+      'ADMIN',
+      'role'
     );
     if (isArrayPresent(adminRole)) {
       setAdminPermissionsList(adminRole[0].permissions);
@@ -905,7 +906,7 @@ const EditPermissionsPage = () => {
   }, [rolePermissionsList, adminPermissionsList]);
 
   useEffect(() => {
-    let pdlRole = filterObjectByValOrKey(rolePermissionsList, "PDL", "role");
+    let pdlRole = filterObjectByValOrKey(rolePermissionsList, 'PDL', 'role');
     if (isArrayPresent(pdlRole)) {
       setPDLPermissionsList(pdlRole[0].permissions);
     }
@@ -914,8 +915,8 @@ const EditPermissionsPage = () => {
   useEffect(() => {
     let memberRole = filterObjectByValOrKey(
       rolePermissionsList,
-      "MEMBER",
-      "role"
+      'MEMBER',
+      'role'
     );
     if (isArrayPresent(memberRole)) {
       setMemberPermissionsList(memberRole[0].permissions);
@@ -925,89 +926,89 @@ const EditPermissionsPage = () => {
   useEffect(() => {
     setCreateFeedbackRequestPermissionsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_CREATE_FEEDBACK_REQUEST"
+        permission => permission.permission === 'CAN_CREATE_FEEDBACK_REQUEST'
       )
     );
     setDeleteFeedbackRequestPermissionsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_DELETE_FEEDBACK_REQUEST"
+        permission => permission.permission === 'CAN_DELETE_FEEDBACK_REQUEST'
       )
     );
     setViewFeedbackRequestPermissionsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_REQUEST"
+        permission => permission.permission === 'CAN_VIEW_FEEDBACK_REQUEST'
       )
     );
     setViewFeedbackAnswerPermissionsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_ANSWER"
+        permission => permission.permission === 'CAN_VIEW_FEEDBACK_ANSWER'
       )
     );
     setCreateOrgMembersPermissionsAdmin(
       adminPermissionsList.some(
-        (permission) =>
-          permission.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+        permission =>
+          permission.permission === 'CAN_CREATE_ORGANIZATION_MEMBERS'
       )
     );
     setDeleteOrgMembersPermissionsAdmin(
       adminPermissionsList.some(
-        (permission) =>
-          permission.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+        permission =>
+          permission.permission === 'CAN_DELETE_ORGANIZATION_MEMBERS'
       )
     );
     setViewRolePermissionsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_ROLE_PERMISSIONS"
+        permission => permission.permission === 'CAN_VIEW_ROLE_PERMISSIONS'
       )
     );
     setAssignRolePermissionsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_ASSIGN_ROLE_PERMISSIONS"
+        permission => permission.permission === 'CAN_ASSIGN_ROLE_PERMISSIONS'
       )
     );
     setViewPermissionsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_PERMISSIONS"
+        permission => permission.permission === 'CAN_VIEW_PERMISSIONS'
       )
     );
     setViewSkillsReportsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_SKILLS_REPORT"
+        permission => permission.permission === 'CAN_VIEW_SKILLS_REPORT'
       )
     );
     setViewRetentionReportsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_RETENTION_REPORT"
+        permission => permission.permission === 'CAN_VIEW_RETENTION_REPORT'
       )
     );
     setViewAnniversaryReportsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_ANNIVERSARY_REPORT"
+        permission => permission.permission === 'CAN_VIEW_ANNIVERSARY_REPORT'
       )
     );
     setViewBirthdayReportsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_BIRTHDAY_REPORT"
+        permission => permission.permission === 'CAN_VIEW_BIRTHDAY_REPORT'
       )
     );
     setViewProfileReportsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_PROFILE_REPORT"
+        permission => permission.permission === 'CAN_VIEW_PROFILE_REPORT'
       )
     );
     setUpdateCheckinsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_UPDATE_CHECKINS"
+        permission => permission.permission === 'CAN_UPDATE_CHECKINS'
       )
     );
     setCreateCheckinsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_CREATE_CHECKINS"
+        permission => permission.permission === 'CAN_CREATE_CHECKINS'
       )
     );
     setViewCheckinsAdmin(
       adminPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_CHECKINS"
+        permission => permission.permission === 'CAN_VIEW_CHECKINS'
       )
     );
   }, [adminPermissionsList]);
@@ -1015,89 +1016,89 @@ const EditPermissionsPage = () => {
   useEffect(() => {
     setCreateFeedbackRequestPermissionsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_CREATE_FEEDBACK_REQUEST"
+        permission => permission.permission === 'CAN_CREATE_FEEDBACK_REQUEST'
       )
     );
     setDeleteFeedbackRequestPermissionsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_DELETE_FEEDBACK_REQUEST"
+        permission => permission.permission === 'CAN_DELETE_FEEDBACK_REQUEST'
       )
     );
     setViewFeedbackRequestPermissionsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_REQUEST"
+        permission => permission.permission === 'CAN_VIEW_FEEDBACK_REQUEST'
       )
     );
     setViewFeedbackAnswerPermissionsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_ANSWER"
+        permission => permission.permission === 'CAN_VIEW_FEEDBACK_ANSWER'
       )
     );
     setCreateOrgMembersPermissionsPDL(
       pdlPermissionsList.some(
-        (permission) =>
-          permission.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+        permission =>
+          permission.permission === 'CAN_CREATE_ORGANIZATION_MEMBERS'
       )
     );
     setDeleteOrgMembersPermissionsPDL(
       pdlPermissionsList.some(
-        (permission) =>
-          permission.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+        permission =>
+          permission.permission === 'CAN_DELETE_ORGANIZATION_MEMBERS'
       )
     );
     setViewRolePermissionsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_ROLE_PERMISSIONS"
+        permission => permission.permission === 'CAN_VIEW_ROLE_PERMISSIONS'
       )
     );
     setAssignRolePermissionsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_ASSIGN_ROLE_PERMISSIONS"
+        permission => permission.permission === 'CAN_ASSIGN_ROLE_PERMISSIONS'
       )
     );
     setViewPermissionsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_PERMISSIONS"
+        permission => permission.permission === 'CAN_VIEW_PERMISSIONS'
       )
     );
     setViewSkillsReportsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_SKILLS_REPORT"
+        permission => permission.permission === 'CAN_VIEW_SKILLS_REPORT'
       )
     );
     setViewRetentionReportsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_RETENTION_REPORT"
+        permission => permission.permission === 'CAN_VIEW_RETENTION_REPORT'
       )
     );
     setViewAnniversaryReportsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_ANNIVERSARY_REPORT"
+        permission => permission.permission === 'CAN_VIEW_ANNIVERSARY_REPORT'
       )
     );
     setViewBirthdayReportsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_BIRTHDAY_REPORT"
+        permission => permission.permission === 'CAN_VIEW_BIRTHDAY_REPORT'
       )
     );
     setViewProfileReportsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_PROFILE_REPORT"
+        permission => permission.permission === 'CAN_VIEW_PROFILE_REPORT'
       )
     );
     setUpdateCheckinsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_UPDATE_CHECKINS"
+        permission => permission.permission === 'CAN_UPDATE_CHECKINS'
       )
     );
     setCreateCheckinsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_CREATE_CHECKINS"
+        permission => permission.permission === 'CAN_CREATE_CHECKINS'
       )
     );
     setViewCheckinsPDL(
       pdlPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_CHECKINS"
+        permission => permission.permission === 'CAN_VIEW_CHECKINS'
       )
     );
   }, [pdlPermissionsList]);
@@ -1105,89 +1106,89 @@ const EditPermissionsPage = () => {
   useEffect(() => {
     setCreateFeedbackRequestPermissionsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_CREATE_FEEDBACK_REQUEST"
+        permission => permission.permission === 'CAN_CREATE_FEEDBACK_REQUEST'
       )
     );
     setDeleteFeedbackRequestPermissionsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_DELETE_FEEDBACK_REQUEST"
+        permission => permission.permission === 'CAN_DELETE_FEEDBACK_REQUEST'
       )
     );
     setViewFeedbackRequestPermissionsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_REQUEST"
+        permission => permission.permission === 'CAN_VIEW_FEEDBACK_REQUEST'
       )
     );
     setViewFeedbackAnswerPermissionsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_FEEDBACK_ANSWER"
+        permission => permission.permission === 'CAN_VIEW_FEEDBACK_ANSWER'
       )
     );
     setCreateOrgMembersPermissionsMember(
       memberPermissionsList.some(
-        (permission) =>
-          permission.permission === "CAN_CREATE_ORGANIZATION_MEMBERS"
+        permission =>
+          permission.permission === 'CAN_CREATE_ORGANIZATION_MEMBERS'
       )
     );
     setDeleteOrgMembersPermissionsMember(
       memberPermissionsList.some(
-        (permission) =>
-          permission.permission === "CAN_DELETE_ORGANIZATION_MEMBERS"
+        permission =>
+          permission.permission === 'CAN_DELETE_ORGANIZATION_MEMBERS'
       )
     );
     setViewRolePermissionsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_ROLE_PERMISSIONS"
+        permission => permission.permission === 'CAN_VIEW_ROLE_PERMISSIONS'
       )
     );
     setAssignRolePermissionsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_ASSIGN_ROLE_PERMISSIONS"
+        permission => permission.permission === 'CAN_ASSIGN_ROLE_PERMISSIONS'
       )
     );
     setViewPermissionsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_PERMISSIONS"
+        permission => permission.permission === 'CAN_VIEW_PERMISSIONS'
       )
     );
     setViewSkillsReportsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_SKILLS_REPORT"
+        permission => permission.permission === 'CAN_VIEW_SKILLS_REPORT'
       )
     );
     setViewRetentionReportsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_RETENTION_REPORT"
+        permission => permission.permission === 'CAN_VIEW_RETENTION_REPORT'
       )
     );
     setViewAnniversaryReportsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_ANNIVERSARY_REPORT"
+        permission => permission.permission === 'CAN_VIEW_ANNIVERSARY_REPORT'
       )
     );
     setViewBirthdayReportsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_BIRTHDAY_REPORT"
+        permission => permission.permission === 'CAN_VIEW_BIRTHDAY_REPORT'
       )
     );
     setViewProfileReportsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_PROFILE_REPORT"
+        permission => permission.permission === 'CAN_VIEW_PROFILE_REPORT'
       )
     );
     setUpdateCheckinsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_UPDATE_CHECKINS"
+        permission => permission.permission === 'CAN_UPDATE_CHECKINS'
       )
     );
     setCreateCheckinsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_CREATE_CHECKINS"
+        permission => permission.permission === 'CAN_CREATE_CHECKINS'
       )
     );
     setViewCheckinsMember(
       memberPermissionsList.some(
-        (permission) => permission.permission === "CAN_VIEW_CHECKINS"
+        permission => permission.permission === 'CAN_VIEW_CHECKINS'
       )
     );
   }, [memberPermissionsList]);

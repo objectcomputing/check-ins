@@ -1,17 +1,16 @@
-
 .double-celebration {
   display: flex;
   flex-direction: column;
 }
 
 .double-celebration .anniv {
-    margin-bottom: 10rem;
+  margin-bottom: 10rem;
 }
 
 .double-celebration .bday {
-    margin-top: 5rem;
+  margin-top: 5rem;
 }
 
 .double-celebration h1 {
-    margin: 0;
+  margin: 0;
 }

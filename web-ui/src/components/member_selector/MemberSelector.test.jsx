@@ -1,45 +1,43 @@
-import React from "react";
-import { AppContextProvider } from "../../context/AppContext";
-import MemberSelector from "./MemberSelector";
+import React from 'react';
+import { AppContextProvider } from '../../context/AppContext';
+import MemberSelector from './MemberSelector';
 
 const initialState = {
   state: {
     userProfile: {
       memberProfile: {
-        id: "912834091823",
-        name: "Current",
-        pdlId: "0987654321",
-        supervisorId: "9876543210",
+        id: '912834091823',
+        name: 'Current',
+        pdlId: '0987654321',
+        supervisorId: '9876543210'
       },
-      role: ["MEMBER"],
+      role: ['MEMBER']
     },
     memberProfiles: [
       {
-        id: "0987654321",
-        name: "TestName",
-        lastName: "Name",
+        id: '0987654321',
+        name: 'TestName',
+        lastName: 'Name'
       },
       {
-        id: "9876543210",
-        name: "TestName2",
-        lastName: "Name2",
-      },
-    ],
-  },
+        id: '9876543210',
+        name: 'TestName2',
+        lastName: 'Name2'
+      }
+    ]
+  }
 };
 
-describe("MemberSelector", () => {
-  it("renders correctly with default props", () => {
+describe('MemberSelector', () => {
+  it('renders correctly with default props', () => {
     snapshot(
       <AppContextProvider value={initialState}>
-        <MemberSelector
-          onChange={vi.fn()}
-        />
+        <MemberSelector onChange={vi.fn()} />
       </AppContextProvider>
     );
   });
 
-  it("renders correctly as a controlled component", () => {
+  it('renders correctly as a controlled component', () => {
     snapshot(
       <AppContextProvider value={initialState}>
         <MemberSelector
@@ -50,13 +48,13 @@ describe("MemberSelector", () => {
           exportable
           listHeight={300}
           className="test-class"
-          style={{ margin: "10px" }}
+          style={{ margin: '10px' }}
         />
       </AppContextProvider>
     );
   });
 
-  it("renders correctly when disabled", () => {
+  it('renders correctly when disabled', () => {
     snapshot(
       <AppContextProvider value={initialState}>
         <MemberSelector

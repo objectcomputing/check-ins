@@ -1,23 +1,23 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import {styled} from '@mui/styles';
-import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { styled } from '@mui/styles';
+import FeedbackRequestSubcard from './feedback_request_subcard/FeedbackRequestSubcard';
 import Card from '@mui/material/Card';
-import {Avatar, Typography} from '@mui/material';
+import { Avatar, Typography } from '@mui/material';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
-import {useHistory} from "react-router-dom";
-import PropTypes from "prop-types";
-import "./FeedbackRequestCard.css";
-import { selectProfile } from "../../context/selectors";
-import { AppContext } from "../../context/AppContext";
-import { getAvatarURL } from "../../api/api.js";
-import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
-import queryString from "query-string";
+import { useHistory } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import './FeedbackRequestCard.css';
+import { selectProfile } from '../../context/selectors';
+import { AppContext } from '../../context/AppContext';
+import { getAvatarURL } from '../../api/api.js';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+import queryString from 'query-string';
 
 const PREFIX = 'FeedbackRequestCard';
 const classes = {
@@ -28,54 +28,54 @@ const classes = {
 
 const StyledCard = styled(Card)({
   [`&.${classes.root}`]: {
-    color: "gray",
-    width: "100%",
-    maxHeight: "10%",
-    "@media (max-width:769px)": {
-      width: "100%",
-      maxWidth: "100%",
-    },
+    color: 'gray',
+    width: '100%',
+    maxHeight: '10%',
+    '@media (max-width:769px)': {
+      width: '100%',
+      maxWidth: '100%'
+    }
   },
   [`& .${classes.expandClose}`]: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: "transform 0.1s linear",
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: 'transform 0.1s linear'
   },
   [`& .${classes.expandOpen}`]: {
-    transform: "rotate(180deg)",
-    transition: "transform 0.1s linear",
-    marginLeft: "auto",
+    transform: 'rotate(180deg)',
+    transition: 'transform 0.1s linear',
+    marginLeft: 'auto'
   },
-  "& .MuiCardContent-root": {
+  '& .MuiCardContent-root': {
     paddingBottom: 0,
     paddingTop: 0,
-    "&:last-child": {
+    '&:last-child': {
       paddingBottom: 0
     }
   },
-  "& .MuiCardActions-root": {
+  '& .MuiCardActions-root': {
     padding: 0,
-    maxHeight: "30px"
+    maxHeight: '30px'
   },
-  "& .MuiTypography-body1": {
-    "@media (max-width:767px)": {
-      fontSize: "0.7rem",
+  '& .MuiTypography-body1': {
+    '@media (max-width:767px)': {
+      fontSize: '0.7rem'
     }
   }
 });
 
 const SortOption = {
-  SENT_DATE: "sent_date",
-  SUBMISSION_DATE: "submission_date",
-  RECIPIENT_NAME_ALPHABETICAL: "recipient_name_alphabetical",
-  RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical",
+  SENT_DATE: 'sent_date',
+  SUBMISSION_DATE: 'submission_date',
+  RECIPIENT_NAME_ALPHABETICAL: 'recipient_name_alphabetical',
+  RECIPIENT_NAME_REVERSE_ALPHABETICAL: 'recipient_name_reverse_alphabetical'
 };
 
 const DateRange = {
-  THREE_MONTHS: "3mo",
-  SIX_MONTHS: "6mo",
-  ONE_YEAR: "1yr",
-  ALL_TIME: "all",
+  THREE_MONTHS: '3mo',
+  SIX_MONTHS: '6mo',
+  ONE_YEAR: '1yr',
+  ALL_TIME: 'all'
 };
 
 const propTypes = {
@@ -86,14 +86,14 @@ const propTypes = {
     SortOption.SENT_DATE,
     SortOption.SUBMISSION_DATE,
     SortOption.RECIPIENT_NAME_ALPHABETICAL,
-    SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL,
+    SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL
   ]).isRequired,
   dateRange: PropTypes.oneOf([
     DateRange.THREE_MONTHS,
     DateRange.SIX_MONTHS,
     DateRange.ONE_YEAR,
-    DateRange.ALL_TIME,
-  ]).isRequired,
+    DateRange.ALL_TIME
+  ]).isRequired
 };
 
 const FeedbackRequestCard = ({
@@ -101,7 +101,7 @@ const FeedbackRequestCard = ({
   templateName,
   responses,
   sortType,
-  dateRange,
+  dateRange
 }) => {
   const { state } = useContext(AppContext);
   const requesteeProfile = selectProfile(state, requesteeId);
@@ -115,7 +115,7 @@ const FeedbackRequestCard = ({
   };
 
   const withinDateRange = useCallback(
-    (requestDate) => {
+    requestDate => {
       let oldestDate = new Date();
       switch (dateRange) {
         case DateRange.THREE_MONTHS:
@@ -134,7 +134,7 @@ const FeedbackRequestCard = ({
       }
 
       if (Array.isArray(requestDate)) {
-        requestDate = new Date(requestDate.join("/"));
+        requestDate = new Date(requestDate.join('/'));
         // have to do for Safari
       }
       return requestDate >= oldestDate;
@@ -146,16 +146,16 @@ const FeedbackRequestCard = ({
     let message;
     switch (dateRange) {
       case DateRange.THREE_MONTHS:
-        message = "No requests in the past 3 months";
+        message = 'No requests in the past 3 months';
         break;
       case DateRange.SIX_MONTHS:
-        message = "No requests in the past 6 months";
+        message = 'No requests in the past 6 months';
         break;
       case DateRange.ONE_YEAR:
-        message = "No requests in the past year";
+        message = 'No requests in the past year';
         break;
       default:
-        message = "No requests";
+        message = 'No requests';
     }
 
     return (
@@ -163,9 +163,9 @@ const FeedbackRequestCard = ({
         <Divider />
         <div
           style={{
-            padding: "12px 12px",
-            textAlign: "center",
-            backgroundColor: "#ececec",
+            padding: '12px 12px',
+            textAlign: 'center',
+            backgroundColor: '#ececec'
           }}
         >
           <Typography variant="body1">{message}</Typography>
@@ -176,9 +176,9 @@ const FeedbackRequestCard = ({
 
   const handleViewAllResponsesClick = () => {
     if (sortedResponses.length === 0) return;
-    const requestIds = sortedResponses.map((response) => response.id);
+    const requestIds = sortedResponses.map(response => response.id);
     const params = {
-      request: requestIds,
+      request: requestIds
     };
 
     history.push(`/feedback/view/responses/?${queryString.stringify(params)}`);
@@ -187,7 +187,7 @@ const FeedbackRequestCard = ({
   // Sort the responses by either the send date or the submit date
   useEffect(() => {
     let responsesCopy = [...responses];
-    responsesCopy = responsesCopy.filter((response) =>
+    responsesCopy = responsesCopy.filter(response =>
       withinDateRange(response.sendDate)
     );
 
@@ -240,7 +240,7 @@ const FeedbackRequestCard = ({
                   className="no-wrap"
                 >
                   <Grid item>
-                    <Avatar style={{ marginRight: "1em" }} src={avatarURL} />
+                    <Avatar style={{ marginRight: '1em' }} src={avatarURL} />
                   </Grid>
                   <Grid item xs className="small-margin">
                     <Typography className="person-name">
@@ -259,7 +259,7 @@ const FeedbackRequestCard = ({
                       onClick={handleViewAllResponsesClick}
                       disabled={
                         sortedResponses.length === 0 ||
-                        sortedResponses.every((o) => o.status === "pending")
+                        sortedResponses.every(o => o.status === 'pending')
                       }
                     >
                       View all responses
@@ -276,14 +276,15 @@ const FeedbackRequestCard = ({
             aria-expanded={expanded}
             aria-label="show more"
             className={expanded ? classes.expandOpen : classes.expandClose}
-            size="large">
+            size="large"
+          >
             <ExpandMoreIcon />
           </IconButton>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent style={{ padding: 0 }}>
             {sortedResponses && sortedResponses.length
-              ? sortedResponses.map((response) => {
+              ? sortedResponses.map(response => {
                   return (
                     <FeedbackRequestSubcard
                       key={response.id}

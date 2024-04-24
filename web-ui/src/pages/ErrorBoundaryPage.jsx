@@ -1,60 +1,60 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 
-import { AppContext } from "../context/AppContext";
-import { UPDATE_TOAST } from "../context/actions";
-import { selectCsrfToken } from "../context/selectors";
-import { newGitHubIssue } from "../api/github";
+import { AppContext } from '../context/AppContext';
+import { UPDATE_TOAST } from '../context/actions';
+import { selectCsrfToken } from '../context/selectors';
+import { newGitHubIssue } from '../api/github';
 
-import { Button, Modal, TextField } from "@mui/material";
+import { Button, Modal, TextField } from '@mui/material';
 
 import { Editor } from '@tinymce/tinymce-react';
 
-import "./ErrorBoundaryPage.css";
-import { sanitizeQuillElements } from "../helpers/sanitizehtml";
+import './ErrorBoundaryPage.css';
+import { sanitizeQuillElements } from '../helpers/sanitizehtml';
 
 const ErrorFallback = ({ error }) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [link, setLink] = useState("");
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [link, setLink] = useState('');
 
   const close = () => {
     setOpen(false);
   };
 
   const createNewGitIssue = async () => {
-    if (body === "" || title === "") {
+    if (body === '' || title === '') {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: "Must have a Body and a Title",
-        },
+          severity: 'error',
+          toast: 'Must have a Body and a Title'
+        }
       });
       return;
     }
     //Clean new issue of potentially malicious content in body
     //before upload to server
-    let sanitizeBody = sanitizeQuillElements(body)
+    let sanitizeBody = sanitizeQuillElements(body);
     let res = await newGitHubIssue(sanitizeBody, title, csrf);
     if (res && res.payload) {
       setLink(res.payload.data[0].html_url);
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: !res.error ? "success" : "error",
+          severity: !res.error ? 'success' : 'error',
           toast: !res.error
             ? `New issue ${title} created! Gratzie &#128512`
-            : res.error.message,
-        },
+            : res.error.message
+        }
       });
     }
   };
 
-  const handleBodyChange = (content) => {
+  const handleBodyChange = content => {
     setBody(content);
   };
 
@@ -78,7 +78,7 @@ const ErrorFallback = ({ error }) => {
         >
           Create New GitHub Issue
         </Button>
-        {link !== "" && (
+        {link !== '' && (
           <h3 className="link">
             Check out your issue here! &nbsp; <a href={link}>{link}</a>
           </h3>
@@ -92,23 +92,26 @@ const ErrorFallback = ({ error }) => {
             label="Title"
             placeholder="Issue Title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
           />
           <Editor
             required
             initialValue="Issue Description"
-            style={{ height: "175px", marginBottom: "30px" }}
+            style={{ height: '175px', marginBottom: '30px' }}
             value={body}
             onEditorChange={handleBodyChange}
             init={{
               promotion: false,
               plugins: 'lists',
-              toolbar: 'undo redo | blocks | ' +
+              toolbar:
+                'undo redo | blocks | ' +
                 'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
                 'alignright alignjustify | bullist numlist outdent indent | ' +
                 'removeformat | help'
             }}
-            tinymceScriptSrc={import.meta.env.VITE_APP_API_URL + '/js/tinymce/tinymce.min.js'}
+            tinymceScriptSrc={
+              import.meta.env.VITE_APP_API_URL + '/js/tinymce/tinymce.min.js'
+            }
           />
           <div className="create-new-issue-modal-actions">
             <Button onClick={close} color="secondary">

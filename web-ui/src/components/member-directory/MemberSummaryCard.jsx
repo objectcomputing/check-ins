@@ -1,18 +1,24 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-import { AppContext } from "../../context/AppContext";
-import { selectIsAdmin, selectProfileMap } from "../../context/selectors";
-import { getAvatarURL } from "../../api/api.js";
+import { AppContext } from '../../context/AppContext';
+import { selectIsAdmin, selectProfileMap } from '../../context/selectors';
+import { getAvatarURL } from '../../api/api.js';
 
-import { Card, CardHeader } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import { Card, CardHeader } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 
-import "./MemberSummaryCard.css";
+import './MemberSummaryCard.css';
 
-import { Box, CardContent, Container, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  CardContent,
+  Container,
+  Tooltip,
+  Typography
+} from '@mui/material';
 const PREFIX = 'MemberSummaryCard';
 const classes = {
   header: `${PREFIX}-header`
@@ -20,7 +26,7 @@ const classes = {
 
 const StyledBox = styled(Box)(() => ({
   [`& .${classes.header}`]: {
-    cursor: "pointer",
+    cursor: 'pointer'
   }
 }));
 
@@ -34,7 +40,7 @@ const MemberSummaryCard = ({ member }) => {
     title,
     supervisorid,
     pdlId,
-    terminationDate,
+    terminationDate
   } = member;
   const supervisorProfile = selectProfileMap(state)[supervisorid];
   const pdlProfile = selectProfileMap(state)[pdlId];
@@ -42,9 +48,9 @@ const MemberSummaryCard = ({ member }) => {
 
   return (
     <StyledBox display="flex" flexWrap="wrap">
-      <Card className={"member-card"}>
+      <Card className={'member-card'}>
         <Link
-          style={{ color: "black", textDecoration: "none" }}
+          style={{ color: 'black', textDecoration: 'none' }}
           to={`/profile/${member.id}`}
         >
           <CardHeader
@@ -62,26 +68,26 @@ const MemberSummaryCard = ({ member }) => {
             disableTypography
             avatar={
               isAdmin && terminationDate ? (
-                <Avatar className={"large"}>
+                <Avatar className={'large'}>
                   <Tooltip
                     open={tooltipIsOpen}
                     onOpen={() => setTooltipIsOpen(true)}
                     onClose={() => setTooltipIsOpen(false)}
                     enterTouchDelay={0}
                     placement="top-start"
-                    title={"This member has been terminated"}
+                    title={'This member has been terminated'}
                   >
                     <PriorityHighIcon />
                   </Tooltip>
                 </Avatar>
               ) : (
-                <Avatar className={"large"} src={getAvatarURL(workEmail)} />
+                <Avatar className={'large'} src={getAvatarURL(workEmail)} />
               )
             }
           />
         </Link>
         <CardContent>
-          <Container fixed className={"info-container"}>
+          <Container fixed className={'info-container'}>
             <Typography variant="body2" color="textSecondary" component="p">
               <a
                 href={`mailto:${workEmail}`}
@@ -93,18 +99,32 @@ const MemberSummaryCard = ({ member }) => {
               <br />
               Location: {location}
               <br />
-              Supervisor: {supervisorid && 
-              <Link to={`/profile/${supervisorid}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.6)" }}>
-              {supervisorProfile?.name}
-              </Link>}
+              Supervisor:{' '}
+              {supervisorid && (
+                <Link
+                  to={`/profile/${supervisorid}`}
+                  style={{
+                    textDecoration: 'none',
+                    color: 'rgba(0, 0, 0, 0.6)'
+                  }}
+                >
+                  {supervisorProfile?.name}
+                </Link>
+              )}
               <br />
-              PDL: {pdlId && 
-              <Link to={`/profile/${pdlId}`} style = {{textDecoration: "none", color: "rgba(0, 0, 0, 0.6)" }}>
-              {pdlProfile?.name}
-              </Link>
-          
-              }
-          <br />
+              PDL:{' '}
+              {pdlId && (
+                <Link
+                  to={`/profile/${pdlId}`}
+                  style={{
+                    textDecoration: 'none',
+                    color: 'rgba(0, 0, 0, 0.6)'
+                  }}
+                >
+                  {pdlProfile?.name}
+                </Link>
+              )}
+              <br />
             </Typography>
           </Container>
         </CardContent>

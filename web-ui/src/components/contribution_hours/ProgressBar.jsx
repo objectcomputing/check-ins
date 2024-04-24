@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 import { styled } from '@mui/material/styles';
-import PropTypes from "prop-types";
-import LinearProgress from "@mui/material/LinearProgress";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import PropTypes from 'prop-types';
+import LinearProgress from '@mui/material/LinearProgress';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const PREFIX = 'LinearBuffer';
 const classes = {
@@ -12,8 +12,8 @@ const classes = {
 
 const Root = styled('div')({
   [`&.${classes.root}`]: {
-    width: "100%",
-  },
+    width: '100%'
+  }
 });
 
 function LinearProgressWithLabel(props) {
@@ -34,20 +34,19 @@ const propTypes = {
   billableHours: PropTypes.number,
   contributionHours: PropTypes.number.isRequired,
   targetHours: PropTypes.number.isRequired,
-  ptoHours: PropTypes.number,
+  ptoHours: PropTypes.number
 };
 
 const LinearBuffer = ({
   billableHours,
   contributionHours = 925,
   targetHours = 1850,
-  ptoHours = 0,
+  ptoHours = 0
 }) => {
-
   return (
     <Root className={classes.root}>
       <LinearProgressWithLabel
-        variant={billableHours ? "buffer" : "determinate"}
+        variant={billableHours ? 'buffer' : 'determinate'}
         value={
           billableHours
             ? (billableHours / targetHours) * 100
@@ -61,10 +60,10 @@ const LinearBuffer = ({
         align="right"
         variant="body2"
         color="textSecondary"
-        style={{ display: "block" }}
+        style={{ display: 'block' }}
       >
-        Billable Hours: {billableHours} - Contribution Hours:{" "}
-        {contributionHours} - Target Hours: {targetHours} - PTO Hours:{" "}
+        Billable Hours: {billableHours} - Contribution Hours:{' '}
+        {contributionHours} - Target Hours: {targetHours} - PTO Hours:{' '}
         {ptoHours}
       </Typography>
     </Root>

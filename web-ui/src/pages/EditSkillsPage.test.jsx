@@ -1,9 +1,9 @@
-import React from "react";
-import EditSkillsPage from "./EditSkillsPage";
-import { AppContextProvider } from "../context/AppContext";
-import {BrowserRouter} from "react-router-dom";
+import React from 'react';
+import EditSkillsPage from './EditSkillsPage';
+import { AppContextProvider } from '../context/AppContext';
+import { BrowserRouter } from 'react-router-dom';
 
-it("renders correctly", () => {
+it('renders correctly', () => {
   snapshot(
     <AppContextProvider>
       <BrowserRouter>

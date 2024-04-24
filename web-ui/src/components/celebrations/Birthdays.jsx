@@ -1,43 +1,43 @@
-import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 
-import { getAvatarURL } from "../../api/api.js";
-import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
+import { getAvatarURL } from '../../api/api.js';
+import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 
-import { AppContext } from "../../context/AppContext";
+import { AppContext } from '../../context/AppContext';
 import {
   selectMemberProfilesLoading,
-  selectProfile,
-} from "../../context/selectors";
-import { randomConfetti } from "../../context/util";
+  selectProfile
+} from '../../context/selectors';
+import { randomConfetti } from '../../context/util';
 
-import Avatar from "@mui/material/Avatar";
-import { Card, CardHeader } from "@mui/material";
-import { Grid } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { Typography } from "@mui/material";
+import Avatar from '@mui/material/Avatar';
+import { Card, CardHeader } from '@mui/material';
+import { Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { Typography } from '@mui/material';
 
-import "./Birthdays.css";
+import './Birthdays.css';
 
-const PREFIX = "MemberSummaryCard";
+const PREFIX = 'MemberSummaryCard';
 const classes = {
-  header: `${PREFIX}-header`,
+  header: `${PREFIX}-header`
 };
-const Root = styled("div")({
+const Root = styled('div')({
   [`& .${classes.search}`]: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   [`& .${classes.searchInput}`]: {
-    width: "20em",
+    width: '20em'
   },
   [`& .${classes.members}`]: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-evenly",
-    width: "100%",
-  },
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    width: '100%'
+  }
 });
 
 const Birthdays = ({ birthdays, xPos = 0.75 }) => {
@@ -49,23 +49,23 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
     let user = selectProfile(state, bday.userId);
     if (user) {
       return (
-        <Card className={"birthdays-card"} key={index}>
+        <Card className={'birthdays-card'} key={index}>
           <Link
-            style={{ color: "black", textDecoration: "none" }}
+            style={{ color: 'black', textDecoration: 'none' }}
             to={`/profile/${bday.userId}`}
           >
             <CardHeader
-              className={"birthday-card"}
+              className={'birthday-card'}
               title={
                 <Typography variant="h5" component="h2">
-                  Happy Birthday{" "}
-                  <span>{user.firstName + " " + user.lastName}!</span>
+                  Happy Birthday{' '}
+                  <span>{user.firstName + ' ' + user.lastName}!</span>
                 </Typography>
               }
               disableTypography
               avatar={
                 <Avatar
-                  className={"celebrations-avatar"}
+                  className={'celebrations-avatar'}
                   src={getAvatarURL(user?.workEmail)}
                 />
               }
@@ -103,8 +103,8 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
                   <SkeletonLoader key={index} type="people" />
                 ))
               : !loading
-              ? createBirthdayCards
-              : null}
+                ? createBirthdayCards
+                : null}
           </Grid>
         </Grid>
       </Root>

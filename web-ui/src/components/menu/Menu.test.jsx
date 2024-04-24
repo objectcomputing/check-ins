@@ -1,57 +1,57 @@
-import React from "react";
-import Menu from "./Menu";
-import { MemoryRouter } from "react-router-dom";
-import { AppContextProvider } from "../../context/AppContext";
+import React from 'react';
+import Menu from './Menu';
+import { MemoryRouter } from 'react-router-dom';
+import { AppContextProvider } from '../../context/AppContext';
 
 const initialState = {
   state: {
     userProfile: {
-      name: "holmes",
+      name: 'holmes',
       memberProfile: {
-        pdlId: "",
-        title: "Tester",
-        workEmail: "test@tester.com",
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
       },
-      role: ["MEMBER"],
+      role: ['MEMBER'],
       permissions: [],
       imageUrl:
-        "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
-    },
-  },
+        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
+    }
+  }
 };
 
 const adminState = {
   state: {
     userProfile: {
-      name: "holmes",
+      name: 'holmes',
       memberProfile: {
-        pdlId: "",
-        title: "Tester",
-        workEmail: "test@tester.com",
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
       },
-      role: ["MEMBER", "ADMIN"],
-      permissions: [{permission:"CAN_VIEW_SKILLS_REPORT"}],
+      role: ['MEMBER', 'ADMIN'],
+      permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }],
       imageUrl:
-        "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
-    },
-  },
+        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
+    }
+  }
 };
 
 const pdlState = {
   state: {
     userProfile: {
-      name: "holmes",
+      name: 'holmes',
       memberProfile: {
-        pdlId: "",
-        title: "Tester",
-        workEmail: "test@tester.com",
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
       },
-      role: ["MEMBER","PDL"],
+      role: ['MEMBER', 'PDL'],
       permissions: [],
       imageUrl:
-        "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
-    },
-  },
+        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
+    }
+  }
 };
 
 describe('<Menu />', () => {

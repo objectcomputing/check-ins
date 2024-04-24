@@ -1,6 +1,6 @@
-import React from "react";
-import FeedbackSubmissionTips from "./FeedbackSubmissionTips";
+import React from 'react';
+import FeedbackSubmissionTips from './FeedbackSubmissionTips';
 
-it("renders the feedback tips component.", () => {
-  snapshot(<FeedbackSubmissionTips/>);
+it('renders the feedback tips component.', () => {
+  snapshot(<FeedbackSubmissionTips />);
 });

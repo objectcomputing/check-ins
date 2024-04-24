@@ -1,21 +1,25 @@
-import React, { useContext, useEffect, useState } from "react";
-import {useHistory} from "react-router-dom";
-import { getMembersByPDL } from "../../api/member";
-import { getCheckinByMemberId } from "../../api/checkins";
-import { AppContext } from "../../context/AppContext";
-import { UPDATE_CHECKINS } from "../../context/actions";
-import { selectCurrentUserId, selectMostRecentCheckin, selectCsrfToken } from "../../context/selectors";
+import React, { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { getMembersByPDL } from '../../api/member';
+import { getCheckinByMemberId } from '../../api/checkins';
+import { AppContext } from '../../context/AppContext';
+import { UPDATE_CHECKINS } from '../../context/actions';
+import {
+  selectCurrentUserId,
+  selectMostRecentCheckin,
+  selectCsrfToken
+} from '../../context/selectors';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import GroupIcon from "@mui/icons-material/Group";
-import Avatar from "../avatar/Avatar"
-import { getAvatarURL } from "../../api/api.js";
+import GroupIcon from '@mui/icons-material/Group';
+import Avatar from '../avatar/Avatar';
+import { getAvatarURL } from '../../api/api.js';
 
-import "./Personnel.css";
+import './Personnel.css';
 
 const Personnel = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -57,7 +61,7 @@ const Personnel = () => {
               ? res.payload.data
               : null;
           if (data && data.length > 0 && !res.error) {
-            dispatch({type: UPDATE_CHECKINS, payload: data});
+            dispatch({ type: UPDATE_CHECKINS, payload: data });
           }
         }
       }
@@ -67,20 +71,24 @@ const Personnel = () => {
     }
   }, [csrf, personnel, dispatch]);
 
-// Create feedback request link
-const createFeedbackRequestLink = (memberId) => (
-    <span className="feedback-link" onClick={(e) => {
-          e.stopPropagation();
-          history.push(`/feedback/request?for=${memberId}`);
-        }}>
+  // Create feedback request link
+  const createFeedbackRequestLink = memberId => (
+    <span
+      className="feedback-link"
+      onClick={e => {
+        e.stopPropagation();
+        history.push(`/feedback/request?for=${memberId}`);
+      }}
+    >
       Request Feedback
-    </span>);
+    </span>
+  );
 
   // Create entry of member and their last checkin
   function createEntry(person, lastCheckin, keyInput) {
     let key = keyInput ? keyInput : undefined;
-    let name = "Team Member";
-    let workEmail = "";
+    let name = 'Team Member';
+    let workEmail = '';
 
     if (person) {
       let id = person.id ? person.id : null;
@@ -90,9 +98,7 @@ const createFeedbackRequestLink = (memberId) => (
     }
 
     return (
-      <ListItem key={key}
-
-      >
+      <ListItem key={key}>
         <ListItemAvatar>
           <Avatar
             alt={name}
@@ -102,7 +108,10 @@ const createFeedbackRequestLink = (memberId) => (
             }}
           />
         </ListItemAvatar>
-        <ListItemText primary={name} secondary={createFeedbackRequestLink(person.id)}/>
+        <ListItemText
+          primary={name}
+          secondary={createFeedbackRequestLink(person.id)}
+        />
       </ListItem>
     );
   }
@@ -110,7 +119,9 @@ const createFeedbackRequestLink = (memberId) => (
   // Create the entries for the personnel container
   const createPersonnelEntries = () => {
     if (personnel && personnel.length > 0) {
-      return personnel.map((person) => createEntry(person, selectMostRecentCheckin(state, person.id), null));
+      return personnel.map(person =>
+        createEntry(person, selectMostRecentCheckin(state, person.id), null)
+      );
     } else {
       return [];
     }
@@ -119,9 +130,7 @@ const createFeedbackRequestLink = (memberId) => (
   return (
     <Card>
       <CardHeader avatar={<GroupIcon />} title="Development Partners" />
-        <List dense>
-          {createPersonnelEntries()}
-        </List>
+      <List dense>{createPersonnelEntries()}</List>
     </Card>
   );
 };

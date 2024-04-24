@@ -1,11 +1,11 @@
-import React, { useContext, useState, useCallback } from "react";
+import React, { useContext, useState, useCallback } from 'react';
 
-import { styled } from "@mui/material/styles";
-import { AppContext } from "../../context/AppContext";
-import { UPDATE_GUILDS, UPDATE_TOAST } from "../../context/actions";
-import EditGuildModal from "./EditGuildModal";
-import { Link } from "react-router-dom";
-import { Link as StyledLink } from "@mui/material";
+import { styled } from '@mui/material/styles';
+import { AppContext } from '../../context/AppContext';
+import { UPDATE_GUILDS, UPDATE_TOAST } from '../../context/actions';
+import EditGuildModal from './EditGuildModal';
+import { Link } from 'react-router-dom';
+import { Link as StyledLink } from '@mui/material';
 
 import {
   Button,
@@ -18,44 +18,44 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Tooltip,
-} from "@mui/material";
-import PropTypes from "prop-types";
-import { deleteGuild, updateGuild } from "../../api/guild.js";
-import SplitButton from "../split-button/SplitButton";
+  Tooltip
+} from '@mui/material';
+import PropTypes from 'prop-types';
+import { deleteGuild, updateGuild } from '../../api/guild.js';
+import SplitButton from '../split-button/SplitButton';
 
-const PREFIX = "GuildSummaryCard";
+const PREFIX = 'GuildSummaryCard';
 const classes = {
   card: `${PREFIX}-card`,
   header: `${PREFIX}-header`,
-  title: `${PREFIX}-title`,
+  title: `${PREFIX}-title`
 };
 const StyledCard = styled(Card)(() => ({
   [`&.${classes.card}`]: {
-    width: "340px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
+    width: '340px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   [`& .${classes.header}`]: {
-    width: "100%",
+    width: '100%'
   },
   [`& .${classes.title}`]: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
+  }
 }));
 
 const propTypes = {
   guild: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
-    description: PropTypes.string,
-  }),
+    description: PropTypes.string
+  })
 };
 
-const displayName = "GuildSummaryCard";
+const displayName = 'GuildSummaryCard';
 
 const GuildSummaryCard = ({ guild, index }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -64,21 +64,21 @@ const GuildSummaryCard = ({ guild, index }) => {
   const [openDelete, setOpenDelete] = useState(false);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
   const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
 
   let leads =
     guild.guildMembers == null
       ? null
-      : guild.guildMembers.filter((guildMember) => guildMember.lead);
+      : guild.guildMembers.filter(guildMember => guildMember.lead);
   let nonLeads =
     guild.guildMembers == null
       ? null
-      : guild.guildMembers.filter((guildMember) => !guildMember.lead);
+      : guild.guildMembers.filter(guildMember => !guildMember.lead);
 
   const isGuildLead =
     leads === null
       ? false
-      : leads.some((lead) => lead.memberId === userProfile.memberProfile.id);
+      : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -94,23 +94,23 @@ const GuildSummaryCard = ({ guild, index }) => {
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "success",
-            toast: "Guild deleted",
-          },
+            severity: 'success',
+            toast: 'Guild deleted'
+          }
         });
-        let newGuilds = guilds.filter((guild) => {
+        let newGuilds = guilds.filter(guild => {
           return guild.id !== guildId;
         });
         dispatch({
           type: UPDATE_GUILDS,
-          payload: newGuilds,
+          payload: newGuilds
         });
       }
     }
   }, [guildId, csrf, dispatch, guilds]);
 
   const options =
-    isAdmin || isGuildLead ? ["Edit Guild", "Delete Guild"] : ["Edit Guild"];
+    isAdmin || isGuildLead ? ['Edit Guild', 'Delete Guild'] : ['Edit Guild'];
 
   const handleAction = (e, index) => {
     if (index === 0) {
@@ -126,7 +126,7 @@ const GuildSummaryCard = ({ guild, index }) => {
         classes={{
           content: classes.header,
           title: classes.title,
-          subheader: classes.title,
+          subheader: classes.title
         }}
         title={guild.name}
         subheader={
@@ -143,13 +143,13 @@ const GuildSummaryCard = ({ guild, index }) => {
         }
       />
       <CardContent>
-        {guild?.link ? 
-        <React.Fragment>
-          <div>
-          <StyledLink href={guild.link}>Link to Guild Homepage</StyledLink>
-          </div>
-        </React.Fragment>
-          :null}
+        {guild?.link ? (
+          <React.Fragment>
+            <div>
+              <StyledLink href={guild.link}>Link to Guild Homepage</StyledLink>
+            </div>
+          </React.Fragment>
+        ) : null}
         {guild.guildMembers == null ? (
           <React.Fragment>
             <strong>Guild Leads: </strong>None Assigned
@@ -165,8 +165,8 @@ const GuildSummaryCard = ({ guild, index }) => {
                   key={lead.memberId}
                   to={`/profile/${lead?.memberId}`}
                   style={{
-                    textDecoration: "none",
-                    color: "rgba(0, 0, 0, 0.87)",
+                    textDecoration: 'none',
+                    color: 'rgba(0, 0, 0, 0.87)'
                   }}
                 >
                   {index !== leads.length - 1 ? `${lead?.name}, ` : lead?.name}
@@ -181,8 +181,8 @@ const GuildSummaryCard = ({ guild, index }) => {
                   key={member.memberId}
                   to={`/profile/${member?.memberId}`}
                   style={{
-                    textDecoration: "none",
-                    color: "rgba(0, 0, 0, 0.87)",
+                    textDecoration: 'none',
+                    color: 'rgba(0, 0, 0, 0.87)'
                   }}
                 >
                   {index !== nonLeads.length - 1
@@ -226,7 +226,7 @@ const GuildSummaryCard = ({ guild, index }) => {
         guild={guild}
         open={open}
         onClose={handleClose}
-        onSave={async (editedGuild) => {
+        onSave={async editedGuild => {
           let res = await updateGuild(editedGuild, csrf);
           let data =
             res.payload && res.payload.data && !res.error
@@ -237,7 +237,7 @@ const GuildSummaryCard = ({ guild, index }) => {
             copy[index] = data;
             dispatch({
               type: UPDATE_GUILDS,
-              payload: copy,
+              payload: copy
             });
           }
         }}

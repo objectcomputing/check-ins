@@ -1,14 +1,14 @@
-import React from "react";
-import SentimentIcon from "./SentimentIcon";
-import {AppContextProvider} from "../../context/AppContext";
+import React from 'react';
+import SentimentIcon from './SentimentIcon';
+import { AppContextProvider } from '../../context/AppContext';
 
 export default {
-  title: "Check Ins/SentimentIcon",
+  title: 'Check Ins/SentimentIcon',
   component: SentimentIcon,
   decorators: [
-    (SentimentIcon) => (
+    SentimentIcon => (
       <AppContextProvider>
-        <SentimentIcon/>
+        <SentimentIcon />
       </AppContextProvider>
     )
   ]
@@ -16,11 +16,11 @@ export default {
 
 const sentimentData = {
   sentimentScore: 0
-}
+};
 
-const Template = (args) => {
+const Template = args => {
   return <SentimentIcon {...args} />;
-}
+};
 
 export const DefaultTemplate = Template.bind({});
 DefaultTemplate.args = {
