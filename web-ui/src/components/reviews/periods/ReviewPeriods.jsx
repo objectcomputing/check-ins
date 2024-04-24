@@ -364,9 +364,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         ) : periods.length > 0 ? (
           periods
             .sort((a, b) => {
-              return !!a.open === !!b.open
+              return Boolean(a.open) === Boolean(b.open)
                 ? ('' + a.name).localeCompare(b.name)
-                : !!a.open
+                : Boolean(a.open)
                   ? -1
                   : 1;
             })
