@@ -37,7 +37,6 @@ export function sortMembersBySkill(searchResults) {
   ];
 
   if (isArrayPresent(searchResults)) {
-    // Sort the array by the number of skills
     const sortedArray = searchResults.sort((a, b) => {
       // If number of skills is not the same, sort by number of skills
       if (a.skills.length !== b.skills.length) {
