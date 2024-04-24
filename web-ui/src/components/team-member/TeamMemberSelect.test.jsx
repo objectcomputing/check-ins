@@ -29,7 +29,7 @@ it('clicks single item', done => {
   const name = 'jesse';
   const handleChange = teamMembers => {
     expect(teamMembers).toHaveLength(1);
-    expect(teamMembers[0].name === name);
+    expect(teamMembers[0].name).toBe(name);
   };
   render(
     <TeamMemberSelect
@@ -48,10 +48,10 @@ it('clicks multiple items', done => {
   const name2 = 'michael';
   const handleChange = teamMembers => {
     if (teamMembers.length === 1) {
-      expect(teamMembers[0].name === name1);
+      expect(teamMembers[0].name).toBe(name1);
     } else if (teamMembers.length === 2) {
-      expect(teamMembers[0].name === name1);
-      expect(teamMembers[1].name === name2);
+      expect(teamMembers[0].name).toBe(name1);
+      expect(teamMembers[1].name).toBe(name2);
     }
   };
   render(
