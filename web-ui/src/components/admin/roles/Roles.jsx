@@ -62,10 +62,30 @@ const Roles = () => {
   memberProfiles?.sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
-    if (roles) {
-      setSelectedRoles(roles.map(roleObj => roleObj.role));
-    }
-  }, [roles]);
+    const url = new URL(location.href);
+    setSearchText(url.searchParams.get('searchText') ?? '');
+    const selectedRoles = url.searchParams.get('selectedRoles');
+    const roles = selectedRoles?.split(',') ?? [];
+    if (roles.length === 0) roles.push('ADMIN', 'MEMBER', 'PDL');
+    setSelectedRoles(roles);
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(location.href);
+    const params = {
+      searchText: searchText,
+      selectedRoles: selectedRoles.join(',')
+    };
+    const q = new URLSearchParams(params).toString();
+    const newUrl = url.origin + url.pathname + '?' + q;
+    history.replaceState(params, '', newUrl);
+  }, [searchText, selectedRoles]);
+
+  // useEffect(() => {
+  //   if (roles) {
+  //     setSelectedRoles(roles.map(roleObj => roleObj.role));
+  //   }
+  // }, [roles]);
 
   useEffect(() => {
     const memberMap = {};
