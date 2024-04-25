@@ -50,7 +50,11 @@ To run the UI tests, use the following command:
 yarn --cwd web-ui test
 ```
 
-Or simply `cd` to the `web-ui` directory and run `yarn test`.
+Or simply `cd` to the `web-ui` directory and run `yarn test`. Tests which fail to meet their Snapshot will be marked as failed. You can update the Snapshot by running the following command:
+
+```shell
+yarn --cwd web-ui test -u
+```
 
 # Running the Server
 
