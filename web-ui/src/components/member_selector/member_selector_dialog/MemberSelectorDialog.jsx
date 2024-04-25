@@ -130,7 +130,9 @@ const MemberSelectorDialog = ({
       // If the dialog is opened with initial filters, set the initial filter
       if (initialFilter && initialFilter.type === FilterType.ROLE) {
         setFilterType(initialFilter.type);
-        setFilter(selectRoles(state).find(role => role.role === 'PDL'));
+        setFilter(
+          selectRoles(state).find(role => role.role === initialFilter.value)
+        );
       }
     }
   }, [open]);
