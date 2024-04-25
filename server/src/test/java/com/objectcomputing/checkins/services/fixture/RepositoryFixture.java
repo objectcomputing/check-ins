@@ -18,6 +18,7 @@ import com.objectcomputing.checkins.services.kudos.KudosRepository;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.csvreport.MemberProfileReportRepository;
 import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
@@ -28,6 +29,8 @@ import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleRepository;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionRepository;
 import com.objectcomputing.checkins.services.settings.SettingsRepository;
+import com.objectcomputing.checkins.services.skillcategory.SkillCategoryRepository;
+import com.objectcomputing.checkins.services.skillcategory.skillcategory_skill.SkillCategorySkillRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
 import com.objectcomputing.checkins.services.tags.TagRepository;
@@ -187,5 +190,17 @@ public interface RepositoryFixture {
 
     default KudosRecipientRepository getKudosRecipientRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(KudosRecipientRepository.class);
+    }
+
+    default SkillCategoryRepository getSkillCategoryRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(SkillCategoryRepository.class);
+    }
+
+    default SkillCategorySkillRepository getSkillCategorySkillRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(SkillCategorySkillRepository.class);
+    }
+
+    default MemberProfileReportRepository getMemberProfileReportRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(MemberProfileReportRepository.class);
     }
 }

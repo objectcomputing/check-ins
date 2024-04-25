@@ -6,11 +6,13 @@ plugins {
     id("org.openrewrite.rewrite") version "5.20.0"
 }
 
+evaluationDependsOn(":web-ui")
+
 rewrite {
     activeRecipe("org.openrewrite.java.micronaut.Micronaut2to3Migration")
 }
 
-version "0.6.0"
+version "0.7.0"
 group "com.objectcomputing.checkins"
 
 repositories {
@@ -36,6 +38,7 @@ dependencies {
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+//    implementation project(":web-ui")
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-management")
     implementation('io.micronaut:micronaut-runtime:3.4.3')
@@ -134,7 +137,7 @@ dependencies {
     //testImplementation "org.testcontainers:junit-jupiter:1.15.1"
     //testImplementation("org.testcontainers:postgresql")
 
-    publicResources project(':web-ui')
+//    publicResources project(':web-ui')
 
     rewrite('org.openrewrite.recipe:rewrite-micronaut:1.10.0')
 }
@@ -142,7 +145,7 @@ dependencies {
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
     reports {
-        xml.enabled true
+        xml.required = true
     }
 }
 
@@ -164,7 +167,7 @@ tasks.withType(JavaCompile) {
 if(System.getenv("SKIP_WEB_UI") == null) {
     processResources {
         into('public') {
-            from configurations.publicResources
+            from tasks.getByPath(':web-ui:yarnBuild').outputs
         }
     }
 }

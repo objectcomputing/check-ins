@@ -5,33 +5,30 @@ const templateQuestionsUrl = "/services/feedback/template_questions";
 
 export const createFeedbackTemplate = async (feedbackTemplate, cookie) => {
   return resolve({
-    method: "post",
+    method: "POST",
     url: feedbackTemplateUrl,
-    responseType: "json",
     data: feedbackTemplate,
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 };
 
 export const createFeedbackTemplateWithQuestion = async (template, question, cookie) => {
 
   const templateReq = resolve({
-    method: "post",
+    method: "POST",
     url: feedbackTemplateUrl,
-    responseType: "json",
     data: template,
-    headers: { "X-CSRF-Header": cookie }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
   });
 
   const questionReq = templateReq.then((templateRes) => {
     if (!templateRes.error && templateRes.payload && templateRes.payload.data) {
       question.templateId = templateRes.payload.data.id;
       return resolve({
-        method: "post",
+        method: "POST",
         url: templateQuestionsUrl,
-        responseType: "json",
         data: question,
-        headers: {"X-CSRF-Header": cookie}
+        headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
       });
     }
   });
@@ -45,11 +42,10 @@ export const createTemplateQuestions = async (questions, cookie) => {
   const questionReqs = [];
   questions.forEach((question) => {
     questionReqs.push(resolve({
-      method: "post",
+      method: "POST",
       url: templateQuestionsUrl,
-      responseType: "json",
       data: question,
-      headers: { "X-CSRF-Header": cookie }
+      headers: { "X-CSRF-Header": cookie, "Accept": "application/json", "Content-Type": "application/json;charset=UTF-8" },
     }));
   });
 
@@ -61,16 +57,14 @@ export const createTemplateQuestions = async (questions, cookie) => {
 export const getFeedbackTemplate = async (feedbackTemplateId, cookie) => {
   return resolve({
     url: `${feedbackTemplateUrl}/${feedbackTemplateId}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };
 
 export const getFeedbackQuestion = async (questionId, cookie) => {
   return resolve({
     url: `${templateQuestionsUrl}/${questionId}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie }
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 }
 
@@ -80,8 +74,7 @@ export const getQuestionsOnTemplate = async (templateId, cookie) => {
     params: {
       templateId: templateId
     },
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 }
 
@@ -121,10 +114,9 @@ export const getFeedbackTemplateWithQuestions = async (templateId, cookie) => {
 
 export const softDeleteAdHocTemplates = async (creatorId, cookie) => {
   return resolve({
-    method: "delete",
+    method: "DELETE",
     url: `${feedbackTemplateUrl}/creator/${creatorId}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 }
 
@@ -135,7 +127,6 @@ export const getAllFeedbackTemplates = async (cookie) => {
       creatorId: null,
       title: null
     },
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 }

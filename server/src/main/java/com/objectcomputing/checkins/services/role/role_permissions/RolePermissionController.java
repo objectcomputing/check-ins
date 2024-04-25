@@ -4,10 +4,7 @@ import com.objectcomputing.checkins.security.permissions.Permissions;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -18,7 +15,9 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -47,11 +46,34 @@ public class RolePermissionController {
      */
     @RequiredPermission(Permissions.CAN_VIEW_ROLE_PERMISSIONS)
     @Get
-    public Mono<HttpResponse<List<RolePermissionResponseDTO>>> getAllRolePermissions() {
+    public Mono<HttpResponse<List<RolePermissionsResponseDTO>>> getAllRolePermissions() {
 
         return Mono.fromCallable(rolePermissionServices::findAll)
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(rolePermissions -> (HttpResponse<List<RolePermissionResponseDTO>>) HttpResponse.ok(rolePermissions))
+                .map(rolePermissions -> (HttpResponse<List<RolePermissionsResponseDTO>>) HttpResponse.ok(rolePermissions))
                 .subscribeOn(scheduler);
+    }
+
+    @RequiredPermission(Permissions.CAN_ASSIGN_ROLE_PERMISSIONS)
+    @Post("/")
+    public Mono<HttpResponse<RolePermissionDTO>> save(@Body @Valid RolePermissionDTO rolePermission) {
+        return Mono.fromCallable(() -> rolePermissionServices.save(rolePermission.getRoleId(), rolePermission.getPermissionId()))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(savedRolePermission -> (HttpResponse<RolePermissionDTO>) HttpResponse
+                        .created(fromEntity(savedRolePermission)))
+                .subscribeOn(scheduler);
+    }
+
+    @RequiredPermission(Permissions.CAN_ASSIGN_ROLE_PERMISSIONS)
+    @Delete("/")
+    public Mono<HttpResponse> delete(@Body RolePermissionDTO dto) {
+
+        return Mono.fromRunnable(() -> rolePermissionServices.delete(dto.getRoleId(), dto.getPermissionId()))
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .subscribeOn(scheduler).thenReturn(HttpResponse.ok());
+    }
+
+    private RolePermissionDTO fromEntity(RolePermission rolePermission) {
+        return new RolePermissionDTO(rolePermission.getRoleId(), rolePermission.getPermissionId());
     }
 }

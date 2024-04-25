@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile.birthday;
 
 
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
@@ -51,6 +53,7 @@ public class BirthDayController {
      */
 
     @Get("/{?month,dayOfMonth}")
+    @RequiredPermission(Permissions.CAN_VIEW_BIRTHDAY_REPORT)
     public Mono<HttpResponse<List<BirthDayResponseDTO>>> findByValue(@Nullable String[] month, @Nullable Integer[] dayOfMonth) {
 
         return Mono.fromCallable(() -> birthDayServices.findByValue(month, dayOfMonth))

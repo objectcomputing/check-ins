@@ -14,7 +14,7 @@ import jakarta.inject.Singleton;
 @Produces
 @Singleton
 @Requires(classes = {BadArgException.class, ExceptionHandler.class})
-public class ArgumentsHandler implements ExceptionHandler<BadArgException, HttpResponse> {
+public class ArgumentsHandler implements ExceptionHandler<BadArgException, HttpResponse<?>> {
 
     @Override
     public HttpResponse<?> handle(HttpRequest request, BadArgException e) {

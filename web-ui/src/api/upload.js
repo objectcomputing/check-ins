@@ -5,34 +5,30 @@ const fileUrl = "/services/files";
 export const getFiles = async (checkinId, cookie) => {
   return resolve({
     url: fileUrl + `?id=${checkinId}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };
 
 export const getAllFiles = async (cookie) => {
   return resolve({
     url: fileUrl,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { "X-CSRF-Header": cookie, "Accept": "application/json" },
   });
 };
 
 export const uploadFile = async (formData, checkinId, cookie) => {
   return resolve({
-    headers: { "Content-Type": "multipart/form-data", "X-CSRF-Header": cookie },
-    method: "post",
+    headers: { "Content-Type": "multipart/form-data", "X-CSRF-Header": cookie, "Accept": "application/json" },
+    method: "POST",
     url: fileUrl + `/${checkinId}`,
-    responseType: "json",
     data: formData,
   });
 };
 
 export const deleteFile = async (fileId, cookie) => {
   return resolve({
-    headers: { "Content-Type": "multipart/form-data", "X-CSRF-Header": cookie },
-    method: "delete",
+    headers: { "Content-Type": "multipart/form-data", "X-CSRF-Header": cookie, "Accept": "application/json" },
+    method: "DELETE",
     url: fileUrl + `/${fileId}`,
-    responseType: "json",
   });
 };

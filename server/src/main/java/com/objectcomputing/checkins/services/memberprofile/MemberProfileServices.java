@@ -20,4 +20,5 @@ public interface MemberProfileServices {
     List<MemberProfile> findAll();
 
     List<MemberProfile> getSupervisorsForId(UUID id);
+
 }

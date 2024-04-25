@@ -15,14 +15,13 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.client.multipart.MultipartBody;
-import org.junit.jupiter.api.Test;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
-
-
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.util.*;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,7 +71,7 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,responseException.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
     }
 
     @Test

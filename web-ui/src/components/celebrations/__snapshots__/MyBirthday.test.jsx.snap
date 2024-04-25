@@ -1,0 +1,67 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="my-birthday-container"
+  >
+    <div
+      class="hide-my-birthday"
+    >
+      X
+    </div>
+    <div
+      class="my-balloons"
+    >
+      <div>
+        <p>
+          Happy
+        </p>
+        <p>
+          Birthday!
+        </p>
+      </div>
+      <div>
+        <p>
+          Happy
+        </p>
+        <p>
+          Birthday!
+        </p>
+      </div>
+      <div>
+        <p>
+          Happy
+        </p>
+        <p>
+          Birthday!
+        </p>
+      </div>
+      <div>
+        <p>
+          Happy
+        </p>
+        <p>
+          Birthday!
+        </p>
+      </div>
+      <div>
+        <p>
+          Happy
+        </p>
+        <p>
+          Birthday!
+        </p>
+      </div>
+    </div>
+    <div
+      class="my-birthday"
+    >
+      <h1>
+        Happy Birthday 
+        !!!
+      </h1>
+    </div>
+  </div>
+</div>
+`;

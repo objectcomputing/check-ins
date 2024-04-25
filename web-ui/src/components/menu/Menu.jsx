@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { postEmployeeHours } from "../../api/hours";
-import {
-  selectCsrfToken,
-  selectIsAdmin,
-  selectIsSupervisor,
-} from "../../context/selectors";
+import {reportAllMembersCsv} from "../../api/member"
+import {selectCsrfToken, selectHasReportPermission, selectIsAdmin, selectIsSupervisor} from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
+
+import fileDownload from 'js-file-download';
 
 import { useLocation, Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
@@ -145,6 +144,7 @@ function Menu() {
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin = selectIsAdmin(state);
+  const hasReportPermission = selectHasReportPermission(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
   const isSupervisor = selectIsSupervisor(state);
@@ -161,6 +161,31 @@ function Menu() {
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const downloadMembers = async () => {
+    let res = await reportAllMembersCsv(csrf);
+    if (res?.error) {
+
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Hmm...Something went wrong.",
+        },
+      });
+    } else {
+
+      fileDownload(res?.payload?.data, "members.csv");
+
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: `Member export has been saved!`,
+        },
+      });
+    }
   };
 
   const uploadFile = async (file) => {
@@ -349,7 +374,7 @@ function Menu() {
         <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
           {createListJsx(feedbackLinks, true)}
         </Collapse>
-        {isAdmin && (
+        {hasReportPermission && (
           <React.Fragment>
             <ListItem
               button
@@ -422,6 +447,16 @@ function Menu() {
                 }}
               >
                 Upload Hours
+              </MenuItem>
+            )}
+            {isAdmin && (
+              <MenuItem
+                onClick={() => {
+                  closeAvatarMenu();
+                  downloadMembers();
+                }}
+              >
+                Download Members
               </MenuItem>
             )}
           </AvatarMenu>

@@ -88,11 +88,34 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 LocalDate.now().minusDays(3).minusYears(5), "is such like a bro dude, you know?",
                 null, null,null,null,null));
     }
-    default MemberProfile createASupervisedAndPDLUser(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
+
+    default MemberProfile createAnotherSupervisor() {
+        return getMemberProfileRepository().save(new MemberProfile("dudette", null, "gal",
+                null, "Supervisor Lady", null, "New York, New York",
+                "dudettegal@objectcomputing.com", "dudette-gal-supervisor",
+                LocalDate.now().minusDays(5).minusYears(7), "is such like a gal dudette, you know?",
+                null, null,null,null,null));
+    }
+
+    default MemberProfile createAProfileWithSupervisorAndPDL(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Charizard", null, "Char",
                 null, "Local fire hazard", pdlProfile.getId(), "New York, New York",
                 "charizard@objectcomputing.com", "local-kaiju",
                 LocalDate.now().minusDays(3).minusYears(5), "Needs a lot of supervision due to building being ultra flammable",
+                supervisorProfile.getId(), null,null,null,null));
+    }
+    default MemberProfile createAnotherProfileWithSupervisorAndPDL(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
+        return getMemberProfileRepository().save(new MemberProfile("Pikachu", null, "Pika",
+                null, "Local lightning hazard", pdlProfile.getId(), "New York, New York",
+                "pikachu@objectcomputing.com", "local-lightning-kaiju",
+                LocalDate.now().minusDays(5).minusYears(3), "Pretty sparky",
+                supervisorProfile.getId(), null,null,null,null));
+    }
+    default MemberProfile createYetAnotherProfileWithSupervisorAndPDL(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
+        return getMemberProfileRepository().save(new MemberProfile("Squirtle", null, "Squirt",
+                null, "Local water hazard", pdlProfile.getId(), "New York, New York",
+                "squirtle@objectcomputing.com", "local-water-kaiju",
+                LocalDate.now().minusDays(4).minusYears(6), "Rather moist",
                 supervisorProfile.getId(), null,null,null,null));
     }
     // this user is not connected to other users in the system

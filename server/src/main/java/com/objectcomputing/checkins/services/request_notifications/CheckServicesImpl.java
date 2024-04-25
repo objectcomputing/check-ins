@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.request_notifications;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Singleton;
@@ -37,8 +38,10 @@ public class CheckServicesImpl implements CheckServices {
         List<FeedbackRequest> todaysRequests = new ArrayList<>();
         todaysRequests.addAll(feedbackReqRepository.findByValues(null, null, null, today, null, null));
         for (FeedbackRequest req: todaysRequests) {
+            MemberProfile from = memberProfileServices.getById(req.getCreatorId());
+            String fromName  = from.getFirstName() + " " + from.getLastName();
             String newContent =  notificationContent + "<a href=\""+submitURL+req.getId()+"\">Check-Ins application</a>.";
-            emailSender.sendEmail(notificationSubject, newContent);
+            emailSender.sendEmail(fromName, from.getWorkEmail(), notificationSubject, newContent);
         }
 
         return true;

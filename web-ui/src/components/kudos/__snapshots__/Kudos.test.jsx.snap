@@ -1,0 +1,116 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly when 'kudosFrom' prop is not provided 1`] = `
+<div
+  className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root Kudos-display css-3q8kj4-MuiPaper-root-MuiCard-root"
+>
+  <div
+    className="MuiBox-root css-1l4w6pd"
+  >
+    <div
+      className="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        className="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+      >
+        <div
+          className="MuiAvatar-root MuiAvatar-circular Kudos-large css-1wlk0hk-MuiAvatar-root"
+        >
+          <img
+            className="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            src="/src/logo.svg"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+      >
+        <h2
+          className="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+        >
+          Kudos to John Doe 🎉
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+  >
+    <p
+      className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+    >
+      <span
+        className="MuiBox-root css-xi606m"
+      >
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+      </span>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
+<div
+  className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root Kudos-display css-3q8kj4-MuiPaper-root-MuiCard-root"
+>
+  <div
+    className="MuiBox-root css-1l4w6pd"
+  >
+    <div
+      className="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        className="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+      >
+        <div
+          className="MuiAvatar-root MuiAvatar-circular Kudos-large css-1wlk0hk-MuiAvatar-root"
+        >
+          <img
+            className="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            src="/src/logo.svg"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+      >
+        <h2
+          className="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+        >
+          Kudos to John Doe 🎉
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+  >
+    <p
+      className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+    >
+      <span
+        className="MuiBox-root css-xi606m"
+      >
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+      </span>
+    </p>
+    <div
+      className="MuiBox-root css-pori7h"
+    >
+      <h6
+        className="MuiTypography-root MuiTypography-subtitle2 css-ati914-MuiTypography-root"
+      >
+        Jane Doe - Senior Software Engineer
+      </h6>
+      <div
+        className="MuiAvatar-root MuiAvatar-circular Kudos-small css-1wlk0hk-MuiAvatar-root"
+      >
+        <img
+          className="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+          src="/src/logo.svg"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

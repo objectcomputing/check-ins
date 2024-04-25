@@ -32,9 +32,10 @@ public class Skill {
     @Schema(description = "The name of the skill", required = true)
     private String name;
 
+    @NotNull
     @Column(name = "pending")
     @Schema(description = "The pending status (approved or not) of the skill")
-    private boolean pending = true;
+    private Boolean pending = true;
 
     @Column(name = "description")
     @Schema(description = "The description of the skill")
@@ -43,7 +44,7 @@ public class Skill {
     @NotNull
     @Column(name = "extraneous")
     @Schema(description = "The skill is extraneous (or not)", required = true)
-    private boolean extraneous = false;
+    private Boolean extraneous = false;
 
     public Skill() {
     }
@@ -56,14 +57,14 @@ public class Skill {
         this(name, true, description, false);
     }
 
-    public Skill(String name, boolean pending, String description, boolean extraneous) {
+    public Skill(String name, Boolean pending, String description, Boolean extraneous) {
         this.name = name;
         this.pending = pending;
         this.description = description;
         this.extraneous = extraneous;
     }
 
-    public Skill(UUID id, String name, boolean pending, String description, boolean extraneous) {
+    public Skill(UUID id, String name, Boolean pending, String description, Boolean extraneous) {
         this.id = id;
         this.name = name;
         this.pending = pending;
@@ -87,11 +88,11 @@ public class Skill {
         this.name = name;
     }
 
-    public boolean isPending() {
+    public Boolean isPending() {
         return pending;
     }
 
-    public void setPending(boolean pending) {
+    public void setPending(Boolean pending) {
         this.pending = pending;
     }
 
@@ -103,11 +104,12 @@ public class Skill {
         this.description = description;
     }
 
-    public boolean isExtraneous() {
+    public Boolean isExtraneous() {
         return extraneous;
     }
 
-    public void setExtraneous(boolean extraneous) {
+    @SuppressWarnings("unused")
+    public void setExtraneous(Boolean extraneous) {
         this.extraneous = extraneous;
     }
 

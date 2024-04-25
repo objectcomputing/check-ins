@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
 import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Introspected
@@ -9,9 +10,10 @@ public class Interval {
 
     private LocalDate date;
 
-    private float value;
+    @NotNull
+    private Float value;
 
-    public Interval(LocalDate date, float value) {
+    public Interval(LocalDate date, Float value) {
         this.date = date;
         this.value = value;
     }
@@ -24,11 +26,11 @@ public class Interval {
         this.date = date;
     }
 
-    public float getValue() {
+    public Float getValue() {
         return value;
     }
 
-    public void setValue(float value) {
+    public void setValue(Float value) {
         this.value = value;
     }
 }

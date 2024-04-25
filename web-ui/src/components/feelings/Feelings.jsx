@@ -38,6 +38,7 @@ const Feelings = ({ onSelect, message }) => {
               <FontAwesomeIcon icon={icon} size="3x" />
             </div>
             <input
+              data-testid={`feelings-input-${i}`}
               id={`feelings-input-${i}`}
               type="radio"
               name="feeling"

@@ -16,7 +16,17 @@ public interface RolePermissionRepository extends CrudRepository<RolePermission,
             "    (roleid, permissionid) " +
             "VALUES " +
             "    (:roleid, :permissionid)")
-    RolePermission saveByIds(UUID roleid, UUID permissionid);
+    void saveByIds(String roleid, String permissionid);
+
+    @Query("SELECT * from role_permissions " +
+            "WHERE roleid = :roleid " +
+            "AND permissionid = :permissionid")
+    List<RolePermission> findByIds(String roleid, String permissionid);
+
+    @Query("DELETE FROM role_permissions " +
+            "WHERE roleid = :roleid " +
+            "AND permissionid = :permissionid")
+    void deleteByIds(String roleid, String permissionid);
 
     @NonNull
     List<RolePermission> findAll();

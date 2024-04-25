@@ -1,27 +1,31 @@
 import { createSelector } from "reselect";
 
-export const selectMemberProfiles = (state) => state.memberProfiles;
+export const selectMemberProfiles = (state) => state.memberProfiles || [];
 export const selectTerminatedMembers = (state) => state.terminatedMembers;
-export const selectMemberSkills = (state) => state.memberSkills;
-export const selectSkills = (state) => state.skills;
+export const selectMemberSkills = (state) => state.memberSkills || [];
+export const selectSkills = (state) => state.skills || [];
 export const selectTeamMembers = (state) => state.teamMembers;
-export const selectUserProfile = (state) => state.userProfile;
-export const selectCheckins = (state) => state.checkins;
+export const selectUserProfile = (state) => state.userProfile || {};
+export const selectCheckins = (state) => state.checkins || [];
 export const selectCsrfToken = (state) => state.csrf;
-export const selectRoles = (state) => state.roles;
-export const selectUserRoles = (state) => state.userRoles;
-export const selectTeams = (state) => state.teams;
-export const selectGuilds = (state) => state.guilds;
+export const selectRoles = (state) => state.roles || [];
+export const selectUserRoles = (state) => state.userRoles || [];
+export const selectTeams = (state) => state.teams || [];
+export const selectGuilds = (state) => state.guilds || [];
 export const selectLoading = (state) => state.loading;
 export const selectReviewPeriods = (state) => state.reviewPeriods;
+export const selectPermissions = (state) => state.permissions;
 
 export const selectTeamsLoading = createSelector(selectLoading, (loading) => {
   return loading.teams;
 });
-export const selectMemberProfilesLoading = createSelector(
+
+export const selectMemberProfilesLoading = createSelector (
   selectLoading,
-  (loading) => loading.memberProfiles
-);
+  (loading) =>
+  loading.memberProfiles
+
+)
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
@@ -33,6 +37,18 @@ export const selectIsAdmin = createSelector(
   selectUserProfile,
   (userProfile) =>
     userProfile && userProfile.role && userProfile.role.includes("ADMIN")
+);
+
+export const selectHasPermissionAssignmentPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_ASSIGN_ROLE_PERMISSIONS"))
+);
+
+export const selectHasReportPermission = createSelector(
+    selectUserProfile,
+    (userProfile) =>
+        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("REPORT"))
 );
 
 export const selectIsPDL = createSelector(
@@ -75,7 +91,7 @@ export const selectCurrentMembers = createSelector(
           today <= new Date(profile.terminationDate)
         );
       })
-      .sort((a, b) => a.lastName.localeCompare(b.lastName))
+      .sort((a, b) => a?.lastName?.localeCompare(b?.lastName))
 );
 
 export const selectCurrentMemberIds = createSelector(
@@ -245,19 +261,26 @@ export const selectPDLCheckinMap = createSelector(selectCheckins, (checkins) =>
 export const selectSupervisors = createSelector(
   selectCurrentMembers,
   selectProfileMap,
-  (currentMembers, memberProfileMap) =>
-    currentMembers?.reduce((supervisors, currentMember) => {
-      let supervisorId = currentMember.supervisorid;
+  (currentMembers, memberProfileMap) => {
+    const filteredMembers = currentMembers?.filter(member => member.supervisorid);
 
-      const inSupervisors = supervisors.find(
-        (supervisor) => supervisorId === supervisor?.id
-      );
+    const supervisorIds = filteredMembers?.map(member => member.supervisorid);
+    const uniqueSupervisorIds = [...new Set(supervisorIds)];
 
-      if (!inSupervisors) {
-        supervisors.push(memberProfileMap[supervisorId]);
-      }
-      return supervisors;
-    }, [])
+    const supervisors = uniqueSupervisorIds.map(id => memberProfileMap[id]);
+    return supervisors;
+  }
+);
+
+const buildSupervisorHierarchy = (allSupervisors, member, supervisorChain ) => {
+  const memberSupervisor = allSupervisors?.find(supervisor => supervisor?.id === member?.supervisorid);
+  supervisorChain.push(memberSupervisor);
+  return !memberSupervisor?.supervisorid ? supervisorChain : buildSupervisorHierarchy(allSupervisors, memberSupervisor, supervisorChain);
+}
+
+export const selectSupervisorHierarchyIds = (selectedMember) => createSelector(
+  selectSupervisors,
+  (allSupervisors) => buildSupervisorHierarchy(allSupervisors, selectedMember, []).map(supervisor => supervisor?.id)
 );
 
 export const selectIsSupervisor = createSelector(
@@ -292,24 +315,45 @@ export const selectMyTeam = createSelector(
   filterMembersBySupervisor
 );
 
-export const selectSubordinates = createSelector(
+/* Internal Selector, not for export */
+const selectSubordinatesPreventCycle = createSelector(
   selectTeamMembersBySupervisorId,
-  (state, managerId) => managerId,
+  (_, managerId) => managerId,
+  (_, __, previouslyIncluded) => previouslyIncluded || [],
   (state) => state,
-  (team, managerId, state) =>
+  (team, managerId, previouslyIncluded, state) =>
     team.reduce(
       (subordinates, teamMember) => {
-        if (subordinates.some((current) => current.id === teamMember.id))
+        if (previouslyIncluded.some((current) => current === teamMember.id))
           return subordinates;
         else
-          return [...subordinates, ...selectSubordinates(state, teamMember.id)];
-      },
-      [...team]
-    )
+          return [...subordinates, ...selectSubordinatesPreventCycle(state, teamMember.id, [...previouslyIncluded, managerId])];
+  }, [...team])
+);
+
+export const selectSubordinates = createSelector(
+  selectTeamMembersBySupervisorId,
+  (_, managerId) => managerId,
+  (state) => state,
+  (team, managerId, state) => team.reduce((subordinates, teamMember) => {
+    return [...subordinates, ...selectSubordinatesPreventCycle(state, teamMember.id, [managerId])];
+  }, [...team])
+);
+
+export const selectCurrentUserSubordinates = createSelector(
+  selectCurrentUserId,
+  (state) => state,
+  (currentUserId, state) => selectSubordinates(state, currentUserId)
+);
+
+export const selectIsSubordinateOfCurrentUser = createSelector(
+  selectCurrentUserSubordinates,
+  (_, teamMemberId) => teamMemberId,
+  (subordinates, teamMemberId) => subordinates.some((teamMember) => teamMember.id === teamMemberId)
 );
 
 export const selectTeamMembersWithCheckinPDL = createSelector(
-  (state, pdlId) => pdlId,
+  (_, pdlId) => pdlId,
   selectPDLCheckinMap,
   selectProfileMap,
   (pdlId, pdlCheckinMap, profileMap) =>
@@ -367,15 +411,17 @@ export const selectNormalizedMembers = createSelector(
   selectCurrentMembers,
   (state, searchText) => searchText,
   (currentMembers, searchText) =>
-    currentMembers?.filter((member) => {
-      let normName = member.name
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      let normSearchText = searchText
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      return normName.toLowerCase().includes(normSearchText.toLowerCase());
-    })
+    currentMembers
+      ?.filter((member) => {
+        let normName = member.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        let normSearchText = searchText
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        return normName.toLowerCase().includes(normSearchText.toLowerCase());
+      })
+      .sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectNormalizedMembersAdmin = createSelector(

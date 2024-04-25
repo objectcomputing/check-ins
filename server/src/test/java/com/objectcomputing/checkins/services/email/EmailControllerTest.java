@@ -77,7 +77,7 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
         email.put("html", true);
         email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
 
-        when(htmlEmailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString())).thenReturn(true);
+        when(htmlEmailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(true);
 
         final HttpRequest<?> request = HttpRequest.POST("", email)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
@@ -102,8 +102,8 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
         assertEquals(recipient2.getId(), secondEmailRes.getRecipient());
         assertTrue(secondEmailRes.getTransmissionDate().isAfter(secondEmailRes.getSendDate()));
 
-        verify(htmlEmailSender).sendEmailReceivesStatus("Email Subject", "<p>Email content</p>", recipient1.getWorkEmail(), recipient2.getWorkEmail());
-        verify(textEmailSender, never()).sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString());
+        verify(htmlEmailSender).sendEmailReceivesStatus(admin.getFirstName()+" "+admin.getLastName(), admin.getWorkEmail(),"Email Subject", "<p>Email content</p>", recipient1.getWorkEmail(), recipient2.getWorkEmail());
+        verify(textEmailSender, never()).sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
         email.put("html", false);
         email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
 
-        when(textEmailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString())).thenReturn(true);
+        when(textEmailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(true);
 
         final HttpRequest<?> request = HttpRequest.POST("", email)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
@@ -144,8 +144,8 @@ public class EmailControllerTest extends TestContainersSuite implements MemberPr
         assertEquals(recipient2.getId(), secondEmailRes.getRecipient());
         assertTrue(secondEmailRes.getTransmissionDate().isAfter(secondEmailRes.getSendDate()));
 
-        verify(textEmailSender).sendEmailReceivesStatus("Email Subject", "Email content", recipient1.getWorkEmail(), recipient2.getWorkEmail());
-        verify(htmlEmailSender, never()).sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString());
+        verify(textEmailSender).sendEmailReceivesStatus(admin.getFirstName()+" "+admin.getLastName(), admin.getWorkEmail(), "Email Subject", "Email content", recipient1.getWorkEmail(), recipient2.getWorkEmail());
+        verify(htmlEmailSender, never()).sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

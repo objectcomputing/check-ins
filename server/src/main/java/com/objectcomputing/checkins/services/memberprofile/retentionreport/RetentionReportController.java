@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -46,6 +48,7 @@ public class RetentionReportController {
      * @return {@link RetentionReportResponseDTO} Returned retention report
      */
     @Post()
+    @RequiredPermission(Permissions.CAN_VIEW_RETENTION_REPORT)
     public Mono<HttpResponse<RetentionReportResponseDTO>> reportRetention(@Body @Valid @NotNull RetentionReportRequestDTO requestBody,
                                                                           HttpRequest<RetentionReportRequestDTO> request) {
         if (requestBody.getStartDate().isAfter(requestBody.getEndDate()) ||

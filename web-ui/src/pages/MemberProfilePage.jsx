@@ -1,10 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import {
-  selectProfile,
-  selectTerminatedMembers
-} from "../context/selectors";
+import { selectCurrentUserId, selectIsAdmin, selectProfile, selectTerminatedMembers, selectSupervisorHierarchyIds } from "../context/selectors";
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
@@ -33,17 +30,25 @@ import {
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import KudosDialog from "../components/kudos_dialog/KudosDialog";
+import { useHistory } from "react-router-dom";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
+  const history = useHistory();
   const { csrf, skills, userProfile } = state;
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
   const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
   const sortedPdls = selectOrderedPdls(state);
   const sortedMembers = selectOrderedMemberFirstName(state);
-  let pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId)
-  let supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid)
+  const isAdmin = selectIsAdmin(state);
+  const currentUserId = selectCurrentUserId(state);
+  const pdlInfo = sortedPdls && sortedPdls.find((pdl) => pdl?.id === selectedMember?.pdlId);
+  const supervisorInfo = sortedMembers && sortedMembers.find((memberProfile) => memberProfile?.id === selectedMember?.supervisorid);
+  const supervisorChain = selectSupervisorHierarchyIds(selectedMember)(state);
+  const currentUserIsPdl = pdlInfo?.id === currentUserId;
+  const currentUserIsSupervisor = supervisorChain.includes(currentUserId);
+  const canRequestFeedback = isAdmin || currentUserIsPdl || currentUserIsSupervisor;
 
   useEffect(() => {
     // in the case of a terminated member, member details will still display
@@ -164,6 +169,18 @@ const MemberProfilePage = () => {
                         <h4>{(pdlInfo && "PDL: " + pdlInfo.firstName + " " + pdlInfo.lastName) || ("")}</h4>
                       </Typography>
                     </Container>
+                    {canRequestFeedback && <Container fixed sx={{ display: "flex", justifyContent: "center" }}>
+                      <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            history.push(`/feedback/request?for=${memberId}`);
+                          }}
+                      >
+                        Request Feedback
+                      </Button>
+                    </Container>}
                   </CardContent>
                 </Card>
                 <KudosDialog

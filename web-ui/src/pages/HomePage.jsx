@@ -19,6 +19,7 @@ export default function HomePage() {
   const csrf = selectCsrfToken(state);
 
   let me = selectCurrentUser(state);
+  let currentYear = new Date().getFullYear();
 
   const [anniversaries, setAnniversaries] = useState([]);
   const [birthdays, setBirthdays] = useState([]);
@@ -47,7 +48,11 @@ export default function HomePage() {
             : null;
         if (data) {
           if (data.anniversaries) {
-            setAnniversaries(sortAnniversaries(data.anniversaries));
+            let filteredAnniversaries = data.anniversaries.filter((anniv) => {
+              let annivYear = new Date(anniv.anniversary).getFullYear();
+              return annivYear !== currentYear;
+            });
+            setAnniversaries(sortAnniversaries(filteredAnniversaries));
           }
           if (data.birthdays) {
             setBirthdays(sortBirthdays(data.birthdays));

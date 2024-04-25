@@ -28,7 +28,7 @@ import SelectUserModal from "./SelectUserModal";
 import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from "../../context/actions";
 import { AppContext } from "../../context/AppContext";
 import { getReviewPeriods } from "../../api/reviewperiods.js";
-import { createFeedbackRequest, findReviewRequestsByPeriodAndTeamMember, findSelfReviewRequestsByPeriodAndTeamMember } from "../../api/feedback.js";
+import { createFeedbackRequest, findReviewRequestsByPeriodAndTeamMembers, findSelfReviewRequestsByPeriodAndTeamMembers } from "../../api/feedback.js";
 import {
   selectCsrfToken,
   selectReviewPeriod,
@@ -248,55 +248,73 @@ const TeamReviews = ({ periodId }) => {
   const loadReviews = useCallback(async () => {
     let newSelfReviews = {};
     let newReviews = {};
-    const getSelfReviewRequest = async (teamMember) => {
-      const res = await findSelfReviewRequestsByPeriodAndTeamMember(period, teamMember.id, csrf);
-      let data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
-          ? res.payload.data
-          : null;
-      if (data && data.length > 0) {
-        data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
-        newSelfReviews[teamMember.id] = data[0];
+    const getSelfReviewRequests = async (teamMemberIdBatches) => {
+      for (const teamMemberIds of teamMemberIdBatches) {
+        const res = await findSelfReviewRequestsByPeriodAndTeamMembers(period, teamMemberIds, csrf);
+        let data =
+          res &&
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+            ? res.payload.data
+            : null;
+        if (data && data.length > 0) {
+          data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
+          data.forEach(selfReview => newSelfReviews[selfReview.requesteeId] = selfReview);
+        }
       }
     };
 
-    const getReviewRequest = async (teamMember) => {
-      const res = await findReviewRequestsByPeriodAndTeamMember(period, teamMember.id, csrf);
-      let data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
-          ? res.payload.data
-          : null;
-      if (data && data.length > 0) {
-        data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
-        newReviews[teamMember.id] = data;
+    const getReviewRequests = async (teamMemberIdBatches) => {
+      for (const teamMemberIds of teamMemberIdBatches) {
+        const res = await findReviewRequestsByPeriodAndTeamMembers(period, teamMemberIds, csrf);
+        let data =
+          res &&
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+            ? res.payload.data
+            : null;
+        if (data && data.length > 0) {
+          data = data.filter((review)=>"canceled".toUpperCase() !== review?.status?.toUpperCase());
+          data.forEach(review => {
+              if(!newReviews[review.requesteeId]) {
+                  newReviews[review.requesteeId] = [];
+              }
+              newReviews[review.requesteeId].push(review);
+          });
+        }
       }
     };
 
     if (csrf && teamMembers && teamMembers.length > 0 && period && !loadingReviews.current) {
+      const batchSize = 50;
+      const teamMemberIdBatches = teamMembers.reduce((batches, member) => {
+        if (!batches.length || batches[batches.length - 1].length === batchSize) {
+          batches.push([]);
+        }
+        if(member?.id) {
+          batches[batches.length - 1].push(member.id)
+        }
+        return batches;
+      }, []);
       loadingReviews.current = true;
       setSelfReviews({});
       setReviews(null);
-      const promises = teamMembers.map(getSelfReviewRequest);
-      promises.push(...teamMembers.map(getReviewRequest));
-
-      Promise.all(promises).then((res) => {
-        loadingReviews.current = false;
-        loadedReviews.current = true;
-        setSelfReviews({...newSelfReviews});
-        setReviews({...newReviews});
-      });
+      await getSelfReviewRequests(teamMemberIdBatches);
+      await getReviewRequests(teamMemberIdBatches);
+      loadingReviews.current = false;
+      loadedReviews.current = true;
+      setSelfReviews({...newSelfReviews});
+      setReviews({...newReviews});
     }
   }, [csrf, period, teamMembers]);
 
-  useEffect(loadReviews, [loadReviews]);
+  useEffect(() => {
+    loadReviews();
+  }, [loadReviews]);
 
   const reloadReviews = useCallback(() => {
     loadedReviews.current = false;

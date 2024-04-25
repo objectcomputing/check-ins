@@ -8,7 +8,7 @@ import {
 
 import { Modal, TextField } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import DatePicker from "@mui/lab/DatePicker";
+import { DatePicker } from "@mui/x-date-pickers";
 import { format } from "date-fns";
 import { Button } from "@mui/material";
 import { UPDATE_TOAST } from "../../context/actions";
@@ -237,9 +237,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
           }
         />
         <DatePicker
-          renderInput={(props) => (
-            <TextField className="halfWidth" {...props} />
-          )}
+          slotProps={{ textField: { className: "halfWidth" } }}
           margin="normal"
           id="bday-datepicker-dialog"
           required
@@ -305,7 +303,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
           )}
         />
         <DatePicker
-          renderInput={(props) => <TextField {...props} />}
+          slotProps={{ textField: { className: "halfWidth" } }}
           margin="normal"
           id="start-datepicker-dialog"
           required
@@ -320,7 +318,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
           }}
         />
         <DatePicker
-          renderInput={(props) => <TextField {...props} />}
+          slotProps={{ textField: { className: "halfWidth" } }}
           margin="normal"
           id="termination-datepicker-dialog"
           label="Termination Date"

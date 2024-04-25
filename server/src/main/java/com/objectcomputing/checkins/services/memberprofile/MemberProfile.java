@@ -7,10 +7,8 @@ import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -341,6 +339,13 @@ public class MemberProfile {
 
     public void setExcluded(@Nullable Boolean excluded) {
         this.excluded = excluded;
+    }
+
+    @Transient
+    public void clearBirthYear() {
+        if (Objects.nonNull(this.birthDate)) {
+            birthDate = birthDate.withYear(1900);
+        }
     }
 
     @Override
