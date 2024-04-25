@@ -57,3 +57,5 @@ Or simply `cd` to the `web-ui` directory and run `yarn test`.
 ## Running Tests
 
 To skip building the UI when running unit tests in the Server application add the environment variable `SKIP_WEB_UI=true` to your system or run configuration.
+When running the full application UI/Server together it is important to remember to reset `SKIP_WEB_UI=false`. If you are using a run.sh script to launch the app
+simply add export `SKIP_WEB_UI=false` to it.
