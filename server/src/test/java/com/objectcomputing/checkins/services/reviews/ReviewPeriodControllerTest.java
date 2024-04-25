@@ -18,15 +18,14 @@ import org.junit.jupiter.api.Test;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewPeriodFixture, MemberProfileFixture, RoleFixture {
 
@@ -129,6 +128,34 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         assertEquals(reviewPeriodCreateDTO.getName(), response.body().getName());
         assertEquals(reviewPeriodCreateDTO.isOpen(), response.body().isOpen());
         assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    public void testPOSTCreateAReviewPeriodWithTimelines() {
+        LocalDateTime launchDate = LocalDateTime.now();
+        LocalDateTime selfReviewCloseDate = LocalDateTime.now().plusDays(1);
+        LocalDateTime closeDate = LocalDateTime.now().plusDays(2);
+
+        ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
+        reviewPeriodCreateDTO.setName("reincarnation");
+        reviewPeriodCreateDTO.setOpen(true);
+        reviewPeriodCreateDTO.setLaunchDate(launchDate);
+        reviewPeriodCreateDTO.setSelfReviewCloseDate(selfReviewCloseDate);
+        reviewPeriodCreateDTO.setCloseDate(closeDate);
+
+        final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
+                POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
+
+        assertNotNull(response);
+        assertNotNull(response.body());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(reviewPeriodCreateDTO.getName(), response.body().getName());
+        assertEquals(reviewPeriodCreateDTO.isOpen(), response.body().isOpen());
+        assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
+        assertEquals(reviewPeriodCreateDTO.getLaunchDate(), response.body().getLaunchDate());
+        assertEquals(reviewPeriodCreateDTO.getSelfReviewCloseDate(), response.body().getSelfReviewCloseDate());
+        assertEquals(reviewPeriodCreateDTO.getCloseDate(), response.body().getCloseDate());
     }
 
     @Test

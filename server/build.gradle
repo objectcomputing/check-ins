@@ -177,7 +177,7 @@ tasks.withType(JavaCompile) {
     }
 }
 
-if(System.getenv("SKIP_WEB_UI") == null) {
+if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "false") {
     processResources {
         into('public') {
             from tasks.getByPath(':web-ui:yarnBuild').outputs

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { postEmployeeHours } from '../../api/hours';
-import { reportAllMembersCsv } from '../../api/member';
 import {
   selectCsrfToken,
   selectHasReportPermission,
@@ -14,8 +13,6 @@ import {
   selectHasTeamSkillsReportPermission
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
-
-import fileDownload from 'js-file-download';
 
 import { useLocation, Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
@@ -181,29 +178,6 @@ function Menu() {
     return links;
   };
 
-  const downloadMembers = async () => {
-    let res = await reportAllMembersCsv(csrf);
-    if (res?.error) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'error',
-          toast: 'Hmm...Something went wrong.'
-        }
-      });
-    } else {
-      fileDownload(res?.payload?.data, 'members.csv');
-
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'success',
-          toast: `Member export has been saved!`
-        }
-      });
-    }
-  };
-
   const uploadFile = async file => {
     if (!file) {
       return;
@@ -365,22 +339,31 @@ function Menu() {
         {createLinkJsx('/', 'HOME', false)}
         {isAdmin && (
           <>
-            <ListItem button onClick={toggleAdmin} className={classes.listItem}>
+            <ListItem onClick={toggleAdmin} className={classes.listItem}>
               <ListItemText primary="ADMIN" />
             </ListItem>
             <Collapse in={adminOpen} timeout="auto" unmountOnExit>
               {createListJsx(adminLinks, true)}
+              {isAdmin && (
+                <ListItem
+                  className={classes.listItem}
+                  onClick={openHoursUpload}
+                  style={{ marginLeft: '1rem' }}
+                >
+                  Upload Hours
+                </ListItem>
+              )}
             </Collapse>
           </>
         )}
         {createLinkJsx('/checkins', 'CHECK-INS', false)}
-        <ListItem button onClick={toggleDirectory} className={classes.listItem}>
+        <ListItem onClick={toggleDirectory} className={classes.listItem}>
           <ListItemText primary="DIRECTORY" />
         </ListItem>
         <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
           {createListJsx(directoryLinks, true)}
         </Collapse>
-        <ListItem button onClick={toggleFeedback} className={classes.listItem}>
+        <ListItem onClick={toggleFeedback} className={classes.listItem}>
           <ListItemText primary="FEEDBACK" />
         </ListItem>
         <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
