@@ -174,7 +174,7 @@ public class FileControllerTest {
                 client.toBlocking().exchange(request, Map.class));
 
         String error = responseException.getMessage();
-        assertEquals("java.io.FileNotFoundException:  (The system cannot find the path specified)", error);
+        assertEquals("java.io.FileNotFoundException:  (No such file or directory)", error);
         verify(fileServices, times(0)).uploadFile(any(UUID.class), any(CompletedFileUpload.class));
     }
 
