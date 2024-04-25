@@ -3,6 +3,7 @@ import React, { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
 import { reportSkills } from '../api/memberskill.js';
 import SearchResults from '../components/search-results/SearchResults';
+import { sortMembersBySkill } from '../helpers/checks.js';
 
 import {
   selectOrderedSkills,
@@ -40,9 +41,10 @@ const SkillReportPage = props => {
       memberIds.includes(memberSkill.id)
     );
     if (memberSkillsFound && memberIds) {
-      setSearchResults(memberSkillsFound);
+      let newSort = sortMembersBySkill(memberSkillsFound);
+      setSearchResults(newSort);
     } else {
-      setSearchResults(undefined);
+      setSearchResults([]);
     }
   };
 

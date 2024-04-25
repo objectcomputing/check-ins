@@ -11,6 +11,7 @@ import {
   selectSkill
 } from '../context/selectors';
 import { levelMap } from '../context/util';
+import { sortMembersBySkill } from '../helpers/checks.js';
 
 import { Button, TextField } from '@mui/material';
 
@@ -46,11 +47,11 @@ const TeamSkillReportPage = () => {
     }
     if (memberSkillsFound && memberProfiles) {
       setAllSearchResults(memberSkillsFound);
-      setSearchResults(
-        memberSkillsFound.filter(mSkill =>
-          selectedMembers.some(member => member.id === mSkill.id)
-        )
+      let membersSelected = memberSkillsFound.filter(mSkill =>
+        selectedMembers.some(member => member.id === mSkill.id)
       );
+      let newSort = sortMembersBySkill(membersSelected);
+      setSearchResults(newSort);
     } else {
       setSearchResults([]);
       setAllSearchResults([]);

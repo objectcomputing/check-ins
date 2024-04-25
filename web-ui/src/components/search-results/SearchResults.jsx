@@ -30,11 +30,9 @@ const SearchResults = ({ searchResults }) => {
   return (
     <div className="results-section">
       <List>
-        {!searchResults ? (
-          <div />
-        ) : (
-          searchResults.map((member, index) => {
-            return (
+        {searchResults.map((member, i) => {
+          return (
+            <div key={`search-result-${i}`}>
               <Card className={'member-skills-card'} key={`card-${member?.id}`}>
                 <CardHeader
                   title={
@@ -58,14 +56,14 @@ const SearchResults = ({ searchResults }) => {
                   }
                 />
                 <ListItem key={`member-${member?.id}`}>
-                  {member.skills.map((skill, index) => {
-                    return <div key={member?.id}>{chip(skill)}</div>;
+                  {member.skills.map((skill, i) => {
+                    return <div key={`${member?.id}-${i}`}>{chip(skill)}</div>;
                   })}
                 </ListItem>
               </Card>
-            );
-          })
-        )}
+            </div>
+          );
+        })}
       </List>
     </div>
   );
