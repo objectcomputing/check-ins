@@ -28,8 +28,7 @@ public class CsrfModelProcessor{
 
         return HttpResponse.ok()
         // set cookie
-                .cookie(new NettyCookie("_csrf", cookieValue).path("/").sameSite(SameSite.Strict)).body(cookieValue);
-
-
+        //TODO: I temporarily set the cookie to expire in 10 seconds.
+        .cookie(new NettyCookie("_csrf", cookieValue).maxAge(10).path("/").sameSite(SameSite.Strict)).body(cookieValue);
     }
 }
