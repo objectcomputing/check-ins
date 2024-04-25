@@ -182,7 +182,8 @@ function Menu() {
     return links;
   };
 
-  const handleClick = () => {
+  const handleAvatarClick = () => {
+    console.log('Menu.jsx handleAvatarClick: id =', id);
     location.href = `/profile/${id}`;
   };
 
@@ -432,7 +433,7 @@ function Menu() {
           onClick={handleToggle}
         >
           <Avatar
-            onClick={handleClick}
+            onClick={handleAvatarClick}
             src={getAvatarURL(workEmail)}
             style={{
               position: 'absolute',
