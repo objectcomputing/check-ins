@@ -20,7 +20,6 @@ import fileDownload from 'js-file-download';
 import { useLocation, Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import { getAvatarURL } from '../../api/api';
-import AvatarMenu from '@mui/material/Menu';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled, useTheme } from '@mui/material/styles';
@@ -183,8 +182,8 @@ function Menu() {
     return links;
   };
 
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = () => {
+    location.href = `/profile/${id}`;
   };
 
   const downloadMembers = async () => {
@@ -302,10 +301,6 @@ function Menu() {
     setReportsOpen(false);
     setDirectoryOpen(false);
     setFeedbackOpen(false);
-  };
-
-  const closeAvatarMenu = () => {
-    setAnchorEl(null);
   };
 
   const closeHoursUpload = () => {
@@ -447,41 +442,6 @@ function Menu() {
               textDecoration: 'none'
             }}
           />
-          <AvatarMenu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={closeAvatarMenu}
-          >
-            <MenuItem
-              component={Link}
-              onClick={closeAvatarMenu}
-              to={`/profile/${id}`}
-            >
-              Profile
-            </MenuItem>
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  closeAvatarMenu();
-                  openHoursUpload();
-                }}
-              >
-                Upload Hours
-              </MenuItem>
-            )}
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  closeAvatarMenu();
-                  downloadMembers();
-                }}
-              >
-                Download Members
-              </MenuItem>
-            )}
-          </AvatarMenu>
         </div>
       </AppBar>
       <nav className={classes.drawer}>
