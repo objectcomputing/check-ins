@@ -380,6 +380,15 @@ function Menu() {
             </ListItem>
             <Collapse in={adminOpen} timeout="auto" unmountOnExit>
               {createListJsx(adminLinks, true)}
+              {isAdmin && (
+                <button
+                  class="Menu-nested MuiListItem-button"
+                  style={{ border: 'none', margin: '1rem 0' }}
+                  onClick={openHoursUpload}
+                >
+                  Upload Hours
+                </button>
+              )}
             </Collapse>
           </>
         )}
@@ -461,16 +470,6 @@ function Menu() {
             >
               Profile
             </MenuItem>
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  closeAvatarMenu();
-                  openHoursUpload();
-                }}
-              >
-                Upload Hours
-              </MenuItem>
-            )}
             {isAdmin && (
               <MenuItem
                 onClick={() => {
