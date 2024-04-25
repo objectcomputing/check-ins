@@ -381,13 +381,13 @@ function Menu() {
             <Collapse in={adminOpen} timeout="auto" unmountOnExit>
               {createListJsx(adminLinks, true)}
               {isAdmin && (
-                <button
+                <ListItem
                   className="Menu-nested MuiListItem-button"
                   style={{ border: 'none', margin: '1rem 0' }}
                   onClick={openHoursUpload}
                 >
                   Upload Hours
-                </button>
+                </ListItem>
               )}
             </Collapse>
           </>
