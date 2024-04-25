@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { postEmployeeHours } from '../../api/hours';
-import { reportAllMembersCsv } from '../../api/member';
 import {
   selectCsrfToken,
   selectHasReportPermission,
@@ -14,8 +13,6 @@ import {
   selectHasTeamSkillsReportPermission
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
-
-import fileDownload from 'js-file-download';
 
 import { useLocation, Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
@@ -185,29 +182,6 @@ function Menu() {
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const downloadMembers = async () => {
-    let res = await reportAllMembersCsv(csrf);
-    if (res?.error) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'error',
-          toast: 'Hmm...Something went wrong.'
-        }
-      });
-    } else {
-      fileDownload(res?.payload?.data, 'members.csv');
-
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'success',
-          toast: `Member export has been saved!`
-        }
-      });
-    }
   };
 
   const uploadFile = async file => {
@@ -474,10 +448,10 @@ function Menu() {
               <MenuItem
                 onClick={() => {
                   closeAvatarMenu();
-                  downloadMembers();
+                  openHoursUpload();
                 }}
               >
-                Download Members
+                Upload Hours
               </MenuItem>
             )}
           </AvatarMenu>

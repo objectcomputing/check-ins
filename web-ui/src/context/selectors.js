@@ -84,6 +84,16 @@ export const selectHasCheckinsReportPermission = createSelector(
     )
 );
 
+export const selectHasProfileReportPermission = createSelector(
+  selectUserProfile,
+  userProfile =>
+    userProfile &&
+    userProfile.role &&
+    userProfile.permissions.some(p =>
+      p?.permission?.includes('CAN_VIEW_PROFILE_REPORT')
+    )
+);
+
 export const selectHasSkillsReportPermission = createSelector(
   selectUserProfile,
   userProfile =>

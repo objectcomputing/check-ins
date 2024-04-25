@@ -48,13 +48,13 @@ public class ReviewPeriodController {
     @Post()
     public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<ReviewPeriodCreateDTO> request) {
 
-        return Mono.fromCallable(() -> reviewPeriodServices.save(new ReviewPeriod(period.getName(), period.isOpen(), period.getReviewTemplateId(), period.getSelfReviewTemplateId())))
+        return Mono.fromCallable(() -> reviewPeriodServices.save(new ReviewPeriod(period.getName(), period.isOpen(), period.getReviewTemplateId(),
+                        period.getSelfReviewTemplateId(), period.getLaunchDate(), period.getSelfReviewCloseDate(), period.getCloseDate())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(reviewPeriod -> {
-                    return (HttpResponse<ReviewPeriod>) HttpResponse.created(reviewPeriod)
-                            .headers(headers -> headers.location(
-                                    URI.create(String.format("%s/%s", request.getPath(), reviewPeriod.getId()))));
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(reviewPeriod -> (HttpResponse<ReviewPeriod>) HttpResponse.created(reviewPeriod)
+                        .headers(headers -> headers.location(
+                                URI.create(String.format("%s/%s", request.getPath(), reviewPeriod.getId())))))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
 
