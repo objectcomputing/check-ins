@@ -1,13 +1,11 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
-;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-public interface PermissionFixture extends RepositoryFixture, RolePermissionFixture {
+public interface PermissionFixture extends RolePermissionFixture {
 
     // Add MEMBER Permissions here
     List<Permission> memberPermissions = List.of(
@@ -30,7 +28,13 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permission.CAN_VIEW_PERMISSIONS,
         Permission.CAN_VIEW_CHECKINS,
         Permission.CAN_CREATE_CHECKINS,
-        Permission.CAN_UPDATE_CHECKINS
+        Permission.CAN_UPDATE_CHECKINS,
+        Permission.CAN_VIEW_PRIVATE_NOTE,
+        Permission.CAN_CREATE_PRIVATE_NOTE,
+        Permission.CAN_UPDATE_PRIVATE_NOTE,
+        Permission.CAN_CREATE_CHECKIN_DOCUMENT,
+        Permission.CAN_VIEW_CHECKIN_DOCUMENT,
+        Permission.CAN_UPDATE_CHECKIN_DOCUMENT
     );
 
     // Add ADMIN Permissions here
@@ -53,7 +57,16 @@ public interface PermissionFixture extends RepositoryFixture, RolePermissionFixt
         Permission.CAN_UPDATE_CHECKINS,
         Permission.CAN_ASSIGN_ROLE_PERMISSIONS,
         Permission.CAN_VIEW_SKILL_CATEGORIES,
-        Permission.CAN_EDIT_SKILL_CATEGORIES
+        Permission.CAN_EDIT_SKILL_CATEGORIES,
+        Permission.CAN_VIEW_PRIVATE_NOTE,
+        Permission.CAN_CREATE_PRIVATE_NOTE,
+        Permission.CAN_UPDATE_PRIVATE_NOTE,
+        Permission.CAN_CREATE_CHECKIN_DOCUMENT,
+        Permission.CAN_VIEW_CHECKIN_DOCUMENT,
+        Permission.CAN_UPDATE_CHECKIN_DOCUMENT,
+        Permission.CAN_DELETE_CHECKIN_DOCUMENT,
+        Permission.CAN_VIEW_ALL_CHECKINS,
+        Permission.CAN_UPDATE_ALL_CHECKINS
     );
 
 

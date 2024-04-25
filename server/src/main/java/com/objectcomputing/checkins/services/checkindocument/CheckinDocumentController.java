@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -49,6 +51,7 @@ public class CheckinDocumentController {
      */
 
     @Get("/{?checkinsId}")
+    @RequiredPermission(Permission.CAN_VIEW_CHECKIN_DOCUMENT)
     public Mono<HttpResponse<Set<CheckinDocument>>> findCheckinDocument(@Nullable UUID checkinsId) {
         return Mono.fromCallable(() -> checkinDocumentService.read(checkinsId))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -64,6 +67,7 @@ public class CheckinDocumentController {
      */
 
     @Post()
+    @RequiredPermission(Permission.CAN_CREATE_CHECKIN_DOCUMENT)
     public Mono<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
                                                                     HttpRequest<CheckinDocumentCreateDTO> request) {
         return Mono.fromCallable(() -> checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(),checkinDocument.getUploadDocId())))
@@ -81,6 +85,7 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
     @Put()
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKIN_DOCUMENT)
     public Mono<HttpResponse<CheckinDocument>> update(@Body @Valid CheckinDocument checkinDocument,
                                             HttpRequest<CheckinDocument> request) {
         if (checkinDocument == null) {
@@ -103,6 +108,7 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<>}
      */
     @Delete("/{checkinsId}")
+    @RequiredPermission(Permission.CAN_DELETE_CHECKIN_DOCUMENT)
     public HttpResponse<?> delete(UUID checkinsId) {
         checkinDocumentService.deleteByCheckinId(checkinsId);
         return HttpResponse

@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
-;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.PermissionFixture;
@@ -61,7 +60,7 @@ public class RolePermissionsControllerTest extends TestContainersSuite implement
         assertEquals(adminRole.getId(), actual.get(0).getRoleId());
         assertEquals(adminRole.getRole(), actual.get(0).getRole());
         assertNotNull(actual.get(0).getDescription());
-        assertEquals(19, actual.get(0).getPermissions().size());
+        assertEquals(adminPermissions.size(), actual.get(0).getPermissions().size());
         List<PermissionDTO> assigned = actual.get(0).getPermissions();
         for(Permission permission: adminPermissions) {
             PermissionDTO stored = new PermissionDTO(permission);

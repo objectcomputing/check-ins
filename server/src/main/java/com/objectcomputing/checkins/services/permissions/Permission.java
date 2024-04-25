@@ -26,7 +26,15 @@ public enum Permission {
   CAN_VIEW_CHECKINS("View check-ins", "Check-ins"),
   CAN_UPDATE_CHECKINS("Update check-ins", "Check-ins"),
   CAN_VIEW_SKILL_CATEGORIES("View skill categories", "Skill Categories"),
-
+  CAN_VIEW_PRIVATE_NOTE("View check-ins private notes", "Check-ins"),
+  CAN_UPDATE_PRIVATE_NOTE("Update check-ins private notes", "Check-ins"),
+  CAN_CREATE_PRIVATE_NOTE("Create check-ins private notes", "Check-ins"),
+  CAN_VIEW_CHECKIN_DOCUMENT("View check-ins document", "Check-ins"),
+  CAN_UPDATE_CHECKIN_DOCUMENT("Update check-ins document", "Check-ins"),
+  CAN_CREATE_CHECKIN_DOCUMENT("Create check-ins document", "Check-ins"),
+  CAN_DELETE_CHECKIN_DOCUMENT("Delete check-ins document", "Check-ins"),
+  CAN_VIEW_ALL_CHECKINS("View all check-ins", "Check-ins"),
+  CAN_UPDATE_ALL_CHECKINS("Update all check-ins, including completed check-ins", "Check-ins"),
   CAN_EDIT_SKILL_CATEGORIES("Edit skill categories", "Skill Categories");
 
   private final String description;

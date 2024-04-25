@@ -14,6 +14,8 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
@@ -35,6 +37,10 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     HttpClient client;
 
     /////////////////////////////////// READ TESTS /////////////////////////////////////////////////
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
     @Test
     void testReadPrivateNoteNotFound() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
@@ -62,13 +68,23 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+    }
 
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+    @Test
+    void testPdlMemberUnAbleToReadHisPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfUser);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("User is unauthorized to do this operation", responseException.getMessage());
     }
 
     @Test
@@ -115,7 +131,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfADMIN = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfADMIN);
+        assignAdminRole(memberProfileOfADMIN);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfPDL);
@@ -183,13 +199,8 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", privateNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
 
     }
 
@@ -220,7 +231,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfAdmin);
+        assignAdminRole(memberProfileOfAdmin);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
@@ -243,7 +254,6 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     void testMemberUnableToCreatePDLsPrivateNotes() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
@@ -255,13 +265,8 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", privateNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
     }
 
     @Test
@@ -279,12 +284,9 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", PrivateNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
 
     }
 
@@ -382,7 +384,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
                 client.toBlocking().exchange(request, String.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("User is unauthorized to do this operation", responseException.getMessage());
+        assertEquals("Forbidden", responseException.getMessage());
 
     }
 
@@ -404,24 +406,21 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
-    void testAdminUnableToUpdatePrivateNotes() {
+    void testAdminAbleToUpdatePrivateNotes() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        createAndAssignAdminRole(memberProfileForPDL);
+        assignAdminRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         PrivateNote PrivateNote = createADefaultPrivateNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.PUT("", PrivateNote).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
 
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertNotNull(response);
+        assertEquals(PrivateNote, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
@@ -439,12 +438,9 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.PUT("", PrivateNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
 
     }
 
@@ -455,12 +451,9 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        PrivateNoteCreateDTO PrivateNoteCreateDTO = new PrivateNoteCreateDTO();
-        PrivateNoteCreateDTO.setCheckinid(checkIn.getId());
-        PrivateNoteCreateDTO.setCreatedbyid(checkIn.getPdlId());
-        PrivateNoteCreateDTO.setDescription("test");
+        PrivateNote PrivateNote = createADefaultPrivateNote(checkIn, memberProfileOfUser);
 
-        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.PUT("", PrivateNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<PrivateNote> request = HttpRequest.PUT("", PrivateNote).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
