@@ -8,6 +8,7 @@ import { createMember, reportAllMembersCsv } from '../../../api/member';
 import { AppContext } from '../../../context/AppContext';
 import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
 import {
+  selectHasProfileReportPermission,
   selectNormalizedMembers,
   selectNormalizedMembersAdmin
 } from '../../../context/selectors';
@@ -124,7 +125,7 @@ const Users = () => {
                 <Button startIcon={<PersonIcon />} onClick={handleOpen}>
                   Add Member
                 </Button>
-                {isAdmin && (
+                {selectHasProfileReportPermission(state) && (
                   <Button
                     startIcon={<DownloadIcon />}
                     onClick={downloadMembers}
