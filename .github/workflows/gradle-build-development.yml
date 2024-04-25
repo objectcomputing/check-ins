@@ -15,13 +15,13 @@ jobs:
       name: Development
       url: https://checkins-develop-tuvcfzotpq-uc.a.run.app/
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up Node 14
-        uses: actions/setup-node@v2-beta
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: '14'
+          node-version: '20.x'
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
