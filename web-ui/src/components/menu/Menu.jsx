@@ -382,8 +382,7 @@ function Menu() {
               {createListJsx(adminLinks, true)}
               {isAdmin && (
                 <ListItem
-                  className="Menu-nested MuiListItem-button"
-                  style={{ border: 'none', margin: '1rem 0' }}
+                  className={classes.listItem}
                   onClick={openHoursUpload}
                 >
                   Upload Hours
