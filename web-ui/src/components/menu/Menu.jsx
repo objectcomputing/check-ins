@@ -19,7 +19,7 @@ import { AppContext } from '../../context/AppContext';
 import { getAvatarURL } from '../../api/api';
 
 import MenuIcon from '@mui/icons-material/Menu';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import {
   AppBar,
   Avatar,
@@ -37,7 +37,6 @@ import {
 
 import './Menu.css';
 
-const drawerWidth = 150;
 const PREFIX = 'Menu';
 const classes = {
   root: `${PREFIX}-root`,
@@ -50,55 +49,6 @@ const classes = {
   nested: `${PREFIX}-nested`,
   subListItem: `${PREFIX}-subListItem`
 };
-
-const Root = styled('div')(({ theme }) => ({
-  [`&.${classes.root}`]: {
-    display: 'flex',
-    paddingRight: `${drawerWidth}px`
-  },
-  [`& .${classes.drawer}`]: {
-    [theme.breakpoints.up('sm')]: {
-      width: drawerWidth,
-      flexShrink: 0
-    }
-  },
-  [`& .${classes.appBar}`]: {
-    [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-      ['@media print']: {
-        // eslint-disable-line no-useless-computed-key
-        width: `100%`,
-        marginLeft: '0px'
-      }
-    }
-  },
-  [`& .${classes.menuButton}`]: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-      display: 'none'
-    }
-  },
-  // necessary for content to be below app bar
-  // toolbar: theme.mixins.toolbar,
-  [`& .${classes.drawerPaper}`]: {
-    width: drawerWidth
-  },
-  [`& .${classes.content}`]: {
-    flexGrow: 1,
-    padding: theme.spacing(3)
-  },
-  [`& .${classes.listStyle}`]: {
-    textDecoration: 'none',
-    textAlign: 'left'
-  },
-  [`& .${classes.nested}`]: {
-    paddingLeft: theme.spacing(4)
-  },
-  [`& .${classes.subListItem}`]: {
-    fontSize: '0.9rem'
-  }
-}));
 
 const adminLinks = [
   ['/admin/permissions', 'Permissions'],
@@ -386,7 +336,7 @@ function Menu() {
   );
 
   return (
-    <Root className={classes.root}>
+    <div className={classes.root}>
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
@@ -478,7 +428,7 @@ function Menu() {
       <main className={classes.content}>
         <div className={classes.toolbar} />
       </main>
-    </Root>
+    </div>
   );
 }
 

@@ -14,10 +14,30 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import './App.css';
 
+function getUserColorScheme() {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        return 'light';
+    } else {
+        // Default to light if no preference is set
+        return 'light';
+    }
+}
+
 const customHistory = createBrowserHistory();
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#990000'
+    }
+  },
+});
 
 const theme = createTheme({
   palette: {
+    mode: 'light',
     primary: {
       light: '#6085d9',
       main: '#2559a7',
@@ -55,7 +75,7 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={getUserColorScheme() === 'dark' ? darkTheme : theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Router history={customHistory}>
           <AppContextProvider>

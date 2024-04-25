@@ -1,0 +1,29 @@
+:root {
+  /** Breakpoints
+      (more of a reference unless we bring in postcss & custom-media
+  */
+  --sm: 600px;
+  --md: 900px;
+  --lg: 1200px;
+  --xl: 1536px;
+
+  /* Colors */
+  --primary-main: #2559a7;
+  --primary-dark: #000000;
+
+  /* MUI Defaults */
+  --mui-palette-primary-main: var(--primary-main);
+  --mui-palette-primary-dark: var(--primary-main);
+  --mui-palette-primary-light: var(--primary-dark);
+  --mui-palette-primary-contrastText: #fff;
+
+  /* Sizing */
+  --nav-width: 250px;
+  
+  @media (min-width: 600px) {
+    --nav-width: 150px;
+  }
+}
+
+
+

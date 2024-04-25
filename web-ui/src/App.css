@@ -1,9 +1,8 @@
-:root {
-  --oci-light-blue: #76c8d4;
-  --oci-dark-blue: #2c519e;
-  --oci-orange: #f8b576;
+@import 'styles/_variables.css';
+
+/* :root {
   --nav-width: 150px;
-}
+} */
 
 @media (min-width: 600px) {
   .App {

@@ -35,3 +35,56 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+/* Menu Styling */
+.Menu-root {
+  display: flex;
+  padding-right: var(--nav-width);
+
+  .Menu-drawer {
+    flex-shrink: 0;
+
+    @media screen and (max-width: 599px) {
+      width: calc(var(--nav-width) * 1.5);
+    }
+  }
+
+  .Menu-appBar {
+    @media screen and (min-width: 600px) {
+      width: calc(100% - var(--nav-width));
+      margin-left: var(--nav-width);
+
+      @media print {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+  }
+
+  .Menu-menuButton {
+    margin-right: 8px;
+
+    @media (min-width: 600px){
+      display: none;
+    }
+  }
+
+  .Menu-drawerPaper {
+    width: var(--nav-width);
+  }
+
+  .Menu-content {
+    flex-grow: 1;
+    padding: 12px;
+  }
+
+  .Menu-nested {
+    padding-left: 32px;
+  }
+
+  .Menu-subListItem {
+    font-size: 14px;
+  }
+
+
+}
