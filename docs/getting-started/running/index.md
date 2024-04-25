@@ -32,6 +32,19 @@ You can use any email that the system has in its loaded test data. The "password
 
 # Running the UI
 
+The UI will be available on port 8080 once the application is running. The UI is served from the `web-ui` directory. The UI is built using Vite, a modern build tool for frontend development. The UI is written in JavaScript and uses React and Vitest.
+
+## Node Version
+
+When developing against the UI, please use the latest Node LTS. A `.nvmrc` file is provided in the `web-ui` directory to help you manage the Node version. You can use the following command to switch to the expected Node version:
+
+```shell
+nvm install --lts
+nvm use --lts
+```
+
+Or `cd` to the `web-ui` directory and run `nvm use` to be prompted to install the expected Node version as configured in the `.nvmrc` file.
+
 ## HMR
 
 For hot reloading during UI development, you can use the following command to start a Vite server:
@@ -51,3 +64,9 @@ yarn --cwd web-ui test
 ```
 
 Or simply `cd` to the `web-ui` directory and run `yarn test`.
+
+# Running the Server
+
+## Running Tests
+
+To skip building the UI when running unit tests in the Server application add the environment variable `SKIP_WEB_UI=true` to your system or run configuration.

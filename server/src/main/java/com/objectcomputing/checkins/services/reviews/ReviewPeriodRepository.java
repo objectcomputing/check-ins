@@ -9,12 +9,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-public interface ReviewPeriodRepository extends CrudRepository<ReviewPeriod, UUID> {
+public interface ReviewPeriodRepository extends CrudRepository<ReviewPeriod,UUID>{
 
     Optional<ReviewPeriod> findByName(String name);
 
     List<ReviewPeriod> findByNameIlike(String name);
 
     List<ReviewPeriod> findByOpen(boolean open);
-
 }

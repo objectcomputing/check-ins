@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -50,23 +51,36 @@ public class ReviewPeriod {
     @Schema(description = "the id of the self-review template to be used for this review period")
     private UUID selfReviewTemplateId;
 
+    @Column(name = "launch_date")
+    private LocalDateTime launchDate;
+
+    @Column(name = "self_review_close_date")
+    private LocalDateTime selfReviewCloseDate;
+
+    @Column(name = "close_date")
+    private LocalDateTime closeDate;
+
     public ReviewPeriod() {
     }
 
     public ReviewPeriod(String name) {
-        this(name, true, null, null);
+        this(name, true, null, null, null, null, null);
     }
 
     public ReviewPeriod(UUID id, String name, Boolean open) {
-        this(name, open, null, null);
+        this(name, open, null, null, null, null, null);
         this.id = id;
     }
 
-    public ReviewPeriod(String name, Boolean open, @Nullable UUID reviewTemplateId, @Nullable UUID selfReviewTemplateId) {
+    public ReviewPeriod(String name, Boolean open, @Nullable UUID reviewTemplateId, @Nullable UUID selfReviewTemplateId,
+                        LocalDateTime launchDate, LocalDateTime selfReviewCloseDate, LocalDateTime closeDate) {
         this.name = name;
         this.open = open;
         this.reviewTemplateId = reviewTemplateId;
         this.selfReviewTemplateId = selfReviewTemplateId;
+        this.launchDate = launchDate;
+        this.selfReviewCloseDate = selfReviewCloseDate;
+        this.closeDate = closeDate;
     }
 
     public UUID getId() {
@@ -99,17 +113,43 @@ public class ReviewPeriod {
 
     public void setSelfReviewTemplateId(@Nullable UUID selfReviewTemplateId) { this.selfReviewTemplateId = selfReviewTemplateId; }
 
+    public LocalDateTime getLaunchDate() {
+        return launchDate;
+    }
+
+    public void setLaunchDate(LocalDateTime launchDate) {
+        this.launchDate = launchDate;
+    }
+
+    public LocalDateTime getSelfReviewCloseDate() {
+        return selfReviewCloseDate;
+    }
+
+    public void setSelfReviewCloseDate(LocalDateTime selfReviewCloseDate) {
+        this.selfReviewCloseDate = selfReviewCloseDate;
+    }
+
+    public LocalDateTime getCloseDate() {
+        return closeDate;
+    }
+
+    public void setCloseDate(LocalDateTime closeDate) {
+        this.closeDate = closeDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReviewPeriod that = (ReviewPeriod) o;
-        return open == that.open && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(reviewTemplateId, that.reviewTemplateId) && Objects.equals(selfReviewTemplateId, that.selfReviewTemplateId);
+        return open == that.open && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(reviewTemplateId, that.reviewTemplateId)
+                && Objects.equals(selfReviewTemplateId, that.selfReviewTemplateId) && Objects.equals(launchDate, that.launchDate)
+                && Objects.equals(selfReviewCloseDate, that.selfReviewCloseDate) && Objects.equals(closeDate, that.closeDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, open, reviewTemplateId, selfReviewTemplateId);
+        return Objects.hash(id, name, open, reviewTemplateId, selfReviewTemplateId, launchDate, selfReviewCloseDate, closeDate);
     }
 
     @Override
@@ -120,6 +160,10 @@ public class ReviewPeriod {
         sb.append(", open=").append(open);
         sb.append(", reviewTemplateId=").append(reviewTemplateId);
         sb.append(", selfReviewTemplateId=").append(selfReviewTemplateId);
+        sb.append(", launchDate=").append(launchDate);
+        sb.append(", selfReviewCloseDate=").append(selfReviewCloseDate);
+        sb.append(", closeDate=").append(closeDate);
+
         sb.append('}');
         return sb.toString();
     }
