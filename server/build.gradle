@@ -8,8 +8,6 @@ plugins {
     id("org.openrewrite.rewrite") version "5.20.0"
 }
 
-evaluationDependsOn(":web-ui")
-
 rewrite {
     activeRecipe("org.openrewrite.java.micronaut.Micronaut2to3Migration")
 }
@@ -178,6 +176,7 @@ tasks.withType(JavaCompile) {
 }
 
 if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "false") {
+    evaluationDependsOn(":web-ui")
     processResources {
         into('public') {
             from tasks.getByPath(':web-ui:yarnBuild').outputs

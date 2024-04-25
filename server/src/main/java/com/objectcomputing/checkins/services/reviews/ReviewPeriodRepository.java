@@ -15,5 +15,5 @@ public interface ReviewPeriodRepository extends CrudRepository<ReviewPeriod,UUID
 
     List<ReviewPeriod> findByNameIlike(String name);
 
-    List<ReviewPeriod> findByOpen(boolean open);
+    List<ReviewPeriod> findByStatus(String status);
 }

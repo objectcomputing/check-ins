@@ -15,8 +15,8 @@ public class ReviewPeriodCreateDTO {
     private String name;
 
     @NotNull
-    @Schema(required = true, description = "whether the review is open")
-    private Boolean open;
+    @Schema(required = true, description = "the status of the review")
+    private ReviewStatus status;
 
     private UUID reviewTemplateId;
 
@@ -28,21 +28,20 @@ public class ReviewPeriodCreateDTO {
 
     private LocalDateTime closeDate;
 
-    public String getName() {
-        return name;
+    public ReviewPeriod convertToEntity(){
+        return new ReviewPeriod(this.name, this.status.toString(), this.reviewTemplateId,
+                this.selfReviewTemplateId, this.launchDate, this.selfReviewCloseDate, this.closeDate);
     }
+
+    public String getName() { return name; }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public Boolean isOpen() {
-        return open;
-    }
+    public ReviewStatus getStatus() { return status; }
 
-    public void setOpen(Boolean open) {
-        this.open = open;
-    }
+    public void setStatus(ReviewStatus status) { this.status = status; }
 
     public UUID getReviewTemplateId() {
         return reviewTemplateId;
@@ -58,9 +57,7 @@ public class ReviewPeriodCreateDTO {
         return launchDate;
     }
 
-    public void setLaunchDate(LocalDateTime launchDate) {
-        this.launchDate = launchDate;
-    }
+    public void setLaunchDate(LocalDateTime launchDate) { this.launchDate = launchDate; }
 
     public LocalDateTime getSelfReviewCloseDate() {
         return selfReviewCloseDate;
@@ -77,4 +74,6 @@ public class ReviewPeriodCreateDTO {
     public void setCloseDate(LocalDateTime closeDate) {
         this.closeDate = closeDate;
     }
+
+
 }
