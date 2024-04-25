@@ -39,14 +39,14 @@ exports[`renders correctly 1`] = `
                   role="combobox"
                   tabindex="0"
                 >
-                  ADMIN, PDL
+                  ADMIN, MEMBER, PDL
                 </div>
                 <input
                   aria-hidden="true"
                   aria-invalid="false"
                   class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
                   tabindex="-1"
-                  value="ADMIN,PDL"
+                  value="ADMIN,MEMBER,PDL"
                 />
                 <svg
                   aria-hidden="true"
@@ -75,7 +75,7 @@ exports[`renders correctly 1`] = `
               <p
                 class="MuiFormHelperText-root MuiFormHelperText-sizeMedium MuiFormHelperText-contained MuiFormHelperText-filled css-1wc848c-MuiFormHelperText-root"
               >
-                Showing 2/2 roles
+                Showing 3/2 roles
               </p>
             </div>
             <div
