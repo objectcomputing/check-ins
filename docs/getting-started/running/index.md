@@ -51,3 +51,9 @@ yarn --cwd web-ui test
 ```
 
 Or simply `cd` to the `web-ui` directory and run `yarn test`.
+
+# Running the Server
+
+## Running Tests
+
+To skip building the UI when running unit tests in the Server application add the environment variable `SKIP_WEB_UI=true` to your system or run configuration.
