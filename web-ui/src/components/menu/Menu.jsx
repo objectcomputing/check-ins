@@ -34,7 +34,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  MenuItem,
   Modal,
   Toolbar
 } from '@mui/material';
@@ -180,11 +179,6 @@ function Menu() {
     }
 
     return links;
-  };
-
-  const handleAvatarClick = () => {
-    console.log('Menu.jsx handleAvatarClick: id =', id);
-    location.href = `/profile/${id}`;
   };
 
   const downloadMembers = async () => {
@@ -426,14 +420,8 @@ function Menu() {
             <MenuIcon />
           </IconButton>
         </Toolbar>
-        <div
-          ref={anchorRef}
-          aria-controls={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}
-        >
+        <Link to={`/profile/${id}`}>
           <Avatar
-            onClick={handleAvatarClick}
             src={getAvatarURL(workEmail)}
             style={{
               position: 'absolute',
@@ -443,7 +431,7 @@ function Menu() {
               textDecoration: 'none'
             }}
           />
-        </div>
+        </Link>
       </AppBar>
       <nav className={classes.drawer}>
         <Drawer
