@@ -1,6 +1,8 @@
-:root {
+@import 'styles/_variables.css';
+
+/* :root {
   --nav-width: 150px;
-}
+} */
 
 @media (min-width: 600px) {
   .App {
