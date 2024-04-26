@@ -1,6 +1,6 @@
 import React from 'react';
 import ReviewPeriodStepper from './ReviewPeriodStepper';
-import { AppContextProvider } from '../../context/AppContext';
+import { AppContextProvider } from '../../../context/AppContext';
 
 const reviewPeriod = {
   id: "b0b8a6f3-2d15-4923-8552-2f729f58ea0f",
