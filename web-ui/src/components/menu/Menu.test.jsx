@@ -1,13 +1,17 @@
 import React from 'react';
+import { render } from '@testing-library/react';
 import Menu from './Menu';
+import { BrowserRouter } from 'react-router-dom';
 import { MemoryRouter } from 'react-router-dom';
 import { AppContextProvider } from '../../context/AppContext';
 
+const testId = 'some-id';
 const initialState = {
   state: {
     userProfile: {
       name: 'holmes',
       memberProfile: {
+        id: testId,
         pdlId: '',
         title: 'Tester',
         workEmail: 'test@tester.com'
@@ -83,5 +87,20 @@ describe('<Menu />', () => {
         </MemoryRouter>
       </AppContextProvider>
     );
+  });
+
+  it('adds link to avatar', () => {
+    const { container } = render(
+      <AppContextProvider value={initialState}>
+        <BrowserRouter>
+          <Menu />
+        </BrowserRouter>
+      </AppContextProvider>
+    );
+    const link = container.querySelector('header > a');
+    const href = link.getAttribute('href');
+    const lastIndex = href.lastIndexOf('/');
+    const id = href.substring(lastIndex + 1);
+    expect(id).toBe(testId);
   });
 });

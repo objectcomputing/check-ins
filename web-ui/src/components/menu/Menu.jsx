@@ -147,7 +147,6 @@ function Menu() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [showHoursUpload, setShowHoursUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
@@ -295,7 +294,6 @@ function Menu() {
         component={Link}
         to={path}
         className={isSubLink ? classes.nested : null}
-        button
         onClick={
           isSubLink
             ? undefined

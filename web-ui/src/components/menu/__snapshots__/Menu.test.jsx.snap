@@ -34,7 +34,7 @@ exports[`<Menu /> > renders correctly 1`] = `
         </button>
       </div>
       <a
-        href="/profile/undefined"
+        href="/profile/some-id"
       >
         <div
           class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
@@ -84,9 +84,8 @@ exports[`<Menu /> > renders correctly 1`] = `
               class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
             >
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -97,14 +96,10 @@ exports[`<Menu /> > renders correctly 1`] = `
                     HOME
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/checkins"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -115,9 +110,6 @@ exports[`<Menu /> > renders correctly 1`] = `
                     CHECK-INS
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <li
                 class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
@@ -143,9 +135,8 @@ exports[`<Menu /> > renders correctly 1`] = `
                     class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
                   >
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Mui-selected Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Mui-selected Menu-nested css-1p823my-MuiListItem-root"
                       href="/guilds"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -156,14 +147,10 @@ exports[`<Menu /> > renders correctly 1`] = `
                           Guilds
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/people"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -174,14 +161,10 @@ exports[`<Menu /> > renders correctly 1`] = `
                           People
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/teams"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -192,9 +175,6 @@ exports[`<Menu /> > renders correctly 1`] = `
                           Teams
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                   </div>
                 </div>
@@ -241,9 +221,8 @@ exports[`<Menu /> > renders correctly 1`] = `
               class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
             >
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -254,14 +233,10 @@ exports[`<Menu /> > renders correctly 1`] = `
                     HOME
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/checkins"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -272,9 +247,6 @@ exports[`<Menu /> > renders correctly 1`] = `
                     CHECK-INS
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <li
                 class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
@@ -300,9 +272,8 @@ exports[`<Menu /> > renders correctly 1`] = `
                     class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
                   >
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Mui-selected Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Mui-selected Menu-nested css-1p823my-MuiListItem-root"
                       href="/guilds"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -313,14 +284,10 @@ exports[`<Menu /> > renders correctly 1`] = `
                           Guilds
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/people"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -331,14 +298,10 @@ exports[`<Menu /> > renders correctly 1`] = `
                           People
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/teams"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -349,9 +312,6 @@ exports[`<Menu /> > renders correctly 1`] = `
                           Teams
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                   </div>
                 </div>
@@ -467,9 +427,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
               class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
             >
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -480,9 +439,6 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     HOME
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <li
                 class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
@@ -498,9 +454,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                 </div>
               </li>
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/checkins"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -511,9 +466,6 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     CHECK-INS
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <li
                 class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
@@ -539,9 +491,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
                   >
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Mui-selected Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Mui-selected Menu-nested css-1p823my-MuiListItem-root"
                       href="/guilds"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -552,14 +503,10 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                           Guilds
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/people"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -570,14 +517,10 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                           People
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/teams"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -588,9 +531,6 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                           Teams
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                   </div>
                 </div>
@@ -655,9 +595,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
               class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
             >
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -668,9 +607,6 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     HOME
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <li
                 class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
@@ -686,9 +622,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                 </div>
               </li>
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/checkins"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -699,9 +634,6 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     CHECK-INS
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <li
                 class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
@@ -727,9 +659,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
                   >
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Mui-selected Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Mui-selected Menu-nested css-1p823my-MuiListItem-root"
                       href="/guilds"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -740,14 +671,10 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                           Guilds
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/people"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -758,14 +685,10 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                           People
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/teams"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -776,9 +699,6 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                           Teams
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                   </div>
                 </div>
@@ -912,9 +832,8 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
               class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
             >
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -925,14 +844,10 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     HOME
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/checkins"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -943,9 +858,6 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     CHECK-INS
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <li
                 class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
@@ -971,9 +883,8 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
                   >
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Mui-selected Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Mui-selected Menu-nested css-1p823my-MuiListItem-root"
                       href="/guilds"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -984,14 +895,10 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                           Guilds
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/people"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1002,14 +909,10 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                           People
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/teams"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1020,9 +923,6 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                           Teams
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                   </div>
                 </div>
@@ -1069,9 +969,8 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
               class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
             >
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1082,14 +981,10 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     HOME
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <a
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
                 href="/checkins"
-                tabindex="0"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1100,9 +995,6 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     CHECK-INS
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </a>
               <li
                 class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
@@ -1128,9 +1020,8 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
                   >
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Mui-selected Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Mui-selected Menu-nested css-1p823my-MuiListItem-root"
                       href="/guilds"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1141,14 +1032,10 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                           Guilds
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/people"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1159,14 +1046,10 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                           People
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                     <a
-                      class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button Menu-nested css-bshv44-MuiButtonBase-root-MuiListItem-root"
+                      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding Menu-nested css-1p823my-MuiListItem-root"
                       href="/teams"
-                      tabindex="0"
                     >
                       <div
                         class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1177,9 +1060,6 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                           Teams
                         </span>
                       </div>
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
                     </a>
                   </div>
                 </div>
