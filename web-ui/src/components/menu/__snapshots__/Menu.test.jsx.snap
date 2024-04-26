@@ -119,10 +119,8 @@ exports[`<Menu /> > renders correctly 1`] = `
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />
               </a>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -133,10 +131,7 @@ exports[`<Menu /> > renders correctly 1`] = `
                     DIRECTORY
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <div
                 class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
                 style="min-height: 0px;"
@@ -204,10 +199,8 @@ exports[`<Menu /> > renders correctly 1`] = `
                   </div>
                 </div>
               </div>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -218,10 +211,7 @@ exports[`<Menu /> > renders correctly 1`] = `
                     FEEDBACK
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
             </nav>
           </div>
         </div>
@@ -286,10 +276,8 @@ exports[`<Menu /> > renders correctly 1`] = `
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />
               </a>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -300,10 +288,7 @@ exports[`<Menu /> > renders correctly 1`] = `
                     DIRECTORY
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <div
                 class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
                 style="min-height: 0px;"
@@ -371,10 +356,8 @@ exports[`<Menu /> > renders correctly 1`] = `
                   </div>
                 </div>
               </div>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -385,10 +368,7 @@ exports[`<Menu /> > renders correctly 1`] = `
                     FEEDBACK
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
             </nav>
           </div>
         </div>
@@ -504,10 +484,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />
               </a>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -518,10 +496,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     ADMIN
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <a
                 class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
                 href="/checkins"
@@ -540,10 +515,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />
               </a>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -554,10 +527,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     DIRECTORY
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <div
                 class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
                 style="min-height: 0px;"
@@ -625,10 +595,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                   </div>
                 </div>
               </div>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -639,10 +607,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     FEEDBACK
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <div
                 class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
                 role="button"
@@ -707,10 +672,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />
               </a>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -721,10 +684,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     ADMIN
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <a
                 class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
                 href="/checkins"
@@ -743,10 +703,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />
               </a>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -757,10 +715,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     DIRECTORY
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <div
                 class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
                 style="min-height: 0px;"
@@ -828,10 +783,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                   </div>
                 </div>
               </div>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -842,10 +795,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     FEEDBACK
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <div
                 class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
                 role="button"
@@ -997,10 +947,8 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />
               </a>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1011,10 +959,7 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     DIRECTORY
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <div
                 class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
                 style="min-height: 0px;"
@@ -1082,10 +1027,8 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                   </div>
                 </div>
               </div>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1096,10 +1039,7 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     FEEDBACK
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
             </nav>
           </div>
         </div>
@@ -1164,10 +1104,8 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />
               </a>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1178,10 +1116,7 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     DIRECTORY
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
               <div
                 class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
                 style="min-height: 0px;"
@@ -1249,10 +1184,8 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                   </div>
                 </div>
               </div>
-              <div
-                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
-                role="button"
-                tabindex="0"
+              <li
+                class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
               >
                 <div
                   class="MuiListItemText-root css-tlelie-MuiListItemText-root"
@@ -1263,10 +1196,7 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     FEEDBACK
                   </span>
                 </div>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </div>
+              </li>
             </nav>
           </div>
         </div>

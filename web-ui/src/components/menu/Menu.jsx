@@ -299,22 +299,31 @@ function Menu() {
         {createLinkJsx('/', 'HOME', false)}
         {isAdmin && (
           <>
-            <ListItem button onClick={toggleAdmin} className={classes.listItem}>
+            <ListItem onClick={toggleAdmin} className={classes.listItem}>
               <ListItemText primary="ADMIN" />
             </ListItem>
             <Collapse in={adminOpen} timeout="auto" unmountOnExit>
               {createListJsx(adminLinks, true)}
+              {isAdmin && (
+                <ListItem
+                  className={classes.listItem}
+                  onClick={openHoursUpload}
+                  style={{ marginLeft: '1rem' }}
+                >
+                  Upload Hours
+                </ListItem>
+              )}
             </Collapse>
           </>
         )}
         {createLinkJsx('/checkins', 'CHECK-INS', false)}
-        <ListItem button onClick={toggleDirectory} className={classes.listItem}>
+        <ListItem onClick={toggleDirectory} className={classes.listItem}>
           <ListItemText primary="DIRECTORY" />
         </ListItem>
         <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
           {createListJsx(directoryLinks, true)}
         </Collapse>
-        <ListItem button onClick={toggleFeedback} className={classes.listItem}>
+        <ListItem onClick={toggleFeedback} className={classes.listItem}>
           <ListItemText primary="FEEDBACK" />
         </ListItem>
         <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
