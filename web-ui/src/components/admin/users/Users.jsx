@@ -1,17 +1,20 @@
-import React, { useContext, useState } from 'react';
+import fileDownload from 'js-file-download';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
 import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
-import { createMember } from '../../../api/member';
+import { createMember, reportAllMembersCsv } from '../../../api/member';
 import { AppContext } from '../../../context/AppContext';
-import { UPDATE_MEMBER_PROFILES } from '../../../context/actions';
+import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
 import {
+  selectHasProfileReportPermission,
   selectNormalizedMembers,
   selectNormalizedMembersAdmin
 } from '../../../context/selectors';
 
-import { Button, TextField, Grid } from '@mui/material';
+import { Button, Grid, TextField } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/FileDownload';
 import PersonIcon from '@mui/icons-material/Person';
 
 import './Users.css';
@@ -66,6 +69,31 @@ const Users = () => {
       ? selectNormalizedMembersAdmin(state, searchText)
       : selectNormalizedMembers(state, searchText);
 
+  useEffect(() => {
+    const url = new URL(location.href);
+
+    const addUser = url.searchParams.get('addUser');
+    setOpen(addUser === 'true');
+
+    const includeTerminated = url.searchParams.get('includeTerminated');
+    setIncludeTerminated(includeTerminated === 'true');
+
+    const search = url.searchParams.get('search') || '';
+    setSearchText(search);
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(location.href);
+    const params = {
+      addUser: open,
+      includeTerminated,
+      search: searchText
+    };
+    const q = new URLSearchParams(params).toString();
+    const newUrl = url.origin + url.pathname + '?' + q;
+    history.replaceState(params, '', newUrl);
+  }, [includeTerminated, open, searchText]);
+
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
@@ -79,6 +107,29 @@ const Users = () => {
       />
     );
   });
+
+  const downloadMembers = async () => {
+    let res = await reportAllMembersCsv(csrf);
+    if (res?.error) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'Hmm...Something went wrong.'
+        }
+      });
+    } else {
+      fileDownload(res?.payload?.data, 'members.csv');
+
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'success',
+          toast: `Member export has been saved!`
+        }
+      });
+    }
+  };
 
   return (
     <Root>
@@ -99,6 +150,14 @@ const Users = () => {
                 <Button startIcon={<PersonIcon />} onClick={handleOpen}>
                   Add Member
                 </Button>
+                {selectHasProfileReportPermission(state) && (
+                  <Button
+                    startIcon={<DownloadIcon />}
+                    onClick={downloadMembers}
+                  >
+                    Download Members
+                  </Button>
+                )}
 
                 <MemberModal
                   member={{}}

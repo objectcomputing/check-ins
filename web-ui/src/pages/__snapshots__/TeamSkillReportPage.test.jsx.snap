@@ -135,7 +135,9 @@ exports[`renders correctly 1`] = `
                   <span
                     class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
                   >
-                    No members selected
+                    No 
+                    members
+                     selected
                   </span>
                 </div>
               </li>
