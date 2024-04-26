@@ -71,6 +71,7 @@
 
   .Menu-drawerPaper {
     width: var(--nav-width);
+    overflow-x: hidden;
   }
 
   .Menu-content {
@@ -85,6 +86,20 @@
   .Menu-subListItem {
     font-size: 14px;
   }
-
-
+ 
+  .Menu-modeToggle {
+    aspect-ratio: 1;
+    background: var(--checkins-palette-primary-main);
+    border-radius: 30px;
+    bottom: 24px;
+    color: var(--checkins-palette-primary-contrastText);
+    cursor: pointer;
+    display: grid;
+    margin-left: 50%;
+    padding: 0;
+    place-items: center;
+    position: absolute;
+    transform: translateX(-50%);
+    width: 40px;
+  }  
 }
