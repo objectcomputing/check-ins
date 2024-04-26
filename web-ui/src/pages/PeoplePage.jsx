@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import MemberSummaryCard from '../components/member-directory/MemberSummaryCard';
 import { AppContext } from '../context/AppContext';
@@ -41,6 +41,23 @@ const PeoplePage = () => {
   const [searchText, setSearchText] = useState('');
 
   const normalizedMembers = selectNormalizedMembers(state, searchText);
+
+  useEffect(() => {
+    const url = new URL(location.href);
+    const search = url.searchParams.get('search') || '';
+    setSearchText(search);
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(location.href);
+    let newUrl = url.origin + url.pathname;
+    const params = {};
+    if (searchText) params.search = searchText;
+    if (Object.keys(params).length) {
+      newUrl += '?' + new URLSearchParams(params).toString();
+    }
+    history.replaceState(params, '', newUrl);
+  }, [searchText]);
 
   const createMemberCards = normalizedMembers.map((member, index) => {
     return (
