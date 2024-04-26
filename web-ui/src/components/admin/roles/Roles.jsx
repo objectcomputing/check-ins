@@ -48,6 +48,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
+  // roles here is all possible roles, not the selected roles.
   const { csrf, memberProfiles, roles, userRoles } = state;
 
   const [showAddUser, setShowAddUser] = useState(false);
@@ -62,10 +63,28 @@ const Roles = () => {
   memberProfiles?.sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
-    if (roles) {
-      setSelectedRoles(roles.map(roleObj => roleObj.role));
+    const url = new URL(location.href);
+    const selectedRoles = url.searchParams.get('roles');
+    if (selectedRoles?.length > 0) {
+      // Select only the roles specified in the URL.
+      setSelectedRoles(selectedRoles.split(','));
+    } else {
+      // Select all possible roles.
+      setSelectedRoles(roles.map(r => r.role));
     }
-  }, [roles]);
+    setSearchText(url.searchParams.get('search') ?? '');
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(location.href);
+    const params = {
+      roles: selectedRoles.join(','),
+      search: searchText
+    };
+    const q = new URLSearchParams(params).toString();
+    const newUrl = url.origin + url.pathname + '?' + q;
+    history.replaceState(params, '', newUrl);
+  }, [searchText, selectedRoles]);
 
   useEffect(() => {
     const memberMap = {};
