@@ -4,6 +4,8 @@ import GroupIcon from '@mui/icons-material/Group';
 import { Button, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+import { createGuild } from '../../api/guild';
+import { ADD_GUILD } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import AddGuildModal from './EditGuildModal';
 import GuildSummaryCard from './GuildSummaryCard';
@@ -35,7 +37,7 @@ const displayName = 'GuildResults';
 
 const GuildResults = () => {
   const { dispatch, state } = useContext(AppContext);
-  const { guilds, userProfile } = state;
+  const { csrf, guilds, userProfile } = state;
   const [addOpen, setAddOpen] = useState(false);
   const [openedGuildId, setOpenedGuildId] = useState('');
   const [searchText, setSearchText] = useState('');
@@ -94,6 +96,7 @@ const GuildResults = () => {
                 open={addOpen}
                 onClose={handleClose}
                 onSave={async guild => {
+                  console.log('GuildResults.jsx onSave: guild =', guild);
                   if (csrf) {
                     let res = await createGuild(guild, csrf);
                     let data =
