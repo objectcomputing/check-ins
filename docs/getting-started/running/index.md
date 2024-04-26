@@ -66,8 +66,10 @@ yarn --cwd web-ui test
 Or simply `cd` to the `web-ui` directory and run `yarn test`. Tests using Snapshots are likely to fail with component updates. Those which fail to meet their Snapshot will be marked as failed. You can update the Snapshot by running the following command:
 
 ```shell
-yarn --cwd web-ui test -u
+yarn --cwd web-ui test -u # or simply `yarn test` followed by `u`
 ```
+
+Testing Library is installed in the UI project. You can find more information about Testing Library [here](https://testing-library.com/docs/react-testing-library/intro/).
 
 # Running the Server
 
