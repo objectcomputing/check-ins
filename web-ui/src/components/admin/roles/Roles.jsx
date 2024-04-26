@@ -66,7 +66,6 @@ const Roles = () => {
     const url = new URL(location.href);
     setSearchText(url.searchParams.get('searchText') ?? '');
     const selectedRoles = url.searchParams.get('selectedRoles');
-    console.log('Roles.jsx: selectedRoles =', selectedRoles);
     if (selectedRoles?.length > 0) {
       // Select only the roles specified in the URL.
       setSelectedRoles(selectedRoles.split(','));
