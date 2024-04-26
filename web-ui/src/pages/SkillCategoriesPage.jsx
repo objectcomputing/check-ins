@@ -65,6 +65,33 @@ const SkillCategoriesPage = () => {
   const [query, setQuery] = useState('');
   const [skillFilter, setSkillFilter] = useState(null);
 
+  useEffect(() => {
+    const url = new URL(location.href);
+
+    const addNew = url.searchParams.get('addNew');
+    setDialogOpen(addNew === 'true');
+
+    const search = url.searchParams.get('search') || '';
+    setQuery(search);
+
+    const filter = url.searchParams.get('filter');
+    const skill = skills.find(s => s.name === filter) || null;
+    setSkillFilter(skill);
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(location.href);
+    let newUrl = url.origin + url.pathname;
+    const params = {};
+    if (query) params.search = query;
+    if (dialogOpen) params.addNew = true;
+    if (skillFilter) params.filter = skillFilter.name;
+    if (Object.keys(params).length) {
+      newUrl += '?' + new URLSearchParams(params).toString();
+    }
+    history.replaceState(params, '', newUrl);
+  }, [dialogOpen, query, skillFilter]);
+
   const retrieveCategories = useCallback(async () => {
     if (csrf) {
       const res = await getSkillCategories(csrf);
