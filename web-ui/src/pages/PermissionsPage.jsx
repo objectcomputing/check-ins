@@ -66,13 +66,27 @@ const EditPermissionsPage = () => {
   const { csrf } = state;
   const roles = selectRoles(state);
   const hasPermission = selectHasPermissionAssignmentPermission(state);
-  const [selectedRole, setSelectedRole] = useState(
-    roles && roles.find(() => true)
-  );
+  const [selectedRole, setSelectedRole] = useState(roles[0]);
   const [categoriesList, setCategoriesList] = useState([]);
   const [rolePermissionsList, setRolePermissionsList] = useState([]);
   const [rolePermissions, setRolePermissions] = useState([]);
   const [refresh, setRefresh] = useState(true);
+
+  useEffect(() => {
+    const url = new URL(location.href);
+    const roleName = url.searchParams.get('role');
+    const role = roles.find(r => r.role === roleName);
+    setSelectedRole(role || roles[0]);
+  }, []);
+
+  useEffect(() => {
+    if (!selectedRole) return;
+    const url = new URL(location.href);
+    const params = { role: selectedRole.role };
+    const q = new URLSearchParams(params).toString();
+    const newUrl = url.origin + url.pathname + '?' + q;
+    history.replaceState(params, '', newUrl);
+  }, [selectedRole]);
 
   useEffect(() => {
     const getRolePermissions = async () => {
