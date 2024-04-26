@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { AppContext } from '../context/AppContext';
 import { selectOrderedSkills, selectPendingSkills } from '../context/selectors';
@@ -20,11 +20,37 @@ const EditSkillsPage = () => {
   const allSkills = selectOrderedSkills(state);
   const pendingSkills = selectPendingSkills(state);
 
+  useEffect(() => {
+    const url = new URL(location.href);
+
+    const combining = url.searchParams.get('combining');
+    setOpen(combining === 'true');
+
+    const search = url.searchParams.get('search') || '';
+    setSearchText(search);
+
+    const showAll = url.searchParams.get('showAll');
+    setShowAllSkills(showAll === 'true');
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(location.href);
+    let newUrl = url.origin + url.pathname;
+    const params = {};
+    if (searchText) params.search = searchText;
+    if (open) params.combining = true;
+    if (showAllSkills) params.showAll = true;
+    if (Object.keys(params).length) {
+      newUrl += '?' + new URLSearchParams(params).toString();
+    }
+    history.replaceState(params, '', newUrl);
+  }, [open, searchText, showAllSkills]);
+
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
 
-  const handleClick = () => setShowAllSkills(!showAllSkills);
+  const toggleShowAllSkills = () => setShowAllSkills(!showAllSkills);
 
   return (
     <div className="pending-skills-page">
@@ -42,10 +68,10 @@ const EditSkillsPage = () => {
           <div className="show-all-skills">
             <label htmlFor="all-skills">Show all skills</label>
             <input
-              onClick={handleClick}
+              onChange={toggleShowAllSkills}
               id="all-skills"
               type="checkbox"
-              value={showAllSkills}
+              checked={showAllSkills}
             />
           </div>
         </div>
