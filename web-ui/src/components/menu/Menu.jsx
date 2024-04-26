@@ -20,7 +20,7 @@ import { getAvatarURL } from '../../api/api';
 import AvatarMenu from '@mui/material/Menu';
 
 import MenuIcon from '@mui/icons-material/Menu';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, useColorScheme } from '@mui/material/styles';
 import {
   AppBar,
   Avatar,
@@ -36,7 +36,7 @@ import {
   Modal,
   Toolbar
 } from '@mui/material';
-
+import { DarkMode, LightMode } from '@mui/icons-material';
 import './Menu.css';
 
 const PREFIX = 'Menu';
@@ -273,6 +273,21 @@ function Menu() {
     );
   };
 
+  function SchemeToggle() {
+    const { mode, setMode } = useColorScheme();
+    return (
+      <div
+        className='Menu-modeToggle'
+        onClick={() => {
+          setMode(mode === 'light' ? 'dark' : 'light');
+        }}
+        title={`Select ${mode === 'light' ? 'dark' : 'light'} mode`}
+      >
+        {mode === 'light' ? <DarkMode /> : <LightMode />}
+      </div>
+    );
+  }
+
   const onFileSelected = e => {
     setSelectedFile(e.target.files[0]);
   };
@@ -344,6 +359,7 @@ function Menu() {
           </React.Fragment>
         )}
       </List>
+      <SchemeToggle />
     </div>
   );
 

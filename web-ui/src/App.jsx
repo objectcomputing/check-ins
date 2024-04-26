@@ -10,9 +10,15 @@ import { AppContextProvider } from './context/AppContext';
 import SnackBarWithContext from './components/snackbar/SnackBarWithContext';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+// import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+import {
+  experimental_extendTheme as extendTheme,
+  Experimental_CssVarsProvider as CssVarsProvider,
+} from '@mui/material/styles';
 
 import './App.css';
+import { colors } from '@mui/material';
 
 function getUserColorScheme() {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -25,8 +31,53 @@ function getUserColorScheme() {
     }
 }
 
+const theme = extendTheme({
+  cssVarPrefix: 'checkins',
+  colorSchemes: {
+    light: {
+      palette: {
+        primary: {
+          main: '#2d519e',
+        },
+        background: {
+          default: '#F5F5F6',
+          paper: '#fff'
+        }
+      },
+    },
+    dark: {
+      palette: {
+        primary: {
+          main: '#2d519e',
+        },
+        AppBar: {
+          darkBg: '#2d519e'
+        }
+      },
+    },
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          fontSize: '0.875rem',
+          lineHeight: 1.43,
+          letterSpacing: '0.01071rem'
+        }
+      }
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: 'standard'
+      }
+    }
+  }
+});
+
 const customHistory = createBrowserHistory();
-const darkTheme = createTheme({
+/*
+const darkTheme = extendTheme({
+  ...theme,
   palette: {
     mode: 'dark',
     primary: {
@@ -35,12 +86,13 @@ const darkTheme = createTheme({
   },
 });
 
-const theme = createTheme({
+const lightTheme = extendTheme({
+  ...theme,
   palette: {
     mode: 'light',
     primary: {
       light: '#6085d9',
-      main: '#2559a7',
+      main: 'var(--primary-main)',
       dark: '#003177',
       contrastText: '#fff'
     },
@@ -73,9 +125,13 @@ const theme = createTheme({
   }
 });
 
+*/
+
+// getUserColorScheme() === 'dark' ? darkTheme : lightTheme
+
 function App() {
   return (
-    <ThemeProvider theme={getUserColorScheme() === 'dark' ? darkTheme : theme}>
+    <CssVarsProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Router history={customHistory}>
           <AppContextProvider>
@@ -98,7 +154,7 @@ function App() {
           </AppContextProvider>
         </Router>
       </LocalizationProvider>
-    </ThemeProvider>
+    </CssVarsProvider>
   );
 }
 
