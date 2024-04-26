@@ -114,7 +114,6 @@ const ViewFeedbackPage = () => {
     setDateRange(dateRange);
 
     const searchText = url.searchParams.get('search') || '';
-    console.log('ViewFeedbackPage.jsx : searchText =', searchText);
     setSearchText(searchText);
 
     const showAll = url.searchParams.get('showAll');
@@ -132,7 +131,6 @@ const ViewFeedbackPage = () => {
       showAll: includeAll,
       sort: sortValue
     };
-    console.log('ViewFeedbackPage.jsx : params =', params);
     const q = new URLSearchParams(params).toString();
     const newUrl = url.origin + url.pathname + '?' + q;
     history.replaceState(params, '', newUrl);
@@ -411,9 +409,9 @@ const ViewFeedbackPage = () => {
                 </InputAdornment>
               )
             }}
-            defaultValue={searchText}
+            value={searchText}
           />
-          <FormControl className={classes.textField} value={dateRange}>
+          <FormControl className={classes.textField}>
             <TextField
               id="select-time"
               select
@@ -421,7 +419,7 @@ const ViewFeedbackPage = () => {
               size="small"
               label="Show requests sent within"
               onChange={e => setDateRange(e.target.value)}
-              defaultValue={DateRange.THREE_MONTHS}
+              value={dateRange}
               variant="outlined"
             >
               <MenuItem value={DateRange.THREE_MONTHS}>Past 3 months</MenuItem>
@@ -431,7 +429,7 @@ const ViewFeedbackPage = () => {
             </TextField>
           </FormControl>
 
-          <FormControl className={classes.textField} value={sortValue}>
+          <FormControl className={classes.textField}>
             <TextField
               id="select-sort-method"
               select
@@ -439,7 +437,7 @@ const ViewFeedbackPage = () => {
               size="small"
               label="Sort by"
               onChange={e => setSortValue(e.target.value)}
-              defaultValue={SortOption.SENT_DATE}
+              value={sortValue}
               variant="outlined"
             >
               <MenuItem value={SortOption.SUBMISSION_DATE}>
