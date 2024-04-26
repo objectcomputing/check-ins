@@ -5,7 +5,6 @@ import { AppContextProvider } from '../../context/AppContext';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { BrowserRouter } from 'react-router-dom';
-import { act } from '@testing-library/react';
 
 const currentUserProfile = {
   id: 9876,
