@@ -1,0 +1,105 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-8atqhb"
+  >
+    <div
+      class="MuiStepper-root MuiStepper-horizontal MuiStepper-alternativeLabel css-10mg1vw-MuiStepper-root"
+    >
+      <div
+        class="MuiStep-root MuiStep-horizontal MuiStep-alternativeLabel css-n7tliy-MuiStep-root"
+      >
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal MuiStepLabel-alternativeLabel css-ascpo7-MuiStepLabel-root"
+        >
+          <span
+            class="MuiStepLabel-iconContainer Mui-active MuiStepLabel-alternativeLabel css-vnkopk-MuiStepLabel-iconContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root Mui-active css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="12"
+              />
+              <text
+                class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                dominant-baseline="central"
+                text-anchor="middle"
+                x="12"
+                y="12"
+              >
+                1
+              </text>
+            </svg>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer MuiStepLabel-alternativeLabel css-1vyamtt-MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiStepLabel-label Mui-active MuiStepLabel-alternativeLabel css-1hv8oq8-MuiStepLabel-label"
+            >
+              Review Period Is Open
+            </span>
+          </span>
+        </span>
+      </div>
+      <div
+        class="MuiStep-root MuiStep-horizontal MuiStep-alternativeLabel css-n7tliy-MuiStep-root"
+      >
+        <div
+          class="MuiStepConnector-root MuiStepConnector-horizontal MuiStepConnector-alternativeLabel Mui-disabled css-zpcwqm-MuiStepConnector-root"
+        >
+          <span
+            class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-z7uhs0-MuiStepConnector-line"
+          />
+        </div>
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled MuiStepLabel-alternativeLabel css-ascpo7-MuiStepLabel-root"
+        >
+          <span
+            class="MuiStepLabel-iconContainer Mui-disabled MuiStepLabel-alternativeLabel css-vnkopk-MuiStepLabel-iconContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="12"
+              />
+              <text
+                class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                dominant-baseline="central"
+                text-anchor="middle"
+                x="12"
+                y="12"
+              >
+                2
+              </text>
+            </svg>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer MuiStepLabel-alternativeLabel css-1vyamtt-MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiStepLabel-label Mui-disabled MuiStepLabel-alternativeLabel css-1hv8oq8-MuiStepLabel-label"
+            >
+              Review Period Is Closed
+            </span>
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
