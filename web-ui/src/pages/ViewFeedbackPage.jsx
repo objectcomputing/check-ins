@@ -108,6 +108,37 @@ const ViewFeedbackPage = () => {
   const [includeAll, setIncludeAll] = useState(false);
 
   useEffect(() => {
+    const url = new URL(location.href);
+
+    const dateRange = url.searchParams.get('dates') || DateRange.THREE_MONTHS;
+    setDateRange(dateRange);
+
+    const searchText = url.searchParams.get('search') || '';
+    console.log('ViewFeedbackPage.jsx : searchText =', searchText);
+    setSearchText(searchText);
+
+    const showAll = url.searchParams.get('showAll');
+    setIncludeAll(showAll === 'true');
+
+    const sortValue = url.searchParams.get('sort') || SortOption.SENT_DATE;
+    setSortValue(sortValue);
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(location.href);
+    const params = {
+      dates: dateRange,
+      search: searchText,
+      showAll: includeAll,
+      sort: sortValue
+    };
+    console.log('ViewFeedbackPage.jsx : params =', params);
+    const q = new URLSearchParams(params).toString();
+    const newUrl = url.origin + url.pathname + '?' + q;
+    history.replaceState(params, '', newUrl);
+  }, [dateRange, includeAll, searchText, sortValue]);
+
+  useEffect(() => {
     if (currentMembers && currentMembers.length > 0) {
       isAdmin && includeAll
         ? setTeamMembers(
@@ -380,6 +411,7 @@ const ViewFeedbackPage = () => {
                 </InputAdornment>
               )
             }}
+            defaultValue={searchText}
           />
           <FormControl className={classes.textField} value={dateRange}>
             <TextField
