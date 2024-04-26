@@ -64,8 +64,7 @@ const Roles = () => {
 
   useEffect(() => {
     const url = new URL(location.href);
-    setSearchText(url.searchParams.get('searchText') ?? '');
-    const selectedRoles = url.searchParams.get('selectedRoles');
+    const selectedRoles = url.searchParams.get('roles');
     if (selectedRoles?.length > 0) {
       // Select only the roles specified in the URL.
       setSelectedRoles(selectedRoles.split(','));
@@ -73,13 +72,14 @@ const Roles = () => {
       // Select all possible roles.
       setSelectedRoles(roles.map(r => r.role));
     }
+    setSearchText(url.searchParams.get('search') ?? '');
   }, []);
 
   useEffect(() => {
     const url = new URL(location.href);
     const params = {
-      searchText: searchText,
-      selectedRoles: selectedRoles.join(',')
+      roles: selectedRoles.join(','),
+      search: searchText
     };
     const q = new URLSearchParams(params).toString();
     const newUrl = url.origin + url.pathname + '?' + q;
