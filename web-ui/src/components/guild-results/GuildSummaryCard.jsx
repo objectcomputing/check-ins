@@ -57,10 +57,10 @@ const propTypes = {
 
 const displayName = 'GuildSummaryCard';
 
-const GuildSummaryCard = ({ guild, index }) => {
+const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
   const { state, dispatch } = useContext(AppContext);
   const { guilds, userProfile, csrf } = state;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(isOpen);
   const [openDelete, setOpenDelete] = useState(false);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
   const isAdmin =
@@ -80,8 +80,14 @@ const GuildSummaryCard = ({ guild, index }) => {
       ? false
       : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleOpen = () => {
+    setOpen(true);
+    onGuildSelect(guild.id);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    onGuildSelect('');
+  };
 
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
