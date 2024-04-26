@@ -38,7 +38,7 @@ const displayName = 'TeamResults';
 const TeamResults = () => {
   const { state } = useContext(AppContext);
   const loading = selectTeamsLoading(state);
-  const [open, setOpen] = useState(false);
+  const [addingTeam, setAddingTeam] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [selectedTeamId, setSelectedTeamId] = useState('');
   const teams = selectNormalizedTeams(state, searchText);
@@ -59,7 +59,7 @@ const TeamResults = () => {
     const url = new URL(location.href);
 
     const addNew = url.searchParams.get('addNew');
-    setOpen(addNew === 'true');
+    setAddingTeam(addNew === 'true');
 
     const search = url.searchParams.get('search') || '';
     setSearchText(search);
@@ -72,14 +72,14 @@ const TeamResults = () => {
     const url = new URL(location.href);
     let newUrl = url.origin + url.pathname;
     const params = {};
-    if (open) params.addNew = true;
+    if (addingTeam) params.addNew = true;
     if (searchText) params.search = searchText;
     if (selectedTeamId) params.team = selectedTeamId;
     if (Object.keys(params).length) {
       newUrl += '?' + new URLSearchParams(params).toString();
     }
     history.replaceState(params, '', newUrl);
-  }, [open, searchText, selectedTeamId]);
+  }, [addingTeam, searchText, selectedTeamId]);
 
   return (
     <Root>
@@ -93,7 +93,7 @@ const TeamResults = () => {
             setSearchText(e.target.value);
           }}
         />
-        <TeamsActions isOpen={open} onOpen={setOpen} />
+        <TeamsActions isOpen={addingTeam} onOpen={setAddingTeam} />
       </div>
       <div className="teams">
         {loading
