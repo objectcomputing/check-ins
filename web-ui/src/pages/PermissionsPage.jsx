@@ -19,6 +19,7 @@ import {
   selectRoles,
   selectHasPermissionAssignmentPermission
 } from '../context/selectors';
+import { queryParameterSetup } from '../helpers/query-parameters';
 
 import './PermissionsPage.css';
 
@@ -72,21 +73,20 @@ const EditPermissionsPage = () => {
   const [rolePermissions, setRolePermissions] = useState([]);
   const [refresh, setRefresh] = useState(true);
 
-  useEffect(() => {
-    const url = new URL(location.href);
-    const roleName = url.searchParams.get('role');
-    const role = roles.find(r => r.role === roleName);
-    setSelectedRole(role || roles[0]);
-  }, []);
-
-  useEffect(() => {
-    if (!selectedRole) return;
-    const url = new URL(location.href);
-    const params = { role: selectedRole.role };
-    const q = new URLSearchParams(params).toString();
-    const newUrl = url.origin + url.pathname + '?' + q;
-    history.replaceState(params, '', newUrl);
-  }, [selectedRole]);
+  queryParameterSetup([
+    {
+      name: 'role',
+      default: roles[0],
+      value: selectedRole,
+      setter(value) {
+        const role = roles.find(r => r.role === value);
+        setSelectedRole(role);
+      },
+      toQP(selectedRole) {
+        return selectedRole.role;
+      }
+    }
+  ]);
 
   useEffect(() => {
     const getRolePermissions = async () => {

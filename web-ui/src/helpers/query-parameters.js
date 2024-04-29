@@ -5,7 +5,8 @@ import { useEffect } from 'react';
  * @property {string} name
  * @property {boolean} default
  * @property {boolean} value
- * @property {(boolean) => void} setter
+ * @property {(boolean) => void} setter - takes query parameter value and updates state
+ * @property {(any) => string} toQP - takes state value and returns query parameter value
  */
 
 /**
@@ -13,7 +14,8 @@ import { useEffect } from 'react';
  * @property {string} name
  * @property {string} default
  * @property {string} value
- * @property {(string) => void} setter
+ * @property {(string) => void} setter - takes query parameter value and updates state
+ * @property {(any) => string} toQP - takes state value and returns query parameter value
  */
 
 /**
@@ -42,7 +44,8 @@ export const queryParameterSetup = qps => {
     let newUrl = url.origin + url.pathname;
     const params = {};
     for (const qp of qps) {
-      const { value } = qp;
+      let { toQP, value } = qp;
+      if (toQP) value = toQP(value);
       if (value && value !== qp.default) params[qp.name] = value;
     }
     if (Object.keys(params).length) {
