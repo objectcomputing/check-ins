@@ -1,14 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { TextField, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 import MemberSummaryCard from '../components/member-directory/MemberSummaryCard';
+import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 import { AppContext } from '../context/AppContext';
 import {
   selectMemberProfilesLoading,
   selectNormalizedMembers
 } from '../context/selectors';
-import { TextField, Grid } from '@mui/material';
+import { useQueryParameters } from '../helpers/query-parameters';
+
 import './PeoplePage.css';
-import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 
 const PREFIX = 'PeoplePage';
 const classes = {
@@ -42,22 +45,14 @@ const PeoplePage = () => {
 
   const normalizedMembers = selectNormalizedMembers(state, searchText);
 
-  useEffect(() => {
-    const url = new URL(location.href);
-    const search = url.searchParams.get('search') || '';
-    setSearchText(search);
-  }, []);
-
-  useEffect(() => {
-    const url = new URL(location.href);
-    let newUrl = url.origin + url.pathname;
-    const params = {};
-    if (searchText) params.search = searchText;
-    if (Object.keys(params).length) {
-      newUrl += '?' + new URLSearchParams(params).toString();
+  useQueryParameters([
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
     }
-    history.replaceState(params, '', newUrl);
-  }, [searchText]);
+  ]);
 
   const createMemberCards = normalizedMembers.map((member, index) => {
     return (
