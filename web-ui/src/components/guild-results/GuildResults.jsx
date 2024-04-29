@@ -10,6 +10,7 @@ import { AppContext } from '../../context/AppContext';
 import AddGuildModal from './EditGuildModal';
 import GuildSummaryCard from './GuildSummaryCard';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
+import { useQueryParameters } from '../../helpers/query-parameters';
 import './GuildResults.css';
 
 const PREFIX = 'GuildResults';
@@ -42,31 +43,26 @@ const GuildResults = () => {
   const [openedGuildId, setOpenedGuildId] = useState('');
   const [searchText, setSearchText] = useState('');
 
-  useEffect(() => {
-    const url = new URL(location.href);
-
-    const addOpen = url.searchParams.get('addOpen') || '';
-    setAddOpen(addOpen === 'true');
-
-    const guildId = url.searchParams.get('guild') || '';
-    setOpenedGuildId(guildId);
-
-    const search = url.searchParams.get('search') || '';
-    setSearchText(search);
-  }, []);
-
-  useEffect(() => {
-    const url = new URL(location.href);
-    let newUrl = url.origin + url.pathname;
-    const params = {};
-    if (addOpen) params.addOpen = true;
-    if (openedGuildId) params.guild = openedGuildId;
-    if (searchText) params.search = searchText;
-    if (Object.keys(params).length) {
-      newUrl += '?' + new URLSearchParams(params).toString();
+  useQueryParameters([
+    {
+      name: 'addOpen',
+      default: false,
+      value: addOpen,
+      setter: setAddOpen
+    },
+    {
+      name: 'guild',
+      default: '',
+      value: openedGuildId,
+      setter: setOpenedGuildId
+    },
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
     }
-    history.replaceState(params, '', newUrl);
-  }, [addOpen, openedGuildId, searchText]);
+  ]);
 
   const handleOpen = () => setAddOpen(true);
 
