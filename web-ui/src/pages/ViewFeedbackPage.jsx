@@ -410,7 +410,7 @@ const ViewFeedbackPage = () => {
             }}
             value={searchText}
           />
-          <FormControl className={classes.textField} value={dateRange}>
+          <FormControl className={classes.textField}>
             <TextField
               id="select-time"
               select
