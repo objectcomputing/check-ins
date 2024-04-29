@@ -1,7 +1,11 @@
 import fileDownload from 'js-file-download';
 import React, { useContext, useEffect, useState } from 'react';
 
+import DownloadIcon from '@mui/icons-material/FileDownload';
+import PersonIcon from '@mui/icons-material/Person';
+import { Button, Grid, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
 import { createMember, reportAllMembersCsv } from '../../../api/member';
@@ -13,9 +17,7 @@ import {
   selectNormalizedMembersAdmin
 } from '../../../context/selectors';
 
-import { Button, Grid, TextField } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/FileDownload';
-import PersonIcon from '@mui/icons-material/Person';
+import { queryParameterSetup } from '../../../helpers/query-parameters';
 
 import './Users.css';
 
@@ -69,30 +71,26 @@ const Users = () => {
       ? selectNormalizedMembersAdmin(state, searchText)
       : selectNormalizedMembers(state, searchText);
 
-  useEffect(() => {
-    const url = new URL(location.href);
-
-    const addUser = url.searchParams.get('addUser');
-    setOpen(addUser === 'true');
-
-    const includeTerminated = url.searchParams.get('includeTerminated');
-    setIncludeTerminated(includeTerminated === 'true');
-
-    const search = url.searchParams.get('search') || '';
-    setSearchText(search);
-  }, []);
-
-  useEffect(() => {
-    const url = new URL(location.href);
-    const params = {
-      addUser: open,
-      includeTerminated,
-      search: searchText
-    };
-    const q = new URLSearchParams(params).toString();
-    const newUrl = url.origin + url.pathname + '?' + q;
-    history.replaceState(params, '', newUrl);
-  }, [includeTerminated, open, searchText]);
+  queryParameterSetup([
+    {
+      name: 'addUser',
+      default: false,
+      getter: () => open,
+      setter: setOpen
+    },
+    {
+      name: 'includeTerminated',
+      default: false,
+      getter: () => includeTerminated,
+      setter: setIncludeTerminated
+    },
+    {
+      name: 'search',
+      default: '',
+      getter: () => searchText,
+      setter: setSearchText
+    }
+  ]);
 
   const handleOpen = () => setOpen(true);
 

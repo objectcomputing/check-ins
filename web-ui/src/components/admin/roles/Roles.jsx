@@ -41,7 +41,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 
-import { isArrayPresent } from './../../../helpers/checks';
+import { isArrayPresent } from '../../../helpers/checks';
 
 import './Roles.css';
 import EditIcon from '@mui/icons-material/Edit';

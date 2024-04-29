@@ -108,7 +108,7 @@ const ViewFeedbackPage = () => {
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
   const [includeAll, setIncludeAll] = useState(false);
 
-  const qps = [
+  queryParameterSetup([
     {
       name: 'dates',
       default: DateRange.THREE_MONTHS,
@@ -133,8 +133,7 @@ const ViewFeedbackPage = () => {
       getter: () => sortValue,
       setter: setSortValue
     }
-  ];
-  queryParameterSetup(qps);
+  ]);
 
   useEffect(() => {
     if (currentMembers && currentMembers.length > 0) {
