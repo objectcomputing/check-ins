@@ -12,24 +12,18 @@ import './TeamResults.css';
 
 const displayName = 'TeamsActions';
 
-const TeamsActions = () => {
+const TeamsActions = ({ isOpen, onOpen }) => {
   const { state, dispatch } = useContext(AppContext);
-  const [open, setOpen] = useState(false);
-
   const { csrf } = state;
-
-  const handleOpen = () => setOpen(true);
-
-  const handleClose = () => setOpen(false);
 
   return (
     <div className="team-actions">
-      <Button startIcon={<GroupIcon />} onClick={handleOpen}>
+      <Button startIcon={<GroupIcon />} onClick={() => onOpen(true)}>
         Add Team
       </Button>
       <AddTeamModal
-        open={open}
-        onClose={handleClose}
+        open={isOpen}
+        onClose={() => onOpen(false)}
         onSave={async team => {
           if (csrf) {
             let res = await createTeam(team, csrf);

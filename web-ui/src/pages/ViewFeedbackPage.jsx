@@ -33,6 +33,7 @@ import {
 } from '../context/selectors';
 import { getFeedbackTemplate } from '../api/feedbacktemplate';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 const PREFIX = 'ViewFeedbackPage';
 const classes = {
@@ -106,6 +107,33 @@ const ViewFeedbackPage = () => {
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
   const [includeAll, setIncludeAll] = useState(false);
+
+  useQueryParameters([
+    {
+      name: 'dates',
+      default: DateRange.THREE_MONTHS,
+      value: dateRange,
+      setter: setDateRange
+    },
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
+    },
+    {
+      name: 'showAll',
+      default: false,
+      value: includeAll,
+      setter: setIncludeAll
+    },
+    {
+      name: 'sort',
+      default: SortOption.SENT_DATE,
+      value: sortValue,
+      setter: setSortValue
+    }
+  ]);
 
   useEffect(() => {
     const url = new URL(location.href);
@@ -428,8 +456,7 @@ const ViewFeedbackPage = () => {
               <MenuItem value={DateRange.ALL_TIME}>All time</MenuItem>
             </TextField>
           </FormControl>
-
-          <FormControl className={classes.textField}>
+          <FormControl className={classes.textField} value={sortValue}>
             <TextField
               id="select-sort-method"
               select
