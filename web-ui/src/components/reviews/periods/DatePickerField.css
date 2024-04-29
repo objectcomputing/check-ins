@@ -1,0 +1,11 @@
+.datePickerField {
+    display: flex;
+    margin: 0.7rem;
+}
+.datePickerField .MuiFormControl-root {
+    width: auto;
+}
+.datePickerFlexWrapper {
+    display: flex;
+    flex-direction: row;
+}

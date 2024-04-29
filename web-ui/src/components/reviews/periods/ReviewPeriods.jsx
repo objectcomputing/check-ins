@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import dayjs from 'dayjs';
 
 import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,6 +31,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { styled } from '@mui/material/styles';
+import './DatePickerField.css';
 
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
@@ -51,6 +53,7 @@ import {
   selectReviewPeriod,
   selectReviewPeriods
 } from '../../../context/selectors';
+import DatePickerField from './DatePickerField.jsx';
 
 const propTypes = {
   message: PropTypes.string,
@@ -117,6 +120,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [toDelete, setToDelete] = useState(null);
+  const [launchDate, setLaunchDate] = React.useState(dayjs(''));
+  const [selfReviewDate, setSelfReviewDate] = React.useState(dayjs(''));
+  const [closeDate, setCloseDate] = React.useState(dayjs(''));
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
@@ -421,6 +427,11 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </Typography>
         )}
       </List>
+      <div className="datePickerFlexWrapper">
+        <DatePickerField date={launchDate} setDate={setLaunchDate} label="Launch Date" />
+        <DatePickerField date={selfReviewDate} setDate={setSelfReviewDate} label="Self-Review Date" />
+        <DatePickerField date={closeDate} setDate={setCloseDate} label="Close Date" />
+      </div>
       <Modal open={open} onClose={handleClose}>
         <Box sx={modalStyles}>
           <TextField
