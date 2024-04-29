@@ -92,7 +92,6 @@ const GuildResults = () => {
                 open={addOpen}
                 onClose={handleClose}
                 onSave={async guild => {
-                  console.log('GuildResults.jsx onSave: guild =', guild);
                   if (csrf) {
                     let res = await createGuild(guild, csrf);
                     let data =
