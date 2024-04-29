@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { AppContext } from '../context/AppContext';
 import { selectOrderedSkills, selectPendingSkills } from '../context/selectors';
 import EditSkillsCard from '../components/edit_skills/EditSkillsCard';
 import EditSkillsModal from '../components/edit_skills/EditSkillsModal';
-import { Link } from 'react-router-dom';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 import { Button, TextField } from '@mui/material';
 
@@ -26,6 +27,21 @@ const EditSkillsPage = () => {
 
   const handleClick = () => setShowAllSkills(!showAllSkills);
 
+  useQueryParameters([
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
+    },
+    {
+      name: 'showAll',
+      default: false,
+      value: showAllSkills,
+      setter: setShowAllSkills
+    }
+  ]);
+
   return (
     <div className="pending-skills-page">
       <div className="search">
@@ -42,10 +58,10 @@ const EditSkillsPage = () => {
           <div className="show-all-skills">
             <label htmlFor="all-skills">Show all skills</label>
             <input
-              onClick={handleClick}
+              onChange={handleClick}
               id="all-skills"
               type="checkbox"
-              value={showAllSkills}
+              checked={showAllSkills}
             />
           </div>
         </div>
