@@ -16,7 +16,7 @@ import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin
 } from '../../../context/selectors';
-import { queryParameterSetup } from '../../../helpers/query-parameters';
+import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import './Users.css';
 
@@ -70,7 +70,7 @@ const Users = () => {
       ? selectNormalizedMembersAdmin(state, searchText)
       : selectNormalizedMembers(state, searchText);
 
-  queryParameterSetup([
+  useQueryParameters([
     {
       name: 'addUser',
       default: false,

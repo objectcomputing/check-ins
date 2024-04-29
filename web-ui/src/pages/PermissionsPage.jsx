@@ -19,7 +19,7 @@ import {
   selectRoles,
   selectHasPermissionAssignmentPermission
 } from '../context/selectors';
-import { queryParameterSetup } from '../helpers/query-parameters';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 import './PermissionsPage.css';
 
@@ -73,7 +73,7 @@ const EditPermissionsPage = () => {
   const [rolePermissions, setRolePermissions] = useState([]);
   const [refresh, setRefresh] = useState(true);
 
-  queryParameterSetup([
+  useQueryParameters([
     {
       name: 'role',
       default: roles[0],

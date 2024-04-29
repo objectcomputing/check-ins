@@ -33,7 +33,7 @@ import {
 } from '../context/selectors';
 import { getFeedbackTemplate } from '../api/feedbacktemplate';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
-import { queryParameterSetup } from '../helpers/query-parameters';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 const PREFIX = 'ViewFeedbackPage';
 const classes = {
@@ -108,7 +108,7 @@ const ViewFeedbackPage = () => {
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
   const [includeAll, setIncludeAll] = useState(false);
 
-  queryParameterSetup([
+  useQueryParameters([
     {
       name: 'dates',
       default: DateRange.THREE_MONTHS,

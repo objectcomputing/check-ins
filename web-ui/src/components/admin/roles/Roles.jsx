@@ -43,7 +43,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { isArrayPresent } from '../../../helpers/checks';
-import { queryParameterSetup } from '../../../helpers/query-parameters';
+import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import './Roles.css';
 
@@ -63,18 +63,19 @@ const Roles = () => {
 
   memberProfiles?.sort((a, b) => a.name.localeCompare(b.name));
 
-  queryParameterSetup([
+  if (!roles) console.error('Roles.jsx: state.roles is not set!');
+  const allRoles = roles.map(r => r.role).sort();
+  useQueryParameters([
     {
       name: 'roles',
-      default: [],
+      default: allRoles,
       value: selectedRoles,
       setter(value) {
         if (value?.length > 0) {
           // Select only the roles specified in the URL.
-          setSelectedRoles(value.split(',').sort());
+          setSelectedRoles(value.sort());
         } else {
-          // Select all possible roles.
-          setSelectedRoles(roles.map(r => r.role));
+          setSelectedRoles(allRoles);
         }
       },
       toQP() {
@@ -230,9 +231,7 @@ const Roles = () => {
                   value={selectedRoles}
                   onChange={event => {
                     const value = event.target.value;
-                    setSelectedRoles(
-                      typeof value === 'string' ? value.split(',') : value
-                    );
+                    setSelectedRoles(value.sort());
                   }}
                   input={<OutlinedInput label="Roles" />}
                   renderValue={selected => selected.join(', ')}

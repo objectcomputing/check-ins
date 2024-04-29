@@ -21,15 +21,16 @@ import { useEffect } from 'react';
 /**
  * @param {(QPBoolean | QPString)[]} qps - query parameters
  */
-export const queryParameterSetup = qps => {
+export const useQueryParameters = qps => {
   useEffect(() => {
     const url = new URL(location.href);
     const params = url.searchParams;
     for (const qp of qps) {
-      const v = params.get(qp.name);
+      let v = params.get(qp.name);
       if (typeof qp.default === 'boolean') {
         qp.setter(v ? v === 'true' : qp.default);
       } else {
+        if (v && Array.isArray(qp.default)) v = v.split(',');
         qp.setter(v || qp.default);
       }
     }
@@ -46,7 +47,8 @@ export const queryParameterSetup = qps => {
     for (const qp of qps) {
       let { toQP, value } = qp;
       if (toQP) value = toQP(value);
-      if (value && value !== qp.default) params[qp.name] = value;
+      if (!value) continue;
+      if (!compare(value, qp.default)) params[qp.name] = value;
     }
     if (Object.keys(params).length) {
       newUrl += '?' + new URLSearchParams(params).toString();
@@ -54,3 +56,6 @@ export const queryParameterSetup = qps => {
     history.replaceState(params, '', newUrl);
   }, dependencies);
 };
+
+const compare = (a, b) => stringValue(a) === stringValue(b);
+const stringValue = v => (Array.isArray(v) ? v.sort().join(',') : v);

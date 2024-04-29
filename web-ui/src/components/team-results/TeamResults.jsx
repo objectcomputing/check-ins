@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { TextField } from '@mui/material';
 import './TeamResults.css';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
-import { queryParameterSetup } from '../../helpers/query-parameters';
+import { useQueryParameters } from '../../helpers/query-parameters';
 
 const PREFIX = 'TeamResults';
 const classes = {
@@ -56,7 +56,7 @@ const TeamResults = () => {
     );
   });
 
-  queryParameterSetup([
+  useQueryParameters([
     {
       name: 'addNew',
       default: false,
