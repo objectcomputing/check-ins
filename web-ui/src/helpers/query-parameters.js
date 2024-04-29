@@ -6,7 +6,7 @@ import { useEffect } from 'react';
  * @property {boolean} default
  * @property {boolean} value
  * @property {(boolean) => void} setter - takes query parameter value and updates state
- * @property {(any) => string} toQP - takes state value and returns query parameter value
+ * @property {[(any) => string]} toQP - takes state value and returns query parameter value
  */
 
 /**
@@ -15,22 +15,20 @@ import { useEffect } from 'react';
  * @property {string} default
  * @property {string} value
  * @property {(string) => void} setter - takes query parameter value and updates state
- * @property {(any) => string} toQP - takes state value and returns query parameter value
+ * @property {[(any) => string]} toQP - takes state value and returns query parameter value
  */
 
 /**
- * @param {(QPBoolean | QPString[]} qps - query parameters
+ * @param {(QPBoolean | QPString)[]} qps - query parameters
  */
 export const queryParameterSetup = qps => {
   useEffect(() => {
     const url = new URL(location.href);
-
     const params = url.searchParams;
-
     for (const qp of qps) {
       const v = params.get(qp.name);
       if (typeof qp.default === 'boolean') {
-        qp.setter(v === 'true');
+        qp.setter(v ? v === 'true' : qp.default);
       } else {
         qp.setter(v || qp.default);
       }
@@ -39,6 +37,8 @@ export const queryParameterSetup = qps => {
 
   const dependencies = qps.map(qp => qp.value);
 
+  // This assumes the app does not use query parameters for any other purposes.
+  // It will drop any that are not set by this useEffect.
   useEffect(() => {
     const url = new URL(location.href);
     let newUrl = url.origin + url.pathname;
