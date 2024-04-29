@@ -33,6 +33,7 @@ import {
 } from '../context/selectors';
 import { getFeedbackTemplate } from '../api/feedbacktemplate';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
+import { queryParameterSetup } from '../helpers/query-parameters';
 
 const PREFIX = 'ViewFeedbackPage';
 const classes = {
@@ -107,35 +108,33 @@ const ViewFeedbackPage = () => {
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
   const [includeAll, setIncludeAll] = useState(false);
 
-  useEffect(() => {
-    const url = new URL(location.href);
-
-    const dates = url.searchParams.get('dates') || '';
-    setDateRange(dates);
-
-    const search = url.searchParams.get('search') || '';
-    setSearchText(search);
-
-    const showAll = url.searchParams.get('showAll');
-    setIncludeAll(showAll === 'true');
-
-    const sort = url.searchParams.get('sort') || '';
-    setSortValue(sort);
-  }, []);
-
-  useEffect(() => {
-    const url = new URL(location.href);
-    let newUrl = url.origin + url.pathname;
-    const params = {};
-    if (dateRange) params.dates = dateRange;
-    if (includeAll) params.showAll = true;
-    if (searchText) params.search = searchText;
-    if (sortValue) params.sort = sortValue;
-    if (Object.keys(params).length) {
-      newUrl += '?' + new URLSearchParams(params).toString();
+  const qps = [
+    {
+      name: 'dates',
+      default: DateRange.THREE_MONTHS,
+      getter: () => dateRange,
+      setter: setDateRange
+    },
+    {
+      name: 'search',
+      default: '',
+      getter: () => searchText,
+      setter: setSearchText
+    },
+    {
+      name: 'showAll',
+      default: false,
+      getter: () => includeAll,
+      setter: setIncludeAll
+    },
+    {
+      name: 'sort',
+      default: SortOption.SENT_DATE,
+      getter: () => sortValue,
+      setter: setSortValue
     }
-    history.replaceState(params, '', newUrl);
-  }, [dateRange, includeAll, searchText, sortValue]);
+  ];
+  queryParameterSetup(qps);
 
   useEffect(() => {
     if (currentMembers && currentMembers.length > 0) {
