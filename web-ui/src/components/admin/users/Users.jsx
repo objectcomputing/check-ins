@@ -75,19 +75,19 @@ const Users = () => {
     {
       name: 'addUser',
       default: false,
-      getter: () => open,
+      value: open,
       setter: setOpen
     },
     {
       name: 'includeTerminated',
       default: false,
-      getter: () => includeTerminated,
+      value: includeTerminated,
       setter: setIncludeTerminated
     },
     {
       name: 'search',
       default: '',
-      getter: () => searchText,
+      value: searchText,
       setter: setSearchText
     }
   ]);

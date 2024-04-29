@@ -4,7 +4,7 @@ import { useEffect } from 'react';
  * @typedef {object} QPBoolean
  * @property {string} name
  * @property {boolean} default
- * @property {() => boolean} getter
+ * @property {boolean} value
  * @property {(boolean) => void} setter
  */
 
@@ -12,7 +12,7 @@ import { useEffect } from 'react';
  * @typedef {object} QPString
  * @property {string} name
  * @property {string} default
- * @property {() => string} getter
+ * @property {string} value
  * @property {(string) => void} setter
  */
 
@@ -35,14 +35,14 @@ export const queryParameterSetup = qps => {
     }
   }, []);
 
-  const dependencies = qps.map(qp => qp.getter());
+  const dependencies = qps.map(qp => qp.value);
 
   useEffect(() => {
     const url = new URL(location.href);
     let newUrl = url.origin + url.pathname;
     const params = {};
     for (const qp of qps) {
-      const value = qp.getter();
+      const { value } = qp;
       if (value && value !== qp.default) params[qp.name] = value;
     }
     if (Object.keys(params).length) {

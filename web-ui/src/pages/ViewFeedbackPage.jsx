@@ -112,25 +112,25 @@ const ViewFeedbackPage = () => {
     {
       name: 'dates',
       default: DateRange.THREE_MONTHS,
-      getter: () => dateRange,
+      value: dateRange,
       setter: setDateRange
     },
     {
       name: 'search',
       default: '',
-      getter: () => searchText,
+      value: searchText,
       setter: setSearchText
     },
     {
       name: 'showAll',
       default: false,
-      getter: () => includeAll,
+      value: includeAll,
       setter: setIncludeAll
     },
     {
       name: 'sort',
       default: SortOption.SENT_DATE,
-      getter: () => sortValue,
+      value: sortValue,
       setter: setSortValue
     }
   ]);
