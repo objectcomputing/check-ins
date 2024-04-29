@@ -83,7 +83,7 @@ const EditPermissionsPage = () => {
         setSelectedRole(role);
       },
       toQP(selectedRole) {
-        return selectedRole.role;
+        return selectedRole ? selectedRole.role : '';
       }
     }
   ]);
