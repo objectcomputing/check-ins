@@ -38,17 +38,23 @@ export const useQueryParameters = qps => {
 
   const dependencies = qps.map(qp => qp.value);
 
-  // This assumes the app does not use query parameters for any other purposes.
-  // It will drop any that are not set by this useEffect.
   useEffect(() => {
     const url = new URL(location.href);
     let newUrl = url.origin + url.pathname;
     const params = {};
+
+    // Add query parameters listed in qps that do not have their default value.
     for (const qp of qps) {
       let { toQP, value } = qp;
       if (toQP) value = toQP(value);
       if (value && !compare(value, qp.default)) params[qp.name] = value;
     }
+
+    // Add query parameters that are not listed in qps.
+    for (const [k, v] of url.searchParams) {
+      if (!qps.some(qp => qp.name === k)) params[k] = v;
+    }
+
     if (Object.keys(params).length) {
       newUrl += '?' + new URLSearchParams(params).toString();
     }
