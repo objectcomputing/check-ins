@@ -16,7 +16,6 @@ import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin
 } from '../../../context/selectors';
-
 import { queryParameterSetup } from '../../../helpers/query-parameters';
 
 import './Users.css';

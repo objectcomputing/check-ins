@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { TextField } from '@mui/material';
 import './TeamResults.css';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
+import { queryParameterSetup } from '../../helpers/query-parameters';
 
 const PREFIX = 'TeamResults';
 const classes = {
@@ -55,31 +56,26 @@ const TeamResults = () => {
     );
   });
 
-  useEffect(() => {
-    const url = new URL(location.href);
-
-    const addNew = url.searchParams.get('addNew');
-    setAddingTeam(addNew === 'true');
-
-    const search = url.searchParams.get('search') || '';
-    setSearchText(search);
-
-    const selectedTeamId = url.searchParams.get('team') || '';
-    setSelectedTeamId(selectedTeamId);
-  }, []);
-
-  useEffect(() => {
-    const url = new URL(location.href);
-    let newUrl = url.origin + url.pathname;
-    const params = {};
-    if (addingTeam) params.addNew = true;
-    if (searchText) params.search = searchText;
-    if (selectedTeamId) params.team = selectedTeamId;
-    if (Object.keys(params).length) {
-      newUrl += '?' + new URLSearchParams(params).toString();
+  queryParameterSetup([
+    {
+      name: 'addNew',
+      default: false,
+      value: addingTeam,
+      setter: setAddingTeam
+    },
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
+    },
+    {
+      name: 'team',
+      default: '',
+      value: selectedTeamId,
+      setter: setSelectedTeamId
     }
-    history.replaceState(params, '', newUrl);
-  }, [addingTeam, searchText, selectedTeamId]);
+  ]);
 
   return (
     <Root>
