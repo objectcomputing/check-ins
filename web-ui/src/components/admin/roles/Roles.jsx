@@ -71,12 +71,7 @@ const Roles = () => {
       default: allRoles,
       value: selectedRoles,
       setter(value) {
-        if (value?.length > 0) {
-          // Select only the roles specified in the URL.
-          setSelectedRoles(value.sort());
-        } else {
-          setSelectedRoles(allRoles);
-        }
+        setSelectedRoles(isArrayPresent(value) ? value.sort() : allRoles);
       },
       toQP() {
         return selectedRoles.join(',');

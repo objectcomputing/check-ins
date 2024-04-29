@@ -47,8 +47,7 @@ export const useQueryParameters = qps => {
     for (const qp of qps) {
       let { toQP, value } = qp;
       if (toQP) value = toQP(value);
-      if (!value) continue;
-      if (!compare(value, qp.default)) params[qp.name] = value;
+      if (value && !compare(value, qp.default)) params[qp.name] = value;
     }
     if (Object.keys(params).length) {
       newUrl += '?' + new URLSearchParams(params).toString();
