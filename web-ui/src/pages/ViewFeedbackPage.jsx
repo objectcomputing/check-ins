@@ -136,35 +136,6 @@ const ViewFeedbackPage = () => {
   ]);
 
   useEffect(() => {
-    const url = new URL(location.href);
-
-    const dateRange = url.searchParams.get('dates') || DateRange.THREE_MONTHS;
-    setDateRange(dateRange);
-
-    const searchText = url.searchParams.get('search') || '';
-    setSearchText(searchText);
-
-    const showAll = url.searchParams.get('showAll');
-    setIncludeAll(showAll === 'true');
-
-    const sortValue = url.searchParams.get('sort') || SortOption.SENT_DATE;
-    setSortValue(sortValue);
-  }, []);
-
-  useEffect(() => {
-    const url = new URL(location.href);
-    const params = {
-      dates: dateRange,
-      search: searchText,
-      showAll: includeAll,
-      sort: sortValue
-    };
-    const q = new URLSearchParams(params).toString();
-    const newUrl = url.origin + url.pathname + '?' + q;
-    history.replaceState(params, '', newUrl);
-  }, [dateRange, includeAll, searchText, sortValue]);
-
-  useEffect(() => {
     if (currentMembers && currentMembers.length > 0) {
       isAdmin && includeAll
         ? setTeamMembers(
