@@ -187,6 +187,9 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
               ? editedGuild.guildMembers.filter(guildMember => guildMember.lead)
               : []
           }
+          isOptionEqualToValue={(option, value) =>
+            value && option.id === value.memberId
+          }
           onChange={onLeadsChange}
           getOptionLabel={option => option.name}
           renderInput={params => (
@@ -211,7 +214,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           onChange={onGuildMembersChange}
           getOptionLabel={option => option.name}
           isOptionEqualToValue={(option, value) =>
-            value ? value.id === option.id : false
+            value && option.id === value.memberId
           }
           renderInput={params => (
             <TextField
