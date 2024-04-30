@@ -16,7 +16,7 @@ public class ReviewPeriodCreateDTO {
 
     @NotNull
     @Schema(required = true, description = "the status of the review")
-    private ReviewStatus status;
+    private ReviewStatus reviewStatus;
 
     private UUID reviewTemplateId;
 
@@ -29,7 +29,7 @@ public class ReviewPeriodCreateDTO {
     private LocalDateTime closeDate;
 
     public ReviewPeriod convertToEntity(){
-        return new ReviewPeriod(this.name, this.status.toString(), this.reviewTemplateId,
+        return new ReviewPeriod(this.name, this.reviewStatus, this.reviewTemplateId,
                 this.selfReviewTemplateId, this.launchDate, this.selfReviewCloseDate, this.closeDate);
     }
 
@@ -39,9 +39,9 @@ public class ReviewPeriodCreateDTO {
         this.name = name;
     }
 
-    public ReviewStatus getStatus() { return status; }
+    public ReviewStatus getReviewStatus() { return reviewStatus; }
 
-    public void setStatus(ReviewStatus status) { this.status = status; }
+    public void setReviewStatus(ReviewStatus reviewStatus) { this.reviewStatus = reviewStatus; }
 
     public UUID getReviewTemplateId() {
         return reviewTemplateId;

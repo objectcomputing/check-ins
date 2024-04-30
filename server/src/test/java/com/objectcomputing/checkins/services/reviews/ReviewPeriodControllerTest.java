@@ -75,7 +75,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         ReviewPeriod closedReviewPeriod = createAClosedReviewPeriod();
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?status=%s", encodeValue(String.valueOf(reviewPeriod.getStatus())))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/?status=%s", encodeValue(String.valueOf(reviewPeriod.getReviewStatus())))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
         final HttpResponse<Set<ReviewPeriod>> response = client.toBlocking().exchange(request, Argument.setOf(ReviewPeriod.class));
 
@@ -112,7 +112,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
     public void testPOSTCreateAReviewPeriod() {
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
-        reviewPeriodCreateDTO.setStatus(ReviewStatus.OPEN);
+        reviewPeriodCreateDTO.setReviewStatus(ReviewStatus.OPEN);
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -121,7 +121,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(reviewPeriodCreateDTO.getName(), response.body().getName());
-        assertEquals(reviewPeriodCreateDTO.getStatus().name(), response.body().getStatus());
+        assertEquals(reviewPeriodCreateDTO.getReviewStatus(), response.body().getReviewStatus());
         assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
     }
 
@@ -133,7 +133,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
 
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
-        reviewPeriodCreateDTO.setStatus(ReviewStatus.OPEN);
+        reviewPeriodCreateDTO.setReviewStatus(ReviewStatus.OPEN);
         reviewPeriodCreateDTO.setLaunchDate(launchDate);
         reviewPeriodCreateDTO.setSelfReviewCloseDate(selfReviewCloseDate);
         reviewPeriodCreateDTO.setCloseDate(closeDate);
@@ -146,7 +146,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         assertNotNull(response.body());
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(reviewPeriodCreateDTO.getName(), response.body().getName());
-        assertEquals(reviewPeriodCreateDTO.getStatus().name(), response.body().getStatus());
+        assertEquals(reviewPeriodCreateDTO.getReviewStatus(), response.body().getReviewStatus());
         assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
         assertEquals(reviewPeriodCreateDTO.getLaunchDate(), response.body().getLaunchDate());
         assertEquals(reviewPeriodCreateDTO.getSelfReviewCloseDate(), response.body().getSelfReviewCloseDate());
@@ -158,7 +158,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName(reviewPeriod.getName());
-        reviewPeriodCreateDTO.setStatus(ReviewStatus.valueOf(reviewPeriod.getStatus()));
+        reviewPeriodCreateDTO.setReviewStatus(reviewPeriod.getReviewStatus());
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -174,7 +174,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName(reviewPeriod.getName());
-        reviewPeriodCreateDTO.setStatus(ReviewStatus.OPEN);
+        reviewPeriodCreateDTO.setReviewStatus(ReviewStatus.OPEN);
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -204,7 +204,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         createAndAssignAdminRole(memberProfileOfAdmin);
 
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
-        reviewPeriod.setStatus(ReviewStatus.OPEN.name());
+        reviewPeriod.setReviewStatus(ReviewStatus.OPEN);
 
         final HttpRequest<ReviewPeriod> request = HttpRequest.
                 PUT("/", reviewPeriod).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -235,7 +235,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
 
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
-        reviewPeriodCreateDTO.setStatus(ReviewStatus.OPEN);
+        reviewPeriodCreateDTO.setReviewStatus(ReviewStatus.OPEN);
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 PUT("/", reviewPeriodCreateDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);

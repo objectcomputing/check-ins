@@ -11,7 +11,7 @@ public interface ReviewPeriodServices {
 
     ReviewPeriod findById(UUID id);
 
-    Set<ReviewPeriod> findByValue(String name, ReviewStatus status);
+    Set<ReviewPeriod> findByValue(String name, ReviewStatus reviewStatus);
 
     void delete(UUID id);
 }

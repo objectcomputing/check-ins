@@ -52,10 +52,10 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
         if (name != null) {
             reviewPeriods = findByNameLike(name).stream()
-                    .filter(rp -> status == null || Objects.equals(rp.getStatus(), status.name()))
+                    .filter(rp -> status == null || Objects.equals(rp.getReviewStatus(), status.name()))
                     .collect(Collectors.toSet());
         } else if (status != null) {
-            reviewPeriods.addAll(reviewPeriodRepository.findByStatus(status.toString()));
+            reviewPeriods.addAll(reviewPeriodRepository.findByReviewStatus(status));
         } else {
             reviewPeriodRepository.findAll().forEach(reviewPeriods::add);
         }

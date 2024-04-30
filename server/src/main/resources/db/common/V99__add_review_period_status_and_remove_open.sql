@@ -1,7 +1,7 @@
-ALTER TABLE review_periods ADD COLUMN status varchar;
+ALTER TABLE review_periods ADD COLUMN review_status varchar;
 
 UPDATE review_periods
-SET status = CASE
+SET review_status = CASE
                  WHEN open = true THEN 'OPENED'
                  WHEN open = false THEN 'CLOSED'
                  ELSE 'UNKNOWN' END;

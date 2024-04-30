@@ -7,10 +7,7 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -35,9 +32,10 @@ public class ReviewPeriod {
     private String name;
 
     @NotNull
-    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "review_status")
     @Schema(description = "The current status of the review period")
-    private String status;
+    private ReviewStatus reviewStatus;
 
     @Column(name = "review_template_id")
     @TypeDef(type = DataType.STRING)
@@ -64,18 +62,18 @@ public class ReviewPeriod {
     }
 
     public ReviewPeriod(String name) {
-        this(name, ReviewStatus.OPEN.name(), null, null, null, null, null);
+        this(name, ReviewStatus.OPEN, null, null, null, null, null);
     }
 
-    public ReviewPeriod(UUID id, String name, String status) {
-        this(name, status, null, null, null, null, null);
+    public ReviewPeriod(UUID id, String name, ReviewStatus reviewStatus) {
+        this(name, reviewStatus, null, null, null, null, null);
         this.id = id;
     }
 
-    public ReviewPeriod(String name, String status, @Nullable UUID reviewTemplateId, @Nullable UUID selfReviewTemplateId,
+    public ReviewPeriod(String name, ReviewStatus reviewStatus, @Nullable UUID reviewTemplateId, @Nullable UUID selfReviewTemplateId,
                         LocalDateTime launchDate, LocalDateTime selfReviewCloseDate, LocalDateTime closeDate) {
         this.name = name;
-        this.status = status;
+        this.reviewStatus = reviewStatus;
         this.reviewTemplateId = reviewTemplateId;
         this.selfReviewTemplateId = selfReviewTemplateId;
         this.launchDate = launchDate;
@@ -99,12 +97,12 @@ public class ReviewPeriod {
         this.name = name;
     }
 
-    public String getStatus() {
-        return status;
+    public ReviewStatus getReviewStatus() {
+        return reviewStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setReviewStatus(ReviewStatus reviewStatus) {
+        this.reviewStatus = reviewStatus;
     }
 
     @Nullable
@@ -143,7 +141,7 @@ public class ReviewPeriod {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, status, reviewTemplateId, selfReviewTemplateId, launchDate, selfReviewCloseDate, closeDate);
+        return Objects.hash(id, name, reviewStatus, reviewTemplateId, selfReviewTemplateId, launchDate, selfReviewCloseDate, closeDate);
     }
 
     @Override
@@ -151,7 +149,7 @@ public class ReviewPeriod {
         final StringBuilder sb = new StringBuilder("ReviewPeriod{");
         sb.append("id=").append(id);
         sb.append(", name='").append(name).append('\'');
-        sb.append(", status=").append(status);
+        sb.append(", status=").append(reviewStatus);
         sb.append(", reviewTemplateId=").append(reviewTemplateId);
         sb.append(", selfReviewTemplateId=").append(selfReviewTemplateId);
         sb.append(", launchDate=").append(launchDate);
@@ -167,7 +165,7 @@ public class ReviewPeriod {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReviewPeriod that = (ReviewPeriod) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(status, that.status) &&
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(reviewStatus, that.reviewStatus) &&
                 Objects.equals(reviewTemplateId, that.reviewTemplateId) && Objects.equals(selfReviewTemplateId, that.selfReviewTemplateId) &&
                 Objects.equals(launchDate, that.launchDate) && Objects.equals(selfReviewCloseDate, that.selfReviewCloseDate) &&
                 Objects.equals(closeDate, that.closeDate);
