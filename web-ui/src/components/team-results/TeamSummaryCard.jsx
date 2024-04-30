@@ -55,10 +55,9 @@ const propTypes = {
 
 const displayName = 'TeamSummaryCard';
 
-const TeamSummaryCard = ({ team, index }) => {
+const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
   const { state, dispatch } = useContext(AppContext);
   const { teams, userProfile, csrf } = state;
-  const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
@@ -79,10 +78,8 @@ const TeamSummaryCard = ({ team, index }) => {
       ? false
       : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
 
-  const handleOpen = () => setOpen(true);
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
 
-  const handleClose = () => setOpen(false);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
   const teamId = team?.id;
@@ -113,7 +110,7 @@ const TeamSummaryCard = ({ team, index }) => {
 
   const handleAction = (e, index) => {
     if (index === 0) {
-      handleOpen();
+      onTeamSelect(team.id);
     } else if (index === 1) {
       handleOpenDeleteConfirmation();
     }
@@ -216,8 +213,8 @@ const TeamSummaryCard = ({ team, index }) => {
       </CardActions>
       <EditTeamModal
         team={team}
-        open={open}
-        onClose={handleClose}
+        open={team.id === selectedTeamId}
+        onClose={() => onTeamSelect('')}
         onSave={async editedTeam => {
           const res = await updateTeam(editedTeam, csrf);
           const data =

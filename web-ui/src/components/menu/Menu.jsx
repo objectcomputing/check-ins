@@ -17,7 +17,6 @@ import { UPDATE_TOAST } from '../../context/actions';
 import { useLocation, Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import { getAvatarURL } from '../../api/api';
-import AvatarMenu from '@mui/material/Menu';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme, useColorScheme } from '@mui/material/styles';
@@ -32,7 +31,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  MenuItem,
   Modal,
   Toolbar
 } from '@mui/material';
@@ -99,7 +97,6 @@ function Menu() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [showHoursUpload, setShowHoursUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
@@ -128,10 +125,6 @@ function Menu() {
     }
 
     return links;
-  };
-
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
   };
 
   const uploadFile = async file => {
@@ -228,10 +221,6 @@ function Menu() {
     setFeedbackOpen(false);
   };
 
-  const closeAvatarMenu = () => {
-    setAnchorEl(null);
-  };
-
   const closeHoursUpload = () => {
     setShowHoursUpload(false);
     setSelectedFile(null);
@@ -255,7 +244,6 @@ function Menu() {
         component={Link}
         to={path}
         className={isSubLink ? classes.nested : null}
-        button
         onClick={
           isSubLink
             ? undefined
@@ -379,14 +367,8 @@ function Menu() {
             <MenuIcon />
           </IconButton>
         </Toolbar>
-        <div
-          ref={anchorRef}
-          aria-controls={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}
-        >
+        <Link to={`/profile/${id}`}>
           <Avatar
-            onClick={handleClick}
             src={getAvatarURL(workEmail)}
             style={{
               position: 'absolute',
@@ -396,32 +378,7 @@ function Menu() {
               textDecoration: 'none'
             }}
           />
-          <AvatarMenu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={closeAvatarMenu}
-          >
-            <MenuItem
-              component={Link}
-              onClick={closeAvatarMenu}
-              to={`/profile/${id}`}
-            >
-              Profile
-            </MenuItem>
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  closeAvatarMenu();
-                  openHoursUpload();
-                }}
-              >
-                Upload Hours
-              </MenuItem>
-            )}
-          </AvatarMenu>
-        </div>
+        </Link>
       </AppBar>
       <nav className={classes.drawer}>
         <Drawer

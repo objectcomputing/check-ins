@@ -1,38 +1,37 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
-
-import { AppContext } from '../context/AppContext';
-
 import fileDownload from 'js-file-download';
-
+import { Search } from '@mui/icons-material';
+import DownloadIcon from '@mui/icons-material/FileDownload';
 import {
+  Autocomplete,
   Button,
+  Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   IconButton,
+  InputAdornment,
   TextField,
   Tooltip,
   Typography
 } from '@mui/material';
-import SkillCategoryCard from '../components/skill-category-card/SkillCategoryCard';
+import { styled } from '@mui/material/styles';
 
-import './SkillCategoriesPage.css';
-import { selectCsrfToken, selectOrderedSkills } from '../context/selectors';
 import {
   createSkillCategory,
   deleteSkillCategory,
   getSkillCategories,
   getSkillsCsv
 } from '../api/skillcategory';
+import SkillCategoryCard from '../components/skill-category-card/SkillCategoryCard';
 import SkillCategoryNewDialog from '../components/skill-category-new-dialog/SkillCategoryNewDialog';
 import { UPDATE_TOAST } from '../context/actions';
-import Dialog from '@mui/material/Dialog';
-import InputAdornment from '@mui/material/InputAdornment';
-import { Search } from '@mui/icons-material';
-import Autocomplete from '@mui/material/Autocomplete';
-import DownloadIcon from '@mui/icons-material/FileDownload';
+import { AppContext } from '../context/AppContext';
+import { selectCsrfToken, selectOrderedSkills } from '../context/selectors';
+import { useQueryParameters } from '../helpers/query-parameters';
+
+import './SkillCategoriesPage.css';
 
 const PREFIX = 'SkillCategoriesPage';
 const classes = {
@@ -64,6 +63,33 @@ const SkillCategoriesPage = () => {
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [query, setQuery] = useState('');
   const [skillFilter, setSkillFilter] = useState(null);
+
+  useQueryParameters([
+    {
+      name: 'addNew',
+      default: false,
+      value: dialogOpen,
+      setter: setDialogOpen
+    },
+    {
+      name: 'filter',
+      default: null,
+      value: skillFilter,
+      setter(value) {
+        const skill = skills.find(s => s.name === value) || null;
+        setSkillFilter(skill);
+      },
+      toQP(filter) {
+        return filter?.name ?? null;
+      }
+    },
+    {
+      name: 'search',
+      default: '',
+      value: query,
+      setter: setQuery
+    }
+  ]);
 
   const retrieveCategories = useCallback(async () => {
     if (csrf) {
