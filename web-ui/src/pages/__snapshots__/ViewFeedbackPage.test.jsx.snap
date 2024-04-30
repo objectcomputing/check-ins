@@ -110,7 +110,6 @@ exports[`renders correctly 1`] = `
         </div>
         <div
           class="MuiFormControl-root ViewFeedbackPage-textField css-1nrlq1o-MuiFormControl-root"
-          value="3mo"
         >
           <div
             class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
