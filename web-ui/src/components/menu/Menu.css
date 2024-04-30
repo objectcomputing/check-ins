@@ -64,7 +64,7 @@
   .Menu-menuButton {
     margin-right: 8px;
 
-    @media (min-width: 600px){
+    @media (min-width: 600px) {
       display: none;
     }
   }
@@ -86,7 +86,7 @@
   .Menu-subListItem {
     font-size: 14px;
   }
- 
+
   .Menu-modeToggle {
     aspect-ratio: 1;
     background: var(--checkins-palette-primary-main);
@@ -101,5 +101,5 @@
     position: absolute;
     transform: translateX(-50%);
     width: 40px;
-  }  
+  }
 }

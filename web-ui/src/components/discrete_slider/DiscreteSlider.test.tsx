@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 // @ts-ignore
-import DiscreteSlider from "./DiscreteSlider";
+import DiscreteSlider from './DiscreteSlider';
 
-vi.mock("@mui/material/Slider", () => {
+vi.mock('@mui/material/Slider', () => {
   return {
     default: () => (props: any) => {
-      const {onChange, 'data-testid': testId, ...rest} = props;
+      const { onChange, 'data-testid': testId, ...rest } = props;
 
       return (
         <input
@@ -18,21 +18,20 @@ vi.mock("@mui/material/Slider", () => {
         />
       );
     }
-  }
+  };
 });
 
-describe("DiscreteSlider", () => {
-  it("renders slider with title", () => {
+describe('DiscreteSlider', () => {
+  it('renders slider with title', () => {
     // @ts-ignore
     snapshot(<DiscreteSlider title="Some skill" />, {
       createNodeMock: (element: any) => {
-        if (element.type === "div") {
+        if (element.type === 'div') {
           return {
-            addEventListener: vi.fn(),
+            addEventListener: vi.fn()
           };
         }
-      },
+      }
     });
   });
 });
-

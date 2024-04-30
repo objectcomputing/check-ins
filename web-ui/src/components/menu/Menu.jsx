@@ -277,7 +277,7 @@ function Menu() {
     const { mode, setMode } = useColorScheme();
     return (
       <div
-        className='Menu-modeToggle'
+        className="Menu-modeToggle"
         onClick={() => {
           setMode(mode === 'light' ? 'dark' : 'light');
         }}
