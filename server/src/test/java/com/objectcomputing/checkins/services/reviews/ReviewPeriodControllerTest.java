@@ -74,7 +74,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         ReviewPeriod closedReviewPeriod = createAClosedReviewPeriod();
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?status=%s", encodeValue(String.valueOf(reviewPeriod.getReviewStatus())))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/?reviewStatus=%s", encodeValue(String.valueOf(reviewPeriod.getReviewStatus())))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
         final HttpResponse<Set<ReviewPeriod>> response = client.toBlocking().exchange(request, Argument.setOf(ReviewPeriod.class));
 
