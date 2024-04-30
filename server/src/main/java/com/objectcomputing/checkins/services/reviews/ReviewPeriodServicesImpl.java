@@ -47,15 +47,15 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         return reviewPeriodRepository.findById(id).orElse(null);
     }
 
-    public Set<ReviewPeriod> findByValue(String name, ReviewStatus status) {
+    public Set<ReviewPeriod> findByValue(String name, ReviewStatus reviewStatus) {
         Set<ReviewPeriod> reviewPeriods = new HashSet<>();
 
         if (name != null) {
             reviewPeriods = findByNameLike(name).stream()
-                    .filter(rp -> status == null || Objects.equals(rp.getReviewStatus(), status.name()))
+                    .filter(rp -> reviewStatus == null || Objects.equals(rp.getReviewStatus(), reviewStatus))
                     .collect(Collectors.toSet());
-        } else if (status != null) {
-            reviewPeriods.addAll(reviewPeriodRepository.findByReviewStatus(status));
+        } else if (reviewStatus != null) {
+            reviewPeriods.addAll(reviewPeriodRepository.findByReviewStatus(reviewStatus));
         } else {
             reviewPeriodRepository.findAll().forEach(reviewPeriods::add);
         }
