@@ -14,21 +14,27 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 
 import {
   experimental_extendTheme as extendTheme,
-  Experimental_CssVarsProvider as CssVarsProvider,
+  Experimental_CssVarsProvider as CssVarsProvider
 } from '@mui/material/styles';
 
 import './App.css';
 import { colors } from '@mui/material';
 
 function getUserColorScheme() {
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        return 'light';
-    } else {
-        // Default to light if no preference is set
-        return 'light';
-    }
+  if (
+    window.matchMedia &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  ) {
+    return 'dark';
+  } else if (
+    window.matchMedia &&
+    window.matchMedia('(prefers-color-scheme: light)').matches
+  ) {
+    return 'light';
+  } else {
+    // Default to light if no preference is set
+    return 'light';
+  }
 }
 
 const theme = extendTheme({
@@ -37,24 +43,24 @@ const theme = extendTheme({
     light: {
       palette: {
         primary: {
-          main: '#2d519e',
+          main: '#2d519e'
         },
         background: {
           default: '#F5F5F6',
           paper: '#fff'
         }
-      },
+      }
     },
     dark: {
       palette: {
         primary: {
-          main: '#2d519e',
+          main: '#2d519e'
         },
         AppBar: {
           darkBg: '#2d519e'
         }
-      },
-    },
+      }
+    }
   },
   components: {
     MuiCssBaseline: {

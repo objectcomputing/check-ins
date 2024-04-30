@@ -11,26 +11,22 @@
   /* Colors */
   --primary-main: #2d519e;
   --primary-dark: var(--primary-main);
-  --secondary-main: #76c8d4
-
+  --secondary-main: #76c8d4 
+  
   /* MUI Defaults */
   --checkins-palette-primary-main: var(--primary-main);
   --checkins-palette-primary-dark: var(--primary-main);
   --checkins-palette-primary-light: var(--primary-dark);
   --checkins-palette-primary-contrastText: #fff;
-  
+
   /* Sizing */
   --nav-width: 250px;
-  
+
   @media (min-width: 600px) {
     --nav-width: 150px;
   }
-  
-  [data-mui-color-scheme="dark"] {
+
+  [data-mui-color-scheme='dark'] {
     --checkins-palette-primary-main: var(--primary-main);
   }
 }
-
-
-
-
