@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -15,7 +9,6 @@ import WorkIcon from '@mui/icons-material/Work';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import { DatePicker } from '@mui/x-date-pickers';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -130,15 +123,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const periods = selectReviewPeriods(state);
   const userProfile = selectUserProfile(state);
   const isAdmin = userProfile?.role?.includes('ADMIN');
-
-  const launchDatePickerRef = useRef(null);
-  useEffect(() => {
-    const { current } = launchDatePickerRef;
-    if (current) {
-      const button = current.querySelector('button');
-      button?.click();
-    }
-  }, [launchDatePickerRef.current]);
 
   const handleOpen = useCallback(() => setOpen(true), [setOpen]);
   const handleClose = useCallback(() => setOpen(false), [setOpen]);
@@ -264,7 +248,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         !res.error
           ? res.payload.data
           : null;
-      // console.log('ReviewPeriods.jsx useEffect: data =', data);
       if (data) {
         dispatch({ type: UPDATE_REVIEW_PERIODS, payload: data });
         setLoading(false);
@@ -429,11 +412,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     primary={name + (open ? ' - Open' : '')}
                     secondary={getSecondaryLabel(id)}
                   />
-                  <div style={{ display: 'flex', gap: '2rem' }}>
-                    <DatePicker ref={launchDatePickerRef} label="Launch Date" />
-                    <DatePicker label="Self Review Close Date" />
-                    <DatePicker label="Close Date" />
-                  </div>
                 </ListItem>
               </>
             ))
