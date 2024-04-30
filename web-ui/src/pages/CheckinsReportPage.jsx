@@ -26,7 +26,7 @@ const CheckinsReportPage = () => {
   let pdls;
 
   const getPdls = () => {
-    if (!pdls) {
+    if (!isArrayPresent(pdls)) {
       pdls = selectCheckinPDLS(state, closed, planned).sort((a, b) => {
         const aPieces = a.name.split(' ').slice(-1);
         const bPieces = b.name.split(' ').slice(-1);
@@ -36,21 +36,29 @@ const CheckinsReportPage = () => {
     return pdls;
   };
 
-  const [filteredPdls, setFilteredPdls] = useState(getPdls());
+  const [filteredPdls, setFilteredPdls] = useState(pdls);
+
+  const updateSelectedPdls = ids => {
+    // TODO: Why is pdls sometimes not set?
+    pdls = getPdls();
+    console.log('pdls =', pdls);
+    if (isArrayPresent(pdls)) {
+      const selected = pdls.filter(pdl => ids.includes(pdl.id));
+      console.log('selected =', selected);
+      setSelectedPdls(selected);
+    } else {
+      setTimeout(() => {
+        updateSelectedPdls(ids);
+      }, 1000);
+    }
+  };
 
   useQueryParameters([
     {
       name: 'pdls',
       default: [],
       value: selectedPdls,
-      setter(ids) {
-        // TODO: Why does this return an empty array?
-        const pdls = getPdls();
-        console.log('CheckinsReportPage.jsx setter: pdls =', pdls);
-        const selected = ids.map(id => pdls.find(pdl => pdl.id === id));
-        console.log('CheckinsReportPage.jsx setter: selected =', selected);
-        setSelectedPdls(selected);
-      },
+      setter: updateSelectedPdls,
       toQP(newPdls) {
         if (isArrayPresent(newPdls)) {
           console.log('CheckinsReportPage.jsx toQP: newPdls =', newPdls);
@@ -65,7 +73,6 @@ const CheckinsReportPage = () => {
   ]);
 
   useEffect(() => {
-    pdls = getPdls();
     pdls.map(
       pdl => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
     );
@@ -93,7 +100,7 @@ const CheckinsReportPage = () => {
       setFilteredPdls([...newValue]);
     } else {
       setSelectedPdls([]);
-      setFilteredPdls(getPdls());
+      setFilteredPdls(pdls);
     }
   };
 
@@ -111,7 +118,7 @@ const CheckinsReportPage = () => {
         <Autocomplete
           id="pdlSelect"
           multiple
-          options={getPdls()}
+          options={pdls}
           value={selectedPdls || []}
           onChange={onPdlChange}
           getOptionLabel={option => option.name}
