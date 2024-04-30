@@ -35,6 +35,9 @@ configurations {
 }
 
 dependencies {
+    compileOnly ("org.projectlombok:lombok")
+    annotationProcessor ("org.projectlombok:lombok")
+    annotationProcessor ("io.micronaut:micronaut-inject-java")
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
@@ -143,7 +146,7 @@ dependencies {
 }
 
 test {
-    OperatingSystem os = DefaultNativePlatform.currentOperatingSystem;
+    OperatingSystem os = DefaultNativePlatform.currentOperatingSystem
     if (os.isLinux()) {
         def uid = ["id", "-u"].execute().text.trim()
         environment "DOCKER_HOST", "unix:///run/user/$uid/podman/podman.sock"

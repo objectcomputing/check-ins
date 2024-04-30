@@ -38,10 +38,9 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
 
     @Test
     public void testGETNonExistingEndpointReturns404() {
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/12345678-9123-4567-abcd-123456789abc")
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-        });
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(HttpRequest.GET("/12345678-9123-4567-abcd-123456789abc")
+                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE)));
 
         assertNotNull(thrown.getResponse());
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
@@ -79,6 +78,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
 
         final HttpResponse<Set<ReviewPeriod>> response = client.toBlocking().exchange(request, Argument.setOf(ReviewPeriod.class));
 
+        assertNotNull(closedReviewPeriod);
         assertEquals(Set.of(reviewPeriod), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
@@ -119,10 +119,12 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
 
         assertNotNull(response);
+        var body = response.body();
+        assertNotNull(body);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(reviewPeriodCreateDTO.getName(), response.body().getName());
-        assertEquals(reviewPeriodCreateDTO.getReviewStatus(), response.body().getReviewStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
+        assertEquals(reviewPeriodCreateDTO.getName(), body.getName());
+        assertEquals(reviewPeriodCreateDTO.getReviewStatus(), body.getReviewStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), body.getId()), response.getHeaders().get("location"));
     }
 
     @Test
@@ -143,14 +145,15 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
 
         assertNotNull(response);
-        assertNotNull(response.body());
+        var body = response.body();
+        assertNotNull(body);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(reviewPeriodCreateDTO.getName(), response.body().getName());
-        assertEquals(reviewPeriodCreateDTO.getReviewStatus(), response.body().getReviewStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
-        assertEquals(reviewPeriodCreateDTO.getLaunchDate(), response.body().getLaunchDate());
-        assertEquals(reviewPeriodCreateDTO.getSelfReviewCloseDate(), response.body().getSelfReviewCloseDate());
-        assertEquals(reviewPeriodCreateDTO.getCloseDate(), response.body().getCloseDate());
+        assertEquals(reviewPeriodCreateDTO.getName(), body.getName());
+        assertEquals(reviewPeriodCreateDTO.getReviewStatus(), body.getReviewStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), body.getId()), response.getHeaders().get("location"));
+        assertEquals(reviewPeriodCreateDTO.getLaunchDate(), body.getLaunchDate());
+        assertEquals(reviewPeriodCreateDTO.getSelfReviewCloseDate(), body.getSelfReviewCloseDate());
+        assertEquals(reviewPeriodCreateDTO.getCloseDate(), body.getCloseDate());
     }
 
     @Test

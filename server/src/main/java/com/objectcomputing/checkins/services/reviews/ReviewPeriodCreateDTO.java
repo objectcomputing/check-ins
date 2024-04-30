@@ -2,12 +2,18 @@ package com.objectcomputing.checkins.services.reviews;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Introspected
 public class ReviewPeriodCreateDTO {
     @NotBlank
@@ -32,48 +38,4 @@ public class ReviewPeriodCreateDTO {
         return new ReviewPeriod(this.name, this.reviewStatus, this.reviewTemplateId,
                 this.selfReviewTemplateId, this.launchDate, this.selfReviewCloseDate, this.closeDate);
     }
-
-    public String getName() { return name; }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public ReviewStatus getReviewStatus() { return reviewStatus; }
-
-    public void setReviewStatus(ReviewStatus reviewStatus) { this.reviewStatus = reviewStatus; }
-
-    public UUID getReviewTemplateId() {
-        return reviewTemplateId;
-    }
-
-    public void setReviewTemplateId(UUID reviewTemplateId) { this.reviewTemplateId = reviewTemplateId; }
-
-    public UUID getSelfReviewTemplateId() { return selfReviewTemplateId; }
-
-    public void setSelfReviewTemplateId(UUID selfReviewTemplateId) { this.selfReviewTemplateId = selfReviewTemplateId; }
-
-    public LocalDateTime getLaunchDate() {
-        return launchDate;
-    }
-
-    public void setLaunchDate(LocalDateTime launchDate) { this.launchDate = launchDate; }
-
-    public LocalDateTime getSelfReviewCloseDate() {
-        return selfReviewCloseDate;
-    }
-
-    public void setSelfReviewCloseDate(LocalDateTime selfReviewCloseDate) {
-        this.selfReviewCloseDate = selfReviewCloseDate;
-    }
-
-    public LocalDateTime getCloseDate() {
-        return closeDate;
-    }
-
-    public void setCloseDate(LocalDateTime closeDate) {
-        this.closeDate = closeDate;
-    }
-
-
 }
