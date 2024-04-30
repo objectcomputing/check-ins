@@ -259,6 +259,7 @@ const ReceivedRequestsPage = () => {
           onClick={() => setReceivedRequestsExpanded(!receivedRequestsExpanded)}
           aria-expanded={receivedRequestsExpanded}
           aria-label="show more"
+          size="large"
         />
       </div>
       <Divider />
@@ -302,6 +303,7 @@ const ReceivedRequestsPage = () => {
           }
           aria-expanded={submittedRequestsExpanded}
           aria-label="show more"
+          size="large"
         />
       </div>
       <Divider />
@@ -353,6 +355,7 @@ const ReceivedRequestsPage = () => {
           onClick={() => setCanceledRequestsExpanded(!canceledRequestsExpanded)}
           aria-expanded={canceledRequestsExpanded}
           aria-label="show more"
+          size="large"
         />
       </div>
       <Divider />
