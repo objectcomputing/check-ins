@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 
+import { TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+
 import { AppContext } from '../context/AppContext';
 import CheckinReport from '../components/reports-section/CheckinReport';
 import {
   selectCheckinPDLS,
   selectTeamMembersWithCheckinPDL
 } from '../context/selectors';
-
-import { TextField } from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
+import { isArrayPresent } from '../helpers/checks';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 import './CheckinsReportPage.css';
 
@@ -19,15 +21,51 @@ const CheckinsReportPage = () => {
   const [closed, setClosed] = useState(false);
   const [searchText, setSearchText] = useState('');
 
-  const pdls = selectCheckinPDLS(state, closed, planned).sort((a, b) => {
-    const aPieces = a.name.split(' ').slice(-1);
-    const bPieces = b.name.split(' ').slice(-1);
-    return aPieces.toString().localeCompare(bPieces);
-  });
-  const [filteredPdls, setFilteredPdls] = useState(pdls);
+  console.log('CheckinsReportPage.jsx : selectedPdls =', selectedPdls);
+
+  let pdls;
+
+  const getPdls = () => {
+    if (!pdls) {
+      pdls = selectCheckinPDLS(state, closed, planned).sort((a, b) => {
+        const aPieces = a.name.split(' ').slice(-1);
+        const bPieces = b.name.split(' ').slice(-1);
+        return aPieces.toString().localeCompare(bPieces);
+      });
+    }
+    return pdls;
+  };
+
+  const [filteredPdls, setFilteredPdls] = useState(getPdls());
+
+  useQueryParameters([
+    {
+      name: 'pdls',
+      default: [],
+      value: selectedPdls,
+      setter(ids) {
+        // TODO: Why does this return an empty array?
+        const pdls = getPdls();
+        console.log('CheckinsReportPage.jsx setter: pdls =', pdls);
+        const selected = ids.map(id => pdls.find(pdl => pdl.id === id));
+        console.log('CheckinsReportPage.jsx setter: selected =', selected);
+        setSelectedPdls(selected);
+      },
+      toQP(newPdls) {
+        if (isArrayPresent(newPdls)) {
+          console.log('CheckinsReportPage.jsx toQP: newPdls =', newPdls);
+          const ids = newPdls.map(pdl => pdl.id);
+          console.log('CheckinsReportPage.jsx toQP: ids =', ids);
+          return ids.join(',');
+        } else {
+          return [];
+        }
+      }
+    }
+  ]);
 
   useEffect(() => {
-    if (!pdls) return;
+    pdls = getPdls();
     pdls.map(
       pdl => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
     );
@@ -41,7 +79,7 @@ const CheckinsReportPage = () => {
     });
 
     setFilteredPdls(newPdlList);
-  }, [pdls, searchText, state]);
+  }, [searchText, state]);
 
   const onPdlChange = (event, newValue) => {
     let extantPdls = filteredPdls || [];
@@ -55,7 +93,7 @@ const CheckinsReportPage = () => {
       setFilteredPdls([...newValue]);
     } else {
       setSelectedPdls([]);
-      setFilteredPdls(pdls);
+      setFilteredPdls(getPdls());
     }
   };
 
@@ -73,7 +111,7 @@ const CheckinsReportPage = () => {
         <Autocomplete
           id="pdlSelect"
           multiple
-          options={pdls}
+          options={getPdls()}
           value={selectedPdls || []}
           onChange={onPdlChange}
           getOptionLabel={option => option.name}
