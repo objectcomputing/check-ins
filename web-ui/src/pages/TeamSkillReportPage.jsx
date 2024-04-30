@@ -1,4 +1,7 @@
 import React, { useContext, useState } from 'react';
+import { Button, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import Typography from '@mui/material/Typography';
 
 import { reportSkills } from '../api/memberskill.js';
 import SearchResults from '../components/search-results/SearchResults';
@@ -11,22 +14,20 @@ import {
   selectSkill
 } from '../context/selectors';
 import { levelMap } from '../context/util';
-import { sortMembersBySkill } from '../helpers/checks.js';
-
-import { Button, TextField } from '@mui/material';
-
-import Autocomplete from '@mui/material/Autocomplete';
 
 import './TeamSkillReportPage.css';
 import MemberSelector from '../components/member_selector/MemberSelector';
-import Typography from '@mui/material/Typography';
 import MemberSkillRadar from '../components/member_skill_radar/MemberSkillRadar.jsx';
+import { isArrayPresent, sortMembersBySkill } from '../helpers/checks.js';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 const TeamSkillReportPage = () => {
   const { state } = useContext(AppContext);
 
   const csrf = selectCsrfToken(state);
   const skills = selectOrderedSkills(state);
+  //TODO: Why is this an empty array when the page is refreshed?
+  console.log('TeamSkillReportPage.jsx : skills =', skills);
   const memberProfiles = selectOrderedMemberFirstName(state);
 
   const [selectedMembers, setSelectedMembers] = useState([]);
@@ -35,6 +36,30 @@ const TeamSkillReportPage = () => {
   const [searchSkills, setSearchSkills] = useState([]);
   const [editedSearchRequest, setEditedSearchRequest] = useState([]);
   const [showRadar, setShowRadar] = useState(false);
+
+  useQueryParameters([
+    {
+      name: 'skills',
+      default: [],
+      value: searchSkills,
+      setter(ids) {
+        console.log('setter: ids =', ids);
+        const selected = ids.map(id => skills.find(skill => skill.id === id));
+        console.log('setter: selected =', selected);
+        setSearchSkills(selected);
+      },
+      toQP(newSkills) {
+        if (isArrayPresent(newSkills)) {
+          console.log('toQP: newSkills =', newSkills);
+          const ids = newSkills.map(skill => skill.id);
+          console.log('toQP: ids =', ids);
+          return ids.join(',');
+        } else {
+          return [];
+        }
+      }
+    }
+  ]);
 
   const handleSearch = async searchRequestDTO => {
     let res = await reportSkills(searchRequestDTO, csrf);
