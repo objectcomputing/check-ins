@@ -6,7 +6,13 @@ import {
   selectCurrentMembers
 } from '../../context/selectors';
 
-import { Button, Modal, TextField } from '@mui/material';
+import {
+  Button,
+  FormControlLabel,
+  Modal,
+  Switch,
+  TextField
+} from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import './EditGuildModal.css';
 
@@ -14,9 +20,13 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
   const currentUser = selectCurrentUser(state);
   const [editedGuild, setGuild] = useState(guild);
+  const [isCommunity, setIsCommunity] = useState(false);
   const [guildMemberOptions, setGuildMemberOptions] = useState([]);
   const currentMembers = selectCurrentMembers(state);
   const guildMembers = guild?.guildMembers;
+
+  console.log('EditGuildModal.jsx : editedGuild =', editedGuild);
+  console.log('EditGuildModal.jsx : guildMemberOptions =', guildMemberOptions);
 
   const findExistingMember = useCallback(
     member =>
@@ -159,6 +169,17 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           value={editedGuild.name ? editedGuild.name : ''}
           onChange={e => setGuild({ ...editedGuild, name: e.target.value })}
         />
+        <div>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isCommunity}
+                onChange={() => setIsCommunity(c => !c)}
+              />
+            }
+            label="Community"
+          />
+        </div>
         <TextField
           id="guild-description-input"
           label="Description"
@@ -187,9 +208,11 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
               ? editedGuild.guildMembers.filter(guildMember => guildMember.lead)
               : []
           }
-          isOptionEqualToValue={(option, value) =>
-            value && option.id === value.memberId
-          }
+          isOptionEqualToValue={(option, value) => {
+            console.log('guildLeadSelect: option =', option);
+            console.log('guildLeadSelect: value =', value);
+            return value && option.id === value.memberId;
+          }}
           onChange={onLeadsChange}
           getOptionLabel={option => option.name}
           renderInput={params => (
@@ -213,9 +236,11 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           }
           onChange={onGuildMembersChange}
           getOptionLabel={option => option.name}
-          isOptionEqualToValue={(option, value) =>
-            value && option.id === value.memberId
-          }
+          isOptionEqualToValue={(option, value) => {
+            console.log('guildMemberOptions: option =', option);
+            console.log('guildMemberOptions: value =', value);
+            value && option.id === value.memberId;
+          }}
           renderInput={params => (
             <TextField
               {...params}
