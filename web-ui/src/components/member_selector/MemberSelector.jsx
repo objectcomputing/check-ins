@@ -19,12 +19,11 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getAvatarURL } from '../../api/api';
 
+import ExpandMore from '../expand-more/ExpandMore.jsx';
 import MemberSelectorDialog, {
   FilterType
 } from './member_selector_dialog/MemberSelectorDialog';
@@ -99,6 +98,8 @@ const MemberSelector = ({
   );
   const roleFilter = filters.find(filter => filter.type === FilterType.ROLE);
   const memberDescriptor = isFilteredByRole ? roleFilter.value : 'members';
+
+  const handleExpandClick = () => setExpanded(!expanded);
 
   // When the selected members change, fire the onChange event
   useEffect(() => {
@@ -176,9 +177,12 @@ const MemberSelector = ({
       >
         <CardHeader
           avatar={
-            <IconButton onClick={() => setExpanded(!expanded)}>
-              {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
+            <ExpandMore
+              expand={expanded}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+            />
           }
           title={
             <div className="member-selector-card-title-container">

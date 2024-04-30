@@ -11,13 +11,13 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import { Search as SearchIcon } from '@mui/icons-material';
-import { Collapse, IconButton, InputAdornment } from '@mui/material';
+import { Collapse, InputAdornment } from '@mui/material';
 import ReceivedRequestCard from '../components/received_request_card/ReceivedRequestCard';
 import { getFeedbackRequestsByRecipient } from '../api/feedback';
 import './ReceivedRequestsPage.css';
 import { UPDATE_TOAST } from '../context/actions';
 import Divider from '@mui/material/Divider';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMore from '../components/expand-more/ExpandMore';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 
 const PREFIX = 'ReceivedRequestsPage';
@@ -61,16 +61,6 @@ const Root = styled('div')({
     color: 'gray',
     marginTop: '4em',
     textAlign: 'center'
-  },
-  [`& .${classes.expandClose}`]: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: 'transform 0.1s linear'
-  },
-  [`& .${classes.expandOpen}`]: {
-    transform: 'rotate(180deg)',
-    transition: 'transform 0.1s linear',
-    marginLeft: 'auto'
   }
 });
 
@@ -264,16 +254,12 @@ const ReceivedRequestsPage = () => {
       </div>
       <div className="request-section-header">
         <Typography variant="h5">Received Requests</Typography>
-        <IconButton
+        <ExpandMore
+          expand={receivedRequestsExpanded}
           onClick={() => setReceivedRequestsExpanded(!receivedRequestsExpanded)}
+          aria-expanded={receivedRequestsExpanded}
           aria-label="show more"
-          className={
-            receivedRequestsExpanded ? classes.expandOpen : classes.expandClose
-          }
-          size="large"
-        >
-          <ExpandMoreIcon />
-        </IconButton>
+        />
       </div>
       <Divider />
       <Collapse in={!receivedRequestsExpanded} timeout="auto" unmountOnExit>
@@ -309,18 +295,14 @@ const ReceivedRequestsPage = () => {
       </Collapse>
       <div className="request-section-header">
         <Typography variant="h5">Submitted Requests</Typography>
-        <IconButton
+        <ExpandMore
+          expand={submittedRequestsExpanded}
           onClick={() =>
             setSubmittedRequestsExpanded(!submittedRequestsExpanded)
           }
+          aria-expanded={submittedRequestsExpanded}
           aria-label="show more"
-          className={
-            submittedRequestsExpanded ? classes.expandOpen : classes.expandClose
-          }
-          size="large"
-        >
-          <ExpandMoreIcon />
-        </IconButton>
+        />
       </div>
       <Divider />
       <Collapse in={!submittedRequestsExpanded} timeout="auto" unmountOnExit>
@@ -366,16 +348,12 @@ const ReceivedRequestsPage = () => {
       </Collapse>
       <div className="request-section-header">
         <Typography variant="h5">Canceled Requests</Typography>
-        <IconButton
+        <ExpandMore
+          expand={canceledRequestsExpanded}
           onClick={() => setCanceledRequestsExpanded(!canceledRequestsExpanded)}
+          aria-expanded={canceledRequestsExpanded}
           aria-label="show more"
-          className={
-            canceledRequestsExpanded ? classes.expandOpen : classes.expandClose
-          }
-          size="large"
-        >
-          <ExpandMoreIcon />
-        </IconButton>
+        />
       </div>
       <Divider />
       <Collapse in={!canceledRequestsExpanded} timeout="auto" unmountOnExit>

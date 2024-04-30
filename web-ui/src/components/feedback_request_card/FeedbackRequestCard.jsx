@@ -6,8 +6,6 @@ import { Avatar, Typography } from '@mui/material';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -18,6 +16,8 @@ import { getAvatarURL } from '../../api/api.js';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import queryString from 'query-string';
+
+import ExpandMore from '../expand-more/ExpandMore';
 
 const PREFIX = 'FeedbackRequestCard';
 const classes = {
@@ -35,16 +35,6 @@ const StyledCard = styled(Card)({
       width: '100%',
       maxWidth: '100%'
     }
-  },
-  [`& .${classes.expandClose}`]: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: 'transform 0.1s linear'
-  },
-  [`& .${classes.expandOpen}`]: {
-    transform: 'rotate(180deg)',
-    transition: 'transform 0.1s linear',
-    marginLeft: 'auto'
   },
   '& .MuiCardContent-root': {
     paddingBottom: 0,
@@ -107,12 +97,10 @@ const FeedbackRequestCard = ({
   const requesteeProfile = selectProfile(state, requesteeId);
   const avatarURL = getAvatarURL(requesteeProfile?.workEmail);
   const history = useHistory();
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [sortedResponses, setSortedResponses] = useState(responses);
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  const handleExpandClick = () => setExpanded(!expanded);
 
   const withinDateRange = useCallback(
     requestDate => {
@@ -271,15 +259,13 @@ const FeedbackRequestCard = ({
           </CardContent>
         </div>
         <CardActions disableSpacing>
-          <IconButton
+          <ExpandMore
+            expand={expanded}
             onClick={handleExpandClick}
             aria-expanded={expanded}
             aria-label="show more"
-            className={expanded ? classes.expandOpen : classes.expandClose}
             size="large"
-          >
-            <ExpandMoreIcon />
-          </IconButton>
+          />
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent style={{ padding: 0 }}>
