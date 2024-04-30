@@ -15,7 +15,7 @@ public class ReviewPeriodCreateDTO {
     private String name;
 
     @NotNull
-    @Schema(required = true, description = "the status of the review")
+    @Schema(implementation = ReviewStatus.class, required = true, description = "the status of the review")
     private ReviewStatus reviewStatus;
 
     private UUID reviewTemplateId;
