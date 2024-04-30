@@ -263,7 +263,7 @@ const FeedbackRequestCard = ({
             expand={expanded}
             onClick={handleExpandClick}
             aria-expanded={expanded}
-            aria-label="show more"
+            aria-label={expanded ? 'show less' : 'show more'}
             size="large"
           />
         </CardActions>

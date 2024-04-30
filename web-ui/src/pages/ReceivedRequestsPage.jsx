@@ -258,7 +258,7 @@ const ReceivedRequestsPage = () => {
           expand={receivedRequestsExpanded}
           onClick={() => setReceivedRequestsExpanded(!receivedRequestsExpanded)}
           aria-expanded={receivedRequestsExpanded}
-          aria-label="show more"
+          aria-label={receivedRequestsExpanded ? 'show less' : 'show more'}
           size="large"
         />
       </div>
@@ -302,7 +302,7 @@ const ReceivedRequestsPage = () => {
             setSubmittedRequestsExpanded(!submittedRequestsExpanded)
           }
           aria-expanded={submittedRequestsExpanded}
-          aria-label="show more"
+          aria-label={submittedRequestsExpanded ? 'show less' : 'show more'}
           size="large"
         />
       </div>
@@ -354,7 +354,7 @@ const ReceivedRequestsPage = () => {
           expand={canceledRequestsExpanded}
           onClick={() => setCanceledRequestsExpanded(!canceledRequestsExpanded)}
           aria-expanded={canceledRequestsExpanded}
-          aria-label="show more"
+          aria-label={canceledRequestsExpanded ? 'show less' : 'show more'}
           size="large"
         />
       </div>
