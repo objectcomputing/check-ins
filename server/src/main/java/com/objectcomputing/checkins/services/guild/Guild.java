@@ -60,20 +60,20 @@ public class Guild {
     private String description;
 
     @NotNull
-    @Column(name = "is_community")
+    @Column(name = "community")
     @Schema(description = "Is the guild a community")
-    private Boolean isCommunity;
+    private boolean community;
 
-    public Guild(String name, String description, @Nullable String link, Boolean isCommunity) {
-        this(null, name, description, link, isCommunity);
+    public Guild(String name, String description, @Nullable String link, boolean community) {
+        this(null, name, description, link, community);
     }
 
-    public Guild(UUID id, String name, String description, @Nullable String link, Boolean isCommunity) {
+    public Guild(UUID id, String name, String description, @Nullable String link, boolean community) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.link = link;
-        this.isCommunity = isCommunity;
+        this.community = community;
     }
 
     @Override
@@ -85,13 +85,13 @@ public class Guild {
                 Objects.equals(name, guild.name) &&
                 Objects.equals(description, guild.description) &&
                 Objects.equals(link, guild.link) &&
-                Objects.equals(isCommunity, guild.isCommunity);
+                Objects.equals(community, guild.community);
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, link, isCommunity);
+        return Objects.hash(id, name, description, link, community);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class Guild {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", link='" + link +
-                ", isCommunity=" + isCommunity +
+                ", community=" + community +
                 '}';
     }
 }

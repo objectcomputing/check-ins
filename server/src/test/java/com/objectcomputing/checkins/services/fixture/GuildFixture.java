@@ -20,19 +20,19 @@ public interface GuildFixture extends MemberProfileFixture, RepositoryFixture{
     }
 
     default GuildCreateDTO createFromEntity(Guild entity) {
-        return new GuildCreateDTO(entity.getName(), entity.getDescription(), entity.getLink());
+        return new GuildCreateDTO(entity.getName(), entity.getDescription(), entity.getLink(), false);
     }
 
     default GuildUpdateDTO updateFromEntity(Guild entity) {
-        return new GuildUpdateDTO(entity.getId(), entity.getName(), entity.getDescription(),entity.getLink(), entity.getIsCommunity());
+        return new GuildUpdateDTO(entity.getId(), entity.getName(), entity.getDescription(),entity.getLink(), entity.isCommunity());
     }
 
     default GuildResponseDTO responseFromEntity(Guild entity) {
-        return new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(),entity.getLink(), entity.getIsCommunity());
+        return new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(),entity.getLink(), entity.isCommunity());
     }
 
     default Guild entityFromDTO(GuildUpdateDTO dto) {
-        return new Guild(dto.getId(), dto.getName(), dto.getDescription(),dto.getLink(), dto.getIsCommunity());
+        return new Guild(dto.getId(), dto.getName(), dto.getDescription(),dto.getLink(), dto.isCommunity());
     }
 
 }

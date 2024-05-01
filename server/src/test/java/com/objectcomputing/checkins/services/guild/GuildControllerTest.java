@@ -123,7 +123,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setDescription("description");
         guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
-        guildCreateDTO.setIsCommunity(false);
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<GuildResponseDTO> response = client.toBlocking().exchange(request, GuildResponseDTO.class);
@@ -144,7 +144,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setDescription("description");
         guildCreateDTO.setLink("wwwu.fakelink.com");
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
-        guildCreateDTO.setIsCommunity(false);
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -166,7 +166,8 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setDescription("description");
         guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(new ArrayList<>());
-        guildCreateDTO.setIsCommunity(false);
+        guildCreateDTO.setCommunity(false);
+
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -184,7 +185,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testCreateAnInvalidGuild() {
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
-        guildCreateDTO.setIsCommunity(false);
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -194,23 +195,6 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         assertEquals("guild.name: must not be blank", error.asText());
-        assertEquals(request.getPath(), href.asText());
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-    }
-
-    @Test
-    void testCreateAGuildWithNullIsCommunity() {
-        GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
-        guildCreateDTO.setName("name");
-
-        final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
-        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("guild.isCommunity: must not be null", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -241,7 +225,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(new ArrayList<>());
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
-        guildCreateDTO.setIsCommunity(false);
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -438,7 +422,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         Guild guildEntity = createDefaultGuild();
         UUID requestId = UUID.randomUUID();
         GuildUpdateDTO requestBody = new GuildUpdateDTO(requestId.toString(), guildEntity.getName(),
-                guildEntity.getDescription(), guildEntity.getLink(), guildEntity.getIsCommunity());
+                guildEntity.getDescription(), guildEntity.getLink(), guildEntity.isCommunity());
         requestBody.setGuildMembers(new ArrayList<>());
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();

@@ -34,12 +34,13 @@ public class GuildCreateDTO {
 
     @NotNull
     @Schema(description = "Is the guild a community")
-    private Boolean isCommunity;
+    private boolean community;
 
-    public GuildCreateDTO(String name, @Nullable String description, @Nullable String link) {
+    public GuildCreateDTO(String name, @Nullable String description, @Nullable String link, boolean community) {
         this.name = name;
         this.description = description;
         this.link =link;
+        this.community = community;
     }
 
     @Data

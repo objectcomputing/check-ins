@@ -30,7 +30,7 @@ class GuildCreateDTOTest {
     void testConstraintViolationName() {
         GuildCreateDTO dto = new GuildCreateDTO();
         dto.setName("");
-        dto.setIsCommunity(false);
+        dto.setCommunity(false);
 
         Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
         assertEquals(1, violations.size());
@@ -40,23 +40,11 @@ class GuildCreateDTOTest {
     }
 
     @Test
-    void testConstraintViolationIsCommunity() {
-        GuildCreateDTO dto = new GuildCreateDTO();
-        dto.setName("name");
-
-        Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
-        assertEquals(1, violations.size());
-        for (ConstraintViolation<GuildCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
-        }
-    }
-
-    @Test
     void testPopulatedDTO() {
         GuildCreateDTO dto = new GuildCreateDTO();
 
         dto.setName("Melt man");
-        dto.setIsCommunity(false);
+        dto.setCommunity(false);
         dto.setDescription("with the power to melt");
 
         Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);

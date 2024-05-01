@@ -35,14 +35,14 @@ public class GuildUpdateDTO {
     private List<GuildMemberUpdateDTO> guildMembers;
 
     @Schema(description = "Is the guild a community")
-    private Boolean isCommunity;
+    private boolean community;
 
-    public GuildUpdateDTO(UUID id, String name, @Nullable String description, @Nullable String link, Boolean isCommunity) {
+    public GuildUpdateDTO(UUID id, String name, @Nullable String description, @Nullable String link, boolean community) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.link = link;
-        this.isCommunity = isCommunity;
+        this.community = community;
     }
 
     public GuildUpdateDTO(String id, String name, String description, @Nullable String link, Boolean isCommunity) {

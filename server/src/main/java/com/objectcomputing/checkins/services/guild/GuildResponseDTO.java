@@ -36,15 +36,16 @@ public class GuildResponseDTO {
     @Schema(description="link to the homepage of the guild")
     private String link;
 
+    @NotNull
     @Schema(description = "Is the guild a community")
-    private Boolean isCommunity;
+    private boolean community;
 
-    public GuildResponseDTO(UUID id, String name, @Nullable String description, @Nullable String link, Boolean isCommunity) {
+    public GuildResponseDTO(UUID id, String name, @Nullable String description, @Nullable String link, boolean community) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.link = link;
-        this.isCommunity = isCommunity;
+        this.community = community;
     }
 
     public List<GuildMemberResponseDTO> getGuildMembers() {
