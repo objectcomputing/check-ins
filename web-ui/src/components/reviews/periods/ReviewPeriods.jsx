@@ -118,7 +118,10 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(ReviewStatus.CLOSED);
-  const [periodToAdd, setPeriodToAdd] = useState({ name: '', status: ReviewStatus.OPEN });
+  const [periodToAdd, setPeriodToAdd] = useState({
+    name: '',
+    status: ReviewStatus.OPEN
+  });
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [toDelete, setToDelete] = useState(null);
@@ -129,9 +132,14 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const userProfile = selectUserProfile(state);
   const isAdmin = userProfile?.role?.includes('ADMIN');
 
-
-  const handleOpen = useCallback(() => setStatus(ReviewStatus.OPEN), [setStatus]);
-  const handleClose = useCallback(() => setStatus(ReviewStatus.CLOSED), [setStatus]);
+  const handleOpen = useCallback(
+    () => setStatus(ReviewStatus.OPEN),
+    [setStatus]
+  );
+  const handleClose = useCallback(
+    () => setStatus(ReviewStatus.CLOSED),
+    [setStatus]
+  );
 
   const findPeriodByName = useCallback(
     name =>
@@ -172,7 +180,10 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         return;
       }
       const toUpdate = selectReviewPeriod(state, id);
-      toUpdate.status = toUpdate?.status === ReviewStatus.CLOSED ? ReviewStatus.OPEN : ReviewStatus.CLOSED;
+      toUpdate.status =
+        toUpdate?.status === ReviewStatus.CLOSED
+          ? ReviewStatus.OPEN
+          : ReviewStatus.CLOSED;
       const res = await updateReviewPeriod(toUpdate, csrf);
       const data =
         res && res.payload && res.payload.data ? res.payload.data : null;
@@ -184,7 +195,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const getSecondaryLabel = useCallback(
     periodId => {
       if (mode === 'self') {
-        if (selectReviewPeriod(state, periodId)?.status === ReviewStatus.status) {
+        if (
+          selectReviewPeriod(state, periodId)?.status === ReviewStatus.status
+        ) {
           if (
             !selfReviews ||
             !selfReviews[periodId] ||
@@ -371,10 +384,10 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           periods
             .sort((a, b) => {
               return a.status === b.status
-                  ? ('' + a.name).localeCompare(b.name)
-                  : a.status === ReviewStatus.OPEN
-                      ? -1
-                      : 1;
+                ? ('' + a.name).localeCompare(b.name)
+                : a.status === ReviewStatus.OPEN
+                  ? -1
+                  : 1;
             })
             .map(({ name, status, id }, i) => (
               <>
@@ -382,12 +395,26 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   secondaryAction={
                     isAdmin && (
                       <>
-                        <Tooltip title={status === ReviewStatus.OPEN ? 'Archive' : 'Unarchive'}>
+                        <Tooltip
+                          title={
+                            status === ReviewStatus.OPEN
+                              ? 'Archive'
+                              : 'Unarchive'
+                          }
+                        >
                           <IconButton
                             onClick={() => toggleReviewPeriod(id)}
-                            aria-label={status === ReviewStatus.OPEN ? 'Archive' : 'Unarchive'}
+                            aria-label={
+                              status === ReviewStatus.OPEN
+                                ? 'Archive'
+                                : 'Unarchive'
+                            }
                           >
-                            {status === ReviewStatus.OPEN ? <ArchiveIcon /> : <UnarchiveIcon />}
+                            {status === ReviewStatus.OPEN ? (
+                              <ArchiveIcon />
+                            ) : (
+                              <UnarchiveIcon />
+                            )}
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
@@ -415,7 +442,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   <ListItemText
                     key={`period-lit-${id}`}
                     onClick={() => onPeriodClick(id)}
-                    primary={name + (status === ReviewStatus.OPEN ? ' - Open' : '')}
+                    primary={
+                      name + (status === ReviewStatus.OPEN ? ' - Open' : '')
+                    }
                     secondary={getSecondaryLabel(id)}
                   />
                 </ListItem>
