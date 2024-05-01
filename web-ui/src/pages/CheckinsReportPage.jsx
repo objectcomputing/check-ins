@@ -26,7 +26,6 @@ const CheckinsReportPage = () => {
     const bPieces = b.name.split(' ').slice(-1);
     return aPieces.toString().localeCompare(bPieces);
   });
-
   const [filteredPdls, setFilteredPdls] = useState(pdls);
 
   const processedQPs = useRef(false);
