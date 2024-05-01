@@ -2,10 +2,10 @@ package com.objectcomputing.checkins.services.guild;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import jakarta.inject.Inject;
 import javax.validation.ConstraintViolation;
 import java.util.HashMap;
 import java.util.Set;
@@ -25,7 +25,7 @@ class GuildTest {
     void testGuildInstantiation() {
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(name, description, null);
+        Guild guild = new Guild(name, description, null, false);
         assertEquals(guild.getName(), name);
         assertEquals(guild.getDescription(), description);
     }
@@ -36,7 +36,7 @@ class GuildTest {
         final String name = "name";
         final String description = "description";
         final String link = "https://www.compass.objectcomputing.com/guilds/name";
-        Guild guild = new Guild(id, name, description, link);
+        Guild guild = new Guild(id, name, description, link, false);
         assertEquals(guild.getId(), id);
         assertEquals(guild.getName(), name);
         assertEquals(guild.getDescription(), description);
@@ -51,7 +51,7 @@ class GuildTest {
         final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(id, name, description, null);
+        Guild guild = new Guild(id, name, description, null, false);
 
         guild.setName("");
         guild.setDescription("");
@@ -69,8 +69,8 @@ class GuildTest {
         final String name = "name";
         final String description = "description";
         final String link = "https://www.compass.objectcomputing.com/guilds/name";
-        Guild g = new Guild(id, name, description, link);
-        Guild g2 = new Guild(id, name, description, link);
+        Guild g = new Guild(id, name, description, link, false);
+        Guild g2 = new Guild(id, name, description, link, false);
 
         assertEquals(g, g2);
 
@@ -86,7 +86,7 @@ class GuildTest {
         final String name = "name";
         final String description = "description";
         final String link = "https://www.compass.objectcomputing.com/guilds/name";
-        Guild g = new Guild(id, name, description, link);
+        Guild g = new Guild(id, name, description, link, false);
 
         map.put(g, true);
 
@@ -99,10 +99,13 @@ class GuildTest {
         final String name = "name------name";
         final String description = "description------description";
         final String link = "https://www.compass.objectcomputing.com/guilds/name";
-        Guild g = new Guild(id, name, description,link);
+        final String isCommunity = "false";
+        Guild g = new Guild(id, name, description,link, false);
 
-        assertTrue(g.toString().contains(name));
-        assertTrue(g.toString().contains(id.toString()));
-        assertTrue(g.toString().contains(description));
+        String s = g.toString();
+        assertTrue(s.contains(name));
+        assertTrue(s.contains(id.toString()));
+        assertTrue(s.contains(description));
+        assertTrue(s.contains(isCommunity));
     }
 }

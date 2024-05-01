@@ -2,10 +2,10 @@ package com.objectcomputing.checkins.services.guild;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import jakarta.inject.Inject;
 import javax.validation.ConstraintViolation;
 import java.util.Set;
 
@@ -27,10 +27,10 @@ class GuildCreateDTOTest {
     }
 
     @Test
-    void testConstraintViolation() {
+    void testConstraintViolationName() {
         GuildCreateDTO dto = new GuildCreateDTO();
-
         dto.setName("");
+        dto.setIsCommunity(false);
 
         Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
         assertEquals(1, violations.size());
@@ -40,16 +40,24 @@ class GuildCreateDTOTest {
     }
 
     @Test
+    void testConstraintViolationIsCommunity() {
+        GuildCreateDTO dto = new GuildCreateDTO();
+        dto.setName("name");
+
+        Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
+        assertEquals(1, violations.size());
+        for (ConstraintViolation<GuildCreateDTO> violation : violations) {
+            assertEquals(violation.getMessage(), "must not be null");
+        }
+    }
+
+    @Test
     void testPopulatedDTO() {
         GuildCreateDTO dto = new GuildCreateDTO();
 
-        final String name = "Melt man";
-        dto.setName(name);
-        assertEquals(dto.getName(), name);
-
-        final String description = "with the power to melt";
-        dto.setDescription(description);
-        assertEquals(dto.getDescription(), description);
+        dto.setName("Melt man");
+        dto.setIsCommunity(false);
+        dto.setDescription("with the power to melt");
 
         Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());

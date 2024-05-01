@@ -1,22 +1,28 @@
 package com.objectcomputing.checkins.services.guild;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import io.micronaut.core.annotation.Nullable;
-
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Setter
+@Getter
+@NoArgsConstructor
 @Table(name = "guild")
 public class Guild {
     @Id
@@ -34,7 +40,6 @@ public class Guild {
     )
     @Schema(description = "name of the guild")
     private String name;
-
 
     @Nullable
     @Column(name="link", unique=true)
@@ -54,50 +59,21 @@ public class Guild {
     @Schema(description = "description of the guild")
     private String description;
 
+    @NotNull
+    @Column(name = "is_community")
+    @Schema(description = "Is the guild a community")
+    private Boolean isCommunity;
 
-
-    public Guild(String name, String description, @Nullable String link) {
-        this(null, name, description, link);
+    public Guild(String name, String description, @Nullable String link, Boolean isCommunity) {
+        this(null, name, description, link, isCommunity);
     }
 
-    public Guild(UUID id, String name, String description, @Nullable String link) {
+    public Guild(UUID id, String name, String description, @Nullable String link, Boolean isCommunity) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.link = link;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Nullable
-    public String getLink() {
-        return this.link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
+        this.isCommunity = isCommunity;
     }
 
     @Override
@@ -108,13 +84,14 @@ public class Guild {
         return Objects.equals(id, guild.id) &&
                 Objects.equals(name, guild.name) &&
                 Objects.equals(description, guild.description) &&
-                Objects.equals(link, this.link);
+                Objects.equals(link, guild.link) &&
+                Objects.equals(isCommunity, guild.isCommunity);
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, link);
+        return Objects.hash(id, name, description, link, isCommunity);
     }
 
     @Override
@@ -124,6 +101,7 @@ public class Guild {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", link='" + link +
+                ", isCommunity=" + isCommunity +
                 '}';
     }
 }
