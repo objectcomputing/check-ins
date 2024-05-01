@@ -6,7 +6,10 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetConfig;
-import com.objectcomputing.checkins.services.guild.member.*;
+import com.objectcomputing.checkins.services.guild.member.GuildMember;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -14,6 +17,7 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.time.LocalDate;
@@ -179,8 +183,8 @@ public class GuildServicesImpl implements GuildServices {
     }
 
 
-    public Set<GuildResponseDTO> findByFields(String name, UUID memberid) {
-        Set<GuildResponseDTO> foundGuilds = guildsRepo.search(name, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
+    public Set<GuildResponseDTO> findByFields(String name, UUID memberId) {
+        Set<GuildResponseDTO> foundGuilds = guildsRepo.search(name, nullSafeUUIDToString(memberId)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
         for (GuildResponseDTO foundGuild : foundGuilds) {
             Set<GuildMember> foundMembers = guildMemberRepo.findByGuildId(foundGuild.getId()).stream().filter(guildMember -> {
@@ -212,7 +216,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink());
+        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity());
     }
 
     private GuildMember fromMemberDTO(GuildCreateDTO.GuildMemberCreateDTO memberDTO, UUID guildId) {
@@ -235,7 +239,8 @@ public class GuildServicesImpl implements GuildServices {
         if (entity == null) {
             return null;
         }
-        GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(), entity.getLink());
+        GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(),
+                entity.getLink(), entity.isCommunity());
         dto.setGuildMembers(memberEntities);
         return dto;
     }
@@ -244,7 +249,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink());
+        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity());
     }
 
     private GuildMemberResponseDTO fromMemberEntity(GuildMember guildMember, MemberProfile memberProfile) {

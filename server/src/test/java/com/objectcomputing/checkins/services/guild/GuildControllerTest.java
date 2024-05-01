@@ -18,18 +18,18 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import jakarta.inject.Inject;
 import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfileFixture, RoleFixture, GuildMemberFixture {
@@ -123,12 +123,13 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setDescription("description");
         guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<GuildResponseDTO> response = client.toBlocking().exchange(request, GuildResponseDTO.class);
 
-        GuildResponseDTO guildEntity = response.body();
-
+        assertTrue(response.getBody().isPresent());
+        GuildResponseDTO guildEntity = response.getBody().get();
         assertEquals(guildCreateDTO.getDescription(), guildEntity.getDescription());
         assertEquals(guildCreateDTO.getName(), guildEntity.getName());
         assertEquals(HttpStatus.CREATED, response.getStatus());
@@ -143,6 +144,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setDescription("description");
         guildCreateDTO.setLink("wwwu.fakelink.com");
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -164,6 +166,8 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setDescription("description");
         guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(new ArrayList<>());
+        guildCreateDTO.setCommunity(false);
+
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -181,6 +185,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testCreateAnInvalidGuild() {
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -220,6 +225,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(new ArrayList<>());
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -256,7 +262,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         Guild guildEntity = createDefaultGuild();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<GuildResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(GuildResponseDTO.class));
 
         assertEntityDTOEqual(Set.of(guildEntity), response.body());
@@ -380,7 +386,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testUpdateGuildNullName() {
         Guild guildEntity = createDefaultGuild();
 
-        GuildUpdateDTO requestBody = new GuildUpdateDTO(guildEntity.getId(), null, null,null);
+        GuildUpdateDTO requestBody = new GuildUpdateDTO(guildEntity.getId(), null, null,null, false);
         requestBody.setGuildMembers(new ArrayList<>());
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("", requestBody)
@@ -415,7 +421,8 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testUpdateGuildNotExist() {
         Guild guildEntity = createDefaultGuild();
         UUID requestId = UUID.randomUUID();
-        GuildUpdateDTO requestBody = new GuildUpdateDTO(requestId.toString(), guildEntity.getName(), guildEntity.getDescription(), guildEntity.getLink());
+        GuildUpdateDTO requestBody = new GuildUpdateDTO(requestId.toString(), guildEntity.getName(),
+                guildEntity.getDescription(), guildEntity.getLink(), guildEntity.isCommunity());
         requestBody.setGuildMembers(new ArrayList<>());
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
