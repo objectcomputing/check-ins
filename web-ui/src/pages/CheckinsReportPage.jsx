@@ -30,7 +30,6 @@ const CheckinsReportPage = () => {
   const [filteredPdls, setFilteredPdls] = useState(pdls);
 
   const processedQPs = useRef(false);
-
   useQueryParameters(
     [
       {
@@ -56,6 +55,7 @@ const CheckinsReportPage = () => {
   );
 
   useEffect(() => {
+    if (!pdls) return;
     pdls.map(
       pdl => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
     );
@@ -69,7 +69,7 @@ const CheckinsReportPage = () => {
     });
 
     setFilteredPdls(newPdlList);
-  }, [searchText, state]);
+  }, [pdls, searchText, state]);
 
   const onPdlChange = (event, newValue) => {
     let extantPdls = filteredPdls || [];
