@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -29,27 +29,24 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 
-import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
-import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
+import {findSelfReviewRequestsByPeriodAndTeamMember} from '../../../api/feedback.js';
+import {getAllFeedbackTemplates} from '../../../api/feedbacktemplate.js';
 import {
-  getReviewPeriods,
   createReviewPeriod,
-  updateReviewPeriod,
-  removeReviewPeriod
+  getReviewPeriods,
+  removeReviewPeriod,
+  updateReviewPeriod
 } from '../../../api/reviewperiods.js';
-import { AppContext } from '../../../context/AppContext';
-import {
-  UPDATE_REVIEW_PERIODS,
-  ADD_REVIEW_PERIOD
-} from '../../../context/actions';
+import {AppContext} from '../../../context/AppContext';
+import {ADD_REVIEW_PERIOD, UPDATE_REVIEW_PERIODS} from '../../../context/actions';
 import {
   selectCsrfToken,
-  selectUserProfile,
   selectCurrentUserId,
   selectReviewPeriod,
-  selectReviewPeriods
+  selectReviewPeriods,
+  selectUserProfile
 } from '../../../context/selectors';
 
 const propTypes = {
@@ -106,14 +103,25 @@ const Root = styled('div')(({ theme }) => ({
   }
 }));
 
+const ReviewStatus = {
+  PLANNING: 'PLANNING',
+  AWAITING_APPROVAL: 'AWAITING_APPROVAL',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  UNKNOWN: 'UNKNOWN'
+};
+
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
   const [canSave, setCanSave] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [periodToAdd, setPeriodToAdd] = useState({ name: '', open: true });
+  const [status, setStatus] = useState(ReviewStatus.CLOSED);
+  const [periodToAdd, setPeriodToAdd] = useState({
+    name: '',
+    status: ReviewStatus.OPEN
+  });
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [toDelete, setToDelete] = useState(null);
@@ -124,8 +132,14 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const userProfile = selectUserProfile(state);
   const isAdmin = userProfile?.role?.includes('ADMIN');
 
-  const handleOpen = useCallback(() => setOpen(true), [setOpen]);
-  const handleClose = useCallback(() => setOpen(false), [setOpen]);
+  const handleOpen = useCallback(
+    () => setStatus(ReviewStatus.OPEN),
+    [setStatus]
+  );
+  const handleClose = useCallback(
+    () => setStatus(ReviewStatus.CLOSED),
+    [setStatus]
+  );
 
   const findPeriodByName = useCallback(
     name =>
@@ -147,7 +161,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         data && dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
       }
       handleClose();
-      setPeriodToAdd({ name: '', open: true });
+      setPeriodToAdd({ name: '', status: ReviewStatus.OPEN });
     },
     [
       csrf,
@@ -166,7 +180,10 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         return;
       }
       const toUpdate = selectReviewPeriod(state, id);
-      toUpdate.open = !toUpdate?.open;
+      toUpdate.status =
+        toUpdate?.status === ReviewStatus.CLOSED
+          ? ReviewStatus.OPEN
+          : ReviewStatus.CLOSED;
       const res = await updateReviewPeriod(toUpdate, csrf);
       const data =
         res && res.payload && res.payload.data ? res.payload.data : null;
@@ -178,7 +195,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const getSecondaryLabel = useCallback(
     periodId => {
       if (mode === 'self') {
-        if (selectReviewPeriod(state, periodId)?.open) {
+        if (
+          selectReviewPeriod(state, periodId)?.status === ReviewStatus.status
+        ) {
           if (
             !selfReviews ||
             !selfReviews[periodId] ||
@@ -295,7 +314,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const onPeriodClick = useCallback(
     id => {
-      if (selectReviewPeriod(state, id)?.open) {
+      if (selectReviewPeriod(state, id)?.status === ReviewStatus.OPEN) {
         onPeriodSelected(id);
       }
     },
@@ -364,24 +383,38 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         ) : periods.length > 0 ? (
           periods
             .sort((a, b) => {
-              return Boolean(a.open) === Boolean(b.open)
+              return a.status === b.status
                 ? ('' + a.name).localeCompare(b.name)
-                : Boolean(a.open)
+                : a.status === ReviewStatus.OPEN
                   ? -1
                   : 1;
             })
-            .map(({ name, open, id }, i) => (
+            .map(({ name, status, id }, i) => (
               <>
                 <ListItem
                   secondaryAction={
                     isAdmin && (
                       <>
-                        <Tooltip title={open ? 'Archive' : 'Unarchive'}>
+                        <Tooltip
+                          title={
+                            status === ReviewStatus.OPEN
+                              ? 'Archive'
+                              : 'Unarchive'
+                          }
+                        >
                           <IconButton
                             onClick={() => toggleReviewPeriod(id)}
-                            aria-label={open ? 'Archive' : 'Unarchive'}
+                            aria-label={
+                              status === ReviewStatus.OPEN
+                                ? 'Archive'
+                                : 'Unarchive'
+                            }
                           >
-                            {open ? <ArchiveIcon /> : <UnarchiveIcon />}
+                            {status === ReviewStatus.OPEN ? (
+                              <ArchiveIcon />
+                            ) : (
+                              <UnarchiveIcon />
+                            )}
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
@@ -409,7 +442,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   <ListItemText
                     key={`period-lit-${id}`}
                     onClick={() => onPeriodClick(id)}
-                    primary={name + (open ? ' - Open' : '')}
+                    primary={
+                      name + (status === ReviewStatus.OPEN ? ' - Open' : '')
+                    }
                     secondary={getSecondaryLabel(id)}
                   />
                 </ListItem>
@@ -421,7 +456,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </Typography>
         )}
       </List>
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={status === ReviewStatus.OPEN} onClose={handleClose}>
         <Box sx={modalStyles}>
           <TextField
             className="fullWidth"
