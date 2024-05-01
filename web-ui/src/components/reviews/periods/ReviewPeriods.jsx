@@ -304,6 +304,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     ) {
       getSelfReviews();
     }
+    console.log("Periods")
+    console.log(periods);
   }, [csrf, periods, currentUserId, selfReviews]);
 
   const onPeriodClick = useCallback(
@@ -343,7 +345,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     const launch = value;
     setPeriodToAdd({
       ...periodToAdd,
-      launchDate: launch
+      launchDate: new Date(launch.$d * 1000)
     });
   };
 
@@ -351,7 +353,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     const selfReview = value;
     setPeriodToAdd({
       ...periodToAdd,
-      selfReviewCloseDate: selfReview
+      selfReviewCloseDate: new Date(selfReview.$d * 1000)
     });
   };
 
@@ -359,7 +361,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     const close = value;
     setPeriodToAdd({
       ...periodToAdd,
-      closeDate: close
+      closeDate: new Date(close.$d * 1000)
     });
   };
 
@@ -451,17 +453,17 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   />
                   <div className="datePickerFlexWrapper">
                     <DatePickerField
-                      date={launchDate}
+                      date={dayjs(launchDate)}
                       setDate={handleLaunchDateChange}
                       label="Launch Date"
                     />
                     <DatePickerField
-                      date={selfReviewCloseDate}
+                      date={dayjs(selfReviewCloseDate)}
                       setDate={handleSelfReviewDateChange}
                       label="Self-Review Date"
                     />
                     <DatePickerField
-                      date={closeDate}
+                      date={dayjs(closeDate)}
                       setDate={handleCloseDateChange}
                       label="Close Date"
                     />
