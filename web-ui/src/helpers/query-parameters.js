@@ -31,7 +31,6 @@ export const useQueryParameters = (
   useEffect(() => {
     if (processedQPs?.current) return;
 
-    //console.log('useQueryParameters: requirements =', requirements);
     const haveRequirements = requirements.every(req =>
       Array.isArray(req) ? req.length > 0 : req !== null && req !== undefined
     );
