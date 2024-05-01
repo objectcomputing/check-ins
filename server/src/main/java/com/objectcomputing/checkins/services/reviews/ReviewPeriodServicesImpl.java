@@ -9,10 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
@@ -49,16 +47,15 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         return reviewPeriodRepository.findById(id).orElse(null);
     }
 
-    public Set<ReviewPeriod> findByValue(String name, Boolean open) {
+    public Set<ReviewPeriod> findByValue(String name, ReviewStatus reviewStatus) {
         Set<ReviewPeriod> reviewPeriods = new HashSet<>();
 
         if (name != null) {
-            reviewPeriods.addAll(findByNameLike(name));
-            if (open != null) {
-                reviewPeriods.retainAll(reviewPeriodRepository.findByOpen(open));
-            }
-        } else if (open != null) {
-            reviewPeriods.addAll(reviewPeriodRepository.findByOpen(open));
+            reviewPeriods = findByNameLike(name).stream()
+                    .filter(rp -> reviewStatus == null || Objects.equals(rp.getReviewStatus(), reviewStatus))
+                    .collect(Collectors.toSet());
+        } else if (reviewStatus != null) {
+            reviewPeriods.addAll(reviewPeriodRepository.findByReviewStatus(reviewStatus));
         } else {
             reviewPeriodRepository.findAll().forEach(reviewPeriods::add);
         }
