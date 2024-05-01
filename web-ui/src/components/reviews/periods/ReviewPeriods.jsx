@@ -127,8 +127,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [templates, setTemplates] = useState([]);
   const [toDelete, setToDelete] = useState(null);
   const [launchDate, setLaunchDate] = useState(null);
-  const [selfReviewDate, setSelfReviewDate] = useState(dayjs(''));
-  const [closeDate, setCloseDate] = useState(dayjs(''));
+  const [selfReviewDate, setSelfReviewDate] = useState(null);
+  const [closeDate, setCloseDate] = useState(null);
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
@@ -328,9 +328,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     setPeriodToAdd({
       ...periodToAdd,
       reviewTemplateId: templateId,
-      launchDate: launchDate ? launchDate : dayjs(''),
-      selfReviewCloseDate: selfReviewDate ? selfReviewDate : dayjs(''),
-      closeDate: closeDate ? closeDate : dayjs(''),
+      launchDate: launchDate ? launchDate : null,
+      selfReviewCloseDate: selfReviewDate ? selfReviewDate : null,
+      closeDate: closeDate ? closeDate : null,
     });
   };
 
@@ -339,9 +339,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     setPeriodToAdd({
       ...periodToAdd,
       selfReviewTemplateId: templateId,
-      launchDate: launchDate ? launchDate : dayjs(''),
-      selfReviewCloseDate: selfReviewDate ? selfReviewDate : dayjs(''),
-      closeDate: closeDate ? closeDate : dayjs(''),
+      launchDate: launchDate ? launchDate : null,
+      selfReviewCloseDate: selfReviewDate ? selfReviewDate : null,
+      closeDate: closeDate ? closeDate : null,
     });
   };
 
