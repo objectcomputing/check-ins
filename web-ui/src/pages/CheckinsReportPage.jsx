@@ -26,8 +26,6 @@ const CheckinsReportPage = () => {
     const bPieces = b.name.split(' ').slice(-1);
     return aPieces.toString().localeCompare(bPieces);
   });
-  console.log('CheckinsReportPage.jsx : pdls =', pdls);
-  console.log('CheckinsReportPage.jsx : selectedPdls =', selectedPdls);
 
   const [filteredPdls, setFilteredPdls] = useState(pdls);
 
@@ -39,7 +37,10 @@ const CheckinsReportPage = () => {
         name: 'pdls',
         default: [],
         value: selectedPdls,
-        setter: setSelectedPdls,
+        setter(ids) {
+          const newPdls = ids.map(id => pdls.find(pdl => pdl.id === id));
+          setSelectedPdls(newPdls);
+        },
         toQP(newPdls) {
           if (isArrayPresent(newPdls)) {
             const ids = newPdls.map(pdl => pdl.id);
