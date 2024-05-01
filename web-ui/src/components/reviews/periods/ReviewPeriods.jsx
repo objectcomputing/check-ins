@@ -116,13 +116,19 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [periodToAdd, setPeriodToAdd] = useState({ name: '', open: true });
+  const [periodToAdd, setPeriodToAdd] = useState({
+    name: '',
+    open: true,
+    launchDate: '',
+    selfReviewCloseDate: '',
+    closeDate: ''
+  });
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [toDelete, setToDelete] = useState(null);
-  const [launchDate, setLaunchDate] = React.useState(dayjs(''));
-  const [selfReviewDate, setSelfReviewDate] = React.useState(dayjs(''));
-  const [closeDate, setCloseDate] = React.useState(dayjs(''));
+  const [launchDate, setLaunchDate] = useState(null);
+  const [selfReviewDate, setSelfReviewDate] = useState(dayjs(''));
+  const [closeDate, setCloseDate] = useState(dayjs(''));
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
@@ -238,6 +244,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         periodToAdd.selfReviewTemplateId
     );
     setCanSave(valid);
+    console.log(periodToAdd);
   }, [periodToAdd]);
 
   useEffect(() => {
@@ -320,7 +327,10 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     const templateId = event.target.value;
     setPeriodToAdd({
       ...periodToAdd,
-      reviewTemplateId: templateId
+      reviewTemplateId: templateId,
+      launchDate: launchDate ? launchDate : dayjs(''),
+      selfReviewCloseDate: selfReviewDate ? selfReviewDate : dayjs(''),
+      closeDate: closeDate ? closeDate : dayjs(''),
     });
   };
 
@@ -328,8 +338,38 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     const templateId = event.target.value;
     setPeriodToAdd({
       ...periodToAdd,
-      selfReviewTemplateId: templateId
+      selfReviewTemplateId: templateId,
+      launchDate: launchDate ? launchDate : dayjs(''),
+      selfReviewCloseDate: selfReviewDate ? selfReviewDate : dayjs(''),
+      closeDate: closeDate ? closeDate : dayjs(''),
     });
+  };
+
+  const handleLaunchDateChange = value => {
+    const launch = value;
+    setPeriodToAdd({
+      ...periodToAdd,
+      launchDate: launch
+    });
+    setLaunchDate(launch);
+  };
+
+  const handleSelfReviewDateChange = value => {
+    const selfReview = value;
+    setPeriodToAdd({
+      ...periodToAdd,
+      selfReviewCloseDate: selfReview
+    });
+    setSelfReviewDate(selfReview);
+  };
+
+  const handleCloseDateChange = value => {
+    const close = value;
+    setPeriodToAdd({
+      ...periodToAdd,
+      closeDate: close
+    });
+    setCloseDate(close);
   };
 
   return (
@@ -377,7 +417,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   : 1;
             })
             .map(({ name, open, id }, i) => (
-              <>
+              <div key={i}>
                 <ListItem
                   secondaryAction={
                     isAdmin && (
@@ -418,8 +458,25 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     primary={name + (open ? ' - Open' : '')}
                     secondary={getSecondaryLabel(id)}
                   />
+                  <div className="datePickerFlexWrapper">
+                    <DatePickerField
+                      date={launchDate}
+                      setDate={handleLaunchDateChange}
+                      label="Launch Date"
+                    />
+                    <DatePickerField
+                      date={selfReviewDate}
+                      setDate={handleSelfReviewDateChange}
+                      label="Self-Review Date"
+                    />
+                    <DatePickerField
+                      date={closeDate}
+                      setDate={handleCloseDateChange}
+                      label="Close Date"
+                    />
+                  </div>
                 </ListItem>
-              </>
+              </div>
             ))
         ) : (
           <Typography variant="body1">
@@ -427,11 +484,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </Typography>
         )}
       </List>
-      <div className="datePickerFlexWrapper">
-        <DatePickerField date={launchDate} setDate={setLaunchDate} label="Launch Date" />
-        <DatePickerField date={selfReviewDate} setDate={setSelfReviewDate} label="Self-Review Date" />
-        <DatePickerField date={closeDate} setDate={setCloseDate} label="Close Date" />
-      </div>
       <Modal open={open} onClose={handleClose}>
         <Box sx={modalStyles}>
           <TextField

@@ -11,7 +11,7 @@ export default function DatePickerField({ date, setDate, label}) {
       <DatePicker
         label={label}
         value={date}
-        onChange={newValue => setDate(newValue)}
+        onChange={setDate}
       />
     </LocalizationProvider>
     </div>

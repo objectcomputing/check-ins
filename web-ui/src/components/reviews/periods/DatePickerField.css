@@ -8,4 +8,6 @@
 .datePickerFlexWrapper {
     display: flex;
     flex-direction: row;
+    margin-right: 2rem;
+    margin-bottom: 0.8rem;
 }
