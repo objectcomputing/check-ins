@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -21,56 +21,38 @@ const CheckinsReportPage = () => {
   const [closed, setClosed] = useState(false);
   const [searchText, setSearchText] = useState('');
 
+  const pdls = selectCheckinPDLS(state, closed, planned).sort((a, b) => {
+    const aPieces = a.name.split(' ').slice(-1);
+    const bPieces = b.name.split(' ').slice(-1);
+    return aPieces.toString().localeCompare(bPieces);
+  });
+  console.log('CheckinsReportPage.jsx : pdls =', pdls);
   console.log('CheckinsReportPage.jsx : selectedPdls =', selectedPdls);
-
-  let pdls;
-
-  const getPdls = () => {
-    if (!isArrayPresent(pdls)) {
-      pdls = selectCheckinPDLS(state, closed, planned).sort((a, b) => {
-        const aPieces = a.name.split(' ').slice(-1);
-        const bPieces = b.name.split(' ').slice(-1);
-        return aPieces.toString().localeCompare(bPieces);
-      });
-    }
-    return pdls;
-  };
 
   const [filteredPdls, setFilteredPdls] = useState(pdls);
 
-  const updateSelectedPdls = ids => {
-    // TODO: Why is pdls sometimes not set?
-    pdls = getPdls();
-    console.log('pdls =', pdls);
-    if (isArrayPresent(pdls)) {
-      const selected = pdls.filter(pdl => ids.includes(pdl.id));
-      console.log('selected =', selected);
-      setSelectedPdls(selected);
-    } else {
-      setTimeout(() => {
-        updateSelectedPdls(ids);
-      }, 1000);
-    }
-  };
+  const processedQPs = useRef(false);
 
-  useQueryParameters([
-    {
-      name: 'pdls',
-      default: [],
-      value: selectedPdls,
-      setter: updateSelectedPdls,
-      toQP(newPdls) {
-        if (isArrayPresent(newPdls)) {
-          console.log('CheckinsReportPage.jsx toQP: newPdls =', newPdls);
-          const ids = newPdls.map(pdl => pdl.id);
-          console.log('CheckinsReportPage.jsx toQP: ids =', ids);
-          return ids.join(',');
-        } else {
-          return [];
+  useQueryParameters(
+    [
+      {
+        name: 'pdls',
+        default: [],
+        value: selectedPdls,
+        setter: setSelectedPdls,
+        toQP(newPdls) {
+          if (isArrayPresent(newPdls)) {
+            const ids = newPdls.map(pdl => pdl.id);
+            return ids.join(',');
+          } else {
+            return [];
+          }
         }
       }
-    }
-  ]);
+    ],
+    [pdls],
+    processedQPs
+  );
 
   useEffect(() => {
     pdls.map(
