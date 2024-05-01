@@ -20,13 +20,11 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
   const currentUser = selectCurrentUser(state);
   const [editedGuild, setGuild] = useState(guild);
-  const [isCommunity, setIsCommunity] = useState(false);
   const [guildMemberOptions, setGuildMemberOptions] = useState([]);
   const currentMembers = selectCurrentMembers(state);
   const guildMembers = guild?.guildMembers;
 
   console.log('EditGuildModal.jsx : editedGuild =', editedGuild);
-  console.log('EditGuildModal.jsx : guildMemberOptions =', guildMemberOptions);
 
   const findExistingMember = useCallback(
     member =>
@@ -173,8 +171,14 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           <FormControlLabel
             control={
               <Switch
-                checked={isCommunity}
-                onChange={() => setIsCommunity(c => !c)}
+                checked={editedGuild.community}
+                onChange={event => {
+                  const { checked } = event.target;
+                  setGuild(g => {
+                    g.community = checked;
+                    return g;
+                  });
+                }}
               />
             }
             label="Community"
@@ -209,8 +213,6 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
               : []
           }
           isOptionEqualToValue={(option, value) => {
-            console.log('guildLeadSelect: option =', option);
-            console.log('guildLeadSelect: value =', value);
             return value && option.id === value.memberId;
           }}
           onChange={onLeadsChange}
