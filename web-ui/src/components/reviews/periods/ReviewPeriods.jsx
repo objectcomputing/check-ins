@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -29,18 +29,21 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import {styled} from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
-import {findSelfReviewRequestsByPeriodAndTeamMember} from '../../../api/feedback.js';
-import {getAllFeedbackTemplates} from '../../../api/feedbacktemplate.js';
+import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
+import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
 import {
   createReviewPeriod,
   getReviewPeriods,
   removeReviewPeriod,
   updateReviewPeriod
 } from '../../../api/reviewperiods.js';
-import {AppContext} from '../../../context/AppContext';
-import {ADD_REVIEW_PERIOD, UPDATE_REVIEW_PERIODS} from '../../../context/actions';
+import { AppContext } from '../../../context/AppContext';
+import {
+  ADD_REVIEW_PERIOD,
+  UPDATE_REVIEW_PERIODS
+} from '../../../context/actions';
 import {
   selectCsrfToken,
   selectCurrentUserId,
