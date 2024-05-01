@@ -1,6 +1,10 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
+import { Card, CardHeader, Grid, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import { styled } from '@mui/material/styles';
+
 import { getAvatarURL } from '../../api/api.js';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 
@@ -10,12 +14,6 @@ import {
   selectProfile
 } from '../../context/selectors';
 import { randomConfetti } from '../../context/util';
-
-import Avatar from '@mui/material/Avatar';
-import { Card, CardHeader } from '@mui/material';
-import { Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { Typography } from '@mui/material';
 
 import { formatBirthday } from '../../helpers/celebration.js';
 
