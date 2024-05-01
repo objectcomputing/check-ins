@@ -119,16 +119,13 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [periodToAdd, setPeriodToAdd] = useState({
     name: '',
     open: true,
-    launchDate: '',
-    selfReviewCloseDate: '',
-    closeDate: ''
+    launchDate: null,
+    selfReviewCloseDate: null,
+    closeDate: null
   });
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [toDelete, setToDelete] = useState(null);
-  const [launchDate, setLaunchDate] = useState(null);
-  const [selfReviewDate, setSelfReviewDate] = useState(null);
-  const [closeDate, setCloseDate] = useState(null);
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
@@ -241,7 +238,10 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     const valid = Boolean(
       periodToAdd.name &&
         periodToAdd.reviewTemplateId &&
-        periodToAdd.selfReviewTemplateId
+        periodToAdd.selfReviewTemplateId &&
+        periodToAdd.launchDate &&
+        periodToAdd.selfReviewCloseDate &&
+        periodToAdd.closeDate
     );
     setCanSave(valid);
     console.log(periodToAdd);
@@ -327,10 +327,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     const templateId = event.target.value;
     setPeriodToAdd({
       ...periodToAdd,
-      reviewTemplateId: templateId,
-      launchDate: launchDate ? launchDate : null,
-      selfReviewCloseDate: selfReviewDate ? selfReviewDate : null,
-      closeDate: closeDate ? closeDate : null,
+      reviewTemplateId: templateId
     });
   };
 
@@ -338,10 +335,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     const templateId = event.target.value;
     setPeriodToAdd({
       ...periodToAdd,
-      selfReviewTemplateId: templateId,
-      launchDate: launchDate ? launchDate : null,
-      selfReviewCloseDate: selfReviewDate ? selfReviewDate : null,
-      closeDate: closeDate ? closeDate : null,
+      selfReviewTemplateId: templateId
     });
   };
 
@@ -351,7 +345,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       ...periodToAdd,
       launchDate: launch
     });
-    setLaunchDate(launch);
   };
 
   const handleSelfReviewDateChange = value => {
@@ -360,7 +353,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       ...periodToAdd,
       selfReviewCloseDate: selfReview
     });
-    setSelfReviewDate(selfReview);
   };
 
   const handleCloseDateChange = value => {
@@ -369,7 +361,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       ...periodToAdd,
       closeDate: close
     });
-    setCloseDate(close);
   };
 
   return (
@@ -416,7 +407,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   ? -1
                   : 1;
             })
-            .map(({ name, open, id }, i) => (
+            .map(({ name, open, id, launchDate, selfReviewCloseDate, closeDate }, i) => (
               <div key={i}>
                 <ListItem
                   secondaryAction={
@@ -465,7 +456,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                       label="Launch Date"
                     />
                     <DatePickerField
-                      date={selfReviewDate}
+                      date={selfReviewCloseDate}
                       setDate={handleSelfReviewDateChange}
                       label="Self-Review Date"
                     />
