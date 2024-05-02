@@ -50,7 +50,7 @@ const Anniversaries = ({ anniversaries }) => {
     return (
       <Card className={'anniversaries-card'} key={index}>
         <Link
-          style={{ color: 'black', textDecoration: 'none' }}
+          style={{ color: 'inherit', textDecoration: 'none' }}
           to={`/profile/${anniv.userId}`}
         >
           <CardHeader

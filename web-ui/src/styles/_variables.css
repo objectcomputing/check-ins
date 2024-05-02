@@ -9,15 +9,22 @@
   --xl: 1536px;
 
   /* Colors */
-  --primary-main: #2d519e;
-  --primary-dark: var(--primary-main);
-  --secondary-main: #76c8d4 
+  --primary-light: #2d519e;
+  --primary-dark: #1a2e4f;
+  --secondary-main: #76c8d4; /* are we using secondary? */
+  --primary-link-light: var(--primary-light);
+  --primary-link-light-hover: #6084D1;
+  --primary-link-dark: #6b81b3;
+  --primary-link-dark-hover: #4f5f8c;
   
-  /* MUI Defaults */
-  --checkins-palette-primary-main: var(--primary-main);
-  --checkins-palette-primary-dark: var(--primary-main);
-  --checkins-palette-primary-light: var(--primary-dark);
+  /* MUI Prefixes */
+  --checkins-palette-primary-main: var(--primary-light);
+  --checkins-palette-primary-link: var(--primary-light);
+  --checkins-palette-primary-link-hover: var(--primary-link-light-hover);
   --checkins-palette-primary-contrastText: #fff;
+  --checkins-palette-primary-menuItem: #111;
+  --checkins-palette-background-paper: #fff;
+  --checkins-palette-background-default: #f5f5f5;
 
   /* Sizing */
   --nav-width: 250px;
@@ -26,7 +33,13 @@
     --nav-width: 150px;
   }
 
-  [data-mui-color-scheme='dark'] {
-    --checkins-palette-primary-main: var(--primary-main);
+  &[data-mui-color-scheme='dark'] {
+    --checkins-palette-primary-main: var(--primary-dark);
+    --checkins-palette-primary-link: var(--primary-link-dark);
+    --checkins-palette-primary-link-hover: var(--primary-link-dark-hover);
+    --checkins-palette-primary-menuItem: var(--primary-link-dark);
+    --checkins-palette-AppBar-darkBg: var(--checkins-palette-primary-main);
+    --checkins-palette-background-paper: #121212;
+    --checkins-palette-background-default: #121212;
   }
 }

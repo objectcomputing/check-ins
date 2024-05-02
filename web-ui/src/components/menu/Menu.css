@@ -70,8 +70,8 @@
   }
 
   .Menu-drawerPaper {
-    width: var(--nav-width);
     overflow-x: hidden;
+    width: var(--nav-width);
   }
 
   .Menu-content {
@@ -85,6 +85,15 @@
 
   .Menu-subListItem {
     font-size: 14px;
+  }
+  
+  .Menu-subListItem,
+  .MuiListItem-root {
+    color: var(--checkins-palette-primary-menuItem);
+
+    &:hover {
+      background-color: var(--checkins-palette-action-selectedOpacity);
+    }
   }
 
   .Menu-modeToggle {
