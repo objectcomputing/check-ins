@@ -37,8 +37,9 @@
 .member-selector-dialog .filter-input-container {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .member-selector-dialog .direct-reports-only-checkbox {

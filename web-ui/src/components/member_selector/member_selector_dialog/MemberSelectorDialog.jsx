@@ -30,6 +30,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
+import { DatePicker } from '@mui/x-date-pickers';
 
 import { getAvatarURL } from '../../../api/api';
 import { AppContext } from '../../../context/AppContext';
@@ -116,6 +117,15 @@ const MemberSelectorDialog = ({
   const csrf = selectCsrfToken(state);
   const members = selectCurrentMembers(state);
 
+  /* For debugging.
+  const now = new Date();
+  for (const member of members) {
+    const start = new Date(member.startDate);
+    const diffMonths = differenceInMonths(now, start);
+    console.log(member.firstName, start, diffMonths, start.getFullYear());
+  }
+  */
+
   // Use the first initial filter as the default filter type
   const [initialFilter] = initialFilters;
 
@@ -130,10 +140,10 @@ const MemberSelectorDialog = ({
   const [filter, setFilter] = useState(null);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [directReportsOnly, setDirectReportsOnly] = useState(false);
-
   const [selectableMembers, setSelectableMembers] = useState([]);
-
   const [tenure, setTenure] = useState(initialFilter?.tenure || Tenures.All);
+  const [customTenure, setCustomTenure] = useState(new Date());
+
   const handleSubmit = useCallback(() => {
     const membersToAdd = members.filter(member => checked.has(member.id));
     onSubmit(membersToAdd);
@@ -253,10 +263,15 @@ const MemberSelectorDialog = ({
         member => !selectedMembers.includes(member)
       );
 
-      if (tenure !== Tenures.All) {
-        // Exclude members that don't have the selected tenure.
-        const requiredMonths = tenureToMonths[tenure];
+      // Exclude members that don't have the selected tenure.
+      if (tenure === Tenures.Custom) {
+        filteredMemberList = members.filter(member => {
+          const start = new Date(member.startDate);
+          return start <= customTenure;
+        });
+      } else if (tenure !== Tenures.All) {
         const now = new Date();
+        const requiredMonths = tenureToMonths[tenure];
         filteredMemberList = members.filter(member => {
           const start = new Date(member.startDate);
           const diffMonths = differenceInMonths(now, start);
@@ -365,6 +380,7 @@ const MemberSelectorDialog = ({
     }
   }, [
     csrf,
+    customTenure,
     directReportsOnly,
     filter,
     filterType,
@@ -512,24 +528,10 @@ const MemberSelectorDialog = ({
               value={filter}
               onChange={(_, value) => setFilter(value)}
             />
-            <FormControl className="filter-type-select">
-              <InputLabel id="member-filter-label">Required Tenure</InputLabel>
-              <Select
-                labelId="member-filter-label"
-                label="Required Tenure"
-                value={tenure}
-                onChange={event => {
-                  setTenure(event.target.value);
-                }}
-                disabled={!!initialFilter}
-              >
-                {Object.values(Tenures).map(name => (
-                  <MenuItem key={name} value={name}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          </div>
+        </FormGroup>
+        <FormGroup className="dialog-form-group">
+          <div className="filter-input-container">
             {filterType === FilterType.MANAGER && (
               <FormControlLabel
                 className="direct-reports-only-checkbox"
@@ -544,20 +546,53 @@ const MemberSelectorDialog = ({
                 label="Direct reports only"
               />
             )}
+            {/* TODO: When should this be rendered and why doesn't it have a label?
+             <Checkbox
+              className="toggle-selectable-members-checkbox"
+              onChange={event => handleToggleAll(event.target.checked)}
+              checked={
+                selectableMembers.length > 0 &&
+                visibleChecked().length === selectableMembers.length
+              }
+              indeterminate={
+                visibleChecked().length > 0 &&
+                visibleChecked().length !== selectableMembers.length
+              }
+              disabled={selectableMembers.length === 0}
+            /> */}
+            <FormControl className="filter-type-select">
+              <InputLabel id="member-filter-label">Required Tenure</InputLabel>
+              <Select
+                labelId="member-filter-label"
+                label="Required Tenure"
+                value={tenure}
+                onChange={event => {
+                  const tenure = event.target.value;
+                  setTenure(tenure);
+                }}
+                disabled={!!initialFilter}
+              >
+                {Object.values(Tenures).map(name => (
+                  <MenuItem key={name} value={name}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            {tenure === Tenures.Custom && (
+              <DatePicker
+                slotProps={{ textField: { className: 'halfWidth' } }}
+                label="Custom Tenure"
+                format="MM/dd/yyyy"
+                value={customTenure}
+                openTo="year"
+                onChange={setCustomTenure}
+                KeyboardButtonProps={{
+                  'aria-label': 'Change Date'
+                }}
+              />
+            )}
           </div>
-          <Checkbox
-            className="toggle-selectable-members-checkbox"
-            onChange={event => handleToggleAll(event.target.checked)}
-            checked={
-              selectableMembers.length > 0 &&
-              visibleChecked().length === selectableMembers.length
-            }
-            indeterminate={
-              visibleChecked().length > 0 &&
-              visibleChecked().length !== selectableMembers.length
-            }
-            disabled={selectableMembers.length === 0}
-          />
         </FormGroup>
         <Divider />
         <List dense role="list" sx={{ height: '85%', overflowY: 'scroll' }}>
