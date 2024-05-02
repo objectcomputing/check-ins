@@ -24,8 +24,6 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   const currentMembers = selectCurrentMembers(state);
   const guildMembers = guild?.guildMembers;
 
-  console.log('EditGuildModal.jsx : editedGuild =', editedGuild);
-
   const findExistingMember = useCallback(
     member =>
       guildMembers?.find(current => current.memberId === member.memberId),
@@ -174,10 +172,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
                 checked={editedGuild.community}
                 onChange={event => {
                   const { checked } = event.target;
-                  setGuild(g => {
-                    g.community = checked;
-                    return g;
-                  });
+                  setGuild({ ...editedGuild, community: checked });
                 }}
               />
             }
@@ -238,11 +233,9 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           }
           onChange={onGuildMembersChange}
           getOptionLabel={option => option.name}
-          isOptionEqualToValue={(option, value) => {
-            console.log('guildMemberOptions: option =', option);
-            console.log('guildMemberOptions: value =', value);
-            value && option.id === value.memberId;
-          }}
+          isOptionEqualToValue={(option, value) =>
+            value && option.id === value.memberId
+          }
           renderInput={params => (
             <TextField
               {...params}
