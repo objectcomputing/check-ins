@@ -34,16 +34,20 @@ export const useQueryParameters = (
     const haveRequirements = requirements.every(req =>
       Array.isArray(req) ? req.length > 0 : req !== null && req !== undefined
     );
+    console.log('query-parameters.js : haveRequirements =', haveRequirements);
     if (!haveRequirements) return;
 
     const url = new URL(location.href);
     const params = url.searchParams;
     for (const qp of qps) {
+      console.log('query-parameters.js : name =', qp.name);
       let v = params.get(qp.name);
+      console.log('query-parameters.js : v =', v);
       if (typeof qp.default === 'boolean') {
         qp.setter(v ? v === 'true' : qp.default);
       } else {
         if (v && Array.isArray(qp.default)) v = v.split(',');
+        console.log('query-parameters.js : calling setter');
         qp.setter(v || qp.default);
       }
     }
