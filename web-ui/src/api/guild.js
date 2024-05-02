@@ -21,7 +21,6 @@ export const getMembersByGuild = async (id, cookie) => {
 };
 
 export const updateGuild = async (guild, cookie) => {
-  console.log('guild.js updateGuild: guild =', guild);
   return resolve({
     method: 'PUT',
     url: guildUrl,
@@ -52,7 +51,6 @@ export const getAllGuilds = async cookie => {
 };
 
 export const createGuild = async (guild, cookie) => {
-  console.log('guild.js createGuild: guild =', guild);
   return resolve({
     method: 'POST',
     url: guildUrl,
