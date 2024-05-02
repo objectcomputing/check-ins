@@ -6,11 +6,11 @@ import java.util.UUID;
 public interface GuildServices {
     GuildResponseDTO read(UUID id);
 
-    GuildResponseDTO save(GuildCreateDTO g);
+    GuildResponseDTO save(GuildCreateDTO guild);
 
-    GuildResponseDTO update(GuildUpdateDTO g);
+    GuildResponseDTO update(GuildUpdateDTO guild);
 
-    Set<GuildResponseDTO> findByFields(String name, UUID memberid);
+    Set<GuildResponseDTO> findByFields(String name, UUID memberId);
 
     boolean delete(UUID id);
 }

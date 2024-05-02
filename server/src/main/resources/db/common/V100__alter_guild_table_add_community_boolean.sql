@@ -1,0 +1,1 @@
+ALTER TABLE guild ADD COLUMN community boolean DEFAULT false NOT NULL;
