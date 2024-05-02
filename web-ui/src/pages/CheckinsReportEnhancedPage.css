@@ -1,0 +1,33 @@
+.checkins-report-page {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.checkbox-row label {
+  margin-left: 0.5rem;
+}
+
+.filter-pdls-and-members {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 1rem;
+}
+
+.filter-pdls-and-members > * {
+  width: 15%;
+}
+
+.MuiFormControl-root {
+  margin-left: 1rem;
+}

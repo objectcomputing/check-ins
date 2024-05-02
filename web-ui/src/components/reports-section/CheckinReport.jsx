@@ -1,9 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import { getAvatarURL } from '../../api/api.js';
 import { AppContext } from '../../context/AppContext';
 import { selectFilteredCheckinsForTeamMemberAndPDL } from '../../context/selectors';
+
+import ExpandMore from '../expand-more/ExpandMore';
 
 import {
   Accordion,
@@ -12,18 +15,36 @@ import {
   Avatar,
   Box,
   Card,
-  CardHeader,
   CardContent,
+  CardHeader,
   Chip,
+  Collapse,
   Container,
+  Divider,
   Typography
 } from '@mui/material';
 
 import './CheckinReport.css';
 
+const propTypes = {
+  closed: PropTypes.bool,
+  pdl: PropTypes.shape({
+    name: PropTypes.string,
+    id: PropTypes.string,
+    members: PropTypes.array,
+    workEmail: PropTypes.string,
+    title: PropTypes.string
+  }),
+  planned: PropTypes.bool
+};
+
 const CheckinsReport = ({ closed, pdl, planned }) => {
   const { state } = useContext(AppContext);
-  const { name, id, members, workEmail } = pdl;
+  const [expanded, setExpanded] = useState(true);
+
+  const { name, id, members, workEmail, title } = pdl;
+
+  const handleExpandClick = () => setExpanded(!expanded);
 
   const getCheckinDate = checkin => {
     if (!checkin || !checkin.checkInDate) return;
@@ -82,6 +103,7 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
         return (
           <Accordion id="member-sub-card" key={member.id + id}>
             <AccordionSummary
+              expandIcon={<ExpandMore />}
               aria-controls="panel1a-content"
               id="accordion-summary"
             >
@@ -103,28 +125,61 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
           </Accordion>
         );
       });
-    } else return null;
+    } else
+      return (
+        <div className="checkin-report-no-data">
+          <Typography>
+            No assigned check-ins available for display during this period.
+          </Typography>
+        </div>
+      );
   };
 
   return (
     <Box display="flex" flexWrap="wrap">
-      <Card id="pdl-card">
+      <Card className="checkin-report-card">
         <CardHeader
           title={
-            <Typography variant="h5" component="h2">
-              {name}
-            </Typography>
+            <div className="checkin-report-card-title-container">
+              <Typography
+                className="checkin-report-card-name"
+                variant="h5"
+                noWrap
+              >
+                {name}
+              </Typography>
+              <Typography
+                className="checkin-report-card-title"
+                variant="h6"
+                color="gray"
+              >
+                {title}
+              </Typography>
+            </div>
           }
           disableTypography
           avatar={<Avatar id="pdl-large" src={getAvatarURL(workEmail)} />}
+          action={
+            <ExpandMore
+              expand={expanded}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label={expanded ? 'show less' : 'show more'}
+            />
+          }
         />
-        <CardContent>
-          <Container fixed>
-            <TeamMemberMap />
-          </Container>
-        </CardContent>
+        <Divider />
+        <Collapse in={expanded}>
+          <CardContent>
+            <Container fixed>
+              <TeamMemberMap />
+            </Container>
+          </CardContent>
+        </Collapse>
       </Card>
     </Box>
   );
 };
+
+CheckinsReport.propTypes = propTypes;
 export default CheckinsReport;

@@ -1,3 +1,30 @@
+.checkin-report-card {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 0;
+  width: 100vw;
+
+  .checkin-report-card-title-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .checkin-report-card-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 20rem;
+  }
+}
+
+.checkin-report-no-data {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 10rem;
+}
+
 #accordion-checkin-date {
   flex-direction: column;
 }
