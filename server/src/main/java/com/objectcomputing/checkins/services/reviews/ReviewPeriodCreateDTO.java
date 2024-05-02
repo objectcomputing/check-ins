@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.reviews;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,14 +25,19 @@ public class ReviewPeriodCreateDTO {
     @Schema(implementation = ReviewStatus.class, required = true, description = "the status of the review")
     private ReviewStatus reviewStatus;
 
+    @Nullable
     private UUID reviewTemplateId;
 
+    @Nullable
     private UUID selfReviewTemplateId;
 
+    @Nullable
     private LocalDateTime launchDate;
 
+    @Nullable
     private LocalDateTime selfReviewCloseDate;
 
+    @Nullable
     private LocalDateTime closeDate;
 
     public ReviewPeriod convertToEntity(){
