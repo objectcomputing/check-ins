@@ -55,17 +55,21 @@ public class ReviewPeriod {
     @Schema(description = "the id of the self-review template to be used for this review period")
     private UUID selfReviewTemplateId;
 
+    @Nullable
     @Column(name = "launch_date")
     private LocalDateTime launchDate;
 
+    @Nullable
     @Column(name = "self_review_close_date")
     private LocalDateTime selfReviewCloseDate;
 
+    @Nullable
     @Column(name = "close_date")
     private LocalDateTime closeDate;
 
-    public ReviewPeriod(String name, ReviewStatus reviewStatus, @Nullable UUID reviewTemplateId, @Nullable UUID selfReviewTemplateId,
-                        LocalDateTime launchDate, LocalDateTime selfReviewCloseDate, LocalDateTime closeDate) {
+    public ReviewPeriod(String name, ReviewStatus reviewStatus, @Nullable UUID reviewTemplateId,
+                        @Nullable UUID selfReviewTemplateId, @Nullable LocalDateTime launchDate,
+                        @Nullable LocalDateTime selfReviewCloseDate, @Nullable LocalDateTime closeDate) {
         this.name = name;
         this.reviewStatus = reviewStatus;
         this.reviewTemplateId = reviewTemplateId;
