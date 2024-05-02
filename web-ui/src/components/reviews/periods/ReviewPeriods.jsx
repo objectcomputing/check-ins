@@ -126,6 +126,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [toDelete, setToDelete] = useState(null);
+  const [toUpdate, setToUpdate] = useState(null);
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
@@ -151,12 +152,17 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       if (!alreadyExists) {
         handleOpen();
         const res = await createReviewPeriod(periodToAdd, csrf);
-        const data =
-          res && res.payload && res.payload.data ? res.payload.data : null;
+        const data = res?.payload?.data ?? null;
         data && dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
       }
       handleClose();
-      setPeriodToAdd({ name: '', open: true });
+      setPeriodToAdd({
+        name: '',
+        open: true,
+        launchDate: null,
+        selfReviewCloseDate: null,
+        closeDate: null
+      });
     },
     [
       csrf,
@@ -226,6 +232,18 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     });
     handleConfirmClose();
   }, [csrf, periods, dispatch, toDelete, handleConfirmClose]);
+
+  const updateReviewPeriodDates = useCallback(
+    async period => {
+      if (!csrf) {
+        return;
+      }
+      const res = await updateReviewPeriod(period, csrf);
+      const data = res?.payload?.data ?? null;
+      data && dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
+    },
+    [csrf, state, periods, dispatch]
+  );
 
   const loadFeedbackTemplates = useCallback(async () => {
     const res = await getAllFeedbackTemplates(csrf);
@@ -304,7 +322,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     ) {
       getSelfReviews();
     }
-    console.log("Periods")
+    console.log('Periods');
     console.log(periods);
   }, [csrf, periods, currentUserId, selfReviews]);
 
@@ -341,28 +359,45 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     });
   };
 
-  const handleLaunchDateChange = value => {
-    const launch = value;
-    setPeriodToAdd({
-      ...periodToAdd,
-      launchDate: new Date(launch.$d * 1000)
-    });
+  function standardizeDate(date) {
+    const toTimestamp = date => Math.floor(date.getTime() / 1000);
+    const fromTimestamp = timestamp => new Date(timestamp * 1000).toISOString();
+    
+    let newDate = toTimestamp(new Date(date));
+    let adjustedDate = fromTimestamp(newDate);
+    return adjustedDate;
+  }
+
+  const handleLaunchDateChange = ( val, period ) => {
+    let goodDate = standardizeDate(`${val.$y}-${val.$W}-${val.$D}`);
+    let newPeriod = {
+      ...period,
+      launchDate: goodDate
+    };
+    console.log("New Period");
+    console.log(newPeriod);
+    setPeriodToAdd(newPeriod);
+    updateReviewPeriodDates(newPeriod);
   };
 
-  const handleSelfReviewDateChange = value => {
-    const selfReview = value;
-    setPeriodToAdd({
-      ...periodToAdd,
-      selfReviewCloseDate: new Date(selfReview.$d * 1000)
-    });
+  const handleSelfReviewDateChange = ( val, period ) => {
+    let goodDate = standardizeDate(`${val.$y}-${val.$W}-${val.$D}`);
+    let newPeriod = {
+      ...period,
+      selfReviewCloseDate: goodDate
+    };
+    setPeriodToAdd(newPeriod);
+    updateReviewPeriodDates(newPeriod);
   };
 
-  const handleCloseDateChange = value => {
-    const close = value;
-    setPeriodToAdd({
-      ...periodToAdd,
-      closeDate: new Date(close.$d * 1000)
-    });
+  const handleCloseDateChange = ( val, period ) => {
+    let goodDate = standardizeDate(`${val.$y}-${val.$W}-${val.$D}`);
+    let newPeriod = {
+      ...period,
+      closeDate: goodDate
+    };
+    setPeriodToAdd(newPeriod);
+    updateReviewPeriodDates(newPeriod);
   };
 
   return (
@@ -409,68 +444,73 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   ? -1
                   : 1;
             })
-            .map(({ name, open, id, launchDate, selfReviewCloseDate, closeDate }, i) => (
-              <div key={i}>
-                <ListItem
-                  secondaryAction={
-                    isAdmin && (
-                      <>
-                        <Tooltip title={open ? 'Archive' : 'Unarchive'}>
-                          <IconButton
-                            onClick={() => toggleReviewPeriod(id)}
-                            aria-label={open ? 'Archive' : 'Unarchive'}
-                          >
-                            {open ? <ArchiveIcon /> : <UnarchiveIcon />}
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                          <IconButton
-                            onClick={() => confirmDelete(id)}
-                            edge="end"
-                            aria-label="Delete"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </>
-                    )
-                  }
-                  key={`period-${id}`}
-                >
-                  <ListItemAvatar
-                    key={`period-lia-${id}`}
-                    onClick={() => onPeriodClick(id)}
+            .map(
+              (
+                { name, open, id, launchDate, selfReviewCloseDate, closeDate },
+                i
+              ) => (
+                <div key={i}>
+                  <ListItem
+                    secondaryAction={
+                      isAdmin && (
+                        <>
+                          <Tooltip title={open ? 'Archive' : 'Unarchive'}>
+                            <IconButton
+                              onClick={() => toggleReviewPeriod(id)}
+                              aria-label={open ? 'Archive' : 'Unarchive'}
+                            >
+                              {open ? <ArchiveIcon /> : <UnarchiveIcon />}
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Delete">
+                            <IconButton
+                              onClick={() => confirmDelete(id)}
+                              edge="end"
+                              aria-label="Delete"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </>
+                      )
+                    }
+                    key={`period-${id}`}
                   >
-                    <Avatar>
-                      <WorkIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    key={`period-lit-${id}`}
-                    onClick={() => onPeriodClick(id)}
-                    primary={name + (open ? ' - Open' : '')}
-                    secondary={getSecondaryLabel(id)}
-                  />
-                  <div className="datePickerFlexWrapper">
-                    <DatePickerField
-                      date={dayjs(launchDate)}
-                      setDate={handleLaunchDateChange}
-                      label="Launch Date"
+                    <ListItemAvatar
+                      key={`period-lia-${id}`}
+                      onClick={() => onPeriodClick(id)}
+                    >
+                      <Avatar>
+                        <WorkIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      key={`period-lit-${id}`}
+                      onClick={() => onPeriodClick(id)}
+                      primary={name + (open ? ' - Open' : '')}
+                      secondary={getSecondaryLabel(id)}
                     />
-                    <DatePickerField
-                      date={dayjs(selfReviewCloseDate)}
-                      setDate={handleSelfReviewDateChange}
-                      label="Self-Review Date"
-                    />
-                    <DatePickerField
-                      date={dayjs(closeDate)}
-                      setDate={handleCloseDateChange}
-                      label="Close Date"
-                    />
-                  </div>
-                </ListItem>
-              </div>
-            ))
+                    <div className="datePickerFlexWrapper">
+                      <DatePickerField
+                        date={dayjs(launchDate)}
+                        setDate={val => handleLaunchDateChange(val, { id, name, open, launchDate, selfReviewCloseDate, closeDate })}
+                        label="Launch Date"
+                      />
+                      <DatePickerField
+                        date={dayjs(selfReviewCloseDate)}
+                        setDate={val => handleSelfReviewDateChange(val, { id, name, open, launchDate, selfReviewCloseDate, closeDate })}
+                        label="Self-Review Date"
+                      />
+                      <DatePickerField
+                        date={dayjs(closeDate)}
+                        setDate={val => handleCloseDateChange(val, { id, name, open, launchDate, selfReviewCloseDate, closeDate })}
+                        label="Close Date"
+                      />
+                    </div>
+                  </ListItem>
+                </div>
+              )
+            )
         ) : (
           <Typography variant="body1">
             There are currently no review periods.
