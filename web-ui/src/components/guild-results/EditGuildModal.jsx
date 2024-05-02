@@ -6,7 +6,13 @@ import {
   selectCurrentMembers
 } from '../../context/selectors';
 
-import { Button, Modal, TextField } from '@mui/material';
+import {
+  Button,
+  FormControlLabel,
+  Modal,
+  Switch,
+  TextField
+} from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import './EditGuildModal.css';
 
@@ -159,6 +165,20 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           value={editedGuild.name ? editedGuild.name : ''}
           onChange={e => setGuild({ ...editedGuild, name: e.target.value })}
         />
+        <div>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={editedGuild.community}
+                onChange={event => {
+                  const { checked } = event.target;
+                  setGuild({ ...editedGuild, community: checked });
+                }}
+              />
+            }
+            label="Community"
+          />
+        </div>
         <TextField
           id="guild-description-input"
           label="Description"
