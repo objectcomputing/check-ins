@@ -63,7 +63,7 @@ const adminLinks = [
 ];
 
 const directoryLinks = [
-  ['/guilds', 'Guilds'],
+  ['/guilds', 'Guilds & Communities'],
   ['/people', 'People'],
   ['/teams', 'Teams']
 ];
