@@ -1,4 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
+
+import { Button, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import { AppContext } from '../context/AppContext';
 import { reportSkills } from '../api/memberskill.js';
@@ -11,8 +14,7 @@ import {
   selectCurrentMemberIds
 } from '../context/selectors';
 
-import { Button, TextField } from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 import './SkillReportPage.css';
 
@@ -26,6 +28,28 @@ const SkillReportPage = props => {
   const [searchSkills, setSearchSkills] = useState([]);
   const [editedSearchRequest, setEditedSearchRequest] =
     useState(searchRequestDTO);
+
+  const processedQPs = useRef(false);
+  useQueryParameters(
+    [
+      {
+        name: 'skills',
+        default: [],
+        value: searchSkills,
+        setter(ids) {
+          const searchSkills = ids.map(id =>
+            skills.find(skill => skill.id === id)
+          );
+          setSearchSkills(searchSkills);
+        },
+        toQP() {
+          return searchSkills.map(skill => skill.id).join(',');
+        }
+      }
+    ],
+    [skills],
+    processedQPs
+  );
 
   const handleSearch = async searchRequestDTO => {
     let res = await reportSkills(searchRequestDTO, csrf);
