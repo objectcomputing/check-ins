@@ -32,7 +32,7 @@ describe('MemberSelector', () => {
   it('renders correctly with default props', () => {
     snapshot(
       <AppContextProvider value={initialState}>
-        <MemberSelector onChange={vi.fn()} />
+        <MemberSelector onChange={vi.fn()} selected={[]} />
       </AppContextProvider>
     );
   });
