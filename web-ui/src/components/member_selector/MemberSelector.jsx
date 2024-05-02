@@ -80,7 +80,9 @@ const MemberSelector = ({
   className,
   style
 }) => {
+  console.log('MemberSelector.jsx : selected =', selected);
   const isControlled = !!selected && Array.isArray(selected);
+  console.log('MemberSelector.jsx : isControlled =', isControlled);
 
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
@@ -88,6 +90,7 @@ const MemberSelector = ({
   const [selectedMembers, setSelectedMembers] = useState(
     isControlled ? selected : []
   );
+  console.log('MemberSelector.jsx : selectedMembers =', selectedMembers);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -101,12 +104,10 @@ const MemberSelector = ({
 
   const handleExpandClick = () => setExpanded(!expanded);
 
-  // When the selected members change, fire the onChange event
-  useEffect(() => {
-    if (onChange) {
-      onChange(selectedMembers);
-    }
-  }, [selectedMembers, onChange]);
+  function updateMembers(members) {
+    setSelectedMembers(members);
+    onChange(members);
+  }
 
   // If the selector is disabled, make sure the selector dialog is closed
   useEffect(() => {
@@ -118,7 +119,7 @@ const MemberSelector = ({
   const addMembers = useCallback(
     membersToAdd => {
       const selected = [...selectedMembers, ...membersToAdd];
-      setSelectedMembers(selected);
+      updateMembers(selected);
       setDialogOpen(false);
     },
     [selectedMembers]
@@ -131,7 +132,7 @@ const MemberSelector = ({
         selectedMember => selectedMember.id === member.id
       );
       selected.splice(indexToRemove, 1);
-      setSelectedMembers(selected);
+      updateMembers(selected);
     },
     [selectedMembers]
   );
@@ -165,7 +166,7 @@ const MemberSelector = ({
   }, [selectedMembers, csrf, dispatch]);
 
   const clearMembers = useCallback(() => {
-    setSelectedMembers([]);
+    updateMembers([]);
   }, []);
 
   return (
