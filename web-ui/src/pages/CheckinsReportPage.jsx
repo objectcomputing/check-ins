@@ -1,4 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+
+import { TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import { AppContext } from '../context/AppContext';
 import CheckinReport from '../components/reports-section/CheckinReport';
@@ -6,9 +9,8 @@ import {
   selectCheckinPDLS,
   selectTeamMembersWithCheckinPDL
 } from '../context/selectors';
-
-import { TextField } from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
+import { isArrayPresent } from '../helpers/checks';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 import './CheckinsReportPage.css';
 
@@ -25,6 +27,31 @@ const CheckinsReportPage = () => {
     return aPieces.toString().localeCompare(bPieces);
   });
   const [filteredPdls, setFilteredPdls] = useState(pdls);
+
+  const processedQPs = useRef(false);
+  useQueryParameters(
+    [
+      {
+        name: 'pdls',
+        default: [],
+        value: selectedPdls,
+        setter(ids) {
+          const newPdls = ids.map(id => pdls.find(pdl => pdl.id === id));
+          setSelectedPdls(newPdls);
+        },
+        toQP(newPdls) {
+          if (isArrayPresent(newPdls)) {
+            const ids = newPdls.map(pdl => pdl.id);
+            return ids.join(',');
+          } else {
+            return [];
+          }
+        }
+      }
+    ],
+    [pdls],
+    processedQPs
+  );
 
   useEffect(() => {
     if (!pdls) return;

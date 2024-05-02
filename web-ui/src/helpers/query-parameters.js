@@ -21,8 +21,21 @@ import { useEffect } from 'react';
 /**
  * @param {(QPBoolean | QPString)[]} qps - query parameters
  */
-export const useQueryParameters = qps => {
+export const useQueryParameters = (
+  qps,
+  requirements = [],
+  processedQPs = null
+) => {
+  // This examines all the query parameters and
+  // sets the state value associated with each of them.
   useEffect(() => {
+    if (processedQPs?.current) return;
+
+    const haveRequirements = requirements.every(req =>
+      Array.isArray(req) ? req.length > 0 : req !== null && req !== undefined
+    );
+    if (!haveRequirements) return;
+
     const url = new URL(location.href);
     const params = url.searchParams;
     for (const qp of qps) {
@@ -34,13 +47,21 @@ export const useQueryParameters = qps => {
         qp.setter(v || qp.default);
       }
     }
-  }, []);
+    if (processedQPs) processedQPs.current = true;
+  }, requirements);
 
   const dependencies = qps.map(qp => qp.value);
 
+  // This updates the query parameters in the URL
+  // when their associated state values change.
   useEffect(() => {
+    const haveRequirements = requirements.every(req =>
+      Array.isArray(req) ? req.length > 0 : req !== null && req !== undefined
+    );
+    if (!haveRequirements) return;
+
     const url = new URL(location.href);
-    let newUrl = url.origin + url.pathname;
+    const baseUrl = url.origin + url.pathname;
     const params = {};
 
     // Add query parameters listed in qps that do not have their default value.
@@ -55,10 +76,12 @@ export const useQueryParameters = qps => {
       if (!qps.some(qp => qp.name === k)) params[k] = v;
     }
 
-    if (Object.keys(params).length) {
-      newUrl += '?' + new URLSearchParams(params).toString();
+    const search = Object.keys(params).length
+      ? '?' + new URLSearchParams(params).toString()
+      : '';
+    if (search !== url.search) {
+      history.replaceState(params, '', baseUrl + search);
     }
-    history.replaceState(params, '', newUrl);
   }, dependencies);
 };
 
