@@ -34,13 +34,6 @@ const TeamSkillReportPage = () => {
   const [editedSearchRequest, setEditedSearchRequest] = useState([]);
   const [showRadar, setShowRadar] = useState(false);
 
-  console.log('TeamSkillReportPage.jsx : selectedMembers =', selectedMembers);
-
-  function updateMembers(members) {
-    console.log('TeamSkillReportPage.jsx updateMembers: members =', members);
-    setSelectedMembers(members);
-  }
-
   const processedQPs = useRef(false);
   useQueryParameters(
     [
@@ -49,15 +42,10 @@ const TeamSkillReportPage = () => {
         default: [],
         value: selectedMembers,
         setter(ids) {
-          console.log('TeamSkillReportPage.jsx setter: ids =', ids);
           const selectedMembers = ids.map(id =>
             memberProfiles.find(member => member.id === id)
           );
-          console.log(
-            'TeamSkillReportPage.jsx setter: selectedMembers =',
-            selectedMembers
-          );
-          updateMembers(selectedMembers);
+          setSelectedMembers(selectedMembers);
         },
         toQP() {
           return selectedMembers.map(member => member.id).join(',');
@@ -175,7 +163,7 @@ const TeamSkillReportPage = () => {
       <MemberSelector
         className="team-skill-member-selector"
         listHeight={300}
-        onChange={updateMembers}
+        onChange={setSelectedMembers}
         selected={selectedMembers}
       />
       <div className="select-skills-section">
