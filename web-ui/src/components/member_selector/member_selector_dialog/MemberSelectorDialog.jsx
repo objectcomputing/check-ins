@@ -1,14 +1,20 @@
+import { differenceInMonths } from 'date-fns';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   AppBar,
+  Autocomplete,
   Avatar,
   Button,
   Checkbox,
   Dialog,
   DialogContent,
+  Divider,
+  FormControl,
+  FormControlLabel,
   FormGroup,
   IconButton,
+  InputAdornment,
   InputLabel,
   List,
   ListItem,
@@ -17,16 +23,14 @@ import {
   ListItemText,
   MenuItem,
   Select,
+  Slide,
   TextField,
   Toolbar,
   Typography
 } from '@mui/material';
-import Slide from '@mui/material/Slide';
 import CloseIcon from '@mui/icons-material/Close';
-import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-import Autocomplete from '@mui/material/Autocomplete';
-import FormControl from '@mui/material/FormControl';
+
 import { getAvatarURL } from '../../../api/api';
 import { AppContext } from '../../../context/AppContext';
 import {
@@ -47,8 +51,6 @@ import { getMembersByGuild } from '../../../api/guild';
 import { getSkillMembers } from '../../../api/memberskill';
 
 import './MemberSelectorDialog.css';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Divider from '@mui/material/Divider';
 
 const DialogTransition = React.forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props} />
@@ -64,9 +66,29 @@ export const FilterType = Object.freeze({
   MANAGER: 'Manager'
 });
 
+export const Tenures = Object.freeze({
+  All: 'All',
+  Months6: '6 Months',
+  Years1: '1 Year',
+  Years5: '5 Years',
+  Years10: '10 Years',
+  Years20: '20 Years',
+  Custom: 'Custom'
+});
+
+const tenureToMonths = {
+  [Tenures.Months6]: 6,
+  [Tenures.Years1]: 12,
+  [Tenures.Years5]: 60,
+  [Tenures.Years10]: 120,
+  [Tenures.Years20]: 240,
+  [Tenures.Custom]: 0
+};
+
 const propTypes = {
   initialFilters: PropTypes.arrayOf(
     PropTypes.shape({
+      tenure: PropTypes.oneOf(Object.values(Tenures)),
       type: PropTypes.oneOf(Object.values(FilterType)),
       value: PropTypes.oneOfType([
         PropTypes.string,
@@ -111,6 +133,7 @@ const MemberSelectorDialog = ({
 
   const [selectableMembers, setSelectableMembers] = useState([]);
 
+  const [tenure, setTenure] = useState(initialFilter?.tenure || Tenures.All);
   const handleSubmit = useCallback(() => {
     const membersToAdd = members.filter(member => checked.has(member.id));
     onSubmit(membersToAdd);
@@ -207,7 +230,7 @@ const MemberSelectorDialog = ({
     };
 
     setFilterOptions(getFilterOptions());
-  }, [filterType, members, state]);
+  }, [filterType, members, state, tenure]);
 
   const showError = useCallback(
     message => {
@@ -229,6 +252,17 @@ const MemberSelectorDialog = ({
       let filteredMemberList = members.filter(
         member => !selectedMembers.includes(member)
       );
+
+      if (tenure !== Tenures.All) {
+        // Exclude members that don't have the selected tenure.
+        const requiredMonths = tenureToMonths[tenure];
+        const now = new Date();
+        filteredMemberList = members.filter(member => {
+          const start = new Date(member.startDate);
+          const diffMonths = differenceInMonths(now, start);
+          return diffMonths >= requiredMonths;
+        });
+      }
 
       // If a filter is selected, use it to filter the list of selectable members
       if (filter) {
@@ -330,15 +364,16 @@ const MemberSelectorDialog = ({
       });
     }
   }, [
-    state,
     csrf,
-    members,
-    filterType,
+    directReportsOnly,
     filter,
+    filterType,
+    members,
+    open,
     selectedMembers,
     showError,
-    directReportsOnly,
-    open
+    state,
+    tenure
   ]);
 
   useEffect(() => {
@@ -438,13 +473,32 @@ const MemberSelectorDialog = ({
                 )
               }}
             />
+            <FormControl className="filter-type-select">
+              <InputLabel id="member-filter-label">Filter Type</InputLabel>
+              <Select
+                labelId="member-filter-label"
+                label="Filter Type"
+                value={filterType}
+                onChange={event => {
+                  setFilter(null);
+                  setFilterType(event.target.value);
+                }}
+                disabled={!!initialFilter}
+              >
+                {Object.values(FilterType).map(name => (
+                  <MenuItem key={name} value={name}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Autocomplete
               className="filter-input"
               renderInput={params => (
                 <TextField
                   {...params}
                   variant="outlined"
-                  label="Filter Members"
+                  label="Filter Value"
                   placeholder={`Search for ${filterType.toLowerCase()}`}
                 />
               )}
@@ -459,18 +513,17 @@ const MemberSelectorDialog = ({
               onChange={(_, value) => setFilter(value)}
             />
             <FormControl className="filter-type-select">
-              <InputLabel id="member-filter-label">Filter by</InputLabel>
+              <InputLabel id="member-filter-label">Required Tenure</InputLabel>
               <Select
                 labelId="member-filter-label"
-                label="Filter by"
-                value={filterType}
+                label="Required Tenure"
+                value={tenure}
                 onChange={event => {
-                  setFilter(null);
-                  setFilterType(event.target.value);
+                  setTenure(event.target.value);
                 }}
                 disabled={!!initialFilter}
               >
-                {Object.values(FilterType).map(name => (
+                {Object.values(Tenures).map(name => (
                   <MenuItem key={name} value={name}>
                     {name}
                   </MenuItem>
