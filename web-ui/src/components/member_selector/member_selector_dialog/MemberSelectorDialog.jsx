@@ -528,6 +528,19 @@ const MemberSelectorDialog = ({
               value={filter}
               onChange={(_, value) => setFilter(value)}
             />
+            <Checkbox
+              className="toggle-selectable-members-checkbox"
+              onChange={event => handleToggleAll(event.target.checked)}
+              checked={
+                selectableMembers.length > 0 &&
+                visibleChecked().length === selectableMembers.length
+              }
+              indeterminate={
+                visibleChecked().length > 0 &&
+                visibleChecked().length !== selectableMembers.length
+              }
+              disabled={selectableMembers.length === 0}
+            />
           </div>
         </FormGroup>
         <FormGroup className="dialog-form-group">
@@ -546,20 +559,6 @@ const MemberSelectorDialog = ({
                 label="Direct reports only"
               />
             )}
-            {/* TODO: When should this be rendered and why doesn't it have a label?
-             <Checkbox
-              className="toggle-selectable-members-checkbox"
-              onChange={event => handleToggleAll(event.target.checked)}
-              checked={
-                selectableMembers.length > 0 &&
-                visibleChecked().length === selectableMembers.length
-              }
-              indeterminate={
-                visibleChecked().length > 0 &&
-                visibleChecked().length !== selectableMembers.length
-              }
-              disabled={selectableMembers.length === 0}
-            /> */}
             <FormControl className="filter-type-select">
               <InputLabel id="member-filter-label">Required Tenure</InputLabel>
               <Select
