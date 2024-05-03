@@ -490,9 +490,9 @@ const MemberSelectorDialog = ({
               }}
             />
             <FormControl className="filter-type-select">
-              <InputLabel id="member-filter-label">Filter Type</InputLabel>
+              <InputLabel id="filter-type-label">Filter Type</InputLabel>
               <Select
-                labelId="member-filter-label"
+                labelId="filter-type-label"
                 label="Filter Type"
                 value={filterType}
                 onChange={event => {

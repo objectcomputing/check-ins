@@ -151,7 +151,7 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                 <label
                   class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="true"
-                  id="member-filter-label"
+                  id="filter-type-label"
                 >
                   Filter Type
                 </label>
@@ -162,7 +162,7 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                     aria-controls=":r2:"
                     aria-expanded="false"
                     aria-haspopup="listbox"
-                    aria-labelledby="member-filter-label"
+                    aria-labelledby="filter-type-label"
                     class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
                     role="combobox"
                     tabindex="0"
