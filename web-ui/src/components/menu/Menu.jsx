@@ -19,7 +19,11 @@ import { AppContext } from '../../context/AppContext';
 import { getAvatarURL } from '../../api/api';
 
 import MenuIcon from '@mui/icons-material/Menu';
-import { useTheme, useColorScheme } from '@mui/material/styles';
+import {
+  useTheme,
+  useColorScheme,
+  Experimental_CssVarsProvider as CssVarsProvider
+} from '@mui/material/styles';
 import {
   AppBar,
   Avatar,
@@ -353,97 +357,99 @@ function Menu() {
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            className={classes.menuButton}
-            size="large"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
-        <Link to={`/profile/${id}`}>
-          <Avatar
-            src={getAvatarURL(workEmail)}
-            style={{
-              position: 'absolute',
-              cursor: 'pointer',
-              right: '5px',
-              top: '10px',
-              textDecoration: 'none'
+      <CssVarsProvider>
+        <CssBaseline />
+        <AppBar position="fixed" className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              className={classes.menuButton}
+              size="large"
+            >
+              <MenuIcon />
+            </IconButton>
+          </Toolbar>
+          <Link to={`/profile/${id}`}>
+            <Avatar
+              src={getAvatarURL(workEmail)}
+              style={{
+                position: 'absolute',
+                cursor: 'pointer',
+                right: '5px',
+                top: '10px',
+                textDecoration: 'none'
+              }}
+            />
+          </Link>
+        </AppBar>
+        <nav className={classes.drawer}>
+          <Drawer
+            sx={{ display: { sm: 'none', xs: 'block' } }}
+            variant="temporary"
+            disablePortal
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper
             }}
-          />
-        </Link>
-      </AppBar>
-      <nav className={classes.drawer}>
-        <Drawer
-          sx={{ display: { sm: 'none', xs: 'block' } }}
-          variant="temporary"
-          disablePortal
-          anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          classes={{
-            paper: classes.drawerPaper
-          }}
-          ModalProps={{
-            keepMounted: true // Better open performance on mobile.
-          }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          classes={{
-            paper: classes.drawerPaper
-          }}
-          variant="permanent"
-          open
-          sx={{ display: { xs: 'none', sm: 'block' } }}
-        >
-          {drawer}
-        </Drawer>
-        <Modal
-          open={showHoursUpload}
-          onBackdropClick={closeHoursUpload}
-          onClose={closeHoursUpload}
-        >
-          <div className="hours-upload-modal">
-            <Button color="primary">
-              <label htmlFor="file-upload">
-                <h3>Choose A CSV File</h3>
-                <input
-                  accept=".csv"
-                  id="file-upload"
-                  onChange={e => onFileSelected(e)}
-                  style={{ display: 'none' }}
-                  type="file"
-                />
-              </label>
-            </Button>
-            <div className="buttons">
-              <Button color="secondary" onClick={closeHoursUpload}>
-                Cancel
+            ModalProps={{
+              keepMounted: true // Better open performance on mobile.
+            }}
+          >
+            {drawer}
+          </Drawer>
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper
+            }}
+            variant="permanent"
+            open
+            sx={{ display: { xs: 'none', sm: 'block' } }}
+          >
+            {drawer}
+          </Drawer>
+          <Modal
+            open={showHoursUpload}
+            onBackdropClick={closeHoursUpload}
+            onClose={closeHoursUpload}
+          >
+            <div className="hours-upload-modal">
+              <Button color="primary">
+                <label htmlFor="file-upload">
+                  <h3>Choose A CSV File</h3>
+                  <input
+                    accept=".csv"
+                    id="file-upload"
+                    onChange={e => onFileSelected(e)}
+                    style={{ display: 'none' }}
+                    type="file"
+                  />
+                </label>
               </Button>
-              {selectedFile && (
-                <Button
-                  color="primary"
-                  onClick={() => uploadFile(selectedFile)}
-                >
-                  Upload &nbsp;<strong>{selectedFile.name}</strong>
+              <div className="buttons">
+                <Button color="secondary" onClick={closeHoursUpload}>
+                  Cancel
                 </Button>
-              )}
+                {selectedFile && (
+                  <Button
+                    color="primary"
+                    onClick={() => uploadFile(selectedFile)}
+                  >
+                    Upload &nbsp;<strong>{selectedFile.name}</strong>
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        </Modal>
-      </nav>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-      </main>
+          </Modal>
+        </nav>
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+        </main>
+      </CssVarsProvider>
     </div>
   );
 }
