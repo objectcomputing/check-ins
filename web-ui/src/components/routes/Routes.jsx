@@ -50,9 +50,7 @@ export default function Routes() {
         <TeamsPage />
       </Route>
       <Route path="/guilds">
-        <Header title="Guilds">
-          <GroupIcon fontSize="large" />
-        </Header>
+        <Header title="Guilds & Communities" />
         <GuildsPage />
       </Route>
       <Route exact path="/">
