@@ -1,8 +1,10 @@
 package com.objectcomputing.checkins.services.reviews;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.agenda_item.AgendaItem;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -19,6 +21,7 @@ import reactor.core.scheduler.Schedulers;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
@@ -77,6 +80,15 @@ public class ReviewAssignmentController {
         }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(reviewAssignment -> {
             return (HttpResponse<ReviewAssignment>) HttpResponse.ok(reviewAssignment);
         }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    }
+
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
+    @Get("/period/{reviewPeriodId}{?reviewerId}")
+    public Mono<HttpResponse<Set<ReviewAssignment>>> findAssignmentsByPeriodId(@NotNull UUID reviewPeriodId, @Nullable UUID reviewerId) {
+
+        return Mono.fromCallable(() -> reviewAssignmentServices.findAllByReviewPeriodIdAndReviewerId(reviewPeriodId, reviewerId))
+            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+            .map(assignments -> (HttpResponse<Set<ReviewAssignment>>) HttpResponse.ok(assignments)).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
 }
