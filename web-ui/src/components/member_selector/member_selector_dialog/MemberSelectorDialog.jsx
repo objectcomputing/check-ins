@@ -117,6 +117,7 @@ const MemberSelectorDialog = ({
   const csrf = selectCsrfToken(state);
   const members = selectCurrentMembers(state);
 
+  // Use the first initial filter as the default filter type
   const [initialFilter] = initialFilters;
 
   // Contains set of ids of checked members for instant add/remove operations
