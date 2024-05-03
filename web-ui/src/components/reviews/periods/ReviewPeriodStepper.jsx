@@ -4,17 +4,22 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 
-const steps = [
-  'Review Period Is Open',
-  'Review Period Is Closed'
+const options = [
+  { label: 'Planning', option: 'PLANNING' },
+  { label: 'Awaiting Approval', option: 'AWAITING_APPROVAL' },
+  { label: 'Open', option: 'OPEN' },
+  { label: 'Closed', option: 'CLOSED' }
 ];
 
-export default function ReviewPeriodStepper({reviewPeriod}) {
+export default function ReviewPeriodStepper({ reviewPeriod }) {
   return (
     <Box sx={{ width: '100%' }}>
-      <Stepper activeStep={reviewPeriod?.open === true ? 0 : 1} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
+      <Stepper
+        activeStep={reviewPeriod?.reviewStatus === option ? 0 : 1}
+        alternativeLabel
+      >
+        {options.map((label, option) => (
+          <Step key={option}>
             <StepLabel>{label}</StepLabel>
           </Step>
         ))}
