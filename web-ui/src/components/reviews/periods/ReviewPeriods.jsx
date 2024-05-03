@@ -260,7 +260,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       }
       console.log('Period being updated');
       console.log(period);
-      const res = await updateReviewPeriod('', csrf);
+      const res = await updateReviewPeriod(period, csrf);
       const data = res?.payload?.data ?? null;
       console.log('Data');
       console.log(data);
