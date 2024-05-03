@@ -9,7 +9,7 @@ const steps = [
   'Review Period Is Closed'
 ];
 
-export default function HorizontalLinearAlternativeLabelStepper({reviewPeriod}) {
+export default function ReviewPeriodStepper({reviewPeriod}) {
   return (
     <Box sx={{ width: '100%' }}>
       <Stepper activeStep={reviewPeriod?.open === true ? 0 : 1} alternativeLabel>
