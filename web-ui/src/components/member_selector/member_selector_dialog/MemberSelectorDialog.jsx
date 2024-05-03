@@ -528,20 +528,20 @@ const MemberSelectorDialog = ({
               value={filter}
               onChange={(_, value) => setFilter(value)}
             />
-            <Checkbox
-              className="toggle-selectable-members-checkbox"
-              onChange={event => handleToggleAll(event.target.checked)}
-              checked={
-                selectableMembers.length > 0 &&
-                visibleChecked().length === selectableMembers.length
-              }
-              indeterminate={
-                visibleChecked().length > 0 &&
-                visibleChecked().length !== selectableMembers.length
-              }
-              disabled={selectableMembers.length === 0}
-            />
           </div>
+          <Checkbox
+            className="toggle-selectable-members-checkbox"
+            onChange={event => handleToggleAll(event.target.checked)}
+            checked={
+              selectableMembers.length > 0 &&
+              visibleChecked().length === selectableMembers.length
+            }
+            indeterminate={
+              visibleChecked().length > 0 &&
+              visibleChecked().length !== selectableMembers.length
+            }
+            disabled={selectableMembers.length === 0}
+          />
         </FormGroup>
         <FormGroup className="dialog-form-group">
           <div className="filter-input-container">
