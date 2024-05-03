@@ -42,16 +42,19 @@ public class ReviewAssignment {
 
     @NotBlank
     @Column(name = "reviewee_id")
+    @TypeDef(type = DataType.STRING)
     @Schema(required = true, description = "The ID of the employee being reviewed")
     private UUID revieweeId;
 
     @NotBlank
     @Column(name = "reviewer_id")
+    @TypeDef(type = DataType.STRING)
     @Schema(required = true, description = "The ID of the employee conducting the review")
     private UUID reviewerId;
 
     @NotBlank
     @Column(name = "review_period_id")
+    @TypeDef(type = DataType.STRING)
     @Schema(required = true, description = "The ID of the review period that the assignment is related to")
     private UUID reviewPeriodId;
 
