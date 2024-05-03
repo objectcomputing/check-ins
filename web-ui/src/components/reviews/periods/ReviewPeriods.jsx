@@ -135,7 +135,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [toDelete, setToDelete] = useState(null);
-  const [toUpdate, setToUpdate] = useState(null);
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
@@ -173,7 +172,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       handleClose();
       setPeriodToAdd({
         name: '',
-        eviewStatus: ReviewStatus.OPEN,
+        reviewStatus: ReviewStatus.OPEN,
         launchDate: null,
         selfReviewCloseDate: null,
         closeDate: null
@@ -212,7 +211,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     periodId => {
       if (mode === 'self') {
         if (
-          selectReviewPeriod(state, periodId)?.reviewStatus === ReviewStatus.OPEN
+          selectReviewPeriod(state, periodId)?.reviewStatus ===
+          ReviewStatus.OPEN
         ) {
           if (
             !selfReviews ||
@@ -258,16 +258,16 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       if (!csrf) {
         return;
       }
-      console.log("Period being updated");
-      console.log(period)
-      const res = await updateReviewPeriod(period, csrf);
+      console.log('Period being updated');
+      console.log(period);
+      const res = await updateReviewPeriod('', csrf);
       const data = res?.payload?.data ?? null;
-      console.log("Data");
+      console.log('Data');
       console.log(data);
-      if (data) { 
-        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });} 
-        else {
-          console.log(res?.payload?.error);
+      if (data) {
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
+      } else {
+        console.log(res?.error);
       }
     },
     [csrf, state, periods, dispatch]
@@ -390,25 +390,23 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   function standardizeDate(date) {
     const toTimestamp = date => Math.floor(date.getTime() / 1000);
     const fromTimestamp = timestamp => new Date(timestamp * 1000).toISOString();
-    
+
     let newDate = toTimestamp(new Date(date));
     let adjustedDate = fromTimestamp(newDate);
     return adjustedDate;
   }
 
-  const handleLaunchDateChange = ( val, period ) => {
+  const handleLaunchDateChange = (val, period) => {
     let goodDate = standardizeDate(`${val.$y}-${val.$W}-${val.$D}`);
     let newPeriod = {
       ...period,
       launchDate: goodDate
     };
-    console.log("New Period");
-    console.log(newPeriod);
     setPeriodToAdd(newPeriod);
     updateReviewPeriodDates(newPeriod);
   };
 
-  const handleSelfReviewDateChange = ( val, period ) => {
+  const handleSelfReviewDateChange = (val, period) => {
     let goodDate = standardizeDate(`${val.$y}-${val.$W}-${val.$D}`);
     let newPeriod = {
       ...period,
@@ -418,7 +416,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     updateReviewPeriodDates(newPeriod);
   };
 
-  const handleCloseDateChange = ( val, period ) => {
+  const handleCloseDateChange = (val, period) => {
     let goodDate = standardizeDate(`${val.$y}-${val.$W}-${val.$D}`);
     let newPeriod = {
       ...period,
@@ -474,7 +472,14 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             })
             .map(
               (
-                { name, reviewStatus, id, launchDate, selfReviewCloseDate, closeDate },
+                {
+                  name,
+                  reviewStatus,
+                  id,
+                  launchDate,
+                  selfReviewCloseDate,
+                  closeDate
+                },
                 i
               ) => (
                 <div key={i}>
@@ -483,26 +488,26 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                       isAdmin && (
                         <>
                           <Tooltip
-                          title={
-                            reviewStatus === ReviewStatus.OPEN
-                              ? 'Archive'
-                              : 'Unarchive'
-                          }
-                        >
-                            <IconButton
-                              onClick={() => toggleReviewPeriod(id)}
-                              aria-label={
+                            title={
                               reviewStatus === ReviewStatus.OPEN
                                 ? 'Archive'
                                 : 'Unarchive'
                             }
                           >
-                            {reviewStatus === ReviewStatus.OPEN ? (
-                              <ArchiveIcon />
-                            ) : (
-                              <UnarchiveIcon />                            
-			      )}                            			    
-			      </IconButton>
+                            <IconButton
+                              onClick={() => toggleReviewPeriod(id)}
+                              aria-label={
+                                reviewStatus === ReviewStatus.OPEN
+                                  ? 'Archive'
+                                  : 'Unarchive'
+                              }
+                            >
+                              {reviewStatus === ReviewStatus.OPEN ? (
+                                <ArchiveIcon />
+                              ) : (
+                                <UnarchiveIcon />
+                              )}
+                            </IconButton>
                           </Tooltip>
                           <Tooltip title="Delete">
                             <IconButton
@@ -530,24 +535,52 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                       key={`period-lit-${id}`}
                       onClick={() => onPeriodClick(id)}
                       primary={
-                      name + (reviewStatus === ReviewStatus.OPEN ? ' - Open' : '')
-                    }
+                        name +
+                        (reviewStatus === ReviewStatus.OPEN ? ' - Open' : '')
+                      }
                       secondary={getSecondaryLabel(id)}
                     />
                     <div className="datePickerFlexWrapper">
                       <DatePickerField
                         date={dayjs(launchDate)}
-                        setDate={val => handleLaunchDateChange(val, { id, name, open, launchDate, selfReviewCloseDate, closeDate })}
+                        setDate={val =>
+                          handleLaunchDateChange(val, {
+                            id,
+                            name,
+                            reviewStatus,
+                            launchDate,
+                            selfReviewCloseDate,
+                            closeDate
+                          })
+                        }
                         label="Launch Date"
                       />
                       <DatePickerField
                         date={dayjs(selfReviewCloseDate)}
-                        setDate={val => handleSelfReviewDateChange(val, { id, name, open, launchDate, selfReviewCloseDate, closeDate })}
+                        setDate={val =>
+                          handleSelfReviewDateChange(val, {
+                            id,
+                            name,
+                            reviewStatus,
+                            launchDate,
+                            selfReviewCloseDate,
+                            closeDate
+                          })
+                        }
                         label="Self-Review Date"
                       />
                       <DatePickerField
                         date={dayjs(closeDate)}
-                        setDate={val => handleCloseDateChange(val, { id, name, open, launchDate, selfReviewCloseDate, closeDate })}
+                        setDate={val =>
+                          handleCloseDateChange(val, {
+                            id,
+                            name,
+                            reviewStatus,
+                            launchDate,
+                            selfReviewCloseDate,
+                            closeDate
+                          })
+                        }
                         label="Close Date"
                       />
                     </div>
