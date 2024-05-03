@@ -132,4 +132,30 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
+
+    @Test
+    public void testGETFindAssignmentsByPeriodIdWithReviewer() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
+
+        ReviewAssignment reviewAssignment = createAReviewAssignmentBetweenMembers(member, supervisor, reviewPeriod, false);
+
+        //Non-matching review assignments for control group
+        createADefaultReviewAssignment();
+        createADefaultReviewAssignment();
+
+        final HttpRequest<Object> request = HttpRequest.
+            GET(String.format("/period/%s?%s", reviewPeriod.getId(), supervisor.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<Set<ReviewAssignment>> response = client.toBlocking().exchange(request, Argument.setOf(ReviewAssignment.class));
+
+        assertNotNull(response.body());
+        assertEquals(1, Objects.requireNonNull(response.body()).size());
+        assertTrue(response.body().stream().anyMatch(ra -> ra.getRevieweeId().equals(member.getId())));
+        assertTrue(response.body().stream().anyMatch(ra -> ra.getId().equals(reviewAssignment.getId())));
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+
 }
