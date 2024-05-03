@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import { TextField } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import { AppContext } from '../context/AppContext';
@@ -127,23 +127,25 @@ const CheckinsReportPage = () => {
         <label htmlFor="planned">Include planned</label>
         <input id="planned" onClick={handlePlanned} type="checkbox" />
       </div>
-      {selectedPdls.length
-        ? selectedPdls.map(pdl => (
-            <CheckinReport
-              closed={closed}
-              key={pdl.id}
-              pdl={pdl}
-              planned={planned}
-            />
-          ))
-        : filteredPdls.map(pdl => (
-            <CheckinReport
-              closed={closed}
-              key={pdl.id}
-              pdl={pdl}
-              planned={planned}
-            />
-          ))}
+      <Box sx={{ m: 2 }}>
+        {selectedPdls.length
+          ? selectedPdls.map(pdl => (
+              <CheckinReport
+                closed={closed}
+                key={pdl.id}
+                pdl={pdl}
+                planned={planned}
+              />
+            ))
+          : filteredPdls.map(pdl => (
+              <CheckinReport
+                closed={closed}
+                key={pdl.id}
+                pdl={pdl}
+                planned={planned}
+              />
+            ))}
+      </Box>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { getAvatarURL } from '../../api/api.js';
 import { AppContext } from '../../context/AppContext';
 import { selectFilteredCheckinsForTeamMemberAndPDL } from '../../context/selectors';
 
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandMore from '../expand-more/ExpandMore';
 
 import {
@@ -21,8 +22,63 @@ import {
   Collapse,
   Container,
   Divider,
+  Stepper,
+  Step,
+  StepLabel,
   Typography
 } from '@mui/material';
+
+/**
+ * @typedef {Object} Checkin
+ * @property {string} id - The ID of the check-in.
+ * @property {boolean} completed - Indicates whether the check-in is completed.
+ * @property {Array} checkinDate - The date of the check-in.
+ * @property {string} pdlId - The ID of the PDL.
+ * @property {string} teamMemberId - The ID of the team member.
+ */
+
+/**
+ * @typedef {("Done" | "In Progress" | "Not Started")} CheckinStatus
+ * @typedef {("Not Yet Scheduled" | "Scheduled" | "Completed")} SchedulingStatus
+ */
+
+/** @type {CheckinStatus} */
+const steps = ['Not Started', 'In Progress', 'Done'];
+
+/** @type {SchedulingStatus} */
+const schedulingSteps = ['Not Yet Scheduled', 'Scheduled', 'Completed'];
+
+function HorizontalLinearStepper({ step = 0 }) {
+  const [activeStep, setActiveStep] = React.useState(step);
+  const [skipped, setSkipped] = React.useState(new Set());
+
+  const isStepOptional = step => step === -1;
+  const isStepSkipped = step => skipped.has(step);
+
+  return (
+    <Box sx={{ width: '100%', my: 1 }}>
+      <Stepper activeStep={activeStep}>
+        {steps.map((label, index) => {
+          const stepProps = {};
+          const labelProps = {};
+          if (isStepOptional(index)) {
+            labelProps.optional = (
+              <Typography variant="caption">Optional</Typography>
+            );
+          }
+          if (isStepSkipped(index)) {
+            stepProps.completed = false;
+          }
+          return (
+            <Step key={label} {...stepProps}>
+              <StepLabel {...labelProps}>{label}</StepLabel>
+            </Step>
+          );
+        })}
+      </Stepper>
+    </Box>
+  );
+}
 
 import './CheckinReport.css';
 
@@ -41,6 +97,9 @@ const propTypes = {
 const CheckinsReport = ({ closed, pdl, planned }) => {
   const { state } = useContext(AppContext);
   const [expanded, setExpanded] = useState(true);
+  const [statusForPeriod, setStatusForPeriod] = useState(
+    /** @type CheckinStatus */ ('Not Started')
+  );
 
   const { name, id, members, workEmail, title } = pdl;
 
@@ -50,6 +109,78 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
     if (!checkin || !checkin.checkInDate) return;
     const [year, month, day, hour, minute] = checkin.checkInDate;
     return new Date(year, month - 1, day, hour, minute, 0);
+  };
+
+  /**
+   * Determine the status of the check-ins for a member.
+   * @param {Object} params - The parameters object.
+   * @param {Checkin[]} params.checkins - Checkins for a member.
+   * @returns {CheckinStatus} The status of check-ins.
+   */
+  const statusForPeriodByMember = ({ checkins = [] }) => {
+    const now = new Date();
+    if (checkins.length === 0) return 'Not Started';
+    const completed = checkins.filter(checkin => checkin.completed);
+    if (completed.length === checkins.length) return 'Done';
+    const inProgress = checkins.filter(
+      checkin => !checkin.completed && getCheckinDate(checkin) < now
+    );
+    if (inProgress.length > 0) return 'Open';
+    return 'Not Started';
+  };
+
+  /**
+   * Get the date of the last check-in.
+   * @param {Checkin[]} checkins - Check-ins for a member.
+   * @returns {Date} The date of the last check-in.
+   */
+  const getLastCheckinDate = checkins => {
+    if (checkins.length === 0) return;
+    return checkins.reduce((acc, checkin) => {
+      const checkinDate = getCheckinDate(checkin);
+      return checkinDate > acc ? checkinDate : acc;
+    }, new Date(0));
+  };
+
+  /**
+   * Determine the status of the check-ins for a PDL.
+   * @param {Object} params - The parameters object.
+   * @param {Array} params.members - Members of the PDL.
+   * @returns {CheckinStatus} The status of check-ins.
+   */
+  const statusForPeriodByPDL = ({ members = [] }) => {
+    // const debug = ['Done', 'In Progress', 'Not Started'][0];
+    const now = new Date();
+    if (members.length === 0) return 'Not Started';
+    const completed = members.filter(member => {
+      const checkins = selectFilteredCheckinsForTeamMemberAndPDL(
+        state,
+        member.id,
+        id,
+        closed,
+        planned
+      );
+      return (
+        checkins.filter(checkin => checkin.completed).length === checkins.length
+      );
+    });
+    if (completed.length === members.length) return 'Done';
+    const inProgress = members.filter(member => {
+      const checkins = selectFilteredCheckinsForTeamMemberAndPDL(
+        state,
+        member.id,
+        id,
+        closed,
+        planned
+      );
+      return (
+        checkins.filter(
+          checkin => !checkin.completed && getCheckinDate(checkin) < now
+        ).length > 0
+      );
+    });
+    if (inProgress.length > 0) return 'In Progress';
+    return 'Not Started';
   };
 
   const LinkSection = ({ checkin, member }) => {
@@ -78,6 +209,7 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
       </Link>
     );
   };
+
   const TeamMemberMap = () => {
     const filtered =
       members &&
@@ -101,19 +233,50 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
           planned
         );
         return (
-          <Accordion id="member-sub-card" key={member.id + id}>
+          <Accordion className="member-sub-card" key={member.id + id}>
             <AccordionSummary
-              expandIcon={<ExpandMore />}
+              expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="accordion-summary"
+              className="checkin-report-accordion-summary"
             >
-              <Avatar
-                className={'large'}
-                src={getAvatarURL(member.workEmail)}
-              />
-              <Typography>{member.name}</Typography>
+              <div className="member-sub-card-summmary-content">
+                <Avatar
+                  className={'large'}
+                  src={getAvatarURL(member.workEmail)}
+                />
+                <Typography>{member.name}</Typography>
+                <Typography
+                  variant="caption"
+                  component={'time'}
+                  dateTime={getLastCheckinDate(checkins).toISOString()}
+                  sx={{ display: { xs: 'none', sm: 'flex' } }}
+                  className="last-connected"
+                >
+                  Last connected:{' '}
+                  {getLastCheckinDate(checkins).toLocaleDateString(
+                    navigator.language,
+                    {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: 'numeric'
+                    }
+                  )}
+                </Typography>
+                <Chip
+                  label={statusForPeriodByMember({ checkins })}
+                  color={
+                    statusForPeriodByMember({ checkins }) === 'Done'
+                      ? 'secondary'
+                      : 'primary'
+                  }
+                />
+              </div>
             </AccordionSummary>
-            <AccordionDetails id="accordion-checkin-date">
+            <AccordionDetails
+              id="accordion-checkin-date"
+              className="member-sub-card-accordion-details"
+            >
               {checkins.map(checkin => (
                 <LinkSection
                   checkin={checkin}
@@ -160,18 +323,30 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
           disableTypography
           avatar={<Avatar id="pdl-large" src={getAvatarURL(workEmail)} />}
           action={
-            <ExpandMore
-              expand={expanded}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label={expanded ? 'show less' : 'show more'}
-            />
+            <div className="checkin-report-card-actions">
+              <Chip label={statusForPeriodByPDL({ members })} />
+              <ExpandMore
+                expand={expanded}
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label={expanded ? 'show less' : 'show more'}
+              />
+            </div>
           }
         />
         <Divider />
         <Collapse in={expanded}>
           <CardContent>
             <Container fixed>
+              <HorizontalLinearStepper
+                step={
+                  statusForPeriodByPDL({ members }) === 'Done'
+                    ? 2
+                    : statusForPeriodByPDL({ members }) === 'In Progress'
+                      ? 1
+                      : 0
+                }
+              />
               <TeamMemberMap />
             </Container>
           </CardContent>

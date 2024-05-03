@@ -1,8 +1,7 @@
 .checkin-report-card {
   display: flex;
   flex-direction: column;
-  margin: 1rem 0;
-  width: 100vw;
+  width: 100%;
 
   .checkin-report-card-title-container {
     display: flex;
@@ -15,6 +14,64 @@
     text-overflow: ellipsis;
     max-width: 20rem;
   }
+
+  .checkin-report-card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .member-sub-card {
+    background-color: #fafafa;
+    margin-top: 1rem;
+    padding: 0.5rem;
+
+    .member-sub-card-accordion-details {
+      display: flex;
+      flex-direction: column;
+      margin: 0.5rem 0;
+    }
+
+    .member-sub-card-summmary-content {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      margin-right: 1rem;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      p {
+        flex: 1;
+        margin: 0.5rem;
+      }
+
+      .last-connected {
+        color: #a0a0a0;
+        /* background-color: #f44336; */
+        padding: 0.5rem;
+        /* border-radius: 0.5rem; */
+        margin-right: 1rem;
+      }
+    }
+
+    .checkin-report-link {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+
+      :not(:first-child) {
+        margin-top: 0.5rem;
+      }
+
+      p {
+        flex: 1;
+      }
+    }
+  }
 }
 
 .checkin-report-no-data {
@@ -23,47 +80,4 @@
   justify-content: center;
   align-items: center;
   height: 10rem;
-}
-
-#accordion-checkin-date {
-  flex-direction: column;
-}
-
-.checkin-report-link {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.checkin-report-link .MuiChip-colorPrimary {
-  height: 1.5rem;
-  margin-left: 0.5rem;
-}
-
-.checkin-report-link .MuiChip-colorSecondary {
-  height: 1.5rem;
-  margin-left: 0.5rem;
-}
-
-.MuiAccordionSummary-content {
-  align-items: center;
-}
-
-.MuiAccordionSummary-content > p {
-  margin-left: 1rem;
-}
-
-#member-sub-card {
-  background-color: var(--checkins-palette-background-default);
-  margin-top: 1rem;
-}
-
-#pdl-card {
-  margin: 1rem;
-  width: 100vw;
-}
-
-#pdl-large {
-  height: 4rem;
-  width: 4rem;
 }

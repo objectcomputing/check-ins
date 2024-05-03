@@ -1,10 +1,10 @@
-// Type definitions specified here will be availalbe app-wide
+// Type definitions specified here will be available app-wide
 
 /**
- * @typedef {Object} Member
+ * @typedef {Object} MemberProfile
  * @property {?string} bioText
  * @property {?Array} birthday
- * @property {string} empolyeeId
+ * @property {string} employeeId
  * @property {?string} excluded
  * @property {string} firstName
  * @property {!string} id
@@ -23,6 +23,6 @@
  */
 
 /**
- * @typedef {Member} PDL
+ * @typedef {MemberProfile} PDLProfile
  * @property {string} pdlId
  */
