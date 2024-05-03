@@ -13,10 +13,10 @@
   --primary-dark: #1a2e4f;
   --secondary-main: #76c8d4; /* are we using secondary? */
   --primary-link-light: var(--primary-light);
-  --primary-link-light-hover: #6084D1;
+  --primary-link-light-hover: #6084d1;
   --primary-link-dark: #6b81b3;
   --primary-link-dark-hover: #4f5f8c;
-  
+
   /* MUI Prefixes */
   --checkins-palette-primary-main: var(--primary-light);
   --checkins-palette-primary-link: var(--primary-light);

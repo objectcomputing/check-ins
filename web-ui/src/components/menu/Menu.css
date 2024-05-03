@@ -86,7 +86,7 @@
   .Menu-subListItem {
     font-size: 14px;
   }
-  
+
   .Menu-subListItem,
   .MuiListItem-root {
     color: var(--checkins-palette-primary-menuItem);
