@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.server.EmbeddedServer;
@@ -17,8 +18,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,11 +31,11 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixture {
 
-    private static Map<String, Object> userAttributes = new HashMap<>();
-    private static String firstName = "some.first.name";
-    private static String lastName = "some.last.name";
-    private static String userEmail = "some.email.address";
-    private static String imageUrl = "some.picture.url";
+    private static final Map<String, Object> userAttributes = new HashMap<>();
+    private static final String firstName = "some.first.name";
+    private static final String lastName = "some.last.name";
+    private static final String userEmail = "some.email.address";
+    private static final String imageUrl = "some.picture.url";
 
     @Mock
     CurrentUserServices currentUserServices;
@@ -46,9 +48,8 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
     EmbeddedServer embeddedServer;
 
     @BeforeAll
-    void setup() {
-
-        MockitoAnnotations.initMocks(this);
+    void setup() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
     }
 
     @Test
@@ -60,7 +61,7 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
     @Test
     public void testCurrentUserReturnsValidDTO() {
         Authentication auth = new Authentication() {
-            @NotNull
+            @NonNull
             @Override
             public Map<String, Object> getAttributes() {
                 userAttributes.put("name", firstName + ' ' + lastName);
@@ -104,7 +105,7 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
         MemberProfile member = createADefaultMemberProfile();
         assignMemberRole(member);
         Authentication auth = new Authentication() {
-            @NotNull
+            @NonNull
             @Override
             public Map<String, Object> getAttributes() {
                 userAttributes.put("name", member.getFirstName() + ' ' + member.getLastName());
@@ -134,7 +135,7 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
 
 
     @Test
-    public void testCurrentUserReturnsCorrectPermissionsAdmn() {
+    public void testCurrentUserReturnsCorrectPermissionsAdmin() {
 
 
         Role adminRole = createRole(new Role(RoleType.ADMIN.name(), "Member Role"));
@@ -142,7 +143,7 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
         MemberProfile admin = createADefaultMemberProfile();
         assignAdminRole(admin);
         Authentication auth = new Authentication() {
-            @NotNull
+            @NonNull
             @Override
             public Map<String, Object> getAttributes() {
                 userAttributes.put("name", admin.getFirstName() + ' ' + admin.getLastName());

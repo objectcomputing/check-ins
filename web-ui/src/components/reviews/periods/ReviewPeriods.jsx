@@ -36,22 +36,22 @@ import './DatePickerField.css';
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
 import {
-  getReviewPeriods,
   createReviewPeriod,
-  updateReviewPeriod,
-  removeReviewPeriod
+  getReviewPeriods,
+  removeReviewPeriod,
+  updateReviewPeriod
 } from '../../../api/reviewperiods.js';
 import { AppContext } from '../../../context/AppContext';
 import {
-  UPDATE_REVIEW_PERIODS,
-  ADD_REVIEW_PERIOD
+  ADD_REVIEW_PERIOD,
+  UPDATE_REVIEW_PERIODS
 } from '../../../context/actions';
 import {
   selectCsrfToken,
-  selectUserProfile,
   selectCurrentUserId,
   selectReviewPeriod,
-  selectReviewPeriods
+  selectReviewPeriods,
+  selectUserProfile
 } from '../../../context/selectors';
 import DatePickerField from './DatePickerField.jsx';
 
@@ -109,16 +109,25 @@ const Root = styled('div')(({ theme }) => ({
   }
 }));
 
+const ReviewStatus = {
+  PLANNING: 'PLANNING',
+  AWAITING_APPROVAL: 'AWAITING_APPROVAL',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  UNKNOWN: 'UNKNOWN'
+};
+
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
   const [canSave, setCanSave] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+
+  const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [periodToAdd, setPeriodToAdd] = useState({
     name: '',
-    open: true,
+    reviewStatus: ReviewStatus.OPEN,
     launchDate: null,
     selfReviewCloseDate: null,
     closeDate: null
@@ -134,8 +143,14 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const userProfile = selectUserProfile(state);
   const isAdmin = userProfile?.role?.includes('ADMIN');
 
-  const handleOpen = useCallback(() => setOpen(true), [setOpen]);
-  const handleClose = useCallback(() => setOpen(false), [setOpen]);
+  const handleOpen = useCallback(
+    () => setReviewStatus(ReviewStatus.OPEN),
+    [setReviewStatus]
+  );
+  const handleClose = useCallback(
+    () => setReviewStatus(ReviewStatus.CLOSED),
+    [setReviewStatus]
+  );
 
   const findPeriodByName = useCallback(
     name =>
@@ -158,7 +173,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       handleClose();
       setPeriodToAdd({
         name: '',
-        open: true,
+        eviewStatus: ReviewStatus.OPEN,
         launchDate: null,
         selfReviewCloseDate: null,
         closeDate: null
@@ -181,7 +196,10 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         return;
       }
       const toUpdate = selectReviewPeriod(state, id);
-      toUpdate.open = !toUpdate?.open;
+      toUpdate.reviewStatus =
+        toUpdate?.reviewStatus === ReviewStatus.CLOSED
+          ? ReviewStatus.OPEN
+          : ReviewStatus.CLOSED;
       const res = await updateReviewPeriod(toUpdate, csrf);
       const data =
         res && res.payload && res.payload.data ? res.payload.data : null;
@@ -193,7 +211,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const getSecondaryLabel = useCallback(
     periodId => {
       if (mode === 'self') {
-        if (selectReviewPeriod(state, periodId)?.open) {
+        if (
+          selectReviewPeriod(state, periodId)?.reviewStatus === ReviewStatus.OPEN
+        ) {
           if (
             !selfReviews ||
             !selfReviews[periodId] ||
@@ -336,7 +356,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const onPeriodClick = useCallback(
     id => {
-      if (selectReviewPeriod(state, id)?.open) {
+      if (selectReviewPeriod(state, id)?.reviewStatus === ReviewStatus.OPEN) {
         onPeriodSelected(id);
       }
     },
@@ -446,15 +466,15 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         ) : periods.length > 0 ? (
           periods
             .sort((a, b) => {
-              return Boolean(a.open) === Boolean(b.open)
+              return a.reviewStatus === b.reviewStatus
                 ? ('' + a.name).localeCompare(b.name)
-                : Boolean(a.open)
+                : a.reviewStatus === ReviewStatus.OPEN
                   ? -1
                   : 1;
             })
             .map(
               (
-                { name, open, id, launchDate, selfReviewCloseDate, closeDate },
+                { name, reviewStatus, id, launchDate, selfReviewCloseDate, closeDate },
                 i
               ) => (
                 <div key={i}>
@@ -462,13 +482,27 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     secondaryAction={
                       isAdmin && (
                         <>
-                          <Tooltip title={open ? 'Archive' : 'Unarchive'}>
+                          <Tooltip
+                          title={
+                            reviewStatus === ReviewStatus.OPEN
+                              ? 'Archive'
+                              : 'Unarchive'
+                          }
+                        >
                             <IconButton
                               onClick={() => toggleReviewPeriod(id)}
-                              aria-label={open ? 'Archive' : 'Unarchive'}
-                            >
-                              {open ? <ArchiveIcon /> : <UnarchiveIcon />}
-                            </IconButton>
+                              aria-label={
+                              reviewStatus === ReviewStatus.OPEN
+                                ? 'Archive'
+                                : 'Unarchive'
+                            }
+                          >
+                            {reviewStatus === ReviewStatus.OPEN ? (
+                              <ArchiveIcon />
+                            ) : (
+                              <UnarchiveIcon />                            
+			      )}                            			    
+			      </IconButton>
                           </Tooltip>
                           <Tooltip title="Delete">
                             <IconButton
@@ -495,7 +529,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     <ListItemText
                       key={`period-lit-${id}`}
                       onClick={() => onPeriodClick(id)}
-                      primary={name + (open ? ' - Open' : '')}
+                      primary={
+                      name + (reviewStatus === ReviewStatus.OPEN ? ' - Open' : '')
+                    }
                       secondary={getSecondaryLabel(id)}
                     />
                     <div className="datePickerFlexWrapper">
@@ -525,7 +561,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </Typography>
         )}
       </List>
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={reviewStatus === ReviewStatus.OPEN} onClose={handleClose}>
         <Box sx={modalStyles}>
           <TextField
             className="fullWidth"

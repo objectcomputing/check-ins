@@ -173,8 +173,8 @@ public class FileControllerTest {
         final IllegalArgumentException responseException = assertThrows(IllegalArgumentException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
-        String error = responseException.getMessage();
-        assertEquals("java.io.FileNotFoundException:  (No such file or directory)", error);
+        // Note: exception message is different here depending on your operating system. Better to just check the type.
+        assertTrue(responseException.getMessage().contains("java.io.FileNotFoundException"));
         verify(fileServices, times(0)).uploadFile(any(UUID.class), any(CompletedFileUpload.class));
     }
 

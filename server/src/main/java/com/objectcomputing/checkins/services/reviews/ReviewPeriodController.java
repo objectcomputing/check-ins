@@ -48,8 +48,7 @@ public class ReviewPeriodController {
     @Post()
     public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<ReviewPeriodCreateDTO> request) {
 
-        return Mono.fromCallable(() -> reviewPeriodServices.save(new ReviewPeriod(period.getName(), period.isOpen(), period.getReviewTemplateId(),
-                        period.getSelfReviewTemplateId(), period.getLaunchDate(), period.getSelfReviewCloseDate(), period.getCloseDate())))
+        return Mono.fromCallable(() -> reviewPeriodServices.save(period.convertToEntity()))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(reviewPeriod -> (HttpResponse<ReviewPeriod>) HttpResponse.created(reviewPeriod)
                         .headers(headers -> headers.location(
@@ -83,15 +82,15 @@ public class ReviewPeriodController {
      * Find {@link ReviewPeriod}s by name and/or open status, if both are blank get all review periods.
      *
      * @param name, name of the review period
-     * @param open, whether the review period remains open
+     * @param reviewStatus, the current {@link ReviewStatus} of the review (
      * @return a streamable response containing a {@link Set} of {@link ReviewPeriod}s that match the given criteria
      */
 
-    @Get("/{?name,pending}")
+    @Get("/{?name,reviewStatus}")
     public Mono<HttpResponse<Set<ReviewPeriod>>> findByValue(@Nullable String name,
-                                                      @Nullable Boolean open) {
+                                                      @Nullable ReviewStatus reviewStatus) {
 
-        return Mono.fromCallable(() -> reviewPeriodServices.findByValue(name, open))
+        return Mono.fromCallable(() -> reviewPeriodServices.findByValue(name, reviewStatus))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(reviewPeriods -> (HttpResponse<Set<ReviewPeriod>>) HttpResponse.ok(reviewPeriods))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));

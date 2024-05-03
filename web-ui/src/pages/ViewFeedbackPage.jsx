@@ -33,6 +33,7 @@ import {
 } from '../context/selectors';
 import { getFeedbackTemplate } from '../api/feedbacktemplate';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 const PREFIX = 'ViewFeedbackPage';
 const classes = {
@@ -106,6 +107,33 @@ const ViewFeedbackPage = () => {
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
   const [includeAll, setIncludeAll] = useState(false);
+
+  useQueryParameters([
+    {
+      name: 'dates',
+      default: DateRange.THREE_MONTHS,
+      value: dateRange,
+      setter: setDateRange
+    },
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
+    },
+    {
+      name: 'showAll',
+      default: false,
+      value: includeAll,
+      setter: setIncludeAll
+    },
+    {
+      name: 'sort',
+      default: SortOption.SENT_DATE,
+      value: sortValue,
+      setter: setSortValue
+    }
+  ]);
 
   useEffect(() => {
     if (currentMembers && currentMembers.length > 0) {
@@ -380,8 +408,9 @@ const ViewFeedbackPage = () => {
                 </InputAdornment>
               )
             }}
+            value={searchText}
           />
-          <FormControl className={classes.textField} value={dateRange}>
+          <FormControl className={classes.textField}>
             <TextField
               id="select-time"
               select
@@ -389,7 +418,7 @@ const ViewFeedbackPage = () => {
               size="small"
               label="Show requests sent within"
               onChange={e => setDateRange(e.target.value)}
-              defaultValue={DateRange.THREE_MONTHS}
+              value={dateRange}
               variant="outlined"
             >
               <MenuItem value={DateRange.THREE_MONTHS}>Past 3 months</MenuItem>
@@ -398,7 +427,6 @@ const ViewFeedbackPage = () => {
               <MenuItem value={DateRange.ALL_TIME}>All time</MenuItem>
             </TextField>
           </FormControl>
-
           <FormControl className={classes.textField} value={sortValue}>
             <TextField
               id="select-sort-method"
@@ -407,7 +435,7 @@ const ViewFeedbackPage = () => {
               size="small"
               label="Sort by"
               onChange={e => setSortValue(e.target.value)}
-              defaultValue={SortOption.SENT_DATE}
+              value={sortValue}
               variant="outlined"
             >
               <MenuItem value={SortOption.SUBMISSION_DATE}>
