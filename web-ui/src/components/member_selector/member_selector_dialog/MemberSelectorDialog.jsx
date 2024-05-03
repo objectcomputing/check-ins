@@ -580,6 +580,7 @@ const MemberSelectorDialog = ({
             </FormControl>
             {tenure === Tenures.Custom && (
               <DatePicker
+                className="custom-tenure-picker"
                 slotProps={{ textField: { className: 'halfWidth' } }}
                 label="Custom Tenure"
                 format="MM/dd/yyyy"
