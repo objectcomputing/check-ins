@@ -238,9 +238,17 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       if (!csrf) {
         return;
       }
+      console.log("Period being updated");
+      console.log(period)
       const res = await updateReviewPeriod(period, csrf);
       const data = res?.payload?.data ?? null;
-      data && dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
+      console.log("Data");
+      console.log(data);
+      if (data) { 
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });} 
+        else {
+          console.log(res?.payload?.error);
+      }
     },
     [csrf, state, periods, dispatch]
   );
@@ -262,7 +270,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         periodToAdd.closeDate
     );
     setCanSave(valid);
-    console.log(periodToAdd);
+    // console.log(periodToAdd);
   }, [periodToAdd]);
 
   useEffect(() => {
