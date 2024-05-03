@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.reviews;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
@@ -125,6 +128,40 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
         assertEquals(reviewPeriodCreateDTO.getName(), body.getName());
         assertEquals(reviewPeriodCreateDTO.getReviewStatus(), body.getReviewStatus());
         assertEquals(String.format("%s/%s", request.getPath(), body.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    public void mattExampleJsonSerialization() throws JsonProcessingException {
+        ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
+        reviewPeriodCreateDTO.setName("reincarnation");
+        reviewPeriodCreateDTO.setReviewStatus(ReviewStatus.OPEN);
+        reviewPeriodCreateDTO.setLaunchDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setSelfReviewCloseDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setCloseDate(LocalDateTime.now());
+
+        final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
+                POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertNotNull(response);
+        var actualJson = response.body();
+        assertNotNull(actualJson);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String expectedJson = objectMapper.writeValueAsString(reviewPeriodCreateDTO);
+
+        String expectedLaunchDateFormat = objectMapper.readTree(expectedJson).get("launchDate").asText();
+        String actualLaunchDateFormat = objectMapper.readTree(actualJson).get("launchDate").asText();
+        assertEquals(expectedLaunchDateFormat, actualLaunchDateFormat);
+
+        String expectedSelfReviewCloseDateFormat = objectMapper.readTree(expectedJson).get("selfReviewCloseDate").asText();
+        String actualSelfReviewCloseDateFormat = objectMapper.readTree(actualJson).get("selfReviewCloseDate").asText();
+        assertEquals(expectedSelfReviewCloseDateFormat, actualSelfReviewCloseDateFormat);
+
+        String expectedCloseDateFormat = objectMapper.readTree(expectedJson).get("closeDate").asText();
+        String actualCloseDateFormat = objectMapper.readTree(actualJson).get("closeDate").asText();
+        assertEquals(expectedCloseDateFormat, actualCloseDateFormat);
     }
 
     @Test
