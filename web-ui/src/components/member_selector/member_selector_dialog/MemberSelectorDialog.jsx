@@ -117,16 +117,6 @@ const MemberSelectorDialog = ({
   const csrf = selectCsrfToken(state);
   const members = selectCurrentMembers(state);
 
-  /* For debugging.
-  const now = new Date();
-  for (const member of members) {
-    const start = new Date(member.startDate);
-    const diffMonths = differenceInMonths(now, start);
-    console.log(member.firstName, start, diffMonths, start.getFullYear());
-  }
-  */
-
-  // Use the first initial filter as the default filter type
   const [initialFilter] = initialFilters;
 
   // Contains set of ids of checked members for instant add/remove operations
@@ -240,7 +230,7 @@ const MemberSelectorDialog = ({
     };
 
     setFilterOptions(getFilterOptions());
-  }, [filterType, members, state, tenure]);
+  }, [filterType, members, state]);
 
   const showError = useCallback(
     message => {
@@ -582,7 +572,7 @@ const MemberSelectorDialog = ({
               <DatePicker
                 className="custom-tenure-picker"
                 slotProps={{ textField: { className: 'halfWidth' } }}
-                label="Custom Tenure"
+                label="Custom Tenure Start"
                 format="MM/dd/yyyy"
                 value={customTenure}
                 openTo="year"
