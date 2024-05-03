@@ -59,10 +59,10 @@ public class ReviewAssignmentController {
     }
 
     /**
-     * Retrieve a {@link ReviewPeriod} given its id.
+     * Retrieve a {@link ReviewAssignment} given its id.
      *
-     * @param id {@link UUID} of the review entry
-     * @return a streamable response containing the found {@link ReviewPeriod} with the given ID
+     * @param id {@link UUID} of the review assignment
+     * @return a streamable response containing the found {@link ReviewAssignment} with the given ID
      */
 
     @Get("/{id}")
@@ -71,7 +71,7 @@ public class ReviewAssignmentController {
         return Mono.fromCallable(() -> {
             ReviewAssignment result = reviewAssignmentServices.findById(id);
             if (result == null) {
-                throw new NotFoundException("No review period for UUID");
+                throw new NotFoundException("No review assignment for UUID");
             }
             return result;
         }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(reviewAssignment -> {
