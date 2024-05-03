@@ -64,7 +64,8 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
               <h5
                 class="MuiTypography-root MuiTypography-h5 toolbar-title css-ag7rrr-MuiTypography-root"
               >
-                Select Members
+                Select 
+                Members
               </h5>
               <p
                 class="MuiTypography-root MuiTypography-body1 selected-count-label css-ahj2mt-MuiTypography-root"

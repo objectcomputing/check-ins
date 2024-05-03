@@ -1,18 +1,22 @@
-import React, { useContext, useState } from 'react';
+import fileDownload from 'js-file-download';
+import React, { useContext, useEffect, useState } from 'react';
 
+import DownloadIcon from '@mui/icons-material/FileDownload';
+import PersonIcon from '@mui/icons-material/Person';
+import { Button, Grid, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
-import { createMember } from '../../../api/member';
+import { createMember, reportAllMembersCsv } from '../../../api/member';
 import { AppContext } from '../../../context/AppContext';
-import { UPDATE_MEMBER_PROFILES } from '../../../context/actions';
+import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
 import {
+  selectHasProfileReportPermission,
   selectNormalizedMembers,
   selectNormalizedMembersAdmin
 } from '../../../context/selectors';
-
-import { Button, TextField, Grid } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
+import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import './Users.css';
 
@@ -66,6 +70,27 @@ const Users = () => {
       ? selectNormalizedMembersAdmin(state, searchText)
       : selectNormalizedMembers(state, searchText);
 
+  useQueryParameters([
+    {
+      name: 'addUser',
+      default: false,
+      value: open,
+      setter: setOpen
+    },
+    {
+      name: 'includeTerminated',
+      default: false,
+      value: includeTerminated,
+      setter: setIncludeTerminated
+    },
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
+    }
+  ]);
+
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
@@ -79,6 +104,29 @@ const Users = () => {
       />
     );
   });
+
+  const downloadMembers = async () => {
+    let res = await reportAllMembersCsv(csrf);
+    if (res?.error) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'Hmm...Something went wrong.'
+        }
+      });
+    } else {
+      fileDownload(res?.payload?.data, 'members.csv');
+
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'success',
+          toast: `Member export has been saved!`
+        }
+      });
+    }
+  };
 
   return (
     <Root>
@@ -99,6 +147,14 @@ const Users = () => {
                 <Button startIcon={<PersonIcon />} onClick={handleOpen}>
                   Add Member
                 </Button>
+                {selectHasProfileReportPermission(state) && (
+                  <Button
+                    startIcon={<DownloadIcon />}
+                    onClick={downloadMembers}
+                  >
+                    Download Members
+                  </Button>
+                )}
 
                 <MemberModal
                   member={{}}

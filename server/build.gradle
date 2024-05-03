@@ -8,8 +8,6 @@ plugins {
     id("org.openrewrite.rewrite") version "5.20.0"
 }
 
-evaluationDependsOn(":web-ui")
-
 rewrite {
     activeRecipe("org.openrewrite.java.micronaut.Micronaut2to3Migration")
 }
@@ -37,6 +35,9 @@ configurations {
 }
 
 dependencies {
+    compileOnly ("org.projectlombok:lombok")
+    annotationProcessor ("org.projectlombok:lombok")
+    annotationProcessor ("io.micronaut:micronaut-inject-java")
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
@@ -145,7 +146,7 @@ dependencies {
 }
 
 test {
-    OperatingSystem os = DefaultNativePlatform.currentOperatingSystem;
+    OperatingSystem os = DefaultNativePlatform.currentOperatingSystem
     if (os.isLinux()) {
         def uid = ["id", "-u"].execute().text.trim()
         environment "DOCKER_HOST", "unix:///run/user/$uid/podman/podman.sock"
@@ -162,7 +163,7 @@ jacocoTestReport {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
     options.compilerArgs.add('-parameters')
     options.fork = true
@@ -170,14 +171,15 @@ tasks.withType(JavaCompile) {
 
     String envStr = System.getenv('MICRONAUT_ENVIRONMENTS')
     List<String> envs = envStr != null ? Arrays.asList(envStr.split(',')) : List.of() as List<String>
-    if(!envs.disjoint(List.of("test", "local"))) {
+    if (!envs.disjoint(List.of("test", "local"))) {
         options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger-local'
     } else {
         options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger'
     }
 }
 
-if(System.getenv("SKIP_WEB_UI") == null) {
+if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "false") {
+    evaluationDependsOn(":web-ui")
     processResources {
         into('public') {
             from tasks.getByPath(':web-ui:yarnBuild').outputs

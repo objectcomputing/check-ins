@@ -19,13 +19,14 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getAvatarURL } from '../../api/api';
 
-import MemberSelectorDialog from './member_selector_dialog/MemberSelectorDialog';
+import ExpandMore from '../expand-more/ExpandMore.jsx';
+import MemberSelectorDialog, {
+  FilterType
+} from './member_selector_dialog/MemberSelectorDialog';
 import DownloadIcon from '@mui/icons-material/FileDownload';
 import { reportSelectedMembersCsv } from '../../api/member.js';
 import { AppContext } from '../../context/AppContext.jsx';
@@ -36,6 +37,17 @@ import { UPDATE_TOAST } from '../../context/actions.js';
 import './MemberSelector.css';
 
 const propTypes = {
+  /** An array of filters to apply to the member list in the dialog. */
+  initialFilters: PropTypes.arrayOf(
+    PropTypes.shape({
+      type: PropTypes.oneOf(Object.values(FilterType)),
+      value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.bool
+      ])
+    })
+  ),
   /** The members that are currently selected. Use to make this a controlled component. */
   selected: PropTypes.arrayOf(PropTypes.object),
   /** Listener for whenever the list of selected members changes. Passes the updated list as an argument. */
@@ -57,6 +69,7 @@ const propTypes = {
 };
 
 const MemberSelector = ({
+  initialFilters = [],
   selected,
   onChange,
   title = 'Selected Members',
@@ -67,24 +80,21 @@ const MemberSelector = ({
   className,
   style
 }) => {
-  const isControlled = !!selected && Array.isArray(selected);
-
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
-  const [selectedMembers, setSelectedMembers] = useState(
-    isControlled ? selected : []
-  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [filters, setFilters] = useState(initialFilters);
 
-  // When the selected members change, fire the onChange event
-  useEffect(() => {
-    if (onChange) {
-      onChange(selectedMembers);
-    }
-  }, [selectedMembers, onChange]);
+  const isFilteredByRole = filters.some(
+    filter => filter.type === FilterType.ROLE
+  );
+  const roleFilter = filters.find(filter => filter.type === FilterType.ROLE);
+  const memberDescriptor = isFilteredByRole ? roleFilter.value : 'members';
+
+  const handleExpandClick = () => setExpanded(!expanded);
 
   // If the selector is disabled, make sure the selector dialog is closed
   useEffect(() => {
@@ -93,33 +103,22 @@ const MemberSelector = ({
     }
   }, [disabled]);
 
-  const addMembers = useCallback(
-    membersToAdd => {
-      const selected = [...selectedMembers, ...membersToAdd];
-      setSelectedMembers(selected);
-      setDialogOpen(false);
-    },
-    [selectedMembers]
-  );
+  const addMembers = membersToAdd => {
+    onChange([...selected, ...membersToAdd]);
+    setDialogOpen(false);
+  };
 
-  const removeMember = useCallback(
-    member => {
-      const selected = [...selectedMembers];
-      const indexToRemove = selected.findIndex(
-        selectedMember => selectedMember.id === member.id
-      );
-      selected.splice(indexToRemove, 1);
-      setSelectedMembers(selected);
-    },
-    [selectedMembers]
-  );
+  const removeMember = member => {
+    const newSelected = selected.filter(m => m.id !== member.id);
+    onChange(newSelected);
+  };
 
   const downloadMemberCsv = useCallback(() => {
     if (!exportable) {
       return;
     }
 
-    const memberIds = selectedMembers.map(member => member.id);
+    const memberIds = selected.map(member => member.id);
     reportSelectedMembersCsv(memberIds, csrf).then(res => {
       if (res && !res.error) {
         fileDownload(res.payload.data, 'members.csv');
@@ -140,11 +139,9 @@ const MemberSelector = ({
         });
       }
     });
-  }, [selectedMembers, csrf, dispatch]);
+  }, [selected, csrf, dispatch]);
 
-  const clearMembers = useCallback(() => {
-    setSelectedMembers([]);
-  }, []);
+  const clearMembers = () => onChange([]);
 
   return (
     <>
@@ -155,9 +152,12 @@ const MemberSelector = ({
       >
         <CardHeader
           avatar={
-            <IconButton onClick={() => setExpanded(!expanded)}>
-              {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
+            <ExpandMore
+              expand={expanded}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+            />
           }
           title={
             <div className="member-selector-card-title-container">
@@ -173,13 +173,13 @@ const MemberSelector = ({
                 variant="h6"
                 color="gray"
               >
-                ({selectedMembers.length})
+                ({selected.length})
               </Typography>
             </div>
           }
           action={
             <>
-              <Tooltip title="Add members" arrow>
+              <Tooltip title={`Add ${memberDescriptor}`} arrow>
                 <IconButton
                   style={{ margin: '4px 8px 0 0' }}
                   onClick={() => setDialogOpen(true)}
@@ -204,7 +204,7 @@ const MemberSelector = ({
                     setMenuAnchor(null);
                     clearMembers();
                   }}
-                  disabled={disabled || !selectedMembers.length}
+                  disabled={disabled || !selected.length}
                 >
                   <ListItemIcon>
                     <HighlightOffIcon fontSize="small" />
@@ -217,7 +217,7 @@ const MemberSelector = ({
                       setMenuAnchor(null);
                       downloadMemberCsv();
                     }}
-                    disabled={!selectedMembers.length}
+                    disabled={!selected.length}
                   >
                     <ListItemIcon>
                       <DownloadIcon fontSize="small" />
@@ -236,8 +236,8 @@ const MemberSelector = ({
             role="list"
             sx={{ maxHeight: listHeight, overflow: 'auto' }}
           >
-            {selectedMembers.length ? (
-              selectedMembers.map(member => (
+            {selected.length ? (
+              selected.map(member => (
                 <ListItem
                   key={member.id}
                   role="listitem"
@@ -270,7 +270,7 @@ const MemberSelector = ({
             ) : (
               <ListItem>
                 <ListItemText style={{ color: 'gray' }}>
-                  No members selected
+                  No {memberDescriptor} selected
                 </ListItemText>
               </ListItem>
             )}
@@ -279,7 +279,9 @@ const MemberSelector = ({
       </Card>
       <MemberSelectorDialog
         open={dialogOpen}
-        selectedMembers={selectedMembers}
+        initialFilters={filters}
+        memberDescriptor={memberDescriptor}
+        selectedMembers={selected}
         onClose={() => setDialogOpen(false)}
         onSubmit={membersToAdd => addMembers(membersToAdd)}
       />

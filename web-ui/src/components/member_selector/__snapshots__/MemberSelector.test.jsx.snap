@@ -13,19 +13,21 @@ exports[`MemberSelector > renders correctly as a controlled component 1`] = `
         class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
       >
         <button
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+          aria-expanded="true"
+          aria-label="show more"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1eomvmf-MuiButtonBase-root-MuiIconButton-root"
           tabindex="0"
           type="button"
         >
           <svg
             aria-hidden="true"
             class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-            data-testid="ExpandLessIcon"
+            data-testid="ExpandMoreIcon"
             focusable="false"
             viewBox="0 0 24 24"
           >
             <path
-              d="m12 8-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"
+              d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
             />
           </svg>
           <span
@@ -253,19 +255,21 @@ exports[`MemberSelector > renders correctly when disabled 1`] = `
         class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
       >
         <button
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+          aria-expanded="true"
+          aria-label="show more"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1eomvmf-MuiButtonBase-root-MuiIconButton-root"
           tabindex="0"
           type="button"
         >
           <svg
             aria-hidden="true"
             class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-            data-testid="ExpandLessIcon"
+            data-testid="ExpandMoreIcon"
             focusable="false"
             viewBox="0 0 24 24"
           >
             <path
-              d="m12 8-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"
+              d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
             />
           </svg>
           <span
@@ -487,19 +491,21 @@ exports[`MemberSelector > renders correctly with default props 1`] = `
         class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
       >
         <button
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+          aria-expanded="true"
+          aria-label="show more"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1eomvmf-MuiButtonBase-root-MuiIconButton-root"
           tabindex="0"
           type="button"
         >
           <svg
             aria-hidden="true"
             class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-            data-testid="ExpandLessIcon"
+            data-testid="ExpandMoreIcon"
             focusable="false"
             viewBox="0 0 24 24"
           >
             <path
-              d="m12 8-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"
+              d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
             />
           </svg>
           <span
@@ -607,7 +613,9 @@ exports[`MemberSelector > renders correctly with default props 1`] = `
                 <span
                   class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
                 >
-                  No members selected
+                  No 
+                  members
+                   selected
                 </span>
               </div>
             </li>

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { postEmployeeHours } from '../../api/hours';
-import { reportAllMembersCsv } from '../../api/member';
 import {
   selectCsrfToken,
   selectHasReportPermission,
@@ -15,12 +14,9 @@ import {
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 
-import fileDownload from 'js-file-download';
-
 import { useLocation, Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import { getAvatarURL } from '../../api/api';
-import AvatarMenu from '@mui/material/Menu';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled, useTheme } from '@mui/material/styles';
@@ -35,7 +31,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  MenuItem,
   Modal,
   Toolbar
 } from '@mui/material';
@@ -152,7 +147,6 @@ function Menu() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [showHoursUpload, setShowHoursUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
@@ -181,33 +175,6 @@ function Menu() {
     }
 
     return links;
-  };
-
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const downloadMembers = async () => {
-    let res = await reportAllMembersCsv(csrf);
-    if (res?.error) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'error',
-          toast: 'Hmm...Something went wrong.'
-        }
-      });
-    } else {
-      fileDownload(res?.payload?.data, 'members.csv');
-
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'success',
-          toast: `Member export has been saved!`
-        }
-      });
-    }
   };
 
   const uploadFile = async file => {
@@ -304,10 +271,6 @@ function Menu() {
     setFeedbackOpen(false);
   };
 
-  const closeAvatarMenu = () => {
-    setAnchorEl(null);
-  };
-
   const closeHoursUpload = () => {
     setShowHoursUpload(false);
     setSelectedFile(null);
@@ -331,7 +294,6 @@ function Menu() {
         component={Link}
         to={path}
         className={isSubLink ? classes.nested : null}
-        button
         onClick={
           isSubLink
             ? undefined
@@ -375,22 +337,31 @@ function Menu() {
         {createLinkJsx('/', 'HOME', false)}
         {isAdmin && (
           <>
-            <ListItem button onClick={toggleAdmin} className={classes.listItem}>
+            <ListItem onClick={toggleAdmin} className={classes.listItem}>
               <ListItemText primary="ADMIN" />
             </ListItem>
             <Collapse in={adminOpen} timeout="auto" unmountOnExit>
               {createListJsx(adminLinks, true)}
+              {isAdmin && (
+                <ListItem
+                  className={classes.listItem}
+                  onClick={openHoursUpload}
+                  style={{ marginLeft: '1rem' }}
+                >
+                  Upload Hours
+                </ListItem>
+              )}
             </Collapse>
           </>
         )}
         {createLinkJsx('/checkins', 'CHECK-INS', false)}
-        <ListItem button onClick={toggleDirectory} className={classes.listItem}>
+        <ListItem onClick={toggleDirectory} className={classes.listItem}>
           <ListItemText primary="DIRECTORY" />
         </ListItem>
         <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
           {createListJsx(directoryLinks, true)}
         </Collapse>
-        <ListItem button onClick={toggleFeedback} className={classes.listItem}>
+        <ListItem onClick={toggleFeedback} className={classes.listItem}>
           <ListItemText primary="FEEDBACK" />
         </ListItem>
         <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
@@ -430,14 +401,8 @@ function Menu() {
             <MenuIcon />
           </IconButton>
         </Toolbar>
-        <div
-          ref={anchorRef}
-          aria-controls={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}
-        >
+        <Link to={`/profile/${id}`}>
           <Avatar
-            onClick={handleClick}
             src={getAvatarURL(workEmail)}
             style={{
               position: 'absolute',
@@ -447,42 +412,7 @@ function Menu() {
               textDecoration: 'none'
             }}
           />
-          <AvatarMenu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={closeAvatarMenu}
-          >
-            <MenuItem
-              component={Link}
-              onClick={closeAvatarMenu}
-              to={`/profile/${id}`}
-            >
-              Profile
-            </MenuItem>
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  closeAvatarMenu();
-                  openHoursUpload();
-                }}
-              >
-                Upload Hours
-              </MenuItem>
-            )}
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  closeAvatarMenu();
-                  downloadMembers();
-                }}
-              >
-                Download Members
-              </MenuItem>
-            )}
-          </AvatarMenu>
-        </div>
+        </Link>
       </AppBar>
       <nav className={classes.drawer}>
         <Drawer

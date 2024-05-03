@@ -11,12 +11,12 @@ import io.micronaut.http.client.multipart.MultipartBody;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import jakarta.inject.Inject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,15 +27,9 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static io.micronaut.http.MediaType.MULTIPART_FORM_DATA;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -179,8 +173,8 @@ public class FileControllerTest {
         final IllegalArgumentException responseException = assertThrows(IllegalArgumentException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
-        String error = responseException.getMessage();
-        assertEquals("java.io.FileNotFoundException:  (No such file or directory)", error);
+        // Note: exception message is different here depending on your operating system. Better to just check the type.
+        assertTrue(responseException.getMessage().contains("java.io.FileNotFoundException"));
         verify(fileServices, times(0)).uploadFile(any(UUID.class), any(CompletedFileUpload.class));
     }
 

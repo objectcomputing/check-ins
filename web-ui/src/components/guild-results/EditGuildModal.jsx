@@ -6,7 +6,13 @@ import {
   selectCurrentMembers
 } from '../../context/selectors';
 
-import { Button, Modal, TextField } from '@mui/material';
+import {
+  Button,
+  FormControlLabel,
+  Modal,
+  Switch,
+  TextField
+} from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import './EditGuildModal.css';
 
@@ -159,6 +165,20 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           value={editedGuild.name ? editedGuild.name : ''}
           onChange={e => setGuild({ ...editedGuild, name: e.target.value })}
         />
+        <div>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={editedGuild.community}
+                onChange={event => {
+                  const { checked } = event.target;
+                  setGuild({ ...editedGuild, community: checked });
+                }}
+              />
+            }
+            label="Community"
+          />
+        </div>
         <TextField
           id="guild-description-input"
           label="Description"
@@ -187,6 +207,9 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
               ? editedGuild.guildMembers.filter(guildMember => guildMember.lead)
               : []
           }
+          isOptionEqualToValue={(option, value) =>
+            value && option.id === value.memberId
+          }
           onChange={onLeadsChange}
           getOptionLabel={option => option.name}
           renderInput={params => (
@@ -211,7 +234,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           onChange={onGuildMembersChange}
           getOptionLabel={option => option.name}
           isOptionEqualToValue={(option, value) =>
-            value ? value.id === option.id : false
+            value && option.id === value.memberId
           }
           renderInput={params => (
             <TextField

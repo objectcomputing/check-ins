@@ -1,4 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
+
+import { Autocomplete, Button, TextField, Typography } from '@mui/material';
 
 import { reportSkills } from '../api/memberskill.js';
 import SearchResults from '../components/search-results/SearchResults';
@@ -13,14 +15,10 @@ import {
 import { levelMap } from '../context/util';
 import { sortMembersBySkill } from '../helpers/checks.js';
 
-import { Button, TextField } from '@mui/material';
-
-import Autocomplete from '@mui/material/Autocomplete';
-
 import './TeamSkillReportPage.css';
 import MemberSelector from '../components/member_selector/MemberSelector';
-import Typography from '@mui/material/Typography';
 import MemberSkillRadar from '../components/member_skill_radar/MemberSkillRadar.jsx';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 const TeamSkillReportPage = () => {
   const { state } = useContext(AppContext);
@@ -35,6 +33,42 @@ const TeamSkillReportPage = () => {
   const [searchSkills, setSearchSkills] = useState([]);
   const [editedSearchRequest, setEditedSearchRequest] = useState([]);
   const [showRadar, setShowRadar] = useState(false);
+
+  const processedQPs = useRef(false);
+  useQueryParameters(
+    [
+      {
+        name: 'members',
+        default: [],
+        value: selectedMembers,
+        setter(ids) {
+          const selectedMembers = ids.map(id =>
+            memberProfiles.find(member => member.id === id)
+          );
+          setSelectedMembers(selectedMembers);
+        },
+        toQP() {
+          return selectedMembers.map(member => member.id).join(',');
+        }
+      },
+      {
+        name: 'skills',
+        default: [],
+        value: searchSkills,
+        setter(ids) {
+          const searchSkills = ids.map(id =>
+            skills.find(skill => skill.id === id)
+          );
+          setSearchSkills(searchSkills);
+        },
+        toQP() {
+          return searchSkills.map(skill => skill.id).join(',');
+        }
+      }
+    ],
+    [memberProfiles, skills],
+    processedQPs
+  );
 
   const handleSearch = async searchRequestDTO => {
     let res = await reportSkills(searchRequestDTO, csrf);
@@ -129,7 +163,8 @@ const TeamSkillReportPage = () => {
       <MemberSelector
         className="team-skill-member-selector"
         listHeight={300}
-        onChange={selected => setSelectedMembers(selected)}
+        onChange={setSelectedMembers}
+        selected={selectedMembers}
       />
       <div className="select-skills-section">
         <Autocomplete

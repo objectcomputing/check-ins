@@ -56,7 +56,6 @@ exports[`EditSkillsCard > renders correctly 1`] = `
           <input
             id="all-skills"
             type="checkbox"
-            value="false"
           />
         </div>
       </div>

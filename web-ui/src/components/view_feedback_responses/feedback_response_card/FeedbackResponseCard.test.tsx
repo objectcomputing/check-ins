@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react';
 // @ts-ignore
-import FeedbackResponseCard from "./FeedbackResponseCard";
+import FeedbackResponseCard from './FeedbackResponseCard';
 // @ts-ignore
-import {AppContextProvider} from "../../../context/AppContext";
+import { AppContextProvider } from '../../../context/AppContext';
 
-vi.mock("@mui/material/Slider", () => {
+vi.mock('@mui/material/Slider', () => {
   return {
     default: () => (props: any) => {
-      const {onChange, 'data-testid': testId, ...rest} = props;
+      const { onChange, 'data-testid': testId, ...rest } = props;
 
       return (
         <input
@@ -20,11 +20,11 @@ vi.mock("@mui/material/Slider", () => {
         />
       );
     }
-  }
+  };
 });
 
-describe("FeedbackResponseCard", () => {
-  it("renders correctly for text responses", () => {
+describe('FeedbackResponseCard', () => {
+  it('renders correctly for text responses', () => {
     // @ts-ignore
     snapshot(
       <AppContextProvider>
@@ -32,12 +32,14 @@ describe("FeedbackResponseCard", () => {
           responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"
           inputType="TEXT"
           answer="I love opossums. I have rehabilitated baby opossums for 25 years, and I intend to do so until my last day!"
-          sentiment={0.8}/>
+          sentiment={0.8}
+        />
       </AppContextProvider>
-    )
+    );
   });
 
-  it("renders correctly for radio button responses", () => {// @ts-ignore
+  it('renders correctly for radio button responses', () => {
+    // @ts-ignore
     // @ts-ignore
     snapshot(
       <AppContextProvider>
@@ -45,12 +47,13 @@ describe("FeedbackResponseCard", () => {
           responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"
           inputType="RADIO"
           answer="Yes"
-          sentiment={1}/>
+          sentiment={1}
+        />
       </AppContextProvider>
-    )
+    );
   });
 
-  it("renders correctly for slider responses", () => {
+  it('renders correctly for slider responses', () => {
     // @ts-ignore
     snapshot(
       <AppContextProvider>
@@ -58,8 +61,9 @@ describe("FeedbackResponseCard", () => {
           responderId="01b7d769-9fa2-43ff-95c7-f3b950a27bf9"
           inputType="SLIDER"
           answer="Neither Agree nor Disagree"
-          sentiment={0.5}/>
+          sentiment={0.5}
+        />
       </AppContextProvider>
-    )
+    );
   });
 });

@@ -13,33 +13,47 @@ import SearchBirthdayAnniversaryResults from '../components/search-results/Searc
 import { sortBirthdays } from '../context/util';
 
 import { selectCsrfToken } from '../context/selectors';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 const months = [
-  { month: 'January' },
-  { month: 'February' },
-  { month: 'March' },
-  { month: 'April' },
-  { month: 'May' },
-  { month: 'June' },
-  { month: 'July' },
-  { month: 'August' },
-  { month: 'September' },
-  { month: 'October' },
-  { month: 'November' },
-  { month: 'December' }
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
 ];
 
 const BirthdayReportPage = () => {
+  const currentMonth = new Date().getMonth();
+  const defaultMonths = [months[currentMonth]];
+
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const [searchBirthdayResults, setSearchBirthdayResults] = useState([]);
-  const currentMonth = new Date().getMonth();
-  const [selectedMonths, setSelectedMonths] = useState([months[currentMonth]]);
+  const [selectedMonths, setSelectedMonths] = useState(defaultMonths);
   const [hasSearched, setHasSearched] = useState(false);
 
+  useQueryParameters([
+    {
+      name: 'months',
+      default: defaultMonths,
+      value: selectedMonths,
+      setter: setSelectedMonths,
+      toQP(value) {
+        return value ? value.join(',') : [];
+      }
+    }
+  ]);
+
   const handleSearch = async monthsToSearch => {
-    const months = monthsToSearch.map(m => m.month);
-    const birthdayResults = await getBirthdays(months, csrf);
+    const birthdayResults = await getBirthdays(monthsToSearch, csrf);
     setSearchBirthdayResults(sortBirthdays(birthdayResults));
     setHasSearched(true);
   };
@@ -55,13 +69,12 @@ const BirthdayReportPage = () => {
           multiple
           id="monthSelect"
           options={months}
-          defaultValue={[months[currentMonth].month]}
+          defaultValue={defaultMonths}
           value={selectedMonths}
           onChange={onMonthChange}
           isOptionEqualToValue={(option, value) => {
-            return value ? value.month === option.month : false;
+            return value ? value === option : false;
           }}
-          getOptionLabel={option => option.month}
           renderInput={params => (
             <TextField
               {...params}
