@@ -9,7 +9,14 @@
   --xl: 1536px;
 
   /* Colors */
-  --primary-light: #2d519e;
+  --oci-light-blue: #76c8d4;
+  --oci-dark-blue: #2c519e;
+  --oci-orange: #f8b576;
+
+  --black: #121212;
+  --white: #fff;
+
+  --primary-light: var(--oci-dark-blue);
   --primary-dark: #1a2e4f;
   --secondary-main: #76c8d4; /* are we using secondary? */
   --primary-link-light: var(--primary-light);
@@ -25,6 +32,7 @@
   --checkins-palette-primary-menuItem: #111;
   --checkins-palette-background-paper: #fff;
   --checkins-palette-background-default: #f5f5f5;
+  --checkins-palette-content-color: var(--checkins-palette-primary-menuItem)
 
   /* Sizing */
   --nav-width: 250px;
@@ -41,5 +49,6 @@
     --checkins-palette-AppBar-darkBg: var(--checkins-palette-primary-main);
     --checkins-palette-background-paper: #121212;
     --checkins-palette-background-default: #121212;
+    --checkins-palette-content-color: var(--white)
   }
 }

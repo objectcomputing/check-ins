@@ -66,11 +66,11 @@ const theme = extendTheme({
         }
       }
     },
-    MuiTextField: {
-      defaultProps: {
-        variant: 'standard'
-      }
-    }
+    // MuiTextField: {
+    //   defaultProps: {
+    //     variant: 'standard'
+    //   }
+    // }
   }
 });
 

@@ -10,7 +10,7 @@ exports[`renders correctly 1`] = `
     >
       <a
         href="/profile/2o34i2j34"
-        style="color: black; text-decoration: none;"
+        style="opacity: 0.6; text-decoration: none;"
       >
         <div
           class="MuiCardHeader-root MemberSummaryCard-header css-185gdzj-MuiCardHeader-root"

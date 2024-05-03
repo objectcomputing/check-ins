@@ -50,7 +50,11 @@ const MemberSummaryCard = ({ member }) => {
     <StyledBox display="flex" flexWrap="wrap">
       <Card className={'member-card'}>
         <Link
-          style={{ color: 'black', textDecoration: 'none' }}
+          style={{
+            color: 'inherit',
+            opacity: 0.6,
+            textDecoration: 'none'
+          }}
           to={`/profile/${member.id}`}
         >
           <CardHeader
@@ -104,8 +108,9 @@ const MemberSummaryCard = ({ member }) => {
                 <Link
                   to={`/profile/${supervisorid}`}
                   style={{
-                    textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.6)'
+                    color: 'inherit',
+                    opacity: 0.6,
+                    textDecoration: 'none'
                   }}
                 >
                   {supervisorProfile?.name}
@@ -118,7 +123,7 @@ const MemberSummaryCard = ({ member }) => {
                   to={`/profile/${pdlId}`}
                   style={{
                     textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.6)'
+                    color: 'inherit'
                   }}
                 >
                   {pdlProfile?.name}
