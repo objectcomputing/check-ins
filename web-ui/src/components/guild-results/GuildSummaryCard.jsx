@@ -140,6 +140,10 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
       <FontAwesomeIcon
         icon={guild.community ? faPeopleGroup : faHammer}
         size="2x"
+        style={{
+          color: guild.community ? 'var(--oci-orange)' : 'var(--oci-light-blue)'
+        }}
+        title={`This is a ${guild.community ? 'Community' : 'Guild'}.`}
       />
       <CardHeader
         classes={{
