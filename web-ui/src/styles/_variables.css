@@ -15,40 +15,61 @@
 
   --black: #121212;
   --white: #fff;
+  --gray-dark: #555353;
+  --gray-light: #e5e5e5;
+  --gray: #808080;
+  --red: #f00;
+  --yellow: #ee8c00;
+  --green: #006400;
 
-  --primary-light: var(--oci-dark-blue);
+  --primary: var(--oci-dark-blue);
+  --primary-light: var(--oci-light-blue);
   --primary-dark: #1a2e4f;
-  --secondary-main: #76c8d4; /* are we using secondary? */
+  --secondary: var(--oci-orange)
+  --secondary-main: var(--oci-light-blue);
   --primary-link-light: var(--primary-light);
   --primary-link-light-hover: #6084d1;
   --primary-link-dark: #6b81b3;
   --primary-link-dark-hover: #4f5f8c;
-
+  
   /* MUI Prefixes */
   --checkins-palette-primary-main: var(--primary-light);
+  --checkins-palette-primary-mainChannel: 118,200,212;
   --checkins-palette-primary-link: var(--primary-light);
   --checkins-palette-primary-link-hover: var(--primary-link-light-hover);
-  --checkins-palette-primary-contrastText: #fff;
+  --checkins-palette-primary-contrastText: var(--white);
   --checkins-palette-primary-menuItem: #111;
-  --checkins-palette-background-paper: #fff;
+  --checkins-palette-secondary-main: var(--secondary);
+  --checkins-palette-background-paper: var(--white);
   --checkins-palette-background-default: #f5f5f5;
-  --checkins-palette-content-color: var(--checkins-palette-primary-menuItem)
-
+  --checkins-palette-content-color: var(--checkins-palette-primary-menuItem);
+  --checkins-palette-gray-light: var(--gray-light);
+  --checkins-palette-gray-dark: var(--gray-dark);
+  --checkins-palette-gray: var(--gray);
+  --checkins-palette-red: var(--red);
+  --checkins-palette-yellow: var(--yellow);
+  --checkins-palette-green: var(--green);
+  
   /* Sizing */
   --nav-width: 250px;
-
+  
   @media (min-width: 600px) {
     --nav-width: 150px;
   }
-
+  
   &[data-mui-color-scheme='dark'] {
-    --checkins-palette-primary-main: var(--primary-dark);
+    --primary-main: var(--oci-light-blue);
+    --checkins-palette-primary-main: var(--primary-light);
     --checkins-palette-primary-link: var(--primary-link-dark);
     --checkins-palette-primary-link-hover: var(--primary-link-dark-hover);
-    --checkins-palette-primary-menuItem: var(--primary-link-dark);
+    --checkins-palette-primary-contrastText: var(--white);
+    --checkins-palette-primary-menuItem: var(--primary-link-light);
     --checkins-palette-AppBar-darkBg: var(--checkins-palette-primary-main);
     --checkins-palette-background-paper: #121212;
     --checkins-palette-background-default: #121212;
-    --checkins-palette-content-color: var(--white)
+    --checkins-palette-content-color: var(--white);
+    --checkins-palette-gray-light: #e5e5e526;
+    --checkins-palette-gray-dark: var(--gray);
+
   }
 }

@@ -15,12 +15,12 @@
   position: absolute;
   min-width: 400px;
   max-width: 600px;
-  background-color: #fff;
+  background-color: var(--checkins-palette-background-default);
   top: 50%;
   left: 50%;
   padding: 0.5rem;
   transform: translate(-50%, -50%);
-  border: 2px solid #fff;
+  border: 2px solid var(--checkins-palette-background-default);
 }
 
 .role-modal h2 {

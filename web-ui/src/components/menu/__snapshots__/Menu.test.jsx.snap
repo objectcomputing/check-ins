@@ -41,6 +41,7 @@ exports[`<Menu /> > renders correctly 1`] = `
           style="position: absolute; cursor: pointer; right: 5px; top: 10px; text-decoration: none;"
         >
           <img
+            alt="holmes's avatar"
             class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
             src="http://localhost:8080/services/member-profiles/member-photos/test%40tester.com"
           />
@@ -416,6 +417,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
           style="position: absolute; cursor: pointer; right: 5px; top: 10px; text-decoration: none;"
         >
           <img
+            alt="holmes's avatar"
             class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
             src="http://localhost:8080/services/member-profiles/member-photos/test%40tester.com"
           />
@@ -853,6 +855,7 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
           style="position: absolute; cursor: pointer; right: 5px; top: 10px; text-decoration: none;"
         >
           <img
+            alt="holmes's avatar"
             class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
             src="http://localhost:8080/services/member-profiles/member-photos/test%40tester.com"
           />

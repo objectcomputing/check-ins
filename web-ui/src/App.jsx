@@ -65,12 +65,7 @@ const theme = extendTheme({
           letterSpacing: '0.01071rem'
         }
       }
-    },
-    // MuiTextField: {
-    //   defaultProps: {
-    //     variant: 'standard'
-    //   }
-    // }
+    }
   }
 });
 

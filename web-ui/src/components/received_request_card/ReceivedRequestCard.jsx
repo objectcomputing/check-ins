@@ -9,6 +9,7 @@ import { selectProfile } from '../../context/selectors';
 import DateFnsUtils from '@date-io/date-fns';
 import { AppContext } from '../../context/AppContext';
 import { Edit as EditIcon } from '@mui/icons-material';
+import './ReceivedRequestCard.css';
 
 const dateFns = new DateFnsUtils();
 const PREFIX = 'ReceivedRequestCard';
@@ -21,21 +22,21 @@ const classes = {
 };
 
 const StyledCard = styled(Card)({
-  [`& .${classes.redTypography}`]: {
-    color: '#FF0000'
-  },
-  [`& .${classes.yellowTypography}`]: {
-    color: '#EE8C00'
-  },
-  [`& .${classes.greenTypography}`]: {
-    color: '#006400'
-  },
-  [`& .${classes.darkGrayTypography}`]: {
-    color: '#333333'
-  },
-  [`& .${classes.grayTypography}`]: {
-    color: 'gray'
-  }
+  // [`& .${classes.redTypography}`]: {
+  //   color: '#FF0000'
+  // },
+  // [`& .${classes.yellowTypography}`]: {
+  //   color: '#EE8C00'
+  // },
+  // [`& .${classes.greenTypography}`]: {
+  //   color: '#006400'
+  // },
+  // [`& .${classes.darkGrayTypography}`]: {
+  //   color: '#333333'
+  // },
+  // [`& .${classes.grayTypography}`]: {
+  //   color: 'gray'
+  // }
 });
 
 const propTypes = {

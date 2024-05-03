@@ -187,7 +187,7 @@ exports[`renders correctly 1`] = `
                       class="role-header-title"
                     >
                       <h4
-                        class="MuiTypography-root MuiTypography-h4 css-1pbf2mx-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
                       >
                         ADMIN
                       </h4>
@@ -281,7 +281,7 @@ exports[`renders correctly 1`] = `
                       class="role-header-title"
                     >
                       <h4
-                        class="MuiTypography-root MuiTypography-h4 css-1pbf2mx-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
                       >
                         PDL
                       </h4>
