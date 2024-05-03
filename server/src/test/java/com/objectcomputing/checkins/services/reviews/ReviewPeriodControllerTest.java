@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -131,7 +132,7 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
     }
 
     @Test
-    public void mattExampleJsonSerialization() throws JsonProcessingException {
+    public void testReviewPeriodCreateDTOSerialization() throws JsonProcessingException {
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
         reviewPeriodCreateDTO.setReviewStatus(ReviewStatus.OPEN);
@@ -166,9 +167,9 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
 
     @Test
     public void testPOSTCreateAReviewPeriodWithTimelines() {
-        LocalDateTime launchDate = LocalDateTime.now();
-        LocalDateTime selfReviewCloseDate = LocalDateTime.now().plusDays(1);
-        LocalDateTime closeDate = LocalDateTime.now().plusDays(2);
+        LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        LocalDateTime selfReviewCloseDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime closeDate = LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS);
 
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
@@ -253,6 +254,38 @@ public class ReviewPeriodControllerTest extends TestContainersSuite implements R
 
         assertEquals(reviewPeriod, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testReviewPeriodSerialization() throws JsonProcessingException {
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createAndAssignAdminRole(memberProfileOfAdmin);
+
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        reviewPeriod.setReviewStatus(ReviewStatus.OPEN);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+                PUT("/", reviewPeriod).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        String actualJson = response.body();
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String expectedJson = objectMapper.writeValueAsString(reviewPeriod);
+
+        String expectedLaunchDateFormat = objectMapper.readTree(expectedJson).get("launchDate").asText();
+        String actualLaunchDateFormat = objectMapper.readTree(actualJson).get("launchDate").asText();
+        assertEquals(expectedLaunchDateFormat, actualLaunchDateFormat);
+
+        String expectedSelfReviewCloseDateFormat = objectMapper.readTree(expectedJson).get("selfReviewCloseDate").asText();
+        String actualSelfReviewCloseDateFormat = objectMapper.readTree(actualJson).get("selfReviewCloseDate").asText();
+        assertEquals(expectedSelfReviewCloseDateFormat, actualSelfReviewCloseDateFormat);
+
+        String expectedCloseDateFormat = objectMapper.readTree(expectedJson).get("closeDate").asText();
+        String actualCloseDateFormat = objectMapper.readTree(actualJson).get("closeDate").asText();
+        assertEquals(expectedCloseDateFormat, actualCloseDateFormat);
     }
 
     @Test
