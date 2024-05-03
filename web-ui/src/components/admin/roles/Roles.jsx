@@ -296,7 +296,7 @@ const Roles = () => {
                 />
               )}
             />
-            <Button color="primary" onClick={() => addToRole(selectedMember)}>
+            <Button color="secondary" onClick={() => addToRole(selectedMember)}>
               Save
             </Button>
           </div>
@@ -311,7 +311,7 @@ const Roles = () => {
                       <ListSubheader style={{ padding: 0 }}>
                         <div className="role-header">
                           <div className="role-header-title">
-                            <Typography variant="h4" color="black">
+                            <Typography variant="h4" >
                               {roleObj.role}
                             </Typography>
                             <Typography

@@ -188,7 +188,7 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
                   to={`/profile/${lead?.memberId}`}
                   style={{
                     textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.87)'
+                    color: 'inherit'
                   }}
                 >
                   {index !== leads.length - 1 ? `${lead?.name}, ` : lead?.name}
@@ -204,7 +204,7 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
                   to={`/profile/${member?.memberId}`}
                   style={{
                     textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.87)'
+                    color: 'inherit'
                   }}
                 >
                   {index !== nonLeads.length - 1

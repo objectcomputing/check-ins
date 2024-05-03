@@ -382,6 +382,7 @@ function Menu() {
                 top: '10px',
                 textDecoration: 'none'
               }}
+              alt={`${userProfile?.name}'s avatar`}
             />
           </Link>
         </AppBar>
