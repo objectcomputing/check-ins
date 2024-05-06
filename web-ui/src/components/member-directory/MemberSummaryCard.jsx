@@ -109,7 +109,6 @@ const MemberSummaryCard = ({ member }) => {
                   to={`/profile/${supervisorid}`}
                   style={{
                     color: 'inherit',
-                    opacity: 0.6,
                     textDecoration: 'none'
                   }}
                 >

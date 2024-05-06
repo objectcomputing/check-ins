@@ -19,6 +19,7 @@ import {
 import './App.css';
 
 function getUserColorScheme() {
+  console.log('getting your scheme');
   if (
     window.matchMedia &&
     window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -37,28 +38,27 @@ function getUserColorScheme() {
 const theme = extendTheme({
   cssVarPrefix: 'checkins',
   colorSchemes: {
-    // light: {
-    //   palette: {
-    //     primary: {
-    //       main: '#2d519e',
-    //     },
-    //     background: {
-    //       default: '#F5F5F6',
-    //       paper: '#fff'
-    //     }
-    //   }
-    // },
-    // dark: {
-    //   palette: {
-    //     primary: {
-    //       main: '#2d519e',
-    //     },
-    //   }
-    // }
+    light: {
+      palette: {
+        secondary: {
+          main: '#76c8d4'
+        }
+      }
+    },
+    dark: {
+      palette: {
+        secondary: {
+          main: '#76c8d4'
+        }
+      }
+    }
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        secondary: {
+          main: '#f8b576'
+        },
         body: {
           fontSize: '0.875rem',
           lineHeight: 1.43,
@@ -70,6 +70,8 @@ const theme = extendTheme({
 });
 
 const customHistory = createBrowserHistory();
+
+getUserColorScheme();
 
 function App() {
   return (

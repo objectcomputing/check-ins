@@ -3,13 +3,13 @@
 body {
   font-family: 'Raleway', sans-serif;
   font-size: 20px;
-  transition: 1s;
+  transition: var(--transition-timing-long);
 }
 
 .my-anniversary.open {
   animation: bg-change 1s 1;
   background-color: #72c8d5;
-  transition: 1s;
+  transition: var(--transition-timing-long);
 }
 @keyframes bg-change {
   0% {
@@ -47,7 +47,7 @@ body {
   transform-origin: 0% 0%;
   cursor: pointer;
   transform: translate(-50%, -50%);
-  transition: 1s;
+  transition: var(--transition-timing-long);
   animation: box 0.5s infinite;
 }
 .my-anniversary-gift .box {
@@ -88,10 +88,10 @@ body {
     #2559a7 56%,
     #2559a7 100%
   );
-  transition: 1s;
+  transition: var(--transition-timing-long);
 }
 .my-anniversary-gift-top.boxOpen {
-  animation: box-open 1s;
+  animation: box-open var(--transition-timing-long);
   opacity: 0;
 }
 @keyframes box-open {

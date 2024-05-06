@@ -173,7 +173,7 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
                   style={{
                     color: 'inherit',
                     opacity: 0.87,
-                    textDecoration: 'none',
+                    textDecoration: 'none'
                   }}
                 >
                   {index !== nonLeads.length - 1

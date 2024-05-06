@@ -199,7 +199,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     periodId => {
       if (mode === 'self') {
         if (
-          selectReviewPeriod(state, periodId)?.reviewStatus === ReviewStatus.OPEN
+          selectReviewPeriod(state, periodId)?.reviewStatus ===
+          ReviewStatus.OPEN
         ) {
           if (
             !selfReviews ||
@@ -446,7 +447,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     key={`period-lit-${id}`}
                     onClick={() => onPeriodClick(id)}
                     primary={
-                      name + (reviewStatus === ReviewStatus.OPEN ? ' - Open' : '')
+                      name +
+                      (reviewStatus === ReviewStatus.OPEN ? ' - Open' : '')
                     }
                     secondary={getSecondaryLabel(id)}
                   />

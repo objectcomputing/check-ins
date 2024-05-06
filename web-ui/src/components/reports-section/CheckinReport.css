@@ -27,7 +27,7 @@
 }
 
 #member-sub-card {
-  background-color: #fafafa;
+  background-color: var(--checkins-palette-background-default);
   margin-top: 1rem;
 }
 

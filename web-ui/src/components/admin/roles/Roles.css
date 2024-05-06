@@ -88,7 +88,7 @@
   max-height: 40rem;
   min-height: 40rem;
   margin: 1rem;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 .role-header-buttons {
