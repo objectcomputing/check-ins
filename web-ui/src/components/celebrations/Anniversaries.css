@@ -4,13 +4,13 @@ body {
   font-family: 'Raleway', sans-serif;
   background-color: #f0e2db;
   font-size: 20px;
-  transition: 1s;
+  transition: var(--transition-timing-long);
 }
 
 body.open {
   animation: bg-change 1s 1;
   background-color: #72c8d5;
-  transition: 1s;
+  transition: var(--transition-timing-long);
 }
 @keyframes bg-change {
   0% {
@@ -31,7 +31,7 @@ body.open {
   min-width: 450px;
 }
 .anniversaries-card span {
-  color: var(--checkins-palette-primary-link);
+  color: var(--checkins-palette-primary-light);
   font-weight: bold;
 }
 .anniversary-gift {
@@ -42,7 +42,7 @@ body.open {
   height: 100px;
   transform-origin: 0% 0%;
   transform: translate(-50%, -50%);
-  transition: 1s;
+  transition: var(--transition-timing-long);
   /*   animation: box 0.5s infinite; */
 }
 .box {
@@ -82,7 +82,7 @@ body.open {
     #2559a7 56%,
     #2559a7 100%
   );
-  transition: 1s;
+  transition: var(--transition-timing-long);
 }
 .anniversary-gift-top.boxOpen {
   animation: box-open 1s;
@@ -144,10 +144,10 @@ body.open {
     #2559a7 100%
   );
   border-radius: 0 0 5px 5px;
-  transition: 1s;
+  transition: var(--transition-timing-long);
 }
 .anniversary-gift-box.boxDown {
-  animation: box-down 1s;
+  animation: box-down var(--transition-timing-long);
   opacity: 0;
 }
 @keyframes box-down {

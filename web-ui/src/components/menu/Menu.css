@@ -22,8 +22,8 @@
 }
 
 .hours-upload-modal {
-  background-color: #fff;
-  border: 2px solid #fff;
+  background-color: var(--checkins-palette-background-paper);
+  border: 2px solid var(--checkins-palette-background-paper);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -96,19 +96,24 @@
     }
   }
 
+  .Menu-listStyle {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: calc(100vh - 100px);
+  }
+
   .Menu-modeToggle {
     aspect-ratio: 1;
     background: var(--checkins-palette-primary-main);
     border-radius: 30px;
-    bottom: 24px;
     color: var(--checkins-palette-primary-contrastText);
     cursor: pointer;
     display: grid;
-    margin-left: 50%;
+    margin: 1.5rem auto;
+    box-size: border-box;
     padding: 0;
     place-items: center;
-    position: absolute;
-    transform: translateX(-50%);
     width: 40px;
   }
 }

@@ -16,7 +16,7 @@ body {
   min-width: 450px;
 }
 .birthdays-card span {
-  color: var(--checkins-palette-primary-link);
+  color: var(--checkins-palette-primary-light);
   font-weight: bold;
 }
 .birthdays-container {

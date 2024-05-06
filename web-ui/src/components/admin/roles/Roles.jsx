@@ -311,9 +311,7 @@ const Roles = () => {
                       <ListSubheader style={{ padding: 0 }}>
                         <div className="role-header">
                           <div className="role-header-title">
-                            <Typography variant="h4" >
-                              {roleObj.role}
-                            </Typography>
+                            <Typography variant="h4">{roleObj.role}</Typography>
                             <Typography
                               variant="subtitle1"
                               style={{

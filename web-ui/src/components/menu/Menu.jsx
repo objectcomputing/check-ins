@@ -303,55 +303,57 @@ function Menu() {
       </div>
 
       <List component="nav" className={classes.listStyle}>
-        {createLinkJsx('/', 'HOME', false)}
-        {isAdmin && (
-          <>
-            <ListItem onClick={toggleAdmin} className={classes.listItem}>
-              <ListItemText primary="ADMIN" />
-            </ListItem>
-            <Collapse in={adminOpen} timeout="auto" unmountOnExit>
-              {createListJsx(adminLinks, true)}
-              {isAdmin && (
-                <ListItem
-                  className={classes.listItem}
-                  onClick={openHoursUpload}
-                  style={{ marginLeft: '1rem' }}
-                >
-                  Upload Hours
-                </ListItem>
-              )}
-            </Collapse>
-          </>
-        )}
-        {createLinkJsx('/checkins', 'CHECK-INS', false)}
-        <ListItem onClick={toggleDirectory} className={classes.listItem}>
-          <ListItemText primary="DIRECTORY" />
-        </ListItem>
-        <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
-          {createListJsx(directoryLinks, true)}
-        </Collapse>
-        <ListItem onClick={toggleFeedback} className={classes.listItem}>
-          <ListItemText primary="FEEDBACK" />
-        </ListItem>
-        <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
-          {createListJsx(feedbackLinks, true)}
-        </Collapse>
-        {hasReportPermission && (
-          <React.Fragment>
-            <ListItem
-              button
-              onClick={toggleReports}
-              className={classes.listItem}
-            >
-              <ListItemText primary="REPORTS" />
-            </ListItem>
-            <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
-              {createListJsx(getReportLinks(), true)}
-            </Collapse>
-          </React.Fragment>
-        )}
+        <div>
+          {createLinkJsx('/', 'HOME', false)}
+          {isAdmin && (
+            <>
+              <ListItem onClick={toggleAdmin} className={classes.listItem}>
+                <ListItemText primary="ADMIN" />
+              </ListItem>
+              <Collapse in={adminOpen} timeout="auto" unmountOnExit>
+                {createListJsx(adminLinks, true)}
+                {isAdmin && (
+                  <ListItem
+                    className={classes.listItem}
+                    onClick={openHoursUpload}
+                    style={{ marginLeft: '1rem' }}
+                  >
+                    Upload Hours
+                  </ListItem>
+                )}
+              </Collapse>
+            </>
+          )}
+          {createLinkJsx('/checkins', 'CHECK-INS', false)}
+          <ListItem onClick={toggleDirectory} className={classes.listItem}>
+            <ListItemText primary="DIRECTORY" />
+          </ListItem>
+          <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
+            {createListJsx(directoryLinks, true)}
+          </Collapse>
+          <ListItem onClick={toggleFeedback} className={classes.listItem}>
+            <ListItemText primary="FEEDBACK" />
+          </ListItem>
+          <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
+            {createListJsx(feedbackLinks, true)}
+          </Collapse>
+          {hasReportPermission && (
+            <React.Fragment>
+              <ListItem
+                button
+                onClick={toggleReports}
+                className={classes.listItem}
+              >
+                <ListItemText primary="REPORTS" />
+              </ListItem>
+              <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
+                {createListJsx(getReportLinks(), true)}
+              </Collapse>
+            </React.Fragment>
+          )}
+        </div>
+        <SchemeToggle />
       </List>
-      <SchemeToggle />
     </div>
   );
 

@@ -170,8 +170,9 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
                   key={member?.memberId}
                   to={`/profile/${member?.memberId}`}
                   style={{
-                    textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.87)'
+                    color: 'inherit',
+                    opacity: 0.87,
+                    textDecoration: 'none'
                   }}
                 >
                   {index !== nonLeads.length - 1

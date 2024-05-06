@@ -91,7 +91,7 @@ const ChooseEmailFormatStep = ({
             <Typography variant="h6" fontWeight="bold">
               MJML File
             </Typography>
-            <Typography variant="body2" color="gray">
+            <Typography variant="body2">
               Create an email with a custom format using MJML
             </Typography>
           </div>
@@ -121,7 +121,7 @@ const ChooseEmailFormatStep = ({
             <Typography variant="h6" fontWeight="bold">
               Text
             </Typography>
-            <Typography variant="body2" color="gray">
+            <Typography variant="body2">
               Write a simple email with no formatting
             </Typography>
           </div>

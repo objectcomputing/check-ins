@@ -104,8 +104,8 @@ const MemberSummaryCard = ({ member }) => {
                 <Link
                   to={`/profile/${supervisorid}`}
                   style={{
-                    textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.6)'
+                    color: 'inherit',
+                    textDecoration: 'none'
                   }}
                 >
                   {supervisorProfile?.name}
