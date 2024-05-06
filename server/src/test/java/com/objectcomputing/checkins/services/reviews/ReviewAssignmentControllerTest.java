@@ -111,6 +111,31 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
+    @Test
+    public void testGETFindAssignmentsByPeriodIdWithoutPermissions() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile anotherSupervisor = createAnotherSupervisor();
+
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+
+        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
+        assignPdlRole(pdlMemberProfileTwo);
+
+        MemberProfile memberOne = createAProfileWithSupervisorAndPDL(supervisor, pdlMemberProfile);
+        MemberProfile memberTwo = createAnotherProfileWithSupervisorAndPDL(supervisor, pdlMemberProfileTwo);
+        MemberProfile memberThree = createYetAnotherProfileWithSupervisorAndPDL(anotherSupervisor, pdlMemberProfileTwo);
+
+        final HttpRequest<Object> request = HttpRequest.
+            GET(String.format("/period/%s", reviewPeriod.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
 
     @Test
     public void testGETFindAssignmentsByPeriodIdNoReviewer() {
