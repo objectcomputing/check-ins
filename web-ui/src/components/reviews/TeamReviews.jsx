@@ -1,3 +1,8 @@
+import DateFnsUtils from '@date-io/date-fns';
+const dateUtils = new DateFnsUtils();
+
+import PropTypes from 'prop-types';
+import queryString from 'query-string';
 import React, {
   useEffect,
   useContext,
@@ -5,40 +10,41 @@ import React, {
   useState,
   useRef
 } from 'react';
-import PropTypes from 'prop-types';
 import { useLocation, useHistory } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
+
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AddCommentIcon from '@mui/icons-material/AddComment';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Divider from '@mui/material/Divider';
-import queryString from 'query-string';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Switch from '@mui/material/Switch';
-import Typography from '@mui/material/Typography';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Tooltip from '@mui/material/Tooltip';
-import Skeleton from '@mui/material/Skeleton';
-import TeamMemberReview from './TeamMemberReview';
-import SelectUserModal from './SelectUserModal';
-import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from '../../context/actions';
-import { AppContext } from '../../context/AppContext';
-import { getReviewPeriods } from '../../api/reviewperiods.js';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Avatar,
+  Button,
+  Divider,
+  FormControlLabel,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
+  Skeleton,
+  Switch,
+  Tooltip,
+  Typography
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+import { getAvatarURL } from '../../api/api.js';
 import {
   createFeedbackRequest,
   findReviewRequestsByPeriodAndTeamMembers,
   findSelfReviewRequestsByPeriodAndTeamMembers
 } from '../../api/feedback.js';
+import { getReviewPeriods } from '../../api/reviewperiods.js';
+import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from '../../context/actions';
+import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
   selectReviewPeriod,
@@ -49,9 +55,13 @@ import {
   selectCurrentMembers,
   selectSubordinates
 } from '../../context/selectors';
-import { getAvatarURL } from '../../api/api.js';
-import DateFnsUtils from '@date-io/date-fns';
-const dateUtils = new DateFnsUtils();
+
+import MemberSelector from '../member_selector/MemberSelector';
+import MemberSelectorDialog, {
+  FilterType
+} from '../member_selector/member_selector_dialog/MemberSelectorDialog';
+import SelectUserModal from './SelectUserModal';
+import TeamMemberReview from './TeamMemberReview';
 
 const propTypes = {
   teamMembers: PropTypes.arrayOf(
@@ -96,26 +106,31 @@ const Root = styled('div')(({ theme }) => ({
 
 const TeamReviews = ({ periodId }) => {
   const { state, dispatch } = useContext(AppContext);
-  const csrf = selectCsrfToken(state);
-  const location = useLocation();
   const history = useHistory();
-  const currentUser = selectCurrentUser(state);
-  const currentMembers = selectCurrentMembers(state);
-  const myTeam = selectMyTeam(state);
-  const subordinates = selectSubordinates(state, currentUser?.id);
-  const isAdmin = selectIsAdmin(state);
-  const period = selectReviewPeriod(state, periodId);
-  const [teamMembers, setTeamMembers] = useState(null);
-  const [selfReviews, setSelfReviews] = useState({});
-  const [reviews, setReviews] = useState(null);
-  const [query, setQuery] = useState({});
-  const [selectedTeamMember, setSelectedTeamMember] = useState(null);
-  const selectedMemberProfile = selectProfile(state, selectedTeamMember);
-  const [newRequestOpen, setNewRequestOpen] = useState(false);
+  const location = useLocation();
+
   const [includeAll, setIncludeAll] = useState(false);
-  const loadingReviews = useRef(false);
-  const loadedReviews = useRef(false);
+  const [memberFilters, setMemberFilters] = useState([]);
+  const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
+  const [newRequestOpen, setNewRequestOpen] = useState(false);
+  const [query, setQuery] = useState({});
+  const [reviews, setReviews] = useState(null);
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [selfReviews, setSelfReviews] = useState({});
+  const [teamMembers, setTeamMembers] = useState([]);
+
   const creatingReview = useRef(false);
+  const loadedReviews = useRef(false);
+  const loadingReviews = useRef(false);
+
+  const csrf = selectCsrfToken(state);
+  const currentMembers = selectCurrentMembers(state);
+  const currentUser = selectCurrentUser(state);
+  const isAdmin = selectIsAdmin(state);
+  const myTeam = selectMyTeam(state);
+  const period = selectReviewPeriod(state, periodId);
+  const selectedMemberProfile = selectProfile(state, selectedMember);
+  const subordinates = selectSubordinates(state, currentUser?.id);
 
   const handleOpenNewRequest = useCallback(
     () => setNewRequestOpen(true),
@@ -219,7 +234,7 @@ const TeamReviews = ({ periodId }) => {
   }, [query.teamMember, hasTeamMember]);
 
   useEffect(() => {
-    setSelectedTeamMember(getTeamMember());
+    setSelectedMember(getTeamMember());
   }, [getTeamMember]);
 
   useEffect(() => {
@@ -495,7 +510,7 @@ const TeamReviews = ({ periodId }) => {
     <Root>
       <div className={classes.headerContainer}>
         <Typography variant="h4">Team Reviews</Typography>
-        {!selectedTeamMember && (
+        {!selectedMember && (
           <FormControlLabel
             control={
               <Switch checked={includeAll} onChange={toggleIncludeAll} />
@@ -503,7 +518,7 @@ const TeamReviews = ({ periodId }) => {
             label="Show All"
           />
         )}
-        {selectedTeamMember && (
+        {selectedMember && (
           <Button
             onClick={handleOpenNewRequest}
             className={classes.actionButtons}
@@ -515,9 +530,15 @@ const TeamReviews = ({ periodId }) => {
           </Button>
         )}
       </div>
-      {!selectedTeamMember && loadedReviews.current && (
+      <MemberSelector
+        className="team-skill-member-selector"
+        // listHeight={300}
+        onChange={setTeamMembers}
+        selected={teamMembers}
+      />
+      {!selectedMember && loadedReviews.current && (
         <>
-          <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+          {/* <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
             {teamMembers && teamMembers.length > 0
               ? teamMembers
                   .sort((a, b) => {
@@ -574,7 +595,7 @@ const TeamReviews = ({ periodId }) => {
                     </>
                   ))
               : null}
-          </List>
+          </List> */}
           <Accordion style={{ marginTop: '1rem' }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -650,7 +671,7 @@ const TeamReviews = ({ periodId }) => {
           </Accordion>
         </>
       )}
-      {!selectedTeamMember && loadingReviews.current && (
+      {!selectedMember && loadingReviews.current && (
         <>
           <ListItem key="skeleton-period">
             <ListItemAvatar>
@@ -668,12 +689,12 @@ const TeamReviews = ({ periodId }) => {
           </ListItem>
         </>
       )}
-      {!!selectedTeamMember && reviews && (
+      {!!selectedMember && reviews && (
         <TeamMemberReview
           reloadReviews={reloadReviews}
           memberProfile={selectedMemberProfile}
-          selfReview={selfReviews[selectedTeamMember]}
-          reviews={reviews[selectedTeamMember]}
+          selfReview={selfReviews[selectedMember]}
+          reviews={reviews[selectedMember]}
         />
       )}
       <SelectUserModal
@@ -681,6 +702,14 @@ const TeamReviews = ({ periodId }) => {
         open={newRequestOpen}
         onSelect={handleNewRequest}
         onClose={handleCloseNewRequest}
+      />
+      <MemberSelectorDialog
+        open={memberSelectorOpen}
+        initialFilters={memberFilters}
+        memberDescriptor="members"
+        selectedMembers={teamMembers}
+        onClose={() => setDialogOpen(false)}
+        onSubmit={membersToAdd => setTeamMembers(membersToAdd)}
       />
     </Root>
   );
