@@ -144,7 +144,7 @@ exports[`<Menu /> > renders correctly 1`] = `
                         <span
                           class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
                         >
-                          Guilds
+                          Guilds & Communities
                         </span>
                       </div>
                     </a>
@@ -281,7 +281,7 @@ exports[`<Menu /> > renders correctly 1`] = `
                         <span
                           class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
                         >
-                          Guilds
+                          Guilds & Communities
                         </span>
                       </div>
                     </a>
@@ -500,7 +500,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                         <span
                           class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
                         >
-                          Guilds
+                          Guilds & Communities
                         </span>
                       </div>
                     </a>
@@ -668,7 +668,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                         <span
                           class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
                         >
-                          Guilds
+                          Guilds & Communities
                         </span>
                       </div>
                     </a>
@@ -892,7 +892,7 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                         <span
                           class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
                         >
-                          Guilds
+                          Guilds & Communities
                         </span>
                       </div>
                     </a>
@@ -1029,7 +1029,7 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                         <span
                           class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
                         >
-                          Guilds
+                          Guilds & Communities
                         </span>
                       </div>
                     </a>

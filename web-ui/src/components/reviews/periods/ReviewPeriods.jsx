@@ -7,28 +7,32 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import WorkIcon from '@mui/icons-material/Work';
 
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
-import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import MenuItem from '@mui/material/MenuItem';
-import Modal from '@mui/material/Modal';
-import Select from '@mui/material/Select';
-import Skeleton from '@mui/material/Skeleton';
-import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
+import {
+  Avatar,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  MenuItem,
+  Modal,
+  Select,
+  Skeleton,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material';
+
+import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import { styled } from '@mui/material/styles';
 import './DatePickerField.css';
@@ -141,6 +145,20 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const periods = selectReviewPeriods(state);
   const userProfile = selectUserProfile(state);
   const isAdmin = userProfile?.role?.includes('ADMIN');
+
+  useQueryParameters([
+    {
+      name: 'add',
+      default: false,
+      value: reviewStatus,
+      setter(open) {
+        setReviewStatus(open ? ReviewStatus.OPEN : ReviewStatus.CLOSED);
+      },
+      toQP(reviewStatus) {
+        return reviewStatus === ReviewStatus.OPEN;
+      }
+    }
+  ]);
 
   const handleOpen = useCallback(
     () => setReviewStatus(ReviewStatus.OPEN),

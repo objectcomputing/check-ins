@@ -7,6 +7,9 @@ import EditGuildModal from './EditGuildModal';
 import { Link } from 'react-router-dom';
 import { Link as StyledLink } from '@mui/material';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHammer, faPeopleGroup } from '@fortawesome/free-solid-svg-icons';
+
 import {
   Button,
   Card,
@@ -32,13 +35,19 @@ const classes = {
 };
 const StyledCard = styled(Card)(() => ({
   [`&.${classes.card}`]: {
-    width: '340px',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    position: 'relative',
+    width: '340px'
   },
   [`& .${classes.header}`]: {
     width: '100%'
+  },
+  ['& [data-icon]']: {
+    position: 'absolute',
+    right: '1rem',
+    top: '1rem'
   },
   [`& .${classes.title}`]: {
     overflow: 'hidden',
@@ -128,6 +137,14 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
 
   return (
     <StyledCard className={classes.card}>
+      <FontAwesomeIcon
+        icon={guild.community ? faPeopleGroup : faHammer}
+        size="2x"
+        style={{
+          color: guild.community ? 'var(--oci-orange)' : 'var(--oci-light-blue)'
+        }}
+        title={`This is a ${guild.community ? 'Community' : 'Guild'}.`}
+      />
       <CardHeader
         classes={{
           content: classes.header,
