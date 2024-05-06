@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -41,10 +40,8 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
 
     @BeforeEach
     void createRolesAndPermissions() {
-
         createAndAssignRoles();
     }
-
 
     @Test
     public void testPOSTCreateAReviewAssignment() {
