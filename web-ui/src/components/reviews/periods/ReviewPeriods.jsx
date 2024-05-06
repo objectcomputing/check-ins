@@ -9,8 +9,7 @@ import {
   HourglassTop,
   MeetingRoom,
   QuestionMark,
-  Unarchive,
-  Work
+  Unarchive
 } from '@mui/icons-material';
 
 import {
@@ -474,9 +473,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     key={`period-lia-${id}`}
                     onClick={() => onPeriodClick(id)}
                   >
-                    <Avatar>
-                      <Work />
-                    </Avatar>
+                    <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     key={`period-lit-${id}`}
@@ -484,9 +481,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     primary={`${name} - ${titleCase(reviewStatus)}`}
                     secondary={getSecondaryLabel(id)}
                   />
-                  <ListItemAvatar key={`icon-${id}`}>
-                    <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
-                  </ListItemAvatar>
                 </ListItem>
               </>
             ))
