@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
+import { format, formatISO } from "date-fns";
 
 import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -185,7 +186,13 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         handleOpen();
         const res = await createReviewPeriod(periodToAdd, csrf);
         const data = res?.payload?.data ?? null;
-        data && dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
+        console.log('Data');
+        console.log(data);
+        if (data) {
+          dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
+        } else {
+          console.log(res?.error);
+        }
       }
       handleClose();
       setPeriodToAdd({
@@ -276,12 +283,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       if (!csrf) {
         return;
       }
-      console.log('Period being updated');
-      console.log(period);
       const res = await updateReviewPeriod(period, csrf);
       const data = res?.payload?.data ?? null;
-      console.log('Data');
-      console.log(data);
       if (data) {
         dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
       } else {
@@ -301,14 +304,11 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   useEffect(() => {
     const valid = Boolean(
       periodToAdd.name &&
+        periodToAdd.reviewStatus &&
         periodToAdd.reviewTemplateId &&
-        periodToAdd.selfReviewTemplateId &&
-        periodToAdd.launchDate &&
-        periodToAdd.selfReviewCloseDate &&
-        periodToAdd.closeDate
+        periodToAdd.selfReviewTemplateId 
     );
     setCanSave(valid);
-    // console.log(periodToAdd);
   }, [periodToAdd]);
 
   useEffect(() => {
@@ -346,11 +346,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             csrf
           );
           const data =
-            res &&
-            res.payload &&
-            res.payload.data &&
-            res.payload.status === 200 &&
-            !res.error
+            res?.payload?.data &&
+            res?.payload?.status === 200 &&
+            !res?.error
               ? res.payload.data
               : null;
           if (data) {
@@ -368,8 +366,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     ) {
       getSelfReviews();
     }
-    console.log('Periods');
-    console.log(periods);
   }, [csrf, periods, currentUserId, selfReviews]);
 
   const onPeriodClick = useCallback(
@@ -405,40 +401,32 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     });
   };
 
-  function standardizeDate(date) {
-    const toTimestamp = date => Math.floor(date.getTime() / 1000);
-    const fromTimestamp = timestamp => new Date(timestamp * 1000).toISOString();
-
-    let newDate = toTimestamp(new Date(date));
-    let adjustedDate = fromTimestamp(newDate);
-    return adjustedDate;
-  }
-
   const handleLaunchDateChange = (val, period) => {
-    let goodDate = standardizeDate(`${val.$y}-${val.$W}-${val.$D}`);
+    let isoDate = val?.$d.toISOString() ?? null;
     let newPeriod = {
       ...period,
-      launchDate: goodDate
+      launchDate: isoDate
     };
+
     setPeriodToAdd(newPeriod);
     updateReviewPeriodDates(newPeriod);
   };
 
   const handleSelfReviewDateChange = (val, period) => {
-    let goodDate = standardizeDate(`${val.$y}-${val.$W}-${val.$D}`);
+    let isoDate = val?.$d.toISOString() ?? null;
     let newPeriod = {
       ...period,
-      selfReviewCloseDate: goodDate
+      selfReviewCloseDate: isoDate
     };
     setPeriodToAdd(newPeriod);
     updateReviewPeriodDates(newPeriod);
   };
 
   const handleCloseDateChange = (val, period) => {
-    let goodDate = standardizeDate(`${val.$y}-${val.$W}-${val.$D}`);
+    let isoDate = val?.$d.toISOString() ?? null;
     let newPeriod = {
       ...period,
-      closeDate: goodDate
+      closeDate: isoDate
     };
     setPeriodToAdd(newPeriod);
     updateReviewPeriodDates(newPeriod);
