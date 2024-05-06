@@ -402,8 +402,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   };
 
   const handleLaunchDateChange = (val, period) => {
-    let isoDate = val?.$d.toISOString() ?? null;
-    let newPeriod = {
+    const isoDate = val?.$d.toISOString() ?? null;
+    const newPeriod = {
       ...period,
       launchDate: isoDate
     };
@@ -413,8 +413,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   };
 
   const handleSelfReviewDateChange = (val, period) => {
-    let isoDate = val?.$d.toISOString() ?? null;
-    let newPeriod = {
+    const isoDate = val?.$d.toISOString() ?? null;
+    const newPeriod = {
       ...period,
       selfReviewCloseDate: isoDate
     };
@@ -423,8 +423,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   };
 
   const handleCloseDateChange = (val, period) => {
-    let isoDate = val?.$d.toISOString() ?? null;
-    let newPeriod = {
+    const isoDate = val?.$d.toISOString() ?? null;
+    const newPeriod = {
       ...period,
       closeDate: isoDate
     };
@@ -560,6 +560,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                           })
                         }
                         label="Launch Date"
+                        disabled={!isAdmin}
+                        open={reviewStatus === ReviewStatus.PLANNING}
                       />
                       <DatePickerField
                         date={dayjs(selfReviewCloseDate)}
@@ -574,6 +576,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                           })
                         }
                         label="Self-Review Date"
+                        disabled={!isAdmin}
                       />
                       <DatePickerField
                         date={dayjs(closeDate)}
@@ -588,6 +591,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                           })
                         }
                         label="Close Date"
+                        disabled={!isAdmin}
                       />
                     </div>
                   </ListItem>
