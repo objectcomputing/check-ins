@@ -71,7 +71,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
         ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
 
         final HttpRequest<Object> request = HttpRequest.
-            GET(String.format("/%s", reviewAssignment.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+            GET(String.format("/%s", reviewAssignment.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
         final HttpResponse<ReviewAssignment> response = client.toBlocking().exchange(request, ReviewAssignment.class);
 
