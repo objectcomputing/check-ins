@@ -146,6 +146,62 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                 </div>
               </div>
               <div
+                class="MuiFormControl-root filter-type-select css-1nrlq1o-MuiFormControl-root"
+              >
+                <label
+                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
+                  data-shrink="true"
+                  id="filter-type-label"
+                >
+                  Filter Type
+                </label>
+                <div
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl  css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                >
+                  <div
+                    aria-controls=":r2:"
+                    aria-expanded="false"
+                    aria-haspopup="listbox"
+                    aria-labelledby="filter-type-label"
+                    class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                    role="combobox"
+                    tabindex="0"
+                  >
+                    Team
+                  </div>
+                  <input
+                    aria-hidden="true"
+                    aria-invalid="false"
+                    class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                    tabindex="-1"
+                    value="Team"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-hfutr2-MuiSvgIcon-root-MuiSelect-icon"
+                    data-testid="ArrowDropDownIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M7 10l5 5 5-5z"
+                    />
+                  </svg>
+                  <fieldset
+                    aria-hidden="true"
+                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                  >
+                    <legend
+                      class="css-14lo706"
+                    >
+                      <span>
+                        Filter Type
+                      </span>
+                    </legend>
+                  </fieldset>
+                </div>
+              </div>
+              <div
                 class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon filter-input css-clttge-MuiAutocomplete-root"
               >
                 <div
@@ -154,10 +210,10 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   <label
                     class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
                     data-shrink="false"
-                    for=":r2:"
-                    id=":r2:-label"
+                    for=":r3:"
+                    id=":r3:-label"
                   >
-                    Filter Members
+                    Filter Value
                   </label>
                   <div
                     class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root"
@@ -169,7 +225,7 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                       autocapitalize="none"
                       autocomplete="off"
                       class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
-                      id=":r2:"
+                      id=":r3:"
                       placeholder="Search for team"
                       role="combobox"
                       spellcheck="false"
@@ -210,67 +266,11 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                         class="css-yjsfm1"
                       >
                         <span>
-                          Filter Members
+                          Filter Value
                         </span>
                       </legend>
                     </fieldset>
                   </div>
-                </div>
-              </div>
-              <div
-                class="MuiFormControl-root filter-type-select css-1nrlq1o-MuiFormControl-root"
-              >
-                <label
-                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
-                  data-shrink="true"
-                  id="member-filter-label"
-                >
-                  Filter by
-                </label>
-                <div
-                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl  css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
-                >
-                  <div
-                    aria-controls=":r4:"
-                    aria-expanded="false"
-                    aria-haspopup="listbox"
-                    aria-labelledby="member-filter-label"
-                    class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
-                    role="combobox"
-                    tabindex="0"
-                  >
-                    Team
-                  </div>
-                  <input
-                    aria-hidden="true"
-                    aria-invalid="false"
-                    class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
-                    tabindex="-1"
-                    value="Team"
-                  />
-                  <svg
-                    aria-hidden="true"
-                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-hfutr2-MuiSvgIcon-root-MuiSelect-icon"
-                    data-testid="ArrowDropDownIcon"
-                    focusable="false"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M7 10l5 5 5-5z"
-                    />
-                  </svg>
-                  <fieldset
-                    aria-hidden="true"
-                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
-                  >
-                    <legend
-                      class="css-14lo706"
-                    >
-                      <span>
-                        Filter by
-                      </span>
-                    </legend>
-                  </fieldset>
                 </div>
               </div>
             </div>
@@ -297,6 +297,70 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                 />
               </svg>
             </span>
+          </div>
+          <div
+            class="MuiFormGroup-root dialog-form-group css-dmmspl-MuiFormGroup-root"
+          >
+            <div
+              class="filter-input-container"
+            >
+              <div
+                class="MuiFormControl-root filter-type-select css-1nrlq1o-MuiFormControl-root"
+              >
+                <label
+                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
+                  data-shrink="true"
+                  id="member-filter-label"
+                >
+                  Required Tenure
+                </label>
+                <div
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl  css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                >
+                  <div
+                    aria-controls=":r5:"
+                    aria-expanded="false"
+                    aria-haspopup="listbox"
+                    aria-labelledby="member-filter-label"
+                    class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                    role="combobox"
+                    tabindex="0"
+                  >
+                    All
+                  </div>
+                  <input
+                    aria-hidden="true"
+                    aria-invalid="false"
+                    class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                    tabindex="-1"
+                    value="All"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-hfutr2-MuiSvgIcon-root-MuiSelect-icon"
+                    data-testid="ArrowDropDownIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M7 10l5 5 5-5z"
+                    />
+                  </svg>
+                  <fieldset
+                    aria-hidden="true"
+                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                  >
+                    <legend
+                      class="css-14lo706"
+                    >
+                      <span>
+                        Required Tenure
+                      </span>
+                    </legend>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
           </div>
           <hr
             class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
