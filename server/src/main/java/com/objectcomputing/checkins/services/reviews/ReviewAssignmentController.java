@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutorService;
 @Tag(name = "reviews")
 public class ReviewAssignmentController {
 
-    private ReviewAssignmentServices reviewAssignmentServices;
+    private final ReviewAssignmentServices reviewAssignmentServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
 
@@ -68,6 +68,7 @@ public class ReviewAssignmentController {
      * @return a streamable response containing the found {@link ReviewAssignment} with the given ID
      */
 
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
     @Get("/{id}")
     public Mono<HttpResponse<ReviewAssignment>> getById(@NotNull UUID id) {
 
@@ -77,9 +78,9 @@ public class ReviewAssignmentController {
                 throw new NotFoundException("No review assignment for UUID");
             }
             return result;
-        }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(reviewAssignment -> {
-            return (HttpResponse<ReviewAssignment>) HttpResponse.ok(reviewAssignment);
-        }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        }).publishOn(Schedulers.fromExecutor(eventLoopGroup))
+            .map(reviewAssignment -> (HttpResponse<ReviewAssignment>) HttpResponse.ok(reviewAssignment))
+            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
@@ -88,7 +89,8 @@ public class ReviewAssignmentController {
 
         return Mono.fromCallable(() -> reviewAssignmentServices.findAllByReviewPeriodIdAndReviewerId(reviewPeriodId, reviewerId))
             .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-            .map(assignments -> (HttpResponse<Set<ReviewAssignment>>) HttpResponse.ok(assignments)).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+            .map(assignments -> (HttpResponse<Set<ReviewAssignment>>) HttpResponse.ok(assignments))
+            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
 }
