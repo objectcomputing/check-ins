@@ -143,7 +143,7 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
         style={{
           color: guild.community ? 'var(--oci-orange)' : 'var(--oci-light-blue)'
         }}
-        title={`This is a ${guild.community ? 'Community' : 'Guild'}.`}
+        // title={`This is a ${guild.community ? 'Community' : 'Guild'}.`}
       />
       <CardHeader
         classes={{
