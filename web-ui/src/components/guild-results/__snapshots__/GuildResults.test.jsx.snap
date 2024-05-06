@@ -81,7 +81,7 @@ exports[`renders correctly 1`] = `
         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-1xtmct9-MuiPaper-root-MuiCard-root"
       >
         <svg
-          aria-labelledby="svg-inline--fa-title-pzb7NKWzNsFj"
+          aria-labelledby="svg-inline--fa-title-oS5RSYr4H5kg"
           class="svg-inline--fa fa-hammer fa-2x "
           data-icon="hammer"
           data-prefix="fas"
@@ -90,7 +90,7 @@ exports[`renders correctly 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <title
-            id="svg-inline--fa-title-pzb7NKWzNsFj"
+            id="svg-inline--fa-title-oS5RSYr4H5kg"
           >
             This is a Guild.
           </title>
@@ -185,7 +185,7 @@ exports[`renders correctly 1`] = `
         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-1xtmct9-MuiPaper-root-MuiCard-root"
       >
         <svg
-          aria-labelledby="svg-inline--fa-title-KPj0zwBESM81"
+          aria-labelledby="svg-inline--fa-title-X55DS5m5VJxb"
           class="svg-inline--fa fa-hammer fa-2x "
           data-icon="hammer"
           data-prefix="fas"
@@ -194,7 +194,7 @@ exports[`renders correctly 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <title
-            id="svg-inline--fa-title-KPj0zwBESM81"
+            id="svg-inline--fa-title-X55DS5m5VJxb"
           >
             This is a Guild.
           </title>

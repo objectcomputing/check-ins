@@ -6,7 +6,7 @@ exports[`renders correctly 1`] = `
     class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-1xtmct9-MuiPaper-root-MuiCard-root"
   >
     <svg
-      aria-labelledby="svg-inline--fa-title-Y7IHphQv9qkY"
+      aria-labelledby="svg-inline--fa-title-c5jWWCz8lYq8"
       class="svg-inline--fa fa-hammer fa-2x "
       data-icon="hammer"
       data-prefix="fas"
@@ -15,7 +15,7 @@ exports[`renders correctly 1`] = `
       xmlns="http://www.w3.org/2000/svg"
     >
       <title
-        id="svg-inline--fa-title-Y7IHphQv9qkY"
+        id="svg-inline--fa-title-c5jWWCz8lYq8"
       >
         This is a Guild.
       </title>
@@ -74,7 +74,7 @@ exports[`renders correctly for ADMIN 1`] = `
     class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-1xtmct9-MuiPaper-root-MuiCard-root"
   >
     <svg
-      aria-labelledby="svg-inline--fa-title-x5fZO7fok7Wg"
+      aria-labelledby="svg-inline--fa-title-NDmMutsU7RAk"
       class="svg-inline--fa fa-hammer fa-2x "
       data-icon="hammer"
       data-prefix="fas"
@@ -83,7 +83,7 @@ exports[`renders correctly for ADMIN 1`] = `
       xmlns="http://www.w3.org/2000/svg"
     >
       <title
-        id="svg-inline--fa-title-x5fZO7fok7Wg"
+        id="svg-inline--fa-title-NDmMutsU7RAk"
       >
         This is a Guild.
       </title>
@@ -183,7 +183,7 @@ exports[`renders correctly for guild lead 1`] = `
     class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-1xtmct9-MuiPaper-root-MuiCard-root"
   >
     <svg
-      aria-labelledby="svg-inline--fa-title-pYattfh7bDnS"
+      aria-labelledby="svg-inline--fa-title-tT5ehUboA6RZ"
       class="svg-inline--fa fa-hammer fa-2x "
       data-icon="hammer"
       data-prefix="fas"
@@ -192,7 +192,7 @@ exports[`renders correctly for guild lead 1`] = `
       xmlns="http://www.w3.org/2000/svg"
     >
       <title
-        id="svg-inline--fa-title-pYattfh7bDnS"
+        id="svg-inline--fa-title-tT5ehUboA6RZ"
       >
         This is a Guild.
       </title>
