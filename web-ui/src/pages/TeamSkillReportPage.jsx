@@ -162,7 +162,7 @@ const TeamSkillReportPage = () => {
     <div className="team-skill-report-page">
       <MemberSelector
         className="team-skill-member-selector"
-        listHeight={300}
+        listHeight="300px"
         onChange={setSelectedMembers}
         selected={selectedMembers}
       />

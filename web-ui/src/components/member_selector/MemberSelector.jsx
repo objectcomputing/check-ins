@@ -59,7 +59,7 @@ const propTypes = {
   /** If true, include a button to export the list of members to a CSV file. False by default. */
   exportable: PropTypes.bool,
   /** Adjusts the height of the scrollable list of selected members (in pixels) */
-  listHeight: PropTypes.number,
+  listHeight: PropTypes.string,
   /** If true, members cannot be added to or removed from the current selection. False by default. */
   disabled: PropTypes.bool,
   /** A custom class name to additionally apply to the top-level card */
@@ -75,7 +75,7 @@ const MemberSelector = ({
   title = 'Selected Members',
   outlined = false,
   exportable = false,
-  listHeight = 400,
+  listHeight = '80vh',
   disabled = false,
   className,
   style

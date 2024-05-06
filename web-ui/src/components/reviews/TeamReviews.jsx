@@ -532,7 +532,7 @@ const TeamReviews = ({ periodId }) => {
       </div>
       <MemberSelector
         className="team-skill-member-selector"
-        // listHeight={300}
+        listHeight="300px"
         onChange={setTeamMembers}
         selected={teamMembers}
       />
