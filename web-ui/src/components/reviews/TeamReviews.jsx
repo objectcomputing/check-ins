@@ -36,6 +36,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+import { resolve } from '../../api/api.js';
 import { getAvatarURL } from '../../api/api.js';
 import {
   createFeedbackRequest,
@@ -141,11 +142,35 @@ const TeamReviews = ({ periodId }) => {
     [setNewRequestOpen]
   );
 
-  const updateTeamMembers = useCallback(
-    // Send PUT request to update on server.
-    teamMembers => setTeamMembers(teamMembers),
-    [setTeamMembers]
-  );
+  const reviewAssignmentsURL = '/services/review-assignments';
+
+  const updateTeamMembers = async teamMembers => {
+    // TODO: Waiting for Zach to finish this endpoint.
+    // TODO: Does each object in the teamMembers array contain these properties?
+    /*
+    const data = {
+      id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+      revieweeId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+      reviewerId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+      reviewPeriodId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+      approved: true
+    };
+    */
+
+    const res = await resolve({
+      method: 'PUT',
+      url: reviewAssignmentsUrl,
+      data,
+      headers: {
+        'X-CSRF-Header': cookie,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+
+    console.log('TeamReviews.jsx updateTeamMembers: res =', res);
+    setTeamMembers(teamMembers);
+  };
 
   useEffect(() => {
     if (currentMembers && currentMembers.length > 0) {
