@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import { format, formatISO } from "date-fns";
 
 import {
   Archive,
@@ -322,7 +321,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       periodToAdd.name &&
         periodToAdd.reviewStatus &&
         periodToAdd.reviewTemplateId &&
-        periodToAdd.selfReviewTemplateId 
+        periodToAdd.selfReviewTemplateId
     );
     setCanSave(valid);
   }, [periodToAdd]);
@@ -362,9 +361,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             csrf
           );
           const data =
-            res?.payload?.data &&
-            res?.payload?.status === 200 &&
-            !res?.error
+            res?.payload?.data && res?.payload?.status === 200 && !res?.error
               ? res.payload.data
               : null;
           if (data) {
