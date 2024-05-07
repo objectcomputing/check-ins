@@ -99,7 +99,7 @@ const Root = styled('div')(({ theme }) => ({
     ['@media (max-width:800px)']: {
       // eslint-disable-line no-useless-computed-key
       margin: '0',
-      'justify-content': 'center'
+      justifyContent: 'center'
     }
   }
 }));
@@ -139,6 +139,12 @@ const TeamReviews = ({ periodId }) => {
   const handleCloseNewRequest = useCallback(
     () => setNewRequestOpen(false),
     [setNewRequestOpen]
+  );
+
+  const updateTeamMembers = useCallback(
+    // Send PUT request to update on server.
+    teamMembers => setTeamMembers(teamMembers),
+    [setTeamMembers]
   );
 
   useEffect(() => {
@@ -532,8 +538,8 @@ const TeamReviews = ({ periodId }) => {
       </div>
       <MemberSelector
         className="team-skill-member-selector"
-        listHeight="300px"
-        onChange={setTeamMembers}
+        listHeight="500px"
+        onChange={updateTeamMembers}
         selected={teamMembers}
       />
       {!selectedMember && loadedReviews.current && (
