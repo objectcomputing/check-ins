@@ -9,8 +9,86 @@ exports[`renders correctly 1`] = `
       class="MuiStepper-root MuiStepper-horizontal MuiStepper-alternativeLabel css-10mg1vw-MuiStepper-root"
     >
       <div
+        class="MuiStep-root MuiStep-horizontal MuiStep-alternativeLabel Mui-completed css-n7tliy-MuiStep-root"
+      >
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal MuiStepLabel-alternativeLabel css-ascpo7-MuiStepLabel-root"
+        >
+          <span
+            class="MuiStepLabel-iconContainer Mui-completed MuiStepLabel-alternativeLabel css-vnkopk-MuiStepLabel-iconContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root Mui-completed css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              data-testid="CheckCircleIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm-2 17l-5-5 1.4-1.4 3.6 3.6 7.6-7.6L19 8l-9 9z"
+              />
+            </svg>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer MuiStepLabel-alternativeLabel css-1vyamtt-MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiStepLabel-label Mui-completed MuiStepLabel-alternativeLabel css-1hv8oq8-MuiStepLabel-label"
+            >
+              Planning
+            </span>
+          </span>
+        </span>
+      </div>
+      <div
+        class="MuiStep-root MuiStep-horizontal MuiStep-alternativeLabel Mui-completed css-n7tliy-MuiStep-root"
+      >
+        <div
+          class="MuiStepConnector-root MuiStepConnector-horizontal MuiStepConnector-alternativeLabel Mui-completed css-zpcwqm-MuiStepConnector-root"
+        >
+          <span
+            class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-z7uhs0-MuiStepConnector-line"
+          />
+        </div>
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal MuiStepLabel-alternativeLabel css-ascpo7-MuiStepLabel-root"
+        >
+          <span
+            class="MuiStepLabel-iconContainer Mui-completed MuiStepLabel-alternativeLabel css-vnkopk-MuiStepLabel-iconContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root Mui-completed css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              data-testid="CheckCircleIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm-2 17l-5-5 1.4-1.4 3.6 3.6 7.6-7.6L19 8l-9 9z"
+              />
+            </svg>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer MuiStepLabel-alternativeLabel css-1vyamtt-MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiStepLabel-label Mui-completed MuiStepLabel-alternativeLabel css-1hv8oq8-MuiStepLabel-label"
+            >
+              Awaiting Approval
+            </span>
+          </span>
+        </span>
+      </div>
+      <div
         class="MuiStep-root MuiStep-horizontal MuiStep-alternativeLabel css-n7tliy-MuiStep-root"
       >
+        <div
+          class="MuiStepConnector-root MuiStepConnector-horizontal MuiStepConnector-alternativeLabel Mui-active css-zpcwqm-MuiStepConnector-root"
+        >
+          <span
+            class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-z7uhs0-MuiStepConnector-line"
+          />
+        </div>
         <span
           class="MuiStepLabel-root MuiStepLabel-horizontal MuiStepLabel-alternativeLabel css-ascpo7-MuiStepLabel-root"
         >
@@ -35,7 +113,7 @@ exports[`renders correctly 1`] = `
                 x="12"
                 y="12"
               >
-                1
+                3
               </text>
             </svg>
           </span>
@@ -45,7 +123,7 @@ exports[`renders correctly 1`] = `
             <span
               class="MuiStepLabel-label Mui-active MuiStepLabel-alternativeLabel css-1hv8oq8-MuiStepLabel-label"
             >
-              Review Period Is Open
+              Open
             </span>
           </span>
         </span>
@@ -84,7 +162,7 @@ exports[`renders correctly 1`] = `
                 x="12"
                 y="12"
               >
-                2
+                4
               </text>
             </svg>
           </span>
@@ -94,7 +172,7 @@ exports[`renders correctly 1`] = `
             <span
               class="MuiStepLabel-label Mui-disabled MuiStepLabel-alternativeLabel css-1hv8oq8-MuiStepLabel-label"
             >
-              Review Period Is Closed
+              Closed
             </span>
           </span>
         </span>
