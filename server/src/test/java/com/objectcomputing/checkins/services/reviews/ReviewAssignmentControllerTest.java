@@ -180,4 +180,68 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     }
 
 
+
+    @Test
+    public void testPUTUpdateReviewAssignmentWithoutPermissions() {
+        ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
+
+        final HttpRequest<ReviewAssignment> request = HttpRequest.PUT("/", reviewAssignment)
+            .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
+    @Test
+    public void testPUTUpdateNonexistentReviewAssignment() {
+        ReviewAssignment reviewAssignment = new ReviewAssignment();
+        reviewAssignment.setId(UUID.randomUUID());
+        reviewAssignment.setRevieweeId(UUID.randomUUID());
+        reviewAssignment.setReviewerId(UUID.randomUUID());
+
+        final HttpRequest<ReviewAssignment> request = HttpRequest.
+            PUT("/", reviewAssignment).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    public void testPUTUpdateNullReviewAssignment() {
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void deleteReviewAssignment() {
+        ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
+
+        final HttpRequest<Object> request = HttpRequest.
+            DELETE(String.format("/%s", reviewAssignment.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<ReviewAssignment> response = client.toBlocking().exchange(request, ReviewAssignment.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void deleteReviewAssignmentWithoutPermissions() {
+        ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
+
+        final HttpRequest<Object> request = HttpRequest.
+            DELETE(String.format("/%s", reviewAssignment.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
 }
