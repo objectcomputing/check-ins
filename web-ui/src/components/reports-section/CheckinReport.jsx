@@ -236,8 +236,6 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
           <Accordion className="member-sub-card" key={member.id + id}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="accordion-summary"
               className="checkin-report-accordion-summary"
             >
               <div className="member-sub-card-summmary-content">
@@ -321,7 +319,7 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
             </div>
           }
           disableTypography
-          avatar={<Avatar id="pdl-large" src={getAvatarURL(workEmail)} />}
+          avatar={<Avatar src={getAvatarURL(workEmail)} />}
           action={
             <div className="checkin-report-card-actions">
               <Chip label={statusForPeriodByPDL({ members })} />
@@ -338,15 +336,17 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
         <Collapse in={expanded}>
           <CardContent>
             <Container fixed>
-              <HorizontalLinearStepper
-                step={
-                  statusForPeriodByPDL({ members }) === 'Done'
-                    ? 2
-                    : statusForPeriodByPDL({ members }) === 'In Progress'
-                      ? 1
-                      : 0
-                }
-              />
+              <div className="checkin-report-stepper">
+                <HorizontalLinearStepper
+                  step={
+                    statusForPeriodByPDL({ members }) === 'Done'
+                      ? 2
+                      : statusForPeriodByPDL({ members }) === 'In Progress'
+                        ? 1
+                        : 0
+                  }
+                />
+              </div>
               <TeamMemberMap />
             </Container>
           </CardContent>
