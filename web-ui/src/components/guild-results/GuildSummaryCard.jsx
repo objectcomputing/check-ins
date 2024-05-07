@@ -1,14 +1,13 @@
 import React, { useContext, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
+import { Construction, Groups } from '@mui/icons-material';
+import { Link as StyledLink } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 import { AppContext } from '../../context/AppContext';
 import { UPDATE_GUILDS, UPDATE_TOAST } from '../../context/actions';
 import EditGuildModal from './EditGuildModal';
-import { Link } from 'react-router-dom';
-import { Link as StyledLink } from '@mui/material';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHammer, faPeopleGroup } from '@fortawesome/free-solid-svg-icons';
 
 import {
   Button,
@@ -135,15 +134,22 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
     }
   };
 
+  const iconStyles = { height: '2.5rem', width: '2.5rem' };
+
   return (
     <StyledCard className={classes.card}>
-      <FontAwesomeIcon
-        icon={guild.community ? faPeopleGroup : faHammer}
-        size="2x"
-        style={{
-          color: guild.community ? 'var(--oci-orange)' : 'var(--oci-light-blue)'
-        }}
-      />
+      <Tooltip
+        title={`This is a ${guild.community ? 'Community' : 'Guild'}.`}
+        aria-label="icon meaning"
+      >
+        {guild.community ? (
+          <Groups sx={{ color: 'var(--oci-orange)', ...iconStyles }} />
+        ) : (
+          <Construction
+            sx={{ color: 'var(--oci-light-blue)', ...iconStyles }}
+          />
+        )}
+      </Tooltip>
       <CardHeader
         classes={{
           content: classes.header,
