@@ -10,9 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
@@ -45,6 +43,29 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         }
 
         return newAssignment;
+    }
+
+    @Override
+    public List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, Boolean deleteExisting) {
+
+        if(Boolean.TRUE.equals(deleteExisting)) {
+            LOG.warn(String.format("Deleting all review assignments for review period %s", reviewPeriodId));
+            reviewAssignmentRepository.deleteByReviewPeriodId(reviewPeriodId);
+        }
+
+        List<ReviewAssignment> newAssignments = new ArrayList<>();
+        if (reviewAssignments != null) {
+            for (ReviewAssignment reviewAssignment : reviewAssignments) {
+                if (reviewAssignment.getId() != null) {
+                    throw new BadArgException(String.format("Found unexpected id %s for review assignment. New entities must not contain an id.",
+                        reviewAssignment.getId()));
+                }
+                reviewAssignment.setReviewPeriodId(reviewPeriodId);
+            }
+
+            reviewAssignmentRepository.saveAll(reviewAssignments).forEach(newAssignments::add);
+        }
+        return newAssignments;
     }
 
     @Override

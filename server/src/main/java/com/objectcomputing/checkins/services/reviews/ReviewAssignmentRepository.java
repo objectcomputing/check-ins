@@ -13,4 +13,6 @@ public interface ReviewAssignmentRepository extends CrudRepository<ReviewAssignm
     Set<ReviewAssignment> findByReviewPeriodId(UUID reviewPeriodId);
 
     Set<ReviewAssignment> findByReviewPeriodIdAndReviewerId(UUID reviewPeriodId, UUID reviewerId);
+
+    void deleteByReviewPeriodId(UUID reviewPeriodId);
 }

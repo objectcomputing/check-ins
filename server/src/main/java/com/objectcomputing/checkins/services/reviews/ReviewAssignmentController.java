@@ -19,10 +19,13 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.awt.*;
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Controller("/services/review-assignments")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -56,6 +59,26 @@ public class ReviewAssignmentController {
             .map(reviewAssignment -> (HttpResponse<ReviewAssignment>) HttpResponse.created(reviewAssignment)
                 .headers(headers -> headers.location(
                     URI.create(String.format("%s/%s", request.getPath(), reviewAssignment.getId())))))
+            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+
+    }
+
+    /**
+     * Create and save multiple new {@link ReviewAssignment}s and associate them with a given {@link ReviewPeriod}.
+     *
+     * @param reviewPeriodId a {@link UUID} representing the review period to associate the review assignments with
+     * @param assignments a List of {@link ReviewAssignmentDTO} representing the desired review assignments
+     * @return a streamable response containing the list of stored {@link ReviewAssignment}
+     */
+    @Post("/{reviewPeriodId}")
+    @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
+    public Mono<HttpResponse<List<ReviewAssignment>>> createReviewAssignment(@NotNull UUID reviewPeriodId, @Body @Valid List<ReviewAssignmentDTO> assignments) {
+
+        return Mono.fromCallable(() -> reviewAssignmentServices.saveAll(reviewPeriodId,
+                assignments.stream().map(ReviewAssignmentDTO::convertToEntity).collect(Collectors.toList()),
+                Boolean.TRUE))
+            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+            .map(reviewAssignments -> (HttpResponse<List<ReviewAssignment>>) HttpResponse.created(reviewAssignments))
             .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
 
     }
