@@ -9,6 +9,9 @@ public interface ReviewAssignmentServices {
     ReviewAssignment save(ReviewAssignment reviewAssignment);
     ReviewAssignment findById(UUID id);
 
+    ReviewAssignment update(ReviewAssignment reviewAssignment);
+
+    void delete(UUID id);
     Set<ReviewAssignment> findAllByReviewPeriodIdAndReviewerId(UUID reviewPeriodId, @Nullable UUID reviewerId);
 
 }
