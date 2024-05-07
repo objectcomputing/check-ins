@@ -10,66 +10,90 @@ import { AppContextProvider } from './context/AppContext';
 import SnackBarWithContext from './components/snackbar/SnackBarWithContext';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { DarkMode, LightMode } from '@mui/icons-material';
+
+import {
+  useColorScheme,
+  experimental_extendTheme as extendTheme,
+  Experimental_CssVarsProvider as CssVarsProvider
+} from '@mui/material/styles';
 
 import './App.css';
 
-const customHistory = createBrowserHistory();
+function getUserColorScheme() {
+  if (window?.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  } else if (window?.matchMedia('(prefers-color-scheme: light)').matches) {
+    return 'light';
+  } else {
+    return 'light';
+  }
+}
+function SchemeToggle() {
+  const { mode, setMode } = useColorScheme();
+  return (
+    <div
+      className="Menu-modeToggle"
+      onClick={() => {
+        setMode(mode === 'light' ? 'dark' : 'light');
+      }}
+      title={`Select ${mode === 'light' ? 'dark' : 'light'} mode`}
+    >
+      {mode === 'light' ? <DarkMode /> : <LightMode />}
+    </div>
+  );
+}
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      light: '#6085d9',
-      main: '#2559a7',
-      dark: '#003177',
-      contrastText: '#fff'
+const theme = extendTheme({
+  cssVarPrefix: 'checkins',
+  colorSchemes: {
+    light: {
+      palette: {
+        secondary: {
+          main: '#76c8d4'
+        }
+      }
     },
-    secondary: {
-      light: '#ffe8a2',
-      main: '#feb672',
-      dark: '#c88645',
-      contrastText: '#000'
-    },
-    background: {
-      default: '#F5F5F6',
-      paper: '#fff'
+    dark: {
+      palette: {
+        secondary: {
+          main: '#76c8d4'
+        }
+      }
     }
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        secondary: {
+          main: '#f8b576'
+        },
         body: {
           fontSize: '0.875rem',
           lineHeight: 1.43,
           letterSpacing: '0.01071rem'
         }
       }
-    },
-    MuiTextField: {
-      defaultProps: {
-        variant: 'standard'
-      }
     }
   }
 });
 
+const customHistory = createBrowserHistory();
+
+getUserColorScheme();
+
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <CssVarsProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Router history={customHistory}>
           <AppContextProvider>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <div>
-                <Menu />
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                  }}
-                  className="App"
-                >
+                <Menu>
+                  <SchemeToggle />
+                </Menu>
+                <div className="App">
                   <Routes />
                 </div>
               </div>
@@ -78,7 +102,7 @@ function App() {
           </AppContextProvider>
         </Router>
       </LocalizationProvider>
-    </ThemeProvider>
+    </CssVarsProvider>
   );
 }
 

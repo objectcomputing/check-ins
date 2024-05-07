@@ -213,7 +213,7 @@ exports[`renders correctly for guild lead 1`] = `
       </strong>
       <a
         href="/profile/3fa4-5717-4562-b3fc-2c963f66afa9"
-        style="text-decoration: none; color: rgba(0, 0, 0, 0.87);"
+        style="text-decoration: none;"
       >
         testname
       </a>
