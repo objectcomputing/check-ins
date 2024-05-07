@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Test;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -42,7 +42,6 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     void createRolesAndPermissions() {
         createAndAssignRoles();
     }
-
 
     @Test
     public void testPOSTCreateAReviewAssignment() {
@@ -72,12 +71,113 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
         ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
 
         final HttpRequest<Object> request = HttpRequest.
-            GET(String.format("/%s", reviewAssignment.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+            GET(String.format("/%s", reviewAssignment.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
         final HttpResponse<ReviewAssignment> response = client.toBlocking().exchange(request, ReviewAssignment.class);
 
         assertEquals(reviewAssignment, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
+
+    @Test
+    public void testGETFindAssignmentsByPeriodIdDefaultAssignments() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile anotherSupervisor = createAnotherSupervisor();
+
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+
+        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
+        assignPdlRole(pdlMemberProfileTwo);
+
+        MemberProfile memberOne = createAProfileWithSupervisorAndPDL(supervisor, pdlMemberProfile);
+        MemberProfile memberTwo = createAnotherProfileWithSupervisorAndPDL(supervisor, pdlMemberProfileTwo);
+        MemberProfile memberThree = createYetAnotherProfileWithSupervisorAndPDL(anotherSupervisor, pdlMemberProfileTwo);
+
+        final HttpRequest<Object> request = HttpRequest.
+            GET(String.format("/period/%s", reviewPeriod.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<Set<ReviewAssignment>> response = client.toBlocking().exchange(request, Argument.setOf(ReviewAssignment.class));
+
+        assertNotNull(response.body());
+        assertEquals(8, Objects.requireNonNull(response.body()).size());
+        assertTrue(response.body().stream().anyMatch(ra -> ra.getRevieweeId().equals(memberOne.getId())));
+        assertTrue(response.body().stream().anyMatch(ra -> ra.getRevieweeId().equals(memberTwo.getId())));
+        assertTrue(response.body().stream().anyMatch(ra -> ra.getRevieweeId().equals(memberThree.getId())));
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    public void testGETFindAssignmentsByPeriodIdWithoutPermissions() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile anotherSupervisor = createAnotherSupervisor();
+
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+
+        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
+        assignPdlRole(pdlMemberProfileTwo);
+
+        MemberProfile memberOne = createAProfileWithSupervisorAndPDL(supervisor, pdlMemberProfile);
+        MemberProfile memberTwo = createAnotherProfileWithSupervisorAndPDL(supervisor, pdlMemberProfileTwo);
+        MemberProfile memberThree = createYetAnotherProfileWithSupervisorAndPDL(anotherSupervisor, pdlMemberProfileTwo);
+
+        final HttpRequest<Object> request = HttpRequest.
+            GET(String.format("/period/%s", reviewPeriod.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
+
+    @Test
+    public void testGETFindAssignmentsByPeriodIdNoReviewer() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
+
+        ReviewAssignment reviewAssignment = createAReviewAssignmentBetweenMembers(member, supervisor, reviewPeriod, false);
+
+        final HttpRequest<Object> request = HttpRequest.
+            GET(String.format("/period/%s", reviewPeriod.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<Set<ReviewAssignment>> response = client.toBlocking().exchange(request, Argument.setOf(ReviewAssignment.class));
+
+        assertNotNull(response.body());
+        assertEquals(1, Objects.requireNonNull(response.body()).size());
+        assertTrue(response.body().stream().anyMatch(ra -> ra.getRevieweeId().equals(member.getId())));
+        assertTrue(response.body().stream().anyMatch(ra -> ra.getId().equals(reviewAssignment.getId())));
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+
+    @Test
+    public void testGETFindAssignmentsByPeriodIdWithReviewer() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
+
+        ReviewAssignment reviewAssignment = createAReviewAssignmentBetweenMembers(member, supervisor, reviewPeriod, false);
+
+        //Non-matching review assignments for control group
+        createADefaultReviewAssignment();
+        createADefaultReviewAssignment();
+
+        final HttpRequest<Object> request = HttpRequest.
+            GET(String.format("/period/%s?%s", reviewPeriod.getId(), supervisor.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<Set<ReviewAssignment>> response = client.toBlocking().exchange(request, Argument.setOf(ReviewAssignment.class));
+
+        assertNotNull(response.body());
+        assertEquals(1, Objects.requireNonNull(response.body()).size());
+        assertTrue(response.body().stream().anyMatch(ra -> ra.getRevieweeId().equals(member.getId())));
+        assertTrue(response.body().stream().anyMatch(ra -> ra.getId().equals(reviewAssignment.getId())));
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
 
 }

@@ -1,10 +1,16 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import ArchiveIcon from '@mui/icons-material/Archive';
-import DeleteIcon from '@mui/icons-material/Delete';
-import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import WorkIcon from '@mui/icons-material/Work';
+import {
+  Archive,
+  BorderColor,
+  Delete,
+  DoorFront,
+  HourglassTop,
+  MeetingRoom,
+  QuestionMark,
+  Unarchive
+} from '@mui/icons-material';
 
 import {
   Avatar,
@@ -55,6 +61,8 @@ import {
   selectReviewPeriods,
   selectUserProfile
 } from '../../../context/selectors';
+
+import { titleCase } from '../../../helpers/strings.js';
 
 const propTypes = {
   message: PropTypes.string,
@@ -116,6 +124,14 @@ const ReviewStatus = {
   OPEN: 'OPEN',
   CLOSED: 'CLOSED',
   UNKNOWN: 'UNKNOWN'
+};
+
+const reviewStatusIconMap = {
+  [ReviewStatus.PLANNING]: <BorderColor />,
+  [ReviewStatus.AWAITING_APPROVAL]: <HourglassTop />,
+  [ReviewStatus.OPEN]: <MeetingRoom />,
+  [ReviewStatus.CLOSED]: <DoorFront />,
+  [ReviewStatus.UNKNOWN]: <QuestionMark />
 };
 
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
@@ -433,9 +449,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                             }
                           >
                             {reviewStatus === ReviewStatus.OPEN ? (
-                              <ArchiveIcon />
+                              <Archive />
                             ) : (
-                              <UnarchiveIcon />
+                              <Unarchive />
                             )}
                           </IconButton>
                         </Tooltip>
@@ -445,7 +461,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                             edge="end"
                             aria-label="Delete"
                           >
-                            <DeleteIcon />
+                            <Delete />
                           </IconButton>
                         </Tooltip>
                       </>
@@ -457,17 +473,12 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     key={`period-lia-${id}`}
                     onClick={() => onPeriodClick(id)}
                   >
-                    <Avatar>
-                      <WorkIcon />
-                    </Avatar>
+                    <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     key={`period-lit-${id}`}
                     onClick={() => onPeriodClick(id)}
-                    primary={
-                      name +
-                      (reviewStatus === ReviewStatus.OPEN ? ' - Open' : '')
-                    }
+                    primary={`${name} - ${titleCase(reviewStatus)}`}
                     secondary={getSecondaryLabel(id)}
                   />
                 </ListItem>

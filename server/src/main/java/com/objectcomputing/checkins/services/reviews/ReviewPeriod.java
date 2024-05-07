@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.reviews;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -57,14 +60,20 @@ public class ReviewPeriod {
 
     @Nullable
     @Column(name = "launch_date")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime launchDate;
 
     @Nullable
     @Column(name = "self_review_close_date")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime selfReviewCloseDate;
 
     @Nullable
     @Column(name = "close_date")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime closeDate;
 
     public ReviewPeriod(String name, ReviewStatus reviewStatus, @Nullable UUID reviewTemplateId,
