@@ -39,7 +39,7 @@ exports[`renders correctly 1`] = `
           >
             <a
               href="/profile/67dc3a3b-5bfa-4759-997a-fb6bac98dcf3"
-              style="color: black; text-decoration: none;"
+              style="text-decoration: none;"
             >
               <div
                 class="MuiCardHeader-root MemberSummaryCard-header css-185gdzj-MuiCardHeader-root"
@@ -88,7 +88,7 @@ exports[`renders correctly 1`] = `
           >
             <a
               href="/profile/b2d35288-7f1e-4549-aa2b-68396b162490"
-              style="color: black; text-decoration: none;"
+              style="text-decoration: none;"
             >
               <div
                 class="MuiCardHeader-root MemberSummaryCard-header css-185gdzj-MuiCardHeader-root"
@@ -137,7 +137,7 @@ exports[`renders correctly 1`] = `
           >
             <a
               href="/profile/43ee8e79-b33d-44cd-b23c-e183894ebfef"
-              style="color: black; text-decoration: none;"
+              style="text-decoration: none;"
             >
               <div
                 class="MuiCardHeader-root MemberSummaryCard-header css-185gdzj-MuiCardHeader-root"
