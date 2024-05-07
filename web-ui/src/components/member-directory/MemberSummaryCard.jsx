@@ -50,7 +50,10 @@ const MemberSummaryCard = ({ member }) => {
     <StyledBox display="flex" flexWrap="wrap">
       <Card className={'member-card'}>
         <Link
-          style={{ color: 'var(--checkins-palette-content-color)', textDecoration: 'none' }}
+          style={{
+            color: 'var(--checkins-palette-content-color)',
+            textDecoration: 'none'
+          }}
           to={`/profile/${member.id}`}
         >
           <CardHeader

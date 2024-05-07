@@ -19,16 +19,9 @@ import {
 import './App.css';
 
 function getUserColorScheme() {
-  console.log('getting your scheme');
-  if (
-    window.matchMedia &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  ) {
+  if (window?.matchMedia('(prefers-color-scheme: dark)').matches) {
     return 'dark';
-  } else if (
-    window.matchMedia &&
-    window.matchMedia('(prefers-color-scheme: light)').matches
-  ) {
+  } else if (window?.matchMedia('(prefers-color-scheme: light)').matches) {
     return 'light';
   } else {
     return 'light';
