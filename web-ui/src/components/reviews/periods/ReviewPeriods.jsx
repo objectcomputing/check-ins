@@ -245,9 +245,19 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           ? ReviewStatus.OPEN
           : ReviewStatus.CLOSED;
       const res = await updateReviewPeriod(toUpdate, csrf);
-      const data =
-        res && res.payload && res.payload.data ? res.payload.data : null;
-      data && dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
+      const data = res?.payload?.data ? res.payload.data : null;
+      if (data) {
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
+      } else {
+        console.log(res?.error);
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Error selecting review period'
+          }
+        });
+      }
     },
     [csrf, state, periods, dispatch]
   );
@@ -324,9 +334,20 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const loadFeedbackTemplates = useCallback(async () => {
     const res = await getAllFeedbackTemplates(csrf);
-    const templates = res.payload.data;
-    templates?.sort((t1, t2) => t1.title.localeCompare(t2.title));
-    setTemplates(templates);
+    const templates = res?.payload?.data;
+    if (templates) {
+      templates?.sort((t1, t2) => t1.title.localeCompare(t2.title));
+      setTemplates(templates);
+    } else {
+      console.log(res?.error);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'Error fetching feedback templates'
+        }
+      });
+    }
   }, [csrf, dispatch]);
 
   useEffect(() => {
@@ -346,16 +367,21 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       setLoading(true);
       const res = await getReviewPeriods(csrf);
       const data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
+        res?.payload?.data && res.payload.status === 200 && !res.error
           ? res.payload.data
           : null;
       if (data) {
         dispatch({ type: UPDATE_REVIEW_PERIODS, payload: data });
         setLoading(false);
+      } else {
+        console.log(res?.error);
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Error fetching review periods'
+          }
+        });
       }
     };
     if (csrf) {
@@ -379,6 +405,15 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
               : null;
           if (data) {
             reviews[period.id] = data[0];
+          } else {
+            console.log(res?.error);
+            window.snackDispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: 'error',
+                toast: 'Error finding review request'
+              }
+            });
           }
         })
       ).then(() => setSelfReviews(reviews));
