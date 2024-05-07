@@ -54,7 +54,8 @@
     "serve": "vite preview",
     "start": "vite",
     "storybook": "storybook dev -p 6006",
-    "test": "vitest"
+    "test": "vitest",
+    "update-test": "vitest -u"
   },
   "eslintConfig": {
     "extends": "react-app"
