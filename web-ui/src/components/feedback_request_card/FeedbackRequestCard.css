@@ -1,5 +1,5 @@
 .person-name {
-  color: black;
+  color: var(--checkins-palette-content-color);
 }
 
 .response-link {

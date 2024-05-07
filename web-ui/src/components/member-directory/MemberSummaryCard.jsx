@@ -50,7 +50,7 @@ const MemberSummaryCard = ({ member }) => {
     <StyledBox display="flex" flexWrap="wrap">
       <Card className={'member-card'}>
         <Link
-          style={{ color: 'black', textDecoration: 'none' }}
+          style={{ color: 'var(--checkins-palette-content-color)', textDecoration: 'none' }}
           to={`/profile/${member.id}`}
         >
           <CardHeader
@@ -118,7 +118,7 @@ const MemberSummaryCard = ({ member }) => {
                   to={`/profile/${pdlId}`}
                   style={{
                     textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.6)'
+                    color: 'inherit'
                   }}
                 >
                   {pdlProfile?.name}
