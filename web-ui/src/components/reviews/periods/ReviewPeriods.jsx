@@ -204,7 +204,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         if (data) {
           dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
         } else {
-          console.log(res?.error);
+          console.error(res?.error);
           window.snackDispatch({
             type: UPDATE_TOAST,
             payload: {
@@ -249,7 +249,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       if (data) {
         dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
       } else {
-        console.log(res?.error);
+        console.error(res?.error);
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
@@ -318,7 +318,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       if (data) {
         dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
       } else {
-        console.log(res?.error);
+        console.error(res?.error);
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
@@ -339,7 +339,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       templates?.sort((t1, t2) => t1.title.localeCompare(t2.title));
       setTemplates(templates);
     } else {
-      console.log(res?.error);
+      console.error(res?.error);
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -374,7 +374,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         dispatch({ type: UPDATE_REVIEW_PERIODS, payload: data });
         setLoading(false);
       } else {
-        console.log(res?.error);
+        console.error(res?.error);
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
@@ -406,7 +406,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           if (data) {
             reviews[period.id] = data[0];
           } else {
-            console.log(res?.error);
+            console.error(res?.error);
             window.snackDispatch({
               type: UPDATE_TOAST,
               payload: {
