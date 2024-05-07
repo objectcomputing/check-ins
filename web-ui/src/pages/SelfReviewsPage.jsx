@@ -39,7 +39,7 @@ const Root = styled('div')(({ theme }) => ({
     ['@media (max-width:800px)']: {
       // eslint-disable-line no-useless-computed-key
       margin: '0',
-      'justify-content': 'center'
+      justifyContent: 'center'
     }
   },
   [`& .${classes.requestHeader}`]: {
