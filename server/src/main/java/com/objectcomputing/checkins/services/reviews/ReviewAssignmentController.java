@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.reviews;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.agenda_item.AgendaItem;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
@@ -91,6 +90,38 @@ public class ReviewAssignmentController {
             .publishOn(Schedulers.fromExecutor(eventLoopGroup))
             .map(assignments -> (HttpResponse<Set<ReviewAssignment>>) HttpResponse.ok(assignments))
             .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    }
+
+    /**
+     * Update an existing {@link ReviewAssignment}.
+     *
+     * @param reviewAssignment  the updated {@link ReviewAssignment}
+     * @return a streamable response containing the stored {@link ReviewAssignment}
+     */
+    @RequiredPermission(Permission.CAN_UPDATE_REVIEW_ASSIGNMENTS)
+    @Put
+    public Mono<HttpResponse<ReviewAssignment>> update(@Body @Valid ReviewAssignment reviewAssignment, HttpRequest<ReviewAssignment> request) {
+
+        return Mono.fromCallable(() -> reviewAssignmentServices.update(reviewAssignment))
+            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+            .map(updatedReviewAssignment -> (HttpResponse<ReviewAssignment>) HttpResponse
+                .ok()
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewAssignment.getId()))))
+                .body(updatedReviewAssignment))
+            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    }
+
+    /**
+     * Delete a {@link ReviewAssignment}.
+     *
+     * @param id  the id of the review assignment to be deleted to delete
+     */
+    @RequiredPermission(Permission.CAN_DELETE_REVIEW_ASSIGNMENTS)
+    @Delete("/{id}")
+    public HttpResponse<?> deleteReviewAssignment(@NotNull UUID id) {
+        reviewAssignmentServices.delete(id);
+        return HttpResponse
+            .ok();
     }
 
 }
