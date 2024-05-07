@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import dayjs from 'dayjs';
 
 import {
   Archive,
@@ -39,6 +38,7 @@ import {
 } from '@mui/material';
 
 import { useQueryParameters } from '../../../helpers/query-parameters';
+import { UPDATE_TOAST } from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
 import './DatePickerField.css';
@@ -201,12 +201,17 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         handleOpen();
         const res = await createReviewPeriod(periodToAdd, csrf);
         const data = res?.payload?.data ?? null;
-        console.log('Data');
-        console.log(data);
         if (data) {
           dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
         } else {
           console.log(res?.error);
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'error',
+              toast: 'Error adding review period'
+            }
+          });
         }
       }
       handleClose();
@@ -304,7 +309,15 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
       } else {
         console.log(res?.error);
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Error updating review period'
+          }
+        });
       }
+      setPeriodToAdd(period);
     },
     [csrf, state, periods, dispatch]
   );
@@ -416,33 +429,26 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const handleLaunchDateChange = (val, period) => {
     const isoDate = val?.$d.toISOString() ?? null;
-    const newPeriod = {
+    updateReviewPeriodDates({
       ...period,
       launchDate: isoDate
-    };
-
-    setPeriodToAdd(newPeriod);
-    updateReviewPeriodDates(newPeriod);
+    });
   };
 
   const handleSelfReviewDateChange = (val, period) => {
     const isoDate = val?.$d.toISOString() ?? null;
-    const newPeriod = {
+    updateReviewPeriodDates({
       ...period,
       selfReviewCloseDate: isoDate
-    };
-    setPeriodToAdd(newPeriod);
-    updateReviewPeriodDates(newPeriod);
+    });
   };
 
   const handleCloseDateChange = (val, period) => {
     const isoDate = val?.$d.toISOString() ?? null;
-    const newPeriod = {
+    updateReviewPeriodDates({
       ...period,
       closeDate: isoDate
-    };
-    setPeriodToAdd(newPeriod);
-    updateReviewPeriodDates(newPeriod);
+    });
   };
 
   return (
@@ -501,7 +507,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                 },
                 i
               ) => (
-                <div key={i}>
+                <div key={i} className="reviewPeriodSection">
                   <ListItem
                     secondaryAction={
                       isAdmin && (
@@ -556,7 +562,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     />
                     <div className="datePickerFlexWrapper">
                       <DatePickerField
-                        date={dayjs(launchDate)}
+                        date={launchDate}
                         setDate={val =>
                           handleLaunchDateChange(val, {
                             id,
@@ -572,7 +578,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                         open={reviewStatus === ReviewStatus.PLANNING}
                       />
                       <DatePickerField
-                        date={dayjs(selfReviewCloseDate)}
+                        date={selfReviewCloseDate}
                         setDate={val =>
                           handleSelfReviewDateChange(val, {
                             id,
@@ -587,7 +593,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                         disabled={!isAdmin}
                       />
                       <DatePickerField
-                        date={dayjs(closeDate)}
+                        date={closeDate}
                         setDate={val =>
                           handleCloseDateChange(val, {
                             id,

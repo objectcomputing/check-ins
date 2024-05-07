@@ -4,22 +4,25 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import './DatePickerField.css';
 
-export default function DatePickerField({ date, setDate, label, disabled, open}) {
-
+export default function DatePickerField({
+  date,
+  setDate,
+  label,
+  disabled,
+  open
+}) {
   const [cleared, setCleared] = useState(false);
   const launchDatePickerRef = useRef(null);
 
   useEffect(() => {
     if (cleared) {
-      const timeout = setTimeout(() => {
+      requestAnimationFrame(() => {
         setCleared(false);
-      }, 1500);
-
-      return () => clearTimeout(timeout);
+      });
     }
-    return () => {};
   }, [cleared]);
 
+  // This opens the DatePicker for the launch date if the open prop is set to true.
   useEffect(() => {
     const { current } = launchDatePickerRef;
     if (current && open) {
@@ -30,19 +33,19 @@ export default function DatePickerField({ date, setDate, label, disabled, open})
 
   return (
     <div className="datePickerField">
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DatePicker
-        label={label}
-        value={date}
-        format="YYYY-MM-DD"
-        onChange={setDate}
-        slotProps={{
-          field: { clearable: true, onClear: () => setCleared(true) },
-        }}
-        disabled={disabled}
-        ref={launchDatePickerRef}
-      />
-    </LocalizationProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          label={label}
+          value={date}
+          format="YYYY-MM-DD"
+          onChange={setDate}
+          slotProps={{
+            field: { clearable: true, onClear: () => setCleared(true) }
+          }}
+          disabled={disabled}
+          ref={launchDatePickerRef}
+        />
+      </LocalizationProvider>
     </div>
   );
 }
