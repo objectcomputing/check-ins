@@ -31,7 +31,7 @@ import './CheckinsReportPage.css';
  * @returns {number} - Comparison result for sorting
  */
 function sortByLastName(a, b) {
-  if (!a.name || !b.name) return;
+  if (!a.name || !b.name) return 0;
   const lastNameA = a.name.split(' ').slice(-1)[0];
   const lastNameB = b.name.split(' ').slice(-1)[0];
   return lastNameA.localeCompare(lastNameB);
