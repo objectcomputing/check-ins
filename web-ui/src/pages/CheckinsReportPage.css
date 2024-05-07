@@ -1,27 +1,27 @@
-.checkbox-row {
+.checkins-report-page {
   display: flex;
-  align-items: center;
-  margin-left: 0.5rem;
-  margin-top: 0.5rem;
-}
+  flex-direction: column;
+  margin: 1rem;
 
-.checkbox-row label {
-  margin-left: 0.5rem;
-}
+  .checkins-report-page-reports {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+  }
 
-.filter-pdls-and-members {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-left: 12px;
-  margin-right: 12px;
-  margin-bottom: 1rem;
-}
+  .checkins-report-page-dates {
+    display: flex;
+    justify-content: flex-end;
+    text-align: right;
+    gap: 2rem;
+    margin: 0;
+  }
 
-.filter-pdls-and-members > * {
-  width: 15%;
-}
-
-.MuiFormControl-root {
-  margin-left: 1rem;
+  .checkins-report-page-no-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 10rem;
+  }
 }
