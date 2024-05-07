@@ -1,13 +1,13 @@
 import { format } from 'date-fns';
-import { getQuarterDuration } from './datetime';
+import { getQuarterBeginEnd } from './datetime';
 
-describe('getQuarterDuration', () => {
+describe('getQuarterBeginEnd', () => {
   it('returns the start and end dates of the current quarter', () => {
     const inputDate = new Date('2024-04-15');
     const expectedStart = '2024-04-01';
     const expectedEnd = '2024-06-30';
 
-    const { startOfQuarter, endOfQuarter } = getQuarterDuration(inputDate);
+    const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(inputDate);
 
     expect(format(startOfQuarter, 'yyyy-MM-dd')).toBe(expectedStart);
     expect(format(endOfQuarter, 'yyyy-MM-dd')).toBe(expectedEnd);
@@ -18,7 +18,7 @@ describe('getQuarterDuration', () => {
     const expectedStart = '2024-01-01';
     const expectedEnd = '2024-03-31';
 
-    const { startOfQuarter, endOfQuarter } = getQuarterDuration(inputDate);
+    const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(inputDate);
 
     expect(format(startOfQuarter, 'yyyy-MM-dd')).toBe(expectedStart);
     expect(format(endOfQuarter, 'yyyy-MM-dd')).toBe(expectedEnd);
@@ -29,7 +29,7 @@ describe('getQuarterDuration', () => {
     const expectedStart = '2023-10-01';
     const expectedEnd = '2023-12-31';
 
-    const { startOfQuarter, endOfQuarter } = getQuarterDuration(inputDate);
+    const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(inputDate);
 
     expect(format(startOfQuarter, 'yyyy-MM-dd')).toBe(expectedStart);
     expect(format(endOfQuarter, 'yyyy-MM-dd')).toBe(expectedEnd);
@@ -40,7 +40,7 @@ describe('getQuarterDuration', () => {
     const expectedStart = '2020-01-01';
     const expectedEnd = '2020-03-31';
 
-    const { startOfQuarter, endOfQuarter } = getQuarterDuration(inputDate);
+    const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(inputDate);
 
     expect(format(startOfQuarter, 'yyyy-MM-dd')).toBe(expectedStart);
     expect(format(endOfQuarter, 'yyyy-MM-dd')).toBe(expectedEnd);
@@ -51,7 +51,7 @@ describe('getQuarterDuration', () => {
     const expectedStart = '2021-04-01';
     const expectedEnd = '2021-06-30';
 
-    const { startOfQuarter, endOfQuarter } = getQuarterDuration(inputDate);
+    const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(inputDate);
 
     expect(format(startOfQuarter, 'yyyy-MM-dd')).toBe(expectedStart);
     expect(format(endOfQuarter, 'yyyy-MM-dd')).toBe(expectedEnd);
@@ -62,7 +62,7 @@ describe('getQuarterDuration', () => {
     const expectedStart = '2024-01-01';
     const expectedEnd = '2024-03-31';
 
-    const { startOfQuarter, endOfQuarter } = getQuarterDuration(inputDate);
+    const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(inputDate);
 
     expect(format(startOfQuarter, 'yyyy-MM-dd')).toBe(expectedStart);
     expect(format(endOfQuarter, 'yyyy-MM-dd')).toBe(expectedEnd);

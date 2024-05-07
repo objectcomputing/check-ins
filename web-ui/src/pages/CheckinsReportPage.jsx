@@ -21,7 +21,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckinReport from '../components/reports-section/CheckinReport';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { FilterType } from '../components/member_selector/member_selector_dialog/MemberSelectorDialog';
-import { getQuarterDuration } from '../helpers/datetime';
+import { getQuarterBeginEnd } from '../helpers/datetime';
 
 import './CheckinsReportPage.css';
 /**
@@ -46,7 +46,7 @@ const CheckinsReportPage = () => {
   const [closed, setClosed] = useState(false);
 
   const [reportDate, setReportDate] = useState(new Date());
-  const { startOfQuarter, endOfQuarter } = getQuarterDuration(reportDate);
+  const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
 
   // Set the report date to today less one month on first load
   useEffect(() => {
