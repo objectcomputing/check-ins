@@ -44,10 +44,10 @@ import './CheckinReport.css';
  * @typedef {("Not Yet Scheduled" | "Scheduled" | "Completed")} SchedulingStatus
  */
 
-/** @type {CheckinStatus} */
+/** @type {CheckinStatus[]} */
 const steps = ['Not Started', 'In Progress', 'Done'];
 
-/** @type {SchedulingStatus} */
+/** @type {SchedulingStatus[]} */
 const schedulingSteps = ['Not Yet Scheduled', 'Scheduled', 'Completed'];
 
 function HorizontalLinearStepper({ step = 0 }) {
