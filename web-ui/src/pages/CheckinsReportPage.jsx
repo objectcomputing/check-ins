@@ -1,151 +1,162 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-
-import { Box, TextField } from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { AppContext } from '../context/AppContext';
-import CheckinReport from '../components/reports-section/CheckinReport';
 import {
   selectCheckinPDLS,
-  selectTeamMembersWithCheckinPDL
+  selectTeamMembersWithCheckinPDL,
+  selectMappedPdls
 } from '../context/selectors';
-import { isArrayPresent } from '../helpers/checks';
-import { useQueryParameters } from '../helpers/query-parameters';
+
+import {
+  Grid,
+  Typography,
+  IconButton,
+  Box,
+  ButtonGroup,
+  Tooltip
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
+import CheckinReport from '../components/reports-section/CheckinReport';
+import MemberSelector from '../components/member_selector/MemberSelector';
+import { FilterType } from '../components/member_selector/member_selector_dialog/MemberSelectorDialog';
+import { getQuarterDuration } from '../helpers/datetime';
 
 import './CheckinsReportPage.css';
+/**
+ * Sort Members by the last name extracted from the full name.
+ * @param {MemberProfile} a - First Member object
+ * @param {MemberProfile} b - Second Member object
+ * @returns {number} - Comparison result for sorting
+ */
+function sortByLastName(a, b) {
+  if (!a.name || !b.name) return;
+  const lastNameA = a.name.split(' ').slice(-1)[0];
+  const lastNameB = b.name.split(' ').slice(-1)[0];
+  return lastNameA.localeCompare(lastNameB);
+}
 
 const CheckinsReportPage = () => {
   const { state } = useContext(AppContext);
-  const [selectedPdls, setSelectedPdls] = useState([]);
+  const [mappedPDLs, setMappedPDLs] = useState(
+    /** @type {PDLProfile[]} */ ([])
+  );
+  const [selectedPdls, setSelectedPdls] = useState(
+    /** @type {PDLProfile[]} */ ([])
+  );
   const [planned, setPlanned] = useState(false);
   const [closed, setClosed] = useState(false);
-  const [searchText, setSearchText] = useState('');
 
-  const pdls = selectCheckinPDLS(state, closed, planned).sort((a, b) => {
-    const aPieces = a.name.split(' ').slice(-1);
-    const bPieces = b.name.split(' ').slice(-1);
-    return aPieces.toString().localeCompare(bPieces);
-  });
-  const [filteredPdls, setFilteredPdls] = useState(pdls);
+  const [reportDate, setReportDate] = useState(new Date());
+  const { startOfQuarter, endOfQuarter } = getQuarterDuration(reportDate);
 
-  const processedQPs = useRef(false);
-  useQueryParameters(
-    [
-      {
-        name: 'pdls',
-        default: [],
-        value: selectedPdls,
-        setter(ids) {
-          const newPdls = ids.map(id => pdls.find(pdl => pdl.id === id));
-          setSelectedPdls(newPdls);
-        },
-        toQP(newPdls) {
-          if (isArrayPresent(newPdls)) {
-            const ids = newPdls.map(pdl => pdl.id);
-            return ids.join(',');
-          } else {
-            return [];
-          }
-        }
-      }
-    ],
-    [pdls],
-    processedQPs
-  );
+  // Set the report date to today less one month on first load
+  useEffect(() => {
+    setReportDate(new Date(new Date().setMonth(new Date().getMonth() - 1)));
+  }, []);
 
+  const handleQuarterClick = evt => {
+    /** @type {HTMLButtonElement} */
+    const button = evt.currentTarget;
+    const isNextButton = button.attributes
+      .getNamedItem('aria-label')
+      .value.includes('Next');
+    isNextButton
+      ? setReportDate(new Date(reportDate.setMonth(reportDate.getMonth() + 3)))
+      : setReportDate(new Date(reportDate.setMonth(reportDate.getMonth() - 3)));
+  };
+
+  /** @type {PDLProfile[]} */
+  const pdls = selectCheckinPDLS(state, closed, planned).sort(sortByLastName);
+
+  // Set the selected PDLs to the mapped PDLs
+  useEffect(() => {
+    const mapped = selectMappedPdls(state);
+    setSelectedPdls(mapped);
+  }, [state]);
+
+  // Set the mapped PDLs to the PDLs with members
   useEffect(() => {
     if (!pdls) return;
-    pdls.map(
+    pdls.forEach(
       pdl => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
     );
-    let newPdlList = pdls.filter(pdl => {
-      pdl.members =
-        pdl.members &&
-        pdl.members.filter(member =>
-          member?.name?.toLowerCase().includes(searchText.toLowerCase())
-        );
-      return pdl.members.length > 0;
-    });
-
-    setFilteredPdls(newPdlList);
-  }, [pdls, searchText, state]);
-
-  const onPdlChange = (event, newValue) => {
-    let extantPdls = filteredPdls || [];
-    newValue.forEach(val => {
-      extantPdls = extantPdls.filter(pdl => pdl.id !== val.id);
-    });
-    extantPdls = [...new Set(extantPdls)];
-    newValue = [...new Set(newValue)];
-    if (newValue.length > 0) {
-      setSelectedPdls(newValue);
-      setFilteredPdls([...newValue]);
-    } else {
-      setSelectedPdls([]);
-      setFilteredPdls(pdls);
-    }
-  };
-
-  const handleClosed = () => {
-    setClosed(!closed);
-  };
-
-  const handlePlanned = () => {
-    setPlanned(!planned);
-  };
+    const pdlsWithMembers = pdls.filter(pdl => pdl.members.length > 0);
+    setMappedPDLs(pdlsWithMembers);
+  }, [pdls, state]);
 
   return (
-    <div>
-      <div className="filter-pdls-and-members">
-        <Autocomplete
-          id="pdlSelect"
-          multiple
-          options={pdls}
-          value={selectedPdls || []}
-          onChange={onPdlChange}
-          getOptionLabel={option => option.name}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label="Select PDLs..."
-              placeholder="Choose which PDLs to display"
-            />
-          )}
-        />
-        <TextField
-          label="Select employees..."
-          placeholder="Member Name"
-          value={searchText}
-          onChange={e => {
-            setSearchText(e.target.value);
-          }}
-        />
-      </div>
-      <div className="checkbox-row">
-        <label htmlFor="closed">Include closed</label>
-        <input id="closed" onClick={handleClosed} type="checkbox" />
-        <label htmlFor="planned">Include planned</label>
-        <input id="planned" onClick={handlePlanned} type="checkbox" />
-      </div>
-      <Box sx={{ m: 2 }}>
-        {selectedPdls.length
-          ? selectedPdls.map(pdl => (
-              <CheckinReport
-                closed={closed}
-                key={pdl.id}
-                pdl={pdl}
-                planned={planned}
-              />
-            ))
-          : filteredPdls.map(pdl => (
-              <CheckinReport
-                closed={closed}
-                key={pdl.id}
-                pdl={pdl}
-                planned={planned}
-              />
-            ))}
+    <div className="checkins-report-page">
+      <MemberSelector
+        initialFilters={[{ type: FilterType.ROLE, value: 'PDL' }]}
+        title="Select PDLs"
+        selected={selectedPdls}
+        onChange={setSelectedPdls}
+        listHeight={180}
+        exportable
+      />
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <ButtonGroup variant="text" aria-label="Basic button group">
+          <Tooltip title="Previous quarter">
+            <IconButton
+              aria-label="Previous quarter`"
+              onClick={handleQuarterClick}
+              size="large"
+            >
+              <ArrowBackIcon style={{ fontSize: '1.2em' }} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Next quarter">
+            <>
+              <IconButton
+                disabled={reportDate >= new Date()}
+                aria-label="Next quarter`"
+                onClick={handleQuarterClick}
+                size="large"
+              >
+                <ArrowForwardIcon style={{ fontSize: '1.2em' }} />
+              </IconButton>
+            </>
+          </Tooltip>
+        </ButtonGroup>
+        <Grid container component="dl" className="checkins-report-page-dates">
+          <Grid item>
+            <Typography component="dt" variant="h6">
+              Start of Quarter
+            </Typography>
+            <Typography component="dd" variant="body2">
+              {startOfQuarter.toDateString()}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography component="dt" variant="h6">
+              End of Quarter
+            </Typography>
+            <Typography component="dd" variant="body2">
+              {endOfQuarter.toDateString()}
+            </Typography>
+          </Grid>
+        </Grid>
       </Box>
+      <div className="checkins-report-page-reports">
+        {selectedPdls.length > 0 ? (
+          selectedPdls.sort(sortByLastName).map(pdl => {
+            return (
+              <CheckinReport
+                closed={closed}
+                key={pdl.id}
+                pdl={pdl}
+                planned={planned}
+              />
+            );
+          })
+        ) : (
+          <div className="checkins-report-page-no-data">
+            <h2>No data to display</h2>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

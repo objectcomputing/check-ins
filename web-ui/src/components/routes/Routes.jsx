@@ -7,7 +7,6 @@ import AnniversaryReportPage from '../../pages/AnniversaryReportPage';
 import BirthdayReportPage from '../../pages/BirthdayReportPage';
 import CheckinsPage from '../../pages/CheckinsPage';
 import CheckinsReportPage from '../../pages/CheckinsReportPage';
-import CheckinsReportEnhancedPage from '../../pages/CheckinsReportEnhancedPage';
 import EditSkillsPage from '../../pages/EditSkillsPage';
 import EditPermissionsPage from '../../pages/PermissionsPage';
 import GroupIcon from '@mui/icons-material/Group';
@@ -117,10 +116,6 @@ export default function Routes() {
           <Route path="/checkins-reports">
             <Header title="Check-in Report" />
             <CheckinsReportPage />
-          </Route>
-          <Route path="/checkins-reports-enhanced">
-            <Header title="Enhanced Check-in Report" />
-            <CheckinsReportEnhancedPage />
           </Route>
           <Route path="/skills-reports">
             <Header title="Skill Report" />
