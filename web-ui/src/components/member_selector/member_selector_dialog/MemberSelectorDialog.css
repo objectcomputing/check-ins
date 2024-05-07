@@ -1,3 +1,7 @@
+.member-selector-dialog .custom-tenure-picker {
+  width: 8rem;
+}
+
 .member-selector-dialog .toolbar-title-container {
   display: flex;
   flex-direction: row;
@@ -30,15 +34,15 @@
 }
 
 .member-selector-dialog .name-search-field {
-  width: 350px;
-  margin-right: 3rem;
+  width: 300px;
 }
 
 .member-selector-dialog .filter-input-container {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .member-selector-dialog .direct-reports-only-checkbox {

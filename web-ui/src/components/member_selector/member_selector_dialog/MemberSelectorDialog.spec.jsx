@@ -122,10 +122,10 @@ describe('MemberSelectorDialog', () => {
     expect(memberList).toHaveLength(initialState.memberProfiles.length);
 
     const filterField = await screen.findByRole('combobox', {
-      name: /filter members/i
+      name: /filter value/i
     });
     let filterTypeField = await screen.findByRole('combobox', {
-      name: /filter by/i
+      name: /filter type/i
     });
     expect(filterField.innerHTML).toBe('');
     expect(filterTypeField.innerHTML).toBe('Team');
@@ -155,10 +155,10 @@ describe('MemberSelectorDialog', () => {
     expect(memberList).toHaveLength(initialState.memberProfiles.length);
 
     const filterField = await screen.findByRole('combobox', {
-      name: /filter members/i
+      name: /filter value/i
     });
     let filterTypeField = await screen.findByRole('combobox', {
-      name: /filter by/i
+      name: /filter type/i
     });
     expect(filterField.innerHTML).toBe('');
     expect(filterTypeField.innerHTML).toBe('Team');

@@ -1,33 +1,43 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import ArchiveIcon from '@mui/icons-material/Archive';
-import DeleteIcon from '@mui/icons-material/Delete';
-import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import WorkIcon from '@mui/icons-material/Work';
+import {
+  Archive,
+  BorderColor,
+  Delete,
+  DoorFront,
+  HourglassTop,
+  MeetingRoom,
+  QuestionMark,
+  Unarchive
+} from '@mui/icons-material';
 
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
-import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import MenuItem from '@mui/material/MenuItem';
-import Modal from '@mui/material/Modal';
-import Select from '@mui/material/Select';
-import Skeleton from '@mui/material/Skeleton';
-import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
+import {
+  Avatar,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  MenuItem,
+  Modal,
+  Select,
+  Skeleton,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material';
+
+import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import { styled } from '@mui/material/styles';
 
@@ -51,6 +61,8 @@ import {
   selectReviewPeriods,
   selectUserProfile
 } from '../../../context/selectors';
+
+import { titleCase } from '../../../helpers/strings.js';
 
 const propTypes = {
   message: PropTypes.string,
@@ -114,6 +126,14 @@ const ReviewStatus = {
   UNKNOWN: 'UNKNOWN'
 };
 
+const reviewStatusIconMap = {
+  [ReviewStatus.PLANNING]: <BorderColor />,
+  [ReviewStatus.AWAITING_APPROVAL]: <HourglassTop />,
+  [ReviewStatus.OPEN]: <MeetingRoom />,
+  [ReviewStatus.CLOSED]: <DoorFront />,
+  [ReviewStatus.UNKNOWN]: <QuestionMark />
+};
+
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
@@ -134,6 +154,20 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const periods = selectReviewPeriods(state);
   const userProfile = selectUserProfile(state);
   const isAdmin = userProfile?.role?.includes('ADMIN');
+
+  useQueryParameters([
+    {
+      name: 'add',
+      default: false,
+      value: reviewStatus,
+      setter(open) {
+        setReviewStatus(open ? ReviewStatus.OPEN : ReviewStatus.CLOSED);
+      },
+      toQP(reviewStatus) {
+        return reviewStatus === ReviewStatus.OPEN;
+      }
+    }
+  ]);
 
   const handleOpen = useCallback(
     () => setReviewStatus(ReviewStatus.OPEN),
@@ -199,7 +233,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     periodId => {
       if (mode === 'self') {
         if (
-          selectReviewPeriod(state, periodId)?.reviewStatus === ReviewStatus.OPEN
+          selectReviewPeriod(state, periodId)?.reviewStatus ===
+          ReviewStatus.OPEN
         ) {
           if (
             !selfReviews ||
@@ -414,9 +449,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                             }
                           >
                             {reviewStatus === ReviewStatus.OPEN ? (
-                              <ArchiveIcon />
+                              <Archive />
                             ) : (
-                              <UnarchiveIcon />
+                              <Unarchive />
                             )}
                           </IconButton>
                         </Tooltip>
@@ -426,7 +461,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                             edge="end"
                             aria-label="Delete"
                           >
-                            <DeleteIcon />
+                            <Delete />
                           </IconButton>
                         </Tooltip>
                       </>
@@ -438,16 +473,12 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     key={`period-lia-${id}`}
                     onClick={() => onPeriodClick(id)}
                   >
-                    <Avatar>
-                      <WorkIcon />
-                    </Avatar>
+                    <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     key={`period-lit-${id}`}
                     onClick={() => onPeriodClick(id)}
-                    primary={
-                      name + (reviewStatus === ReviewStatus.OPEN ? ' - Open' : '')
-                    }
+                    primary={`${name} - ${titleCase(reviewStatus)}`}
                     secondary={getSecondaryLabel(id)}
                   />
                 </ListItem>

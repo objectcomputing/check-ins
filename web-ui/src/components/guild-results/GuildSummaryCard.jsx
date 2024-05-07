@@ -1,11 +1,13 @@
 import React, { useContext, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
+import { Construction, Groups } from '@mui/icons-material';
+import { Link as StyledLink } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 import { AppContext } from '../../context/AppContext';
 import { UPDATE_GUILDS, UPDATE_TOAST } from '../../context/actions';
 import EditGuildModal from './EditGuildModal';
-import { Link } from 'react-router-dom';
-import { Link as StyledLink } from '@mui/material';
 
 import {
   Button,
@@ -32,13 +34,19 @@ const classes = {
 };
 const StyledCard = styled(Card)(() => ({
   [`&.${classes.card}`]: {
-    width: '340px',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    position: 'relative',
+    width: '340px'
   },
   [`& .${classes.header}`]: {
     width: '100%'
+  },
+  ['& [data-icon]']: {
+    position: 'absolute',
+    right: '1rem',
+    top: '1rem'
   },
   [`& .${classes.title}`]: {
     overflow: 'hidden',
@@ -126,8 +134,22 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
     }
   };
 
+  const iconStyles = { height: '2.5rem', width: '2.5rem' };
+
   return (
     <StyledCard className={classes.card}>
+      <Tooltip
+        title={`This is a ${guild.community ? 'Community' : 'Guild'}.`}
+        aria-label="icon meaning"
+      >
+        {guild.community ? (
+          <Groups sx={{ color: 'var(--oci-orange)', ...iconStyles }} />
+        ) : (
+          <Construction
+            sx={{ color: 'var(--oci-light-blue)', ...iconStyles }}
+          />
+        )}
+      </Tooltip>
       <CardHeader
         classes={{
           content: classes.header,
@@ -172,7 +194,7 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
                   to={`/profile/${lead?.memberId}`}
                   style={{
                     textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.87)'
+                    color: 'inherit'
                   }}
                 >
                   {index !== leads.length - 1 ? `${lead?.name}, ` : lead?.name}
@@ -188,7 +210,7 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
                   to={`/profile/${member?.memberId}`}
                   style={{
                     textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.87)'
+                    color: 'inherit'
                   }}
                 >
                   {index !== nonLeads.length - 1
