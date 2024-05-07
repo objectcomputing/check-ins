@@ -10,8 +10,10 @@ import { AppContextProvider } from './context/AppContext';
 import SnackBarWithContext from './components/snackbar/SnackBarWithContext';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DarkMode, LightMode } from '@mui/icons-material';
 
 import {
+  useColorScheme,
   experimental_extendTheme as extendTheme,
   Experimental_CssVarsProvider as CssVarsProvider
 } from '@mui/material/styles';
@@ -26,6 +28,20 @@ function getUserColorScheme() {
   } else {
     return 'light';
   }
+}
+function SchemeToggle() {
+  const { mode, setMode } = useColorScheme();
+  return (
+    <div
+      className="Menu-modeToggle"
+      onClick={() => {
+        setMode(mode === 'light' ? 'dark' : 'light');
+      }}
+      title={`Select ${mode === 'light' ? 'dark' : 'light'} mode`}
+    >
+      {mode === 'light' ? <DarkMode /> : <LightMode />}
+    </div>
+  );
 }
 
 const theme = extendTheme({
@@ -74,7 +90,9 @@ function App() {
           <AppContextProvider>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <div>
-                <Menu />
+                <Menu>
+                  <SchemeToggle />
+                </Menu>
                 <div className="App">
                   <Routes />
                 </div>

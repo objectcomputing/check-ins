@@ -28,7 +28,11 @@
   --primary-text: var(--black);
   --primary-link-light: var(--primary-light);
   --primary-link-light-hover: #6084d1;
-  --primary-link-dark: color-mix(in oklab, var(--oci-dark-blue), var(--white) 35%);
+  --primary-link-dark: color-mix(
+    in oklab,
+    var(--oci-dark-blue),
+    var(--white) 35%
+  );
   --primary-link-dark-hover: #4f5f8c;
   --action: color-mix(in oklab, var(--black), var(--white) 50%);
   --action-disabled: color-mix(in oklab, var(--black), var(--white) 5%);
@@ -64,7 +68,11 @@
     --action-disabled: color-mix(in oklab, var(--white), var(--black) 30%);
 
     --primary-main: var(--oci-light-blue);
-    --primary-light: color-mix(in oklab, var(--oci-dark-blue), var(--white) 30%);
+    --primary-light: color-mix(
+      in oklab,
+      var(--oci-dark-blue),
+      var(--white) 30%
+    );
     --checkins-palette-primary-main: var(--primary-link-dark);
     --checkins-palette-primary-light: var(--primary-light);
     --checkins-palette-primary-link: var(--primary-link-dark);
