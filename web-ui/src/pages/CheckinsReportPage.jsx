@@ -39,9 +39,6 @@ function sortByLastName(a, b) {
 
 const CheckinsReportPage = () => {
   const { state } = useContext(AppContext);
-  const [mappedPDLs, setMappedPDLs] = useState(
-    /** @type {PDLProfile[]} */ ([])
-  );
   const [selectedPdls, setSelectedPdls] = useState(
     /** @type {PDLProfile[]} */ ([])
   );
@@ -82,8 +79,7 @@ const CheckinsReportPage = () => {
     pdls.forEach(
       pdl => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
     );
-    const pdlsWithMembers = pdls.filter(pdl => pdl.members.length > 0);
-    setMappedPDLs(pdlsWithMembers);
+    pdls.filter(pdl => pdl.members.length > 0);
   }, [pdls, state]);
 
   return (
@@ -99,18 +95,21 @@ const CheckinsReportPage = () => {
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <ButtonGroup variant="text" aria-label="Basic button group">
           <Tooltip title="Previous quarter">
-            <IconButton
-              aria-label="Previous quarter`"
-              onClick={handleQuarterClick}
-              size="large"
-            >
-              <ArrowBackIcon style={{ fontSize: '1.2em' }} />
-            </IconButton>
+            <>
+              <IconButton
+                disabled={true}
+                aria-label="Previous quarter`"
+                onClick={handleQuarterClick}
+                size="large"
+              >
+                <ArrowBackIcon style={{ fontSize: '1.2em' }} />
+              </IconButton>
+            </>
           </Tooltip>
           <Tooltip title="Next quarter">
             <>
               <IconButton
-                disabled={reportDate >= new Date()}
+                disabled={true || reportDate >= new Date()}
                 aria-label="Next quarter`"
                 onClick={handleQuarterClick}
                 size="large"
