@@ -2,9 +2,12 @@ package com.objectcomputing.checkins.services.reviews;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -17,6 +20,8 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
     ReviewAssignmentRepository reviewAssignmentRepository;
 
     MemberProfileRepository memberProfileRepository;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ReviewAssignmentServicesImpl.class);
 
     public ReviewAssignmentServicesImpl(ReviewAssignmentRepository reviewAssignmentRepository, MemberProfileRepository memberProfileRepository) {
         this.reviewAssignmentRepository = reviewAssignmentRepository;
@@ -66,8 +71,26 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         return reviewAssignments;
     }
 
+    @Override
+    public ReviewAssignment update(ReviewAssignment reviewAssignment) {
+        LOG.warn(String.format("Updating entity %s", reviewAssignment));
+        if (reviewAssignment.getId() != null && reviewAssignmentRepository.findById(reviewAssignment.getId()).isPresent()) {
+            return reviewAssignmentRepository.update(reviewAssignment);
+        } else {
+            throw new BadArgException(String.format("ReviewAssignment %s does not exist, cannot update", reviewAssignment.getId()));
+        }
+    }
 
-    public Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
+    @Override
+    public void delete(UUID id) {
+        if (id != null && reviewAssignmentRepository.findById(id).isPresent()) {
+            reviewAssignmentRepository.deleteById(id);
+        } else {
+            throw new BadArgException(String.format("ReviewAssignment %s does not exist, cannot delete", id));
+        }
+    }
+
+    private Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
         Set<ReviewAssignment> reviewAssignments = new HashSet<>();
 
         memberProfileRepository.findAll().forEach(memberProfile -> {
