@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
-import { styled } from '@mui/material/styles';
-import { Avatar, Card, Tooltip, IconButton } from '@mui/material';
+import { Avatar, Tooltip, IconButton } from '@mui/material';
 import { getAvatarURL } from '../../api/api';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
@@ -9,6 +8,7 @@ import { selectProfile } from '../../context/selectors';
 import DateFnsUtils from '@date-io/date-fns';
 import { AppContext } from '../../context/AppContext';
 import { Edit as EditIcon } from '@mui/icons-material';
+import './ReceivedRequestCard.css';
 
 const dateFns = new DateFnsUtils();
 const PREFIX = 'ReceivedRequestCard';
@@ -19,24 +19,6 @@ const classes = {
   darkGrayTypography: `${PREFIX}-darkGrayTypography`,
   grayTypography: `${PREFIX}-grayTypography`
 };
-
-const StyledCard = styled(Card)({
-  [`& .${classes.redTypography}`]: {
-    color: '#FF0000'
-  },
-  [`& .${classes.yellowTypography}`]: {
-    color: '#EE8C00'
-  },
-  [`& .${classes.greenTypography}`]: {
-    color: '#006400'
-  },
-  [`& .${classes.darkGrayTypography}`]: {
-    color: '#333333'
-  },
-  [`& .${classes.grayTypography}`]: {
-    color: 'gray'
-  }
-});
 
 const propTypes = {
   request: PropTypes.object.isRequired
@@ -85,77 +67,72 @@ const ReceivedRequestCard = ({ request }) => {
   };
 
   return (
-    <StyledCard style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-      <div className="card-content-grid">
-        <div className="request-members-container">
-          <div className="member-chip">
-            <Avatar
-              style={{ width: '40px', height: '40px', marginRight: '0.5em' }}
-              src={getAvatarURL(requestCreator?.workEmail)}
-            />
-            <div>
-              <Typography className="person-name">
-                {requestCreator?.name}
-              </Typography>
-              <Typography
-                className="position-text"
-                style={{ fontSize: '14px' }}
-              >
-                {requestCreator?.title}
-              </Typography>
-            </div>
-          </div>
-          <Typography style={{ margin: '0 5px 0 5px' }} variant="body1">
-            requested feedback on
-          </Typography>
-          <div className="member-chip">
-            <Avatar
-              style={{ width: '40px', height: '40px', marginRight: '0.5em' }}
-              src={getAvatarURL(requestee?.workEmail)}
-            />
-            <div>
-              <Typography className="person-name">{requestee?.name}</Typography>
-              <Typography
-                className="position-text"
-                style={{ fontSize: '14px' }}
-              >
-                {requestee?.title}
-              </Typography>
-            </div>
+    <div
+      className="card-content-grid"
+      style={{ paddingLeft: '16px', paddingRight: '16px' }}
+    >
+      <div className="request-members-container">
+        <div className="member-chip">
+          <Avatar
+            style={{ width: '40px', height: '40px', marginRight: '0.5em' }}
+            src={getAvatarURL(requestCreator?.workEmail)}
+          />
+          <div>
+            <Typography className="person-name">
+              {requestCreator?.name}
+            </Typography>
+            <Typography className="position-text" style={{ fontSize: '14px' }}>
+              {requestCreator?.title}
+            </Typography>
           </div>
         </div>
-        <div className="request-details-container">
-          <div className="request-dates-container">
-            <Typography className={classes.darkGrayTypography} variant="body1">
-              Sent on {sendDate}
+        <Typography style={{ margin: '0 5px 0 5px' }} variant="body1">
+          requested feedback on
+        </Typography>
+        <div className="member-chip">
+          <Avatar
+            style={{ width: '40px', height: '40px', marginRight: '0.5em' }}
+            src={getAvatarURL(requestee?.workEmail)}
+          />
+          <div>
+            <Typography className="person-name">{requestee?.name}</Typography>
+            <Typography className="position-text" style={{ fontSize: '14px' }}>
+              {requestee?.title}
             </Typography>
-            <Typography variant="body2">
-              {request?.dueDate ? `Due on ${dueDate}` : 'No due date'}
-            </Typography>
-          </div>
-          <div className="request-status-container">
-            <Submitted />
-          </div>
-          <div className="submission-link-container">
-            {request &&
-            !request.submitDate &&
-            request.id &&
-            request.status !== 'canceled' ? (
-              <Link
-                to={`/feedback/submit?request=${request.id}`}
-                style={{ textDecoration: 'none' }}
-              >
-                <Tooltip title="Give feedback" arrow>
-                  <IconButton size="large">
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-              </Link>
-            ) : null}
           </div>
         </div>
       </div>
-    </StyledCard>
+      <div className="request-details-container">
+        <div className="request-dates-container">
+          <Typography className={classes.darkGrayTypography} variant="body1">
+            Sent on {sendDate}
+          </Typography>
+          <Typography variant="body2">
+            {request?.dueDate ? `Due on ${dueDate}` : 'No due date'}
+          </Typography>
+        </div>
+        <div className="request-status-container">
+          <Submitted />
+        </div>
+        <div className="submission-link-container">
+          {request &&
+          !request.submitDate &&
+          request.id &&
+          request.status !== 'canceled' ? (
+            <Link
+              to={`/feedback/submit?request=${request.id}`}
+              style={{ textDecoration: 'none' }}
+            >
+              <Tooltip title="Give feedback" arrow>
+                <IconButton size="large">
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+            </Link>
+          ) : null}
+        </div>
+      </div>
+    </div>
   );
 };
 ReceivedRequestCard.propTypes = propTypes;

@@ -95,7 +95,13 @@ const CheckinsHistory = () => {
         >
           <ArrowBackIcon
             className={leftArrowClass}
-            style={{ fontSize: '1.2em' }}
+            style={{
+              fontSize: '1.2em',
+              fill:
+                index <= 0
+                  ? 'var(--checkins-palette-action-disabled)'
+                  : 'var(--checkins-palette-action)'
+            }}
           />
         </IconButton>
         <MobileDateTimePicker
@@ -115,7 +121,13 @@ const CheckinsHistory = () => {
         >
           <ArrowForwardIcon
             className={rightArrowClass}
-            style={{ fontSize: '1.2em' }}
+            style={{
+              fontSize: '1.2em',
+              fill:
+                index <= 0
+                  ? 'var(--checkins-palette-action-disabled)'
+                  : 'var(--checkins-palette-action)'
+            }}
           />
         </IconButton>
       </div>

@@ -51,7 +51,7 @@ const Birthdays = ({ birthdays, xPos = 0.75 }) => {
       return (
         <Card className={'birthdays-card'} key={index}>
           <Link
-            style={{ color: 'black', textDecoration: 'none' }}
+            style={{ color: 'inherit', textDecoration: 'none' }}
             to={`/profile/${bday.userId}`}
           >
             <CardHeader
