@@ -38,8 +38,10 @@ import {
 } from '@mui/material';
 
 import { useQueryParameters } from '../../../helpers/query-parameters';
+import { UPDATE_TOAST } from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
+import './DatePickerField.css';
 
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
@@ -61,6 +63,7 @@ import {
   selectReviewPeriods,
   selectUserProfile
 } from '../../../context/selectors';
+import DatePickerField from './DatePickerField.jsx';
 
 import { titleCase } from '../../../helpers/strings.js';
 
@@ -140,10 +143,14 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [canSave, setCanSave] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [periodToAdd, setPeriodToAdd] = useState({
     name: '',
-    reviewStatus: ReviewStatus.OPEN
+    reviewStatus: ReviewStatus.OPEN,
+    launchDate: null,
+    selfReviewCloseDate: null,
+    closeDate: null
   });
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
@@ -193,12 +200,28 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       if (!alreadyExists) {
         handleOpen();
         const res = await createReviewPeriod(periodToAdd, csrf);
-        const data =
-          res && res.payload && res.payload.data ? res.payload.data : null;
-        data && dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
+        const data = res?.payload?.data ?? null;
+        if (data) {
+          dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
+        } else {
+          console.error(res?.error);
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'error',
+              toast: 'Error adding review period'
+            }
+          });
+        }
       }
       handleClose();
-      setPeriodToAdd({ name: '', reviewStatus: ReviewStatus.OPEN });
+      setPeriodToAdd({
+        name: '',
+        reviewStatus: ReviewStatus.OPEN,
+        launchDate: null,
+        selfReviewCloseDate: null,
+        closeDate: null
+      });
     },
     [
       csrf,
@@ -222,9 +245,19 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           ? ReviewStatus.OPEN
           : ReviewStatus.CLOSED;
       const res = await updateReviewPeriod(toUpdate, csrf);
-      const data =
-        res && res.payload && res.payload.data ? res.payload.data : null;
-      data && dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
+      const data = res?.payload?.data ? res.payload.data : null;
+      if (data) {
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
+      } else {
+        console.error(res?.error);
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Error selecting review period'
+          }
+        });
+      }
     },
     [csrf, state, periods, dispatch]
   );
@@ -275,16 +308,52 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     handleConfirmClose();
   }, [csrf, periods, dispatch, toDelete, handleConfirmClose]);
 
+  const updateReviewPeriodDates = useCallback(
+    async period => {
+      if (!csrf) {
+        return;
+      }
+      const res = await updateReviewPeriod(period, csrf);
+      const data = res?.payload?.data ?? null;
+      if (data) {
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
+      } else {
+        console.error(res?.error);
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Error updating review period'
+          }
+        });
+      }
+      setPeriodToAdd(period);
+    },
+    [csrf, state, periods, dispatch]
+  );
+
   const loadFeedbackTemplates = useCallback(async () => {
     const res = await getAllFeedbackTemplates(csrf);
-    const templates = res.payload.data;
-    templates?.sort((t1, t2) => t1.title.localeCompare(t2.title));
-    setTemplates(templates);
+    const templates = res?.payload?.data;
+    if (templates) {
+      templates?.sort((t1, t2) => t1.title.localeCompare(t2.title));
+      setTemplates(templates);
+    } else {
+      console.error(res?.error);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'Error fetching feedback templates'
+        }
+      });
+    }
   }, [csrf, dispatch]);
 
   useEffect(() => {
     const valid = Boolean(
       periodToAdd.name &&
+        periodToAdd.reviewStatus &&
         periodToAdd.reviewTemplateId &&
         periodToAdd.selfReviewTemplateId
     );
@@ -298,16 +367,21 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       setLoading(true);
       const res = await getReviewPeriods(csrf);
       const data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
+        res?.payload?.data && res.payload.status === 200 && !res.error
           ? res.payload.data
           : null;
       if (data) {
         dispatch({ type: UPDATE_REVIEW_PERIODS, payload: data });
         setLoading(false);
+      } else {
+        console.error(res?.error);
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Error fetching review periods'
+          }
+        });
       }
     };
     if (csrf) {
@@ -326,15 +400,20 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             csrf
           );
           const data =
-            res &&
-            res.payload &&
-            res.payload.data &&
-            res.payload.status === 200 &&
-            !res.error
+            res?.payload?.data && res?.payload?.status === 200 && !res?.error
               ? res.payload.data
               : null;
           if (data) {
             reviews[period.id] = data[0];
+          } else {
+            console.error(res?.error);
+            window.snackDispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: 'error',
+                toast: 'Error finding review request'
+              }
+            });
           }
         })
       ).then(() => setSelfReviews(reviews));
@@ -383,6 +462,30 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     });
   };
 
+  const handleLaunchDateChange = (val, period) => {
+    const isoDate = val?.$d.toISOString() ?? null;
+    updateReviewPeriodDates({
+      ...period,
+      launchDate: isoDate
+    });
+  };
+
+  const handleSelfReviewDateChange = (val, period) => {
+    const isoDate = val?.$d.toISOString() ?? null;
+    updateReviewPeriodDates({
+      ...period,
+      selfReviewCloseDate: isoDate
+    });
+  };
+
+  const handleCloseDateChange = (val, period) => {
+    const isoDate = val?.$d.toISOString() ?? null;
+    updateReviewPeriodDates({
+      ...period,
+      closeDate: isoDate
+    });
+  };
+
   return (
     <Root>
       <div className={classes.headerContainer}>
@@ -427,63 +530,123 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   ? -1
                   : 1;
             })
-            .map(({ name, reviewStatus, id }, i) => (
-              <>
-                <ListItem
-                  secondaryAction={
-                    isAdmin && (
-                      <>
-                        <Tooltip
-                          title={
-                            reviewStatus === ReviewStatus.OPEN
-                              ? 'Archive'
-                              : 'Unarchive'
-                          }
-                        >
-                          <IconButton
-                            onClick={() => toggleReviewPeriod(id)}
-                            aria-label={
+            .map(
+              (
+                {
+                  name,
+                  reviewStatus,
+                  id,
+                  launchDate,
+                  selfReviewCloseDate,
+                  closeDate
+                },
+                i
+              ) => (
+                <div key={i} className="reviewPeriodSection">
+                  <ListItem
+                    secondaryAction={
+                      isAdmin && (
+                        <>
+                          <Tooltip
+                            title={
                               reviewStatus === ReviewStatus.OPEN
                                 ? 'Archive'
                                 : 'Unarchive'
                             }
                           >
-                            {reviewStatus === ReviewStatus.OPEN ? (
-                              <Archive />
-                            ) : (
-                              <Unarchive />
-                            )}
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                          <IconButton
-                            onClick={() => confirmDelete(id)}
-                            edge="end"
-                            aria-label="Delete"
-                          >
-                            <Delete />
-                          </IconButton>
-                        </Tooltip>
-                      </>
-                    )
-                  }
-                  key={`period-${id}`}
-                >
-                  <ListItemAvatar
-                    key={`period-lia-${id}`}
-                    onClick={() => onPeriodClick(id)}
+                            <IconButton
+                              onClick={() => toggleReviewPeriod(id)}
+                              aria-label={
+                                reviewStatus === ReviewStatus.OPEN
+                                  ? 'Archive'
+                                  : 'Unarchive'
+                              }
+                            >
+                              {reviewStatus === ReviewStatus.OPEN ? (
+                                <Archive />
+                              ) : (
+                                <Unarchive />
+                              )}
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Delete">
+                            <IconButton
+                              onClick={() => confirmDelete(id)}
+                              edge="end"
+                              aria-label="Delete"
+                            >
+                              <Delete />
+                            </IconButton>
+                          </Tooltip>
+                        </>
+                      )
+                    }
+                    key={`period-${id}`}
                   >
-                    <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    key={`period-lit-${id}`}
-                    onClick={() => onPeriodClick(id)}
-                    primary={`${name} - ${titleCase(reviewStatus)}`}
-                    secondary={getSecondaryLabel(id)}
-                  />
-                </ListItem>
-              </>
-            ))
+                    <ListItemAvatar
+                      key={`period-lia-${id}`}
+                      onClick={() => onPeriodClick(id)}
+                    >
+                      <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      key={`period-lit-${id}`}
+                      onClick={() => onPeriodClick(id)}
+                      primary={`${name} - ${titleCase(reviewStatus)}`}
+                      secondary={getSecondaryLabel(id)}
+                    />
+                    <div className="datePickerFlexWrapper">
+                      <DatePickerField
+                        date={launchDate}
+                        setDate={val =>
+                          handleLaunchDateChange(val, {
+                            id,
+                            name,
+                            reviewStatus,
+                            launchDate,
+                            selfReviewCloseDate,
+                            closeDate
+                          })
+                        }
+                        label="Launch Date"
+                        disabled={!isAdmin}
+                        open={reviewStatus === ReviewStatus.PLANNING}
+                      />
+                      <DatePickerField
+                        date={selfReviewCloseDate}
+                        setDate={val =>
+                          handleSelfReviewDateChange(val, {
+                            id,
+                            name,
+                            reviewStatus,
+                            launchDate,
+                            selfReviewCloseDate,
+                            closeDate
+                          })
+                        }
+                        label="Self-Review Date"
+                        disabled={!isAdmin}
+                      />
+                      <DatePickerField
+                        date={closeDate}
+                        setDate={val =>
+                          handleCloseDateChange(val, {
+                            id,
+                            name,
+                            reviewStatus,
+                            launchDate,
+                            selfReviewCloseDate,
+                            closeDate
+                          })
+                        }
+                        label="Close Date"
+                        disabled={!isAdmin}
+                      />
+                    </div>
+                  </ListItem>
+                </div>
+              )
+            )
         ) : (
           <Typography variant="body1">
             There are currently no review periods.
