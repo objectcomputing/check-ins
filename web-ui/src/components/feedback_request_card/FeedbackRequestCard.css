@@ -1,19 +1,19 @@
 .person-name {
-  color: black;
+  color: var(--checkins-palette-content-color);
 }
 
 .response-link {
-  color: rgb(42, 55, 172);
+  color: var(--checkins-palette-primary-link);
   text-decoration: none;
   font-size: 1rem;
+
+  &:hover {
+    background-color: var(--checkins-palette-background-default);
+  }
 }
 
 .has-padding-top {
   padding-top: 1em;
-}
-
-.response-link:hover {
-  background-color: lightgray;
 }
 
 .red-text {
@@ -22,11 +22,11 @@
 
 .person-divider {
   min-width: 100%;
-  color: rgb(231, 230, 227);
+  color: var(--checkins-palette-background-default);
 }
 
 .dark-gray-text {
-  color: rgb(85, 83, 83);
+  color: var(--checkins-palette-gray-dark);
 }
 
 .person-row {

@@ -86,7 +86,7 @@ exports[`renders correctly 1`] = `
                 class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium arrow disabled css-i4bv87-MuiSvgIcon-root"
                 data-testid="ArrowBackIcon"
                 focusable="false"
-                style="font-size: 1.2em;"
+                style="font-size: 1.2em; fill: var(--checkins-palette-action-disabled);"
                 viewBox="0 0 24 24"
               >
                 <path
@@ -146,7 +146,7 @@ exports[`renders correctly 1`] = `
                 class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium arrow enabled css-i4bv87-MuiSvgIcon-root"
                 data-testid="ArrowForwardIcon"
                 focusable="false"
-                style="font-size: 1.2em;"
+                style="font-size: 1.2em; fill: var(--checkins-palette-action-disabled);"
                 viewBox="0 0 24 24"
               >
                 <path

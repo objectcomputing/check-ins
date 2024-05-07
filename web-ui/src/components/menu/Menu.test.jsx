@@ -59,6 +59,24 @@ const pdlState = {
 };
 
 describe('<Menu />', () => {
+  let originalMatchMedia;
+  beforeAll(() => {
+    originalMatchMedia = window.matchMedia;
+    window.matchMedia = query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {}, // Deprecated
+      removeListener: () => {}, // Deprecated
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => {}
+    });
+  });
+
+  afterAll(() => {
+    window.matchMedia = originalMatchMedia;
+  });
   it('renders correctly', () => {
     snapshot(
       <AppContextProvider value={initialState}>
