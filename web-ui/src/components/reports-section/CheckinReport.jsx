@@ -28,6 +28,8 @@ import {
   Typography
 } from '@mui/material';
 
+import './CheckinReport.css';
+
 /**
  * @typedef {Object} Checkin
  * @property {string} id - The ID of the check-in.
@@ -80,8 +82,6 @@ function HorizontalLinearStepper({ step = 0 }) {
   );
 }
 
-import './CheckinReport.css';
-
 const propTypes = {
   closed: PropTypes.bool,
   pdl: PropTypes.shape({
@@ -118,10 +118,10 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
    * @returns {CheckinStatus} The status of check-ins.
    */
   const statusForPeriodByMember = ({ checkins = [] }) => {
-    const now = new Date();
     if (checkins.length === 0) return 'Not Started';
     const completed = checkins.filter(checkin => checkin.completed);
     if (completed.length === checkins.length) return 'Done';
+    const now = new Date();
     const inProgress = checkins.filter(
       checkin => !checkin.completed && getCheckinDate(checkin) < now
     );
@@ -149,8 +149,6 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
    * @returns {CheckinStatus} The status of check-ins.
    */
   const statusForPeriodByPDL = ({ members = [] }) => {
-    // const debug = ['Done', 'In Progress', 'Not Started'][0];
-    const now = new Date();
     if (members.length === 0) return 'Not Started';
     const completed = members.filter(member => {
       const checkins = selectFilteredCheckinsForTeamMemberAndPDL(
@@ -173,6 +171,7 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
         closed,
         planned
       );
+      const now = new Date();
       return (
         checkins.filter(
           checkin => !checkin.completed && getCheckinDate(checkin) < now
