@@ -26,3 +26,16 @@
  * @typedef {MemberProfile} PDLProfile
  * @property {string} pdlId
  */
+
+/**
+ * Check-In related types
+ *
+ * @typedef {Object} Checkin
+ * @property {string} id - The ID of the check-in.
+ * @property {boolean} completed - Indicates whether the check-in is completed.
+ * @property {Array} checkinDate - The date of the check-in.
+ * @property {string} pdlId - The ID of the PDL.
+ * @property {string} teamMemberId - The ID of the team member.
+ *
+ * @typedef {("Done" | "In Progress" | "Not Started")} CheckinStatus
+ */
