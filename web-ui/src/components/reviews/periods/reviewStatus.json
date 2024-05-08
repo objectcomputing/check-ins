@@ -1,0 +1,6 @@
+[
+  { "label": "Planning", "option": "PLANNING" },
+  { "label": "Awaiting Approval", "option": "AWAITING_APPROVAL" },
+  { "label": "Open", "option": "OPEN" },
+  { "label": "Closed", "option": "CLOSED" }
+]

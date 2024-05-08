@@ -174,7 +174,7 @@ exports[`renders correctly for team lead 1`] = `
       </strong>
       <a
         href="/profile/undefined"
-        style="text-decoration: none; color: rgba(0, 0, 0, 0.87);"
+        style="text-decoration: none;"
       >
         testname
       </a>

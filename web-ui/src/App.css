@@ -1,13 +1,24 @@
-:root {
-  --oci-light-blue: #76c8d4;
-  --oci-dark-blue: #2c519e;
-  --oci-orange: #f8b576;
-  --nav-width: 150px;
+@import 'styles/variables.css';
+
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  a,
+  a:visited {
+    color: var(--checkins-palette-primary-link);
+  }
+
+  a:hover {
+    color: var(--checkins-palette-primary-link-hover);
+  }
 }
 
 @media (min-width: 600px) {
   .App {
-    padding-left: 150px;
+    margin-top: 65px;
+    padding-left: var(--nav-width);
   }
 }
 
@@ -22,12 +33,12 @@
 }
 
 .App-header {
-  min-height: 100vh;
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   font-size: calc(10px + 2vmin);
+  justify-content: center;
+  min-height: 100vh;
 }
 
 textarea {

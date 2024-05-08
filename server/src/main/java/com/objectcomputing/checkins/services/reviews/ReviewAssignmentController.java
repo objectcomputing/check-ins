@@ -20,9 +20,11 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Controller("/services/review-assignments")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -61,6 +63,26 @@ public class ReviewAssignmentController {
     }
 
     /**
+     * Create and save multiple new {@link ReviewAssignment}s and associate them with a given {@link ReviewPeriod}.
+     *
+     * @param reviewPeriodId a {@link UUID} representing the review period to associate the review assignments with
+     * @param assignments a List of {@link ReviewAssignmentDTO} representing the desired review assignments
+     * @return a streamable response containing the list of stored {@link ReviewAssignment}
+     */
+    @Post("/{reviewPeriodId}")
+    @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
+    public Mono<HttpResponse<List<ReviewAssignment>>> createReviewAssignment(@NotNull UUID reviewPeriodId, @Body @Valid List<ReviewAssignmentDTO> assignments) {
+
+        return Mono.fromCallable(() -> reviewAssignmentServices.saveAll(reviewPeriodId,
+                assignments.stream().map(ReviewAssignmentDTO::convertToEntity).collect(Collectors.toList()),
+                Boolean.TRUE))
+            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+            .map(reviewAssignments -> (HttpResponse<List<ReviewAssignment>>) HttpResponse.created(reviewAssignments))
+            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+
+    }
+
+    /**
      * Retrieve a {@link ReviewAssignment} given its id.
      *
      * @param id {@link UUID} of the review assignment
@@ -90,6 +112,38 @@ public class ReviewAssignmentController {
             .publishOn(Schedulers.fromExecutor(eventLoopGroup))
             .map(assignments -> (HttpResponse<Set<ReviewAssignment>>) HttpResponse.ok(assignments))
             .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    }
+
+    /**
+     * Update an existing {@link ReviewAssignment}.
+     *
+     * @param reviewAssignment  the updated {@link ReviewAssignment}
+     * @return a streamable response containing the stored {@link ReviewAssignment}
+     */
+    @RequiredPermission(Permission.CAN_UPDATE_REVIEW_ASSIGNMENTS)
+    @Put
+    public Mono<HttpResponse<ReviewAssignment>> update(@Body @Valid ReviewAssignment reviewAssignment, HttpRequest<ReviewAssignment> request) {
+
+        return Mono.fromCallable(() -> reviewAssignmentServices.update(reviewAssignment))
+            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+            .map(updatedReviewAssignment -> (HttpResponse<ReviewAssignment>) HttpResponse
+                .ok()
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewAssignment.getId()))))
+                .body(updatedReviewAssignment))
+            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    }
+
+    /**
+     * Delete a {@link ReviewAssignment}.
+     *
+     * @param id  the id of the review assignment to be deleted to delete
+     */
+    @RequiredPermission(Permission.CAN_DELETE_REVIEW_ASSIGNMENTS)
+    @Delete("/{id}")
+    public HttpResponse<?> deleteReviewAssignment(@NotNull UUID id) {
+        reviewAssignmentServices.delete(id);
+        return HttpResponse
+            .ok();
     }
 
 }

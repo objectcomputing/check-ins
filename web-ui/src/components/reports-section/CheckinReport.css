@@ -1,42 +1,49 @@
-#accordion-checkin-date {
-  flex-direction: column;
-}
-
-.checkin-report-link {
+.checkin-report-card {
   display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.checkin-report-link .MuiChip-colorPrimary {
-  height: 1.5rem;
-  margin-left: 0.5rem;
-}
-
-.checkin-report-link .MuiChip-colorSecondary {
-  height: 1.5rem;
-  margin-left: 0.5rem;
-}
-
-.MuiAccordionSummary-content {
-  align-items: center;
-}
-
-.MuiAccordionSummary-content > p {
-  margin-left: 1rem;
-}
-
-#member-sub-card {
-  background-color: #fafafa;
-  margin-top: 1rem;
-}
-
-#pdl-card {
-  margin: 1rem;
+  flex-direction: column;
+  margin: 1rem 0;
   width: 100vw;
+
+  .checkin-report-accordion-summary {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+  }
+
+  .member-sub-card-summmary-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .checkin-report-stepper {
+    margin-bottom: 1rem;
+  }
+
+  .checkin-report-link {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .checkin-report-card-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 20rem;
+  }
 }
 
-#pdl-large {
-  height: 4rem;
-  width: 4rem;
+.checkin-report-no-data {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 10rem;
 }

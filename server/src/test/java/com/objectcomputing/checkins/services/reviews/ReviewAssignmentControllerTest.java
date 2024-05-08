@@ -19,10 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -64,6 +61,55 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
         assertEquals(reviewAssignmentDTO.getReviewPeriodId(), body.getReviewPeriodId());
         assertEquals(false, body.getApproved());
         assertEquals(String.format("%s/%s", request.getPath(), body.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    public void testPOSTCreateMultipleReviewAssignments() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+
+        ReviewAssignmentDTO reviewAssignmentDTO = new ReviewAssignmentDTO();
+        reviewAssignmentDTO.setRevieweeId(UUID.randomUUID());
+        reviewAssignmentDTO.setReviewerId(UUID.randomUUID());
+        reviewAssignmentDTO.setReviewPeriodId(reviewPeriod.getId());
+        reviewAssignmentDTO.setApproved(false);
+
+        ReviewAssignmentDTO reviewAssignmentDTO2 = new ReviewAssignmentDTO();
+        reviewAssignmentDTO2.setRevieweeId(UUID.randomUUID());
+        reviewAssignmentDTO2.setReviewerId(UUID.randomUUID());
+        reviewAssignmentDTO2.setReviewPeriodId(reviewPeriod.getId());
+        reviewAssignmentDTO2.setApproved(false);
+
+        List<ReviewAssignmentDTO> reviewAssignments = List.of(reviewAssignmentDTO, reviewAssignmentDTO2);
+
+        final HttpRequest<List<ReviewAssignmentDTO>> request = HttpRequest.
+            POST(String.format("/%s", reviewPeriod.getId()), reviewAssignments).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<List<ReviewAssignment>> response = client.toBlocking().exchange(request, Argument.listOf(ReviewAssignment.class));
+
+        assertNotNull(response);
+        var body = response.body();
+        assertNotNull(body);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(2, Objects.requireNonNull(response.body()).size());
+        assertTrue(body.stream().anyMatch(ra -> ra.getRevieweeId().equals(reviewAssignmentDTO.getRevieweeId())));
+        assertTrue(body.stream().anyMatch(ra -> ra.getRevieweeId().equals(reviewAssignmentDTO2.getRevieweeId())));
+        assertTrue(body.stream().allMatch(ra -> ra.getReviewPeriodId().equals(reviewPeriod.getId())));
+        assertTrue(body.stream().allMatch(ra -> {
+            assert ra.getApproved() != null;
+            return ra.getApproved().equals(false);
+        }));
+
+
+        final HttpRequest<Object> request2 = HttpRequest.
+            GET(String.format("/period/%s", reviewPeriod.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<List<ReviewAssignment>> response2 = client.toBlocking().exchange(request2, Argument.listOf(ReviewAssignment.class));
+
+        assertNotNull(response2.body());
+        body = response2.body();
+        assertEquals(2, Objects.requireNonNull(response2.body()).size());
+        assertTrue(body.stream().anyMatch(ra -> ra.getRevieweeId().equals(reviewAssignmentDTO.getRevieweeId())));
+        assertTrue(body.stream().anyMatch(ra -> ra.getRevieweeId().equals(reviewAssignmentDTO2.getRevieweeId())));
+        assertEquals(HttpStatus.OK, response2.getStatus());
     }
 
     @Test
@@ -180,4 +226,68 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     }
 
 
+
+    @Test
+    public void testPUTUpdateReviewAssignmentWithoutPermissions() {
+        ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
+
+        final HttpRequest<ReviewAssignment> request = HttpRequest.PUT("/", reviewAssignment)
+            .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
+    @Test
+    public void testPUTUpdateNonexistentReviewAssignment() {
+        ReviewAssignment reviewAssignment = new ReviewAssignment();
+        reviewAssignment.setId(UUID.randomUUID());
+        reviewAssignment.setRevieweeId(UUID.randomUUID());
+        reviewAssignment.setReviewerId(UUID.randomUUID());
+
+        final HttpRequest<ReviewAssignment> request = HttpRequest.
+            PUT("/", reviewAssignment).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    public void testPUTUpdateNullReviewAssignment() {
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void deleteReviewAssignment() {
+        ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
+
+        final HttpRequest<Object> request = HttpRequest.
+            DELETE(String.format("/%s", reviewAssignment.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<ReviewAssignment> response = client.toBlocking().exchange(request, ReviewAssignment.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void deleteReviewAssignmentWithoutPermissions() {
+        ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
+
+        final HttpRequest<Object> request = HttpRequest.
+            DELETE(String.format("/%s", reviewAssignment.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
 }

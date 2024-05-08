@@ -79,7 +79,7 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You do not have permission to access this resource");
         }
-        LOG.warn(String.format("Updating entity %s", reviewPeriod));
+        LOG.info(String.format("Updating entity %s", reviewPeriod));
         if (reviewPeriod.getId() != null && reviewPeriodRepository.findById(reviewPeriod.getId()).isPresent()) {
             return reviewPeriodRepository.update(reviewPeriod);
         } else {

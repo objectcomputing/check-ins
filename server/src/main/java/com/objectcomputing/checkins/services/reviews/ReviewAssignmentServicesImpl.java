@@ -4,11 +4,11 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import jakarta.validation.constraints.NotNull;
+import java.util.*;
 
 @Singleton
 public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
@@ -16,6 +16,8 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
     ReviewAssignmentRepository reviewAssignmentRepository;
 
     MemberProfileRepository memberProfileRepository;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ReviewAssignmentServicesImpl.class);
 
     public ReviewAssignmentServicesImpl(ReviewAssignmentRepository reviewAssignmentRepository, MemberProfileRepository memberProfileRepository) {
         this.reviewAssignmentRepository = reviewAssignmentRepository;
@@ -42,6 +44,29 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
     }
 
     @Override
+    public List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, Boolean deleteExisting) {
+
+        if(deleteExisting) {
+            LOG.warn(String.format("Deleting all review assignments for review period %s", reviewPeriodId));
+            reviewAssignmentRepository.deleteByReviewPeriodId(reviewPeriodId);
+        }
+
+        List<ReviewAssignment> newAssignments = new ArrayList<>();
+        if (reviewAssignments != null) {
+            for (ReviewAssignment reviewAssignment : reviewAssignments) {
+                if (reviewAssignment.getId() != null) {
+                    throw new BadArgException(String.format("Found unexpected id %s for review assignment. New entities must not contain an id.",
+                        reviewAssignment.getId()));
+                }
+                reviewAssignment.setReviewPeriodId(reviewPeriodId);
+            }
+
+            newAssignments.addAll(reviewAssignmentRepository.saveAll(reviewAssignments));
+        }
+        return newAssignments;
+    }
+
+    @Override
     public ReviewAssignment findById(@NotNull UUID id) {
         return reviewAssignmentRepository.findById(id).orElse(null);
     }
@@ -65,8 +90,26 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         return reviewAssignments;
     }
 
+    @Override
+    public ReviewAssignment update(ReviewAssignment reviewAssignment) {
+        LOG.info(String.format("Updating entity %s", reviewAssignment));
+        if (reviewAssignment.getId() != null && reviewAssignmentRepository.findById(reviewAssignment.getId()).isPresent()) {
+            return reviewAssignmentRepository.update(reviewAssignment);
+        } else {
+            throw new BadArgException(String.format("ReviewAssignment %s does not exist, cannot update", reviewAssignment.getId()));
+        }
+    }
 
-    public Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
+    @Override
+    public void delete(UUID id) {
+        if (id != null && reviewAssignmentRepository.findById(id).isPresent()) {
+            reviewAssignmentRepository.deleteById(id);
+        } else {
+            throw new BadArgException(String.format("ReviewAssignment %s does not exist, cannot delete", id));
+        }
+    }
+
+    private Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
         Set<ReviewAssignment> reviewAssignments = new HashSet<>();
 
         memberProfileRepository.findAll().forEach(memberProfile -> {
