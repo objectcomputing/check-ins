@@ -122,7 +122,7 @@ public class ReviewAssignmentController {
      */
     @RequiredPermission(Permission.CAN_UPDATE_REVIEW_ASSIGNMENTS)
     @Put
-    public Mono<HttpResponse<ReviewAssignment>> update(@Body @Valid ReviewAssignment reviewAssignment, HttpRequest<ReviewAssignment> request) {
+    public Mono<HttpResponse<ReviewAssignment>> update(@Body @Valid ReviewAssignment reviewAssignment, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> reviewAssignmentServices.update(reviewAssignment))
             .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -141,7 +141,7 @@ public class ReviewAssignmentController {
     @RequiredPermission(Permission.CAN_DELETE_REVIEW_ASSIGNMENTS)
     @Delete("/{id}")
     public HttpResponse<?> deleteReviewAssignment(@NotNull UUID id) {
-        reviewAssignmentServices.delete(id);
+        reviewAssignmentServices.delete(id); // todo matt blocking
         return HttpResponse
             .ok();
     }
