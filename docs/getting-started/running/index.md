@@ -102,3 +102,15 @@ Once connected, you can run SQL queries against the database, inspect the schema
 The application uses Flyway to manage database migrations. The migrations are located in the `server/src/main/resources/db` directory. The migrations are run automatically when the application starts.
 
 For test data, a Repeatable Migration called `R__Load_testing_data.sql` is used to seed the database with test data. This migration is run every time the application starts.
+
+## Working with encrypted data
+
+Sensitive columns in the database are stored encrypted. The application leverages [pgcrypto](https://www.postgresql.org/docs/current/pgcrypto.html) to encrypt and decrypt these datum. The encryption key used is stored in the `AES_KEY` environment variable. The key is a 256-bit key encoded in base64. This key is used to encrypt and decrypt the data and will be available in the environment when the application is setup.
+
+When running queries against the database, you will see the encrypted data. To decrypt the data, you can use the `pgp_sym_decrypt` function provided by pgcrypto. For example:
+
+```sql
+SELECT pgp_sym_decrypt(encrypted_column, 'AES_KEY') FROM table_name;
+```
+
+For more examples and information on working with encrypted data, refer to the [pgcrypto documentation](https://www.postgresql.org/docs/current/pgcrypto.html).
