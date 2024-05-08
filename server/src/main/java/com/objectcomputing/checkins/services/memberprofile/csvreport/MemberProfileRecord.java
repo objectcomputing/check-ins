@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.TypeDef;
@@ -56,6 +57,7 @@ public class MemberProfileRecord {
     private String workEmail;
 
     @Column(name = "startdate")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate startDate;
 
     @Column(name = "pdlfirstname")

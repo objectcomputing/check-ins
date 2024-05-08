@@ -9,7 +9,6 @@ datasources:
   default:
     url:  jdbc:tc:postgresql:14:///
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
-    clean-disabled: false
 ---
 mail-jet:
   from_address: "someEmail@test.com"
@@ -32,7 +31,6 @@ credentials:
 ---
 flyway:
   enabled: enabled
-  #clean-disabled: false
   datasources:
     default:
       locations:

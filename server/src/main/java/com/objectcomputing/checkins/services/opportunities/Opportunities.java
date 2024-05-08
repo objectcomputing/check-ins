@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.opportunities;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -57,10 +58,12 @@ public class Opportunities {
 
     @Column(name="expireson")
     @Schema(description = "date for expiresOn", required = true)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate expiresOn;
 
     @Column(name="submittedon")
     @Schema(description = "date for submittedOn", required = true)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate submittedOn;
 
     @Column(name="submittedby")

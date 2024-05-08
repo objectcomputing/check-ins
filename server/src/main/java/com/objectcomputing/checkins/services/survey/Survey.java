@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.survey;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -10,6 +11,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -25,16 +27,16 @@ public class Survey {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "the id of the survey", required = true)
+    @Schema(description = "the id of the survey")
     private UUID id;
 
-    @Column(name="name")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(name::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
-    @Schema(description = "description of Name", required = true)
+    @NotBlank
+    @Schema(description = "description of Name")
+    @Column(name="name")
     private String name;
 
     @Column(name="description")
@@ -42,19 +44,20 @@ public class Survey {
             read =  "pgp_sym_decrypt(description::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
-    @Schema(description = "description of Description", required = true)
+    @NotBlank
+    @Schema(description = "description of Description")
     private String description;
 
     @Column(name="createdon")
     @NotNull
-    @Schema(description = "date for createdOn", required = true)
+    @Schema(description = "date for createdOn")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate createdOn;
 
     @Column(name="createdby")
     @TypeDef(type=DataType.STRING)
     @NotNull
-    @Schema(description = "id of the teamMember this entry is associated with", required = true)
+    @Schema(description = "id of the teamMember this entry is associated with")
     private UUID createdBy;
 
     public Survey(UUID id,LocalDate createdOn, UUID createdBy, String name, String description) {

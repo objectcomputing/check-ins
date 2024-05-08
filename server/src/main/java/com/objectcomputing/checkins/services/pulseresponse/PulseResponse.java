@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -31,11 +32,13 @@ public class PulseResponse {
     @Column(name="submissiondate")
     @NotNull
     @Schema(description = "date for submissionDate", required = true)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate submissionDate;
 
     @Column(name="updateddate")
     @NotNull
     @Schema(description = "date for updatedDate", required = true)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate updatedDate;
 
     @Column(name="teammemberid")

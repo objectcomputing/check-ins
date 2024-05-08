@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -60,6 +61,7 @@ public class EmployeeHours {
     @Column(name="updateddate")
     @NotNull
     @Schema(description = "date for updatedDate")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate updatedDate;
 
     @Column(name="targethours")
@@ -69,6 +71,7 @@ public class EmployeeHours {
 
     @Column(name="asofdate")
     @Schema(description = "as of Date")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate asOfDate;
 
     public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate) {

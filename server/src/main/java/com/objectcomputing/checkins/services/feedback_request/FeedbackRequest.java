@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -55,11 +56,13 @@ public class FeedbackRequest {
     @Column(name="send_date")
     @NotNull
     @Schema(description = "date request was sent", required = true)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate sendDate;
 
     @Column(name="due_date")
     @Nullable
     @Schema(description = "date request is due, if applicable")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate dueDate;
 
     @Column(name = "status")
@@ -70,6 +73,7 @@ public class FeedbackRequest {
     @Column(name = "submit_date")
     @Nullable
     @Schema(description = "date the recipient submitted feedback for the request")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate submitDate;
 
     @Column(name = "review_period_id")

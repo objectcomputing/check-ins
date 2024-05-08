@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -104,6 +105,7 @@ public class MemberProfile {
     @Column(name="startdate")
     @Schema(description = "employee's date of hire")
     @Nullable
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate startDate;
 
     @Column(name="biotext")
@@ -124,11 +126,13 @@ public class MemberProfile {
     @Column(name="terminationdate")
     @Schema(description = "employee's date of termination")
     @Nullable
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate terminationDate;
 
     @Column(name="birthdate")
     @Schema(description = "employee's birthdate")
     @Nullable
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate birthDate;
 
     @Column(name="voluntary", columnDefinition = "boolean default false")

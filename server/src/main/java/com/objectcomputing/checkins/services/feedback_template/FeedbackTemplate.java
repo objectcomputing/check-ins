@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -49,6 +50,7 @@ public class FeedbackTemplate {
     @Column(name = "date_created")
     @DateCreated
     @Schema(description = "date the template was created", required = true)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate dateCreated;
 
     @Column(name = "active")

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.member_skill;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -45,7 +46,7 @@ public class MemberSkill {
     private String skilllevel;
 
     @Column(name="lastuseddate")
-    @TypeDef(type= DataType.DATE)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     @Schema(description = "the last used date of the skill")
     private LocalDate lastuseddate;
 
