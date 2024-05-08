@@ -10,13 +10,13 @@ import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;

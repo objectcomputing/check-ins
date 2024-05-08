@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
 import io.micronaut.core.annotation.Introspected;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Introspected

@@ -2,14 +2,15 @@ package com.objectcomputing.checkins.services.feedback_template.template_questio
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Introspected
 public class TemplateQuestionUpdateDTO {
 
-    @NotBlank
+    @NotNull
     @Schema(description = "id of the template question", required = true)
     private UUID id;
 
@@ -17,7 +18,7 @@ public class TemplateQuestionUpdateDTO {
     @Schema(description = "text of the question to receive feedback on", required = true)
     private String question;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "order of question in template", required = true)
     private Integer questionNumber;
 

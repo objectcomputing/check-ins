@@ -9,11 +9,9 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.reactivestreams.Publisher;
-
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 
 @Controller("/services/github-issue")

@@ -13,12 +13,11 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
 
@@ -48,7 +47,7 @@ public class CombineSkillController {
      */
 
     @Post()
-    public Mono<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<CombineSkillsDTO> request) {
+    public Mono<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<?> request) {
         return Mono.fromCallable(() -> combineSkillServices.combine(skill))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdSkill -> (HttpResponse<Skill>) HttpResponse.created(createdSkill)

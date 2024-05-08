@@ -7,9 +7,13 @@ import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -37,7 +41,7 @@ public class FeedbackTemplate {
     private String description;
 
     @Column(name = "creator_id")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of person who created the feedback template", required = true)
     private UUID creatorId;
@@ -48,22 +52,22 @@ public class FeedbackTemplate {
     private LocalDate dateCreated;
 
     @Column(name = "active")
-    @NotBlank
+    @NotNull
     @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
     private Boolean active;
 
     @Column(name = "is_public")
-    @NotBlank
+    @NotNull
     @Schema(description = "whether the template is accessible to everyone or just the creator", required = true)
     private Boolean isPublic;
 
     @Column(name = "is_ad_hoc")
-    @NotBlank
+    @NotNull
     @Schema(description = "whether the template is an ad-hoc template", required = true)
     private Boolean isAdHoc;
 
     @Column(name = "is_review")
-    @NotBlank
+    @NotNull
     @Schema(description = "indicates whether the template is utilized for performance reviews", required = true)
     private Boolean isReview;
 

@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.tags;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.skills.Skill;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,13 +10,12 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
@@ -49,7 +48,7 @@ public class TagController {
      * @return {@link HttpResponse<  Tag  >}
      */
     @Post()
-    public Mono<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<TagCreateDTO> request) {
+    public Mono<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> tagServices.save(new Tag(tag.getName())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -67,7 +66,7 @@ public class TagController {
      */
     @Delete("/{id}")
     public HttpResponse<?> deleteTag(UUID id) {
-        tagServices.delete(id);
+        tagServices.delete(id); // TODO MATT blocking call
         return HttpResponse.ok();
     }
 
@@ -99,7 +98,7 @@ public class TagController {
      * @return {@link Set <tag > set of tags
      */
     @Get("/{?name}")
-    public Mono<HttpResponse<Set<Tag>>> findtags(@Nullable String name) {
+    public Mono<HttpResponse<Set<Tag>>> findTags(@Nullable String name) {
         return Mono.fromCallable(() -> tagServices.findByFields(name))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(tag -> (HttpResponse<Set<Tag>>)HttpResponse
@@ -113,7 +112,7 @@ public class TagController {
      * @return {@link Tag}
      */
     @Put()
-    public Mono<HttpResponse<Tag>> update(@Body @Valid Tag tag, HttpRequest<Skill> request) {
+    public Mono<HttpResponse<Tag>> update(@Body @Valid Tag tag, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> tagServices.update(tag))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))

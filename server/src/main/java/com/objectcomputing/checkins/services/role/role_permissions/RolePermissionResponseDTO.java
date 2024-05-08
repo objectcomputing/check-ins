@@ -3,8 +3,8 @@ package com.objectcomputing.checkins.services.role.role_permissions;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected

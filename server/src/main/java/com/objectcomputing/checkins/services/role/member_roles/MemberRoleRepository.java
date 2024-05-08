@@ -1,16 +1,10 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
-import com.objectcomputing.checkins.services.checkins.CheckIn;
-import com.objectcomputing.checkins.services.role.Role;
-import com.objectcomputing.checkins.services.team.Team;
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

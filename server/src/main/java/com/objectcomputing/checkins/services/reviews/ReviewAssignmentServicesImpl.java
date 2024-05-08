@@ -1,12 +1,11 @@
 package com.objectcomputing.checkins.services.reviews;
 
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;

@@ -2,14 +2,15 @@ package com.objectcomputing.checkins.services.skillcategory;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Introspected
 public class SkillCategoryUpdateDTO {
 
-    @NotBlank
+    @NotNull
     private UUID id;
 
     @NotBlank

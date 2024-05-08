@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.questions;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,13 +11,11 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +48,7 @@ public class QuestionController {
      */
 
     @Post()
-    public Mono<HttpResponse<QuestionResponseDTO>> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<QuestionCreateDTO> request) {
+    public Mono<HttpResponse<QuestionResponseDTO>> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> questionService.saveQuestion(toModel(question)))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -116,7 +115,7 @@ public class QuestionController {
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
     @Put()
-    public Mono<HttpResponse<QuestionResponseDTO>> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<QuestionCreateDTO> request) {
+    public Mono<HttpResponse<QuestionResponseDTO>> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<?> request) {
         if (question == null) {
             return Mono.just(HttpResponse.ok());
         }

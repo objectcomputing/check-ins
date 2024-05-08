@@ -12,10 +12,10 @@ import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
 
@@ -41,7 +41,7 @@ public class SkillCategorySkillController {
     @Post()
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkillId dto,
-                                                         HttpRequest<SkillCategorySkillId> request) {
+                                                         HttpRequest<?> request) {
         return Mono
                 .fromCallable(() -> skillCategorySkillServices.save(dto))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))

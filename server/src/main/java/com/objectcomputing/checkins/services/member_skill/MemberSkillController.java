@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.member_skill;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.skills.Skill;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -11,14 +11,12 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +49,7 @@ public class MemberSkillController {
      * @return {@link HttpResponse< MemberSkill >}
      */
     @Post()
-    public Mono<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
+    public Mono<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(),
                 memberSkill.getSkillid(), memberSkill.getSkilllevel(), memberSkill.getLastuseddate())))
@@ -70,7 +68,7 @@ public class MemberSkillController {
      */
     @Delete("/{id}")
     public HttpResponse<?> deleteMemberSkill(@NotNull UUID id) {
-        memberSkillsService.delete(id);
+        memberSkillsService.delete(id); // todo matt blocking
         return HttpResponse
                 .ok();
     }
@@ -120,7 +118,7 @@ public class MemberSkillController {
      * @return {@link MemberSkill}
      */
     @Put()
-    public Mono<HttpResponse<MemberSkill>> update(@Body @Valid MemberSkill memberSkill, HttpRequest<Skill> request) {
+    public Mono<HttpResponse<MemberSkill>> update(@Body @Valid MemberSkill memberSkill, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> memberSkillsService.update(memberSkill))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))

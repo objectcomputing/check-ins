@@ -2,11 +2,11 @@ package com.objectcomputing.checkins.services.guild.member;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import jakarta.inject.Inject;
-import javax.validation.ConstraintViolation;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;

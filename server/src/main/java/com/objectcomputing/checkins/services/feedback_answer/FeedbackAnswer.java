@@ -4,15 +4,15 @@ import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -39,13 +39,13 @@ public class FeedbackAnswer {
     private String answer;
 
     @Column(name = "question_id")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback question the answer is linked to", required = true)
     private UUID questionId;
 
     @Column(name = "request_id")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the request this question is linked to ", required = true)
     private UUID requestId;

@@ -1,41 +1,34 @@
 package com.objectcomputing.checkins.services.feedback_template.template_question;
 
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.validation.Validated;
+import io.netty.channel.EventLoopGroup;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
-import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Put;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
-
 @Controller("/services/feedback/template_questions")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "template_questions")
+@Validated
 public class TemplateQuestionController {
 
     private final TemplateQuestionServices templateQuestionServices;
@@ -91,7 +84,7 @@ public class TemplateQuestionController {
      */
     @Delete("/{id}")
     public HttpResponse<?> deleteTemplateQuestion(@NotNull UUID id) {
-        templateQuestionServices.delete(id);
+        templateQuestionServices.delete(id); // todo matt blocking
         return HttpResponse
                 .ok();
     }

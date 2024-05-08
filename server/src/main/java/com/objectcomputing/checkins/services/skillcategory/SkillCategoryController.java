@@ -13,11 +13,11 @@ import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -43,7 +43,7 @@ public class SkillCategoryController {
 
     @Post()
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
-    public Mono<HttpResponse<SkillCategory>> create(@Body @Valid SkillCategoryCreateDTO dto, HttpRequest<SkillCategoryCreateDTO> request) {
+    public Mono<HttpResponse<SkillCategory>> create(@Body @Valid SkillCategoryCreateDTO dto, HttpRequest<?> request) {
         return Mono
                 .fromCallable(() -> {
                     SkillCategory skillCategory = new SkillCategory(dto.getName(), dto.getDescription());
@@ -61,7 +61,7 @@ public class SkillCategoryController {
 
     @Put()
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
-    public Mono<HttpResponse<SkillCategory>> update(@Body @Valid SkillCategoryUpdateDTO dto, HttpRequest<SkillCategoryCreateDTO> request) {
+    public Mono<HttpResponse<SkillCategory>> update(@Body @Valid SkillCategoryUpdateDTO dto, HttpRequest<?> request) {
         return Mono
                 .fromCallable(() -> {
                     SkillCategory skillCategory = new SkillCategory(dto.getId(), dto.getName(), dto.getDescription());

@@ -1,17 +1,15 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
-import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,11 +1,11 @@
 package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
-
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;

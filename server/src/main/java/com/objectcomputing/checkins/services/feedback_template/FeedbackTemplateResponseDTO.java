@@ -1,17 +1,18 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Introspected
 public class FeedbackTemplateResponseDTO {
 
-    @NotBlank
+    @NotNull
     @Schema(description = "id of the feedback template", required = true)
     private UUID id;
 
@@ -23,23 +24,23 @@ public class FeedbackTemplateResponseDTO {
     @Schema(description = "description of the feedback template")
     private String description;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "ID of person who created the feedback template", required = true)
     private UUID creatorId;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "date the template was created", required = true)
     private LocalDate dateCreated;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
     private Boolean active;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "whether the template is accessible to everyone or just the creator", required = true)
     private Boolean isPublic;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "whether the template is an ad-hoc template", required = true)
     private Boolean isAdHoc;
 

@@ -44,9 +44,9 @@ public class TodayController {
      * @return {@link TodayResponseDTO today's events}
      */
 
-    @Get("/")
+    @Get()
     public Mono<HttpResponse<TodayResponseDTO>> getTodaysEvents() {
-        return Mono.fromCallable(() -> todayServices.getTodaysEvents())
+        return Mono.fromCallable(todayServices::getTodaysEvents)
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup)).subscribeOn(scheduler)
                 .map(todaysEvents -> (HttpResponse<TodayResponseDTO>) HttpResponse.ok(todaysEvents))
                 .subscribeOn(scheduler);

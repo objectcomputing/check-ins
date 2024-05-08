@@ -10,17 +10,14 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
@@ -51,7 +48,7 @@ public class RoleController {
     @Post()
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Mono<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,
-                                             HttpRequest<RoleCreateDTO> request) {
+                                             HttpRequest<?> request) {
         return Mono.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(userRole -> {
@@ -69,7 +66,7 @@ public class RoleController {
      */
     @Put()
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<Role> request) {
+    public Mono<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<?> request) {
         return Mono.fromCallable(() -> roleServices.update(role))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedRole -> (HttpResponse<Role>) HttpResponse
@@ -107,12 +104,10 @@ public class RoleController {
      */
     @Get()
     public Mono<HttpResponse<List<Role>>> findAll() {
-        return Mono.fromCallable(() -> {
-            List<Role> result = roleServices.findAllRoles();
-            return result;
-        }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(userRole -> {
-            return (HttpResponse<List<Role>>) HttpResponse.ok(userRole);
-        }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        return Mono.fromCallable(roleServices::findAllRoles)
+                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
+                .map(userRole -> (HttpResponse<List<Role>>) HttpResponse.ok(userRole))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -123,7 +118,7 @@ public class RoleController {
     @Delete("/{id}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> deleteRole(UUID id) {
-        roleServices.delete(id);
+        roleServices.delete(id); // todo matt blocking
         return HttpResponse.ok();
     }
 

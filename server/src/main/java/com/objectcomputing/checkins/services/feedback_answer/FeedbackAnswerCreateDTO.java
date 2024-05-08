@@ -1,10 +1,10 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Introspected
@@ -14,11 +14,11 @@ public class FeedbackAnswerCreateDTO {
     @Schema(description = "the content of the answer", required = true)
     private String answer;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "id of the feedback question the answer is linked to", required = true)
     private UUID questionId;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "id of the request this question is linked to ", required = true)
     private UUID requestId;
 

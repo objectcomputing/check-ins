@@ -10,17 +10,18 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 
 @Controller("/services/opportunities")
@@ -56,7 +57,7 @@ public class OpportunitiesController {
                                                                      @Nullable String description, @Nullable UUID submittedBy) {
         return Mono.fromCallable(() -> opportunitiesResponseServices.findByFields(name, description, submittedBy))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(opportunities -> { List<Opportunities>  opportunity = opportunities.stream().collect(Collectors.toList());
+                .map(opportunities -> { List<Opportunities>  opportunity = new ArrayList<>(opportunities);
                    return (HttpResponse<List<Opportunities>>) HttpResponse.ok(opportunity);})
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
@@ -70,13 +71,12 @@ public class OpportunitiesController {
 
     @Post()
     public Mono<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
-                                                     HttpRequest<OpportunitiesCreateDTO> request) {
+                                                     HttpRequest<?> request) {
         return Mono.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(), opportunitiesResponse.getDescription(), opportunitiesResponse.getUrl(), opportunitiesResponse.getExpiresOn(),opportunitiesResponse.getPending())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(opportunities -> {return (HttpResponse<Opportunities>) HttpResponse
+                .map(opportunities -> (HttpResponse<Opportunities>) HttpResponse
                         .created(opportunities)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), opportunities.getId()))));
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), opportunities.getId()))))).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -87,7 +87,7 @@ public class OpportunitiesController {
      */
     @Put()
     public Mono<HttpResponse<Opportunities>> update(@Body @Valid @NotNull Opportunities opportunitiesResponse,
-                                               HttpRequest<Opportunities> request) {
+                                               HttpRequest<?> request) {
         return Mono.fromCallable(() -> opportunitiesResponseServices.update(opportunitiesResponse))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedOpportunities -> (HttpResponse<Opportunities>) HttpResponse
@@ -105,7 +105,7 @@ public class OpportunitiesController {
      */
     @Delete("/{id}")
     public HttpResponse<?> deleteOpportunities(@NotNull UUID id) {
-        opportunitiesResponseServices.delete(id);
+        opportunitiesResponseServices.delete(id); // todo matt blocking
         return HttpResponse
                 .ok();
     }

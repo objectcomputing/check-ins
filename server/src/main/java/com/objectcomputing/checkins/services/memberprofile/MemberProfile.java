@@ -1,16 +1,16 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
-import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
+import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;

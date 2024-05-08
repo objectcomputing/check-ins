@@ -6,6 +6,7 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
+import jakarta.inject.Inject;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import jakarta.inject.Inject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
     private static final PostgreSQLContainer<?> postgres;
 
     static {
-        postgres = new PostgreSQLContainer<>("postgres:11.16");
+        postgres = new PostgreSQLContainer<>("postgres:14");
         postgres.waitingFor(Wait.forLogMessage(".*database system is ready to accept connections\\n", 1));
         postgres.start();
         Runtime.getRuntime().addShutdownHook(new Thread(postgres::stop));
@@ -51,12 +52,12 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
     }
 
     @BeforeEach
-    private void setup() {
+    public void setup() {
         flyway.migrate();
     }
 
     @AfterEach
-    private void teardown() {
+    public void teardown() {
         if(shouldResetDBAfterEachTest) {
             flyway.clean();
         }
@@ -70,6 +71,7 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
         properties.put("datasources.default.password", getPassword());
         properties.put("datasources.default.dialect", "POSTGRES");
         properties.put("datasources.default.driverClassName", "org.testcontainers.jdbc.ContainerDatabaseDriver");
+        properties.put("flyway.datasources.default.clean-schema", "true"); // Needed to run Flyway.clean()
         properties.put("mail-jet.from_address", "someEmail@gmail.com");
         properties.put("mail-jet.from_name", "John Doe");
         return properties;

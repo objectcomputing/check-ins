@@ -12,11 +12,11 @@ import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
@@ -46,7 +46,7 @@ public class ReviewPeriodController {
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
     @Post()
-    public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<ReviewPeriodCreateDTO> request) {
+    public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> reviewPeriodServices.save(period.convertToEntity()))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -103,14 +103,13 @@ public class ReviewPeriodController {
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
     @Put()
-    public Mono<HttpResponse<ReviewPeriod>> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<ReviewPeriod> request) {
+    public Mono<HttpResponse<ReviewPeriod>> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> reviewPeriodServices.update(reviewPeriod))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedReviewPeriod -> (HttpResponse<ReviewPeriod>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewPeriod.getId()))))
-                        .body(updatedReviewPeriod))
+                        .ok(updatedReviewPeriod)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewPeriod.getId())))))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 

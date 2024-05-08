@@ -1,10 +1,10 @@
 package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
 import io.micronaut.core.annotation.Introspected;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-import javax.validation.constraints.NotNull;
 import io.micronaut.core.annotation.Nullable;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.UUID;
 

@@ -2,9 +2,8 @@ package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.fixture.PulseResponseFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-
+import com.objectcomputing.checkins.services.fixture.PulseResponseFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.util.Util;
@@ -15,18 +14,16 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PulseResponseFixture {
 
@@ -199,6 +196,7 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testFindPulseResponseAllParams(){
+        // TODO matt controller has date issue like survey
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);

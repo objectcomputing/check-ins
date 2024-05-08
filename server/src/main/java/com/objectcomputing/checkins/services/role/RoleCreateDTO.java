@@ -5,9 +5,8 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
 
 
 @Introspected

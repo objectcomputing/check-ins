@@ -11,12 +11,12 @@ import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -48,7 +48,7 @@ public class GuildController {
      * @return {@link HttpResponse<GuildResponseDTO>}
      */
     @Post()
-    public Mono<HttpResponse<GuildResponseDTO>> createAGuild(@Body @Valid GuildCreateDTO guild, HttpRequest<GuildCreateDTO> request) {
+    public Mono<HttpResponse<GuildResponseDTO>> createAGuild(@Body @Valid GuildCreateDTO guild, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> guildService.save(guild))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -97,7 +97,7 @@ public class GuildController {
      * @return {@link HttpResponse<GuildResponseDTO>}
      */
     @Put()
-    public Mono<HttpResponse<GuildResponseDTO>> update(@Body @Valid GuildUpdateDTO guild, HttpRequest<GuildUpdateDTO> request) {
+    public Mono<HttpResponse<GuildResponseDTO>> update(@Body @Valid GuildUpdateDTO guild, HttpRequest<?> request) {
         return Mono.fromCallable(() -> guildService.update(guild))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updated -> (HttpResponse<GuildResponseDTO>) HttpResponse

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.survey;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -9,16 +10,13 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -29,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="survey")
-
 public class SurveyController {
 
     private final SurveyService surveyResponseServices;
@@ -75,13 +72,14 @@ public class SurveyController {
 
     @Post()
     public Mono<HttpResponse<Survey>> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse,
-                                                                   HttpRequest<SurveyCreateDTO> request) {
-        return Mono.fromCallable(() -> surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(), surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription())))
+                                                                   HttpRequest<?> request) {
+        return Mono.fromCallable(() -> surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(),
+                        surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(survey -> {return (HttpResponse<Survey>) HttpResponse
+                .map(survey -> (HttpResponse<Survey>) HttpResponse
                         .created(survey)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), survey.getId()))));
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), survey.getId())))))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
     /**
@@ -92,7 +90,7 @@ public class SurveyController {
      */
     @Put()
     public Mono<HttpResponse<Survey>> update(@Body @Valid @NotNull Survey surveyResponse,
-                                                      HttpRequest<Survey> request) {
+                                                      HttpRequest<?> request) {
         return Mono.fromCallable(() -> surveyResponseServices.update(surveyResponse))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatedSurvey -> (HttpResponse<Survey>) HttpResponse
@@ -110,8 +108,7 @@ public class SurveyController {
      */
     @Delete("/{id}")
     public HttpResponse<?> deleteSurvey(@NotNull UUID id) {
-        surveyResponseServices.delete(id);
-        return HttpResponse
-                .ok();
+        surveyResponseServices.delete(id); // todo matt blocking
+        return HttpResponse.ok();
     }
 }

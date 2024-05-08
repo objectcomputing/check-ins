@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -8,12 +10,8 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import java.net.URI;
 import java.util.Set;
@@ -24,7 +22,7 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin-notes")
 public class CheckinNoteController {
-
+    // todo matt whole controller is blocking
     private final CheckinNoteServices checkinNoteServices;
 
     public CheckinNoteController(CheckinNoteServices checkinNoteServices) {
@@ -40,7 +38,7 @@ public class CheckinNoteController {
      */
     @Post()
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
-    public HttpResponse<CheckinNote> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote, HttpRequest<CheckinNoteCreateDTO> request) {
+    public HttpResponse<CheckinNote> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote, HttpRequest<?> request) {
         CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(), checkinNote.getCreatedbyid()
                 , checkinNote.getDescription()));
         return HttpResponse.created(newCheckinNote)
@@ -57,7 +55,7 @@ public class CheckinNoteController {
      */
     @Put()
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
-    public HttpResponse<CheckinNote> updateCheckinNote(@Body @Valid CheckinNote checkinNote, HttpRequest<CheckinNoteCreateDTO> request) {
+    public HttpResponse<CheckinNote> updateCheckinNote(@Body @Valid CheckinNote checkinNote, HttpRequest<?> request) {
         CheckinNote updateCheckinNote = checkinNoteServices.update(checkinNote);
         return HttpResponse.ok().headers(headers -> headers.location(
                 URI.create(String.format("%s/%s", request.getPath(), updateCheckinNote.getId()))))

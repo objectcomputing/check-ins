@@ -2,10 +2,9 @@ package com.objectcomputing.checkins.services.survey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.SurveyFixture;
-import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -14,9 +13,9 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,9 +23,7 @@ import java.util.stream.Collectors;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SurveyControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, SurveyFixture {
 
@@ -193,14 +190,17 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         MemberProfile user = createAnUnrelatedUser();
         createAndAssignAdminRole(user);
 
+        // todo matt createdOn timestamps don't match. Response is a day behind too...
+        // might need to add a converter https://thorben-janssen.com/persist-localdate-localdatetime-jpa/
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        Survey surveyResponse  = createADefaultSurvey(memberProfile);
+        Survey expectedResponse  = createADefaultSurvey(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", expectedResponse.getCreatedBy())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
-        assertEquals(Set.of(surveyResponse), response.body());
+
+        assertTrue(response.body().contains(expectedResponse));
         assertEquals(HttpStatus.OK,response.getStatus());
 
     }

@@ -1,25 +1,30 @@
 package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.oauth2.endpoint.authorization.state.State;
-import io.micronaut.security.oauth2.endpoint.token.response.*;
+import io.micronaut.security.oauth2.endpoint.token.response.OauthAuthenticationMapper;
+import io.micronaut.security.oauth2.endpoint.token.response.OpenIdAuthenticationMapper;
+import io.micronaut.security.oauth2.endpoint.token.response.OpenIdClaims;
+import io.micronaut.security.oauth2.endpoint.token.response.OpenIdTokenResponse;
+import io.micronaut.security.token.Claims;
 import io.micronaut.security.token.config.TokenConfiguration;
-import io.micronaut.security.token.jwt.generator.claims.JwtClaims;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Named("google")
 @Singleton
@@ -39,8 +44,7 @@ public class CheckinsOpenIdAuthenticationMapper implements OpenIdAuthenticationM
         this.tokenConfiguration = tokenConfiguration;
     }
 
-    @NonNull
-    public AuthenticationResponse createAuthentication(String providerName, OpenIdTokenResponse tokenResponse, OpenIdClaims openIdClaims) {
+    public @NonNull AuthenticationResponse createAuthentication(String providerName, OpenIdTokenResponse tokenResponse, OpenIdClaims openIdClaims) {
         Map<String, Object> claims = buildAttributes(providerName, tokenResponse, openIdClaims);
         List<String> roles = getRoles(openIdClaims);
         String username = openIdClaims.getSubject();
@@ -48,10 +52,9 @@ public class CheckinsOpenIdAuthenticationMapper implements OpenIdAuthenticationM
         return AuthenticationResponse.success(username, roles, claims);
     }
 
-    @NonNull
     @Override
-    public AuthenticationResponse createAuthenticationResponse(String providerName, OpenIdTokenResponse tokenResponse, OpenIdClaims openIdClaims, @Nullable State state) {
-        return createAuthentication(providerName, tokenResponse, openIdClaims);
+    public @NonNull Publisher<AuthenticationResponse> createAuthenticationResponse(String providerName, OpenIdTokenResponse tokenResponse, OpenIdClaims openIdClaims, @Nullable State state) {
+        return Mono.fromCallable(() -> createAuthentication(providerName, tokenResponse, openIdClaims));
     }
 
     /**
@@ -62,7 +65,7 @@ public class CheckinsOpenIdAuthenticationMapper implements OpenIdAuthenticationM
      */
     protected Map<String, Object> buildAttributes(String providerName, OpenIdTokenResponse tokenResponse, OpenIdClaims openIdClaims) {
         Map<String, Object> claims = new HashMap<>(openIdClaims.getClaims());
-        JwtClaims.ALL_CLAIMS.forEach(claims::remove);
+        Claims.ALL_CLAIMS.forEach(claims::remove);
         claims.put(OauthAuthenticationMapper.PROVIDER_KEY, providerName);
         claims.put(OpenIdAuthenticationMapper.OPENID_TOKEN_KEY, tokenResponse.getIdToken());
         claims.put(tokenConfiguration.getRolesName(), getRoles(openIdClaims));
@@ -80,8 +83,8 @@ public class CheckinsOpenIdAuthenticationMapper implements OpenIdAuthenticationM
                         LOG.info("MemberProfile of the user: {}", memberProfile);
                         roles.addAll(roleRepository.findUserRoles(memberProfile.getId())
                                 .stream()
-                                .map(role -> role.getRole())
-                                .collect(Collectors.toList()));
+                                .map(Role::getRole)
+                                .toList());
                 });
 
         LOG.info("Email address of the user: {}", openIdClaims.getEmail());

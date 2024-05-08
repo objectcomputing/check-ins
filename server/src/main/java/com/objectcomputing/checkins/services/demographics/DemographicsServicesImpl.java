@@ -7,10 +7,12 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 

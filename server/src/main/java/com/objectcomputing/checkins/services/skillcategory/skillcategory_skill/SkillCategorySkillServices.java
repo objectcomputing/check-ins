@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.skillcategory.skillcategory_skill;
 
 import com.objectcomputing.checkins.services.skills.Skill;
+import jakarta.validation.Valid;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 

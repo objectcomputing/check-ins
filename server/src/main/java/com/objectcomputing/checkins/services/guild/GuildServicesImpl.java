@@ -17,8 +17,8 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;

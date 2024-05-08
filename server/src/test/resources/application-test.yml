@@ -7,8 +7,9 @@ micronaut:
 ---
 datasources:
   default:
-    url:  jdbc:tc:postgresql:11.16:///
+    url:  jdbc:tc:postgresql:14:///
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
+    clean-disabled: false
 ---
 mail-jet:
   from_address: "someEmail@test.com"
@@ -31,6 +32,7 @@ credentials:
 ---
 flyway:
   enabled: enabled
+  #clean-disabled: false
   datasources:
     default:
       locations:
@@ -38,6 +40,8 @@ flyway:
       placeholder-replacement: true
       placeholders:
         aeskey: BOGUS_TEST_KEY
+      clean-schema: true # needed to run Flyway.clean()
+
 ---
 check-ins:
   web-address: "https://checkins.objectcomputing.com"

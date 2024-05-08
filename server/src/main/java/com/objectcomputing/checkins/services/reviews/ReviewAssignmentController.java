@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.reviews;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.agenda_item.AgendaItem;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
@@ -15,11 +14,11 @@ import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
@@ -50,7 +49,7 @@ public class ReviewAssignmentController {
      */
     @Post
     @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
-    public Mono<HttpResponse<ReviewAssignment>> createReviewAssignment(@Body @Valid ReviewAssignmentDTO assignment, HttpRequest<ReviewAssignmentDTO> request) {
+    public Mono<HttpResponse<ReviewAssignment>> createReviewAssignment(@Body @Valid ReviewAssignmentDTO assignment, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> reviewAssignmentServices.save(assignment.convertToEntity()))
             .publishOn(Schedulers.fromExecutor(eventLoopGroup))

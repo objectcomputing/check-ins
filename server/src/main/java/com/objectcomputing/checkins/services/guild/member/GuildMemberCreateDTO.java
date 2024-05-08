@@ -2,8 +2,8 @@ package com.objectcomputing.checkins.services.guild.member;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected

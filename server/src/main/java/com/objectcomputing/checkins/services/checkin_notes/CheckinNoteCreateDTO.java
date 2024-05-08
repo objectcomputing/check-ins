@@ -1,10 +1,10 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
 import io.micronaut.core.annotation.Introspected;
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import io.micronaut.core.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.UUID;
 
 @Introspected

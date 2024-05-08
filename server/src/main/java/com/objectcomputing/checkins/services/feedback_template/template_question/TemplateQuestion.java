@@ -3,23 +3,18 @@ package com.objectcomputing.checkins.services.feedback_template.template_questio
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Objects;
 import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
-import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Introspected
@@ -44,13 +39,13 @@ public class TemplateQuestion {
     private String question;
 
     @Column(name = "template_id")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the template this question is a part of", required = true)
     private UUID templateId;
 
     @Column(name = "question_number")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "order of question in template", required = true)
     private Integer questionNumber;
@@ -69,7 +64,7 @@ public class TemplateQuestion {
      * @param questionNumber The order of the question in the template
      * @param inputType The type of input used to answer the question
      */
-    public TemplateQuestion(@NotBlank String question, @NotBlank UUID templateId, @NotBlank Integer questionNumber, @NotBlank String inputType) {
+    public TemplateQuestion(@NotBlank String question, @NotNull UUID templateId, @NotNull Integer questionNumber, @NotBlank String inputType) {
         this.id = null;
         this.question = question;
         this.templateId = templateId;
@@ -85,7 +80,7 @@ public class TemplateQuestion {
      * @param questionNumber The order of the question in the template
      * @param inputType The type of input used to answer the question
      */
-    public TemplateQuestion(@NotBlank UUID id, @NotBlank String question, @NotBlank Integer questionNumber, @NotBlank String inputType) {
+    public TemplateQuestion(@NotNull UUID id, @NotBlank String question, @NotNull Integer questionNumber, @NotBlank String inputType) {
         this.id = id;
         this.question = question;
         this.questionNumber = questionNumber;
@@ -99,7 +94,7 @@ public class TemplateQuestion {
      * @param questionNumber The order of the question in the template
      * @param inputType The type of input used to answer the question
      */
-    public TemplateQuestion(@NotBlank String question, @NotBlank Integer questionNumber, @NotBlank String inputType) {
+    public TemplateQuestion(@NotBlank String question, @NotNull Integer questionNumber, @NotBlank String inputType) {
         this.id = null;
         this.templateId = null;
         this.question = question;

@@ -597,6 +597,8 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         var body = response.getBody().get();
         assertEquals(1, body.size());
         assertProfilesEqual(memberProfile, Objects.requireNonNull(body.get(0)));
+
+        // todo matt date issue
     }
 
     @Test

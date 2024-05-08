@@ -5,9 +5,9 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;

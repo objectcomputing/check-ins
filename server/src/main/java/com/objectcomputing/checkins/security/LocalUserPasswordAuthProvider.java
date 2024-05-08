@@ -10,16 +10,17 @@ import com.objectcomputing.checkins.services.role.member_roles.MemberRoleService
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.annotation.SingleResult;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationFailed;
-import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import org.reactivestreams.Publisher;
-
+import io.micronaut.security.authentication.provider.ReactiveAuthenticationProvider;
 import jakarta.inject.Singleton;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Singleton
 @Requires(env = {Environments.LOCAL, Environment.TEST})
-public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
+public class LocalUserPasswordAuthProvider implements ReactiveAuthenticationProvider<HttpRequest<?>, String, String>  { // TODO matt why can't I use HttpRequestReactiveAuthenticationProvider
 
     private final CurrentUserServices currentUserServices;
     private final UsersStore usersStore;
@@ -47,14 +48,15 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
         this.rolePermissionServices = rolePermissionServices;
     }
 
-    @Override
-    public Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authReq) {
-        String email = authReq.getIdentity().toString();
+   @Override
+   @SingleResult
+   public @NonNull Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> requestContext, @NonNull AuthenticationRequest<String, String> authReq) {
+        String email = authReq.getIdentity();
         MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email, email);
 
         String role;
         // if empty get default roles, otherwise create role on the fly
-        if (StringUtils.isNotEmpty(role = authReq.getSecret().toString())) {
+        if (StringUtils.isNotEmpty(role = authReq.getSecret())) {
             List<String> roles = usersStore.getUserRole(role);
             if (roles == null) {
                 return Mono.just(new AuthenticationFailed(String.format("Invalid role selected %s", role)));

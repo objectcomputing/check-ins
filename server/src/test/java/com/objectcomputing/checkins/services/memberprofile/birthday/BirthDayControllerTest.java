@@ -1,10 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.birthday;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
@@ -17,10 +12,16 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
-import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BirthDayControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
@@ -52,7 +53,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
 
     @Test
     public void testGETFindByValueNameOfTheMonthAndDay() {
-
+        // todo matt
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
 
@@ -62,7 +63,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
                 GET(String.format("/?month=%s&dayOfMonth=%s", memberProfile.getBirthDate().getMonth().toString(), memberProfile.getBirthDate().getDayOfMonth())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<List<BirthDayResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(BirthDayResponseDTO.class));
-
+        // todo matt date issue
         assertEquals(1, response.body().size());
         assertEquals(memberProfile.getId(), response.body().get(0).getUserId());
         assertEquals(HttpStatus.OK, response.getStatus());

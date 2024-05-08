@@ -1,20 +1,17 @@
 package com.objectcomputing.checkins.services.settings;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
-
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.question_category.QuestionCategory;
 
 @Singleton
 public class SettingsServicesImpl implements SettingsServices {

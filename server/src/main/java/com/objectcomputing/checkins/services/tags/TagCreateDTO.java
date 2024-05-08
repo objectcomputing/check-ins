@@ -2,8 +2,7 @@ package com.objectcomputing.checkins.services.tags;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Introspected
 public class TagCreateDTO {

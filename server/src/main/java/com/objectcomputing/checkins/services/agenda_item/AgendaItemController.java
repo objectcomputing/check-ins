@@ -1,10 +1,8 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
-
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -15,12 +13,11 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -54,18 +51,14 @@ public class AgendaItemController {
     @Post("/")
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public Mono<HttpResponse<AgendaItem>> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem,
-                                                             HttpRequest<AgendaItemCreateDTO> request) {
+                                                             HttpRequest<?> request) {
         return Mono
             .just(agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(), agendaItem.getCreatedbyid(), agendaItem.getDescription())))
             .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-            .map(createAgendaItem -> {
-                    //Using code block rather than lambda so we can log what thread we're in
-                    return (HttpResponse<AgendaItem>) HttpResponse
-                            .created(createAgendaItem)
-                            .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createAgendaItem.getId()))
-                            ));
-            }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+            .map(createAgendaItem -> (HttpResponse<AgendaItem>) HttpResponse
+                    .created(createAgendaItem)
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createAgendaItem.getId())))))
+            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
      /**
@@ -76,7 +69,7 @@ public class AgendaItemController {
      */
     @Put("/")
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
-    public Mono<HttpResponse<AgendaItem>> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItem> request) {
+    public Mono<HttpResponse<AgendaItem>> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<?> request) {
         if (agendaItem == null) {
             return Mono.just(HttpResponse.ok());
         }
@@ -104,9 +97,8 @@ public class AgendaItemController {
                                                                  @Nullable UUID createdbyid) {
         return Mono.fromCallable(() -> agendaItemServices.findByFields(checkinid, createdbyid))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(agendaItems -> {
-                    return (HttpResponse<Set<AgendaItem>>) HttpResponse.ok(agendaItems);
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(agendaItems -> (HttpResponse<Set<AgendaItem>>) HttpResponse.ok(agendaItems))
+                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 
      /**	
@@ -134,7 +126,7 @@ public class AgendaItemController {
     @Delete("/{id}")
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<?> deleteAgendaItem(UUID id) {
-        agendaItemServices.delete(id);
+        agendaItemServices.delete(id); // todo matt blocking
         return HttpResponse
                 .ok();
     }

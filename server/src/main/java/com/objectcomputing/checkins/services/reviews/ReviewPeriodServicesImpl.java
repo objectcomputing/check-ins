@@ -5,10 +5,10 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 

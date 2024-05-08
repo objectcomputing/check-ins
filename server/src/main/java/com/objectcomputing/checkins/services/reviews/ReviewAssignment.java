@@ -6,15 +6,15 @@ import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -40,19 +40,19 @@ public class ReviewAssignment {
         this.approved = approved;
     }
 
-    @NotBlank
+    @NotNull
     @Column(name = "reviewee_id")
     @TypeDef(type = DataType.STRING)
     @Schema(required = true, description = "The ID of the employee being reviewed")
     private UUID revieweeId;
 
-    @NotBlank
+    @NotNull
     @Column(name = "reviewer_id")
     @TypeDef(type = DataType.STRING)
     @Schema(required = true, description = "The ID of the employee conducting the review")
     private UUID reviewerId;
 
-    @NotBlank
+    @NotNull
     @Column(name = "review_period_id")
     @TypeDef(type = DataType.STRING)
     @Schema(required = true, description = "The ID of the review period that the assignment is related to")

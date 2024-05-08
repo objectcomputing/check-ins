@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.checkindocument;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -11,13 +12,11 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
@@ -69,7 +68,7 @@ public class CheckinDocumentController {
     @Post()
     @RequiredPermission(Permission.CAN_CREATE_CHECKIN_DOCUMENT)
     public Mono<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
-                                                                    HttpRequest<CheckinDocumentCreateDTO> request) {
+                                                                    HttpRequest<?> request) {
         return Mono.fromCallable(() -> checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(),checkinDocument.getUploadDocId())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(createdCheckinDocument -> {return (HttpResponse<CheckinDocument>) HttpResponse
@@ -87,7 +86,7 @@ public class CheckinDocumentController {
     @Put()
     @RequiredPermission(Permission.CAN_UPDATE_CHECKIN_DOCUMENT)
     public Mono<HttpResponse<CheckinDocument>> update(@Body @Valid CheckinDocument checkinDocument,
-                                            HttpRequest<CheckinDocument> request) {
+                                            HttpRequest<?> request) {
         if (checkinDocument == null) {
             return Mono.just(HttpResponse.ok());
         }
@@ -110,7 +109,7 @@ public class CheckinDocumentController {
     @Delete("/{checkinsId}")
     @RequiredPermission(Permission.CAN_DELETE_CHECKIN_DOCUMENT)
     public HttpResponse<?> delete(UUID checkinsId) {
-        checkinDocumentService.deleteByCheckinId(checkinsId);
+        checkinDocumentService.deleteByCheckinId(checkinsId); // todo matt blocking
         return HttpResponse
                 .noContent();
     }

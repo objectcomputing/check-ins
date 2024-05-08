@@ -1,9 +1,10 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.UUID;
 
 @Introspected

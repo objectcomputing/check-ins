@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.team;
 
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -10,14 +11,12 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +48,7 @@ public class TeamController {
      * @return {@link HttpResponse<TeamResponseDTO>}
      */
     @Post()
-    public Mono<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<TeamCreateDTO> request) {
+    public Mono<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> teamService.save(team))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
@@ -80,7 +79,7 @@ public class TeamController {
      * @param name,     name of the team
      * @param memberId, {@link UUID} of the member you wish to inquire in to which teams they are a part of
      * @return {@link List<TeamResponseDTO> list of teams}, return all teams when no parameters filled in else
-     * return all teams that match all of the filled in params
+     * return all teams that match all the filled in params
      */
     @Get("/{?name,memberId}")
     public Mono<HttpResponse<Set<TeamResponseDTO>>> findTeams(@Nullable String name, @Nullable UUID memberId) {
@@ -97,7 +96,7 @@ public class TeamController {
      * @return {@link HttpResponse<TeamResponseDTO>}
      */
     @Put()
-    public Mono<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<TeamUpdateDTO> request) {
+    public Mono<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<?> request) {
         return Mono.fromCallable(() -> teamService.update(team))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updated -> (HttpResponse<TeamResponseDTO>) HttpResponse
@@ -115,10 +114,10 @@ public class TeamController {
      * @return
      */
     @Delete("/{id}")
-    public Mono<HttpResponse> deleteTeam(@NotNull UUID id) {
+    public Mono<HttpResponse<Object>> deleteTeam(@NotNull UUID id) {
         return Mono.fromCallable(() -> teamService.delete(id))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(success -> (HttpResponse) HttpResponse.ok())
+                .map(success -> (HttpResponse<Object>) HttpResponse.ok())
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
     }
 }

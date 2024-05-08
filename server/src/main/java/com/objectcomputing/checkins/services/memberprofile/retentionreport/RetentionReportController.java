@@ -13,12 +13,12 @@ import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
 
@@ -50,7 +50,7 @@ public class RetentionReportController {
     @Post()
     @RequiredPermission(Permission.CAN_VIEW_RETENTION_REPORT)
     public Mono<HttpResponse<RetentionReportResponseDTO>> reportRetention(@Body @Valid @NotNull RetentionReportRequestDTO requestBody,
-                                                                          HttpRequest<RetentionReportRequestDTO> request) {
+                                                                          HttpRequest<?> request) {
         if (requestBody.getStartDate().isAfter(requestBody.getEndDate()) ||
                 requestBody.getStartDate().isEqual(requestBody.getEndDate())) {
             throw new BadArgException("Start date must be before end date");

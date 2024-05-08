@@ -1,8 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
@@ -15,12 +12,16 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MemberProfileReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
     @Inject
@@ -80,6 +81,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
 
     @Test
     public void testGetAllMemberProfileRecords() {
+        // todo matt date issue
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
         MemberProfile member3 = createADefaultMemberProfileForPdl(member1);

@@ -2,8 +2,8 @@ package com.objectcomputing.checkins.services.role.member_roles;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
-import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Introspected

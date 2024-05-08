@@ -1,12 +1,11 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import javax.validation.constraints.NotNull;
-
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Introspected
 public class CheckInCreateDTO {

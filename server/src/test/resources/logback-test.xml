@@ -11,7 +11,9 @@
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
+    <!--   TODO matt -->
+<!--    <logger name="org.flywaydb" level="TRACE"/>-->
+<!--    <logger name="io.micronaut.data" level="DEBUG"/>-->
 
-    <logger name="org.flywaydb" level="ERROR"/>
-    <logger name="io.micronaut.data" level="DEBUG"/>
+    <logger name="io.micronaut.http" level="TRACE"/>
 </configuration>

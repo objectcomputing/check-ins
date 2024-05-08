@@ -12,7 +12,6 @@ public interface QuestionRepository extends CrudRepository<Question, UUID> {
 
     Set<Question> findByText(String name);
     Set<Question> findByTextIlike(String name);
-    Set<Question> findAll();
     Set<Question> findByCategoryId(UUID categoryId);
 
 }

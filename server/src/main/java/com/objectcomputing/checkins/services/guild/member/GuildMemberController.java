@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.guild.member;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -9,11 +10,10 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "guild-member")
 public class GuildMemberController {
-
+// todo matt this entire endpoint is blocking
     private GuildMemberServices guildMemberServices;
     private EventLoopGroup eventLoopGroup;
     private ExecutorService ioExecutorService;
@@ -46,7 +46,7 @@ public class GuildMemberController {
      */
     @Post()
     public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMemberCreateDTO guildMember,
-                                                  HttpRequest<GuildMemberResponseDTO> request) {
+                                                  HttpRequest<?> request) {
         GuildMember newGuildMember = guildMemberServices.save(new GuildMember(guildMember.getGuildId(),
                 guildMember.getMemberId(), guildMember.getLead()));
         return HttpResponse
@@ -62,7 +62,7 @@ public class GuildMemberController {
      * @return {@link HttpResponse<GuildMember>}
      */
     @Put()
-    public HttpResponse<?> updateMembers(@Body @Valid GuildMemberUpdateDTO guildMember, HttpRequest<GuildMember> request) {
+    public HttpResponse<?> updateMembers(@Body @Valid GuildMemberUpdateDTO guildMember, HttpRequest<?> request) {
         GuildMember updatedGuildMember = guildMemberServices.update(new GuildMember(guildMember.getId(), guildMember.getGuildId(), guildMember.getMemberId(), guildMember.getLead()));
         return HttpResponse
                 .ok()

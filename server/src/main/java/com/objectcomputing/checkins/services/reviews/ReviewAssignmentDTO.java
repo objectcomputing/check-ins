@@ -3,11 +3,11 @@ package com.objectcomputing.checkins.services.reviews;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Data
@@ -16,15 +16,15 @@ import java.util.UUID;
 @Introspected
 public class ReviewAssignmentDTO {
 
-    @NotBlank
+    @NotNull
     @Schema(required = true, description = "The ID of the employee being reviewed")
     private UUID revieweeId;
 
-    @NotBlank
+    @NotNull
     @Schema(required = true, description = "The ID of the employee conducting the review")
     private UUID reviewerId;
 
-    @NotBlank
+    @NotNull
     @Schema(required = true, description = "The ID of the review period that the assignment is related to")
     private UUID reviewPeriodId;
 
