@@ -153,7 +153,7 @@ const TeamReviews = ({ periodId }) => {
     try {
       const res = await resolve({
         method: 'GET',
-        url: `${reviewAssignmentsUrl}/period/${periodId}/`,
+        url: `${reviewAssignmentsUrl}/period/${periodId}`,
         headers: {
           'X-CSRF-Header': csrf,
           Accept: 'application/json',
