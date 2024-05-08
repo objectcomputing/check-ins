@@ -82,3 +82,23 @@ Testing Library is installed in the UI project. You can find more information ab
 To skip building the UI when running unit tests in the Server application add the environment variable `SKIP_WEB_UI=true` to your system or run configuration.
 When running the full application UI/Server together it is important to remember to reset `SKIP_WEB_UI=false`. If you are using a run.sh script to launch the app
 simply add export `SKIP_WEB_UI=false` to it.
+
+# Connecting to the database
+
+The application uses a PostgresSQL database. The database runs on port 5432 by default as defined in `docker-compose.yaml`.
+
+You can connect to the database on the default port using the following command:
+
+```shell
+psql -h localhost -U postgres -d checkinsdb
+```
+
+The password for the dev database is `postgres`.
+
+Once connected, you can run SQL queries against the database, inspect the schema, and more.
+
+## Seeding the database
+
+The application uses Flyway to manage database migrations. The migrations are located in the `server/src/main/resources/db` directory. The migrations are run automatically when the application starts.
+
+For test data, a Repeatable Migration called `R__Load_testing_data.sql` is used to seed the database with test data. This migration is run every time the application starts.
