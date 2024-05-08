@@ -105,8 +105,8 @@ public class ReviewAssignmentController {
     }
 
     @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
-    @Get("/period/{reviewPeriodId}{?reviewerId}")
-    public Mono<HttpResponse<Set<ReviewAssignment>>> findAssignmentsByPeriodId(@NotNull UUID reviewPeriodId, @Nullable UUID reviewerId) {
+    @Get("/period/{reviewPeriodId}")
+    public Mono<HttpResponse<Set<ReviewAssignment>>> findAssignmentsByPeriodId(@NotNull UUID reviewPeriodId, @Nullable @QueryValue UUID reviewerId) {
 
         return Mono.fromCallable(() -> reviewAssignmentServices.findAllByReviewPeriodIdAndReviewerId(reviewPeriodId, reviewerId))
             .publishOn(Schedulers.fromExecutor(eventLoopGroup))
