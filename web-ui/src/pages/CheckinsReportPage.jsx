@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 
 import { AppContext } from '../context/AppContext';
 import {
@@ -21,7 +21,11 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckinReport from '../components/reports-section/CheckinReport';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { FilterType } from '../components/member_selector/member_selector_dialog/MemberSelectorDialog';
-import { getQuarterBeginEnd } from '../helpers/datetime';
+import {
+  getQuarterBeginEnd,
+  useQueryParameters,
+  isArrayPresent
+} from '../helpers';
 
 import './CheckinsReportPage.css';
 /**
@@ -67,8 +71,34 @@ const CheckinsReportPage = () => {
   /** @type {PDLProfile[]} */
   const pdls = selectCheckinPDLS(state, closed, planned).sort(sortByLastName);
 
-  // Set the selected PDLs to the mapped PDLs
+  const processedQPs = useRef(false);
+  useQueryParameters(
+    [
+      {
+        name: 'pdls',
+        default: [],
+        value: selectedPdls,
+        setter(ids) {
+          const newPdls = ids.map(id => pdls.find(pdl => pdl.id === id));
+          setSelectedPdls(newPdls);
+        },
+        toQP(newPdls) {
+          if (isArrayPresent(newPdls)) {
+            const ids = newPdls.map(pdl => pdl.id);
+            return ids.join(',');
+          } else {
+            return [];
+          }
+        }
+      }
+    ],
+    [pdls],
+    processedQPs
+  );
+
+  // Set the selected PDLs to the mapped PDLs unless they are already set
   useEffect(() => {
+    if (pdls.length > 0) return;
     const mapped = selectMappedPdls(state);
     setSelectedPdls(mapped);
   }, [state]);
