@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.reviews;
 
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
@@ -94,7 +92,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
 
     @Override
     public ReviewAssignment update(ReviewAssignment reviewAssignment) {
-        LOG.warn(String.format("Updating entity %s", reviewAssignment));
+        LOG.info(String.format("Updating entity %s", reviewAssignment));
         if (reviewAssignment.getId() != null && reviewAssignmentRepository.findById(reviewAssignment.getId()).isPresent()) {
             return reviewAssignmentRepository.update(reviewAssignment);
         } else {
