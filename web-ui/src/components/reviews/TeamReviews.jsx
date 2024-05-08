@@ -142,34 +142,37 @@ const TeamReviews = ({ periodId }) => {
     [setNewRequestOpen]
   );
 
-  const reviewAssignmentsURL = '/services/review-assignments';
+  const reviewAssignmentsUrl = '/services/review-assignments';
 
   const updateTeamMembers = async teamMembers => {
-    // TODO: Waiting for Zach to finish this endpoint.
-    // TODO: Does each object in the teamMembers array contain these properties?
-    /*
-    const data = {
-      id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-      revieweeId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-      reviewerId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-      reviewPeriodId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+    console.log(
+      'TeamReviews.jsx updateTeamMembers: teamMembers =',
+      teamMembers
+    );
+    const data = teamMembers.map(tm => ({
+      revieweeId: tm.id,
+      reviewerId: tm.supervisorid,
+      reviewPeriodId: periodId,
       approved: true
-    };
-    */
+    }));
+    console.log('TeamReviews.jsx updateTeamMembers: data =', data);
 
-    const res = await resolve({
-      method: 'PUT',
-      url: reviewAssignmentsUrl,
-      data,
-      headers: {
-        'X-CSRF-Header': cookie,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
-
-    console.log('TeamReviews.jsx updateTeamMembers: res =', res);
-    setTeamMembers(teamMembers);
+    try {
+      const res = await resolve({
+        method: 'PUT',
+        url: reviewAssignmentsUrl,
+        data,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      console.log('TeamReviews.jsx updateTeamMembers: res =', res);
+      setTeamMembers(teamMembers);
+    } catch (err) {
+      console.error('TeamReviews.jsx updateTeamMembers:', err);
+    }
   };
 
   useEffect(() => {
