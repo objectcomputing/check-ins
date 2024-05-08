@@ -144,22 +144,48 @@ const TeamReviews = ({ periodId }) => {
 
   const reviewAssignmentsUrl = '/services/review-assignments';
 
+  useEffect(() => {
+    loadTeamMembers();
+  }, [currentMembers]);
+
+  const loadTeamMembers = async () => {
+    const myId = currentUser?.id;
+    try {
+      const res = await resolve({
+        method: 'GET',
+        url: `${reviewAssignmentsUrl}/period/${periodId}/`,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+      console.log('TeamReviews.jsx loadTeamMembers: res =', res);
+      const assignments = res.payload.data;
+      console.log(
+        'TeamReviews.jsx loadTeamMembers: assignments =',
+        assignments
+      );
+      const memberIds = assignments.map(a => a.revieweeId);
+      const members = currentMembers.filter(m => memberIds.includes(m.id));
+      setTeamMembers(members);
+    } catch (err) {
+      console.error('TeamReviews.jsx loadTeamMembers:', err);
+    }
+  };
+
   const updateTeamMembers = async teamMembers => {
-    console.log(
-      'TeamReviews.jsx updateTeamMembers: teamMembers =',
-      teamMembers
-    );
     const data = teamMembers.map(tm => ({
       revieweeId: tm.id,
       reviewerId: tm.supervisorid,
       reviewPeriodId: periodId,
       approved: true
     }));
-    console.log('TeamReviews.jsx updateTeamMembers: data =', data);
 
     try {
       const res = await resolve({
-        method: 'PUT',
+        method: 'POST',
         url: reviewAssignmentsUrl,
         data,
         headers: {
@@ -168,13 +194,13 @@ const TeamReviews = ({ periodId }) => {
           'Content-Type': 'application/json;charset=UTF-8'
         }
       });
-      console.log('TeamReviews.jsx updateTeamMembers: res =', res);
       setTeamMembers(teamMembers);
     } catch (err) {
       console.error('TeamReviews.jsx updateTeamMembers:', err);
     }
   };
 
+  /*
   useEffect(() => {
     if (currentMembers && currentMembers.length > 0) {
       isAdmin && includeAll
@@ -193,6 +219,7 @@ const TeamReviews = ({ periodId }) => {
     myTeam,
     currentUser?.id
   ]);
+  */
 
   const getReviewStatus = useCallback(
     teamMemberId => {
@@ -572,64 +599,6 @@ const TeamReviews = ({ periodId }) => {
       />
       {!selectedMember && loadedReviews.current && (
         <>
-          {/* <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            {teamMembers && teamMembers.length > 0
-              ? teamMembers
-                  .sort((a, b) => {
-                    return ('' + a?.lastName)
-                      .toUpperCase()
-                      .localeCompare(b?.lastName.toUpperCase());
-                  })
-                  .filter(teamMember => {
-                    return (
-                      reviews &&
-                      (!reviews[teamMember.id] ||
-                        reviews[teamMember.id].length === 0 ||
-                        !reviews[teamMember.id]?.reduce(
-                          (status, review) =>
-                            status && review.status === 'submitted',
-                          true
-                        ))
-                    );
-                  })
-                  .map((teamMember, i) => (
-                    <>
-                      <ListItem
-                        onClick={() => onTeamMemberSelected(teamMember?.id)}
-                        key={`teamMember-${teamMember?.id}`}
-                      >
-                        <ListItemAvatar
-                          key={`teamMember-lia-${teamMember?.id}`}
-                        >
-                          <Avatar src={getAvatarURL(teamMember?.workEmail)} />
-                        </ListItemAvatar>
-                        <ListItemText
-                          key={`teamMember-lit-${teamMember?.id}`}
-                          primary={
-                            teamMember?.firstName + ' ' + teamMember?.lastName
-                          }
-                          secondary={createSecondary(teamMember)}
-                        />
-                        <ListItemSecondaryAction>
-                          <Tooltip title="Request Feedback">
-                            <IconButton>
-                              <AddCommentIcon
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  history.push(
-                                    `/feedback/request?for=${teamMember?.id}`
-                                  );
-                                }}
-                              />
-                            </IconButton>
-                          </Tooltip>
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                      <Divider key={`divider-${teamMember?.id}`} />
-                    </>
-                  ))
-              : null}
-          </List> */}
           <Accordion style={{ marginTop: '1rem' }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
