@@ -152,6 +152,9 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 @Test
 public void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
 
+    MemberProfile memberProfile = createADefaultMemberProfile();
+    createADefaultPulseResponse(memberProfile);
+
     LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
     LocalDate testDateTo = LocalDate.of(2019, 2, 1);
 

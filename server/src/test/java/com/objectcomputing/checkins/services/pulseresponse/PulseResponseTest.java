@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PulseResponseTest {
 
     @Inject
-    public Validator validator;
+    protected Validator validator;
 
     @Test
     void testPulseResponseInstantiation() {
