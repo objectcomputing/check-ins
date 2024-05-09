@@ -668,6 +668,42 @@ const TeamReviews = ({ periodId }) => {
     <Root>
       <div className={classes.headerContainer}>
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
+
+        {period && isAdmin && (
+          <div>
+            <Tooltip
+              title={
+                period.reviewStatus === ReviewStatus.OPEN
+                  ? 'Archive'
+                  : 'Unarchive'
+              }
+            >
+              <IconButton
+                onClick={toggleReviewPeriod}
+                aria-label={
+                  period.reviewStatus === ReviewStatus.OPEN
+                    ? 'Archive'
+                    : 'Unarchive'
+                }
+              >
+                {period.reviewStatus === ReviewStatus.OPEN ? (
+                  <Archive />
+                ) : (
+                  <Unarchive />
+                )}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                onClick={confirmDelete}
+                edge="end"
+                aria-label="Delete"
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </div>
+        )}
         {!selectedMember && (
           <FormControlLabel
             control={
@@ -689,64 +725,27 @@ const TeamReviews = ({ periodId }) => {
         )}
       </div>
       {period && (
-        <>
-          {isAdmin && (
-            <div>
-              <Tooltip
-                title={
-                  period.reviewStatus === ReviewStatus.OPEN
-                    ? 'Archive'
-                    : 'Unarchive'
-                }
-              >
-                <IconButton
-                  onClick={toggleReviewPeriod}
-                  aria-label={
-                    period.reviewStatus === ReviewStatus.OPEN
-                      ? 'Archive'
-                      : 'Unarchive'
-                  }
-                >
-                  {period.reviewStatus === ReviewStatus.OPEN ? (
-                    <Archive />
-                  ) : (
-                    <Unarchive />
-                  )}
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete">
-                <IconButton
-                  onClick={confirmDelete}
-                  edge="end"
-                  aria-label="Delete"
-                >
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            </div>
-          )}
-          <div className="datePickerFlexWrapper">
-            <DatePickerField
-              date={period.launchDate}
-              setDate={val => handleLaunchDateChange(val, period)}
-              label="Launch Date"
-              disabled={!isAdmin}
-              open={period?.reviewStatus === ReviewStatus?.PLANNING}
-            />
-            <DatePickerField
-              date={period.selfReviewCloseDate}
-              setDate={val => handleSelfReviewDateChange(val, period)}
-              label="Self-Review Date"
-              disabled={!isAdmin}
-            />
-            <DatePickerField
-              date={period.closeDate}
-              setDate={val => handleCloseDateChange(val, period)}
-              label="Close Date"
-              disabled={!isAdmin}
-            />
-          </div>
-        </>
+        <div className="datePickerFlexWrapper">
+          <DatePickerField
+            date={period.launchDate}
+            setDate={val => handleLaunchDateChange(val, period)}
+            label="Launch Date"
+            disabled={!isAdmin}
+            open={period?.reviewStatus === ReviewStatus?.PLANNING}
+          />
+          <DatePickerField
+            date={period.selfReviewCloseDate}
+            setDate={val => handleSelfReviewDateChange(val, period)}
+            label="Self-Review Date"
+            disabled={!isAdmin}
+          />
+          <DatePickerField
+            date={period.closeDate}
+            setDate={val => handleCloseDateChange(val, period)}
+            label="Close Date"
+            disabled={!isAdmin}
+          />
+        </div>
       )}
       <MemberSelector
         className="team-skill-member-selector"
