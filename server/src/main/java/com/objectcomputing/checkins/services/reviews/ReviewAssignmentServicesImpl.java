@@ -52,7 +52,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         }
 
         List<ReviewAssignment> newAssignments = new ArrayList<>();
-        if (reviewAssignments != null) {
+        if (reviewAssignments != null && !reviewAssignments.isEmpty()) {
             for (ReviewAssignment reviewAssignment : reviewAssignments) {
                 if (reviewAssignment.getId() != null) {
                     throw new BadArgException(String.format("Found unexpected id %s for review assignment. New entities must not contain an id.",

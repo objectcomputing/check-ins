@@ -9,15 +9,12 @@ import {
   List,
   ListItemIcon,
   ListItemText,
-  Menu,
-  MenuItem,
   Tooltip,
   Typography
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getAvatarURL } from '../../api/api';
 
 import MemberSelectorDialog, {
@@ -85,7 +82,7 @@ const MemberSelector = ({
     filter => filter.type === FilterType.ROLE
   );
   const roleFilter = filters.find(filter => filter.type === FilterType.ROLE);
-  const memberDescriptor = isFilteredByRole ? roleFilter.value : 'members';
+  const memberDescriptor = isFilteredByRole ? roleFilter.value : 'Members';
 
   const handleExpandClick = () => setExpanded(!expanded);
 
@@ -164,7 +161,7 @@ const MemberSelector = ({
           }
           action={
             <>
-              <Tooltip title={`Add ${memberDescriptor}`} arrow>
+              <Tooltip title={`Change ${memberDescriptor}`} arrow>
                 <IconButton
                   style={{ margin: '4px 8px 0 0' }}
                   onClick={() => setDialogOpen(true)}
@@ -173,44 +170,6 @@ const MemberSelector = ({
                   <AddIcon />
                 </IconButton>
               </Tooltip>
-              <IconButton
-                style={{ margin: '4px 8px 0 0' }}
-                onClick={event => setMenuAnchor(event.currentTarget)}
-              >
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                anchorEl={menuAnchor}
-                open={!!menuAnchor}
-                onClose={() => setMenuAnchor(null)}
-              >
-                <MenuItem
-                  onClick={() => {
-                    setMenuAnchor(null);
-                    clearMembers();
-                  }}
-                  disabled={disabled || !selected.length}
-                >
-                  <ListItemIcon>
-                    <HighlightOffIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Remove all</ListItemText>
-                </MenuItem>
-                {exportable && (
-                  <MenuItem
-                    onClick={() => {
-                      setMenuAnchor(null);
-                      downloadMemberCsv();
-                    }}
-                    disabled={!selected.length}
-                  >
-                    <ListItemIcon>
-                      <DownloadIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Download</ListItemText>
-                  </MenuItem>
-                )}
-              </Menu>
             </>
           }
         />

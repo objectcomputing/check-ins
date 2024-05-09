@@ -544,7 +544,7 @@ const TeamReviews = ({ periodId }) => {
   return (
     <Root>
       <div className={classes.headerContainer}>
-        <Typography variant="h4">Team Reviews</Typography>
+        <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
         {!selectedMember && (
           <FormControlLabel
             control={
