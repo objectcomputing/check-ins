@@ -21,8 +21,9 @@ public class PulseReponseCreateDTOTest {
     @Test
     void testDTOInstantiation() {
         PulseResponseCreateDTO dto = new PulseResponseCreateDTO();
+        assertNull(dto.getInternalScore());
+        assertNull(dto.getExternalScore());
         assertNull(dto.getSubmissionDate());
-        assertNull(dto.getUpdatedDate());
         assertNull(dto.getTeamMemberId());
         assertNull(dto.getInternalFeelings());
         assertNull(dto.getExternalFeelings());
@@ -45,11 +46,14 @@ public class PulseReponseCreateDTOTest {
 
         UUID teamMemberId = UUID.randomUUID();
 
+        dto.setInternalScore(1);
+        assertEquals(1, dto.getInternalScore());
+
+        dto.setExternalScore(2);
+        assertEquals(2, dto.getExternalScore());
+
         dto.setSubmissionDate(LocalDate.of(2019, 1, 01));
         assertEquals(dto.getSubmissionDate(), LocalDate.of(2019, 1, 01));
-
-        dto.setUpdatedDate(LocalDate.of(2019, 1, 01));
-        assertEquals(dto.getUpdatedDate(), LocalDate.of(2019, 1, 01));
 
         dto.setTeamMemberId(teamMemberId);
         assertEquals(dto.getTeamMemberId(), teamMemberId);
