@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
-import { getMember } from "../../api/member";
-import { AppContext } from "../../context/AppContext";
-import { getAvatarURL } from "../../api/api.js";
+import React, { useContext, useEffect, useState } from 'react';
+import { getMember } from '../../api/member';
+import { AppContext } from '../../context/AppContext';
+import { getAvatarURL } from '../../api/api.js';
 
-import Avatar from "@mui/material/Avatar";
+import Avatar from '@mui/material/Avatar';
 
-import "./Checkin.css";
-const displayName = "CheckinProfile";
+import './Checkin.css';
+const displayName = 'CheckinProfile';
 
 const CheckinProfile = () => {
   const { state } = useContext(AppContext);
@@ -14,8 +14,8 @@ const CheckinProfile = () => {
   const { name, pdlId, title, workEmail } = selectedProfile
     ? selectedProfile
     : userProfile && userProfile.memberProfile
-    ? userProfile.memberProfile
-    : {};
+      ? userProfile.memberProfile
+      : {};
   const [pdl, setPDL] = useState();
 
   // Get PDL's name
@@ -27,7 +27,7 @@ const CheckinProfile = () => {
           res.payload && res.payload.data && !res.error
             ? res.payload.data
             : undefined;
-        setPDL(pdlProfile ? pdlProfile.name : "");
+        setPDL(pdlProfile ? pdlProfile.name : '');
       }
     }
     if (csrf) {
@@ -39,7 +39,7 @@ const CheckinProfile = () => {
     <div className="profile-section">
       <Avatar
         src={getAvatarURL(workEmail)}
-        style={{ height: "120px", width: "120px" }}
+        style={{ height: '120px', width: '120px' }}
       />
       <div className="info">
         <p>{name}</p>

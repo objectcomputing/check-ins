@@ -1,27 +1,27 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from 'react';
 
-import { AppContext } from "../context/AppContext";
-import CheckinReport from "../components/reports-section/CheckinReport";
+import { AppContext } from '../context/AppContext';
+import CheckinReport from '../components/reports-section/CheckinReport';
 import {
   selectCheckinPDLS,
-  selectTeamMembersWithCheckinPDL,
-} from "../context/selectors";
+  selectTeamMembersWithCheckinPDL
+} from '../context/selectors';
 
-import { TextField } from "@mui/material";
+import { TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import "./CheckinsReportPage.css";
+import './CheckinsReportPage.css';
 
 const CheckinsReportPage = () => {
   const { state } = useContext(AppContext);
   const [selectedPdls, setSelectedPdls] = useState([]);
   const [planned, setPlanned] = useState(false);
   const [closed, setClosed] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
 
   const pdls = selectCheckinPDLS(state, closed, planned).sort((a, b) => {
-    const aPieces = a.name.split(" ").slice(-1);
-    const bPieces = b.name.split(" ").slice(-1);
+    const aPieces = a.name.split(' ').slice(-1);
+    const bPieces = b.name.split(' ').slice(-1);
     return aPieces.toString().localeCompare(bPieces);
   });
   const [filteredPdls, setFilteredPdls] = useState(pdls);
@@ -29,12 +29,12 @@ const CheckinsReportPage = () => {
   useEffect(() => {
     if (!pdls) return;
     pdls.map(
-      (pdl) => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
+      pdl => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
     );
-    let newPdlList = pdls.filter((pdl) => {
+    let newPdlList = pdls.filter(pdl => {
       pdl.members =
         pdl.members &&
-        pdl.members.filter((member) =>
+        pdl.members.filter(member =>
           member?.name?.toLowerCase().includes(searchText.toLowerCase())
         );
       return pdl.members.length > 0;
@@ -45,8 +45,8 @@ const CheckinsReportPage = () => {
 
   const onPdlChange = (event, newValue) => {
     let extantPdls = filteredPdls || [];
-    newValue.forEach((val) => {
-      extantPdls = extantPdls.filter((pdl) => pdl.id !== val.id);
+    newValue.forEach(val => {
+      extantPdls = extantPdls.filter(pdl => pdl.id !== val.id);
     });
     extantPdls = [...new Set(extantPdls)];
     newValue = [...new Set(newValue)];
@@ -76,8 +76,8 @@ const CheckinsReportPage = () => {
           options={pdls}
           value={selectedPdls || []}
           onChange={onPdlChange}
-          getOptionLabel={(option) => option.name}
-          renderInput={(params) => (
+          getOptionLabel={option => option.name}
+          renderInput={params => (
             <TextField
               {...params}
               label="Select PDLs..."
@@ -89,7 +89,7 @@ const CheckinsReportPage = () => {
           label="Select employees..."
           placeholder="Member Name"
           value={searchText}
-          onChange={(e) => {
+          onChange={e => {
             setSearchText(e.target.value);
           }}
         />
@@ -101,7 +101,7 @@ const CheckinsReportPage = () => {
         <input id="planned" onClick={handlePlanned} type="checkbox" />
       </div>
       {selectedPdls.length
-        ? selectedPdls.map((pdl) => (
+        ? selectedPdls.map(pdl => (
             <CheckinReport
               closed={closed}
               key={pdl.id}
@@ -109,7 +109,7 @@ const CheckinsReportPage = () => {
               planned={planned}
             />
           ))
-        : filteredPdls.map((pdl) => (
+        : filteredPdls.map(pdl => (
             <CheckinReport
               closed={closed}
               key={pdl.id}

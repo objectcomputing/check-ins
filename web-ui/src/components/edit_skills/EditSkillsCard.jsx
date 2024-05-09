@@ -1,19 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from 'react';
 
 import {
   deleteMemberSkill,
   getSkillMembers,
-  getMemberSkills,
-} from "../../api/memberskill";
-import { removeSkill, updateSkill } from "../../api/skill";
-import { AppContext } from "../../context/AppContext";
-import { selectProfileMap } from "../../context/selectors";
+  getMemberSkills
+} from '../../api/memberskill';
+import { removeSkill, updateSkill } from '../../api/skill';
+import { AppContext } from '../../context/AppContext';
+import { selectProfileMap } from '../../context/selectors';
 import {
   DELETE_SKILL,
   UPDATE_SKILL,
-  UPDATE_MEMBER_SKILLS,
-} from "../../context/actions";
-import { getAvatarURL } from "../../api/api.js";
+  UPDATE_MEMBER_SKILLS
+} from '../../context/actions';
+import { getAvatarURL } from '../../api/api.js';
 
 import {
   Avatar,
@@ -24,10 +24,10 @@ import {
   CardHeader,
   CardContent,
   Modal,
-  TextField,
-} from "@mui/material";
+  TextField
+} from '@mui/material';
 
-import "./EditSkills.css";
+import './EditSkills.css';
 
 const EditSkillsCard = ({ skill }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -97,7 +97,7 @@ const EditSkillsCard = ({ skill }) => {
         //remove all memberSkills associated with this skill first
         await Promise.all(
           memberSkillsToDelete.payload.data.map(
-            async (member) => await deleteMemberSkill(member.id, csrf)
+            async member => await deleteMemberSkill(member.id, csrf)
           )
         );
       }
@@ -118,7 +118,7 @@ const EditSkillsCard = ({ skill }) => {
     const getMembers = async () => {
       let res = await getSkillMembers(id, csrf);
       if (res && res.payload && res.payload.data) {
-        const memberIds = res.payload.data.map((m) => m.memberid);
+        const memberIds = res.payload.data.map(m => m.memberid);
         setMembers(memberIds);
       }
     };
@@ -127,7 +127,7 @@ const EditSkillsCard = ({ skill }) => {
     }
   }, [csrf, id]);
 
-  const chip = (position) => {
+  const chip = position => {
     return (
       <Chip
         avatar={<Avatar src={getAvatarURL(position?.workEmail)}></Avatar>}
@@ -136,26 +136,28 @@ const EditSkillsCard = ({ skill }) => {
     );
   };
 
-  const submittedBy = (members) => {
+  const submittedBy = members => {
     const [first, second, ...rest] = members;
     const firstProfile = selectProfileMap(state)[first];
     if (second) {
       const secondProfile = selectProfileMap(state)[second];
       return rest.length ? (
-        <div>
+        <div data-testid="skill-submitted-by">
           Submitted By: {chip(firstProfile)} {chip(secondProfile)}
           {rest && ` and ${rest.length} others`}.
         </div>
       ) : (
-        <div>
+        <div data-testid="skill-submitted-by">
           Submitted By: {chip(firstProfile)} {chip(secondProfile)}
         </div>
       );
     } else
       return firstProfile ? (
-        <div>Submitted by: {chip(firstProfile)}</div>
+        <div data-testid="skill-submitted-by">
+          Submitted by: {chip(firstProfile)}
+        </div>
       ) : (
-        <div>Submitted by: Unknown</div>
+        <div data-testid="skill-submitted-by">Submitted by: Unknown</div>
       );
   };
 
@@ -177,23 +179,23 @@ const EditSkillsCard = ({ skill }) => {
             <TextField
               className="halfWidth"
               label="Name"
-              onChange={(e) =>
+              onChange={e =>
                 setEditedSkill({ ...editedSkill, name: e.target.value })
               }
-              value={editedSkill ? editedSkill.name : ""}
+              value={editedSkill ? editedSkill.name : ''}
               variant="outlined"
             />
             <TextField
               className="halfWidth"
               label="Description"
               multiline
-              onChange={(e) =>
+              onChange={e =>
                 setEditedSkill({
                   ...editedSkill,
-                  description: e.target.value,
+                  description: e.target.value
                 })
               }
-              value={editedSkill ? editedSkill.description : ""}
+              value={editedSkill ? editedSkill.description : ''}
               variant="outlined"
             />
             <Button onClick={handleClose}>Cancel</Button>

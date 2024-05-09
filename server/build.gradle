@@ -1,3 +1,5 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("io.micronaut.application") version "2.0.3"
@@ -142,6 +144,17 @@ dependencies {
     rewrite('org.openrewrite.recipe:rewrite-micronaut:1.10.0')
 }
 
+test {
+    OperatingSystem os = DefaultNativePlatform.currentOperatingSystem;
+    if (os.isLinux()) {
+        def uid = ["id", "-u"].execute().text.trim()
+        environment "DOCKER_HOST", "unix:///run/user/$uid/podman/podman.sock"
+    } else if (os.isMacOsX()) {
+        environment "DOCKER_HOST", "unix:///tmp/podman.sock"
+    }
+    environment "TESTCONTAINERS_RYUK_DISABLED", "true"
+}
+
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
     reports {
@@ -164,7 +177,7 @@ tasks.withType(JavaCompile) {
     }
 }
 
-if(System.getenv("SKIP_WEB_UI") == null) {
+if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "false") {
     processResources {
         into('public') {
             from tasks.getByPath(':web-ui:yarnBuild').outputs

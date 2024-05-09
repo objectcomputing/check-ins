@@ -1,22 +1,22 @@
-import React from "react";
-import {AppContextProvider} from "../../context/AppContext";
-import EditGuildModal from "./EditGuildModal";
-import {http} from 'msw'
-import { setupServer } from 'msw/node'
+import React from 'react';
+import { AppContextProvider } from '../../context/AppContext';
+import EditGuildModal from './EditGuildModal';
+import { http } from 'msw';
+import { setupServer } from 'msw/node';
 import { render, waitFor, screen } from '@testing-library/react';
-import userEvent from "@testing-library/user-event";
+import userEvent from '@testing-library/user-event';
 
 window.snackDispatch = vi.fn();
 
 const server = setupServer(
   http.get('http://localhost:8080/csrf/cookie', () => {
-    return HttpResponse.text("O_3eLX2-e05qpS_yOeg1ZVAs9nDhspEi");
+    return HttpResponse.text('O_3eLX2-e05qpS_yOeg1ZVAs9nDhspEi');
   }),
   http.get('http://localhost:8080/services/member-profiles/current', () => {
-    return HttpResponse.json({ id: "12345", name: "Test User" });
+    return HttpResponse.json({ id: '12345', name: 'Test User' });
   }),
   http.get('http://localhost:8080/services/teams/members', () => {
-    return HttpResponse.json([{ id: "12345", name: "Test User" }]);
+    return HttpResponse.json([{ id: '12345', name: 'Test User' }]);
   })
 );
 
@@ -25,55 +25,73 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 const testGuild = {
-    name: "Test Guild",
-    description: "A guild used for testing.",
-    guildLeads: [{id:123, name:"Guild Leader"}, {id:124, name: "Other Leader"}],
-    guildMembers: [{id:125, name:"Guild Member"}, {id:126, name: "Other Member"}]
+  name: 'Test Guild',
+  description: 'A guild used for testing.',
+  guildLeads: [
+    { id: 123, name: 'Guild Leader' },
+    { id: 124, name: 'Other Leader' }
+  ],
+  guildMembers: [
+    { id: 125, name: 'Guild Member' },
+    { id: 126, name: 'Other Member' }
+  ]
 };
 
 const emptyGuild = {
-    name: "Test Guild",
-    description: "A guild used for testing.",
-}
+  name: 'Test Guild',
+  description: 'A guild used for testing.'
+};
 
 const currentUserProfile = {
   id: 9876,
   pdlId: 8765,
-  name: "Current User",
-  firstName: "Current",
-  lastName: "User",
-}
+  name: 'Current User',
+  firstName: 'Current',
+  lastName: 'User'
+};
 
 const initialState = {
   state: {
-    csrf: "O_3eLX2-e05qpS_yOeg1ZVAs9nDhspEi",
+    csrf: 'O_3eLX2-e05qpS_yOeg1ZVAs9nDhspEi',
     userProfile: {
-      name: "Current User",
-      firstName: "Current",
-      lastName: "User",
-      role: ["MEMBER"],
+      name: 'Current User',
+      firstName: 'Current',
+      lastName: 'User',
+      role: ['MEMBER'],
       imageUrl:
-        "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
-      memberProfile: currentUserProfile,
+        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg',
+      memberProfile: currentUserProfile
     },
     checkins: [],
     guilds: [testGuild, emptyGuild],
     teams: [],
     skills: [],
-    roles:[],
+    roles: [],
     userRoles: [],
     memberSkills: [],
     index: 0,
-    memberProfiles: [currentUserProfile, {id:123, name:"Guild Leader"}, {id:124, name: "Other Leader"}, {id:125, name:"Guild Member"}, {id:126, name: "Other Member"}],
+    memberProfiles: [
+      currentUserProfile,
+      { id: 123, name: 'Guild Leader' },
+      { id: 124, name: 'Other Leader' },
+      { id: 125, name: 'Guild Member' },
+      { id: 126, name: 'Other Member' }
+    ]
   }
-}
+};
 
-it("Cannot save without lead", async () => {
+it('Cannot save without lead', async () => {
   const mockOnSave = vi.fn();
 
   render(
     <AppContextProvider value={initialState}>
-      <EditGuildModal guild={testGuild} open={true} onSave={mockOnSave} onClose={vi.fn()} headerText="Edit your guild"/>
+      <EditGuildModal
+        guild={testGuild}
+        open={true}
+        onSave={mockOnSave}
+        onClose={vi.fn()}
+        headerText="Edit your guild"
+      />
     </AppContextProvider>
   );
 

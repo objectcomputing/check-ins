@@ -1,15 +1,14 @@
-import React, {useEffect, useState} from "react";
-import {TextField} from "@mui/material";
-import PropTypes from "prop-types";
+import React, { useEffect, useState } from 'react';
+import { TextField } from '@mui/material';
+import PropTypes from 'prop-types';
 const propTypes = {
   onFormChange: PropTypes.func
-}
+};
 
-const AdHocCreationForm = (props) => {
-
-  const [title, setTitle] = useState("Ad Hoc");
-  const [description, setDescription] = useState("");
-  const [question, setQuestion] = useState("");
+const AdHocCreationForm = props => {
+  const [title, setTitle] = useState('Ad Hoc');
+  const [description, setDescription] = useState('');
+  const [question, setQuestion] = useState('');
 
   useEffect(() => {
     props.onFormChange({
@@ -28,18 +27,20 @@ const AdHocCreationForm = (props) => {
         margin="normal"
         required={true}
         value={title}
-        onChange={(event) => {
+        onChange={event => {
           setTitle(event.target.value);
-        }}/>
+        }}
+      />
       <TextField
         label="Description"
         placeholder="Give a brief description of the template (optional)"
         fullWidth
         margin="normal"
         value={description}
-        onChange={(event) => {
+        onChange={event => {
           setDescription(event.target.value);
-        }}/>
+        }}
+      />
       <TextField
         label="Ask a feedback question"
         placeholder="How is your day going?"
@@ -49,12 +50,13 @@ const AdHocCreationForm = (props) => {
         margin="normal"
         required={true}
         value={question}
-        onChange={(event) => {
+        onChange={event => {
           setQuestion(event.target.value);
-        }}/>
+        }}
+      />
     </React.Fragment>
   );
-}
+};
 
 AdHocCreationForm.propTypes = propTypes;
 

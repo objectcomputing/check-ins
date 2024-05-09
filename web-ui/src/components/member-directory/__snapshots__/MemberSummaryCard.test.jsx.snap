@@ -63,9 +63,11 @@ exports[`renders correctly 1`] = `
             Location: 
             STL
             <br />
-            Supervisor: 
+            Supervisor:
+             
             <br />
-            PDL: 
+            PDL:
+             
             <br />
           </p>
         </div>

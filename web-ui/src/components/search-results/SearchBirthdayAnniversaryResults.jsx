@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext } from 'react';
 
-import { AppContext } from "../../context/AppContext";
-import { getAvatarURL } from "../../api/api";
-import { selectProfile } from "../../context/selectors";
+import { AppContext } from '../../context/AppContext';
+import { getAvatarURL } from '../../api/api';
+import { selectProfile } from '../../context/selectors';
 
 import {
   Avatar,
@@ -10,54 +10,53 @@ import {
   CardHeader,
   Container,
   List,
-  Typography,
-} from "@mui/material";
+  Typography
+} from '@mui/material';
 
 const SearchBirthdayAnniversaryResults = ({
   hasSearched,
-  searchBirthdayResults,
-  searchAnniversaryResults,
+  results,
   anniversary,
-  birthday,
+  birthday
 }) => {
-  searchAnniversaryResults.sort((a, b) => {
-    return a.tenure - b.tenure;
-  });
-
-  searchBirthdayResults.sort((a, b) => {
-    const adate = new Date(a.birthDay);
-    const bdate = new Date(b.birthDay);
-    return adate - bdate;
-  });
+  if (anniversary) {
+    results.sort((a, b) => a.tenure - b.tenure);
+  } else {
+    results.sort((a, b) => {
+      const adate = new Date(a.birthDay);
+      const bdate = new Date(b.birthDay);
+      return adate - bdate;
+    });
+  }
 
   const { state } = useContext(AppContext);
-  const getMemberProfile = (member) => selectProfile(state, member.userId);
+  const getMemberProfile = member => selectProfile(state, member.userId);
   const BirthdayMap = () => {
-    if (searchBirthdayResults.length > 0) {
-      return searchBirthdayResults.map((member) => {
+    if (birthday && results.length) {
+      return results.map(member => {
         return (
           <Card
-            className={"member-birthday-anniversary-card"}
+            className={'member-birthday-anniversary-card'}
             key={`card-${member.userId}`}
           >
             <CardHeader
               title={
                 <Typography variant="h5" component="h2">
-                  {getMemberProfile(member).name || ""}
+                  {getMemberProfile(member).name || ''}
                 </Typography>
               }
               subheader={
                 <Typography color="textSecondary" component="h3">
-                  {getMemberProfile(member).title || ""}
+                  {getMemberProfile(member).title || ''}
                   <br />
-                  Birthday: {member.birthDay || ""}
+                  Birthday: {member.birthDay || ''}
                 </Typography>
               }
               disableTypography
               avatar={
                 <Avatar
-                  className={"large"}
-                  src={getAvatarURL(getMemberProfile(member).workEmail || "")}
+                  className={'large'}
+                  src={getAvatarURL(getMemberProfile(member).workEmail || '')}
                 />
               }
             />
@@ -68,35 +67,35 @@ const SearchBirthdayAnniversaryResults = ({
   };
 
   const AnniversaryMap = () => {
-    if (searchAnniversaryResults.length > 0) {
+    if (anniversary && results.length) {
       return (
-        searchAnniversaryResults.length > 0 &&
-        searchAnniversaryResults.map((member) => {
+        results.length &&
+        results.map(member => {
           return (
             <Card
-              className={"member-birthday-anniversary-card"}
+              className={'member-birthday-anniversary-card'}
               key={`card-${member.userId}`}
             >
               <CardHeader
                 title={
                   <Typography variant="h5" component="h2">
-                    {getMemberProfile(member).name || ""}
+                    {getMemberProfile(member).name || ''}
                   </Typography>
                 }
                 subheader={
                   <Typography color="textSecondary" component="h3">
-                    {getMemberProfile(member).title || ""}
+                    {getMemberProfile(member).title || ''}
                     <br />
-                    Anniversary: {member.anniversary || ""}
+                    Anniversary: {member.anniversary || ''}
                     <br />
-                    Tenure: {member.yearsOfService || ""}
+                    Tenure: {member.yearsOfService || ''}
                   </Typography>
                 }
                 disableTypography
                 avatar={
                   <Avatar
-                    className={"large"}
-                    src={getAvatarURL(getMemberProfile(member).workEmail || "")}
+                    className={'large'}
+                    src={getAvatarURL(getMemberProfile(member).workEmail || '')}
                   />
                 }
               />
@@ -110,12 +109,12 @@ const SearchBirthdayAnniversaryResults = ({
   return (
     <div className="results-section">
       <List>
-        {searchBirthdayResults.length === 0 && hasSearched && birthday && (
+        {birthday && hasSearched && results.length === 0 && (
           <Card>
-            <CardHeader title="No Birthdays found for the selected month" />
+            <CardHeader title="No birthdays found for the selected month" />
           </Card>
         )}
-        {searchBirthdayResults.length > 0 && (
+        {birthday && results.length > 0 && (
           <Card>
             <CardHeader title="Birthdays" />
             <Container fixed>
@@ -123,12 +122,12 @@ const SearchBirthdayAnniversaryResults = ({
             </Container>
           </Card>
         )}
-        {searchAnniversaryResults.length === 0 && hasSearched && anniversary && (
+        {anniversary && hasSearched && results.length === 0 && (
           <Card>
-            <CardHeader title="No Anniversaries found for the selected month" />
+            <CardHeader title="No anniversaries found for the selected month" />
           </Card>
         )}
-        {searchAnniversaryResults.length > 0 && (
+        {anniversary && results.length > 0 && (
           <Card>
             <CardHeader title="Anniversaries" />
             <Container fixed>

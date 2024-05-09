@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 import renderer from 'react-test-renderer';
-import DesktopTable from "./DesktopTable"
-import {roles, allPermissions, handleChange} from "./sample-data"
+import DesktopTable from './DesktopTable';
+import { roles, allPermissions, handleChange } from './sample-data';
 
-describe("DesktopTable", () => {
-  it("renders correctly", () => {
+describe('DesktopTable', () => {
+  it('renders correctly', () => {
     snapshot(
       <DesktopTable
         roles={roles}

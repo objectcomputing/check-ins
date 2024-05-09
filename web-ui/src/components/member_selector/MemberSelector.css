@@ -1,0 +1,33 @@
+/* Workaround for bleeding style applied to MuiCardHeader-action */
+.member-selector-card .MuiCardHeader-action {
+  padding: 0;
+}
+
+.member-selector-card .MuiCardHeader-avatar {
+  margin-right: 8px;
+}
+
+.member-selector-card .member-selector-card-title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.member-selector-card .member-selector-card-title {
+  font-size: 1.5em;
+}
+
+.member-selector-card .member-selector-card-count {
+  font-size: 1.25em;
+}
+
+@media screen and (max-width: 600px) {
+  .member-selector-card .member-selector-card-title {
+    font-size: 1.25em;
+  }
+
+  .member-selector-card .member-selector-card-count {
+    font-size: 1em;
+  }
+}

@@ -25,10 +25,14 @@ This web application is written in [Micronaut](https://micronaut.io) for uploadi
 
 **Environments:** \*TBA\*
 
-# Setup
+# Environment setup
+
+See [Setting up your environment](https://objectcomputing.github.io/check-ins/getting-started/setup/) for instructions on setting up your development environment.
+
+# Project setup
 
 There are two files required to run the application successfully. Both of which must be created and placed in
-`src/main/resources/secrets`
+`src/main/resources/secrets`.
 
 ### directory.json
 
@@ -106,4 +110,4 @@ Note: Be sure that the target Google Drive folder has edit access granted to the
 
 # Contributing
 
-[Contributing](./CONTRIBUTING.md)
+Please see [Contributing](./CONTRIBUTING.md) for details on how to contribute to this project.

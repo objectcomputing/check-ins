@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.Role;
+
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -169,8 +171,8 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid checkin id %s", actionItemCreateDTO.getCheckinid()), error);
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(String.format("Checkin %s not found", actionItemCreateDTO.getCheckinid()), error);
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
 
     }
 
@@ -486,18 +488,18 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     void testFindAllActionItemsByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForAdmin = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = assignAdminRole(memberProfileForAdmin);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForAdmin);
 
         ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForAdmin.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileForAdmin.getWorkEmail(), role.getRole());
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
         assertEquals(Set.of(actionItem), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
@@ -725,7 +727,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid checkin id %s", actionItem.getCheckinid()), error);
+        assertEquals(String.format("Checkin %s not found", actionItem.getCheckinid()), error);
 
     }
 

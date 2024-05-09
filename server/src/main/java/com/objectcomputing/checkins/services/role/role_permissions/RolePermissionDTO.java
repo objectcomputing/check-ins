@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.PermissionDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -13,13 +15,12 @@ public class RolePermissionDTO {
     @Schema(description = "id of the role", required = true)
     private UUID roleId;
 
-    @NotNull
-    @Schema(description = "id of the permission", required = true)
-    private UUID permissionId;
+    @Schema(description = "the permission", required = true)
+    private String permission;
 
-    public RolePermissionDTO(UUID roleId, UUID permissionId) {
+    public RolePermissionDTO(UUID roleId, Permission permission) {
         this.roleId = roleId;
-        this.permissionId = permissionId;
+        this.permission = permission.name();
     }
 
     public UUID getRoleId() {
@@ -30,19 +31,19 @@ public class RolePermissionDTO {
         this.roleId = roleId;
     }
 
-    public UUID getPermissionId() {
-        return permissionId;
+    public String getPermission() {
+        return permission;
     }
 
-    public void setPermissionId(UUID permissionId) {
-        this.permissionId = permissionId;
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("RolePermissionCreateDTO{");
         sb.append("roleId=").append(roleId);
-        sb.append(", permissionId=").append(permissionId);
+        sb.append(", permission=").append(permission);
         sb.append('}');
         return sb.toString();
     }

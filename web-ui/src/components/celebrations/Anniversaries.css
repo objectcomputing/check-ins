@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Raleway:200");
 
 body {
-  font-family: "Raleway", sans-serif;
+  font-family: 'Raleway', sans-serif;
   background-color: #f0e2db;
   font-size: 20px;
   transition: 1s;
@@ -100,7 +100,7 @@ body.open {
 }
 .anniversary-gift-top::before,
 .anniversary-gift-top::after {
-  content: "";
+  content: '';
   width: 15px;
   height: 15px;
   border: 10px solid #feb672;

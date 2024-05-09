@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
-import { styled } from "@mui/material/styles";
-import { Avatar, Card, Tooltip, IconButton } from "@mui/material";
-import { getAvatarURL } from "../../api/api";
-import Typography from "@mui/material/Typography";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { selectProfile } from "../../context/selectors";
-import DateFnsUtils from "@date-io/date-fns";
-import { AppContext } from "../../context/AppContext";
-import { Edit as EditIcon } from "@mui/icons-material";
+import React, { useContext } from 'react';
+import { styled } from '@mui/material/styles';
+import { Avatar, Card, Tooltip, IconButton } from '@mui/material';
+import { getAvatarURL } from '../../api/api';
+import Typography from '@mui/material/Typography';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { selectProfile } from '../../context/selectors';
+import DateFnsUtils from '@date-io/date-fns';
+import { AppContext } from '../../context/AppContext';
+import { Edit as EditIcon } from '@mui/icons-material';
 
 const dateFns = new DateFnsUtils();
 const PREFIX = 'ReceivedRequestCard';
@@ -22,24 +22,24 @@ const classes = {
 
 const StyledCard = styled(Card)({
   [`& .${classes.redTypography}`]: {
-    color: "#FF0000",
+    color: '#FF0000'
   },
   [`& .${classes.yellowTypography}`]: {
-    color: "#EE8C00",
+    color: '#EE8C00'
   },
   [`& .${classes.greenTypography}`]: {
-    color: "#006400",
+    color: '#006400'
   },
   [`& .${classes.darkGrayTypography}`]: {
-    color: "#333333",
+    color: '#333333'
   },
   [`& .${classes.grayTypography}`]: {
-    color: "gray",
-  },
+    color: 'gray'
+  }
 });
 
 const propTypes = {
-  request: PropTypes.object.isRequired,
+  request: PropTypes.object.isRequired
 };
 
 const ReceivedRequestCard = ({ request }) => {
@@ -48,18 +48,18 @@ const ReceivedRequestCard = ({ request }) => {
   const requestCreator = selectProfile(state, request?.creatorId);
   const requestee = selectProfile(state, request?.requesteeId);
   submitDate = submitDate
-    ? dateFns.format(new Date(submitDate.join("/")), "MM/dd/yyyy")
+    ? dateFns.format(new Date(submitDate.join('/')), 'MM/dd/yyyy')
     : null;
   dueDate = dueDate
-    ? dateFns.format(new Date(dueDate.join("/")), "LLLL dd, yyyy")
+    ? dateFns.format(new Date(dueDate.join('/')), 'LLLL dd, yyyy')
     : null;
-  sendDate = dateFns.format(new Date(sendDate.join("/")), "LLLL dd, yyyy");
+  sendDate = dateFns.format(new Date(sendDate.join('/')), 'LLLL dd, yyyy');
 
   const Submitted = () => {
     if (request.dueDate) {
       const today = new Date();
       const due = new Date(request.dueDate);
-      if (!request.submitDate && today > due && request.status !== "canceled") {
+      if (!request.submitDate && today > due && request.status !== 'canceled') {
         return (
           <Typography className={classes.redTypography}>Overdue</Typography>
         );
@@ -71,27 +71,26 @@ const ReceivedRequestCard = ({ request }) => {
           Submitted {submitDate}
         </Typography>
       );
-    } else if (request.status === "canceled") {
+    } else if (request.status === 'canceled') {
       return (
-        <Typography className={classes.grayTypography}>
-          Canceled
-        </Typography>
+        <Typography className={classes.grayTypography}>Canceled</Typography>
       );
-    } else
+    } else if (request.status !== 'pending') {
       return (
         <Typography className={classes.yellowTypography}>
           Not Submitted
         </Typography>
       );
+    }
   };
 
   return (
-    <StyledCard style={{ paddingLeft: "16px", paddingRight: "16px" }}>
+    <StyledCard style={{ paddingLeft: '16px', paddingRight: '16px' }}>
       <div className="card-content-grid">
         <div className="request-members-container">
           <div className="member-chip">
             <Avatar
-              style={{ width: "40px", height: "40px", marginRight: "0.5em" }}
+              style={{ width: '40px', height: '40px', marginRight: '0.5em' }}
               src={getAvatarURL(requestCreator?.workEmail)}
             />
             <div>
@@ -100,25 +99,25 @@ const ReceivedRequestCard = ({ request }) => {
               </Typography>
               <Typography
                 className="position-text"
-                style={{ fontSize: "14px" }}
+                style={{ fontSize: '14px' }}
               >
                 {requestCreator?.title}
               </Typography>
             </div>
           </div>
-          <Typography style={{ margin: "0 5px 0 5px" }} variant="body1">
+          <Typography style={{ margin: '0 5px 0 5px' }} variant="body1">
             requested feedback on
           </Typography>
           <div className="member-chip">
             <Avatar
-              style={{ width: "40px", height: "40px", marginRight: "0.5em" }}
+              style={{ width: '40px', height: '40px', marginRight: '0.5em' }}
               src={getAvatarURL(requestee?.workEmail)}
             />
             <div>
               <Typography className="person-name">{requestee?.name}</Typography>
               <Typography
                 className="position-text"
-                style={{ fontSize: "14px" }}
+                style={{ fontSize: '14px' }}
               >
                 {requestee?.title}
               </Typography>
@@ -131,17 +130,20 @@ const ReceivedRequestCard = ({ request }) => {
               Sent on {sendDate}
             </Typography>
             <Typography variant="body2">
-              {request?.dueDate ? `Due on ${dueDate}` : "No due date"}
+              {request?.dueDate ? `Due on ${dueDate}` : 'No due date'}
             </Typography>
           </div>
           <div className="request-status-container">
             <Submitted />
           </div>
           <div className="submission-link-container">
-            {request && !request.submitDate && request.id && request.status !== "canceled" ? (
+            {request &&
+            !request.submitDate &&
+            request.id &&
+            request.status !== 'canceled' ? (
               <Link
                 to={`/feedback/submit?request=${request.id}`}
-                style={{ textDecoration: "none" }}
+                style={{ textDecoration: 'none' }}
               >
                 <Tooltip title="Give feedback" arrow>
                   <IconButton size="large">

@@ -1,6 +1,14 @@
-.role-buttons {
+.role-header {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row;
+  align-items: center;
+  height: 100px;
+  justify-content: space-between;
+  padding: 0 1rem 0 1rem;
+}
+
+.role-header-title {
+  width: 50%;
 }
 
 .role-modal {
@@ -43,20 +51,17 @@
 
 .roles-content {
   margin-left: 1rem;
-}
-
-.roles-header {
-  display: flex;
-  justify-content: center;
+  margin-right: 1rem;
 }
 
 .roles-content .icon {
-  padding-right: 2rem;
   cursor: pointer;
 }
 
 .roles-content .roles-list-item {
   align-items: center;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .roles-content .roles-search {
@@ -86,30 +91,79 @@
   overflow: scroll;
 }
 
-.roles-content .roles .role-buttons .role-add {
+.role-header-buttons {
+  display: flex;
+  flex-direction: row;
+}
+
+.roles-content .roles .role-header-buttons .role-add {
   cursor: pointer;
   display: flex;
   align-items: center;
   margin-left: 0.5rem;
 }
 
-.roles-content .roles .role-buttons .role-edit {
+.roles-content .roles .role-header-buttons .role-edit {
   cursor: pointer;
   display: flex;
   align-items: center;
   margin-left: 0.5rem;
 }
 
-.roles-content .roles .role-buttons span {
+.roles-content .roles .role-header-buttons span {
   margin-right: 0.5rem;
 }
 
 .roles-content .roles .roles-bot {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 .roles-content .roles .roles-top {
   display: flex;
   justify-content: space-between;
-  margin-left: 16px;
+}
+
+.roles-content .roles .roles-top .roles-top-left {
+  display: flex;
+}
+.roles-content .roles .roles-top .roles-top-right {
+  display: flex;
+}
+
+.roles-content .roles .roles-top-search-fields {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.roles-content .roles .roles-top-search-fields .role-select {
+  width: 50%;
+  margin-right: 2rem;
+}
+
+.roles-content .roles .roles-top-search-fields .member-role-search {
+  width: 50%;
+}
+
+@media screen and (max-width: 600px) {
+  .roles-content .roles .roles-top .roles-top-search-fields {
+    flex-direction: column;
+  }
+
+  .roles-content .roles .roles-top .roles-top-search-fields .role-select {
+    width: 300px;
+    margin-top: 0;
+    margin-right: 0;
+  }
+
+  .roles-content
+    .roles
+    .roles-top
+    .roles-top-search-fields
+    .member-role-search {
+    width: 300px;
+    margin-bottom: 1rem;
+  }
 }

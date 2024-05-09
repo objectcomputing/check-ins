@@ -1,10 +1,10 @@
-import React, { useContext, useState, useCallback } from "react";
-import { styled } from "@mui/material/styles";
-import { AppContext } from "../../context/AppContext";
-import { UPDATE_TEAMS, UPDATE_TOAST } from "../../context/actions";
-import EditTeamModal from "./EditTeamModal";
-import KudosDialog from "../kudos_dialog/KudosDialog";
-import { Link } from "react-router-dom";
+import React, { useContext, useState, useCallback } from 'react';
+import { styled } from '@mui/material/styles';
+import { AppContext } from '../../context/AppContext';
+import { UPDATE_TEAMS, UPDATE_TOAST } from '../../context/actions';
+import EditTeamModal from './EditTeamModal';
+import KudosDialog from '../kudos_dialog/KudosDialog';
+import { Link } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -16,45 +16,45 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Tooltip,
-} from "@mui/material";
-import PropTypes from "prop-types";
-import { deleteTeam, updateTeam } from "../../api/team.js";
-import SplitButton from "../split-button/SplitButton";
+  Tooltip
+} from '@mui/material';
+import PropTypes from 'prop-types';
+import { deleteTeam, updateTeam } from '../../api/team.js';
+import SplitButton from '../split-button/SplitButton';
 
-const PREFIX = "TeamSummaryCard";
+const PREFIX = 'TeamSummaryCard';
 const classes = {
   card: `${PREFIX}-card`,
   header: `${PREFIX}-header`,
-  title: `${PREFIX}-title`,
+  title: `${PREFIX}-title`
 };
 
 const StyledCard = styled(Card)({
   [`&.${classes.card}`]: {
-    width: "340px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
+    width: '340px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   [`& .${classes.header}`]: {
-    width: "100%",
+    width: '100%'
   },
   [`& .${classes.title}`]: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
+  }
 });
 
 const propTypes = {
   team: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
-    description: PropTypes.string,
-  }),
+    description: PropTypes.string
+  })
 };
 
-const displayName = "TeamSummaryCard";
+const displayName = 'TeamSummaryCard';
 
 const TeamSummaryCard = ({ team, index }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -66,21 +66,21 @@ const TeamSummaryCard = ({ team, index }) => {
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
 
   let leads =
     team.teamMembers == null
       ? null
-      : team.teamMembers.filter((teamMember) => teamMember.lead);
+      : team.teamMembers.filter(teamMember => teamMember.lead);
   let nonLeads =
     team.teamMembers == null
       ? null
-      : team.teamMembers.filter((teamMember) => !teamMember.lead);
+      : team.teamMembers.filter(teamMember => !teamMember.lead);
 
   const isTeamLead =
     leads === null
       ? false
-      : leads.some((lead) => lead.memberId === userProfile.memberProfile.id);
+      : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
 
   const handleOpen = () => setOpen(true);
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
@@ -98,25 +98,23 @@ const TeamSummaryCard = ({ team, index }) => {
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "success",
-            toast: "Team deleted",
-          },
+            severity: 'success',
+            toast: 'Team deleted'
+          }
         });
-        let newTeams = teams.filter((team) => {
+        let newTeams = teams.filter(team => {
           return team.id !== teamId;
         });
         dispatch({
           type: UPDATE_TEAMS,
-          payload: newTeams,
+          payload: newTeams
         });
       }
     }
   }, [teamId, csrf, dispatch, teams]);
 
   const options =
-    isAdmin || isTeamLead
-      ? ["Edit Team", "Give Kudos", "Delete Team"]
-      : ["Edit Team", "Give Kudos"];
+    isAdmin || isTeamLead ? ['Edit Team', 'Give Kudos', 'Delete Team'] : ['Edit Team', 'Give Kudos'];
 
   const handleAction = (e, index) => {
     if (index === 0) {
@@ -134,7 +132,7 @@ const TeamSummaryCard = ({ team, index }) => {
         classes={{
           content: classes.header,
           title: classes.title,
-          subheader: classes.title,
+          subheader: classes.title
         }}
         title={team.name}
         subheader={
@@ -166,8 +164,8 @@ const TeamSummaryCard = ({ team, index }) => {
                   key={lead?.memberId}
                   to={`/profile/${lead?.memberId}`}
                   style={{
-                    textDecoration: "none",
-                    color: "rgba(0, 0, 0, 0.87)",
+                    textDecoration: 'none',
+                    color: 'rgba(0, 0, 0, 0.87)'
                   }}
                 >
                   {index !== leads.length - 1 ? `${lead?.name}, ` : lead?.name}
@@ -182,8 +180,8 @@ const TeamSummaryCard = ({ team, index }) => {
                   key={member?.memberId}
                   to={`/profile/${member?.memberId}`}
                   style={{
-                    textDecoration: "none",
-                    color: "rgba(0, 0, 0, 0.87)",
+                    textDecoration: 'none',
+                    color: 'rgba(0, 0, 0, 0.87)'
                   }}
                 >
                   {index !== nonLeads.length - 1
@@ -232,7 +230,7 @@ const TeamSummaryCard = ({ team, index }) => {
         team={team}
         open={open}
         onClose={handleClose}
-        onSave={async (editedTeam) => {
+        onSave={async editedTeam => {
           const res = await updateTeam(editedTeam, csrf);
           const data =
             res.payload && res.payload.data && !res.error
@@ -243,7 +241,7 @@ const TeamSummaryCard = ({ team, index }) => {
             copy[index] = data;
             dispatch({
               type: UPDATE_TEAMS,
-              payload: copy,
+              payload: copy
             });
           }
         }}

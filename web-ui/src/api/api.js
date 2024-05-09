@@ -1,17 +1,20 @@
-import { UPDATE_TOAST } from "../context/actions";
+import { UPDATE_TOAST } from '../context/actions';
 import qs from 'qs';
 
 export const BASE_API_URL = import.meta.env.VITE_APP_API_URL
   ? import.meta.env.VITE_APP_API_URL
-  : "http://localhost:8080";
+  : 'http://localhost:8080';
 
-export const getAvatarURL = (email) =>
+export const getAvatarURL = email =>
   BASE_API_URL +
-  "/services/member-profiles/member-photos/" +
+  '/services/member-profiles/member-photos/' +
   encodeURIComponent(email);
 
 function fetchAbsolute(fetch) {
-  return baseUrl => (url, otherParams) => url.startsWith('/') ? fetch(baseUrl + url, { credentials: 'include', ...otherParams }) : fetch(url, { credentials: 'include', ...otherParams })
+  return baseUrl => (url, otherParams) =>
+    url.startsWith('/')
+      ? fetch(baseUrl + url, { credentials: 'include', ...otherParams })
+      : fetch(url, { credentials: 'include', ...otherParams });
 }
 
 let myFetch = null;
@@ -20,7 +23,7 @@ export const getMyFetch = async () => {
   if (!myFetch) {
     myFetch = fetchAbsolute(fetch)(BASE_API_URL);
 
-/*
+    /*
    I'm not sure this was working before, but we need to figure out an approach for fetch. I will
    open an issue for this.
 
@@ -53,11 +56,11 @@ export const getMyFetch = async () => {
   */
   }
   return myFetch;
-}
+};
 
-export const resolve = async (payload) => {
+export const resolve = async payload => {
   let { url } = payload;
-  const { params = null, data = null, ...rest} = payload;
+  const { params = null, data = null, ...rest } = payload;
   const myFetch = await getMyFetch();
 
   // Convert params to fetch style...
@@ -69,27 +72,29 @@ export const resolve = async (payload) => {
   const promise = myFetch(url, rest);
   const resolved = {
     payload: null,
-    error: null,
+    error: null
   };
 
   resolved.payload = await promise;
-  if(!resolved.payload.ok) {
+  if (!resolved.payload.ok) {
     const statusText = resolved.payload.statusText;
     resolved.error = await resolved.payload.json();
     if (window.snackDispatch) {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: resolved?.error?.message || statusText,
-        },
+          severity: 'error',
+          toast: resolved?.error?.message || statusText
+        }
       });
     }
   } else {
-    const contentType = resolved.payload.headers.get("Content-Type");
-    const contentLength = resolved.payload.headers.get("Content-Length");
-    if(contentLength && contentLength > 0) {
-      if (contentType && contentType.indexOf("application/json") !== -1) {
+    const contentType = resolved.payload.headers.get('Content-Type');
+    const contentLength = resolved.payload.headers.get('Content-Length');
+    if (contentType && contentType.indexOf('text/csv') !== -1) {
+      resolved.payload.data = await resolved.payload.blob();
+    } else if (contentLength && contentLength > 0) {
+      if (contentType && contentType.indexOf('application/json') !== -1) {
         resolved.payload.data = await resolved.payload.json();
       } else {
         resolved.payload.data = await resolved.payload.text();

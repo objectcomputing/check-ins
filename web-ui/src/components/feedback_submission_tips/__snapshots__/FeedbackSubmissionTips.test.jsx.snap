@@ -34,7 +34,8 @@ exports[`renders the feedback tips component. 1`] = `
       class="MuiTypography-root MuiTypography-h5 FeedbackSubmissionTips-announcement css-ag7rrr-MuiTypography-root"
     >
       <b>
-        SBI is a common approach to providing constructive and fair feedback 
+        SBI is a common approach to providing constructive and fair feedback
+         
       </b>
     </h5>
     <div

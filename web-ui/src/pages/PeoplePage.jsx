@@ -1,16 +1,16 @@
-import React, { useContext, useState} from "react";
+import React, { useContext, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import MemberSummaryCard from "../components/member-directory/MemberSummaryCard";
-import { AppContext } from "../context/AppContext";
+import MemberSummaryCard from '../components/member-directory/MemberSummaryCard';
+import { AppContext } from '../context/AppContext';
 import {
   selectMemberProfilesLoading,
-  selectNormalizedMembers,
-} from "../context/selectors";
-import {TextField, Grid, Button} from "@mui/material";
-import "./PeoplePage.css";
-import KudosDialog from "../components/kudos_dialog/KudosDialog";
-import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader"
-import StarIcon from "@mui/icons-material/Star";
+  selectNormalizedMembers
+} from '../context/selectors';
+import { TextField, Grid, Button } from '@mui/material';
+import './PeoplePage.css';
+import KudosDialog from '../components/kudos_dialog/KudosDialog';
+import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
+import StarIcon from '@mui/icons-material/Star';
 
 const PREFIX = 'PeoplePage';
 const classes = {
@@ -21,27 +21,27 @@ const classes = {
 
 const Root = styled('div')({
   [`& .${classes.search}`]: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   [`& .${classes.searchInput}`]: {
-    width: "20em",
+    width: '20em'
   },
   [`& .${classes.members}`]: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-evenly",
-    width: "100%",
-  },
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    width: '100%'
+  }
 });
 
 const PeoplePage = () => {
   const { state } = useContext(AppContext);
-  const loading = selectMemberProfilesLoading(state)
+  const loading = selectMemberProfilesLoading(state);
 
   const [kudosDialogOpen, setKudosDialogOpen] = useState(null);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
 
   const normalizedMembers = selectNormalizedMembers(state, searchText);
 
@@ -53,8 +53,7 @@ const PeoplePage = () => {
         member={member}
       />
     );
-
-  })
+  });
 
   return (
     <Root className="people-page">
@@ -65,7 +64,7 @@ const PeoplePage = () => {
             label="Search employees..."
             placeholder="Member Name"
             value={searchText}
-            onChange={(e) => {
+            onChange={e => {
               setSearchText(e.target.value);
             }}
           />
@@ -83,8 +82,13 @@ const PeoplePage = () => {
           </Button>
         </Grid>
         <Grid item className={classes.members}>
-          {loading ? Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />):
-          !loading ? createMemberCards : null}
+          {loading
+            ? Array.from({ length: 20 }).map((_, index) => (
+                <SkeletonLoader key={index} type="people" />
+              ))
+            : !loading
+              ? createMemberCards
+              : null}
         </Grid>
       </Grid>
     </Root>

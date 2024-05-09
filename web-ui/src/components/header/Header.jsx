@@ -1,5 +1,5 @@
-import React from "react";
-import "./Header.css";
+import React from 'react';
+import './Header.css';
 
 const Header = ({ title, children }) => {
   return (

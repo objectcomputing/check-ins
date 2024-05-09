@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Introspected
@@ -20,6 +21,12 @@ public class ReviewPeriodCreateDTO {
     private UUID reviewTemplateId;
 
     private UUID selfReviewTemplateId;
+
+    private LocalDateTime launchDate;
+
+    private LocalDateTime selfReviewCloseDate;
+
+    private LocalDateTime closeDate;
 
     public String getName() {
         return name;
@@ -46,4 +53,28 @@ public class ReviewPeriodCreateDTO {
     public UUID getSelfReviewTemplateId() { return selfReviewTemplateId; }
 
     public void setSelfReviewTemplateId(UUID selfReviewTemplateId) { this.selfReviewTemplateId = selfReviewTemplateId; }
+
+    public LocalDateTime getLaunchDate() {
+        return launchDate;
+    }
+
+    public void setLaunchDate(LocalDateTime launchDate) {
+        this.launchDate = launchDate;
+    }
+
+    public LocalDateTime getSelfReviewCloseDate() {
+        return selfReviewCloseDate;
+    }
+
+    public void setSelfReviewCloseDate(LocalDateTime selfReviewCloseDate) {
+        this.selfReviewCloseDate = selfReviewCloseDate;
+    }
+
+    public LocalDateTime getCloseDate() {
+        return closeDate;
+    }
+
+    public void setCloseDate(LocalDateTime closeDate) {
+        this.closeDate = closeDate;
+    }
 }

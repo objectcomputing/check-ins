@@ -21,9 +21,11 @@ exports[`renders the confirmation message 1`] = `
       class="MuiTypography-root MuiTypography-h3 FeedbackRequestConfirmation-announcement css-gepadz-MuiTypography-root"
     >
       <b>
-        Feedback request 
+        Feedback request
+         
          sent
-         for 
+         
+        for 
          
       </b>
     </h3>

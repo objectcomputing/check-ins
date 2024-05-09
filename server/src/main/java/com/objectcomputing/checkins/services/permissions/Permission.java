@@ -1,99 +1,67 @@
 package com.objectcomputing.checkins.services.permissions;
 
-import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
-import java.util.Objects;
-import java.util.UUID;
-
-@Entity
 @Introspected
-@Table(name = "permissions")
-public class Permission {
-    @Id
-    @Column(name="id")
-    @AutoPopulated
-    @TypeDef(type= DataType.STRING)
-    @Schema(description = "The id of the permission", required = true)
-    private UUID id;
+@JsonSerialize(using = PermissionSerializer.class)
+public enum Permission {
+  CAN_VIEW_FEEDBACK_REQUEST("View feedback requests", "Feedback"),
+  CAN_CREATE_FEEDBACK_REQUEST("Create feedback requests", "Feedback"),
+  CAN_DELETE_FEEDBACK_REQUEST("Delete feedback requests", "Feedback"),
+  CAN_VIEW_FEEDBACK_ANSWER("View feedback answers", "Feedback"),
+  CAN_DELETE_ORGANIZATION_MEMBERS("Delete organization members", "User Management"),
+  CAN_CREATE_ORGANIZATION_MEMBERS("Create organization members", "User Management"),
+  CAN_VIEW_ROLE_PERMISSIONS("View role permissions", "Security"),
+  CAN_ASSIGN_ROLE_PERMISSIONS("Assign role permissions", "Security"),
+  CAN_VIEW_PERMISSIONS("View all permissions", "Security"),
+  CAN_VIEW_SKILLS_REPORT("View skills report", "Reporting"),
+  CAN_VIEW_RETENTION_REPORT("View retention report", "Reporting"),
+  CAN_VIEW_ANNIVERSARY_REPORT("View anniversary report", "Reporting"),
+  CAN_VIEW_BIRTHDAY_REPORT("View birthday report", "Reporting"),
+  CAN_VIEW_PROFILE_REPORT("View profile report", "Reporting"),
+  CAN_VIEW_CHECKINS_REPORT("View checkins report", "Reporting"),
+  CAN_CREATE_CHECKINS("Create check-ins", "Check-ins"),
+  CAN_VIEW_CHECKINS("View check-ins", "Check-ins"),
+  CAN_UPDATE_CHECKINS("Update check-ins", "Check-ins"),
+  CAN_VIEW_SKILL_CATEGORIES("View skill categories", "Skill Categories"),
+  CAN_VIEW_PRIVATE_NOTE("View check-ins private notes", "Check-ins"),
+  CAN_UPDATE_PRIVATE_NOTE("Update check-ins private notes", "Check-ins"),
+  CAN_CREATE_PRIVATE_NOTE("Create check-ins private notes", "Check-ins"),
+  CAN_VIEW_CHECKIN_DOCUMENT("View check-ins document", "Check-ins"),
+  CAN_UPDATE_CHECKIN_DOCUMENT("Update check-ins document", "Check-ins"),
+  CAN_CREATE_CHECKIN_DOCUMENT("Create check-ins document", "Check-ins"),
+  CAN_DELETE_CHECKIN_DOCUMENT("Delete check-ins document", "Check-ins"),
+  CAN_VIEW_ALL_CHECKINS("View all check-ins", "Check-ins"),
+  CAN_UPDATE_ALL_CHECKINS("Update all check-ins, including completed check-ins", "Check-ins"),
+  CAN_EDIT_SKILL_CATEGORIES("Edit skill categories", "Skill Categories");
 
-    @NotBlank
-    @Column(name = "permission")
-    @Schema(description = "The name of the permission, used on backend for PermissionSecurityRule")
-    private String permission;
+  private final String description;
+  private final String category;
 
-    @Column(name = "description")
-    @Nullable
-    @Schema(description = "A more verbose description of the permission to be displayed on UI")
-    private String description;
+  Permission(String description, String category) {
+    this.description = description;
+    this.category = category;
+  }
 
-    public Permission() {}
+  public String getDescription() {
+    return description;
+  }
 
-    public Permission(UUID id, String permission, @Nullable String description) {
-        this.id = id;
-        this.permission = permission;
-        this.description = description;
-    }
+  public String getCategory() {
+    return category;
+  }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getPermission() {
+  // Use the fromName method as @JsonCreator
+  @JsonCreator
+  public static Permission fromName(String name) {
+    for (Permission permission : values()) {
+      if (permission.name().equalsIgnoreCase(name)) {
         return permission;
+      }
     }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
-    public String getDescription() {
-        return Permissions.valueOf(permission).getDescription(); //ignoring the database for now...
-    }
-
-    public void setDescription(@Nullable String description) {
-        this.description = description;
-    }
-
-    @Transient
-    public String getCategory() {
-        return Permissions.valueOf(permission).getCategory();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Permission that = (Permission) o;
-        return Objects.equals(id, that.id) && Objects.equals(permission, that.permission) && Objects.equals(description, that.description);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, permission, description);
-    }
-
-    @Override
-    public String toString() {
-        return "Permission{" +
-                "id=" + id +
-                ", permission='" + permission + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
+    throw new UnsupportedOperationException(String.format("Unknown permission: '%s'", name));
+  }
 }
+

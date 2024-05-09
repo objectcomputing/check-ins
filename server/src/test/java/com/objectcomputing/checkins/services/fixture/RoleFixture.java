@@ -66,9 +66,6 @@ public interface RoleFixture extends RepositoryFixture, PermissionFixture, Membe
         Role pdlRole = createRole(new Role(RoleType.PDL.name(), "Pdl Role"));
         Role memberRole = createRole(new Role(RoleType.MEMBER.name(), "Member Role"));
 
-        //Save permissions
-        saveAllPermissions();
-
         //Setup permissions for Roles
         setPermissionsForAdmin(adminRole.getId());
         setPermissionsForPdl(pdlRole.getId());

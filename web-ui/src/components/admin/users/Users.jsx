@@ -1,20 +1,23 @@
-import React, { useContext, useState} from "react";
+import fileDownload from 'js-file-download';
+import React, { useContext, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
-import AdminMemberCard from "../../member-directory/AdminMemberCard";
-import MemberModal from "../../member-directory/MemberModal";
-import { createMember } from "../../../api/member";
-import { AppContext } from "../../../context/AppContext";
-import { UPDATE_MEMBER_PROFILES } from "../../../context/actions";
+import AdminMemberCard from '../../member-directory/AdminMemberCard';
+import MemberModal from '../../member-directory/MemberModal';
+import { createMember, reportAllMembersCsv } from '../../../api/member';
+import { AppContext } from '../../../context/AppContext';
+import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
 import {
+  selectHasProfileReportPermission,
   selectNormalizedMembers,
-  selectNormalizedMembersAdmin,
-} from "../../../context/selectors";
+  selectNormalizedMembersAdmin
+} from '../../../context/selectors';
 
-import { Button, TextField, Grid } from "@mui/material";
-import PersonIcon from "@mui/icons-material/Person";
+import { Button, Grid, TextField } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/FileDownload';
+import PersonIcon from '@mui/icons-material/Person';
 
-import "./Users.css";
+import './Users.css';
 
 const PREFIX = 'Users';
 const classes = {
@@ -33,39 +36,40 @@ const Root = styled('div')({
     margin: '-12px'
   },
   [`& .${classes.search}`]: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   [`& .${classes.searchInput}`]: {
-    width: "20em",
+    width: '20em'
   },
   [`& .${classes.members}`]: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-evenly",
-    width: "100%",
-  },
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    width: '100%'
+  }
 });
 
 const Users = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, memberProfiles, userProfile } = state;
   const [open, setOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [includeTerminated, setIncludeTerminated] = useState(false);
   const handleIncludeTerminated = () => {
     setIncludeTerminated(!includeTerminated);
   };
 
   const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
 
-  const normalizedMembers = isAdmin && includeTerminated
-    ? selectNormalizedMembersAdmin(state, searchText)
-    : selectNormalizedMembers(state, searchText);
+  const normalizedMembers =
+    isAdmin && includeTerminated
+      ? selectNormalizedMembersAdmin(state, searchText)
+      : selectNormalizedMembers(state, searchText);
 
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
 
@@ -79,60 +83,93 @@ const Users = () => {
     );
   });
 
+  const downloadMembers = async () => {
+    let res = await reportAllMembersCsv(csrf);
+    if (res?.error) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'Hmm...Something went wrong.'
+        }
+      });
+    } else {
+      fileDownload(res?.payload?.data, 'members.csv');
+
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'success',
+          toast: `Member export has been saved!`
+        }
+      });
+    }
+  };
+
   return (
     <Root>
-    <div className="user-page">
-      <Grid container spacing={3}>
-        <Grid item xs={12} className={classes.search}>
-          <TextField
-            className={classes.searchInput}
-            label="Select employees..."
-            placeholder="Member Name"
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-            }}
-          />
-          {isAdmin && (
-            <div className="add-member">
-              <Button startIcon={<PersonIcon />} onClick={handleOpen}>
-                Add Member
-              </Button>
+      <div className="user-page">
+        <Grid container spacing={3}>
+          <Grid item xs={12} className={classes.search}>
+            <TextField
+              className={classes.searchInput}
+              label="Select employees..."
+              placeholder="Member Name"
+              value={searchText}
+              onChange={e => {
+                setSearchText(e.target.value);
+              }}
+            />
+            {isAdmin && (
+              <div className="add-member">
+                <Button startIcon={<PersonIcon />} onClick={handleOpen}>
+                  Add Member
+                </Button>
+                {selectHasProfileReportPermission(state) && (
+                  <Button
+                    startIcon={<DownloadIcon />}
+                    onClick={downloadMembers}
+                  >
+                    Download Members
+                  </Button>
+                )}
 
-              <MemberModal
-                member={{}}
-                open={open}
-                onClose={handleClose}
-                onSave={async (member) => {
-                  if (
-                    member.location &&
-                    member.firstName &&
-                    member.lastName &&
-                    member.startDate &&
-                    member.title &&
-                    member.workEmail &&
-                    csrf
-                  ) {
-                    let res = await createMember(member, csrf);
-                    let data =
-                      res.payload && res.payload.data && !res.error
-                        ? res.payload.data
-                        : null;
-                    if (data) {
-                      dispatch({
-                        type: UPDATE_MEMBER_PROFILES,
-                        payload: [...memberProfiles, data],
-                      });
+                <MemberModal
+                  member={{}}
+                  open={open}
+                  onClose={handleClose}
+                  onSave={async member => {
+                    if (
+                      member.location &&
+                      member.firstName &&
+                      member.lastName &&
+                      member.startDate &&
+                      member.title &&
+                      member.workEmail &&
+                      csrf
+                    ) {
+                      let res = await createMember(member, csrf);
+                      let data =
+                        res.payload && res.payload.data && !res.error
+                          ? res.payload.data
+                          : null;
+                      if (data) {
+                        dispatch({
+                          type: UPDATE_MEMBER_PROFILES,
+                          payload: [...memberProfiles, data]
+                        });
+                      }
+                      handleClose();
                     }
-                    handleClose();
-                  }
-                }}
-              />
-            </div>
-          )}
-        </Grid>
+                  }}
+                />
+              </div>
+            )}
+          </Grid>
           <div className="checkbox-row">
-            <label htmlFor="includeterminated">Include Terminated Members</label>
+            <label htmlFor="includeterminated">
+              Include Terminated Members
+            </label>
             <input
               id="includeterminated"
               checked={includeTerminated}
@@ -140,11 +177,11 @@ const Users = () => {
               type="checkbox"
             />
           </div>
-        <Grid item className={classes.members}>
-          {createMemberCards}
+          <Grid item className={classes.members}>
+            {createMemberCards}
+          </Grid>
         </Grid>
-      </Grid>
-    </div>
+      </div>
     </Root>
   );
 };

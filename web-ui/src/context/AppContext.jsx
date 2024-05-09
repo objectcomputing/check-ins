@@ -1,6 +1,6 @@
-import React, { useEffect, useReducer, useMemo } from "react";
-import { reducer, initialState } from "./reducer";
-import { getCheckins, getAllCheckinsForAdmin } from "./thunks";
+import React, { useEffect, useReducer, useMemo } from 'react';
+import { reducer, initialState } from './reducer';
+import { getCheckins, getAllCheckinsForAdmin } from './thunks';
 import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
@@ -13,24 +13,27 @@ import {
   UPDATE_SKILLS,
   UPDATE_TEAMS,
   UPDATE_PEOPLE_LOADING,
-  UPDATE_TEAMS_LOADING,
-} from "./actions";
+  UPDATE_TEAMS_LOADING
+} from './actions';
 import {
   getCurrentUser,
   getAllMembers,
-  getAllTerminatedMembers,
-} from "../api/member";
-import { getAllRoles, getAllUserRoles } from "../api/roles";
-import { getMemberSkills } from "../api/memberskill";
-import { BASE_API_URL } from "../api/api";
-import { getAllGuilds } from "../api/guild";
-import { getSkills } from "../api/skill";
-import { getAllTeams } from "../api/team";
+  getAllTerminatedMembers
+} from '../api/member';
+import { getAllRoles, getAllUserRoles } from '../api/roles';
+import { getMemberSkills } from '../api/memberskill';
+import { BASE_API_URL } from '../api/api';
+import { getAllGuilds } from '../api/guild';
+import { getSkills } from '../api/skill';
+import { getAllTeams } from '../api/team';
 
 const AppContext = React.createContext();
 
-const AppContextProvider = (props) => {
-  const [state, dispatch] = useReducer(reducer, props?.value?.state || initialState);
+const AppContextProvider = props => {
+  const [state, dispatch] = useReducer(
+    reducer,
+    props?.value?.state || initialState
+  );
   const userProfile =
     state && state.userProfile ? state.userProfile : undefined;
   const memberProfile =
@@ -40,14 +43,24 @@ const AppContextProvider = (props) => {
 
   const id = memberProfile ? memberProfile.id : undefined;
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;
-  const { csrf, guilds, teams, memberSkills, memberProfiles, checkins, skills, roles, userRoles} = state;
+  const {
+    csrf,
+    guilds,
+    teams,
+    memberSkills,
+    memberProfiles,
+    checkins,
+    skills,
+    roles,
+    userRoles
+  } = state;
   const url = `${BASE_API_URL}/csrf/cookie`;
   useEffect(() => {
     const getCsrf = async () => {
       if (!csrf) {
         const res = await fetch(url, {
-          responseType: "text",
-          credentials: "include",
+          responseType: 'text',
+          credentials: 'include'
         });
         if (res && res.ok) {
           dispatch({ type: SET_CSRF, payload: await res.text() });
@@ -87,13 +100,13 @@ const AppContextProvider = (props) => {
           ? res.payload.data
           : null;
       if (data) {
-        dispatch({type: UPDATE_TEAMS, payload: data });
-        dispatch({type: UPDATE_TEAMS_LOADING})
+        dispatch({ type: UPDATE_TEAMS, payload: data });
+        dispatch({ type: UPDATE_TEAMS_LOADING });
       }
     }
     if (csrf && !teams) {
-      dispatch({type: UPDATE_TEAMS_LOADING})
-      getTeams()
+      dispatch({ type: UPDATE_TEAMS_LOADING });
+      getTeams();
     }
   }, [csrf, teams, dispatch]);
 
@@ -138,7 +151,7 @@ const AppContextProvider = (props) => {
 
       if (profiles) {
         dispatch({ type: UPDATE_MEMBER_PROFILES, payload: profiles });
-        dispatch({type: UPDATE_PEOPLE_LOADING, payload: false})
+        dispatch({ type: UPDATE_PEOPLE_LOADING, payload: false });
       }
     }
     async function getTerminatedMembers() {
@@ -153,9 +166,9 @@ const AppContextProvider = (props) => {
       }
     }
     if (csrf && userProfile && !memberProfiles) {
-      dispatch({type: UPDATE_PEOPLE_LOADING, payload:true})
+      dispatch({ type: UPDATE_PEOPLE_LOADING, payload: true });
       getMemberProfiles();
-      if (userProfile.role?.includes("ADMIN")) { 
+      if (userProfile.role?.includes('ADMIN')) {
         getTerminatedMembers();
       }
     }
@@ -163,7 +176,14 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     function getAllTheCheckins() {
-      if (userProfile && userProfile.role?.includes("ADMIN") && id && csrf) {
+      if (
+        userProfile &&
+        userProfile.permissions?.some(p =>
+          p?.permission?.includes('CAN_VIEW_CHECKINS_REPORT')
+        ) &&
+        id &&
+        csrf
+      ) {
         getAllCheckinsForAdmin(dispatch, csrf);
       } else if (id && csrf) {
         getCheckins(id, pdlId, dispatch, csrf);
@@ -194,45 +214,44 @@ const AppContextProvider = (props) => {
     }
   }, [csrf, skills]);
 
- useEffect(() => {
-   const getRoles = async () => {
-     const res = await getAllRoles(csrf);
-     const data =
-       res &&
-       res.payload &&
-       res.payload.data &&
-       res.payload.status === 200 &&
-       !res.error
-         ? res.payload.data
-         : null;
-     if (data && Array.isArray(data) && data.length > 0) {
-       dispatch({ type: SET_ROLES, payload: data });
-     }
-   };
-   if (csrf && !roles) {
-     getRoles();
-   }
- }, [csrf, roles]);
+  useEffect(() => {
+    const getRoles = async () => {
+      const res = await getAllRoles(csrf);
+      const data =
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data && Array.isArray(data) && data.length > 0) {
+        dispatch({ type: SET_ROLES, payload: data });
+      }
+    };
+    if (csrf && !roles) {
+      getRoles();
+    }
+  }, [csrf, roles]);
 
- useEffect(() => {
-   const getUserRoles = async () => {
-     // make call to the API
-     let res = await getAllUserRoles(csrf);
-     return (
-       res.payload &&
-       res.payload.data &&
-       res.payload.status === 200 &&
-       !res.error)
-       ? res.payload.data
-       : null;
-   };
+  useEffect(() => {
+    const getUserRoles = async () => {
+      // make call to the API
+      let res = await getAllUserRoles(csrf);
+      return res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+        ? res.payload.data
+        : null;
+    };
 
-   if (csrf && !userRoles) {
-     getUserRoles().then((userRoles) => {
-       dispatch({ type: SET_USER_ROLES, payload: userRoles });
-     });
-   }
-}, [csrf, userRoles]);
+    if (csrf && !userRoles) {
+      getUserRoles().then(userRoles => {
+        dispatch({ type: SET_USER_ROLES, payload: userRoles });
+      });
+    }
+  }, [csrf, userRoles]);
 
   const value = useMemo(() => {
     return { state, dispatch };

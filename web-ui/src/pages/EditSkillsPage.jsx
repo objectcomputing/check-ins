@@ -1,19 +1,19 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 
-import { AppContext } from "../context/AppContext";
-import { selectOrderedSkills, selectPendingSkills } from "../context/selectors";
-import EditSkillsCard from "../components/edit_skills/EditSkillsCard";
-import EditSkillsModal from "../components/edit_skills/EditSkillsModal";
-import {Link} from "react-router-dom";
+import { AppContext } from '../context/AppContext';
+import { selectOrderedSkills, selectPendingSkills } from '../context/selectors';
+import EditSkillsCard from '../components/edit_skills/EditSkillsCard';
+import EditSkillsModal from '../components/edit_skills/EditSkillsModal';
+import { Link } from 'react-router-dom';
 
-import { Button, TextField } from "@mui/material";
+import { Button, TextField } from '@mui/material';
 
-import "./EditSkillsPage.css";
+import './EditSkillsPage.css';
 
 const EditSkillsPage = () => {
   const { state } = useContext(AppContext);
 
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [showAllSkills, setShowAllSkills] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -35,7 +35,7 @@ const EditSkillsPage = () => {
             placeholder="Skill"
             fullWidth={true}
             value={searchText}
-            onChange={(e) => {
+            onChange={e => {
               setSearchText(e.target.value);
             }}
           />
@@ -64,18 +64,18 @@ const EditSkillsPage = () => {
       />
       <div className="pending-skills-list">
         {!showAllSkills
-          ? pendingSkills.map((skill) =>
+          ? pendingSkills.map(skill =>
               skill.name.toLowerCase().includes(searchText.toLowerCase()) ? (
                 <EditSkillsCard
-                  key={"pending-skill-" + skill.id}
+                  key={'pending-skill-' + skill.id}
                   skill={skill}
                 />
               ) : null
             )
-          : allSkills.map((skill) =>
+          : allSkills.map(skill =>
               skill.name.toLowerCase().includes(searchText.toLowerCase()) ? (
                 <EditSkillsCard
-                  key={"pending-skill-" + skill.id}
+                  key={'pending-skill-' + skill.id}
                   skill={skill}
                 />
               ) : null

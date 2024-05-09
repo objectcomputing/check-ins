@@ -1,7 +1,8 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.security.permissions.Permissions;
+
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 
 import io.micronaut.core.annotation.Nullable;
@@ -51,7 +52,7 @@ public class AgendaItemController {
      * @return {@link HttpResponse <AgendaItem>}
      */
     @Post("/")
-    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS)
+    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public Mono<HttpResponse<AgendaItem>> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem,
                                                              HttpRequest<AgendaItemCreateDTO> request) {
         return Mono
@@ -74,7 +75,7 @@ public class AgendaItemController {
      * @return {@link HttpResponse< AgendaItem >}
      */
     @Put("/")
-    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public Mono<HttpResponse<AgendaItem>> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItem> request) {
         if (agendaItem == null) {
             return Mono.just(HttpResponse.ok());
@@ -98,7 +99,7 @@ public class AgendaItemController {
      * @return {@link List <CheckIn > list of checkins
      */
     @Get("/{?checkinid,createdbyid}")
-    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Mono<HttpResponse<Set<AgendaItem>>> findAgendaItems(@Nullable UUID checkinid,
                                                                  @Nullable UUID createdbyid) {
         return Mono.fromCallable(() -> agendaItemServices.findByFields(checkinid, createdbyid))
@@ -115,10 +116,10 @@ public class AgendaItemController {
      * @return {@link AgendaItem}
      */
     @Get("/{id}")
-    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Mono<HttpResponse<AgendaItem>> readAgendaItem(UUID id) {
         return Mono.fromCallable(() -> agendaItemServices.read(id))
-                .switchIfEmpty(Mono.error(new NotFoundException("No agennda item for UUID")))
+                .switchIfEmpty(Mono.error(new NotFoundException("No agenda item for UUID")))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(agendaItem -> (HttpResponse<AgendaItem>)HttpResponse.ok(agendaItem))
                 .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
@@ -131,7 +132,7 @@ public class AgendaItemController {
      * @param id, id of {@link AgendaItem} to delete
      */
     @Delete("/{id}")
-    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<?> deleteAgendaItem(UUID id) {
         agendaItemServices.delete(id);
         return HttpResponse

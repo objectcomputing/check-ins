@@ -17,4 +17,7 @@ export default defineConfig({
       exclude: [],
     }
   },
+  optimizeDeps: {
+    include: ['@mui/material/Tooltip'],
+  },
 })

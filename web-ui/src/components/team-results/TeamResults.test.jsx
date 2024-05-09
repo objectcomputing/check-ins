@@ -1,40 +1,40 @@
-import React from "react";
-import TeamResults from "./TeamResults";
-import { AppContextProvider } from "../../context/AppContext";
+import React from 'react';
+import TeamResults from './TeamResults';
+import { AppContextProvider } from '../../context/AppContext';
 
 const initialState = {
   state: {
     loading: {
       teams: true,
-      memberProfiles: true,
+      memberProfiles: true
     },
     userProfile: {
-      name: "holmes",
+      name: 'holmes',
       memberProfile: {
-        pdlId: "",
-        title: "Tester",
-        workEmail: "test@tester.com",
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
       },
-      role: ["MEMBER", "ADMIN"],
+      role: ['MEMBER', 'ADMIN'],
       imageUrl:
-        "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
+        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
     teams: [
       {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        name: "string",
-        description: "string",
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'string',
+        description: 'string'
       },
       {
-        id: "3fa4-5717-4562-b3fc-2c963f66afa6",
-        name: "stuff",
-        description: "",
-      },
-    ],
-  },
+        id: '3fa4-5717-4562-b3fc-2c963f66afa6',
+        name: 'stuff',
+        description: ''
+      }
+    ]
+  }
 };
 
-it("renders correctly", () => {
+it('renders correctly', () => {
   snapshot(
     <AppContextProvider value={initialState}>
       <TeamResults />
@@ -42,27 +42,26 @@ it("renders correctly", () => {
   );
 });
 
-
-it("renders correctly when no teams are loaded", () => {
+it('renders correctly when no teams are loaded', () => {
   const stateWithoutTeams = {
     state: {
       loading: {
         teams: true,
-        memberProfiles: true,
+        memberProfiles: true
       },
       userProfile: {
-        name: "holmes",
+        name: 'holmes',
         memberProfile: {
-          pdlId: "",
-          title: "Tester",
-          workEmail: "test@tester.com",
+          pdlId: '',
+          title: 'Tester',
+          workEmail: 'test@tester.com'
         },
-        role: ["MEMBER", "ADMIN"],
+        role: ['MEMBER', 'ADMIN'],
         imageUrl:
-          "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
+          'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
       },
       teams: []
-    },
+    }
   };
 
   snapshot(

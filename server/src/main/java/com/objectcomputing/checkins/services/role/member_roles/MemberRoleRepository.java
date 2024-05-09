@@ -41,4 +41,6 @@ public interface MemberRoleRepository extends CrudRepository<MemberRole, MemberR
     void removeMemberFromRoles(String memberid);
 
     void deleteByRoleId(UUID roleId);
+
+    Optional<MemberRole> findByMemberId(UUID memberId);
 }

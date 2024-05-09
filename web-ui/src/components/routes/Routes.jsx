@@ -1,41 +1,42 @@
-import React, { useContext } from "react";
-import { Switch, Route } from "react-router-dom";
+import React, { useContext } from 'react';
+import { Switch, Route } from 'react-router-dom';
 
-import { AppContext } from "../../context/AppContext";
+import { AppContext } from '../../context/AppContext';
 
-import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReportPage";
-import CheckinsPage from "../../pages/CheckinsPage";
-import CheckinsReportPage from "../../pages/CheckinsReportPage";
-import EditSkillsPage from "../../pages/EditSkillsPage";
-import EditPermissionsPage from "../../pages/PermissionsPage";
-import GroupIcon from "@mui/icons-material/Group";
-import GuildsPage from "../../pages/GuildsPage";
-import Header from "../header/Header";
-import HomePage from "../../pages/HomePage";
-import PeoplePage from "../../pages/PeoplePage";
-import MemberProfilePage from "../../pages/MemberProfilePage";
-import Roles from "../admin/roles/Roles";
-import SkillReportPage from "../../pages/SkillReportPage";
-import TeamsPage from "../../pages/TeamsPage";
-import TeamSkillReportPage from "../../pages/TeamSkillReportPage";
-import AnnualReviewReportPage from "../../pages/AnnualReviewReportPage";
-import Users from "../admin/users/Users";
+import AnniversaryReportPage from '../../pages/AnniversaryReportPage';
+import BirthdayReportPage from '../../pages/BirthdayReportPage';
+import CheckinsPage from '../../pages/CheckinsPage';
+import CheckinsReportPage from '../../pages/CheckinsReportPage';
+import EditSkillsPage from '../../pages/EditSkillsPage';
+import EditPermissionsPage from '../../pages/PermissionsPage';
+import GroupIcon from '@mui/icons-material/Group';
+import GuildsPage from '../../pages/GuildsPage';
+import Header from '../header/Header';
+import HomePage from '../../pages/HomePage';
+import PeoplePage from '../../pages/PeoplePage';
+import MemberProfilePage from '../../pages/MemberProfilePage';
+import Roles from '../admin/roles/Roles';
+import SkillReportPage from '../../pages/SkillReportPage';
+import TeamsPage from '../../pages/TeamsPage';
+import TeamSkillReportPage from '../../pages/TeamSkillReportPage';
+import AnnualReviewReportPage from '../../pages/AnnualReviewReportPage';
+import Users from '../admin/users/Users';
 
-import { selectIsAdmin } from "../../context/selectors";
-import FeedbackRequestConfirmation from "../feedback_request_confirmation/FeedbackRequestConfirmation";
-import FeedbackRequestPage from "../../pages/FeedbackRequestPage";
-import ViewFeedbackPage from "../../pages/ViewFeedbackPage";
-import ViewFeedbackResponses from "../view_feedback_responses/ViewFeedbackResponses";
-import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/FeedbackSubmitConfirmation";
-import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
-import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
-import EmailPage from "../../pages/EmailPage";
-import ReviewsPage from "../../pages/ReviewsPage";
-import SelfReviewsPage from "../../pages/SelfReviewsPage";
-import KudosPage from "../../pages/KudosPage";
-import ManageKudosPage from "../../pages/ManageKudosPage";
-import SkillCategoriesPage from "../../pages/SkillCategoriesPage";
-import SkillCategoryEditPage from "../../pages/SkillCategoryEditPage";
+import { selectIsAdmin } from '../../context/selectors';
+import FeedbackRequestConfirmation from '../feedback_request_confirmation/FeedbackRequestConfirmation';
+import FeedbackRequestPage from '../../pages/FeedbackRequestPage';
+import ViewFeedbackPage from '../../pages/ViewFeedbackPage';
+import ViewFeedbackResponses from '../view_feedback_responses/ViewFeedbackResponses';
+import FeedbackSubmitConfirmation from '../feedback_submit_confirmation/FeedbackSubmitConfirmation';
+import FeedbackSubmitPage from '../../pages/FeedbackSubmitPage';
+import ReceivedRequestsPage from '../../pages/ReceivedRequestsPage';
+import EmailPage from '../../pages/EmailPage';
+import ReviewsPage from '../../pages/ReviewsPage';
+import SelfReviewsPage from '../../pages/SelfReviewsPage';
+import KudosPage from '../../pages/KudosPage';
+import ManageKudosPage from '../../pages/ManageKudosPage';
+import SkillCategoriesPage from '../../pages/SkillCategoriesPage';
+import SkillCategoryEditPage from '../../pages/SkillCategoryEditPage';
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -131,9 +132,13 @@ export default function Routes() {
             <Header title="Team Skill Report" />
             <TeamSkillReportPage />
           </Route>
-          <Route path="/birthday-anniversary-reports">
-            <Header title="Birthday & Anniversary Report" />
-            <BirthdayAnniversaryReportPage />
+          <Route path="/anniversary-reports">
+            <Header title="Anniversary Report" />
+            <AnniversaryReportPage />
+          </Route>
+          <Route path="/birthday-reports">
+            <Header title="Birthday Report" />
+            <BirthdayReportPage />
           </Route>
           <Route path="/annual-review-reports">
             <Header title="Annual Review Report" />

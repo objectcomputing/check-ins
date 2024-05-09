@@ -4,24 +4,24 @@ import PermissionsTableMobile from './MobileTable';
 
 export default {
   component: PermissionsTableMobile,
-  title: 'Check Ins/PermissionsTable(Mobile)',
-}
+  title: 'Check Ins/PermissionsTable(Mobile)'
+};
 
-const MobileTemplate = (args) => {
+const MobileTemplate = args => {
   return (
-    <div style={{maxWidth: 650}}>
+    <div style={{ maxWidth: 650 }}>
       <PermissionsTableMobile {...args} />
     </div>
   );
-}
+};
 
 const tableProps = {
   roles: roles,
   allPermissions: allPermissions,
-  handleChange: handleChange,
-}
+  handleChange: handleChange
+};
 
 export const PermissionTableOnMobile = MobileTemplate.bind({});
 PermissionTableOnMobile.args = {
   ...tableProps
-}
+};

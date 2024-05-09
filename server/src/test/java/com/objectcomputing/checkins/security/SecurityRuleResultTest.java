@@ -1,8 +1,12 @@
 package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.security.permissions.PermissionSecurityRule;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.Authentication;
@@ -21,10 +25,7 @@ import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 import reactor.test.StepVerifier;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -34,13 +35,21 @@ import static org.mockito.Mockito.when;
 public class SecurityRuleResultTest {
 
     List<String> userPermissions = List.of(
-            "CAN_VIEW_FEEDBACK",
-            "CAN_CREATE_FEEDBACK",
-            "CAN_DELETE_FEEDBACK"
+            "CAN_VIEW_FEEDBACK_REQUEST",
+            "CAN_CREATE_FEEDBACK_REQUEST",
+            "CAN_DELETE_FEEDBACK_REQUEST"
     );
+
+    List<String> userRoles = List.of("ADMIN");
 
     @Inject
     PermissionSecurityRule permissionSecurityRule;
+
+    @Inject
+    RolePermissionServices rolePermissionServices;
+
+    @Inject
+    RoleServices roleServices;
 
     @Mock
     private MethodBasedRouteMatch mockMethodBasedRouteMatch;
@@ -50,6 +59,10 @@ public class SecurityRuleResultTest {
 
     @BeforeAll
     void initMocksAndInitializeFile() {
+
+        Role role = roleServices.save(new Role(RoleType.ADMIN.name(), "Admin Role"));
+        rolePermissionServices.save(role.getId(), Permission.CAN_VIEW_FEEDBACK_REQUEST);
+
         MockitoAnnotations.openMocks(this);
     }
 
@@ -67,11 +80,13 @@ public class SecurityRuleResultTest {
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("permissions", userPermissions);
+        attributes.put("roles", userRoles);
         attributes.put("email", "test.email.address");
+
 
         when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
         when(mockMethodBasedRouteMatch.getAnnotation(RequiredPermission.class)).thenReturn(mockRequiredPermissionAnnotation);
-        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_VIEW_FEEDBACK"));
+        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_VIEW_FEEDBACK_REQUEST"));
 
         Authentication auth = Authentication.build("test.email.address", attributes);
 
@@ -93,6 +108,7 @@ public class SecurityRuleResultTest {
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("permissions", userPermissions);
+        attributes.put("roles", userRoles);
         attributes.put("email", "test.email.address");
 
         when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);

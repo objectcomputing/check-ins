@@ -21,7 +21,7 @@ import {
   UPDATE_SKILLS,
   UPDATE_GUILD,
   UPDATE_GUILDS,
-  UPDATE_ROLES,
+  ADD_ROLE,
   UPDATE_TEAMS,
   UPDATE_TEAM_MEMBERS,
   UPDATE_TOAST,
@@ -29,16 +29,16 @@ import {
   UPDATE_PEOPLE_LOADING,
   UPDATE_TEAMS_LOADING,
   UPDATE_REVIEW_PERIODS,
-  ADD_REVIEW_PERIOD,
-} from "./actions";
+  ADD_REVIEW_PERIOD
+} from './actions';
 
 export const initialState = {
   checkins: null,
   csrf: undefined,
   index: 0,
-  loading : {
+  loading: {
     teams: false,
-    memberProfiles: false,
+    memberProfiles: false
   },
   memberProfiles: null,
   terminatedMembers: [],
@@ -49,11 +49,11 @@ export const initialState = {
   teams: null,
   guilds: null,
   toast: {
-    severity: "",
-    toast: "",
+    severity: '',
+    toast: ''
   },
   userProfile: null,
-  reviewPeriods: [],
+  reviewPeriods: []
 };
 
 export const reducer = (state, action) => {
@@ -70,9 +70,9 @@ export const reducer = (state, action) => {
     case UPDATE_CHECKINS:
       if (state?.checkins?.length > 0) {
         state.checkins = [...state.checkins];
-        action.payload.forEach((checkin) => {
+        action.payload.forEach(checkin => {
           const checkInIndex = state.checkins.findIndex(
-            (current) => current.id === checkin.id
+            current => current.id === checkin.id
           );
           if (checkInIndex >= 0) {
             state.checkins[checkInIndex] = checkin;
@@ -87,7 +87,7 @@ export const reducer = (state, action) => {
     case UPDATE_CHECKIN:
       state.checkins = [...state.checkins];
       const checkInIndex = state.checkins.findIndex(
-        (checkin) => checkin.id === action.payload.id
+        checkin => checkin.id === action.payload.id
       );
       if (checkInIndex >= 0) {
         state.checkins[checkInIndex] = action.payload;
@@ -99,14 +99,12 @@ export const reducer = (state, action) => {
       state.skills = [...state.skills, action.payload];
       break;
     case DELETE_SKILL:
-      state.skills = state.skills.filter(
-        (skill) => skill.id !== action.payload
-      );
+      state.skills = state.skills.filter(skill => skill.id !== action.payload);
       break;
     case UPDATE_SKILL:
       state.skills = [...state.skills];
       const index = state.skills.findIndex(
-        (skill) => skill.id === action.payload.id
+        skill => skill.id === action.payload.id
       );
       state.skills[index] = action.payload;
       break;
@@ -130,48 +128,48 @@ export const reducer = (state, action) => {
       state.teams.sort((a, b) => a.name.localeCompare(b.name));
       break;
     case UPDATE_TEAMS_LOADING:
-        state.loading = {...state.loading, teams: !state.loading.teams}
-        break;
+      state.loading = { ...state.loading, teams: !state.loading.teams };
+      break;
     case UPDATE_PEOPLE_LOADING:
-        state.loading = {...state.loading, memberProfiles: action.payload}
-        break;
+      state.loading = { ...state.loading, memberProfiles: action.payload };
+      break;
     case UPDATE_MEMBER_PROFILES:
-      action.payload.forEach((member) => {
+      action.payload.forEach(member => {
         member.birthDay = Array.isArray(member.birthDay)
-          ? new Date(member.birthDay.join("/"))
+          ? new Date(member.birthDay.join('/'))
           : member && member.birthDay
-          ? member.birthDay
-          : null;
+            ? member.birthDay
+            : null;
         member.startDate = Array.isArray(member.startDate)
-          ? new Date(member.startDate.join("/"))
+          ? new Date(member.startDate.join('/'))
           : member && member.startDate
-          ? member.startDate
-          : new Date();
+            ? member.startDate
+            : new Date();
         member.terminationDate = Array.isArray(member.terminationDate)
-          ? new Date(member.terminationDate.join("/"))
+          ? new Date(member.terminationDate.join('/'))
           : member && member.terminationDate
-          ? member.terminationDate
-          : null;
+            ? member.terminationDate
+            : null;
       });
       state.memberProfiles = action.payload;
       break;
     case UPDATE_TERMINATED_MEMBERS:
-      action.payload.forEach((member) => {
+      action.payload.forEach(member => {
         member.birthDay = Array.isArray(member.birthDay)
-          ? new Date(member.birthDay.join("/"))
+          ? new Date(member.birthDay.join('/'))
           : member && member.birthDay
-          ? member.birthDay
-          : null;
+            ? member.birthDay
+            : null;
         member.startDate = Array.isArray(member.startDate)
-          ? new Date(member.startDate.join("/"))
+          ? new Date(member.startDate.join('/'))
           : member && member.startDate
-          ? member.startDate
-          : new Date();
+            ? member.startDate
+            : new Date();
         member.terminationDate = Array.isArray(member.terminationDate)
-          ? new Date(member.terminationDate.join("/"))
+          ? new Date(member.terminationDate.join('/'))
           : member && member.terminationDate
-          ? member.terminationDate
-          : null;
+            ? member.terminationDate
+            : null;
       });
       state.terminatedMembers = action.payload;
       break;
@@ -186,15 +184,13 @@ export const reducer = (state, action) => {
     case DELETE_MEMBER_SKILL:
       state.memberSkills = [
         ...state.memberSkills.filter(
-          (mSkill) => mSkill.skillid !== action.payload
-        ),
+          mSkill => mSkill.skillid !== action.payload
+        )
       ];
       break;
     case DELETE_MEMBER_PROFILE:
       state.memberProfiles = [
-        ...state.memberProfiles.filter(
-          (profile) => profile.id !== action.payload
-        ),
+        ...state.memberProfiles.filter(profile => profile.id !== action.payload)
       ];
       break;
     case ADD_MEMBER_SKILL:
@@ -207,9 +203,9 @@ export const reducer = (state, action) => {
       state.userRoles = action.payload;
       break;
     case DELETE_ROLE:
-      state.roles = state.roles.filter((role) => role.id !== action.payload);
+      state.roles = state.roles.filter(role => role.id !== action.payload);
       break;
-    case UPDATE_ROLES:
+    case ADD_ROLE:
       state.roles = [...state.roles, action.payload];
       break;
     case ADD_GUILD:
@@ -219,7 +215,7 @@ export const reducer = (state, action) => {
       break;
     case UPDATE_GUILD:
       const { id } = action.payload;
-      const idx = state.guilds.findIndex((guild) => guild.id === id);
+      const idx = state.guilds.findIndex(guild => guild.id === id);
       state.guilds[idx] = action.payload;
       state.guilds = [...state.guilds];
       break;

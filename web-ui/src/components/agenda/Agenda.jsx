@@ -1,27 +1,31 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import React, { useContext, useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   getAgendaItem,
   deleteAgendaItem,
   updateAgendaItem,
-  createAgendaItem,
-} from "../../api/agenda.js";
-import { AppContext } from "../../context/AppContext";
-import { UPDATE_TOAST } from "../../context/actions";
-import { selectCsrfToken, selectCurrentUser, selectCheckin } from "../../context/selectors";
-import { debounce } from "lodash/function";
-import DragIndicator from "@mui/icons-material/DragIndicator";
-import AdjustIcon from "@mui/icons-material/Adjust";
+  createAgendaItem
+} from '../../api/agenda.js';
+import { AppContext } from '../../context/AppContext';
+import { UPDATE_TOAST } from '../../context/actions';
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectCheckin
+} from '../../context/selectors';
+import { debounce } from 'lodash/function';
+import DragIndicator from '@mui/icons-material/DragIndicator';
+import AdjustIcon from '@mui/icons-material/Adjust';
 import Skeleton from '@mui/material/Skeleton';
-import IconButton from "@mui/material/IconButton";
-import SaveIcon from "@mui/icons-material/Done";
-import RemoveIcon from "@mui/icons-material/Remove";
+import IconButton from '@mui/material/IconButton';
+import SaveIcon from '@mui/icons-material/Done';
+import RemoveIcon from '@mui/icons-material/Remove';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 
-import "./Agenda.css";
+import './Agenda.css';
 
 const doUpdate = async (agendaItem, csrf) => {
   if (agendaItem && csrf) {
@@ -40,7 +44,7 @@ const AgendaItems = () => {
   const currentCheckin = selectCheckin(state, checkinId);
 
   const [agendaItems, setAgendaItems] = useState();
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const getAgendaItems = async (checkinId, csrf) => {
@@ -78,12 +82,12 @@ const AgendaItems = () => {
   };
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    display: "flex",
-    background: isDragging ? "lightgreen" : undefined,
-    ...draggableStyle,
+    display: 'flex',
+    background: isDragging ? 'lightgreen' : undefined,
+    ...draggableStyle
   });
 
-  const onDragEnd = (result) => {
+  const onDragEnd = result => {
     if (!result || !result.destination) {
       return;
     }
@@ -104,7 +108,7 @@ const AgendaItems = () => {
         newPriority += 1;
       }
 
-      setAgendaItems((agendaItems) => {
+      setAgendaItems(agendaItems => {
         agendaItems[sourceIndex].priority = newPriority;
         reorder(agendaItems, sourceIndex, index);
         return agendaItems;
@@ -115,27 +119,27 @@ const AgendaItems = () => {
   };
 
   const makeAgendaItem = async () => {
-    if (!checkinId || !currentUserId || description === "" || !csrf) {
+    if (!checkinId || !currentUserId || description === '' || !csrf) {
       return;
     }
     let newAgendaItem = {
       checkinid: checkinId,
       createdbyid: currentUserId,
-      description: description,
+      description: description
     };
     const res = await createAgendaItem(newAgendaItem, csrf);
     if (!res.error && res.payload && res.payload.data) {
       newAgendaItem.id = res.payload.data.id;
       newAgendaItem.priority = res.payload.data.priority;
-      setDescription("");
+      setDescription('');
       setAgendaItems([...agendaItems, newAgendaItem]);
     }
   };
 
-  const killAgendaItem = (id) => {
+  const killAgendaItem = id => {
     if (csrf) {
       deleteItem(id, csrf);
-      let newItems = agendaItems.filter((agendaItem) => {
+      let newItems = agendaItems.filter(agendaItem => {
         return agendaItem.id !== id;
       });
       setAgendaItems(newItems);
@@ -147,9 +151,9 @@ const AgendaItems = () => {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: "Agenda Items can only be edited by creator",
-        },
+          severity: 'error',
+          toast: 'Agenda Items can only be edited by creator'
+        }
       });
       return;
     }
@@ -188,15 +192,15 @@ const AgendaItems = () => {
                 </span>
                 {isLoading ? (
                   <div className="skeleton">
-                    <Skeleton variant="text" height={"2rem"} />
-                    <Skeleton variant="text" height={"2rem"} />
-                    <Skeleton variant="text" height={"2rem"} />
+                    <Skeleton variant="text" height={'2rem'} />
+                    <Skeleton variant="text" height={'2rem'} />
+                    <Skeleton variant="text" height={'2rem'} />
                   </div>
                 ) : (
                   <input
                     disabled={currentCheckin?.completed}
                     className="text-input"
-                    onChange={(e) => handleDescriptionChange(index, e)}
+                    onChange={e => handleDescriptionChange(index, e)}
                     value={agendaItem.description}
                   />
                 )}
@@ -206,7 +210,8 @@ const AgendaItems = () => {
                     aria-label="delete"
                     className="delete-icon"
                     onClick={() => killAgendaItem(agendaItem.id)}
-                    size="large">
+                    size="large"
+                  >
                     <RemoveIcon />
                   </IconButton>
                 </div>
@@ -220,9 +225,16 @@ const AgendaItems = () => {
 
   return (
     <Card className="agenda-items">
-      <CardHeader avatar={<AdjustIcon />} title="Agenda Items" titleTypographyProps={{variant: "h5", component: "h2"}} />
+      <CardHeader
+        avatar={<AdjustIcon />}
+        title="Agenda Items"
+        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+      />
       <CardContent className="agenda-items-container">
-        <DragDropContext isDropDisabled={currentCheckin?.completed} onDragEnd={onDragEnd}>
+        <DragDropContext
+          isDropDisabled={currentCheckin?.completed}
+          onDragEnd={onDragEnd}
+        >
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -237,20 +249,21 @@ const AgendaItems = () => {
             disabled={currentCheckin?.completed}
             className="text-input"
             placeholder="Add an agenda item"
-            onChange={(e) => setDescription(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter" && description !== "") {
+            onChange={e => setDescription(e.target.value)}
+            onKeyPress={e => {
+              if (e.key === 'Enter' && description !== '') {
                 makeAgendaItem();
               }
             }}
-            value={description ? description : ""}
+            value={description ? description : ''}
           />
           <IconButton
             disabled={currentCheckin?.completed}
             aria-label="create"
             className="edit-icon"
             onClick={() => makeAgendaItem()}
-            size="large">
+            size="large"
+          >
             <SaveIcon />
           </IconButton>
         </div>

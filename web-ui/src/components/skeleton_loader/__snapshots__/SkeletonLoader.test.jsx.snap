@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`renders correctly when 'feedback_requests' is passed as prop  1`] = `
+exports[`renders correctly when 'feedback_requests' is passed as prop 1`] = `
 <div
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-12qqhfb-MuiPaper-root-MuiCard-root"
   style={
@@ -103,78 +103,7 @@ exports[`renders correctly when 'feedback_requests' is passed as prop  1`] = `
 </div>
 `;
 
-exports[`renders correctly when 'feedback_requests' is passed as prop  2`] = `
-<div
-  className="MuiBox-root css-1lads1q"
->
-  <span
-    className="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
-    style={
-      {
-        "height": "2.7rem",
-        "width": "100%",
-      }
-    }
-  />
-</div>
-`;
-
-exports[`renders correctly when 'feedback_requests' is passed as prop  3`] = `
-<div
-  className="MuiBox-root css-1lads1q"
->
-  <span
-    className="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
-    style={
-      {
-        "height": "2.7rem",
-        "width": "100%",
-      }
-    }
-  />
-</div>
-`;
-
-exports[`renders correctly when 'feedback_requests' is passed as prop  4`] = `
-<div
-  className="MuiBox-root css-0"
->
-  <span
-    className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse makeStyles-smallMargin-2 css-1e1x4vv-MuiSkeleton-root"
-    style={
-      {
-        "height": 40,
-        "marginBottom": "1em",
-        "width": "50vw",
-      }
-    }
-  />
-  <div
-    className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-12qqhfb-MuiPaper-root-MuiCard-root"
-    width={100}
-  >
-    <div
-      className="MuiCardContent-root makeStyles-noTopBottomPadding-1 css-46bh2p-MuiCardContent-root"
-    >
-      <div
-        className="MuiBox-root css-1lads1q"
-      >
-        <span
-          className="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
-          style={
-            {
-              "height": "8vh",
-              "width": "100%",
-            }
-          }
-        />
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`renders correctly when 'guild' is passed as prop  1`] = `
+exports[`renders correctly when 'guild' is passed as prop 1`] = `
 <div
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
 >
@@ -249,7 +178,7 @@ exports[`renders correctly when 'guild' is passed as prop  1`] = `
 </div>
 `;
 
-exports[`renders correctly when 'people' is passed as prop  1`] = `
+exports[`renders correctly when 'people' is passed as prop 1`] = `
 <div
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
 >
@@ -312,7 +241,23 @@ exports[`renders correctly when 'people' is passed as prop  1`] = `
 </div>
 `;
 
-exports[`renders correctly when 'team' is passed as prop  1`] = `
+exports[`renders correctly when 'received_requests' is passed as prop 1`] = `
+<div
+  className="MuiBox-root css-1lads1q"
+>
+  <span
+    className="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+    style={
+      {
+        "height": "2.7rem",
+        "width": "100%",
+      }
+    }
+  />
+</div>
+`;
+
+exports[`renders correctly when 'team' is passed as prop 1`] = `
 <div
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root SkeletonLoader-card css-12qqhfb-MuiPaper-root-MuiCard-root"
 >
@@ -383,6 +328,45 @@ exports[`renders correctly when 'team' is passed as prop  1`] = `
         }
       }
     />
+  </div>
+</div>
+`;
+
+exports[`renders correctly when 'view_feedback_requests' is passed as prop 1`] = `
+<div
+  className="MuiBox-root css-0"
+>
+  <span
+    className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse makeStyles-smallMargin-2 css-1e1x4vv-MuiSkeleton-root"
+    style={
+      {
+        "height": 40,
+        "marginBottom": "1em",
+        "width": "50vw",
+      }
+    }
+  />
+  <div
+    className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-12qqhfb-MuiPaper-root-MuiCard-root"
+    width={100}
+  >
+    <div
+      className="MuiCardContent-root makeStyles-noTopBottomPadding-1 css-46bh2p-MuiCardContent-root"
+    >
+      <div
+        className="MuiBox-root css-1lads1q"
+      >
+        <span
+          className="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-153n0d3-MuiSkeleton-root"
+          style={
+            {
+              "height": "8vh",
+              "width": "100%",
+            }
+          }
+        />
+      </div>
+    </div>
   </div>
 </div>
 `;

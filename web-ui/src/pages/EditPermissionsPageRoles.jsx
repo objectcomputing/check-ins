@@ -1,5 +1,5 @@
-import React from "react";
-import { Checkbox } from "@mui/material";
+import React from 'react';
+import { Checkbox } from '@mui/material';
 
 const EditPermissionsPageRoles = ({
   title,
@@ -8,7 +8,7 @@ const EditPermissionsPageRoles = ({
   selectPDL,
   pdl,
   selectMember,
-  member,
+  member
 }) => {
   return (
     <div className="permissions">
@@ -17,7 +17,7 @@ const EditPermissionsPageRoles = ({
         checked={admin}
         id="admin-field"
         onChange={selectAdmin}
-        inputProps={{ "aria-label": `admin checkbox ${title}` }}
+        inputProps={{ 'aria-label': `admin checkbox ${title}` }}
       />
 
       <label htmlFor="admin-field">Admin</label>
@@ -25,7 +25,7 @@ const EditPermissionsPageRoles = ({
         checked={pdl}
         id="pdl-field"
         onChange={selectPDL}
-        inputProps={{ "aria-label": `pdl checkbox ${title}` }}
+        inputProps={{ 'aria-label': `pdl checkbox ${title}` }}
       />
 
       <label htmlFor="pdl-field">PDL</label>
@@ -33,7 +33,7 @@ const EditPermissionsPageRoles = ({
         checked={member}
         id="member-field"
         onChange={selectMember}
-        inputProps={{ "aria-label": `member checkbox ${title}` }}
+        inputProps={{ 'aria-label': `member checkbox ${title}` }}
       />
       <label htmlFor="member-field">Member</label>
     </div>
