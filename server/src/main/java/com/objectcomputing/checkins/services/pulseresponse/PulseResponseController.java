@@ -81,7 +81,7 @@ public class PulseResponseController {
     @Post()
     public Mono<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                                     HttpRequest<PulseResponseCreateDTO> request) {
-        return Mono.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
+        return Mono.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
                 .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(pulseresponse -> {return (HttpResponse<PulseResponse>) HttpResponse
                     .created(pulseresponse)

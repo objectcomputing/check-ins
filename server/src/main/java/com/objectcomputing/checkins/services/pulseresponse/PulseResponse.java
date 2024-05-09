@@ -64,17 +64,19 @@ public class PulseResponse {
     @Schema(description = "description of externalfeelings", required = true)
     private String externalFeelings;
 
-    public PulseResponse(UUID id,LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+    protected PulseResponse() {
+    }
+
+    public PulseResponse(UUID id, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this.id = id;
         this.submissionDate = submissionDate;
-        this.updatedDate = updatedDate;
         this.teamMemberId = teamMemberId;
         this.internalFeelings = internalFeelings;
         this.externalFeelings = externalFeelings;
     }
 
-    public PulseResponse(LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
-        this(null,submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
+    public PulseResponse(LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+        this(null,submissionDate, teamMemberId, internalFeelings, externalFeelings);
     }
 
     public UUID getId() {
@@ -91,14 +93,6 @@ public class PulseResponse {
 
     public void setSubmissionDate(LocalDate submissionDate) {
         this.submissionDate = submissionDate;
-    }
-
-    public LocalDate getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(LocalDate updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public UUID getTeamMemberId() {
@@ -142,7 +136,6 @@ public class PulseResponse {
         return "PulseResponse{" +
                 "id=" + id +
                 ", submissionDate=" + submissionDate +
-                ", updatedDate=" + updatedDate +
                 ", teamMemberId=" + teamMemberId +
                 ", internalFeelings=" + internalFeelings +
                 ", externalFeelings=" + externalFeelings +
@@ -150,7 +143,7 @@ public class PulseResponse {
     }
     @Override
     public int hashCode() {
-        return Objects.hash(id, submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
+        return Objects.hash(id, submissionDate, teamMemberId, internalFeelings, externalFeelings);
     }
 }
 

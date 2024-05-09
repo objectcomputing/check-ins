@@ -40,7 +40,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setSubmissionDate(LocalDate.now());
-        pulseResponseCreateDTO.setUpdatedDate(LocalDate.now());
         pulseResponseCreateDTO.setTeamMemberId(memberProfile.getId());
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
@@ -79,7 +78,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     void testCreatePulseResponseForNonExistingMember(){
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setSubmissionDate(LocalDate.now());
-        pulseResponseCreateDTO.setUpdatedDate(LocalDate.now());
         pulseResponseCreateDTO.setTeamMemberId(UUID.randomUUID());
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
@@ -116,7 +114,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         MemberProfile memberProfile = createADefaultMemberProfile();
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setSubmissionDate(LocalDate.of(1965,11,12));
-        pulseResponseCreateDTO.setUpdatedDate(LocalDate.of(1965,11,12));
         pulseResponseCreateDTO.setTeamMemberId(memberProfile.getId());
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
@@ -302,7 +299,7 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testUpdateUnAuthorized() {
-        PulseResponse pulseResponse = new PulseResponse(LocalDate.now(),LocalDate.now(),UUID.randomUUID(),"internalfeeling","externalfeeling");
+        PulseResponse pulseResponse = new PulseResponse(LocalDate.now(),UUID.randomUUID(),"internalfeeling","externalfeeling");
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->

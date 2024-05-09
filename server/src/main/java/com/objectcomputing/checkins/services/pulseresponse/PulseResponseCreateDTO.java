@@ -13,10 +13,6 @@ public class PulseResponseCreateDTO {
     @NotNull
     @Schema(required = true, description = "date for submissionDate")
     private LocalDate submissionDate;
-
-    @NotNull
-    @Schema(required = true, description = "date for updatedDate")
-    private LocalDate updatedDate;
     
     @NotNull
     @Schema(required = true, description = "id of the associated member")
@@ -36,14 +32,6 @@ public class PulseResponseCreateDTO {
 
     public void setSubmissionDate(LocalDate submissionDate) {
         this.submissionDate = submissionDate;
-    }
-
-    public LocalDate getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(LocalDate updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public UUID getTeamMemberId() {

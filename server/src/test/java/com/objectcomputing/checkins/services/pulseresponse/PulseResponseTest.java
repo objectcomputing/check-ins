@@ -24,11 +24,10 @@ public class PulseResponseTest {
     @Test
     void testPulseResponseInstantiation() {
         LocalDate submissionDate= LocalDate.of(2019, 1, 01);
-        LocalDate updatedDate= LocalDate.of(2019, 1, 01);
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings  = "exampleId";
         final String externalFeelings  = "exampleId2";
-        PulseResponse pulseResponse = new PulseResponse(submissionDate,updatedDate, teamMemberId, internalFeelings, externalFeelings);
+        PulseResponse pulseResponse = new PulseResponse(submissionDate,teamMemberId, internalFeelings, externalFeelings);
         assertEquals(teamMemberId, pulseResponse.getTeamMemberId());
         assertEquals(internalFeelings , pulseResponse.getInternalFeelings ());
         assertEquals(externalFeelings , pulseResponse.getExternalFeelings ());
@@ -37,11 +36,10 @@ public class PulseResponseTest {
     @Test
     void testConstraintViolation() {
         LocalDate submissionDate= LocalDate.of(2019, 1, 01);
-        LocalDate updatedDate= LocalDate.of(2019, 1, 01);
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings  = "exampleId";
         final String externalFeelings  = "exampleId2";
-        PulseResponse pulseResponse = new PulseResponse(submissionDate,updatedDate, teamMemberId, internalFeelings,externalFeelings);
+        PulseResponse pulseResponse = new PulseResponse(submissionDate, teamMemberId, internalFeelings,externalFeelings);
 
         pulseResponse.setInternalFeelings (null);
         pulseResponse.setExternalFeelings (null);
@@ -57,13 +55,12 @@ public class PulseResponseTest {
     void testEquals() {
         final UUID id = UUID.randomUUID();
         LocalDate submissionDate= LocalDate.of(2019, 1, 01);
-        LocalDate updatedDate= LocalDate.of(2019, 1, 01);
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings  = "exampleId";
         final String externalFeelings   = "exampleId2";
 
-        PulseResponse pulseResponse1 = new PulseResponse(id,submissionDate,updatedDate, teamMemberId, internalFeelings, externalFeelings );
-        PulseResponse pulseResponse2 = new PulseResponse(id,submissionDate,updatedDate, teamMemberId, internalFeelings, externalFeelings );
+        PulseResponse pulseResponse1 = new PulseResponse(id,submissionDate,teamMemberId, internalFeelings, externalFeelings );
+        PulseResponse pulseResponse2 = new PulseResponse(id,submissionDate,teamMemberId, internalFeelings, externalFeelings );
         assertEquals(pulseResponse1, pulseResponse2);
 
         pulseResponse2.setId(null);
@@ -81,11 +78,10 @@ public class PulseResponseTest {
     void testToString() {
         final UUID id = UUID.randomUUID();
         LocalDate submissionDate= LocalDate.of(2019, 1, 01);
-        LocalDate updatedDate= LocalDate.of(2019, 1, 01);
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings  = "exampleId";
         final String externalFeelings  = "exampleId2";
-        PulseResponse pulseResponse = new PulseResponse(id,submissionDate,updatedDate, teamMemberId, internalFeelings, externalFeelings );
+        PulseResponse pulseResponse = new PulseResponse(id,submissionDate, teamMemberId, internalFeelings, externalFeelings );
 
         String toString = pulseResponse.toString();
         assertTrue(toString.contains(teamMemberId.toString()));
