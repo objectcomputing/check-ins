@@ -71,7 +71,7 @@ public class ReviewAssignmentController {
      */
     @Post("/{reviewPeriodId}")
     @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
-    public Mono<HttpResponse<List<ReviewAssignment>>> createReviewAssignment(@NotNull UUID reviewPeriodId, @Body @Valid List<ReviewAssignmentDTO> assignments) {
+    public Mono<HttpResponse<List<ReviewAssignment>>> createReviewAssignment(@NotNull UUID reviewPeriodId, @Body List<@Valid ReviewAssignmentDTO> assignments) {
 
         return Mono.fromCallable(() -> reviewAssignmentServices.saveAll(reviewPeriodId,
                 assignments.stream().map(ReviewAssignmentDTO::convertToEntity).collect(Collectors.toList()),
