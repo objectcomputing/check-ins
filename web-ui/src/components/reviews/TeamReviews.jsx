@@ -162,7 +162,6 @@ const TeamReviews = ({ periodId }) => {
   const isAdmin = selectIsAdmin(state);
   const myTeam = selectMyTeam(state);
   const period = selectReviewPeriod(state, periodId);
-  console.log('TeamReviews.jsx : period =', period);
   const selectedMemberProfile = selectProfile(state, selectedMember);
   const subordinates = selectSubordinates(state, currentUser?.id);
 
@@ -390,6 +389,7 @@ const TeamReviews = ({ periodId }) => {
       payload: toDelete
     });
     handleConfirmClose();
+    history.goBack();
   }, [csrf, dispatch, toDelete, handleConfirmClose]);
 
   const toggleReviewPeriod = useCallback(async () => {
