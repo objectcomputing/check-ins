@@ -164,6 +164,9 @@ public void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
 // Find By findBySubmissionDateBetween
 @Test
 public void testGetFindByfindBySubmissionDateBetween() {
+    MemberProfile memberProfile = createADefaultMemberProfile();
+
+    createADefaultPulseResponse(memberProfile);
 
     LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
     LocalDate testDateTo = Util.MAX.toLocalDate();
@@ -287,7 +290,7 @@ public void testGetFindByfindBySubmissionDateBetween() {
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Unable to find pulseresponse record with id null, 1%s", pulseResponse.getId()), error);
+        assertEquals(String.format("Unable to find pulseresponse record with id null, %s", pulseResponse.getId()), error);
         assertEquals(request.getPath(), href);
 
     }
