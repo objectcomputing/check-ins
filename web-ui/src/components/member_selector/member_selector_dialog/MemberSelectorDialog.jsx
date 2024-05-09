@@ -101,6 +101,7 @@ const propTypes = {
   memberDescriptor: PropTypes.string,
   open: PropTypes.bool.isRequired,
   selectedMembers: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onClose: PropTypes.func,
   onSubmit: PropTypes.func
 };
 
@@ -109,6 +110,7 @@ const MemberSelectorDialog = ({
   memberDescriptor = 'Members',
   initialFilters = [],
   selectedMembers,
+  onClose,
   onSubmit
 }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -437,14 +439,14 @@ const MemberSelectorDialog = ({
   return (
     <Dialog
       className="member-selector-dialog"
+      onClose={onClose}
       open={open}
       fullScreen
-      onClose={handleSubmit}
       TransitionComponent={DialogTransition}
     >
       <AppBar>
         <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={handleSubmit}>
+          <IconButton edge="start" color="inherit" onClick={onClose}>
             <CloseIcon />
           </IconButton>
           <div className="toolbar-title-container">
@@ -460,7 +462,7 @@ const MemberSelectorDialog = ({
             disabled={checked.size === 0}
             onClick={handleSubmit}
           >
-            Add
+            Save
           </Button>
         </Toolbar>
       </AppBar>
