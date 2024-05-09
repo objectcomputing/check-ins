@@ -119,7 +119,6 @@ const CheckinsReportPage = () => {
         title="Select PDLs"
         selected={selectedPdls}
         onChange={setSelectedPdls}
-        listHeight={180}
         exportable
       />
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>

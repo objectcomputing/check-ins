@@ -101,7 +101,6 @@ const propTypes = {
   memberDescriptor: PropTypes.string,
   open: PropTypes.bool.isRequired,
   selectedMembers: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onClose: PropTypes.func,
   onSubmit: PropTypes.func
 };
 
@@ -110,7 +109,6 @@ const MemberSelectorDialog = ({
   memberDescriptor = 'Members',
   initialFilters = [],
   selectedMembers,
-  onClose,
   onSubmit
 }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -140,17 +138,23 @@ const MemberSelectorDialog = ({
     onSubmit(membersToAdd);
   }, [checked, members, onSubmit]);
 
+  const initializeChecked = useCallback(() => {
+    const initialChecked = new Set();
+    selectedMembers.forEach(member => initialChecked.add(member.id));
+    setChecked(initialChecked);
+  });
+
   // Reset the dialog when it closes, or set the initial filter when it opens
   useEffect(() => {
     if (!open) {
       // Reset all state except for the chosen filter type and its corresponding options
-      setChecked(new Set());
       setNameQuery('');
       setFilter(null);
       setFilteredMembers([]);
       setDirectReportsOnly(false);
       setSelectableMembers([]);
     } else {
+      initializeChecked();
       // If the dialog is opened with initial filters, set the initial filter
       if (initialFilter && initialFilter.type === FilterType.ROLE) {
         setFilterType(initialFilter.type);
@@ -231,6 +235,7 @@ const MemberSelectorDialog = ({
     };
 
     setFilterOptions(getFilterOptions());
+    // initializeChecked();
   }, [filterType, members, state]);
 
   const showError = useCallback(
@@ -249,10 +254,7 @@ const MemberSelectorDialog = ({
   // Filters the list of members based on the selected filter type and filter
   useEffect(() => {
     const getFilteredMembers = async () => {
-      // Exclude members that are already selected
-      let filteredMemberList = members.filter(
-        member => !selectedMembers.includes(member)
-      );
+      let filteredMemberList = [...members];
 
       // Exclude members that don't have the selected tenure.
       if (tenure === Tenures.Custom) {
@@ -437,12 +439,12 @@ const MemberSelectorDialog = ({
       className="member-selector-dialog"
       open={open}
       fullScreen
-      onClose={onClose}
+      onClose={handleSubmit}
       TransitionComponent={DialogTransition}
     >
       <AppBar>
         <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={onClose}>
+          <IconButton edge="start" color="inherit" onClick={handleSubmit}>
             <CloseIcon />
           </IconButton>
           <div className="toolbar-title-container">

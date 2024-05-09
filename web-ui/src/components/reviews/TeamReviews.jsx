@@ -161,12 +161,7 @@ const TeamReviews = ({ periodId }) => {
         }
       });
       if (res.error) throw new Error(res.error.message);
-      console.log('TeamReviews.jsx loadTeamMembers: res =', res);
       const assignments = res.payload.data;
-      console.log(
-        'TeamReviews.jsx loadTeamMembers: assignments =',
-        assignments
-      );
       const memberIds = assignments.map(a => a.revieweeId);
       const members = currentMembers.filter(m => memberIds.includes(m.id));
       setTeamMembers(members);
@@ -186,7 +181,7 @@ const TeamReviews = ({ periodId }) => {
     try {
       const res = await resolve({
         method: 'POST',
-        url: reviewAssignmentsUrl,
+        url: reviewAssignmentsUrl + '/' + periodId,
         data,
         headers: {
           'X-CSRF-Header': csrf,
@@ -199,27 +194,6 @@ const TeamReviews = ({ periodId }) => {
       console.error('TeamReviews.jsx updateTeamMembers:', err);
     }
   };
-
-  /*
-  useEffect(() => {
-    if (currentMembers && currentMembers.length > 0) {
-      isAdmin && includeAll
-        ? setTeamMembers(
-            currentMembers.filter(member => member?.id !== currentUser?.id)
-          )
-        : includeAll
-          ? setTeamMembers(subordinates)
-          : setTeamMembers(myTeam);
-    }
-  }, [
-    isAdmin,
-    includeAll,
-    subordinates,
-    currentMembers,
-    myTeam,
-    currentUser?.id
-  ]);
-  */
 
   const getReviewStatus = useCallback(
     teamMemberId => {
@@ -593,7 +567,6 @@ const TeamReviews = ({ periodId }) => {
       </div>
       <MemberSelector
         className="team-skill-member-selector"
-        listHeight="500px"
         onChange={updateTeamMembers}
         selected={teamMembers}
       />

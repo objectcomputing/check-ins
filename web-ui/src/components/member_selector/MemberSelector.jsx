@@ -4,12 +4,9 @@ import {
   Avatar,
   Card,
   CardHeader,
-  Collapse,
   Divider,
   IconButton,
   List,
-  ListItem,
-  ListItemAvatar,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -23,7 +20,6 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getAvatarURL } from '../../api/api';
 
-import ExpandMore from '../expand-more/ExpandMore.jsx';
 import MemberSelectorDialog, {
   FilterType
 } from './member_selector_dialog/MemberSelectorDialog';
@@ -58,8 +54,6 @@ const propTypes = {
   outlined: PropTypes.bool,
   /** If true, include a button to export the list of members to a CSV file. False by default. */
   exportable: PropTypes.bool,
-  /** Adjusts the height of the scrollable list of selected members (in pixels) */
-  listHeight: PropTypes.string,
   /** If true, members cannot be added to or removed from the current selection. False by default. */
   disabled: PropTypes.bool,
   /** A custom class name to additionally apply to the top-level card */
@@ -75,7 +69,6 @@ const MemberSelector = ({
   title = 'Selected Members',
   outlined = false,
   exportable = false,
-  listHeight = '80vh',
   disabled = false,
   className,
   style
@@ -103,8 +96,8 @@ const MemberSelector = ({
     }
   }, [disabled]);
 
-  const addMembers = membersToAdd => {
-    onChange([...selected, ...membersToAdd]);
+  const replaceSelectedMembers = members => {
+    onChange(members);
     setDialogOpen(false);
   };
 
@@ -151,14 +144,6 @@ const MemberSelector = ({
         style={style}
       >
         <CardHeader
-          avatar={
-            <ExpandMore
-              expand={expanded}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="show more"
-            />
-          }
           title={
             <div className="member-selector-card-title-container">
               <Typography
@@ -229,53 +214,6 @@ const MemberSelector = ({
             </>
           }
         />
-        <Collapse in={expanded}>
-          <Divider />
-          <List
-            dense
-            role="list"
-            sx={{ maxHeight: listHeight, overflow: 'auto' }}
-          >
-            {selected.length ? (
-              selected.map(member => (
-                <ListItem
-                  key={member.id}
-                  role="listitem"
-                  secondaryAction={
-                    <Tooltip title="Deselect member" arrow>
-                      <IconButton
-                        onClick={() => removeMember(member)}
-                        disabled={disabled}
-                      >
-                        <RemoveIcon />
-                      </IconButton>
-                    </Tooltip>
-                  }
-                >
-                  <ListItemAvatar>
-                    <Avatar src={getAvatarURL(member.workEmail)} />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={
-                      <Typography fontWeight="bold">{member.name}</Typography>
-                    }
-                    secondary={
-                      <Typography color="textSecondary" component="h6">
-                        {member.title}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-              ))
-            ) : (
-              <ListItem>
-                <ListItemText style={{ color: 'gray' }}>
-                  No {memberDescriptor} selected
-                </ListItemText>
-              </ListItem>
-            )}
-          </List>
-        </Collapse>
       </Card>
       <MemberSelectorDialog
         open={dialogOpen}
@@ -283,7 +221,7 @@ const MemberSelector = ({
         memberDescriptor={memberDescriptor}
         selectedMembers={selected}
         onClose={() => setDialogOpen(false)}
-        onSubmit={membersToAdd => addMembers(membersToAdd)}
+        onSubmit={replaceSelectedMembers}
       />
     </>
   );
