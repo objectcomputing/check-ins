@@ -2,25 +2,17 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import {
-  Archive,
   BorderColor,
-  Delete,
   DoorFront,
   HourglassTop,
   MeetingRoom,
-  QuestionMark,
-  Unarchive
+  QuestionMark
 } from '@mui/icons-material';
 
 import {
   Avatar,
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   FormControl,
   IconButton,
   InputLabel,
@@ -46,9 +38,7 @@ import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedba
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
 import {
   createReviewPeriod,
-  getReviewPeriods,
-  removeReviewPeriod,
-  updateReviewPeriod
+  getReviewPeriods
 } from '../../../api/reviewperiods.js';
 import { AppContext } from '../../../context/AppContext';
 import {
@@ -139,7 +129,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
   const [canSave, setCanSave] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
@@ -152,7 +141,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   });
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
-  const [toDelete, setToDelete] = useState(null);
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
@@ -232,34 +220,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     ]
   );
 
-  const toggleReviewPeriod = useCallback(
-    async id => {
-      if (!csrf) {
-        return;
-      }
-      const toUpdate = selectReviewPeriod(state, id);
-      toUpdate.reviewStatus =
-        toUpdate?.reviewStatus === ReviewStatus.CLOSED
-          ? ReviewStatus.OPEN
-          : ReviewStatus.CLOSED;
-      const res = await updateReviewPeriod(toUpdate, csrf);
-      const data = res?.payload?.data ? res.payload.data : null;
-      if (data) {
-        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
-      } else {
-        console.error(res?.error);
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'error',
-            toast: 'Error selecting review period'
-          }
-        });
-      }
-    },
-    [csrf, state, periods, dispatch]
-  );
-
   const getSecondaryLabel = useCallback(
     periodId => {
       if (mode === 'self') {
@@ -287,24 +247,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     },
     [selfReviews, state, mode]
   );
-
-  const handleConfirmClose = useCallback(() => {
-    setToDelete(null);
-    setConfirmOpen(false);
-  }, [setToDelete, setConfirmOpen]);
-
-  const deleteReviewPeriod = useCallback(async () => {
-    if (!csrf) {
-      return;
-    }
-
-    await removeReviewPeriod(toDelete, csrf);
-    dispatch({
-      type: UPDATE_REVIEW_PERIODS,
-      payload: periods.filter(period => period?.id !== toDelete)
-    });
-    handleConfirmClose();
-  }, [csrf, periods, dispatch, toDelete, handleConfirmClose]);
 
   const loadFeedbackTemplates = useCallback(async () => {
     const res = await getAllFeedbackTemplates(csrf);
@@ -412,14 +354,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     [state, onPeriodSelected]
   );
 
-  const confirmDelete = useCallback(
-    id => {
-      setToDelete(id);
-      setConfirmOpen(true);
-    },
-    [setToDelete, setConfirmOpen]
-  );
-
   const handleReviewTemplateChange = event => {
     const templateId = event.target.value;
     setPeriodToAdd({
@@ -493,46 +427,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                 i
               ) => (
                 <div key={i} className="reviewPeriodSection">
-                  <ListItem
-                    secondaryAction={
-                      isAdmin && (
-                        <>
-                          <Tooltip
-                            title={
-                              reviewStatus === ReviewStatus.OPEN
-                                ? 'Archive'
-                                : 'Unarchive'
-                            }
-                          >
-                            <IconButton
-                              onClick={() => toggleReviewPeriod(id)}
-                              aria-label={
-                                reviewStatus === ReviewStatus.OPEN
-                                  ? 'Archive'
-                                  : 'Unarchive'
-                              }
-                            >
-                              {reviewStatus === ReviewStatus.OPEN ? (
-                                <Archive />
-                              ) : (
-                                <Unarchive />
-                              )}
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Delete">
-                            <IconButton
-                              onClick={() => confirmDelete(id)}
-                              edge="end"
-                              aria-label="Delete"
-                            >
-                              <Delete />
-                            </IconButton>
-                          </Tooltip>
-                        </>
-                      )
-                    }
-                    key={`period-${id}`}
-                  >
+                  <ListItem key={`period-${id}`}>
                     <ListItemAvatar
                       key={`period-lia-${id}`}
                       onClick={() => onPeriodClick(id)}
@@ -634,28 +529,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </div>
         </Box>
       </Modal>
-      <Dialog
-        open={confirmOpen}
-        onClose={handleConfirmClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {'Delete this review period?'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure that you would like to delete period{' '}
-            {selectReviewPeriod(state, toDelete)?.name}?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirmClose}>No</Button>
-          <Button onClick={deleteReviewPeriod} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Root>
   );
 };

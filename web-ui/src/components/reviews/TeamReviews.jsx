@@ -12,13 +12,25 @@ import React, {
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
-import { AddCircle, AddComment, ExpandMore } from '@mui/icons-material';
+import {
+  AddCircle,
+  AddComment,
+  Archive,
+  Delete,
+  ExpandMore,
+  Unarchive
+} from '@mui/icons-material';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Avatar,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   FormControlLabel,
   IconButton,
@@ -43,9 +55,15 @@ import {
 } from '../../api/feedback.js';
 import {
   getReviewPeriods,
+  removeReviewPeriod,
   updateReviewPeriod
 } from '../../api/reviewperiods.js';
-import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from '../../context/actions';
+import {
+  DELETE_REVIEW_PERIOD,
+  UPDATE_REVIEW_PERIOD,
+  UPDATE_REVIEW_PERIODS,
+  UPDATE_TOAST
+} from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
@@ -122,6 +140,7 @@ const TeamReviews = ({ periodId }) => {
   const history = useHistory();
   const location = useLocation();
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [includeAll, setIncludeAll] = useState(false);
   const [memberFilters, setMemberFilters] = useState([]);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
@@ -131,6 +150,7 @@ const TeamReviews = ({ periodId }) => {
   const [selectedMember, setSelectedMember] = useState(null);
   const [selfReviews, setSelfReviews] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
+  const [toDelete, setToDelete] = useState(null);
 
   const creatingReview = useRef(false);
   const loadedReviews = useRef(false);
@@ -142,6 +162,7 @@ const TeamReviews = ({ periodId }) => {
   const isAdmin = selectIsAdmin(state);
   const myTeam = selectMyTeam(state);
   const period = selectReviewPeriod(state, periodId);
+  console.log('TeamReviews.jsx : period =', period);
   const selectedMemberProfile = selectProfile(state, selectedMember);
   const subordinates = selectSubordinates(state, currentUser?.id);
 
@@ -350,6 +371,50 @@ const TeamReviews = ({ periodId }) => {
     }
   }, [csrf, reviews, currentUser, period, selectedMemberProfile]);
 
+  const confirmDelete = useCallback(() => {
+    setToDelete(period.id);
+    setConfirmOpen(true);
+  }, [period, setToDelete, setConfirmOpen]);
+
+  const handleConfirmClose = useCallback(() => {
+    setToDelete(null);
+    setConfirmOpen(false);
+  }, [setToDelete, setConfirmOpen]);
+
+  const deleteReviewPeriod = useCallback(async () => {
+    if (!csrf) return;
+
+    await removeReviewPeriod(toDelete, csrf);
+    dispatch({
+      type: DELETE_REVIEW_PERIOD,
+      payload: toDelete
+    });
+    handleConfirmClose();
+  }, [csrf, dispatch, toDelete, handleConfirmClose]);
+
+  const toggleReviewPeriod = useCallback(async () => {
+    if (!csrf) return;
+
+    period.reviewStatus =
+      period?.reviewStatus === ReviewStatus.CLOSED
+        ? ReviewStatus.OPEN
+        : ReviewStatus.CLOSED;
+    const res = await updateReviewPeriod(period, csrf);
+    const data = res?.payload?.data ? res.payload.data : null;
+    if (data) {
+      dispatch({ type: UPDATE_REVIEW_PERIOD, payload: period });
+    } else {
+      console.error(res?.error);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'Error selecting review period'
+        }
+      });
+    }
+  }, [csrf, period, state, dispatch]);
+
   const updateReviewPeriodDates = useCallback(
     async period => {
       if (!csrf) return;
@@ -369,7 +434,7 @@ const TeamReviews = ({ periodId }) => {
         });
       }
     },
-    [csrf, state, period, dispatch]
+    [csrf, dispatch, period, state]
   );
 
   const handleLaunchDateChange = (val, period) => {
@@ -586,11 +651,11 @@ const TeamReviews = ({ periodId }) => {
     },
     [
       csrf,
-      period,
-      selectedMemberProfile,
       dispatch,
       handleCloseNewRequest,
-      reviews
+      period,
+      reviews,
+      selectedMemberProfile
     ]
   );
 
@@ -624,27 +689,64 @@ const TeamReviews = ({ periodId }) => {
         )}
       </div>
       {period && (
-        <div className="datePickerFlexWrapper">
-          <DatePickerField
-            date={period.launchDate}
-            setDate={val => handleLaunchDateChange(val, period)}
-            label="Launch Date"
-            disabled={!isAdmin}
-            open={period?.reviewStatus === ReviewStatus?.PLANNING}
-          />
-          <DatePickerField
-            date={period.selfReviewCloseDate}
-            setDate={val => handleSelfReviewDateChange(val, period)}
-            label="Self-Review Date"
-            disabled={!isAdmin}
-          />
-          <DatePickerField
-            date={period.closeDate}
-            setDate={val => handleCloseDateChange(val, period)}
-            label="Close Date"
-            disabled={!isAdmin}
-          />
-        </div>
+        <>
+          {isAdmin && (
+            <div>
+              <Tooltip
+                title={
+                  period.reviewStatus === ReviewStatus.OPEN
+                    ? 'Archive'
+                    : 'Unarchive'
+                }
+              >
+                <IconButton
+                  onClick={toggleReviewPeriod}
+                  aria-label={
+                    period.reviewStatus === ReviewStatus.OPEN
+                      ? 'Archive'
+                      : 'Unarchive'
+                  }
+                >
+                  {period.reviewStatus === ReviewStatus.OPEN ? (
+                    <Archive />
+                  ) : (
+                    <Unarchive />
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete">
+                <IconButton
+                  onClick={confirmDelete}
+                  edge="end"
+                  aria-label="Delete"
+                >
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            </div>
+          )}
+          <div className="datePickerFlexWrapper">
+            <DatePickerField
+              date={period.launchDate}
+              setDate={val => handleLaunchDateChange(val, period)}
+              label="Launch Date"
+              disabled={!isAdmin}
+              open={period?.reviewStatus === ReviewStatus?.PLANNING}
+            />
+            <DatePickerField
+              date={period.selfReviewCloseDate}
+              setDate={val => handleSelfReviewDateChange(val, period)}
+              label="Self-Review Date"
+              disabled={!isAdmin}
+            />
+            <DatePickerField
+              date={period.closeDate}
+              setDate={val => handleCloseDateChange(val, period)}
+              label="Close Date"
+              disabled={!isAdmin}
+            />
+          </div>
+        </>
       )}
       <MemberSelector
         className="team-skill-member-selector"
@@ -768,6 +870,28 @@ const TeamReviews = ({ periodId }) => {
         onClose={() => setDialogOpen(false)}
         onSubmit={membersToAdd => setTeamMembers(membersToAdd)}
       />
+      <Dialog
+        open={confirmOpen}
+        onClose={handleConfirmClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Delete this review period?'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure that you would like to delete period{' '}
+            {selectReviewPeriod(state, toDelete)?.name}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmClose}>No</Button>
+          <Button onClick={deleteReviewPeriod} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Root>
   );
 };
