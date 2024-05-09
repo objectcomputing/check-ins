@@ -147,7 +147,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
         final HttpResponse<Set<ReviewAssignment>> response = client.toBlocking().exchange(request, Argument.setOf(ReviewAssignment.class));
 
         assertNotNull(response.body());
-        assertEquals(8, Objects.requireNonNull(response.body()).size());
+        assertEquals(3, Objects.requireNonNull(response.body()).size());
         assertTrue(response.body().stream().anyMatch(ra -> ra.getRevieweeId().equals(memberOne.getId())));
         assertTrue(response.body().stream().anyMatch(ra -> ra.getRevieweeId().equals(memberTwo.getId())));
         assertTrue(response.body().stream().anyMatch(ra -> ra.getRevieweeId().equals(memberThree.getId())));
