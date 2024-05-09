@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PulseResponseTest {
 
     @Inject
-    private Validator validator;
+    public Validator validator;
 
     @Test
     void testPulseResponseInstantiation() {
-        LocalDate submissionDate= LocalDate.of(2019, 1, 01);
+        LocalDate submissionDate= LocalDate.of(2019, 1, 1);
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings  = "exampleId";
         final String externalFeelings  = "exampleId2";
@@ -35,7 +35,7 @@ public class PulseResponseTest {
 
     @Test
     void testConstraintViolation() {
-        LocalDate submissionDate= LocalDate.of(2019, 1, 01);
+        LocalDate submissionDate= LocalDate.of(2019, 1, 1);
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings  = "exampleId";
         final String externalFeelings  = "exampleId2";
@@ -56,7 +56,7 @@ public class PulseResponseTest {
         final UUID id = UUID.randomUUID();
         final Integer internalScore = 1;
         final Integer externalScore = 2;
-        LocalDate submissionDate= LocalDate.of(2019, 1, 01);
+        LocalDate submissionDate= LocalDate.of(2019, 1, 1);
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings  = "exampleId";
         final String externalFeelings   = "exampleId2";
@@ -89,7 +89,7 @@ public class PulseResponseTest {
     @Test
     void testToString() {
         final UUID id = UUID.randomUUID();
-        LocalDate submissionDate= LocalDate.of(2019, 1, 01);
+        LocalDate submissionDate= LocalDate.of(2019, 1, 1);
         final UUID teamMemberId = UUID.randomUUID();
         final Integer internalScore = 1;
         final Integer externalScore = 2;

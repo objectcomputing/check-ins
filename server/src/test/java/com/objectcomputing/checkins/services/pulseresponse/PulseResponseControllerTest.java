@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -53,7 +52,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 
         PulseResponse pulseResponseResponse = response.body();
 
-        assertNotNull(pulseResponseResponse);
+        Assertions.assertNotNull(pulseResponseResponse);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(pulseResponseCreateDTO.getTeamMemberId(),pulseResponseResponse.getTeamMemberId());
         assertEquals(String.format("%s/%s", request.getPath(), pulseResponseResponse.getId()), response.getHeaders().get("location"));
@@ -288,7 +287,7 @@ public void testGetFindByfindBySubmissionDateBetween() {
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Unable to find pulseresponse record with id null", pulseResponse.getId()), error);
+        assertEquals(String.format("Unable to find pulseresponse record with id null, 1%s", pulseResponse.getId()), error);
         assertEquals(request.getPath(), href);
 
     }

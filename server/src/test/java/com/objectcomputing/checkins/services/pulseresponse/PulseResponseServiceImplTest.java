@@ -38,7 +38,7 @@ public class PulseResponseServiceImplTest {
 
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
@@ -50,7 +50,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testRead() {
-        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 01),UUID.randomUUID(),"examplePRId" , "examplePRId2");
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1),UUID.randomUUID(),"examplePRId" , "examplePRId2");
 
         when(pulseResponseRepository.findById(cd.getId())).thenReturn(Optional.of(cd));
 
@@ -67,7 +67,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testSave() {
-        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 01),UUID.randomUUID(), "PRId", "PRId2");
+        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1),UUID.randomUUID(), "PRId", "PRId2");
         MemberProfile memberprofile = new MemberProfile();
 
         when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberprofile));
@@ -81,7 +81,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testSaveWithId() {
-        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1), UUID.randomUUID(), "PRId", "PRId2");
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("Found unexpected id for pulseresponse %s", cd.getId()), exception.getMessage());
@@ -92,7 +92,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testSavePulseResponseNullTeamMemberId() {
-        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 01),null, "PRId", "PRId2");
+        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1),null, "PRId", "PRId2");
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals("Member null doesn't exists", exception.getMessage());
@@ -103,7 +103,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testSavePulseResponseNullPRId() {
-        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 01), UUID.randomUUID(), null, null);
+        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1), UUID.randomUUID(), null, null);
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("Member %s doesn't exists", cd.getTeamMemberId()), exception.getMessage());
@@ -121,7 +121,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testSavePulseResponseNonExistingMemberProfile() {
-        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 01),UUID.randomUUID(), "PRId", "PRId2");
+        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1),UUID.randomUUID(), "PRId", "PRId2");
 
         when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.empty());
 
@@ -134,7 +134,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testUpdate() {
-        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1), UUID.randomUUID(), "PRId", "PRId2");
         MemberProfile memberprofile = new MemberProfile();
 
         when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberprofile));
@@ -150,7 +150,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testUpdateWithoutId() {
-        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 01),UUID.randomUUID(), "PRId", "PRId2");
+        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1),UUID.randomUUID(), "PRId", "PRId2");
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("Unable to find pulseresponse record with id %s", cd.getId()), exception.getMessage());
@@ -162,7 +162,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testUpdatePulseResponseNullTeamMemberId() {
-        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 01), null, "PRId", "PRId2");
+        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1), null, "PRId", "PRId2");
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals("Unable to find pulseresponse record with id null", exception.getMessage());
@@ -174,7 +174,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testUpdatePulseResponseNullPRId() {
-        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 01), UUID.randomUUID(), null, null);
+        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1), UUID.randomUUID(), null, null);
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals("Unable to find pulseresponse record with id null", exception.getMessage());
@@ -186,7 +186,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testUpdatePulseResponseDoesNotExist() {
-        PulseResponse cd = new PulseResponse(UUID.randomUUID(), 1, 2, LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(), 1, 2, LocalDate.of(2019, 1, 1), UUID.randomUUID(), "PRId", "PRId2");
         when(pulseResponseRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
@@ -199,7 +199,7 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testUpdateMemberProfileDoesNotExist() {
-        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1), UUID.randomUUID(), "PRId", "PRId2");
         when(pulseResponseRepository.findById(eq(cd.getId()))).thenReturn(Optional.of(cd));
         when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.empty());
 
