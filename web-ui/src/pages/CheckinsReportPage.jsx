@@ -94,7 +94,6 @@ const CheckinsReportPage = () => {
         default: [],
         value: selectedPdls,
         setter(ids) {
-          console.log(ids);
           const newPdls = ids
             .map(id => pdls.find(pdl => pdl.id === id))
             .filter(Boolean);
