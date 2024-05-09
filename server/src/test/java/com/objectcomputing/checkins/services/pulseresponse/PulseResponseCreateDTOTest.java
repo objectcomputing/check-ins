@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PulseResponseCreateDTOTest {
 
     @Inject
-    public Validator validator;
+    protected Validator validator;
 
     @Test
     void testDTOInstantiation() {

@@ -33,7 +33,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 
     @Inject
     @Client("/services/pulse-responses")
-    public HttpClient client;
+    protected HttpClient client;
 
     @Test
     public void testCreateAPulseResponse(){
