@@ -75,7 +75,7 @@ micronaut:
     netty:
       event-loops:
         io:
-          num-threads: 3
+          num-threads: 3 # todo matt this is pretty low
 ---
 datasources:
   default:

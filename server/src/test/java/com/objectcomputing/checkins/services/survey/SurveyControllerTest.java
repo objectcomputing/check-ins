@@ -181,17 +181,14 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.getContentLength());
-        response.equals(surveyResponse);
+        assertTrue(Objects.requireNonNull(response.body()).contains(surveyResponse));
     }
 
     @Test
-    void testFindSurveyAllParams(){
+    void testFindSurveyByCreateBy(){
         MemberProfile user = createAnUnrelatedUser();
         createAndAssignAdminRole(user);
 
-        // todo matt createdOn timestamps don't match. Response is a day behind too...
-        // might need to add a converter https://thorben-janssen.com/persist-localdate-localdatetime-jpa/
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey expectedResponse  = createADefaultSurvey(memberProfile);
@@ -200,9 +197,41 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
 
-        assertTrue(response.body().contains(expectedResponse));
+        assertTrue(Objects.requireNonNull(response.body()).contains(expectedResponse));
         assertEquals(HttpStatus.OK,response.getStatus());
+    }
 
+    @Test
+    void testFindSurveyAllParams(){
+        MemberProfile user = createAnUnrelatedUser();
+        createAndAssignAdminRole(user);
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        Survey expectedResponse  = createADefaultSurvey(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&createdBy=%s", expectedResponse.getName(), expectedResponse.getCreatedBy())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
+
+        assertTrue(Objects.requireNonNull(response.body()).contains(expectedResponse));
+        assertEquals(HttpStatus.OK,response.getStatus());
+    }
+
+    @Test
+    void testFindSurveyAllParams_WrongCreateByID(){
+        MemberProfile user = createAnUnrelatedUser();
+        createAndAssignAdminRole(user);
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        Survey expectedResponse  = createADefaultSurvey(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&createdBy=%s", expectedResponse.getName(), UUID.randomUUID())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
+
+
+        assertFalse(Objects.requireNonNull(response.body()).contains(expectedResponse));
+        assertEquals(HttpStatus.OK,response.getStatus());
     }
 
     @Test

@@ -13,12 +13,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "surveys")
 public class Survey {
@@ -74,46 +78,6 @@ public class Survey {
 
     public Survey() {
 
-    }
-
-    public UUID getId() {
-        return this.id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDate getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(LocalDate createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public UUID getCreatedBy() {
-        return this.createdBy;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
     }
 
     @Override

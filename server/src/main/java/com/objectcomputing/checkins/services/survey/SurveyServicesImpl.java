@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Singleton
 public class SurveyServicesImpl implements SurveyService {
@@ -92,15 +93,9 @@ public class SurveyServicesImpl implements SurveyService {
         final boolean isAdmin = currentUserServices.isAdmin();
         permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
 
-        Set<Survey> surveyResponse = new HashSet<>();
-        if(name != null && createdBy != null) {
-            surveyResponse = surveyResponseRepo.findByNameAndCreatedBy(name, createdBy);
-        } else if  (name != null) {
-            surveyResponse = surveyResponseRepo.findByName(name);
-        } else if (createdBy != null){
-            surveyResponse = surveyResponseRepo.findByCreatedBy(createdBy);
-        }
-
-        return surveyResponse;
+        return surveyResponseRepo.findAll().stream()
+                .filter(survey -> (name == null || name.equals(survey.getName())) &&
+                        (createdBy == null || createdBy.equals(survey.getCreatedBy())))
+                .collect(Collectors.toSet());
     }
 }
