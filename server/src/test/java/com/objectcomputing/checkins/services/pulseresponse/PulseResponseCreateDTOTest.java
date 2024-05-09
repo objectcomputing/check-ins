@@ -13,10 +13,10 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
-public class PulseReponseCreateDTOTest {
+public class PulseResponseCreateDTOTest {
 
     @Inject
-    private Validator validator;
+    public Validator validator;
 
     @Test
     void testDTOInstantiation() {
@@ -52,8 +52,8 @@ public class PulseReponseCreateDTOTest {
         dto.setExternalScore(2);
         assertEquals(2, dto.getExternalScore());
 
-        dto.setSubmissionDate(LocalDate.of(2019, 1, 01));
-        assertEquals(dto.getSubmissionDate(), LocalDate.of(2019, 1, 01));
+        dto.setSubmissionDate(LocalDate.of(2019, 1, 1));
+        assertEquals(dto.getSubmissionDate(), LocalDate.of(2019, 1, 1));
 
         dto.setTeamMemberId(teamMemberId);
         assertEquals(dto.getTeamMemberId(), teamMemberId);

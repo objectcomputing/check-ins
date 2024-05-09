@@ -15,12 +15,14 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
@@ -32,7 +34,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 
     @Inject
     @Client("/services/pulse-responses")
-    private HttpClient client;
+    public HttpClient client;
 
     @Test
     public void testCreateAPulseResponse(){
@@ -68,9 +70,8 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText(),
-        errors.get(2).get("message").asText(), errors.get(3).get("message").asText(), errors.get(4).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
+        List<String> errorList = Stream.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText(),
+        errors.get(2).get("message").asText(), errors.get(3).get("message").asText(), errors.get(4).get("message").asText()).sorted().collect(Collectors.toList());
         assertEquals(5,errorList.size());
         assertEquals(request.getPath(),href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -152,8 +153,8 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 @Test
 public void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
 
-    LocalDate testDateFrom = LocalDate.of(2019, 01, 01);  
-    LocalDate testDateTo = LocalDate.of(2019, 02, 01);
+    LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
+    LocalDate testDateTo = LocalDate.of(2019, 2, 1);
 
     final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
     final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
@@ -165,7 +166,7 @@ public void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
 @Test
 public void testGetFindByfindBySubmissionDateBetween() {
 
-    LocalDate testDateFrom = LocalDate.of(2019, 01, 01);  
+    LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
     LocalDate testDateTo = Util.MAX.toLocalDate();
 
     final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
