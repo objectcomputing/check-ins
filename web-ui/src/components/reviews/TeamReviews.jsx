@@ -12,9 +12,7 @@ import React, {
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { AddCircle, AddComment, ExpandMore } from '@mui/icons-material';
 import {
   Accordion,
   AccordionDetails,
@@ -43,7 +41,10 @@ import {
   findReviewRequestsByPeriodAndTeamMembers,
   findSelfReviewRequestsByPeriodAndTeamMembers
 } from '../../api/feedback.js';
-import { getReviewPeriods } from '../../api/reviewperiods.js';
+import {
+  getReviewPeriods,
+  updateReviewPeriod
+} from '../../api/reviewperiods.js';
 import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import {
@@ -63,6 +64,9 @@ import MemberSelectorDialog, {
 } from '../member_selector/member_selector_dialog/MemberSelectorDialog';
 import SelectUserModal from './SelectUserModal';
 import TeamMemberReview from './TeamMemberReview';
+
+import DatePickerField from './periods/DatePickerField.jsx';
+import './periods/DatePickerField.css';
 
 const propTypes = {
   teamMembers: PropTypes.arrayOf(
@@ -104,6 +108,14 @@ const Root = styled('div')(({ theme }) => ({
     }
   }
 }));
+
+const ReviewStatus = {
+  PLANNING: 'PLANNING',
+  AWAITING_APPROVAL: 'AWAITING_APPROVAL',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  UNKNOWN: 'UNKNOWN'
+};
 
 const TeamReviews = ({ periodId }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -338,6 +350,52 @@ const TeamReviews = ({ periodId }) => {
     }
   }, [csrf, reviews, currentUser, period, selectedMemberProfile]);
 
+  const updateReviewPeriodDates = useCallback(
+    async period => {
+      if (!csrf) return;
+
+      const res = await updateReviewPeriod(period, csrf);
+      const data = res?.payload?.data ?? null;
+      if (data) {
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [period] });
+      } else {
+        console.error('Error updating review period:', res?.error);
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Error updating review period'
+          }
+        });
+      }
+    },
+    [csrf, state, period, dispatch]
+  );
+
+  const handleLaunchDateChange = (val, period) => {
+    const isoDate = val?.$d.toISOString() ?? null;
+    updateReviewPeriodDates({
+      ...period,
+      launchDate: isoDate
+    });
+  };
+
+  const handleSelfReviewDateChange = (val, period) => {
+    const isoDate = val?.$d.toISOString() ?? null;
+    updateReviewPeriodDates({
+      ...period,
+      selfReviewCloseDate: isoDate
+    });
+  };
+
+  const handleCloseDateChange = (val, period) => {
+    const isoDate = val?.$d.toISOString() ?? null;
+    updateReviewPeriodDates({
+      ...period,
+      closeDate: isoDate
+    });
+  };
+
   const handleQueryChange = useCallback(
     (key, value) => {
       let newQuery = {
@@ -557,7 +615,7 @@ const TeamReviews = ({ periodId }) => {
           <Button
             onClick={handleOpenNewRequest}
             className={classes.actionButtons}
-            endIcon={<AddCircleIcon />}
+            endIcon={<AddCircle />}
             variant="contained"
             color="primary"
           >
@@ -565,6 +623,29 @@ const TeamReviews = ({ periodId }) => {
           </Button>
         )}
       </div>
+      {period && (
+        <div className="datePickerFlexWrapper">
+          <DatePickerField
+            date={period.launchDate}
+            setDate={val => handleLaunchDateChange(val, period)}
+            label="Launch Date"
+            disabled={!isAdmin}
+            open={period?.reviewStatus === ReviewStatus?.PLANNING}
+          />
+          <DatePickerField
+            date={period.selfReviewCloseDate}
+            setDate={val => handleSelfReviewDateChange(val, period)}
+            label="Self-Review Date"
+            disabled={!isAdmin}
+          />
+          <DatePickerField
+            date={period.closeDate}
+            setDate={val => handleCloseDateChange(val, period)}
+            label="Close Date"
+            disabled={!isAdmin}
+          />
+        </div>
+      )}
       <MemberSelector
         className="team-skill-member-selector"
         onChange={updateTeamMembers}
@@ -574,7 +655,7 @@ const TeamReviews = ({ periodId }) => {
         <>
           <Accordion style={{ marginTop: '1rem' }}>
             <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
+              expandIcon={<ExpandMore />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
@@ -626,7 +707,7 @@ const TeamReviews = ({ periodId }) => {
                             <ListItemSecondaryAction>
                               <Tooltip title="Request Feedback">
                                 <IconButton>
-                                  <AddCommentIcon
+                                  <AddComment
                                     onClick={e => {
                                       e.stopPropagation();
                                       history.push(

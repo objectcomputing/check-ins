@@ -41,7 +41,6 @@ import { useQueryParameters } from '../../../helpers/query-parameters';
 import { UPDATE_TOAST } from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
-import './DatePickerField.css';
 
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
@@ -63,7 +62,6 @@ import {
   selectReviewPeriods,
   selectUserProfile
 } from '../../../context/selectors';
-import DatePickerField from './DatePickerField.jsx';
 
 import { titleCase } from '../../../helpers/strings.js';
 
@@ -308,30 +306,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     handleConfirmClose();
   }, [csrf, periods, dispatch, toDelete, handleConfirmClose]);
 
-  const updateReviewPeriodDates = useCallback(
-    async period => {
-      if (!csrf) {
-        return;
-      }
-      const res = await updateReviewPeriod(period, csrf);
-      const data = res?.payload?.data ?? null;
-      if (data) {
-        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
-      } else {
-        console.error(res?.error);
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'error',
-            toast: 'Error updating review period'
-          }
-        });
-      }
-      setPeriodToAdd(period);
-    },
-    [csrf, state, periods, dispatch]
-  );
-
   const loadFeedbackTemplates = useCallback(async () => {
     const res = await getAllFeedbackTemplates(csrf);
     const templates = res?.payload?.data;
@@ -462,30 +436,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     });
   };
 
-  const handleLaunchDateChange = (val, period) => {
-    const isoDate = val?.$d.toISOString() ?? null;
-    updateReviewPeriodDates({
-      ...period,
-      launchDate: isoDate
-    });
-  };
-
-  const handleSelfReviewDateChange = (val, period) => {
-    const isoDate = val?.$d.toISOString() ?? null;
-    updateReviewPeriodDates({
-      ...period,
-      selfReviewCloseDate: isoDate
-    });
-  };
-
-  const handleCloseDateChange = (val, period) => {
-    const isoDate = val?.$d.toISOString() ?? null;
-    updateReviewPeriodDates({
-      ...period,
-      closeDate: isoDate
-    });
-  };
-
   return (
     <Root>
       <div className={classes.headerContainer}>
@@ -595,54 +545,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                       primary={`${name} - ${titleCase(reviewStatus)}`}
                       secondary={getSecondaryLabel(id)}
                     />
-                    <div className="datePickerFlexWrapper">
-                      <DatePickerField
-                        date={launchDate}
-                        setDate={val =>
-                          handleLaunchDateChange(val, {
-                            id,
-                            name,
-                            reviewStatus,
-                            launchDate,
-                            selfReviewCloseDate,
-                            closeDate
-                          })
-                        }
-                        label="Launch Date"
-                        disabled={!isAdmin}
-                        open={reviewStatus === ReviewStatus.PLANNING}
-                      />
-                      <DatePickerField
-                        date={selfReviewCloseDate}
-                        setDate={val =>
-                          handleSelfReviewDateChange(val, {
-                            id,
-                            name,
-                            reviewStatus,
-                            launchDate,
-                            selfReviewCloseDate,
-                            closeDate
-                          })
-                        }
-                        label="Self-Review Date"
-                        disabled={!isAdmin}
-                      />
-                      <DatePickerField
-                        date={closeDate}
-                        setDate={val =>
-                          handleCloseDateChange(val, {
-                            id,
-                            name,
-                            reviewStatus,
-                            launchDate,
-                            selfReviewCloseDate,
-                            closeDate
-                          })
-                        }
-                        label="Close Date"
-                        disabled={!isAdmin}
-                      />
-                    </div>
                   </ListItem>
                 </div>
               )
