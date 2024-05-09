@@ -45,11 +45,6 @@ public class PulseResponse {
     @Schema(description = "date for submissionDate", required = true)
     private LocalDate submissionDate;
 
-    @Column(name="updateddate")
-    @NotNull
-    @Schema(description = "date for updatedDate", required = true)
-    private LocalDate updatedDate;
-
     @Column(name="teammemberid")
     @TypeDef(type=DataType.STRING)
     @NotNull
@@ -77,7 +72,7 @@ public class PulseResponse {
     protected PulseResponse() {
     }
 
-    public PulseResponse(UUID id, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+    public PulseResponse(UUID id, Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this.id = id;
         this.internalScore = internalScore;
         this.externalScore = externalScore;
@@ -89,9 +84,6 @@ public class PulseResponse {
 
     public PulseResponse(Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this(null,internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
-    }
-
-    public PulseResponse(Object o, Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
     }
 
     public UUID getId() {
