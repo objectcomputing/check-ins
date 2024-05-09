@@ -11,6 +11,14 @@ import java.time.LocalDate;
 public class PulseResponseCreateDTO {
 
     @NotNull
+    @Schema(required = true, description = "integer value of internal score")
+    private Integer internalScore;
+
+    @NotNull
+    @Schema(required = true, description = "integer value of external score")
+    private Integer externalScore;
+
+    @NotNull
     @Schema(required = true, description = "date for submissionDate")
     private LocalDate submissionDate;
     
@@ -25,6 +33,22 @@ public class PulseResponseCreateDTO {
     @NotNull
     @Schema(required = true, description = "description of external feelings")
     private String externalFeelings;
+
+    public Integer getInternalScore() {
+        return internalScore;
+    }
+
+    public void setInternalScore(Integer internalScore) {
+        this.internalScore = internalScore;
+    }
+
+    public Integer getExternalScore() {
+        return externalScore;
+    }
+
+    public void setExternalScore(Integer externalScore) {
+        this.externalScore = externalScore;
+    }
 
     public LocalDate getSubmissionDate() {
         return submissionDate;

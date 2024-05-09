@@ -30,6 +30,16 @@ public class PulseResponse {
     @Schema(description = "the id of the pulse_response", required = true)
     private UUID id;
 
+    @Column(name="internal_score")
+    @NotNull
+    @Schema(description = "integer for internalScore", required = true)
+    private Integer internalScore;
+
+    @Column(name="external_score")
+    @NotNull
+    @Schema(description = "integer for externalScore", required = true)
+    private Integer externalScore;
+
     @Column(name="submissiondate")
     @NotNull
     @Schema(description = "date for submissionDate", required = true)
@@ -69,14 +79,19 @@ public class PulseResponse {
 
     public PulseResponse(UUID id, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this.id = id;
+        this.internalScore = internalScore;
+        this.externalScore = externalScore;
         this.submissionDate = submissionDate;
         this.teamMemberId = teamMemberId;
         this.internalFeelings = internalFeelings;
         this.externalFeelings = externalFeelings;
     }
 
-    public PulseResponse(LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
-        this(null,submissionDate, teamMemberId, internalFeelings, externalFeelings);
+    public PulseResponse(Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+        this(null,internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
+    }
+
+    public PulseResponse(Object o, Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
     }
 
     public UUID getId() {
@@ -85,6 +100,22 @@ public class PulseResponse {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public Integer getInternalScore() {
+        return internalScore;
+    }
+
+    public void setInternalScore(Integer internalScore) {
+        this.internalScore = internalScore;
+    }
+
+    public Integer getExternalScore() {
+        return externalScore;
+    }
+
+    public void setExternalScore(Integer externalScore) {
+        this.externalScore = externalScore;
     }
 
     public LocalDate getSubmissionDate() {
@@ -125,6 +156,8 @@ public class PulseResponse {
         if (o == null || getClass() != o.getClass()) return false;
         PulseResponse that = (PulseResponse) o;
         return Objects.equals(id, that.id) &&
+                Objects.equals(internalScore, that.internalScore) &&
+                Objects.equals(externalScore, that.externalScore) &&
                 Objects.equals(submissionDate, that.submissionDate) &&
                 Objects.equals(teamMemberId, that.teamMemberId) &&
                 Objects.equals(internalFeelings, that.internalFeelings) &&
@@ -135,6 +168,8 @@ public class PulseResponse {
     public String toString() {
         return "PulseResponse{" +
                 "id=" + id +
+                ", internal_score" + internalScore +
+                ", external_score" + externalScore +
                 ", submissionDate=" + submissionDate +
                 ", teamMemberId=" + teamMemberId +
                 ", internalFeelings=" + internalFeelings +
@@ -143,7 +178,7 @@ public class PulseResponse {
     }
     @Override
     public int hashCode() {
-        return Objects.hash(id, submissionDate, teamMemberId, internalFeelings, externalFeelings);
+        return Objects.hash(id, internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
     }
 }
 
