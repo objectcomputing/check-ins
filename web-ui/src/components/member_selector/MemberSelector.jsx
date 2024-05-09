@@ -73,6 +73,7 @@ const MemberSelector = ({
   selected,
   onChange,
   title = 'Selected Members',
+  expand = true,
   outlined = false,
   exportable = false,
   listHeight = 400,
@@ -84,7 +85,7 @@ const MemberSelector = ({
   const csrf = selectCsrfToken(state);
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(expand);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [filters, setFilters] = useState(initialFilters);
 
