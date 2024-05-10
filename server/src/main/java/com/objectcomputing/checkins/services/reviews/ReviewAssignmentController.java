@@ -63,7 +63,7 @@ public class ReviewAssignmentController {
     @Post("/{reviewPeriodId}")
     @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
     public Mono<HttpResponse<List<ReviewAssignment>>> createReviewAssignment(@NotNull UUID reviewPeriodId,
-                                                                             @Body @Valid List<ReviewAssignmentDTO> assignments) {
+                                                                             @Body List<@Valid ReviewAssignmentDTO> assignments) {
         return Mono.fromCallable(() -> reviewAssignmentServices.saveAll(reviewPeriodId,
                 assignments.stream().map(ReviewAssignmentDTO::convertToEntity).collect(Collectors.toList()), Boolean.TRUE)
                 ).map(HttpResponse::created);
@@ -91,7 +91,7 @@ public class ReviewAssignmentController {
 
     @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
     @Get("/period/{reviewPeriodId}{?reviewerId}")
-    public Mono<HttpResponse<Set<ReviewAssignment>>> findAssignmentsByPeriodId(@NotNull UUID reviewPeriodId, @Nullable UUID reviewerId) {
+    public Mono<HttpResponse<Set<ReviewAssignment>>> findAssignmentsByPeriodId(@NotNull UUID reviewPeriodId, @Nullable @QueryValue UUID reviewerId) {
         return Mono.fromCallable(() -> reviewAssignmentServices.findAllByReviewPeriodIdAndReviewerId(reviewPeriodId, reviewerId))
             .map(HttpResponse::ok);
     }

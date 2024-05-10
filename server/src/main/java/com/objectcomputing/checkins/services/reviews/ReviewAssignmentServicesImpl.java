@@ -52,7 +52,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         }
 
         List<ReviewAssignment> newAssignments = new ArrayList<>();
-        if (reviewAssignments != null) {
+        if (reviewAssignments != null && !reviewAssignments.isEmpty()) {
             for (ReviewAssignment reviewAssignment : reviewAssignments) {
                 if (reviewAssignment.getId() != null) {
                     throw new BadArgException(String.format("Found unexpected id %s for review assignment. New entities must not contain an id.",
@@ -75,7 +75,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
     @Override
     public Set<ReviewAssignment> findAllByReviewPeriodIdAndReviewerId(UUID reviewPeriodId, @Nullable UUID reviewerId) {
 
-        Set<ReviewAssignment> reviewAssignments = null;
+        Set<ReviewAssignment> reviewAssignments;
 
         if (reviewerId == null) {
             reviewAssignments = reviewAssignmentRepository.findByReviewPeriodId(reviewPeriodId);
@@ -113,6 +113,10 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         Set<ReviewAssignment> reviewAssignments = new HashSet<>();
 
         memberProfileRepository.findAll().forEach(memberProfile -> {
+            if(memberProfile.getSupervisorid() == null) {
+                return;
+            }
+
             ReviewAssignment reviewAssignment = new ReviewAssignment();
             reviewAssignment.setReviewerId(memberProfile.getSupervisorid());
             reviewAssignment.setRevieweeId(memberProfile.getId());

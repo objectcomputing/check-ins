@@ -33,7 +33,7 @@ public class ReviewAssignment {
     @Schema(description = "The id of the review assignment")
     private UUID id;
 
-    public ReviewAssignment(UUID revieweeId, UUID reviewerId, UUID reviewPeriodId, @Nullable Boolean approved) {
+    public ReviewAssignment(UUID revieweeId,  @Nullable UUID reviewerId, UUID reviewPeriodId, @Nullable Boolean approved) {
         this.revieweeId = revieweeId;
         this.reviewerId = reviewerId;
         this.reviewPeriodId = reviewPeriodId;
@@ -46,7 +46,7 @@ public class ReviewAssignment {
     @Schema(description = "The ID of the employee being reviewed")
     private UUID revieweeId;
 
-    @NotNull
+    @Nullable
     @Column(name = "reviewer_id")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "The ID of the employee conducting the review")

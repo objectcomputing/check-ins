@@ -20,7 +20,7 @@ public class ReviewAssignmentDTO {
     @Schema(description = "The ID of the employee being reviewed")
     private UUID revieweeId;
 
-    @NotNull
+    @Nullable
     @Schema(description = "The ID of the employee conducting the review")
     private UUID reviewerId;
 
