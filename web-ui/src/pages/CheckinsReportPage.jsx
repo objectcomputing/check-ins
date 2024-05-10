@@ -97,7 +97,7 @@ const CheckinsReportPage = () => {
           const newPdls = ids
             .map(id => pdls.find(pdl => pdl.id === id))
             .filter(Boolean);
-          setSelectedPdls(newPdls);
+          newPdls.length > 0 && setSelectedPdls(newPdls);
         },
         toQP(newPdls) {
           if (isArrayPresent(newPdls)) {
@@ -113,12 +113,12 @@ const CheckinsReportPage = () => {
     processedQPs
   );
 
-  // Set the selected PDLs to the mapped PDLs unless they are already set
+  // Update selected PDLs when processedQPs is updated
   useEffect(() => {
-    if (pdls.length > 0) return;
-    const mapped = selectMappedPdls(state);
-    setSelectedPdls(mapped);
-  }, [state]);
+    if (selectedPdls.length === 0 && processedQPs.current) {
+      setSelectedPdls(selectMappedPdls(state));
+    }
+  }, [processedQPs.current]);
 
   // Set the mapped PDLs to the PDLs with members
   useEffect(() => {
