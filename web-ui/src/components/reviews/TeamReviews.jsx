@@ -733,6 +733,7 @@ const TeamReviews = ({ periodId }) => {
             onClick={() => {}}
           >
             <ListItemText
+              className="name-title"
               primary={<Typography fontWeight="bold">{member.name}</Typography>}
               secondary={
                 <Typography color="textSecondary" component="h6">
