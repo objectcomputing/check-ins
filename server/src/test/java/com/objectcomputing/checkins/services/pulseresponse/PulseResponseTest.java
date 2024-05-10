@@ -43,8 +43,8 @@ public class PulseResponseTest {
         final Integer externalScore = 2;
         PulseResponse pulseResponse = new PulseResponse(internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
 
-        pulseResponse.setInternalFeelings (null);
-        pulseResponse.setExternalFeelings (null);
+        pulseResponse.setInternalFeelings(null);
+        pulseResponse.setExternalFeelings(null);
         pulseResponse.setInternalScore(null);
         pulseResponse.setExternalScore(null);
 
