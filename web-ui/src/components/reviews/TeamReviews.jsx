@@ -17,6 +17,7 @@ import {
   AddComment,
   Archive,
   Delete,
+  Download,
   ExpandMore,
   Unarchive
 } from '@mui/icons-material';
@@ -664,6 +665,10 @@ const TeamReviews = ({ periodId }) => {
     ', Self-review: ' +
     getSelfReviewStatus(teamMember?.id);
 
+  const download = () => {
+    // downloadMemberCsv();
+  };
+
   return (
     <Root>
       <div className={classes.headerContainer}>
@@ -671,6 +676,11 @@ const TeamReviews = ({ periodId }) => {
 
         {period && isAdmin && (
           <div>
+            <Tooltip title="Download">
+              <IconButton onClick={download} edge="end" aria-label="Download">
+                <Download />
+              </IconButton>
+            </Tooltip>
             <Tooltip
               title={
                 period.reviewStatus === ReviewStatus.OPEN
