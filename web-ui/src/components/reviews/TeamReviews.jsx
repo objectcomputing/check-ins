@@ -141,14 +141,17 @@ const TeamReviews = ({ periodId }) => {
   const history = useHistory();
   const location = useLocation();
 
-  const [assignments, setAssignments] = useState(false);
+  const [assignments, setAssignments] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [includeAll, setIncludeAll] = useState(false);
   const [memberFilters, setMemberFilters] = useState([]);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [newRequestOpen, setNewRequestOpen] = useState(false);
   const [query, setQuery] = useState({});
+  const [reviewerSelectorOpen, setReviewerSelectorOpen] = useState(false);
   const [reviews, setReviews] = useState(null);
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selfReviews, setSelfReviews] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
   const [toDelete, setToDelete] = useState(null);
@@ -183,6 +186,16 @@ const TeamReviews = ({ periodId }) => {
   useEffect(() => {
     loadTeamMembers();
   }, [currentMembers]);
+
+  useEffect(() => {
+    const reviewers = selectedMember ? getReviewers(selectedMember) : [];
+    setSelectedReviewers(reviewers);
+  }, [selectedMember]);
+
+  const editReviewers = member => {
+    setSelectedMember(member);
+    setReviewerSelectorOpen(true);
+  };
 
   const loadTeamMembers = async () => {
     const myId = currentUser?.id;
@@ -352,12 +365,14 @@ const TeamReviews = ({ periodId }) => {
   }, [csrf, dispatch, toDelete, handleConfirmClose]);
 
   const getReviewers = useCallback(
-    revieweeId => {
-      const as = assignments.filter(a => a.revieweeId === revieweeId);
+    reviewee => {
+      if (!reviewee) return [];
+      const { id } = reviewee;
+      const as = assignments.filter(a => a.revieweeId === id) ?? [];
       const reviewerIds = new Set();
       as.forEach(a => reviewerIds.add(a.reviewerId));
       const reviewers = [...reviewerIds].map(id => memberMap[id]);
-      return reviewers;
+      return sortMembers(reviewers);
     },
     [assignments]
   );
@@ -558,13 +573,84 @@ const TeamReviews = ({ periodId }) => {
     ', Self-review: ' +
     getSelfReviewStatus(teamMember?.id);
 
-  const addReviewer = name => {
-    setReviewers(reviewers => [...reviewers, name]);
+  const deleteReviewer = async (member, reviewer) => {
+    const assignment = assignments.find(
+      a =>
+        a.reviewPeriodId === period.id &&
+        a.reviewerId === reviewer.id &&
+        a.revieweeId === member.id
+    );
+    if (!assignment) return;
+
+    try {
+      const { id } = assignment;
+      const res = await resolve({
+        method: 'DELETE',
+        url: `${reviewAssignmentsUrl}/${id}`,
+        headers: { 'X-CSRF-Header': csrf }
+      });
+      if (res.error) throw new Error(res.error.message);
+      setAssignments(assignments.filter(a => a.id !== id));
+    } catch (err) {
+      console.error('TeamReviews.jsx deleteReviewer:', err);
+    }
   };
 
-  const handleReviewerDelete = reviewer => {
-    const newReviewers = reviewers.filter(r => r !== reviewer);
-    setReviewers(newReviewers);
+  const compareStrings = (s1, s2) => (s1 || '').localeCompare(s2 || '');
+
+  const sortMembers = members =>
+    members.sort((a, b) => {
+      let compare = compareStrings(a.lastName, b.lastName);
+      if (compare === 0) compare = compareStrings(a.firstName, b.firstName);
+      return compare;
+    });
+
+  const updateReviewers = async (member, reviewers) => {
+    const memberId = member.id;
+
+    let newAssignments = [...assignments];
+
+    // Remove all assignments for this member.
+    newAssignments = newAssignments.filter(a => a.revieweeId !== memberId);
+
+    // Add assignments for these reviewers if they don't already exist.
+    // All objects in the assignments array are for the current review period.
+    for (const reviewer of reviewers) {
+      const exists = newAssignments.some(
+        a => a.reviewerId === reviewer.id && a.revieweeId === memberId
+      );
+      if (!exists) {
+        newAssignments.push({
+          reviewPeriodId: periodId,
+          reviewerId: reviewer.id,
+          revieweeId: member.id
+        });
+      }
+    }
+
+    try {
+      const res = await resolve({
+        method: 'POST',
+        url: `${reviewAssignmentsUrl}/${periodId}`,
+        data: newAssignments,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+      newAssignments = sortMembers(res.payload.data);
+      setAssignments(newAssignments);
+    } catch (err) {
+      console.error('TeamReviews.jsx updateTeamMembers:', err);
+    }
+  };
+
+  const closeReviewerDialog = () => {
+    setSelectedMember(null);
+    setSelectedReviewers([]);
+    setReviewerSelectorOpen(false);
   };
 
   return (
@@ -656,17 +742,17 @@ const TeamReviews = ({ periodId }) => {
             />
             <div className="chip-row">
               <Typography>Reviewers:</Typography>
-              {getReviewers(member.id).map(reviewer => (
+              {getReviewers(member).map(reviewer => (
                 <Chip
                   key={reviewer.id}
                   label={reviewer.name}
                   variant="outlined"
-                  onDelete={() => handleReviewerDelete(reviewer)}
+                  onDelete={() => deleteReviewer(member, reviewer)}
                 />
               ))}
               <IconButton
-                aria-label="Add Reviewer"
-                onClick={() => addReviewer('Mark')}
+                aria-label="Edit Reviewers"
+                onClick={() => editReviewers(member)}
               >
                 <AddCircle />
               </IconButton>
@@ -678,10 +764,20 @@ const TeamReviews = ({ periodId }) => {
       <MemberSelectorDialog
         open={memberSelectorOpen}
         initialFilters={memberFilters}
-        memberDescriptor="members"
+        memberDescriptor="Members"
         selectedMembers={teamMembers}
-        onClose={() => setDialogOpen(false)}
-        onSubmit={membersToAdd => setTeamMembers(membersToAdd)}
+        onClose={() => setMemberSelectorOpen(false)}
+        onSubmit={members => setTeamMembers(members)}
+      />
+      <MemberSelectorDialog
+        open={reviewerSelectorOpen}
+        memberDescriptor="Reviewers"
+        selectedMembers={selectedReviewers}
+        onClose={closeReviewerDialog}
+        onSubmit={reviewers => {
+          updateReviewers(selectedMember, reviewers);
+          closeReviewerDialog();
+        }}
       />
       <Dialog
         open={confirmOpen}
