@@ -16,7 +16,6 @@ import {
   AddCircle,
   AddComment,
   Archive,
-  ArrowBack,
   Delete,
   Download,
   ExpandMore,
@@ -93,8 +92,7 @@ import './TeamReviews.css';
 const propTypes = {
   teamMembers: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string,
-      onBack: PropTypes.func
+      id: PropTypes.string
     })
   ),
   periodId: PropTypes.string
@@ -138,20 +136,19 @@ const ReviewStatus = {
   UNKNOWN: 'UNKNOWN'
 };
 
-const TeamReviews = ({ onBack, periodId }) => {
+const TeamReviews = ({ periodId }) => {
   const { state, dispatch } = useContext(AppContext);
   const history = useHistory();
   const location = useLocation();
 
+  const [assignments, setAssignments] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [includeAll, setIncludeAll] = useState(false);
   const [memberFilters, setMemberFilters] = useState([]);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [newRequestOpen, setNewRequestOpen] = useState(false);
   const [query, setQuery] = useState({});
-  const [reviewers, setReviewers] = useState(['Moe', 'Larry', 'Curly']);
   const [reviews, setReviews] = useState(null);
-  const [selectedMember, setSelectedMember] = useState(null);
   const [selfReviews, setSelfReviews] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
   const [toDelete, setToDelete] = useState(null);
@@ -162,11 +159,14 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const csrf = selectCsrfToken(state);
   const currentMembers = selectCurrentMembers(state);
+  const memberMap = currentMembers.reduce((map, member) => {
+    map[member.id] = member;
+    return map;
+  }, {});
   const currentUser = selectCurrentUser(state);
   const isAdmin = selectIsAdmin(state);
   const myTeam = selectMyTeam(state);
   const period = selectReviewPeriod(state, periodId);
-  const selectedMemberProfile = selectProfile(state, selectedMember);
   const subordinates = selectSubordinates(state, currentUser?.id);
 
   const handleOpenNewRequest = useCallback(
@@ -198,6 +198,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       });
       if (res.error) throw new Error(res.error.message);
       const assignments = res.payload.data;
+      setAssignments(assignments);
       const memberIds = assignments.map(a => a.revieweeId);
       const members = currentMembers.filter(m => memberIds.includes(m.id));
       setTeamMembers(members);
@@ -229,6 +230,10 @@ const TeamReviews = ({ onBack, periodId }) => {
     } catch (err) {
       console.error('TeamReviews.jsx updateTeamMembers:', err);
     }
+  };
+
+  const getMember = id => {
+    return teamMembers.find(m => m.id === id);
   };
 
   const getReviewStatus = useCallback(
@@ -305,10 +310,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   }, [query.teamMember, hasTeamMember]);
 
   useEffect(() => {
-    setSelectedMember(getTeamMember());
-  }, [getTeamMember]);
-
-  useEffect(() => {
     const getAllReviewPeriods = async () => {
       const res = await getReviewPeriods(csrf);
       const data =
@@ -327,52 +328,6 @@ const TeamReviews = ({ onBack, periodId }) => {
       getAllReviewPeriods();
     }
   }, [csrf, dispatch]);
-
-  useEffect(() => {
-    const createReview = async () => {
-      const res = await createFeedbackRequest(
-        {
-          creatorId: currentUser.id,
-          requesteeId: selectedMemberProfile.id,
-          recipientId: currentUser.id,
-          templateId: period.reviewTemplateId,
-          reviewPeriodId: period.id,
-          sendDate: dateUtils.format(new Date(), 'yyyy-MM-dd'),
-          status: 'pending'
-        },
-        csrf
-      );
-      const data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 201 &&
-        !res.error
-          ? res.payload.data
-          : null;
-      if (data) {
-        setReviews({ ...reviews, [selectedMemberProfile.id]: [data] });
-      }
-      creatingReview.current = false;
-    };
-
-    if (
-      csrf &&
-      selectedMemberProfile?.id &&
-      reviews &&
-      (!reviews[selectedMemberProfile.id] ||
-        reviews[selectedMemberProfile.id].length === 0) &&
-      currentUser?.id &&
-      period &&
-      !creatingReview.current &&
-      loadedReviews.current
-    ) {
-      if (currentUser?.id === selectedMemberProfile?.supervisorid) {
-        creatingReview.current = true;
-        createReview();
-      }
-    }
-  }, [csrf, reviews, currentUser, period, selectedMemberProfile]);
 
   const confirmDelete = useCallback(() => {
     setToDelete(period.id);
@@ -395,6 +350,17 @@ const TeamReviews = ({ onBack, periodId }) => {
     handleConfirmClose();
     history.goBack();
   }, [csrf, dispatch, toDelete, handleConfirmClose]);
+
+  const getReviewers = useCallback(
+    revieweeId => {
+      const as = assignments.filter(a => a.revieweeId === revieweeId);
+      const reviewerIds = new Set();
+      as.forEach(a => reviewerIds.add(a.reviewerId));
+      const reviewers = [...reviewerIds].map(id => memberMap[id]);
+      return reviewers;
+    },
+    [assignments]
+  );
 
   const toggleReviewPeriod = useCallback(async () => {
     if (!csrf) return;
@@ -482,24 +448,6 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     updateReviewPeriodDates(newPeriod);
   };
-
-  const handleQueryChange = useCallback(
-    (key, value) => {
-      let newQuery = {
-        ...query,
-        [key]: value
-      };
-      history.push({ ...location, search: queryString.stringify(newQuery) });
-    },
-    [history, location, query]
-  );
-
-  const onTeamMemberSelected = useCallback(
-    teamMemberId => {
-      handleQueryChange('teamMember', teamMemberId);
-    },
-    [handleQueryChange]
-  );
 
   const loadReviews = useCallback(async () => {
     let newSelfReviews = {};
@@ -605,82 +553,6 @@ const TeamReviews = ({ onBack, periodId }) => {
     setIncludeAll(!includeAll);
   }, [includeAll, setIncludeAll]);
 
-  const handleNewRequest = useCallback(
-    assignee => {
-      const createNewRequest = async () => {
-        if (!selectedMemberProfile?.supervisorid) {
-          dispatch({
-            type: UPDATE_TOAST,
-            payload: {
-              severity: 'error',
-              toast:
-                'This team member does not have an assigned supervisor. Please assign one before creating a review.'
-            }
-          });
-        } else {
-          const res = await createFeedbackRequest(
-            {
-              creatorId: selectedMemberProfile?.supervisorid,
-              requesteeId: selectedMemberProfile?.id,
-              recipientId: assignee?.id,
-              templateId: period.reviewTemplateId,
-              reviewPeriodId: period.id,
-              sendDate: dateUtils.format(new Date(), 'yyyy-MM-dd'),
-              status: 'pending'
-            },
-            csrf
-          );
-          const data =
-            res &&
-            res.payload &&
-            res.payload.data &&
-            res.payload.status === 201 &&
-            !res.error
-              ? res.payload.data
-              : null;
-          if (data) {
-            const newReviews = { ...reviews };
-            newReviews[selectedMemberProfile?.id].push(data);
-            setReviews(newReviews);
-          } else {
-            dispatch({
-              type: UPDATE_TOAST,
-              payload: {
-                severity: 'error',
-                toast:
-                  'An error has occurred while submitting the review request.'
-              }
-            });
-          }
-          return data;
-        }
-      };
-
-      handleCloseNewRequest();
-      if (csrf && selectedMemberProfile && period) {
-        createNewRequest().then(res => {
-          if (res) {
-            window.snackDispatch({
-              type: UPDATE_TOAST,
-              payload: {
-                severity: 'success',
-                toast: 'Review request sent!'
-              }
-            });
-          }
-        });
-      }
-    },
-    [
-      csrf,
-      dispatch,
-      handleCloseNewRequest,
-      period,
-      reviews,
-      selectedMemberProfile
-    ]
-  );
-
   const createSecondary = teamMember =>
     getReviewStatus(teamMember?.id) +
     ', Self-review: ' +
@@ -697,12 +569,6 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   return (
     <Root className="team-reviews">
-      <Tooltip title="Back">
-        <Button onClick={onBack} aria-label="Back">
-          <ArrowBack /> Back
-        </Button>
-      </Tooltip>
-
       <div className={classes.headerContainer}>
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
 
@@ -741,25 +607,6 @@ const TeamReviews = ({ onBack, periodId }) => {
             </Tooltip>
           </div>
         )}
-        {!selectedMember && (
-          <FormControlLabel
-            control={
-              <Switch checked={includeAll} onChange={toggleIncludeAll} />
-            }
-            label="Show All"
-          />
-        )}
-        {selectedMember && (
-          <Button
-            onClick={handleOpenNewRequest}
-            className={classes.actionButtons}
-            endIcon={<AddCircle />}
-            variant="contained"
-            color="primary"
-          >
-            Request Review
-          </Button>
-        )}
       </div>
       {period && (
         <div className="datePickerFlexWrapper">
@@ -784,61 +631,50 @@ const TeamReviews = ({ onBack, periodId }) => {
           />
         </div>
       )}
-      <div className="chip-row">
-        <Label>Reviewers:</Label>
-        {reviewers.map(reviewer => (
-          <Chip
-            key={reviewer}
-            label={reviewer}
-            variant="outlined"
-            onDelete={() => handleReviewerDelete(reviewer)}
-          />
-        ))}
-        <IconButton
-          aria-label="Add Reviewer"
-          onClick={() => addReviewer('Mark')}
-        >
-          <AddCircle />
-        </IconButton>
-      </div>
       <MemberSelector
         className="team-skill-member-selector"
         exportable
         onChange={updateTeamMembers}
         selected={teamMembers}
       />
-      {!selectedMember && loadingReviews.current && (
-        <>
-          <ListItem key="skeleton-period">
-            <ListItemAvatar>
-              <Skeleton
-                animation="wave"
-                variant="circular"
-                width={40}
-                height={40}
-              />
-            </ListItemAvatar>
+
+      <List dense role="list" sx={{ height: '50%', overflowY: 'scroll' }}>
+        {teamMembers.map(member => (
+          <ListItem
+            key={member.id}
+            role="listitem"
+            disablePadding
+            onClick={() => {}}
+          >
             <ListItemText
-              primary={<Skeleton variant="text" sx={{ fontSize: '1rem' }} />}
-              secondary={<Skeleton variant="text" sx={{ fontSize: '1rem' }} />}
+              primary={<Typography fontWeight="bold">{member.name}</Typography>}
+              secondary={
+                <Typography color="textSecondary" component="h6">
+                  {member.title}
+                </Typography>
+              }
             />
+            <div className="chip-row">
+              <Typography>Reviewers:</Typography>
+              {getReviewers(member.id).map(reviewer => (
+                <Chip
+                  key={reviewer.id}
+                  label={reviewer.name}
+                  variant="outlined"
+                  onDelete={() => handleReviewerDelete(reviewer)}
+                />
+              ))}
+              <IconButton
+                aria-label="Add Reviewer"
+                onClick={() => addReviewer('Mark')}
+              >
+                <AddCircle />
+              </IconButton>
+            </div>
           </ListItem>
-        </>
-      )}
-      {!!selectedMember && reviews && (
-        <TeamMemberReview
-          reloadReviews={reloadReviews}
-          memberProfile={selectedMemberProfile}
-          selfReview={selfReviews[selectedMember]}
-          reviews={reviews[selectedMember]}
-        />
-      )}
-      <SelectUserModal
-        userLabel="Reviewer"
-        open={newRequestOpen}
-        onSelect={handleNewRequest}
-        onClose={handleCloseNewRequest}
-      />
+        ))}
+      </List>
+
       <MemberSelectorDialog
         open={memberSelectorOpen}
         initialFilters={memberFilters}
