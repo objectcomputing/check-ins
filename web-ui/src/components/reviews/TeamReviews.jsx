@@ -439,27 +439,45 @@ const TeamReviews = ({ onBack, periodId }) => {
   );
 
   const handleLaunchDateChange = (val, period) => {
-    const isoDate = val?.$d.toISOString() ?? null;
-    updateReviewPeriodDates({
-      ...period,
-      launchDate: isoDate
-    });
+    const newDate = val?.$d;
+    const isoDate = newDate.toISOString() ?? null;
+    const newPeriod = { ...period, launchDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
+    const closeDate = new Date(period.closeDate);
+    if (selfReviewCloseDate <= newDate) newPeriod.selfReviewCloseDate = null;
+    if (closeDate <= newDate) newPeriod.closeDate = null;
+
+    updateReviewPeriodDates(newPeriod);
   };
 
   const handleSelfReviewDateChange = (val, period) => {
-    const isoDate = val?.$d.toISOString() ?? null;
-    updateReviewPeriodDates({
-      ...period,
-      selfReviewCloseDate: isoDate
-    });
+    const newDate = val?.$d;
+    const isoDate = newDate.toISOString() ?? null;
+    const newPeriod = { ...period, selfReviewCloseDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const launchDate = new Date(period.launchDate);
+    const closeDate = new Date(period.closeDate);
+    if (launchDate >= newDate) newPeriod.launchDate = null;
+    if (closeDate <= newDate) newPeriod.closeDate = null;
+
+    updateReviewPeriodDates(newPeriod);
   };
 
   const handleCloseDateChange = (val, period) => {
-    const isoDate = val?.$d.toISOString() ?? null;
-    updateReviewPeriodDates({
-      ...period,
-      closeDate: isoDate
-    });
+    const newDate = val?.$d;
+    const isoDate = newDate.toISOString() ?? null;
+    const newPeriod = { ...period, closeDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const launchDate = new Date(period.launchDate);
+    const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
+    if (launchDate >= newDate) newPeriod.launchDate = null;
+    if (selfReviewCloseDate >= newDate) newPeriod.selfReviewCloseDate = null;
+
+    updateReviewPeriodDates(newPeriod);
   };
 
   const handleQueryChange = useCallback(
