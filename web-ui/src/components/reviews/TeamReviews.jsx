@@ -665,10 +665,6 @@ const TeamReviews = ({ periodId }) => {
     ', Self-review: ' +
     getSelfReviewStatus(teamMember?.id);
 
-  const download = () => {
-    // downloadMemberCsv();
-  };
-
   return (
     <Root>
       <div className={classes.headerContainer}>
@@ -676,11 +672,6 @@ const TeamReviews = ({ periodId }) => {
 
         {period && isAdmin && (
           <div>
-            <Tooltip title="Download">
-              <IconButton onClick={download} edge="end" aria-label="Download">
-                <Download />
-              </IconButton>
-            </Tooltip>
             <Tooltip
               title={
                 period.reviewStatus === ReviewStatus.OPEN
@@ -759,6 +750,7 @@ const TeamReviews = ({ periodId }) => {
       )}
       <MemberSelector
         className="team-skill-member-selector"
+        exportable
         onChange={updateTeamMembers}
         selected={teamMembers}
       />

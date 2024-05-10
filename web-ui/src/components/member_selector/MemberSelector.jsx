@@ -12,15 +12,12 @@ import {
   Tooltip,
   Typography
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import { Add, FileDownload } from '@mui/icons-material';
 import { getAvatarURL } from '../../api/api';
 
 import MemberSelectorDialog, {
   FilterType
 } from './member_selector_dialog/MemberSelectorDialog';
-import DownloadIcon from '@mui/icons-material/FileDownload';
 import { reportSelectedMembersCsv } from '../../api/member.js';
 import { AppContext } from '../../context/AppContext.jsx';
 import { selectCsrfToken } from '../../context/selectors.js';
@@ -105,9 +102,7 @@ const MemberSelector = ({
   };
 
   const downloadMemberCsv = useCallback(() => {
-    if (!exportable) {
-      return;
-    }
+    if (!exportable) return;
 
     const memberIds = selected.map(member => member.id);
     reportSelectedMembersCsv(memberIds, csrf).then(res => {
@@ -168,9 +163,20 @@ const MemberSelector = ({
                   onClick={() => setDialogOpen(true)}
                   disabled={disabled}
                 >
-                  <AddIcon />
+                  <Add />
                 </IconButton>
               </Tooltip>
+              {exportable && (
+                <Tooltip title="Download">
+                  <IconButton
+                    onClick={downloadMemberCsv}
+                    edge="end"
+                    aria-label="Download"
+                  >
+                    <FileDownload />
+                  </IconButton>
+                </Tooltip>
+              )}
             </>
           }
         />
