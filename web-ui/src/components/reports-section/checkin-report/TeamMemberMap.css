@@ -16,6 +16,10 @@
       width: 100%;
       margin: 0 0.75rem;
     }
+
+    .team-member-map-summmary-latest-activity {
+      color: var(--muted);
+    }
   }
 }
 
