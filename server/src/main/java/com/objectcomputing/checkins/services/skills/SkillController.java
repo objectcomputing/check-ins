@@ -7,37 +7,30 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/skills")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skill")
 public class SkillController {
 
-
     private final SkillServices skillServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public SkillController(SkillServices skillServices, EventLoopGroup eventLoopGroup, @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public SkillController(SkillServices skillServices) {
         this.skillServices = skillServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -49,14 +42,11 @@ public class SkillController {
 
     @Post()
     public Mono<HttpResponse<Skill>> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<?> request) {
-
         return Mono.fromCallable(() -> skillServices.save(new Skill(skill.getName(), skill.isPending(),
                         skill.getDescription(), skill.isExtraneous())))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(createdSkill -> (HttpResponse<Skill>) HttpResponse.created(createdSkill)
+                .map(createdSkill -> HttpResponse.created(createdSkill)
                         .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId())))))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                                URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId())))));
 
     }
 
@@ -69,17 +59,13 @@ public class SkillController {
 
     @Get("/{id}")
     public Mono<HttpResponse<Skill>> getById(@NotNull UUID id) {
-
         return Mono.fromCallable(() -> {
             Skill result = skillServices.readSkill(id);
             if (result == null) {
                 throw new NotFoundException("No skill for UUID");
             }
             return result;
-        })
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(skills -> (HttpResponse<Skill>) HttpResponse.ok(skills))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        }).map(HttpResponse::ok);
     }
 
     /**
@@ -91,13 +77,9 @@ public class SkillController {
      */
 
     @Get("/{?name,pending}")
-    public Mono<HttpResponse<Set<Skill>>> findByValue(@Nullable String name,
-                                                        @Nullable Boolean pending) {
-
+    public Mono<HttpResponse<Set<Skill>>> findByValue(@Nullable String name, @Nullable Boolean pending) {
         return Mono.fromCallable(() -> skillServices.findByValue(name, pending))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(skills -> (HttpResponse<Set<Skill>>) HttpResponse.ok(skills))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(HttpResponse::ok);
     }
 
     /**
@@ -108,13 +90,9 @@ public class SkillController {
      */
     @Put()
     public Mono<HttpResponse<Skill>> update(@Body @Valid Skill skill, HttpRequest<?> request) {
-
         return Mono.fromCallable(() -> skillServices.update(skill))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedSkill -> (HttpResponse<Skill>) HttpResponse
-                        .ok(updatedSkill)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSkill.getId())))))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(updatedSkill -> HttpResponse.ok(updatedSkill)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSkill.getId())))));
     }
 
     /**
@@ -123,10 +101,9 @@ public class SkillController {
      * @param id, id of {@link Skill} to delete
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteSkill(@NotNull UUID id) {
-        skillServices.delete(id); // todo matt
-        return HttpResponse
-                .ok();
+    public Mono<HttpResponse<?>> deleteSkill(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> skillServices.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 
 }

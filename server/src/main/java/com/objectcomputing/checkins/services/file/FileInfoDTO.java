@@ -3,57 +3,30 @@ package com.objectcomputing.checkins.services.file;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
+@Getter
+@Setter
 @Introspected
 public class FileInfoDTO {
 
     @NotNull
-    @Schema(description = "id of file", required = true)
+    @Schema(description = "id of file")
     private String fileId;
 
     @NotNull
-    @Schema(description = "CheckIn id associated with the file", required = true)
+    @Schema(description = "CheckIn id associated with the file")
     private UUID checkInId;
 
     @NotNull
-    @Schema(description = "name of the file", required = true)
+    @Schema(description = "name of the file")
     private String name;
 
     @NotNull
-    @Schema(description = "size of the file", required = true)
+    @Schema(description = "size of the file")
     private Long size;
 
-    public String getFileId() {
-        return fileId;
-    }
-
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
-    }
-
-    public UUID getCheckInId() {
-        return checkInId;
-    }
-
-    public void setCheckInId(UUID checkInId) {
-        this.checkInId = checkInId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getSize() {
-        return size;
-    }
-
-    public void setSize(Long size) {
-        this.size = size;
-    }
 }

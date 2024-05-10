@@ -6,21 +6,24 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 
 @Controller("/services/github-issue")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "github")
 public class GithubController {
 
-    private GithubClient githubClient;
+    private final GithubClient githubClient;
 
     public GithubController(GithubClient githubClient) {
         this.githubClient = githubClient;
@@ -33,8 +36,8 @@ public class GithubController {
      * @return {@link HttpResponse < IssueResponseDTO >}
      */
     @Post
-    Publisher<IssueResponseDTO> sendIssue(@Body @Valid @NotNull IssueCreateDTO request) {
-        return githubClient.sendIssue(request);
+    Mono<IssueResponseDTO> sendIssue(@Body @Valid @NotNull IssueCreateDTO request) {
+        return Mono.from(githubClient.sendIssue(request));
     }
 
 }

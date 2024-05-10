@@ -1,8 +1,9 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import io.micronaut.core.annotation.Nullable;
+
 import java.util.List;
 import java.util.UUID;
-import io.micronaut.core.annotation.Nullable;
 
 public interface FeedbackTemplateServices {
 
@@ -10,7 +11,7 @@ public interface FeedbackTemplateServices {
 
     FeedbackTemplate update(FeedbackTemplate feedbackTemplate);
 
-    Boolean delete(UUID id);
+    void delete(UUID id);
 
     FeedbackTemplate getById(UUID id);
 

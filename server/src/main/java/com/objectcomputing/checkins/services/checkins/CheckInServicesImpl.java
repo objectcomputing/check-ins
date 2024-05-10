@@ -47,7 +47,7 @@ public class CheckInServicesImpl implements CheckInServices {
         List<Permission> userPermissions = rolePermissionServices.findUserPermissions(memberId);
         if (!userPermissions.isEmpty()) {
             hasPermission = userPermissions.stream().map(Permission::name).anyMatch(str -> str.equals(permission.name()));
-            LOG.debug("Member has elevated access permisson: {}", hasPermission);
+            LOG.debug("Member has elevated access permission: {}", hasPermission);
         }
         return hasPermission;
     }

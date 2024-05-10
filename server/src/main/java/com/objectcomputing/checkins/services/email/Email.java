@@ -10,11 +10,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "emails")
 public class Email {
@@ -23,7 +27,7 @@ public class Email {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the email", required = true)
+    @Schema(description = "id of the email")
     private UUID id;
 
     @NotNull
@@ -33,7 +37,7 @@ public class Email {
             write = "pgp_sym_encrypt(?, '${aes.key}') "
     )
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "subject of the email", required = true)
+    @Schema(description = "subject of the email")
     private String subject;
 
     @NotNull
@@ -43,31 +47,31 @@ public class Email {
             write = "pgp_sym_encrypt(?, '${aes.key}') "
     )
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the contents of the email", required = true)
+    @Schema(description = "the contents of the email")
     private String contents;
 
     @NotNull
     @Column(name = "sentby")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the user who sent the email", required = true)
+    @Schema(description = "the user who sent the email")
     private UUID sentBy;
 
     @NotNull
     @Column(name = "recipient")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the user who received the email", required = true)
+    @Schema(description = "the user who received the email")
     private UUID recipient;
 
     @NotNull
     @Column(name = "senddate")
     @TypeDef(type = DataType.TIMESTAMP)
-    @Schema(description = "the time the email was sent", required = true)
+    @Schema(description = "the time the email was sent")
     private LocalDateTime sendDate;
 
     @NotNull
     @Column(name = "transmissiondate")
     @TypeDef(type = DataType.TIMESTAMP)
-    @Schema(description = "the time the email was transmitted", required = true)
+    @Schema(description = "the time the email was transmitted")
     private LocalDateTime transmissionDate;
 
     public Email(String subject,
@@ -97,62 +101,6 @@ public class Email {
     }
 
     public Email() {}
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public UUID getSentBy() {
-        return sentBy;
-    }
-
-    public void setSentBy(UUID sentBy) {
-        this.sentBy = sentBy;
-    }
-
-    public UUID getRecipient() {
-        return recipient;
-    }
-
-    public void setRecipient(UUID recipient) {
-        this.recipient = recipient;
-    }
-
-    public LocalDateTime getSendDate() {
-        return sendDate;
-    }
-
-    public void setSendDate(LocalDateTime sendDate) {
-        this.sendDate = sendDate;
-    }
-
-    public LocalDateTime getTransmissionDate() {
-        return transmissionDate;
-    }
-
-    public void setTransmissionDate(LocalDateTime transmissionDate) {
-        this.transmissionDate = transmissionDate;
-    }
 
     @Override
     public String toString() {

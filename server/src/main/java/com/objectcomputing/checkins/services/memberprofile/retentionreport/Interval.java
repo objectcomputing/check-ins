@@ -2,9 +2,13 @@ package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
 import io.micronaut.core.annotation.Introspected;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+@Getter
+@Setter
 @Introspected
 public class Interval {
 
@@ -18,19 +22,4 @@ public class Interval {
         this.value = value;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public Float getValue() {
-        return value;
-    }
-
-    public void setValue(Float value) {
-        this.value = value;
-    }
 }

@@ -3,9 +3,13 @@ package com.objectcomputing.checkins.services.guild.member;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
+@Getter
+@Setter
 @Introspected
 public class GuildMemberUpdateDTO {
 
@@ -29,37 +33,5 @@ public class GuildMemberUpdateDTO {
         this.guildId = guildId;
         this.memberId = memberId;
         this.lead = lead;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Boolean getLead() {
-        return lead;
-    }
-
-    public void setLead(Boolean lead) {
-        this.lead = lead;
-    }
-
-    public UUID getGuildId() {
-        return guildId;
-    }
-
-    public void setGuildId(UUID guildId) {
-        this.guildId = guildId;
-    }
-
-    public UUID getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(UUID memberId) {
-        this.memberId = memberId;
     }
 }

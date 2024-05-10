@@ -29,7 +29,7 @@ class GuildMemberTest {
         GuildMember guildMember = new GuildMember(guildId, memberId, lead);
         assertEquals(guildId, guildMember.getGuildId());
         assertEquals(memberId, guildMember.getMemberId());
-        assertEquals(lead, guildMember.isLead());
+        assertEquals(lead, guildMember.getLead());
     }
 
     @Test
@@ -42,7 +42,7 @@ class GuildMemberTest {
         assertEquals(id, guildMember.getId());
         assertEquals(guildId, guildMember.getGuildId());
         assertEquals(memberId, guildMember.getMemberId());
-        assertEquals(guildMember.isLead(), lead);
+        assertEquals(guildMember.getLead(), lead);
 
         Set<ConstraintViolation<GuildMember>> violations = validator.validate(guildMember);
         assertTrue(violations.isEmpty());

@@ -24,12 +24,12 @@ public class Skill {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "The id of the skill", required = true)
+    @Schema(description = "The id of the skill")
     private UUID id;
 
     @NotBlank
     @Column(name = "name", unique = true)
-    @Schema(description = "The name of the skill", required = true)
+    @Schema(description = "The name of the skill")
     private String name;
 
     @NotNull
@@ -43,7 +43,7 @@ public class Skill {
 
     @NotNull
     @Column(name = "extraneous")
-    @Schema(description = "The skill is extraneous (or not)", required = true)
+    @Schema(description = "The skill is extraneous (or not)")
     private Boolean extraneous = false;
 
     public Skill() {

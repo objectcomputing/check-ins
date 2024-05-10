@@ -5,32 +5,21 @@ import com.objectcomputing.checkins.services.memberprofile.birthday.BirthDayResp
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Setter
+@Getter
 @Introspected
 public class TodayResponseDTO {
     @NotNull
-    @Schema(description = "Today's birthdays", required = true)
+    @Schema(description = "Today's birthdays")
     private List<BirthDayResponseDTO> birthdays;
 
     @NotNull
-    @Schema(description = "Today's anniversaries", required = true)
+    @Schema(description = "Today's anniversaries")
     private List<AnniversaryReportResponseDTO> anniversaries;
 
-    public List<BirthDayResponseDTO> getBirthdays() {
-        return birthdays;
-    }
-
-    public void setBirthdays(List<BirthDayResponseDTO> birthdays) {
-        this.birthdays = birthdays;
-    }
-
-    public List<AnniversaryReportResponseDTO> getAnniversaries() {
-        return anniversaries;
-    }
-
-    public void setAnniversaries(List<AnniversaryReportResponseDTO> anniversaries) {
-        this.anniversaries = anniversaries;
-    }
 }

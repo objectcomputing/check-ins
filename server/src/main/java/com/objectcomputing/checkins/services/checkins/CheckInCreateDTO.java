@@ -3,19 +3,23 @@ package com.objectcomputing.checkins.services.checkins;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Introspected
 public class CheckInCreateDTO {
     
     @NotNull
-    @Schema(description = "id of team member", required = true)
+    @Schema(description = "id of team member")
     private UUID teamMemberId;
 
     @NotNull
-    @Schema(description = "id of pdl", required = true)
+    @Schema(description = "id of pdl")
     private UUID pdlId;
 
     @Schema(description = "date of checkin")
@@ -23,37 +27,5 @@ public class CheckInCreateDTO {
 
     @NotNull
     @Schema(description = "whether checkin is completed or not")
-    private Boolean completed;
-
-    public UUID getTeamMemberId() {
-        return this.teamMemberId;
-    }
-
-    public void setTeamMemberId(UUID teamMemberId) {
-        this.teamMemberId = teamMemberId;
-    }
-
-    public UUID getPdlId() {
-        return this.pdlId;
-    }
-
-    public void setPdlId(UUID pdlId) {
-        this.pdlId = pdlId;
-    }
-
-    public LocalDateTime getCheckInDate() {
-        return this.checkInDate;
-    }
-
-    public void setCheckInDate(LocalDateTime checkInDate) {
-        this.checkInDate = checkInDate;
-    }
-
-    public boolean isCompleted() {
-        return completed != null && completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    };
+    private boolean completed;
 }

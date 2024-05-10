@@ -7,38 +7,30 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/teams")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "teams")
 public class TeamController {
 
     private final TeamServices teamService;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public TeamController(TeamServices teamService,
-                          EventLoopGroup eventLoopGroup,
-                          @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public TeamController(TeamServices teamService) {
         this.teamService = teamService;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -49,13 +41,9 @@ public class TeamController {
      */
     @Post()
     public Mono<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<?> request) {
-
         return Mono.fromCallable(() -> teamService.save(team))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(createdTeam -> (HttpResponse<TeamResponseDTO>) HttpResponse
-                        .created(createdTeam)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdTeam.getId())))))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(createdTeam -> HttpResponse.created(createdTeam)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdTeam.getId())))));
     }
 
     /**
@@ -68,9 +56,7 @@ public class TeamController {
     @Get("/{id}")
     public Mono<HttpResponse<TeamResponseDTO>> readTeam(@NotNull UUID id) {
         return Mono.fromCallable(() -> teamService.read(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(team -> (HttpResponse<TeamResponseDTO>) HttpResponse.ok(team))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(HttpResponse::ok);
     }
 
     /**
@@ -84,9 +70,7 @@ public class TeamController {
     @Get("/{?name,memberId}")
     public Mono<HttpResponse<Set<TeamResponseDTO>>> findTeams(@Nullable String name, @Nullable UUID memberId) {
         return Mono.fromCallable(() -> teamService.findByFields(name, memberId))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(teams -> (HttpResponse<Set<TeamResponseDTO>>) HttpResponse.ok(teams))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(HttpResponse::ok);
     }
 
     /**
@@ -98,12 +82,8 @@ public class TeamController {
     @Put()
     public Mono<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<?> request) {
         return Mono.fromCallable(() -> teamService.update(team))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updated -> (HttpResponse<TeamResponseDTO>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getId()))))
-                        .body(updated))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(updated -> HttpResponse.ok(updated)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getId())))));
 
     }
 
@@ -116,8 +96,6 @@ public class TeamController {
     @Delete("/{id}")
     public Mono<HttpResponse<Object>> deleteTeam(@NotNull UUID id) {
         return Mono.fromCallable(() -> teamService.delete(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(success -> (HttpResponse<Object>) HttpResponse.ok())
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(success -> HttpResponse.ok());
     }
 }

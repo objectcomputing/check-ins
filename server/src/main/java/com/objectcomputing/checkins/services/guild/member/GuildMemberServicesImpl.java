@@ -75,7 +75,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new BadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
         }
         // only allow admins to create guild leads
-        else if (!currentUserServices.isAdmin() && guildMember.isLead()) {
+        else if (!currentUserServices.isAdmin() && guildMember.getLead()) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
         // only admins and leads can add members to guilds unless a user adds themself
@@ -154,7 +154,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         boolean currentUserIsLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
 
         // don't allow guild lead to be removed if they are the only lead
-        if (guildMember.isLead() && guildLeads.size() == 1){
+        if (guildMember.getLead() && guildLeads.size() == 1){
             throw new BadArgException("At least one guild lead must be present in the guild at all times");
         }
         // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild -> don't delete
@@ -177,7 +177,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     private Set<String> getGuildLeadsEmails(Set<GuildMember> guildLeads, GuildMember guildMember){
         // remove email from set of guildleads so they aren't included in email
-        if (guildMember.isLead()){
+        if (guildMember.getLead()){
             guildLeads.remove(guildMember);
         }
         Set<String> guildLeadEmails = new HashSet<>();

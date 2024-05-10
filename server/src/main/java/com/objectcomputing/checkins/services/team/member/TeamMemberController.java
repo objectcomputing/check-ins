@@ -5,6 +5,8 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,11 +19,13 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/teams/members")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "team-member")
 public class TeamMemberController {
 
+    // TODO convert controller to non-blocking
     private final TeamMemberServices teamMemberServices;
 
     public TeamMemberController(TeamMemberServices teamMemberServices) {

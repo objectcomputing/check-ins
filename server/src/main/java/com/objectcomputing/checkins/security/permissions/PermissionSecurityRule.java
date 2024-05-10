@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
-public class PermissionSecurityRule implements SecurityRule<HttpRequest<?>> { // TODO
+public class PermissionSecurityRule implements SecurityRule<HttpRequest<?>> {
 
     public static final Integer ORDER = SecuredAnnotationRule.ORDER - 100;
 

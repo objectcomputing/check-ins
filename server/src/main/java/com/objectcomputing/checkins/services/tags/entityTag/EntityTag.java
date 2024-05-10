@@ -10,11 +10,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@NoArgsConstructor
 @Table(name ="entity_tags")
 public class EntityTag {
 
@@ -22,25 +24,25 @@ public class EntityTag {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the id of the entity tag", required = true)
+    @Schema(description = "the id of the entity tag")
     private UUID id;
 
     @NotNull
     @TypeDef(type = DataType.STRING)
     @Column(name = "entity_id")
-    @Schema(description = "the id of the entity", required = true)
+    @Schema(description = "the id of the entity")
     private UUID entityId;
 
     @NotNull
     @Column(name = "type")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the type of the entity being tagged", required = true)
+    @Schema(description = "the type of the entity being tagged")
     private EntityType type;
 
     @NotNull
     @TypeDef(type = DataType.STRING)
     @Column(name = "tag_id")
-    @Schema(description = "the id of the tag", required = true)
+    @Schema(description = "the id of the tag")
     private UUID tagId;
 
     public enum EntityType {

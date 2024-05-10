@@ -6,37 +6,30 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @Controller("/services/demographics")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "demographics")
 public class DemographicsController {
 
-    private final EventLoopGroup eventLoopGroup;
-    private final Scheduler scheduler;
     private final DemographicsServices demographicsServices;
 
-    public DemographicsController(@Named(TaskExecutors.IO) ExecutorService executorService, EventLoopGroup eventLoopGroup, DemographicsServices demographicsServices) {
-        this.scheduler = Schedulers.fromExecutorService(executorService);
-        this.eventLoopGroup = eventLoopGroup;
+    public DemographicsController(DemographicsServices demographicsServices) {
         this.demographicsServices = demographicsServices;
     }
 
@@ -48,13 +41,9 @@ public class DemographicsController {
      */
     @Get("/{id}")
     public Mono<HttpResponse<DemographicsResponseDTO>> getById(UUID id) {
-
         return Mono.fromCallable(() -> demographicsServices.getById(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(demographic -> (HttpResponse<DemographicsResponseDTO>) HttpResponse
-                        .ok(fromEntity(demographic))
-                        .headers(headers -> headers.location(location(demographic.getId()))))
-                .subscribeOn(scheduler);
+                .map(demographic -> HttpResponse.ok(fromEntity(demographic))
+                        .headers(headers -> headers.location(location(demographic.getId()))));
     }
 
     /**
@@ -79,15 +68,10 @@ public class DemographicsController {
                                                                             @Nullable Boolean veteran,
                                                                             @Nullable Integer militaryTenure,
                                                                             @Nullable String militaryBranch) {
-        return Mono.fromCallable(() -> demographicsServices.findByValues(memberId, gender, degreeLevel, industryTenure, personOfColor, veteran, militaryTenure, militaryBranch))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(demographics -> {
-                    List<DemographicsResponseDTO> dtoList = demographics.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
-                    return (HttpResponse<List<DemographicsResponseDTO>>) HttpResponse
-                            .ok(dtoList);
-
-                }).subscribeOn(scheduler);
+        return Mono.fromCallable(() -> demographicsServices.findByValues(memberId, gender, degreeLevel, industryTenure,
+                        personOfColor, veteran, militaryTenure, militaryBranch))
+                .map(demographicsEntities -> demographicsEntities.stream().map(this::fromEntity).collect(Collectors.toList()))
+                .map(HttpResponse::ok);
     }
 
     /**
@@ -98,18 +82,14 @@ public class DemographicsController {
      */
     @Post()
     public Mono<HttpResponse<DemographicsResponseDTO>> save(@Body @Valid DemographicsCreateDTO demographics,
-                                                              HttpRequest<?> request) {
+                                                            HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> demographicsServices.saveDemographics(fromDTO(demographics)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedDemographics -> {
                         DemographicsResponseDTO savedDemographicsResponse = fromEntity(savedDemographics);
-                        return (HttpResponse<DemographicsResponseDTO>) HttpResponse
-                                .created(savedDemographicsResponse)
-                                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), savedDemographicsResponse.getId()))))
-                                .body(savedDemographicsResponse);
-                })
-                .subscribeOn(scheduler);
+                        return HttpResponse.created(savedDemographicsResponse)
+                                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), savedDemographicsResponse.getId()))));
+                });
     }
 
     /**
@@ -123,15 +103,11 @@ public class DemographicsController {
                                                                 HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> demographicsServices.updateDemographics(fromDTO(demographics)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedDemographics -> {
                     DemographicsResponseDTO updatedDemographics = fromEntity(savedDemographics);
-                    return (HttpResponse<DemographicsResponseDTO>) HttpResponse
-                            .ok()
-                            .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedDemographics.getId()))))
-                            .body(updatedDemographics);
-                })
-                .subscribeOn(scheduler);
+                    return HttpResponse.ok(updatedDemographics)
+                            .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedDemographics.getId()))));
+                });
     }
 
     /**
@@ -141,11 +117,9 @@ public class DemographicsController {
      * @return
      */
     @Delete("/{id}")
-    public Mono<HttpResponse> delete(@NotNull UUID id) {
-        return Mono.fromCallable(() -> demographicsServices.deleteDemographics(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(successFlag -> (HttpResponse) HttpResponse.ok())
-                .subscribeOn(scheduler);
+    public Mono<HttpResponse<?>> delete(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> demographicsServices.deleteDemographics(id))
+                .thenReturn(HttpResponse.ok());
     }
 
     protected URI location(UUID id) {

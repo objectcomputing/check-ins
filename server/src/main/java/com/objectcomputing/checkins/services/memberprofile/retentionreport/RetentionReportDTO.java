@@ -4,9 +4,13 @@ import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+@Getter
+@Setter
 @Introspected
 public class RetentionReportDTO {
     @NotNull
@@ -21,28 +25,4 @@ public class RetentionReportDTO {
     @Schema(description = "The frequency for the retention report")
     private FrequencyType frequency;
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    @Nullable
-    public FrequencyType getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(@Nullable FrequencyType frequency) {
-        this.frequency = frequency;
-    }
 }

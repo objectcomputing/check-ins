@@ -22,7 +22,7 @@ public class GuildResponseDTO {
     private UUID id;
 
     @NotBlank
-    @Schema(required = true, description = "name of the guild")
+    @Schema(description = "name of the guild")
     private String name;
 
     @Nullable

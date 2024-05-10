@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.oauth2.endpoint.authorization.state.State;
@@ -20,11 +21,14 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 @Named("google")
 @Singleton
@@ -34,14 +38,18 @@ public class CheckinsOpenIdAuthenticationMapper implements OpenIdAuthenticationM
     private final MemberProfileRepository memberProfileRepository;
     private final RoleRepository roleRepository;
     private final TokenConfiguration tokenConfiguration;
+    private final Scheduler ioScheduler;
 
     public CheckinsOpenIdAuthenticationMapper(MemberProfileRepository memberProfileRepository,
                                               RoleRepository roleRepository,
-                                              TokenConfiguration tokenConfiguration) {
+                                              TokenConfiguration tokenConfiguration,
+                                              @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+
         LOG.info("Creating an instance of CheckinsOpenIdUserDetailMapper using the constructor");
         this.memberProfileRepository = memberProfileRepository;
         this.roleRepository = roleRepository;
         this.tokenConfiguration = tokenConfiguration;
+        this.ioScheduler = Schedulers.fromExecutor(ioExecutorService);
     }
 
     public @NonNull AuthenticationResponse createAuthentication(String providerName, OpenIdTokenResponse tokenResponse, OpenIdClaims openIdClaims) {
@@ -54,7 +62,8 @@ public class CheckinsOpenIdAuthenticationMapper implements OpenIdAuthenticationM
 
     @Override
     public @NonNull Publisher<AuthenticationResponse> createAuthenticationResponse(String providerName, OpenIdTokenResponse tokenResponse, OpenIdClaims openIdClaims, @Nullable State state) {
-        return Mono.fromCallable(() -> createAuthentication(providerName, tokenResponse, openIdClaims));
+        return Mono.fromCallable(() -> createAuthentication(providerName, tokenResponse, openIdClaims)).subscribeOn(Schedulers.boundedElastic())
+                .subscribeOn(ioScheduler);
     }
 
     /**

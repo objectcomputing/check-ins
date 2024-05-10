@@ -7,38 +7,29 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 
 @Controller("/services/tags")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @io.swagger.v3.oas.annotations.tags.Tag(name = "tags")
-
 public class TagController {
 
     private final TagServices tagServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public TagController(TagServices tagServices,
-                         EventLoopGroup eventLoopGroup,
-                         @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public TagController(TagServices tagServices) {
         this.tagServices = tagServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
         }
 
     /**
@@ -49,14 +40,10 @@ public class TagController {
      */
     @Post()
     public Mono<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<?> request) {
-
         return Mono.fromCallable(() -> tagServices.save(new Tag(tag.getName())))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(createdTag -> (HttpResponse<Tag>)HttpResponse
-                        .created(createdTag)
+                .map(createdTag -> HttpResponse.created(createdTag)
                         .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createdTag.getId())))))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                                URI.create(String.format("%s/%s", request.getPath(), createdTag.getId())))));
     }
 
     /**
@@ -65,9 +52,9 @@ public class TagController {
      * @param id, id of {@link Tag} to delete
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteTag(UUID id) {
-        tagServices.delete(id); // TODO MATT blocking call
-        return HttpResponse.ok();
+    public Mono<HttpResponse<?>> deleteTag(UUID id) {
+        return Mono.fromRunnable(() -> tagServices.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 
     /**
@@ -78,17 +65,13 @@ public class TagController {
      */
     @Get("/{id}")
     public Mono<HttpResponse<Tag>> readTag(@NotNull UUID id) {
-
         return Mono.fromCallable(() -> {
             Tag result = tagServices.read(id);
             if (result == null) {
                 throw new NotFoundException("No tag for UUID");
                 }
                 return result;
-        })
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(tag -> (HttpResponse<Tag>)HttpResponse.ok(tag))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        }).map(HttpResponse::ok);
     }
 
     /**
@@ -100,9 +83,7 @@ public class TagController {
     @Get("/{?name}")
     public Mono<HttpResponse<Set<Tag>>> findTags(@Nullable String name) {
         return Mono.fromCallable(() -> tagServices.findByFields(name))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(tag -> (HttpResponse<Set<Tag>>)HttpResponse
-                        .ok(tag)).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(HttpResponse::ok);
     }
 
     /**
@@ -113,15 +94,9 @@ public class TagController {
      */
     @Put()
     public Mono<HttpResponse<Tag>> update(@Body @Valid Tag tag, HttpRequest<?> request) {
-
         return Mono.fromCallable(() -> tagServices.update(tag))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(tag1 -> (HttpResponse<Tag>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), tag1.getId()))))
-                        .body(tag1))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(tag1 -> HttpResponse.ok(tag1)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), tag1.getId())))));
     }
-
 
 }

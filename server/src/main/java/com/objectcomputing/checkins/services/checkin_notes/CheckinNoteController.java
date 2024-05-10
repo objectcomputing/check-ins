@@ -7,6 +7,8 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,11 +20,12 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/checkin-notes")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin-notes")
 public class CheckinNoteController {
-    // todo matt whole controller is blocking
+    // todo refactor controller to non-blocking
     private final CheckinNoteServices checkinNoteServices;
 
     public CheckinNoteController(CheckinNoteServices checkinNoteServices) {

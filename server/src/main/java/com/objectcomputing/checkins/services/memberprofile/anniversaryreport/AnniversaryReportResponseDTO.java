@@ -4,18 +4,22 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
+@Getter
+@Setter
 @Introspected
 public class AnniversaryReportResponseDTO {
 
     @NotBlank
-    @Schema(description = "name this entry is associated with", required = true)
+    @Schema(description = "name this entry is associated with")
     private String name;
 
     @NotBlank
-    @Schema(description = "anniversary date this entry is associated with", required = true)
+    @Schema(description = "anniversary date this entry is associated with")
     private String anniversary;
 
     @NotNull
@@ -23,38 +27,7 @@ public class AnniversaryReportResponseDTO {
     private Double yearsOfService;
 
     @NotNull
-    @Schema(description = "id of the member profile this entry is associated with", required = true)
+    @Schema(description = "id of the member profile this entry is associated with")
     private UUID userId;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAnniversary() {
-        return anniversary;
-    }
-
-    public void setAnniversary(String anniversary) {
-        this.anniversary = anniversary;
-    }
-
-    public Double getYearsOfService() {
-        return yearsOfService;
-    }
-
-    public void setYearsOfService(Double yearsOfService) {
-        this.yearsOfService = yearsOfService;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
 }

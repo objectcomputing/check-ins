@@ -3,20 +3,24 @@ package com.objectcomputing.checkins.services.agenda_item;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.annotation.sql.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "agenda_items")
 public class AgendaItem {
@@ -25,19 +29,19 @@ public class AgendaItem {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "UUID of agenda item", required = true)
+    @Schema(description = "UUID of agenda item")
     private UUID id;
 
     @NotNull
     @Column(name = "checkinid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the checkin this entry is associated with", required = true)
+    @Schema(description = "id of the checkin this entry is associated with")
     private UUID checkinid;
 
     @NotNull
     @Column(name = "createdbyid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
+    @Schema(description = "id of the member this entry is associated with")
     private UUID createdbyid;
 
     @Nullable
@@ -69,48 +73,6 @@ public class AgendaItem {
         this.checkinid = checkinid;
         this.createdbyid = createdbyid;
         this.description = description;
-        this.priority = priority;
-    }
-
-    public UUID getId() {
-        return this.id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getCheckinid() {
-        return this.checkinid;
-    }
-
-    public void setCheckinid(UUID checkinid) {
-        this.checkinid = checkinid;
-    }
-
-    public UUID getCreatedbyid() {
-        return this.createdbyid;
-    }
-
-    public void setCreatedbyid(UUID createdbyid) {
-        this.createdbyid = createdbyid;
-    }
-
-    @Nullable
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(@Nullable String description) {
-        this.description = description;
-    }
-
-    @SuppressWarnings("unused")
-    public Double getPriority() {
-        return priority;
-    }
-
-    public void setPriority(Double priority) {
         this.priority = priority;
     }
 

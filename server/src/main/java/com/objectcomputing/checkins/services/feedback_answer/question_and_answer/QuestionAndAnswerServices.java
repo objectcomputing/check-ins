@@ -1,15 +1,19 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
 
+import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
+import io.micronaut.core.annotation.Nullable;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 import java.util.UUID;
 
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
-import io.micronaut.core.annotation.Nullable;
-
 public interface QuestionAndAnswerServices {
 
+    @Setter
+    @Getter
     class Tuple {
         private TemplateQuestion question;
         private FeedbackAnswer answer;
@@ -28,29 +32,6 @@ public interface QuestionAndAnswerServices {
 
         public Tuple() {}
 
-        public TemplateQuestion getQuestion() {
-            return question;
-        }
-
-        public void setQuestion(TemplateQuestion question) {
-            this.question = question;
-        }
-
-        public void setAnswer(FeedbackAnswer answer ) {
-            this.answer = answer;
-        }
-
-        public FeedbackAnswer getAnswer() {
-            return answer;
-        }
-
-        public FeedbackRequest getRequest() {
-            return request;
-        }
-
-        public void setRequest(FeedbackRequest request) {
-            this.request = request;
-        }
     }
 
     List<Tuple> getAllQuestionsAndAnswers(UUID requestId);

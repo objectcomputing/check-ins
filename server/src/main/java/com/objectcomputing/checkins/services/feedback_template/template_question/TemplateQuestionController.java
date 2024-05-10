@@ -5,25 +5,22 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @Controller("/services/feedback/template_questions")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -32,15 +29,9 @@ import java.util.stream.Collectors;
 public class TemplateQuestionController {
 
     private final TemplateQuestionServices templateQuestionServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final Scheduler scheduler;
 
-    public TemplateQuestionController(TemplateQuestionServices templateQuestionServices,
-                                      EventLoopGroup eventLoopGroup,
-                                      @Named(TaskExecutors.IO) ExecutorService executorService) {
+    public TemplateQuestionController(TemplateQuestionServices templateQuestionServices) {
         this.templateQuestionServices = templateQuestionServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.scheduler = Schedulers.fromExecutorService(executorService);
     }
 
     /**
@@ -52,11 +43,8 @@ public class TemplateQuestionController {
     @Post()
     public Mono<HttpResponse<TemplateQuestionResponseDTO>> save(@Body @Valid @NotNull TemplateQuestionCreateDTO requestBody) {
         return Mono.fromCallable(() -> templateQuestionServices.save(fromDTO(requestBody)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedFeedbackQuestion -> (HttpResponse<TemplateQuestionResponseDTO>) HttpResponse
-                        .created(fromEntity(savedFeedbackQuestion))
-                        .headers(headers -> headers.location(URI.create("/template_questions/" + savedFeedbackQuestion.getId()))))
-                .subscribeOn(scheduler);
+                .map(savedFeedbackQuestion -> HttpResponse.created(fromEntity(savedFeedbackQuestion))
+                        .headers(headers -> headers.location(URI.create("/template_questions/" + savedFeedbackQuestion.getId()))));
     }
 
     /**
@@ -68,12 +56,8 @@ public class TemplateQuestionController {
     @Put()
     public Mono<HttpResponse<TemplateQuestionResponseDTO>> update(@Body @Valid @NotNull TemplateQuestionUpdateDTO requestBody) {
         return Mono.fromCallable(() -> templateQuestionServices.update(fromDTO(requestBody)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedFeedbackTemplateQ -> (HttpResponse<TemplateQuestionResponseDTO>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create("/template_questions/" + savedFeedbackTemplateQ.getId())))
-                        .body(fromEntity(savedFeedbackTemplateQ)))
-                .subscribeOn(scheduler);
+                .map(savedFeedbackTemplateQ -> HttpResponse.ok(fromEntity(savedFeedbackTemplateQ))
+                        .headers(headers -> headers.location(URI.create("/template_questions/" + savedFeedbackTemplateQ.getId()))));
     }
 
     /**
@@ -83,10 +67,9 @@ public class TemplateQuestionController {
      * @return {Boolean}
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteTemplateQuestion(@NotNull UUID id) {
-        templateQuestionServices.delete(id); // todo matt blocking
-        return HttpResponse
-                .ok();
+    public Mono<HttpResponse<?>> deleteTemplateQuestion(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> templateQuestionServices.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 
     /**
@@ -98,11 +81,8 @@ public class TemplateQuestionController {
     @Get("/{id}")
     public Mono<HttpResponse<TemplateQuestionResponseDTO>> getById(UUID id) {
         return Mono.fromCallable(() -> templateQuestionServices.getById(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(feedbackQuestion -> (HttpResponse<TemplateQuestionResponseDTO>) HttpResponse
-                        .ok(fromEntity(feedbackQuestion))
-                        .headers(headers -> headers.location(URI.create("/template_questions/" + feedbackQuestion.getId()))))
-                .subscribeOn(scheduler);
+                .map(feedbackQuestion -> HttpResponse.ok(fromEntity(feedbackQuestion))
+                        .headers(headers -> headers.location(URI.create("/template_questions/" + feedbackQuestion.getId()))));
     }
 
     /**
@@ -114,12 +94,8 @@ public class TemplateQuestionController {
     @Get("/{?templateId}")
     public Mono<HttpResponse<List<TemplateQuestionResponseDTO>>> findByValues(@Nullable UUID templateId) {
         return Mono.fromCallable(() -> templateQuestionServices.findByFields(templateId))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(templateQuestions -> {
-                    List<TemplateQuestionResponseDTO> dtoList = templateQuestions.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
-                    return (HttpResponse<List<TemplateQuestionResponseDTO>>) HttpResponse.ok(dtoList);
-                }).subscribeOn(scheduler);
+                .map(entities -> entities.stream().map(this::fromEntity).collect(Collectors.toList()))
+                .map(HttpResponse::ok);
     }
 
     /**

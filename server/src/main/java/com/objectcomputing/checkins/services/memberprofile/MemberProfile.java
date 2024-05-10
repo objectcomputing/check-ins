@@ -11,12 +11,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "member_profile")
 public class MemberProfile {
@@ -25,7 +29,7 @@ public class MemberProfile {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "id of the member profile this entry is associated with", required = true)
+    @Schema(description = "id of the member profile this entry is associated with")
     private UUID id;
 
     @NotBlank
@@ -94,7 +98,7 @@ public class MemberProfile {
             read =  "pgp_sym_decrypt(workEmail::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com")
     private String workEmail;
 
     @Column(name="employeeid")
@@ -202,147 +206,6 @@ public class MemberProfile {
     }
 
     public MemberProfile() {
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public UUID getPdlId() {
-        return pdlId;
-    }
-
-    public void setPdlId(UUID pdlId) {
-        this.pdlId = pdlId;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getWorkEmail() {
-        return workEmail;
-    }
-
-    public void setWorkEmail(String workEmail) {
-        this.workEmail = workEmail;
-    }
-
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getBioText() {
-        return bioText;
-    }
-
-    public void setBioText(String bioText) {
-        this.bioText = bioText;
-    }
-
-    @Nullable
-    public UUID getSupervisorid() {
-        return supervisorid;
-    }
-
-    public void setSupervisorid(@Nullable UUID supervisorid) {
-        this.supervisorid = supervisorid;
-    }
-
-    @Nullable
-    public LocalDate getTerminationDate() {
-        return terminationDate;
-    }
-
-    public void setTerminationDate(LocalDate terminationDate) {
-        this.terminationDate = terminationDate;
-    }
-
-    @Nullable
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(@Nullable LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    @Nullable
-    public Boolean getVoluntary() {
-        return voluntary;
-    }
-
-    public void setVoluntary(@Nullable Boolean voluntary) {
-        this.voluntary = voluntary;
-    }
-
-    @Nullable
-    public Boolean getExcluded() {
-        return excluded;
-    }
-
-    public void setExcluded(@Nullable Boolean excluded) {
-        this.excluded = excluded;
     }
 
     @Transient

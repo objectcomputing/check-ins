@@ -32,12 +32,12 @@ public class ReviewPeriod {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "The id of the review period", required = true)
+    @Schema(description = "The id of the review period")
     private UUID id;
 
     @NotBlank
     @Column(name = "name", unique = true)
-    @Schema(description = "The name of the review period", required = true)
+    @Schema(description = "The name of the review period")
     private String name;
 
     @NotNull

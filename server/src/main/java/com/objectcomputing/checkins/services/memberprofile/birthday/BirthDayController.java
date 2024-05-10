@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.memberprofile.birthday;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
@@ -9,22 +10,17 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
-import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/reports/birthdays")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,15 +29,9 @@ public class BirthDayController {
 
 
     private final BirthDayServices birthDayServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final Scheduler scheduler;
 
-    public BirthDayController(BirthDayServices birthDayServices,
-                              EventLoopGroup eventLoopGroup,
-                              @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public BirthDayController(BirthDayServices birthDayServices) {
         this.birthDayServices = birthDayServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -54,10 +44,7 @@ public class BirthDayController {
     @Get("/{?month,dayOfMonth}")
     @RequiredPermission(Permission.CAN_VIEW_BIRTHDAY_REPORT)
     public Mono<HttpResponse<List<BirthDayResponseDTO>>> findByValue(@Nullable String[] month, @Nullable Integer[] dayOfMonth) {
-
         return Mono.fromCallable(() -> birthDayServices.findByValue(month, dayOfMonth))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(birthdays -> (HttpResponse<List<BirthDayResponseDTO>>) HttpResponse.ok(birthdays))
-                .subscribeOn(scheduler);
+                .map(HttpResponse::ok);
     }
 }

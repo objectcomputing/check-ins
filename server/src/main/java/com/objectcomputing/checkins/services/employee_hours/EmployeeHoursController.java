@@ -9,33 +9,25 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/employee/hours")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name="employee hours")
 public class EmployeeHoursController {
     private final EmployeeHoursServices employeeHoursServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public EmployeeHoursController(EmployeeHoursServices employeeHoursServices,
-                                   EventLoopGroup eventLoopGroup,
-                                   @Named(TaskExecutors.IO)ExecutorService ioExecutorService) {
+    public EmployeeHoursController(EmployeeHoursServices employeeHoursServices) {
         this.employeeHoursServices = employeeHoursServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -46,9 +38,7 @@ public class EmployeeHoursController {
     @Get("/{?employeeId}")
     public Mono<HttpResponse<Set<EmployeeHours>>> findEmployeeHours(@Nullable String employeeId) {
         return Mono.fromCallable(() -> employeeHoursServices.findByFields(employeeId))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(createdEmployeeHours -> (HttpResponse<Set<EmployeeHours>>) HttpResponse.ok(createdEmployeeHours))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(HttpResponse::ok);
     }
 
 
@@ -64,11 +54,7 @@ public class EmployeeHoursController {
                 throw new NotFoundException("No employee hours for employee id");
             }
             return result;
-        })
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(employeeHour -> {
-                    return (HttpResponse<EmployeeHours>) HttpResponse.ok(employeeHour);
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        }).map(HttpResponse::ok);
 
     }
 
@@ -80,9 +66,7 @@ public class EmployeeHoursController {
     @Post(uri="/upload" , consumes = MediaType.MULTIPART_FORM_DATA)
     public Mono<HttpResponse<EmployeeHoursResponseDTO>> upload(CompletedFileUpload file){
         return Mono.fromCallable(() -> employeeHoursServices.save(file))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(fileInfo -> (HttpResponse<EmployeeHoursResponseDTO>) HttpResponse.ok(fileInfo))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(HttpResponse::ok);
     }
 
 }

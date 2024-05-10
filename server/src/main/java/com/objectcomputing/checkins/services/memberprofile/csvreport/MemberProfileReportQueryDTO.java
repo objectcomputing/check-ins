@@ -3,10 +3,14 @@ package com.objectcomputing.checkins.services.memberprofile.csvreport;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Introspected
 public class MemberProfileReportQueryDTO {
 
@@ -16,11 +20,4 @@ public class MemberProfileReportQueryDTO {
 
     public MemberProfileReportQueryDTO() {}
 
-    public List<UUID> getMemberIds() {
-        return memberIds;
-    }
-
-    public void setMemberIds(List<UUID> memberIds) {
-        this.memberIds = memberIds;
-    }
 }

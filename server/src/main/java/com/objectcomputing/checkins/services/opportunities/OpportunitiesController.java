@@ -6,25 +6,23 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 
 @Controller("/services/opportunities")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,15 +31,9 @@ import java.util.concurrent.ExecutorService;
 public class OpportunitiesController {
 
     private final OpportunitiesService opportunitiesResponseServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public OpportunitiesController(OpportunitiesService opportunitiesResponseServices,
-                            EventLoopGroup eventLoopGroup,
-                            @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public OpportunitiesController(OpportunitiesService opportunitiesResponseServices) {
         this.opportunitiesResponseServices = opportunitiesResponseServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -56,10 +48,7 @@ public class OpportunitiesController {
     public Mono<HttpResponse<List<Opportunities>>> findOpportunities(@Nullable String name,
                                                                      @Nullable String description, @Nullable UUID submittedBy) {
         return Mono.fromCallable(() -> opportunitiesResponseServices.findByFields(name, description, submittedBy))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(opportunities -> { List<Opportunities>  opportunity = new ArrayList<>(opportunities);
-                   return (HttpResponse<List<Opportunities>>) HttpResponse.ok(opportunity);})
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(opportunities -> HttpResponse.ok(new ArrayList<>(opportunities)));
     }
 
     /**
@@ -72,11 +61,11 @@ public class OpportunitiesController {
     @Post()
     public Mono<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
                                                      HttpRequest<?> request) {
-        return Mono.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(), opportunitiesResponse.getDescription(), opportunitiesResponse.getUrl(), opportunitiesResponse.getExpiresOn(),opportunitiesResponse.getPending())))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(opportunities -> (HttpResponse<Opportunities>) HttpResponse
-                        .created(opportunities)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), opportunities.getId()))))).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        return Mono.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(),
+                        opportunitiesResponse.getDescription(), opportunitiesResponse.getUrl(),
+                        opportunitiesResponse.getExpiresOn(),opportunitiesResponse.getPending())))
+                .map(opportunities -> HttpResponse.created(opportunities)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), opportunities.getId())))));
     }
 
     /**
@@ -89,12 +78,8 @@ public class OpportunitiesController {
     public Mono<HttpResponse<Opportunities>> update(@Body @Valid @NotNull Opportunities opportunitiesResponse,
                                                HttpRequest<?> request) {
         return Mono.fromCallable(() -> opportunitiesResponseServices.update(opportunitiesResponse))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedOpportunities -> (HttpResponse<Opportunities>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedOpportunities.getId()))))
-                        .body(updatedOpportunities))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(updatedOpportunities -> HttpResponse.ok(updatedOpportunities)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedOpportunities.getId())))));
 
     }
 
@@ -104,9 +89,8 @@ public class OpportunitiesController {
      * @param id, id of {@link Opportunities} to delete
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteOpportunities(@NotNull UUID id) {
-        opportunitiesResponseServices.delete(id); // todo matt blocking
-        return HttpResponse
-                .ok();
+    public Mono<HttpResponse<?>> deleteOpportunities(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> opportunitiesResponseServices.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 }

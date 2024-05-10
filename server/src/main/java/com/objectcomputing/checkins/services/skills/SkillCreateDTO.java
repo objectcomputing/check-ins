@@ -8,18 +8,18 @@ import jakarta.validation.constraints.NotNull;
 @Introspected
 public class SkillCreateDTO {
     @NotBlank
-    @Schema(required = true, description = "name of the skill")
+    @Schema(description = "name of the skill")
     private String name;
 
     @NotNull
-    @Schema(required = true, description = "whether the skill is accepted or not")
+    @Schema(description = "whether the skill is accepted or not")
     private Boolean pending;
 
     @Schema(description = "the description of the skill")
     private String description;
 
     @NotNull
-    @Schema(description = "the skill is extraneous (or not)", required = true)
+    @Schema(description = "the skill is extraneous (or not)")
     private Boolean extraneous = false;
 
     public String getName() {

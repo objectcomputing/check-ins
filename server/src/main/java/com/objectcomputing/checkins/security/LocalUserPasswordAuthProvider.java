@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Singleton
 @Requires(env = {Environments.LOCAL, Environment.TEST})
-public class LocalUserPasswordAuthProvider implements ReactiveAuthenticationProvider<HttpRequest<?>, String, String>  { // TODO matt why can't I use HttpRequestReactiveAuthenticationProvider
+public class LocalUserPasswordAuthProvider implements ReactiveAuthenticationProvider<HttpRequest<?>, String, String>  {
 
     private final CurrentUserServices currentUserServices;
     private final UsersStore usersStore;

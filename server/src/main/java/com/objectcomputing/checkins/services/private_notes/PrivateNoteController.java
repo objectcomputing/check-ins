@@ -9,37 +9,28 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/private-notes")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "private-notes")
 public class PrivateNoteController {
 
     private final PrivateNoteServices privateNoteServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final Scheduler scheduler;
 
-    public PrivateNoteController(PrivateNoteServices privateNoteServices,
-                                 EventLoopGroup eventLoopGroup,
-                                 @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public PrivateNoteController(PrivateNoteServices privateNoteServices) {
         this.privateNoteServices = privateNoteServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -49,17 +40,14 @@ public class PrivateNoteController {
      * @param request
      * @return
      */
-    @Post("/")
+    @Post()
     @RequiredPermission(Permission.CAN_CREATE_PRIVATE_NOTE)
     public Mono<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<?> request) {
         return Mono.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
                 privateNote.getCreatedbyid(), privateNote.getDescription())))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(createPrivateNote -> (HttpResponse<PrivateNote>) HttpResponse
-                        .created(createPrivateNote)
+                .map(createPrivateNote -> HttpResponse.created(createPrivateNote)
                         .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createPrivateNote.getId())))))
-                .subscribeOn(scheduler);
+                                URI.create(String.format("%s/%s", request.getPath(), createPrivateNote.getId())))));
 
     }
 
@@ -70,21 +58,17 @@ public class PrivateNoteController {
      * @param request
      * @return
      */
-    @Put("/")
+    @Put()
     @RequiredPermission(Permission.CAN_UPDATE_PRIVATE_NOTE)
     public Mono<HttpResponse<PrivateNote>> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<?> request) {
         if (privateNote == null) {
             return Mono.just(HttpResponse.ok());
         }
         return Mono.fromCallable(() -> privateNoteServices.update(privateNote))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(updatePrivateNote ->
-                        (HttpResponse<PrivateNote>) HttpResponse
-                                .ok()
+                        HttpResponse.ok(updatePrivateNote)
                                 .headers(headers -> headers.location(
-                                        URI.create(String.format("%s/%s", request.getPath(), updatePrivateNote.getId()))))
-                                .body(updatePrivateNote))
-                .subscribeOn(scheduler);
+                                        URI.create(String.format("%s/%s", request.getPath(), updatePrivateNote.getId())))));
     }
 
     /**
@@ -96,9 +80,9 @@ public class PrivateNoteController {
      */
     @Get("/{?checkinid,createdbyid}")
     @RequiredPermission(Permission.CAN_VIEW_PRIVATE_NOTE)
-    public Set<PrivateNote> findPrivateNote(@Nullable UUID checkinid,
+    public Mono<Set<PrivateNote>> findPrivateNote(@Nullable UUID checkinid,
                                             @Nullable UUID createdbyid) {
-        return privateNoteServices.findByFields(checkinid, createdbyid);
+        return Mono.fromCallable(() -> privateNoteServices.findByFields(checkinid, createdbyid));
     }
 
     /**
@@ -116,10 +100,7 @@ public class PrivateNoteController {
                 throw new NotFoundException("No private note for UUID");
             }
             return result;
-        })
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(privateNote -> (HttpResponse<PrivateNote>)HttpResponse.ok(privateNote))
-                .subscribeOn(scheduler);
+        }).map(HttpResponse::ok);
 
     }
 

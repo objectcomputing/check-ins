@@ -13,6 +13,8 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.authentication.AuthenticationResponse;
@@ -33,6 +35,7 @@ import java.util.Map;
 
 @Requires(env = Environments.LOCAL)
 @Controller("/oauth/login/google")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_ANONYMOUS)
 public class LocalLoginController {
 
@@ -59,8 +62,8 @@ public class LocalLoginController {
 
     @View("login")
     @Get
-    public Map<String, String> login() {
-        return Collections.emptyMap();
+    public Mono<Map<String, String>> login() {
+        return Mono.just(Collections.emptyMap());
     }
 
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})

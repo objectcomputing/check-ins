@@ -12,11 +12,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "feedback_answers")
 public class FeedbackAnswer {
@@ -25,7 +29,7 @@ public class FeedbackAnswer {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "unique id of the feedback answer", required = true)
+    @Schema(description = "unique id of the feedback answer")
     private UUID id;
 
     @Column(name = "answer")
@@ -35,19 +39,19 @@ public class FeedbackAnswer {
     )
     @Nullable
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the content of the answer", required = true)
+    @Schema(description = "the content of the answer")
     private String answer;
 
     @Column(name = "question_id")
     @NotNull
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the feedback question the answer is linked to", required = true)
+    @Schema(description = "id of the feedback question the answer is linked to")
     private UUID questionId;
 
     @Column(name = "request_id")
     @NotNull
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the request this question is linked to ", required = true)
+    @Schema(description = "id of the request this question is linked to ")
     private UUID requestId;
 
     @Column(name = "sentiment")
@@ -71,48 +75,6 @@ public class FeedbackAnswer {
     }
 
     public FeedbackAnswer() {}
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    @Nullable
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(@Nullable String answer) {
-        this.answer = answer;
-    }
-
-    public UUID getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(UUID questionId) {
-        this.questionId = questionId;
-    }
-
-    public UUID getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(UUID requestId) {
-        this.requestId = requestId;
-    }
-
-    @Nullable
-    public Double getSentiment() {
-        return sentiment;
-    }
-
-    public void setSentiment(@Nullable Double sentiment) {
-        this.sentiment = sentiment;
-    }
 
     @Override
     public boolean equals(Object o) {

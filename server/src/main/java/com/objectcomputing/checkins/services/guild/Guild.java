@@ -29,7 +29,7 @@ public class Guild {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the id of the guild", required = true)
+    @Schema(description = "the id of the guild")
     private UUID id;
 
     @NotBlank

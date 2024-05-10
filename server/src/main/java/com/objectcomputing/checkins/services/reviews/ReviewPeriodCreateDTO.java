@@ -21,11 +21,11 @@ import java.util.UUID;
 @Introspected
 public class ReviewPeriodCreateDTO {
     @NotBlank
-    @Schema(required = true, description = "name of the review period")
+    @Schema(description = "name of the review period")
     private String name;
 
     @NotNull
-    @Schema(implementation = ReviewStatus.class, required = true, description = "the status of the review")
+    @Schema(implementation = ReviewStatus.class, description = "the status of the review")
     private ReviewStatus reviewStatus;
 
     @Nullable

@@ -17,15 +17,15 @@ import java.util.UUID;
 public class ReviewAssignmentDTO {
 
     @NotNull
-    @Schema(required = true, description = "The ID of the employee being reviewed")
+    @Schema(description = "The ID of the employee being reviewed")
     private UUID revieweeId;
 
     @NotNull
-    @Schema(required = true, description = "The ID of the employee conducting the review")
+    @Schema(description = "The ID of the employee conducting the review")
     private UUID reviewerId;
 
     @NotNull
-    @Schema(required = true, description = "The ID of the review period that the assignment is related to")
+    @Schema(description = "The ID of the review period that the assignment is related to")
     private UUID reviewPeriodId;
 
     @Nullable

@@ -12,7 +12,7 @@ import java.util.UUID;
 @Introspected
 public class SkillsReportRequestDTO {
     @NotNull
-    @Schema(required = true, description = "A list of requested skills")
+    @Schema(description = "A list of requested skills")
     private List<SkillLevelDTO> skills;
 
     @Nullable

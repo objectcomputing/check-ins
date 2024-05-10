@@ -10,12 +10,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name="guild_member_history")
 public class GuildMemberHistory {
 
@@ -23,29 +29,29 @@ public class GuildMemberHistory {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this member to Guild member history entry", required = true)
+    @Schema(description = "id of this member to Guild member history entry")
     private UUID id;
 
     @NotNull
     @Column(name = "guildid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the guild this entry is associated with", required = true)
+    @Schema(description = "id of the guild this entry is associated with")
     private UUID guildId;
 
     @NotNull
     @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the guild member this entry is associated with", required = true)
+    @Schema(description = "id of the guild member this entry is associated with")
     private UUID memberId;
 
     @Nullable
     @Column(name = "change")
-    @Schema(description = "The type of change that is occurring to the guild member.", required = true)
+    @Schema(description = "The type of change that is occurring to the guild member.")
     private String change;
 
     @Nullable
     @Column(name = "date")
-    @Schema(description = "The date of the latest change to the guild member.", required = true)
+    @Schema(description = "The date of the latest change to the guild member.")
     private LocalDateTime date;
 
     public GuildMemberHistory(@NotNull UUID guildId, @NotNull UUID memberId, @Nullable String change, @Nullable LocalDateTime date) {
@@ -60,48 +66,6 @@ public class GuildMemberHistory {
         this.guildId = guildId;
         this.memberId = memberId;
         this.change = change;
-        this.date = date;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getGuildId() {
-        return guildId;
-    }
-
-    public void setGuildId(UUID guildId) {
-        this.guildId = guildId;
-    }
-
-    public UUID getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(UUID memberId) {
-        this.memberId = memberId;
-    }
-
-    @Nullable
-    public String getChange() {
-        return change;
-    }
-
-    public void setChange(@Nullable String change) {
-        this.change = change;
-    }
-
-    @Nullable
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(@Nullable LocalDateTime date) {
         this.date = date;
     }
 

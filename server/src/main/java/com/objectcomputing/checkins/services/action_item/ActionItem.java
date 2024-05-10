@@ -25,19 +25,19 @@ public class ActionItem {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this action item", required = true)
+    @Schema(description = "id of this action item")
     private UUID id;
 
     @NotNull
     @Column(name = "checkinid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the checkin this entry is associated with", required = true)
+    @Schema(description = "id of the checkin this entry is associated with")
     private UUID checkinid;
 
     @NotNull
     @Column(name = "createdbyid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
+    @Schema(description = "id of the member this entry is associated with")
     private UUID createdbyid;
 
     @Nullable

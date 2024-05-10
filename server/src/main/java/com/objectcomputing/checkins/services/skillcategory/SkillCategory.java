@@ -10,10 +10,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.UUID;
 
+@Setter
+@Getter
 @Entity
 @Introspected
 @Table(name = "skillcategories")
@@ -23,12 +27,12 @@ public class SkillCategory {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "The id of the skillcategory", required = true)
+    @Schema(description = "The id of the skillcategory")
     private UUID id;
 
     @NotBlank
     @Column(name = "name", unique = true)
-    @Schema(description = "The name of the skillcategory", required = true)
+    @Schema(description = "The name of the skillcategory")
     private String name;
 
     @Column(name = "description")
@@ -47,31 +51,6 @@ public class SkillCategory {
         this.name = name;
         this.description = description;
     }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
 
     @Override
     public boolean equals(Object o) {

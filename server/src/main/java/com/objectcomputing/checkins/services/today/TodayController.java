@@ -7,35 +7,24 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
-
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/today")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Today")
 public class TodayController {
 
-
     private final TodayServices todayServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final Scheduler scheduler;
 
-    public TodayController(TodayServices todayServices,
-                           EventLoopGroup eventLoopGroup,
-                           @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public TodayController(TodayServices todayServices) {
         this.todayServices = todayServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -43,12 +32,9 @@ public class TodayController {
      *
      * @return {@link TodayResponseDTO today's events}
      */
-
     @Get()
     public Mono<HttpResponse<TodayResponseDTO>> getTodaysEvents() {
         return Mono.fromCallable(todayServices::getTodaysEvents)
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup)).subscribeOn(scheduler)
-                .map(todaysEvents -> (HttpResponse<TodayResponseDTO>) HttpResponse.ok(todaysEvents))
-                .subscribeOn(scheduler);
+                .map(HttpResponse::ok);
     }
 }

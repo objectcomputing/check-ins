@@ -87,7 +87,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         list = feedbackAnswerServices.findByValues(questionId, requestId);
 
         FeedbackAnswer returnedAnswer;
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             FeedbackAnswer newAnswerObject = new FeedbackAnswer();
             newAnswerObject.setAnswer(null);
             newAnswerObject.setQuestionId(questionId);

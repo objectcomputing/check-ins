@@ -12,12 +12,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Introspected
 @Table(name = "pulse_response")
 public class PulseResponse {
@@ -26,25 +32,25 @@ public class PulseResponse {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "the id of the pulse_response", required = true)
+    @Schema(description = "the id of the pulse_response")
     private UUID id;
 
     @Column(name="submissiondate")
     @NotNull
-    @Schema(description = "date for submissionDate", required = true)
+    @Schema(description = "date for submissionDate")
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate submissionDate;
 
     @Column(name="updateddate")
     @NotNull
-    @Schema(description = "date for updatedDate", required = true)
+    @Schema(description = "date for updatedDate")
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate updatedDate;
 
     @Column(name="teammemberid")
     @TypeDef(type=DataType.STRING)
     @NotNull
-    @Schema(description = "id of the teamMember this entry is associated with", required = true)
+    @Schema(description = "id of the teamMember this entry is associated with")
     private UUID teamMemberId;
 
     @Column(name="internalfeelings")
@@ -53,7 +59,7 @@ public class PulseResponse {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @NotNull
-    @Schema(description = "description of internalfeelings", required = true)
+    @Schema(description = "description of internalfeelings")
     private String internalFeelings;
 
     @Column(name="externalfeelings")
@@ -62,7 +68,7 @@ public class PulseResponse {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @NotNull
-    @Schema(description = "description of externalfeelings", required = true)
+    @Schema(description = "description of externalfeelings")
     private String externalFeelings;
 
     public PulseResponse(UUID id,LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
@@ -76,54 +82,6 @@ public class PulseResponse {
 
     public PulseResponse(LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this(null,submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
-    }
-
-    public UUID getId() {
-        return this.id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public LocalDate getSubmissionDate() {
-        return submissionDate;
-    }
-
-    public void setSubmissionDate(LocalDate submissionDate) {
-        this.submissionDate = submissionDate;
-    }
-
-    public LocalDate getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(LocalDate updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
-    public UUID getTeamMemberId() {
-        return this.teamMemberId;
-    }
-
-    public void setTeamMemberId(UUID teamMemberId) {
-        this.teamMemberId = teamMemberId;
-    }
-
-    public String getInternalFeelings() {
-        return internalFeelings;
-    }
-
-    public void setInternalFeelings(String internalFeelings) {
-        this.internalFeelings = internalFeelings;
-    }
-
-    public String getExternalFeelings() {
-        return externalFeelings;
-    }
-
-    public void setExternalFeelings(String externalFeelings) {
-        this.externalFeelings = externalFeelings;
     }
 
     @Override

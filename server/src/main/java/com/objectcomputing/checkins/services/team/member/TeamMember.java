@@ -11,11 +11,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@NoArgsConstructor
 @Introspected
 @Table(name = "team_member")
 public class TeamMember {
@@ -24,19 +26,19 @@ public class TeamMember {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this member to team entry", required = true)
+    @Schema(description = "id of this member to team entry")
     private UUID id;
 
     @NotNull
     @Column(name = "teamid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the team this entry is associated with", required = true)
+    @Schema(description = "id of the team this entry is associated with")
     private UUID teamId;
 
     @NotNull
     @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
+    @Schema(description = "id of the member this entry is associated with")
     private UUID memberId;
 
     @Nullable

@@ -257,7 +257,7 @@ public class GuildServicesImpl implements GuildServices {
             return null;
         }
         return new GuildMemberResponseDTO(guildMember.getId(), memberProfile.getFirstName(), memberProfile.getLastName(),
-                memberProfile.getId(), guildMember.isLead());
+                memberProfile.getId(), guildMember.getLead());
     }
 
 

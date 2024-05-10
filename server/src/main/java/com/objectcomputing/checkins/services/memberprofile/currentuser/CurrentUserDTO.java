@@ -7,10 +7,15 @@ import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Objects;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Introspected
 public class CurrentUserDTO {
 
@@ -39,82 +44,7 @@ public class CurrentUserDTO {
     private String imageUrl;
 
     @NotNull
-    @Schema(implementation = MemberProfile.class, required = true)
+    @Schema(implementation = MemberProfile.class)
     private MemberProfile memberProfile;
 
-    @NotBlank
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(@NotBlank String firstName) {
-        this.firstName = firstName;
-    }
-
-    @NotBlank
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(@NotBlank String lastName) {
-        this.lastName = lastName;
-    }
-
-    @NotBlank
-    public String getName() {
-        return name;
-    }
-
-    public void setName(@NotBlank String name) {
-        this.name = name;
-    }
-
-    @Nullable
-    public List<Permission> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(@Nullable List<Permission> permissions) {
-        this.permissions = permissions;
-    }
-
-    @Nullable
-    public List<String> getRole() {
-        return role;
-    }
-
-    public void setRole(@Nullable List<String> role) {
-        this.role = role;
-    }
-
-    @Nullable
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(@Nullable String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public MemberProfile getMemberProfile() {
-        return memberProfile;
-    }
-
-    public void setMemberProfile(MemberProfile memberProfile) {
-        this.memberProfile = memberProfile;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CurrentUserDTO that = (CurrentUserDTO) o;
-        return Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(name, that.name) && Objects.equals(permissions, that.permissions) && Objects.equals(role, that.role) && Objects.equals(imageUrl, that.imageUrl) && Objects.equals(memberProfile, that.memberProfile);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName, name, permissions, role, imageUrl, memberProfile);
-    }
 }

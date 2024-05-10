@@ -2,6 +2,8 @@ package com.objectcomputing.checkins.services.role.member_roles;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Secured(SecurityRule.IS_ANONYMOUS)
+@ExecuteOn(TaskExecutors.IO)
 @Controller("/services/roles/members")
 public class MemberRoleController {
 

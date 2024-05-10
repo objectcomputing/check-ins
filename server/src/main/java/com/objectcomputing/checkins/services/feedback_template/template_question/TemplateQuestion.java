@@ -12,11 +12,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "template_questions")
 public class TemplateQuestion {
@@ -25,7 +29,7 @@ public class TemplateQuestion {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "unique id of the feedback question", required = true)
+    @Schema(description = "unique id of the feedback question")
     private UUID id;
 
     @Column(name = "question")
@@ -35,25 +39,25 @@ public class TemplateQuestion {
     )
     @NotBlank
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "text of the question to receive feedback on", required = true)
+    @Schema(description = "text of the question to receive feedback on")
     private String question;
 
     @Column(name = "template_id")
     @NotNull
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the template this question is a part of", required = true)
+    @Schema(description = "id of the template this question is a part of")
     private UUID templateId;
 
     @Column(name = "question_number")
     @NotNull
     @TypeDef(type = DataType.INTEGER)
-    @Schema(description = "order of question in template", required = true)
+    @Schema(description = "order of question in template")
     private Integer questionNumber;
 
     @Column(name = "input_type")
     @NotBlank
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the type of input used to answer the question", required = true)
+    @Schema(description = "the type of input used to answer the question")
     public String inputType;
 
     /**
@@ -103,46 +107,6 @@ public class TemplateQuestion {
     }
 
     public TemplateQuestion() {}
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public Integer getQuestionNumber() {
-        return questionNumber;
-    }
-
-    public void setQuestionNumber(Integer orderNum) {
-        this.questionNumber = orderNum;
-    }
-
-    public UUID getTemplateId() {
-        return templateId;
-    }
-
-    public void setTemplateId(UUID templateId) {
-        this.templateId = templateId;
-    }
-
-    public void setInputType(String inputType){
-        this.inputType = inputType;
-    }
-
-    public String getInputType(){
-        return this.inputType;
-    }
 
     @Override
     public boolean equals(Object o) {

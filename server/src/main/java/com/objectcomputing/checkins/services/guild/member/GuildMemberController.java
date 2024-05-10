@@ -6,11 +6,10 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -18,24 +17,18 @@ import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/guilds/members")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "guild-member")
 public class GuildMemberController {
-// todo matt this entire endpoint is blocking
+// todo refactor to non-blocking
     private GuildMemberServices guildMemberServices;
-    private EventLoopGroup eventLoopGroup;
-    private ExecutorService ioExecutorService;
 
-    public GuildMemberController(GuildMemberServices guildMemberServices,
-                                 EventLoopGroup eventLoopGroup,
-                                 @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public GuildMemberController(GuildMemberServices guildMemberServices) {
         this.guildMemberServices = guildMemberServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**

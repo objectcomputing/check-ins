@@ -12,12 +12,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.UUID;
 
 
 @Entity
+@NoArgsConstructor
+@Getter
+@Setter
 @Introspected
 @Table(name = "role")
 public class Role {
@@ -26,11 +32,11 @@ public class Role {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the role", required = true)
+    @Schema(description = "id of the role")
     private UUID id;
 
     @NotNull
-    @Schema(description = "The name of the role", required = true)
+    @Schema(description = "The name of the role")
     private String role;
 
     @Nullable
@@ -52,32 +58,6 @@ public class Role {
         this.role = role;
         this.description = description;
     }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
 
     @Override
     public boolean equals(Object o) {

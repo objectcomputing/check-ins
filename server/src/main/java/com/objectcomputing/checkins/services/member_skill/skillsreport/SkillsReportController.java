@@ -7,37 +7,29 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
 
 ;
 
 @Controller("/reports/skills")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skills-report")
 public class SkillsReportController {
     private final SkillsReportServices skillsReportServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService executorService;
 
-    public SkillsReportController(SkillsReportServices skillsReportServices,
-                                  EventLoopGroup eventLoopGroup,
-                                  @Named(TaskExecutors.IO) ExecutorService executorService) {
+    public SkillsReportController(SkillsReportServices skillsReportServices) {
         this.skillsReportServices = skillsReportServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.executorService = executorService;
     }
 
     /**
@@ -51,10 +43,7 @@ public class SkillsReportController {
     public Mono<HttpResponse<SkillsReportResponseDTO>> reportSkills(@Body @Valid @NotNull SkillsReportRequestDTO requestBody,
                                                                     HttpRequest<?> request) {
         return Mono.fromCallable(() -> skillsReportServices.report(requestBody))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(responseBody -> (HttpResponse<SkillsReportResponseDTO>) HttpResponse
-                        .created(responseBody)
-                        .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))))
-                .subscribeOn(Schedulers.fromExecutor(executorService));
+                .map(responseBody -> HttpResponse.created(responseBody)
+                        .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))));
     }
 }

@@ -7,40 +7,31 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/member-skills")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "member-skills")
 public class MemberSkillController {
 
     private final MemberSkillServices memberSkillsService;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public MemberSkillController(MemberSkillServices memberSkillServices,
-                                 EventLoopGroup eventLoopGroup,
-                                 @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public MemberSkillController(MemberSkillServices memberSkillServices) {
         this.memberSkillsService = memberSkillServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
-
 
     /**
      * Create and save a new member skill.
@@ -50,15 +41,11 @@ public class MemberSkillController {
      */
     @Post()
     public Mono<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<?> request) {
-
         return Mono.fromCallable(() -> memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(),
                 memberSkill.getSkillid(), memberSkill.getSkilllevel(), memberSkill.getLastuseddate())))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(createdMemberSkill -> (HttpResponse<MemberSkill>)HttpResponse
-                        .created(createdMemberSkill)
+                .map(createdMemberSkill -> HttpResponse.created(createdMemberSkill)
                         .headers(headers -> headers.location(
-                            URI.create(String.format("%s/%s", request.getPath(), createdMemberSkill.getId())))))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                            URI.create(String.format("%s/%s", request.getPath(), createdMemberSkill.getId())))));
     }
 
     /**
@@ -67,10 +54,9 @@ public class MemberSkillController {
      * @param id, id of {@link MemberSkill} to delete
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteMemberSkill(@NotNull UUID id) {
-        memberSkillsService.delete(id); // todo matt blocking
-        return HttpResponse
-                .ok();
+    public Mono<HttpResponse<?>> deleteMemberSkill(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> memberSkillsService.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 
     /**
@@ -81,17 +67,13 @@ public class MemberSkillController {
      */
     @Get("/{id}")
     public Mono<HttpResponse<MemberSkill>> readMemberSkill(@NotNull UUID id) {
-
         return Mono.fromCallable(() -> {
             MemberSkill result = memberSkillsService.read(id);
             if (result == null) {
                 throw new NotFoundException("No member skill for UUID");
             }
             return result;
-        })
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(memberSkill -> (HttpResponse<MemberSkill>)HttpResponse.ok(memberSkill))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        }).map(HttpResponse::ok);
     }
 
     /**
@@ -102,12 +84,9 @@ public class MemberSkillController {
      * @return {@link List <MemberSkill > list of Member Skills
      */
     @Get("/{?memberid,skillid}")
-    public Mono<HttpResponse<Set<MemberSkill>>> findMemberSkills(@Nullable UUID memberid,
-                                             @Nullable UUID skillid) {
+    public Mono<HttpResponse<Set<MemberSkill>>> findMemberSkills(@Nullable UUID memberid, @Nullable UUID skillid) {
         return Mono.fromCallable(() -> memberSkillsService.findByFields(memberid, skillid))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(memberSkills -> (HttpResponse<Set<MemberSkill>>)HttpResponse
-                        .ok(memberSkills)).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(HttpResponse::ok);
     }
 
 
@@ -119,13 +98,8 @@ public class MemberSkillController {
      */
     @Put()
     public Mono<HttpResponse<MemberSkill>> update(@Body @Valid MemberSkill memberSkill, HttpRequest<?> request) {
-
         return Mono.fromCallable(() -> memberSkillsService.update(memberSkill))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedMemberSkill -> (HttpResponse<MemberSkill>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberSkill.getId()))))
-                        .body(updatedMemberSkill))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(updatedMemberSkill -> HttpResponse.ok(updatedMemberSkill)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberSkill.getId())))));
     }
 }

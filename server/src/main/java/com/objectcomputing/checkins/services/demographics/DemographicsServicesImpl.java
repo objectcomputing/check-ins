@@ -117,7 +117,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
     }
 
     @Override
-    public Boolean deleteDemographics(@NotNull UUID id) {
+    public void deleteDemographics(@NotNull UUID id) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("Requires admin privileges");
         }
@@ -127,6 +127,5 @@ public class DemographicsServicesImpl implements DemographicsServices{
         }
 
         demographicsRepository.deleteById(id);
-        return true;
     }
 }
