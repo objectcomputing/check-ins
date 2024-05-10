@@ -34,7 +34,7 @@ public class PulseResponseCreateDTOTest {
         PulseResponseCreateDTO dto = new PulseResponseCreateDTO();
 
         Set<ConstraintViolation<PulseResponseCreateDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 6);
+        assertEquals(violations.size(), 4);
         for (ConstraintViolation<PulseResponseCreateDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }

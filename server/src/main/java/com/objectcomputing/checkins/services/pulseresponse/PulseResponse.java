@@ -160,8 +160,8 @@ public class PulseResponse {
     public String toString() {
         return "PulseResponse{" +
                 "id=" + id +
-                ", internal_score" + internalScore +
-                ", external_score" + externalScore +
+                ", internalScore" + internalScore +
+                ", externalScore" + externalScore +
                 ", submissionDate=" + submissionDate +
                 ", teamMemberId=" + teamMemberId +
                 ", internalFeelings=" + internalFeelings +

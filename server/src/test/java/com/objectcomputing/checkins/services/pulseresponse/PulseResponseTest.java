@@ -49,7 +49,7 @@ public class PulseResponseTest {
         pulseResponse.setExternalScore(null);
 
         Set<ConstraintViolation<PulseResponse>> violations = validator.validate(pulseResponse);
-        assertEquals(4, violations.size());
+        assertEquals(2, violations.size());
         for (ConstraintViolation<PulseResponse> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
@@ -85,8 +85,8 @@ public class PulseResponseTest {
         pulseResponse2.setExternalFeelings ("exampleId3");
         assertNotEquals(pulseResponse1, pulseResponse2);
 
-        pulseResponse2.setInternalScore (3);
-        pulseResponse2.setExternalScore (4);
+        pulseResponse2.setInternalScore(3);
+        pulseResponse2.setExternalScore(4);
         assertNotEquals(pulseResponse1, pulseResponse2);
     }
 

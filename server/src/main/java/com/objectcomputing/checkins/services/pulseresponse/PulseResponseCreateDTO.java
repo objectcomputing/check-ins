@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
@@ -10,11 +11,11 @@ import java.time.LocalDate;
 @Introspected
 public class PulseResponseCreateDTO {
 
-    @NotNull
+    @Nullable
     @Schema(required = true, description = "integer value of internal score")
     private Integer internalScore;
 
-    @NotNull
+    @Nullable
     @Schema(required = true, description = "integer value of external score")
     private Integer externalScore;
 
