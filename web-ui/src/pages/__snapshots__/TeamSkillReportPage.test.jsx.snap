@@ -12,36 +12,10 @@ exports[`renders correctly 1`] = `
         class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
       >
         <div
-          class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
-        >
-          <button
-            aria-expanded="true"
-            aria-label="show more"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1eomvmf-MuiButtonBase-root-MuiIconButton-root"
-            tabindex="0"
-            type="button"
-          >
-            <svg
-              aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-              data-testid="ExpandMoreIcon"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
-              />
-            </svg>
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </button>
-        </div>
-        <div
           class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
         >
           <span
-            class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
           >
             <div
               class="member-selector-card-title-container"
@@ -65,7 +39,7 @@ exports[`renders correctly 1`] = `
           class="MuiCardHeader-action css-sgoict-MuiCardHeader-action"
         >
           <button
-            aria-label="Add members"
+            aria-label="Change Members"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
             data-mui-internal-clone-element="true"
             style="margin: 4px 8px 0px 0px;"
@@ -87,64 +61,6 @@ exports[`renders correctly 1`] = `
               class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
             />
           </button>
-          <button
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
-            style="margin: 4px 8px 0px 0px;"
-            tabindex="0"
-            type="button"
-          >
-            <svg
-              aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-              data-testid="MoreVertIcon"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2"
-              />
-            </svg>
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </button>
-        </div>
-      </div>
-      <div
-        class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
-        style="min-height: 0px;"
-      >
-        <div
-          class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
-        >
-          <div
-            class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
-          >
-            <hr
-              class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
-            />
-            <ul
-              class="MuiList-root MuiList-padding MuiList-dense css-rb26g2-MuiList-root"
-              role="list"
-            >
-              <li
-                class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
-              >
-                <div
-                  class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
-                  style="color: gray;"
-                >
-                  <span
-                    class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
-                  >
-                    No 
-                    members
-                     selected
-                  </span>
-                </div>
-              </li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>

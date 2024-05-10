@@ -70,17 +70,19 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
               <p
                 class="MuiTypography-root MuiTypography-body1 selected-count-label css-ahj2mt-MuiTypography-root"
               >
-                0
+                3
                  selected
               </p>
             </div>
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textInherit MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorInherit Mui-disabled MuiButton-root MuiButton-text MuiButton-textInherit MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorInherit css-1y942vo-MuiButtonBase-root-MuiButton-root"
-              disabled=""
-              tabindex="-1"
+              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textInherit MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorInherit MuiButton-root MuiButton-text MuiButton-textInherit MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorInherit css-1y942vo-MuiButtonBase-root-MuiButton-root"
+              tabindex="0"
               type="button"
             >
-              Add
+              Save
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
             </button>
           </div>
         </header>
@@ -275,27 +277,27 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
               </div>
             </div>
             <span
-              aria-disabled="true"
-              class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-disabled PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-disabled MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium toggle-selectable-members-checkbox css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root"
-              tabindex="-1"
+              class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium toggle-selectable-members-checkbox css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root"
             >
               <input
                 class="PrivateSwitchBase-input css-1m9pwf3"
                 data-indeterminate="false"
-                disabled=""
                 type="checkbox"
               />
               <svg
                 aria-hidden="true"
                 class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-                data-testid="CheckBoxOutlineBlankIcon"
+                data-testid="CheckBoxIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
               >
                 <path
-                  d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                  d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
                 />
               </svg>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
             </span>
           </div>
           <div
@@ -368,7 +370,192 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
           <ul
             class="MuiList-root MuiList-padding MuiList-dense css-1vjk1cp-MuiList-root"
             role="list"
-          />
+          >
+            <li
+              class="MuiListItem-root MuiListItem-dense MuiListItem-gutters css-g28sfz-MuiListItem-root"
+              role="listitem"
+            >
+              <div
+                class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-178cqt3-MuiButtonBase-root-MuiListItemButton-root"
+                role="button"
+                tabindex="0"
+              >
+                <div
+                  class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                >
+                  <div
+                    class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+                  >
+                    <img
+                      class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                      src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-ndaqpv-MuiTypography-root"
+                  >
+                    Current User
+                  </p>
+                  <h6
+                    class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+                  />
+                </div>
+              </div>
+              <div
+                class="MuiListItemSecondaryAction-root css-518kzi-MuiListItemSecondaryAction-root"
+              >
+                <span
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-355xbt-MuiButtonBase-root-MuiCheckbox-root"
+                >
+                  <input
+                    checked=""
+                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    data-indeterminate="false"
+                    type="checkbox"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    data-testid="CheckBoxIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </li>
+            <li
+              class="MuiListItem-root MuiListItem-dense MuiListItem-gutters css-g28sfz-MuiListItem-root"
+              role="listitem"
+            >
+              <div
+                class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-178cqt3-MuiButtonBase-root-MuiListItemButton-root"
+                role="button"
+                tabindex="0"
+              >
+                <div
+                  class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                >
+                  <div
+                    class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+                  >
+                    <img
+                      class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                      src="http://localhost:8080/services/member-profiles/member-photos/bobjones%40objectcomputing.com"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-ndaqpv-MuiTypography-root"
+                  >
+                    Bob Jones
+                  </p>
+                  <h6
+                    class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+                  >
+                    Engineer
+                  </h6>
+                </div>
+              </div>
+              <div
+                class="MuiListItemSecondaryAction-root css-518kzi-MuiListItemSecondaryAction-root"
+              >
+                <span
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-355xbt-MuiButtonBase-root-MuiCheckbox-root"
+                >
+                  <input
+                    checked=""
+                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    data-indeterminate="false"
+                    type="checkbox"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    data-testid="CheckBoxIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </li>
+            <li
+              class="MuiListItem-root MuiListItem-dense MuiListItem-gutters css-g28sfz-MuiListItem-root"
+              role="listitem"
+            >
+              <div
+                class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-178cqt3-MuiButtonBase-root-MuiListItemButton-root"
+                role="button"
+                tabindex="0"
+              >
+                <div
+                  class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                >
+                  <div
+                    class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+                  >
+                    <img
+                      class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                      src="http://localhost:8080/services/member-profiles/member-photos/janedoe%40objectcomputing.com"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-ndaqpv-MuiTypography-root"
+                  >
+                    Jane Doe
+                  </p>
+                  <h6
+                    class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+                  >
+                    Manager
+                  </h6>
+                </div>
+              </div>
+              <div
+                class="MuiListItemSecondaryAction-root css-518kzi-MuiListItemSecondaryAction-root"
+              >
+                <span
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-355xbt-MuiButtonBase-root-MuiCheckbox-root"
+                >
+                  <input
+                    checked=""
+                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    data-indeterminate="false"
+                    type="checkbox"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    data-testid="CheckBoxIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </li>
+          </ul>
           <hr
             class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
           />

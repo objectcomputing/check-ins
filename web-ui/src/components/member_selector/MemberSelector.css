@@ -15,19 +15,19 @@
 }
 
 .member-selector-card .member-selector-card-title {
-  font-size: 1.5em;
+  font-size: 1rem;
 }
 
 .member-selector-card .member-selector-card-count {
-  font-size: 1.25em;
+  font-size: 1rem;
 }
 
 @media screen and (max-width: 600px) {
   .member-selector-card .member-selector-card-title {
-    font-size: 1.25em;
+    font-size: 0.75rem;
   }
 
   .member-selector-card .member-selector-card-count {
-    font-size: 1em;
+    font-size: 0.75rem;
   }
 }
