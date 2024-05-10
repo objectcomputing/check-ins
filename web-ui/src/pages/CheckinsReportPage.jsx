@@ -18,7 +18,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-import CheckinReport from '../components/reports-section/CheckinReport';
+import CheckinReport from '../components/reports-section/checkin-report/CheckinReport';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { FilterType } from '../components/member_selector/member_selector_dialog/MemberSelectorDialog';
 import {
@@ -28,6 +28,7 @@ import {
 } from '../helpers';
 
 import './CheckinsReportPage.css';
+
 /**
  * Sort Members by the last name extracted from the full name.
  * @param {MemberProfile} a - First Member object
@@ -41,13 +42,27 @@ function sortByLastName(a, b) {
   return lastNameA.localeCompare(lastNameB);
 }
 
+/**
+ * Sort PDLs by the number of members they have (if available),
+ * with PDLs having more members sorted first.
+ * PDLs without a 'members' property are treated as having 0 members.
+ * @param {PDLProfile} a - First PDL object
+ * @param {PDLProfile} b - Second PDL object
+ * @returns {number} - Comparison result for sorting
+ */
+function sortByMembers(a, b) {
+  const membersA = a.members ? a.members.length : 0;
+  const membersB = b.members ? b.members.length : 0;
+  return membersB - membersA;
+}
+
 const CheckinsReportPage = () => {
   const { state } = useContext(AppContext);
   const [selectedPdls, setSelectedPdls] = useState(
     /** @type {PDLProfile[]} */ ([])
   );
-  const [planned, setPlanned] = useState(false);
-  const [closed, setClosed] = useState(false);
+  const [planned, setPlanned] = useState(true);
+  const [closed, setClosed] = useState(true);
 
   const [reportDate, setReportDate] = useState(new Date());
   const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
@@ -69,7 +84,7 @@ const CheckinsReportPage = () => {
   };
 
   /** @type {PDLProfile[]} */
-  const pdls = selectCheckinPDLS(state, closed, planned).sort(sortByLastName);
+  const pdls = selectCheckinPDLS(state, closed, planned);
 
   const processedQPs = useRef(false);
   useQueryParameters(
@@ -79,7 +94,9 @@ const CheckinsReportPage = () => {
         default: [],
         value: selectedPdls,
         setter(ids) {
-          const newPdls = ids.map(id => pdls.find(pdl => pdl.id === id));
+          const newPdls = ids
+            .map(id => pdls.find(pdl => pdl.id === id))
+            .filter(Boolean);
           setSelectedPdls(newPdls);
         },
         toQP(newPdls) {
@@ -120,32 +137,27 @@ const CheckinsReportPage = () => {
         selected={selectedPdls}
         onChange={setSelectedPdls}
         exportable
+        expand={false}
       />
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <ButtonGroup variant="text" aria-label="Basic button group">
           <Tooltip title="Previous quarter">
-            <>
-              <IconButton
-                disabled={true}
-                aria-label="Previous quarter`"
-                onClick={handleQuarterClick}
-                size="large"
-              >
-                <ArrowBackIcon style={{ fontSize: '1.2em' }} />
-              </IconButton>
-            </>
+            <IconButton
+              aria-label="Previous quarter`"
+              onClick={handleQuarterClick}
+              size="large"
+            >
+              <ArrowBackIcon style={{ fontSize: '1.2em' }} />
+            </IconButton>
           </Tooltip>
           <Tooltip title="Next quarter">
-            <>
-              <IconButton
-                disabled={true || reportDate >= new Date()}
-                aria-label="Next quarter`"
-                onClick={handleQuarterClick}
-                size="large"
-              >
-                <ArrowForwardIcon style={{ fontSize: '1.2em' }} />
-              </IconButton>
-            </>
+            <IconButton
+              aria-label="Next quarter`"
+              onClick={handleQuarterClick}
+              size="large"
+            >
+              <ArrowForwardIcon style={{ fontSize: '1.2em' }} />
+            </IconButton>
           </Tooltip>
         </ButtonGroup>
         <Grid container component="dl" className="checkins-report-page-dates">
@@ -169,19 +181,26 @@ const CheckinsReportPage = () => {
       </Box>
       <div className="checkins-report-page-reports">
         {selectedPdls.length > 0 ? (
-          selectedPdls.sort(sortByLastName).map(pdl => {
-            return (
-              <CheckinReport
-                closed={closed}
-                key={pdl.id}
-                pdl={pdl}
-                planned={planned}
-              />
-            );
-          })
+          selectedPdls
+            .sort(sortByLastName)
+            .sort(sortByMembers)
+            .map(pdl => {
+              return (
+                <CheckinReport
+                  closed={closed}
+                  key={pdl.id}
+                  pdl={pdl}
+                  planned={planned}
+                  reportDate={reportDate}
+                />
+              );
+            })
         ) : (
           <div className="checkins-report-page-no-data">
-            <h2>No data to display</h2>
+            <h2>No PDLs selected</h2>
+            <Typography variant="body1">
+              Please select some PDLs using the Member Selector.
+            </Typography>
           </div>
         )}
       </div>
