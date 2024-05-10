@@ -140,17 +140,23 @@ const MemberSelectorDialog = ({
     onSubmit(membersToAdd);
   }, [checked, members, onSubmit]);
 
+  const initializeChecked = useCallback(() => {
+    const initialChecked = new Set();
+    selectedMembers.forEach(member => initialChecked.add(member.id));
+    setChecked(initialChecked);
+  });
+
   // Reset the dialog when it closes, or set the initial filter when it opens
   useEffect(() => {
     if (!open) {
       // Reset all state except for the chosen filter type and its corresponding options
-      setChecked(new Set());
       setNameQuery('');
       setFilter(null);
       setFilteredMembers([]);
       setDirectReportsOnly(false);
       setSelectableMembers([]);
     } else {
+      initializeChecked();
       // If the dialog is opened with initial filters, set the initial filter
       if (initialFilter && initialFilter.type === FilterType.ROLE) {
         setFilterType(initialFilter.type);
@@ -249,10 +255,7 @@ const MemberSelectorDialog = ({
   // Filters the list of members based on the selected filter type and filter
   useEffect(() => {
     const getFilteredMembers = async () => {
-      // Exclude members that are already selected
-      let filteredMemberList = members.filter(
-        member => !selectedMembers.includes(member)
-      );
+      let filteredMemberList = [...members];
 
       // Exclude members that don't have the selected tenure.
       if (tenure === Tenures.Custom) {
@@ -458,7 +461,7 @@ const MemberSelectorDialog = ({
             disabled={checked.size === 0}
             onClick={handleSubmit}
           >
-            Add
+            Save
           </Button>
         </Toolbar>
       </AppBar>

@@ -136,7 +136,6 @@ const CheckinsReportPage = () => {
         title="Select PDLs"
         selected={selectedPdls}
         onChange={setSelectedPdls}
-        listHeight={180}
         exportable
         expand={false}
       />

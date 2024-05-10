@@ -1,3 +1,8 @@
+import DateFnsUtils from '@date-io/date-fns';
+const dateUtils = new DateFnsUtils();
+
+import PropTypes from 'prop-types';
+import queryString from 'query-string';
 import React, {
   useEffect,
   useContext,
@@ -5,40 +10,63 @@ import React, {
   useState,
   useRef
 } from 'react';
-import PropTypes from 'prop-types';
 import { useLocation, useHistory } from 'react-router-dom';
+
+import {
+  AddCircle,
+  AddComment,
+  Archive,
+  ArrowBack,
+  Delete,
+  Download,
+  ExpandMore,
+  Unarchive
+} from '@mui/icons-material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Avatar,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  FormControlLabel,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
+  Skeleton,
+  Switch,
+  Tooltip,
+  Typography
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Divider from '@mui/material/Divider';
-import queryString from 'query-string';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Switch from '@mui/material/Switch';
-import Typography from '@mui/material/Typography';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Tooltip from '@mui/material/Tooltip';
-import Skeleton from '@mui/material/Skeleton';
-import TeamMemberReview from './TeamMemberReview';
-import SelectUserModal from './SelectUserModal';
-import { UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from '../../context/actions';
-import { AppContext } from '../../context/AppContext';
-import { getReviewPeriods } from '../../api/reviewperiods.js';
+
+import { resolve } from '../../api/api.js';
+import { getAvatarURL } from '../../api/api.js';
 import {
   createFeedbackRequest,
   findReviewRequestsByPeriodAndTeamMembers,
   findSelfReviewRequestsByPeriodAndTeamMembers
 } from '../../api/feedback.js';
+import {
+  getReviewPeriods,
+  removeReviewPeriod,
+  updateReviewPeriod
+} from '../../api/reviewperiods.js';
+import {
+  DELETE_REVIEW_PERIOD,
+  UPDATE_REVIEW_PERIOD,
+  UPDATE_REVIEW_PERIODS,
+  UPDATE_TOAST
+} from '../../context/actions';
+import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
   selectReviewPeriod,
@@ -49,16 +77,22 @@ import {
   selectCurrentMembers,
   selectSubordinates
 } from '../../context/selectors';
-import { getAvatarURL } from '../../api/api.js';
-import DateFnsUtils from '@date-io/date-fns';
-const dateUtils = new DateFnsUtils();
+
+import MemberSelector from '../member_selector/MemberSelector';
+import MemberSelectorDialog, {
+  FilterType
+} from '../member_selector/member_selector_dialog/MemberSelectorDialog';
+import SelectUserModal from './SelectUserModal';
+import TeamMemberReview from './TeamMemberReview';
+
+import DatePickerField from './periods/DatePickerField.jsx';
+import './periods/DatePickerField.css';
 
 const propTypes = {
   teamMembers: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
-      firstName: PropTypes.string,
-      lastName: PropTypes.string
+      onBack: PropTypes.func
     })
   ),
   periodId: PropTypes.string
@@ -89,33 +123,48 @@ const Root = styled('div')(({ theme }) => ({
     ['@media (max-width:800px)']: {
       // eslint-disable-line no-useless-computed-key
       margin: '0',
-      'justify-content': 'center'
+      justifyContent: 'center'
     }
   }
 }));
 
-const TeamReviews = ({ periodId }) => {
+const ReviewStatus = {
+  PLANNING: 'PLANNING',
+  AWAITING_APPROVAL: 'AWAITING_APPROVAL',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  UNKNOWN: 'UNKNOWN'
+};
+
+const TeamReviews = ({ onBack, periodId }) => {
   const { state, dispatch } = useContext(AppContext);
-  const csrf = selectCsrfToken(state);
-  const location = useLocation();
   const history = useHistory();
-  const currentUser = selectCurrentUser(state);
-  const currentMembers = selectCurrentMembers(state);
-  const myTeam = selectMyTeam(state);
-  const subordinates = selectSubordinates(state, currentUser?.id);
-  const isAdmin = selectIsAdmin(state);
-  const period = selectReviewPeriod(state, periodId);
-  const [teamMembers, setTeamMembers] = useState(null);
-  const [selfReviews, setSelfReviews] = useState({});
-  const [reviews, setReviews] = useState(null);
-  const [query, setQuery] = useState({});
-  const [selectedTeamMember, setSelectedTeamMember] = useState(null);
-  const selectedMemberProfile = selectProfile(state, selectedTeamMember);
-  const [newRequestOpen, setNewRequestOpen] = useState(false);
+  const location = useLocation();
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [includeAll, setIncludeAll] = useState(false);
-  const loadingReviews = useRef(false);
-  const loadedReviews = useRef(false);
+  const [memberFilters, setMemberFilters] = useState([]);
+  const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
+  const [newRequestOpen, setNewRequestOpen] = useState(false);
+  const [query, setQuery] = useState({});
+  const [reviews, setReviews] = useState(null);
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [selfReviews, setSelfReviews] = useState({});
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [toDelete, setToDelete] = useState(null);
+
   const creatingReview = useRef(false);
+  const loadedReviews = useRef(false);
+  const loadingReviews = useRef(false);
+
+  const csrf = selectCsrfToken(state);
+  const currentMembers = selectCurrentMembers(state);
+  const currentUser = selectCurrentUser(state);
+  const isAdmin = selectIsAdmin(state);
+  const myTeam = selectMyTeam(state);
+  const period = selectReviewPeriod(state, periodId);
+  const selectedMemberProfile = selectProfile(state, selectedMember);
+  const subordinates = selectSubordinates(state, currentUser?.id);
 
   const handleOpenNewRequest = useCallback(
     () => setNewRequestOpen(true),
@@ -126,24 +175,58 @@ const TeamReviews = ({ periodId }) => {
     [setNewRequestOpen]
   );
 
+  const reviewAssignmentsUrl = '/services/review-assignments';
+
   useEffect(() => {
-    if (currentMembers && currentMembers.length > 0) {
-      isAdmin && includeAll
-        ? setTeamMembers(
-            currentMembers.filter(member => member?.id !== currentUser?.id)
-          )
-        : includeAll
-          ? setTeamMembers(subordinates)
-          : setTeamMembers(myTeam);
+    loadTeamMembers();
+  }, [currentMembers]);
+
+  const loadTeamMembers = async () => {
+    const myId = currentUser?.id;
+    try {
+      const res = await resolve({
+        method: 'GET',
+        url: `${reviewAssignmentsUrl}/period/${periodId}`,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+      const assignments = res.payload.data;
+      const memberIds = assignments.map(a => a.revieweeId);
+      const members = currentMembers.filter(m => memberIds.includes(m.id));
+      setTeamMembers(members);
+    } catch (err) {
+      console.error('TeamReviews.jsx loadTeamMembers:', err);
     }
-  }, [
-    isAdmin,
-    includeAll,
-    subordinates,
-    currentMembers,
-    myTeam,
-    currentUser?.id
-  ]);
+  };
+
+  const updateTeamMembers = async teamMembers => {
+    const data = teamMembers.map(tm => ({
+      revieweeId: tm.id,
+      reviewerId: tm.supervisorid,
+      reviewPeriodId: periodId,
+      approved: true
+    }));
+
+    try {
+      const res = await resolve({
+        method: 'POST',
+        url: reviewAssignmentsUrl + '/' + periodId,
+        data,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      setTeamMembers(teamMembers);
+    } catch (err) {
+      console.error('TeamReviews.jsx updateTeamMembers:', err);
+    }
+  };
 
   const getReviewStatus = useCallback(
     teamMemberId => {
@@ -219,7 +302,7 @@ const TeamReviews = ({ periodId }) => {
   }, [query.teamMember, hasTeamMember]);
 
   useEffect(() => {
-    setSelectedTeamMember(getTeamMember());
+    setSelectedMember(getTeamMember());
   }, [getTeamMember]);
 
   useEffect(() => {
@@ -287,6 +370,115 @@ const TeamReviews = ({ periodId }) => {
       }
     }
   }, [csrf, reviews, currentUser, period, selectedMemberProfile]);
+
+  const confirmDelete = useCallback(() => {
+    setToDelete(period.id);
+    setConfirmOpen(true);
+  }, [period, setToDelete, setConfirmOpen]);
+
+  const handleConfirmClose = useCallback(() => {
+    setToDelete(null);
+    setConfirmOpen(false);
+  }, [setToDelete, setConfirmOpen]);
+
+  const deleteReviewPeriod = useCallback(async () => {
+    if (!csrf) return;
+
+    await removeReviewPeriod(toDelete, csrf);
+    dispatch({
+      type: DELETE_REVIEW_PERIOD,
+      payload: toDelete
+    });
+    handleConfirmClose();
+    history.goBack();
+  }, [csrf, dispatch, toDelete, handleConfirmClose]);
+
+  const toggleReviewPeriod = useCallback(async () => {
+    if (!csrf) return;
+
+    period.reviewStatus =
+      period?.reviewStatus === ReviewStatus.CLOSED
+        ? ReviewStatus.OPEN
+        : ReviewStatus.CLOSED;
+    const res = await updateReviewPeriod(period, csrf);
+    const data = res?.payload?.data ? res.payload.data : null;
+    if (data) {
+      dispatch({ type: UPDATE_REVIEW_PERIOD, payload: period });
+    } else {
+      console.error(res?.error);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'Error selecting review period'
+        }
+      });
+    }
+  }, [csrf, period, state, dispatch]);
+
+  const updateReviewPeriodDates = useCallback(
+    async period => {
+      if (!csrf) return;
+
+      const res = await updateReviewPeriod(period, csrf);
+      const data = res?.payload?.data ?? null;
+      if (data) {
+        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [period] });
+      } else {
+        console.error('Error updating review period:', res?.error);
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Error updating review period'
+          }
+        });
+      }
+    },
+    [csrf, dispatch, period, state]
+  );
+
+  const handleLaunchDateChange = (val, period) => {
+    const newDate = val?.$d;
+    const isoDate = newDate.toISOString() ?? null;
+    const newPeriod = { ...period, launchDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
+    const closeDate = new Date(period.closeDate);
+    if (selfReviewCloseDate <= newDate) newPeriod.selfReviewCloseDate = null;
+    if (closeDate <= newDate) newPeriod.closeDate = null;
+
+    updateReviewPeriodDates(newPeriod);
+  };
+
+  const handleSelfReviewDateChange = (val, period) => {
+    const newDate = val?.$d;
+    const isoDate = newDate.toISOString() ?? null;
+    const newPeriod = { ...period, selfReviewCloseDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const launchDate = new Date(period.launchDate);
+    const closeDate = new Date(period.closeDate);
+    if (launchDate >= newDate) newPeriod.launchDate = null;
+    if (closeDate <= newDate) newPeriod.closeDate = null;
+
+    updateReviewPeriodDates(newPeriod);
+  };
+
+  const handleCloseDateChange = (val, period) => {
+    const newDate = val?.$d;
+    const isoDate = newDate.toISOString() ?? null;
+    const newPeriod = { ...period, closeDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const launchDate = new Date(period.launchDate);
+    const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
+    if (launchDate >= newDate) newPeriod.launchDate = null;
+    if (selfReviewCloseDate >= newDate) newPeriod.selfReviewCloseDate = null;
+
+    updateReviewPeriodDates(newPeriod);
+  };
 
   const handleQueryChange = useCallback(
     (key, value) => {
@@ -478,11 +670,11 @@ const TeamReviews = ({ periodId }) => {
     },
     [
       csrf,
-      period,
-      selectedMemberProfile,
       dispatch,
       handleCloseNewRequest,
-      reviews
+      period,
+      reviews,
+      selectedMemberProfile
     ]
   );
 
@@ -493,9 +685,51 @@ const TeamReviews = ({ periodId }) => {
 
   return (
     <Root>
+      <Tooltip title="Back">
+        <Button onClick={onBack} aria-label="Back">
+          <ArrowBack /> Back
+        </Button>
+      </Tooltip>
+
       <div className={classes.headerContainer}>
-        <Typography variant="h4">Team Reviews</Typography>
-        {!selectedTeamMember && (
+        <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
+
+        {period && isAdmin && (
+          <div>
+            <Tooltip
+              title={
+                period.reviewStatus === ReviewStatus.OPEN
+                  ? 'Archive'
+                  : 'Unarchive'
+              }
+            >
+              <IconButton
+                onClick={toggleReviewPeriod}
+                aria-label={
+                  period.reviewStatus === ReviewStatus.OPEN
+                    ? 'Archive'
+                    : 'Unarchive'
+                }
+              >
+                {period.reviewStatus === ReviewStatus.OPEN ? (
+                  <Archive />
+                ) : (
+                  <Unarchive />
+                )}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                onClick={confirmDelete}
+                edge="end"
+                aria-label="Delete"
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </div>
+        )}
+        {!selectedMember && (
           <FormControlLabel
             control={
               <Switch checked={includeAll} onChange={toggleIncludeAll} />
@@ -503,11 +737,11 @@ const TeamReviews = ({ periodId }) => {
             label="Show All"
           />
         )}
-        {selectedTeamMember && (
+        {selectedMember && (
           <Button
             onClick={handleOpenNewRequest}
             className={classes.actionButtons}
-            endIcon={<AddCircleIcon />}
+            endIcon={<AddCircle />}
             variant="contained"
             color="primary"
           >
@@ -515,142 +749,36 @@ const TeamReviews = ({ periodId }) => {
           </Button>
         )}
       </div>
-      {!selectedTeamMember && loadedReviews.current && (
-        <>
-          <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            {teamMembers && teamMembers.length > 0
-              ? teamMembers
-                  .sort((a, b) => {
-                    return ('' + a?.lastName)
-                      .toUpperCase()
-                      .localeCompare(b?.lastName.toUpperCase());
-                  })
-                  .filter(teamMember => {
-                    return (
-                      reviews &&
-                      (!reviews[teamMember.id] ||
-                        reviews[teamMember.id].length === 0 ||
-                        !reviews[teamMember.id]?.reduce(
-                          (status, review) =>
-                            status && review.status === 'submitted',
-                          true
-                        ))
-                    );
-                  })
-                  .map((teamMember, i) => (
-                    <>
-                      <ListItem
-                        onClick={() => onTeamMemberSelected(teamMember?.id)}
-                        key={`teamMember-${teamMember?.id}`}
-                      >
-                        <ListItemAvatar
-                          key={`teamMember-lia-${teamMember?.id}`}
-                        >
-                          <Avatar src={getAvatarURL(teamMember?.workEmail)} />
-                        </ListItemAvatar>
-                        <ListItemText
-                          key={`teamMember-lit-${teamMember?.id}`}
-                          primary={
-                            teamMember?.firstName + ' ' + teamMember?.lastName
-                          }
-                          secondary={createSecondary(teamMember)}
-                        />
-                        <ListItemSecondaryAction>
-                          <Tooltip title="Request Feedback">
-                            <IconButton>
-                              <AddCommentIcon
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  history.push(
-                                    `/feedback/request?for=${teamMember?.id}`
-                                  );
-                                }}
-                              />
-                            </IconButton>
-                          </Tooltip>
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                      <Divider key={`divider-${teamMember?.id}`} />
-                    </>
-                  ))
-              : null}
-          </List>
-          <Accordion style={{ marginTop: '1rem' }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>Completed Reviews</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {teamMembers && teamMembers.length > 0
-                  ? teamMembers
-                      .sort((a, b) => {
-                        return ('' + a?.lastName)
-                          .toUpperCase()
-                          .localeCompare(b?.lastName.toUpperCase());
-                      })
-                      .filter(teamMember => {
-                        return (
-                          reviews &&
-                          reviews[teamMember.id] &&
-                          reviews[teamMember.id].length !== 0 &&
-                          reviews[teamMember.id]?.reduce(
-                            (status, review) =>
-                              status && review.status === 'submitted',
-                            true
-                          )
-                        );
-                      })
-                      .map((teamMember, i) => (
-                        <>
-                          <ListItem
-                            onClick={() => onTeamMemberSelected(teamMember?.id)}
-                            key={`teamMember-${teamMember?.id}`}
-                          >
-                            <ListItemAvatar
-                              key={`teamMember-lia-${teamMember?.id}`}
-                            >
-                              <Avatar
-                                src={getAvatarURL(teamMember?.workEmail)}
-                              />
-                            </ListItemAvatar>
-                            <ListItemText
-                              key={`teamMember-lit-${teamMember?.id}`}
-                              primary={
-                                teamMember?.firstName +
-                                ' ' +
-                                teamMember?.lastName
-                              }
-                              secondary={createSecondary(teamMember)}
-                            />
-                            <ListItemSecondaryAction>
-                              <Tooltip title="Request Feedback">
-                                <IconButton>
-                                  <AddCommentIcon
-                                    onClick={e => {
-                                      e.stopPropagation();
-                                      history.push(
-                                        `/feedback/request?for=${teamMember?.id}`
-                                      );
-                                    }}
-                                  />
-                                </IconButton>
-                              </Tooltip>
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                          <Divider key={`divider-${teamMember?.id}`} />
-                        </>
-                      ))
-                  : null}
-              </List>
-            </AccordionDetails>
-          </Accordion>
-        </>
+      {period && (
+        <div className="datePickerFlexWrapper">
+          <DatePickerField
+            date={period.launchDate}
+            setDate={val => handleLaunchDateChange(val, period)}
+            label="Launch Date"
+            disabled={!isAdmin}
+            open={period?.reviewStatus === ReviewStatus?.PLANNING}
+          />
+          <DatePickerField
+            date={period.selfReviewCloseDate}
+            setDate={val => handleSelfReviewDateChange(val, period)}
+            label="Self-Review Date"
+            disabled={!isAdmin}
+          />
+          <DatePickerField
+            date={period.closeDate}
+            setDate={val => handleCloseDateChange(val, period)}
+            label="Close Date"
+            disabled={!isAdmin}
+          />
+        </div>
       )}
-      {!selectedTeamMember && loadingReviews.current && (
+      <MemberSelector
+        className="team-skill-member-selector"
+        exportable
+        onChange={updateTeamMembers}
+        selected={teamMembers}
+      />
+      {!selectedMember && loadingReviews.current && (
         <>
           <ListItem key="skeleton-period">
             <ListItemAvatar>
@@ -668,12 +796,12 @@ const TeamReviews = ({ periodId }) => {
           </ListItem>
         </>
       )}
-      {!!selectedTeamMember && reviews && (
+      {!!selectedMember && reviews && (
         <TeamMemberReview
           reloadReviews={reloadReviews}
           memberProfile={selectedMemberProfile}
-          selfReview={selfReviews[selectedTeamMember]}
-          reviews={reviews[selectedTeamMember]}
+          selfReview={selfReviews[selectedMember]}
+          reviews={reviews[selectedMember]}
         />
       )}
       <SelectUserModal
@@ -682,6 +810,36 @@ const TeamReviews = ({ periodId }) => {
         onSelect={handleNewRequest}
         onClose={handleCloseNewRequest}
       />
+      <MemberSelectorDialog
+        open={memberSelectorOpen}
+        initialFilters={memberFilters}
+        memberDescriptor="members"
+        selectedMembers={teamMembers}
+        onClose={() => setDialogOpen(false)}
+        onSubmit={membersToAdd => setTeamMembers(membersToAdd)}
+      />
+      <Dialog
+        open={confirmOpen}
+        onClose={handleConfirmClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Delete this review period?'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure that you would like to delete period{' '}
+            {selectReviewPeriod(state, toDelete)?.name}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmClose}>No</Button>
+          <Button onClick={deleteReviewPeriod} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Root>
   );
 };

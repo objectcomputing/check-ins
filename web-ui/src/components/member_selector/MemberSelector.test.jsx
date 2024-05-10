@@ -46,7 +46,6 @@ describe('MemberSelector', () => {
           title="Custom Title"
           outlined
           exportable
-          listHeight={300}
           className="test-class"
           style={{ margin: '10px' }}
         />
