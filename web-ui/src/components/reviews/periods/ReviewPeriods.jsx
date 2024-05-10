@@ -409,7 +409,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           periods
             .sort((a, b) => {
               return a.reviewStatus === b.reviewStatus
-                ? ('' + a.name).localeCompare(b.name)
+                ? (a.name || '').localeCompare(b.name)
                 : a.reviewStatus === ReviewStatus.OPEN
                   ? -1
                   : 1;
