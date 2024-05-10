@@ -16,6 +16,7 @@ import {
   AddCircle,
   AddComment,
   Archive,
+  ArrowBack,
   Delete,
   Download,
   ExpandMore,
@@ -91,8 +92,7 @@ const propTypes = {
   teamMembers: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
-      firstName: PropTypes.string,
-      lastName: PropTypes.string
+      onBack: PropTypes.func
     })
   ),
   periodId: PropTypes.string
@@ -136,7 +136,7 @@ const ReviewStatus = {
   UNKNOWN: 'UNKNOWN'
 };
 
-const TeamReviews = ({ periodId }) => {
+const TeamReviews = ({ onBack, periodId }) => {
   const { state, dispatch } = useContext(AppContext);
   const history = useHistory();
   const location = useLocation();
@@ -667,6 +667,12 @@ const TeamReviews = ({ periodId }) => {
 
   return (
     <Root>
+      <Tooltip title="Back">
+        <Button onClick={onBack} aria-label="Back">
+          <ArrowBack /> Back
+        </Button>
+      </Tooltip>
+
       <div className={classes.headerContainer}>
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
 
