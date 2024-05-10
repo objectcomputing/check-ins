@@ -293,7 +293,7 @@ public void testGetFindByfindBySubmissionDateBetween() {
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Unable to find pulseresponse record with id null, %s", pulseResponse.getId()), error);
+        assertEquals("Unable to find pulseresponse record with id null", error);
         assertEquals(request.getPath(), href);
 
     }
