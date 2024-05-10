@@ -45,8 +45,6 @@ public class PulseResponseTest {
 
         pulseResponse.setInternalFeelings(null);
         pulseResponse.setExternalFeelings(null);
-        pulseResponse.setInternalScore(null);
-        pulseResponse.setExternalScore(null);
 
         Set<ConstraintViolation<PulseResponse>> violations = validator.validate(pulseResponse);
         assertEquals(2, violations.size());
