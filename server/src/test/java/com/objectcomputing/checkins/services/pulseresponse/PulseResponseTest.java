@@ -39,13 +39,17 @@ public class PulseResponseTest {
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings = "exampleId";
         final String externalFeelings = "exampleId2";
-        PulseResponse pulseResponse = new PulseResponse(1, 2, submissionDate, teamMemberId, internalFeelings, externalFeelings);
+        final Integer internalScore = 1;
+        final Integer externalScore = 2;
+        PulseResponse pulseResponse = new PulseResponse(internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
 
         pulseResponse.setInternalFeelings (null);
         pulseResponse.setExternalFeelings (null);
+        pulseResponse.setInternalScore(null);
+        pulseResponse.setExternalScore(null);
 
         Set<ConstraintViolation<PulseResponse>> violations = validator.validate(pulseResponse);
-        assertEquals(2, violations.size());
+        assertEquals(4, violations.size());
         for (ConstraintViolation<PulseResponse> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
