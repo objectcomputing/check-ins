@@ -23,10 +23,10 @@ public class PulseResponseTest {
 
     @Test
     void testPulseResponseInstantiation() {
-        LocalDate submissionDate= LocalDate.of(2019, 1, 1);
+        LocalDate submissionDate = LocalDate.of(2019, 1, 1);
         final UUID teamMemberId = UUID.randomUUID();
-        final String internalFeelings  = "exampleId";
-        final String externalFeelings  = "exampleId2";
+        final String internalFeelings = "exampleId";
+        final String externalFeelings = "exampleId2";
         PulseResponse pulseResponse = new PulseResponse(1, 2, submissionDate,teamMemberId, internalFeelings, externalFeelings);
         assertEquals(teamMemberId, pulseResponse.getTeamMemberId());
         assertEquals(internalFeelings , pulseResponse.getInternalFeelings ());
@@ -35,11 +35,11 @@ public class PulseResponseTest {
 
     @Test
     void testConstraintViolation() {
-        LocalDate submissionDate= LocalDate.of(2019, 1, 1);
+        LocalDate submissionDate = LocalDate.of(2019, 1, 1);
         final UUID teamMemberId = UUID.randomUUID();
-        final String internalFeelings  = "exampleId";
-        final String externalFeelings  = "exampleId2";
-        PulseResponse pulseResponse = new PulseResponse(1, 2, submissionDate, teamMemberId, internalFeelings,externalFeelings);
+        final String internalFeelings = "exampleId";
+        final String externalFeelings = "exampleId2";
+        PulseResponse pulseResponse = new PulseResponse(1, 2, submissionDate, teamMemberId, internalFeelings, externalFeelings);
 
         pulseResponse.setInternalFeelings (null);
         pulseResponse.setExternalFeelings (null);
@@ -58,8 +58,8 @@ public class PulseResponseTest {
         final Integer externalScore = 2;
         LocalDate submissionDate= LocalDate.of(2019, 1, 1);
         final UUID teamMemberId = UUID.randomUUID();
-        final String internalFeelings  = "exampleId";
-        final String externalFeelings   = "exampleId2";
+        final String internalFeelings = "exampleId";
+        final String externalFeelings = "exampleId2";
 
         PulseResponse pulseResponse1 = new PulseResponse(id,internalScore,externalScore,submissionDate,teamMemberId, internalFeelings, externalFeelings );
         PulseResponse pulseResponse2 = new PulseResponse(id,internalScore,externalScore,submissionDate,teamMemberId, internalFeelings, externalFeelings );
@@ -89,12 +89,12 @@ public class PulseResponseTest {
     @Test
     void testToString() {
         final UUID id = UUID.randomUUID();
-        LocalDate submissionDate= LocalDate.of(2019, 1, 1);
+        LocalDate submissionDate = LocalDate.of(2019, 1, 1);
         final UUID teamMemberId = UUID.randomUUID();
         final Integer internalScore = 1;
         final Integer externalScore = 2;
-        final String internalFeelings  = "exampleId";
-        final String externalFeelings  = "exampleId2";
+        final String internalFeelings = "exampleId";
+        final String externalFeelings = "exampleId2";
         PulseResponse pulseResponse = new PulseResponse(id,internalScore,externalScore,submissionDate, teamMemberId, internalFeelings, externalFeelings );
 
         String toString = pulseResponse.toString();
