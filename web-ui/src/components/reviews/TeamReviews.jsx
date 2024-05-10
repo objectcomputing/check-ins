@@ -90,11 +90,7 @@ import './periods/DatePickerField.css';
 import './TeamReviews.css';
 
 const propTypes = {
-  teamMembers: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string
-    })
-  ),
+  onBack: PropTypes.func,
   periodId: PropTypes.string
 };
 const displayName = 'TeamReviews';
@@ -136,7 +132,7 @@ const ReviewStatus = {
   UNKNOWN: 'UNKNOWN'
 };
 
-const TeamReviews = ({ periodId }) => {
+const TeamReviews = ({ onBack, periodId }) => {
   const { state, dispatch } = useContext(AppContext);
   const history = useHistory();
   const location = useLocation();
@@ -370,7 +366,9 @@ const TeamReviews = ({ periodId }) => {
       const { id } = reviewee;
       const as = assignments.filter(a => a.revieweeId === id) ?? [];
       const reviewerIds = new Set();
-      as.forEach(a => reviewerIds.add(a.reviewerId));
+      as.forEach(a => {
+        if (a.reviewerId) reviewerIds.add(a.reviewerId);
+      });
       const reviewers = [...reviewerIds].map(id => memberMap[id]);
       return sortMembers(reviewers);
     },
@@ -596,6 +594,28 @@ const TeamReviews = ({ periodId }) => {
     }
   };
 
+  const requestApproval = async () => {
+    try {
+      const res = await resolve({
+        method: 'PUT',
+        url: '/services/review-periods',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8',
+          'X-CSRF-Header': csrf
+        },
+        data: {
+          ...period,
+          reviewStatus: ReviewStatus.AWAITING_APPROVAL
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+      onBack();
+    } catch (err) {
+      console.error('TeamReviews.jsx deleteReviewer:', err);
+    }
+  };
+
   const compareStrings = (s1, s2) => (s1 || '').localeCompare(s2 || '');
 
   const sortMembers = members =>
@@ -715,6 +735,7 @@ const TeamReviews = ({ periodId }) => {
             label="Close Date"
             disabled={!isAdmin}
           />
+          <Button onClick={requestApproval}>Request Approval</Button>
         </div>
       )}
       <MemberSelector
