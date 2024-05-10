@@ -237,7 +237,6 @@ const MemberSelectorDialog = ({
     };
 
     setFilterOptions(getFilterOptions());
-    // initializeChecked();
   }, [filterType, members, state]);
 
   const showError = useCallback(
@@ -439,9 +438,9 @@ const MemberSelectorDialog = ({
   return (
     <Dialog
       className="member-selector-dialog"
-      onClose={onClose}
       open={open}
       fullScreen
+      onClose={onClose}
       TransitionComponent={DialogTransition}
     >
       <AppBar>
