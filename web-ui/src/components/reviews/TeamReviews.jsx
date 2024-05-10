@@ -28,6 +28,7 @@ import {
   AccordionSummary,
   Avatar,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -87,6 +88,7 @@ import TeamMemberReview from './TeamMemberReview';
 
 import DatePickerField from './periods/DatePickerField.jsx';
 import './periods/DatePickerField.css';
+import './TeamReviews.css';
 
 const propTypes = {
   teamMembers: PropTypes.arrayOf(
@@ -147,6 +149,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [newRequestOpen, setNewRequestOpen] = useState(false);
   const [query, setQuery] = useState({});
+  const [reviewers, setReviewers] = useState(['Moe', 'Larry', 'Curly']);
   const [reviews, setReviews] = useState(null);
   const [selectedMember, setSelectedMember] = useState(null);
   const [selfReviews, setSelfReviews] = useState({});
@@ -683,8 +686,17 @@ const TeamReviews = ({ onBack, periodId }) => {
     ', Self-review: ' +
     getSelfReviewStatus(teamMember?.id);
 
+  const addReviewer = name => {
+    setReviewers(reviewers => [...reviewers, name]);
+  };
+
+  const handleReviewerDelete = reviewer => {
+    const newReviewers = reviewers.filter(r => r !== reviewer);
+    setReviewers(newReviewers);
+  };
+
   return (
-    <Root>
+    <Root className="team-reviews">
       <Tooltip title="Back">
         <Button onClick={onBack} aria-label="Back">
           <ArrowBack /> Back
@@ -772,6 +784,23 @@ const TeamReviews = ({ onBack, periodId }) => {
           />
         </div>
       )}
+      <div className="chip-row">
+        <Label>Reviewers:</Label>
+        {reviewers.map(reviewer => (
+          <Chip
+            key={reviewer}
+            label={reviewer}
+            variant="outlined"
+            onDelete={() => handleReviewerDelete(reviewer)}
+          />
+        ))}
+        <IconButton
+          aria-label="Add Reviewer"
+          onClick={() => addReviewer('Mark')}
+        >
+          <AddCircle />
+        </IconButton>
+      </div>
       <MemberSelector
         className="team-skill-member-selector"
         exportable
