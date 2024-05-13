@@ -6,5 +6,6 @@ describe('strings', () => {
     expect(titleCase('a')).toEqual('A');
     expect(titleCase('test')).toBe('Test');
     expect(titleCase('one two three')).toBe('One Two Three');
+    expect(titleCase('one_two_three')).toBe('One Two Three');
   });
 });

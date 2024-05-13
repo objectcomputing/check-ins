@@ -165,7 +165,7 @@ const MemberSelectorDialog = ({
         );
       }
     }
-  }, [open]);
+  }, [open, selectedMembers]);
 
   // Change filter options when filter type is changed
   useEffect(() => {

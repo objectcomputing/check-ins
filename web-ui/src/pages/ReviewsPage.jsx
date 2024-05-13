@@ -92,7 +92,7 @@ const ReviewPage = () => {
           <ReviewPeriods onPeriodSelected={onPeriodSelected} />
         ) : (
           <TeamReviews
-            onBack={() => onPeriodSelected(null)}
+            onBack={() => setSelectedPeriod(null)}
             periodId={selectedPeriod}
           />
         )}

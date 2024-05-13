@@ -14,7 +14,6 @@ import {
   Box,
   Button,
   FormControl,
-  IconButton,
   InputLabel,
   List,
   ListItem,
@@ -25,7 +24,6 @@ import {
   Select,
   Skeleton,
   TextField,
-  Tooltip,
   Typography
 } from '@mui/material';
 
@@ -60,7 +58,6 @@ const propTypes = {
   onSelect: PropTypes.func
 };
 const displayName = 'ReviewPeriods';
-const feedbackTemplateUrl = '/services/feedback/templates';
 
 const PREFIX = displayName;
 const classes = {
@@ -134,7 +131,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [periodToAdd, setPeriodToAdd] = useState({
     name: '',
-    reviewStatus: ReviewStatus.OPEN,
+    reviewStatus: ReviewStatus.PLANNING,
     launchDate: null,
     selfReviewCloseDate: null,
     closeDate: null
@@ -166,6 +163,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     () => setReviewStatus(ReviewStatus.OPEN),
     [setReviewStatus]
   );
+
   const handleClose = useCallback(
     () => setReviewStatus(ReviewStatus.CLOSED),
     [setReviewStatus]
@@ -179,9 +177,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const addReviewPeriod = useCallback(
     async name => {
-      if (!csrf) {
-        return;
-      }
+      if (!csrf) return;
+
       const alreadyExists = findPeriodByName(periodToAdd?.name);
       if (!alreadyExists) {
         handleOpen();
@@ -347,8 +344,23 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const onPeriodClick = useCallback(
     id => {
-      if (selectReviewPeriod(state, id)?.reviewStatus === ReviewStatus.OPEN) {
-        onPeriodSelected(id);
+      const status = selectReviewPeriod(state, id)?.reviewStatus;
+      switch (status) {
+        case ReviewStatus.PLANNING:
+          onPeriodSelected(id);
+          break;
+        case ReviewStatus.AWAITING_APPROVAL:
+          // TODO: Check for the required permission.
+          onPeriodSelected(id);
+          break;
+        case ReviewStatus.OPEN:
+          alert(
+            'The page for viewing review periods in the OPEN state has not been created yet.'
+          );
+          break;
+        default:
+          // We do nothing if the status is CLOSED or UNKNOWN.
+          break;
       }
     },
     [state, onPeriodSelected]
@@ -409,41 +421,29 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           periods
             .sort((a, b) => {
               return a.reviewStatus === b.reviewStatus
-                ? ('' + a.name).localeCompare(b.name)
+                ? (a.name || '').localeCompare(b.name)
                 : a.reviewStatus === ReviewStatus.OPEN
                   ? -1
                   : 1;
             })
-            .map(
-              (
-                {
-                  name,
-                  reviewStatus,
-                  id,
-                  launchDate,
-                  selfReviewCloseDate,
-                  closeDate
-                },
-                i
-              ) => (
-                <div key={i} className="reviewPeriodSection">
-                  <ListItem key={`period-${id}`}>
-                    <ListItemAvatar
-                      key={`period-lia-${id}`}
-                      onClick={() => onPeriodClick(id)}
-                    >
-                      <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      key={`period-lit-${id}`}
-                      onClick={() => onPeriodClick(id)}
-                      primary={`${name} - ${titleCase(reviewStatus)}`}
-                      secondary={getSecondaryLabel(id)}
-                    />
-                  </ListItem>
-                </div>
-              )
-            )
+            .map(({ name, reviewStatus, id }, i) => (
+              <div key={i} className="reviewPeriodSection">
+                <ListItem key={`period-${id}`}>
+                  <ListItemAvatar
+                    key={`period-lia-${id}`}
+                    onClick={() => onPeriodClick(id)}
+                  >
+                    <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    key={`period-lit-${id}`}
+                    onClick={() => onPeriodClick(id)}
+                    primary={`${name} - ${titleCase(ReviewStatus[reviewStatus])}`}
+                    secondary={getSecondaryLabel(id)}
+                  />
+                </ListItem>
+              </div>
+            ))
         ) : (
           <Typography variant="body1">
             There are currently no review periods.
