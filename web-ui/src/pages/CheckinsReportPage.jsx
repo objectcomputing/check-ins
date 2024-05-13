@@ -120,12 +120,16 @@ const CheckinsReportPage = () => {
     }
   }, [processedQPs.current]);
 
-  // Set the mapped PDLs to the PDLs with members
+  // Set the mapped PDLs to the PDLs with members attached
+  // filtering out data about check-ins under a different PDL.
   useEffect(() => {
     if (!pdls) return;
-    pdls.forEach(
-      pdl => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
-    );
+    pdls.forEach(pdl => {
+      return (pdl.members = selectTeamMembersWithCheckinPDL(
+        state,
+        pdl.id
+      ).filter(member => member.pdlId === pdl.id));
+    });
     pdls.filter(pdl => pdl.members.length > 0);
   }, [pdls, state]);
 
