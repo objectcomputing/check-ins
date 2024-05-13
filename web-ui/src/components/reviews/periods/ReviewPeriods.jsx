@@ -354,13 +354,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           onPeriodSelected(id);
           break;
         case ReviewStatus.OPEN:
-          /* TODO: This should display a different page
-                   or a read-only version of TeamReviews.
           alert(
             'The page for viewing review periods in the OPEN state has not been created yet.'
           );
-          */
-          onPeriodSelected(id);
           break;
         default:
           // We do nothing if the status is CLOSED or UNKNOWN.
