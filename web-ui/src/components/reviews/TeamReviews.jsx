@@ -705,12 +705,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
       <List dense role="list" sx={{ height: '50%', overflowY: 'scroll' }}>
         {teamMembers.map(member => (
-          <ListItem
-            key={member.id}
-            role="listitem"
-            disablePadding
-            onClick={() => {}}
-          >
+          <ListItem key={member.id} role="listitem" disablePadding>
             <ListItemText
               className="name-title"
               primary={<Typography fontWeight="bold">{member.name}</Typography>}
