@@ -143,13 +143,10 @@ const TeamReviews = ({ onBack, periodId }) => {
     loadTeamMembers();
   }, [currentMembers]);
 
-  useEffect(() => {
-    const reviewers = selectedMember ? getReviewers(selectedMember) : [];
-    setSelectedReviewers(reviewers);
-  }, [selectedMember]);
-
   const editReviewers = member => {
     setSelectedMember(member);
+    const reviewers = member ? getReviewers(member) : [];
+    setSelectedReviewers(reviewers);
     setReviewerSelectorOpen(true);
   };
 
