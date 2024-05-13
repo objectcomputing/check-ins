@@ -114,8 +114,6 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const [assignments, setAssignments] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [includeAll, setIncludeAll] = useState(false);
-  const [memberFilters, setMemberFilters] = useState([]);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [query, setQuery] = useState({});
   const [reviewerSelectorOpen, setReviewerSelectorOpen] = useState(false);
@@ -741,7 +739,6 @@ const TeamReviews = ({ onBack, periodId }) => {
 
       <MemberSelectorDialog
         open={memberSelectorOpen}
-        initialFilters={memberFilters}
         memberDescriptor="Members"
         selectedMembers={teamMembers}
         onClose={() => setMemberSelectorOpen(false)}
