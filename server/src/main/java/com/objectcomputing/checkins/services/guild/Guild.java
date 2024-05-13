@@ -50,7 +50,7 @@ public class Guild {
     @Schema(description="link to the homepage of the guild")
     private String link;
 
-    @NotBlank
+    @Nullable
     @Column(name = "description")
     @ColumnTransformer(
             read = "pgp_sym_decrypt(description::bytea,'${aes.key}')",
@@ -64,11 +64,11 @@ public class Guild {
     @Schema(description = "Is the guild a community")
     private boolean community;
 
-    public Guild(String name, String description, @Nullable String link, boolean community) {
+    public Guild(String name, @Nullable String description, @Nullable String link, boolean community) {
         this(null, name, description, link, community);
     }
 
-    public Guild(UUID id, String name, String description, @Nullable String link, boolean community) {
+    public Guild(UUID id, String name, @Nullable String description, @Nullable String link, boolean community) {
         this.id = id;
         this.name = name;
         this.description = description;

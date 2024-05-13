@@ -36,12 +36,14 @@ configurations {
 
 dependencies {
     rewrite('org.openrewrite.recipe:rewrite-micronaut:2.1.1')
-    // TODO when going to jdk21
-//    compileOnly ("org.projectlombok:lombok:1.18.30")
-//    annotationProcessor ("org.projectlombok:lombok:1.18.30")
+
     runtimeOnly("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("org.yaml:snakeyaml")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    runtimeOnly("org.postgresql:postgresql")
+
     compileOnly ("org.projectlombok:lombok")
+
     annotationProcessor ("org.projectlombok:lombok")
     annotationProcessor ("io.micronaut:micronaut-inject-java")
     annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
@@ -64,23 +66,13 @@ dependencies {
     implementation("io.micronaut.views:micronaut-views-thymeleaf")
     implementation("io.swagger.core.v3:swagger-annotations")
 
-    runtimeOnly("ch.qos.logback:logback-classic")
-    runtimeOnly("org.postgresql:postgresql")
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:postgresql")
-    testImplementation("org.testcontainers:testcontainers")
-
-    testImplementation("org.hamcrest:hamcrest")
-
-    testImplementation("org.mockito:mockito-core")
-
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation "commons-io:commons-io:2.8.0"
     implementation 'org.apache.commons:commons-csv:1.8'
 
     implementation "jakarta.annotation:jakarta.annotation-api"
     implementation "jakarta.persistence:jakarta.persistence-api"
-    implementation "com.sun.mail:javax.mail:1.6.2" // todo matt
+    implementation "com.sun.mail:javax.mail:1.6.2" // todo matt switch to jakarta
     implementation "com.mailjet:mailjet-client:4.2.1"
     implementation "io.micronaut:micronaut-http-server-netty"
     implementation "com.google.api-client:google-api-client:1.30.9"
@@ -95,13 +87,20 @@ dependencies {
     //implementation("io.micronaut.reactor:micronaut-reactor-http-client") // todo matt
     implementation("io.micrometer:context-propagation")
     implementation('io.projectreactor.addons:reactor-adapter:3.4.8') // todo matt
+
+    testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+    testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+
     testImplementation('io.projectreactor:reactor-test') // todo matt
     testImplementation 'io.github.bonigarcia:webdrivermanager:4.1.0'
     testImplementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:testcontainers")
+    testImplementation("org.hamcrest:hamcrest")
+    testImplementation("org.mockito:mockito-core")
 }
 
 test {
