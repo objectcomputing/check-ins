@@ -12,20 +12,8 @@ import React, {
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
+import { AddCircle, Archive, Delete, Unarchive } from '@mui/icons-material';
 import {
-  AddCircle,
-  AddComment,
-  Archive,
-  Delete,
-  Download,
-  ExpandMore,
-  Unarchive
-} from '@mui/icons-material';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Avatar,
   Button,
   Chip,
   Dialog,
@@ -33,25 +21,17 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
-  FormControlLabel,
   IconButton,
   List,
   ListItem,
-  ListItemAvatar,
-  ListItemSecondaryAction,
   ListItemText,
-  Skeleton,
-  Switch,
   Tooltip,
   Typography
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import { resolve } from '../../api/api.js';
-import { getAvatarURL } from '../../api/api.js';
 import {
-  createFeedbackRequest,
   findReviewRequestsByPeriodAndTeamMembers,
   findSelfReviewRequestsByPeriodAndTeamMembers
 } from '../../api/feedback.js';
@@ -70,7 +50,6 @@ import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
   selectReviewPeriod,
-  selectProfile,
   selectCurrentUser,
   selectIsAdmin,
   selectMyTeam,
@@ -79,11 +58,7 @@ import {
 } from '../../context/selectors';
 
 import MemberSelector from '../member_selector/MemberSelector';
-import MemberSelectorDialog, {
-  FilterType
-} from '../member_selector/member_selector_dialog/MemberSelectorDialog';
-import SelectUserModal from './SelectUserModal';
-import TeamMemberReview from './TeamMemberReview';
+import MemberSelectorDialog from '../member_selector/member_selector_dialog/MemberSelectorDialog';
 
 import DatePickerField from './periods/DatePickerField.jsx';
 import './periods/DatePickerField.css';
@@ -142,7 +117,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [includeAll, setIncludeAll] = useState(false);
   const [memberFilters, setMemberFilters] = useState([]);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
-  const [newRequestOpen, setNewRequestOpen] = useState(false);
   const [query, setQuery] = useState({});
   const [reviewerSelectorOpen, setReviewerSelectorOpen] = useState(false);
   const [reviews, setReviews] = useState(null);
@@ -152,7 +126,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [toDelete, setToDelete] = useState(null);
 
-  const creatingReview = useRef(false);
   const loadedReviews = useRef(false);
   const loadingReviews = useRef(false);
 
@@ -164,18 +137,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   }, {});
   const currentUser = selectCurrentUser(state);
   const isAdmin = selectIsAdmin(state);
-  const myTeam = selectMyTeam(state);
   const period = selectReviewPeriod(state, periodId);
-  const subordinates = selectSubordinates(state, currentUser?.id);
-
-  const handleOpenNewRequest = useCallback(
-    () => setNewRequestOpen(true),
-    [setNewRequestOpen]
-  );
-  const handleCloseNewRequest = useCallback(
-    () => setNewRequestOpen(false),
-    [setNewRequestOpen]
-  );
 
   const reviewAssignmentsUrl = '/services/review-assignments';
 
@@ -239,10 +201,6 @@ const TeamReviews = ({ onBack, periodId }) => {
     } catch (err) {
       console.error('TeamReviews.jsx updateTeamMembers:', err);
     }
-  };
-
-  const getMember = id => {
-    return teamMembers.find(m => m.id === id);
   };
 
   const getReviewStatus = useCallback(
@@ -312,11 +270,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   const hasTeamMember = useCallback(() => {
     return !!query.teamMember;
   }, [query.teamMember]);
-
-  const getTeamMember = useCallback(() => {
-    if (hasTeamMember()) return query.teamMember;
-    else return null;
-  }, [query.teamMember, hasTeamMember]);
 
   useEffect(() => {
     const getAllReviewPeriods = async () => {
@@ -555,21 +508,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   useEffect(() => {
     loadReviews();
   }, [loadReviews]);
-
-  const reloadReviews = useCallback(() => {
-    loadedReviews.current = false;
-    loadReviews();
-  }, [loadReviews]);
-
-  const toggleIncludeAll = useCallback(() => {
-    loadedReviews.current = false;
-    setIncludeAll(!includeAll);
-  }, [includeAll, setIncludeAll]);
-
-  const createSecondary = teamMember =>
-    getReviewStatus(teamMember?.id) +
-    ', Self-review: ' +
-    getSelfReviewStatus(teamMember?.id);
 
   const deleteReviewer = async (member, reviewer) => {
     const assignment = assignments.find(
