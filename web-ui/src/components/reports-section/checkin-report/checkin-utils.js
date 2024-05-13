@@ -40,9 +40,13 @@ export const statusForPeriodByMemberScheduling = (
 ) => {
   if (checkins.length === 0) return 'Not Scheduled';
   const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
+  const endOfQuarterWithGrace = new Date(endOfQuarter);
+  endOfQuarterWithGrace.setMonth(endOfQuarter.getMonth() + 1);
   const scheduled = checkins.filter(checkin => {
     const checkinDate = getCheckinDate(checkin);
-    return checkinDate >= startOfQuarter && checkinDate <= endOfQuarter;
+    return (
+      checkinDate >= startOfQuarter && checkinDate <= endOfQuarterWithGrace // Include grace period
+    );
   });
   if (scheduled.length === 0) return 'Not Scheduled';
   const completed = scheduled.filter(checkin => checkin.completed);

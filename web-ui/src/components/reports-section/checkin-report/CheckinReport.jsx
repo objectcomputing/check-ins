@@ -72,12 +72,12 @@ const CheckinsReport = ({ closed, pdl, planned, reportDate }) => {
 
     const isCheckinInProgress = (checkin, start, end) => {
       const checkinDate = getCheckinDate(checkin);
-      const now = new Date();
+      const endOfPeriod = new Date(end);
       return (
         checkinDate >= start &&
         checkinDate <= end &&
         !checkin.completed &&
-        checkinDate < now
+        checkinDate < endOfPeriod
       );
     };
 

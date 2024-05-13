@@ -453,6 +453,16 @@ INSERT INTO checkins
 VALUES
 ('e60c3ca1-3894-4466-b418-9b743d058cc8', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-06-20 11:32:29.04' , false);
 
+-- Julia Smith Check-ins
+-- NOW() + INTERVAL '1 week'
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  'b19a00d4-0225-412a-9456-d349ca293cdd',
+  '59b790d2-fabc-11eb-9a03-0242ac130003',
+  '6207b3fd-042d-49aa-9e28-dcc04f537c2d', -- pdl: Michael Kimberlin
+  CURRENT_DATE + INTERVAL '1 week', -- 1 week from current date
+  false
+);
 
 -- Unreal Ulysses Check-ins
 ---- 2021-02-25 - Completed

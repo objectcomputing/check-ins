@@ -9,11 +9,11 @@ import {
 
 import {
   Grid,
-  Typography,
   IconButton,
   Box,
   ButtonGroup,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -24,7 +24,8 @@ import { FilterType } from '../components/member_selector/member_selector_dialog
 import {
   getQuarterBeginEnd,
   useQueryParameters,
-  isArrayPresent
+  isArrayPresent,
+  getQuarterDisplay
 } from '../helpers';
 
 import './CheckinsReportPage.css';
@@ -120,12 +121,15 @@ const CheckinsReportPage = () => {
     }
   }, [processedQPs.current]);
 
-  // Set the mapped PDLs to the PDLs with members
+  // Set the mapped PDLs to the PDLs with members attached
+  // filtering out data about check-ins under a different PDL.
   useEffect(() => {
     if (!pdls) return;
-    pdls.forEach(
-      pdl => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
-    );
+    pdls.forEach(pdl => {
+      pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id).filter(
+        member => member.pdlId === pdl.id
+      );
+    });
     pdls.filter(pdl => pdl.members.length > 0);
   }, [pdls, state]);
 
@@ -150,6 +154,12 @@ const CheckinsReportPage = () => {
               <ArrowBackIcon style={{ fontSize: '1.2em' }} />
             </IconButton>
           </Tooltip>
+          <Typography
+            variant="h6"
+            sx={{ fontSize: '1.5rem', alignContent: 'center', p: 1 }}
+          >
+            <nobr>{getQuarterDisplay(reportDate)}</nobr>
+          </Typography>
           <Tooltip title="Next quarter">
             <IconButton
               aria-label="Next quarter`"
