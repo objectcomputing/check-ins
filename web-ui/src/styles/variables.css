@@ -36,6 +36,7 @@
   --primary-link-dark-hover: #4f5f8c;
   --action: color-mix(in oklab, var(--black), var(--white) 50%);
   --action-disabled: color-mix(in oklab, var(--black), var(--white) 5%);
+  --muted: color-mix(in oklab, var(--black), var(--white) 47%);
 
   --checkins-palette-action-disabledOpacity: 0.58;
 
@@ -66,6 +67,7 @@
     --primary-text: color-mix(in oklab, var(--white), var(--black) 10%);
     --action: var(--white);
     --action-disabled: color-mix(in oklab, var(--white), var(--black) 30%);
+    --muted: color-mix(in oklab, var(--black), var(--white) 53%);
 
     --primary-main: var(--oci-light-blue);
     --primary-light: color-mix(

@@ -64,8 +64,9 @@ const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
                     component={'time'}
                     dateTime={getLastCheckinDate(checkins).toISOString()}
                     sx={{ display: { xs: 'none', sm: 'flex' } }}
+                    className="team-member-map-summmary-latest-activity"
                   >
-                    Activity:{' '}
+                    Latest Activity:{' '}
                     {getLastCheckinDate(checkins).toLocaleDateString(
                       navigator.language,
                       {

@@ -1,19 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Avatar,
+  Box,
   Card,
   CardHeader,
-  Divider,
   IconButton,
-  List,
-  ListItemIcon,
-  ListItemText,
   Tooltip,
   Typography
 } from '@mui/material';
 import { Add, FileDownload } from '@mui/icons-material';
-import { getAvatarURL } from '../../api/api';
 
 import MemberSelectorDialog, {
   FilterType
@@ -156,7 +151,7 @@ const MemberSelector = ({
             </div>
           }
           action={
-            <>
+            <Box sx={{ mr: 2 }}>
               <Tooltip title={`Change ${memberDescriptor}`} arrow>
                 <IconButton
                   style={{ margin: '4px 8px 0 0' }}
@@ -177,7 +172,7 @@ const MemberSelector = ({
                   </IconButton>
                 </Tooltip>
               )}
-            </>
+            </Box>
           }
         />
       </Card>
