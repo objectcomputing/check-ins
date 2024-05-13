@@ -126,10 +126,9 @@ const CheckinsReportPage = () => {
   useEffect(() => {
     if (!pdls) return;
     pdls.forEach(pdl => {
-      return (pdl.members = selectTeamMembersWithCheckinPDL(
-        state,
-        pdl.id
-      ).filter(member => member.pdlId === pdl.id));
+      pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id).filter(
+        member => member.pdlId === pdl.id
+      );
     });
     pdls.filter(pdl => pdl.members.length > 0);
   }, [pdls, state]);
