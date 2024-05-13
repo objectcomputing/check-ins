@@ -25,7 +25,7 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin-notes")
 public class CheckinNoteController {
-    // todo refactor controller to non-blocking
+
     private final CheckinNoteServices checkinNoteServices;
 
     public CheckinNoteController(CheckinNoteServices checkinNoteServices) {

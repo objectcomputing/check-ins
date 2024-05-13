@@ -104,123 +104,127 @@ public class SecurityRuleResultTest {
 
     }
 
-    // TODO MATT test this first test works
 
-//    @Test
-//    public void rejectSecurityRuleResultTest() {
-//
-//        final HttpRequest<?> request = HttpRequest.POST("/", null)
-//                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE);
-//
-//        Map<String, Object> attributes = new HashMap<>();
-//        attributes.put("permissions", userPermissions);
-//        attributes.put("roles", userRoles);
-//        attributes.put("email", "test.email.address");
-//
-//        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
-//        when(mockMethodBasedRouteMatch.getAnnotation(RequiredPermission.class)).thenReturn(mockRequiredPermissionAnnotation);
-//        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
-//
-//        Authentication auth = Authentication.build("test.email.address", attributes);
-//        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, mockMethodBasedRouteMatch, auth);
-//
-//        assertNotNull(result);
-//        StepVerifier.create(result)
-//                .expectNext(SecurityRuleResult.REJECTED)
-//                .expectComplete()
-//                .verify();
-//    }
-//
-//    @Test
-//    public void unknownSecurityRuleResultIfRouteMatchIsNotAnInstance() {
-//
-//        final HttpRequest<?> request = HttpRequest.POST("/", null)
-//                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE);
-//
-//        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, null, null);
-//
-//        assertNotNull(result);
-//        StepVerifier.create(result)
-//                        .expectNext(SecurityRuleResult.UNKNOWN)
-//                        .expectComplete()
-//                        .verify();
-//    }
-//
-//    @Test
-//    public void unknownSecurityRuleResultIfMethodBasedRouteMatchFailsToHaveAnnotation() {
-//
-//        final HttpRequest<?> request = HttpRequest.POST("/", null)
-//                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE);
-//
-//        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(false);
-//
-//        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, mockMethodBasedRouteMatch, null);
-//
-//        assertNotNull(result);
-//        StepVerifier.create(result)
-//                .expectNext(SecurityRuleResult.UNKNOWN)
-//                .expectComplete()
-//                .verify();
-//    }
-//
-//    @Test
-//    public void unknownSecurityRuleResultIfRequiredPermissionIsNull() {
-//
-//        final HttpRequest<?> request = HttpRequest.POST("/", null)
-//                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE);
-//
-//        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
-//        when(mockMethodBasedRouteMatch.getAnnotation(RequiredPermission.class)).thenReturn(null);
-//
-//        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, mockMethodBasedRouteMatch, null);
-//
-//        assertNotNull(result);
-//        StepVerifier.create(result)
-//                .expectNext(SecurityRuleResult.UNKNOWN)
-//                .expectComplete()
-//                .verify();
-//    }
-//
-//    @Test
-//    public void unknownSecurityRuleResultIfClaimsIsNull() {
-//
-//        final HttpRequest<?> request = HttpRequest.POST("/", null)
-//                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE);
-//
-//        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
-//        when(mockMethodBasedRouteMatch.getAnnotation(RequiredPermission.class)).thenReturn(mockRequiredPermissionAnnotation);
-//        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
-//
-//        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, mockMethodBasedRouteMatch, null);
-//
-//        assertNotNull(result);
-//        StepVerifier.create(result)
-//                .expectNext(SecurityRuleResult.UNKNOWN)
-//                .expectComplete()
-//                .verify();
-//    }
-//
-//    @Test
-//    public void unknownSecurityRuleResultIfClaimsDoesNotContainPermissions() {
-//
-//        final HttpRequest<?> request = HttpRequest.POST("/", null)
-//                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE);
-//
-//        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
-//        when(mockMethodBasedRouteMatch.getAnnotation(RequiredPermission.class)).thenReturn(mockRequiredPermissionAnnotation);
-//        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
-//
-//        Map<String, Object> attributes = new HashMap<>();
-//        attributes.put("email", "test.email.address");
-//
-//        Authentication auth = Authentication.build("test.email.address", attributes);
-//
-//        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, mockMethodBasedRouteMatch, auth);
-//
-//        assertNotNull(result);
-//        StepVerifier.create(result)
-//                .expectNext(SecurityRuleResult.UNKNOWN)
-//                .expectComplete()
-//                .verify();
-//    }
+    @Test
+    public void rejectSecurityRuleResultTest() {
+
+        final HttpRequest<?> request = HttpRequest.POST("/", null)
+                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
+                .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
+
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("permissions", userPermissions);
+        attributes.put("roles", userRoles);
+        attributes.put("email", "test.email.address");
+
+        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
+        when(mockMethodBasedRouteMatch.getAnnotation(RequiredPermission.class)).thenReturn(mockRequiredPermissionAnnotation);
+        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
+
+        Authentication auth = Authentication.build("test.email.address", attributes);
+        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, auth);
+
+        assertNotNull(result);
+        StepVerifier.create(result)
+                .expectNext(SecurityRuleResult.REJECTED)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void unknownSecurityRuleResultIfRouteMatchIsNotAnInstance() {
+
+        final HttpRequest<?> request = HttpRequest.POST("/", null)
+                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE);
+
+        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, null);
+
+        assertNotNull(result);
+        StepVerifier.create(result)
+                        .expectNext(SecurityRuleResult.UNKNOWN)
+                        .expectComplete()
+                        .verify();
+    }
+
+    @Test
+    public void unknownSecurityRuleResultIfMethodBasedRouteMatchFailsToHaveAnnotation() {
+
+        final HttpRequest<?> request = HttpRequest.POST("/", null)
+                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
+                .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
+
+        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(false);
+
+        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, null);
+
+        assertNotNull(result);
+        StepVerifier.create(result)
+                .expectNext(SecurityRuleResult.UNKNOWN)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void unknownSecurityRuleResultIfRequiredPermissionIsNull() {
+
+        final HttpRequest<?> request = HttpRequest.POST("/", null)
+                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
+                .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
+
+        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
+        when(mockMethodBasedRouteMatch.getAnnotation(RequiredPermission.class)).thenReturn(null);
+
+        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, null);
+
+        assertNotNull(result);
+        StepVerifier.create(result)
+                .expectNext(SecurityRuleResult.UNKNOWN)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void unknownSecurityRuleResultIfClaimsIsNull() {
+
+        final HttpRequest<?> request = HttpRequest.POST("/", null)
+                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
+                .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
+
+        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
+        when(mockMethodBasedRouteMatch.getAnnotation(RequiredPermission.class)).thenReturn(mockRequiredPermissionAnnotation);
+        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
+
+        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, null);
+
+        assertNotNull(result);
+        StepVerifier.create(result)
+                .expectNext(SecurityRuleResult.UNKNOWN)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void unknownSecurityRuleResultIfClaimsDoesNotContainPermissions() {
+
+        final HttpRequest<?> request = HttpRequest.POST("/", null)
+                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
+                .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
+
+        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
+        when(mockMethodBasedRouteMatch.getAnnotation(RequiredPermission.class)).thenReturn(mockRequiredPermissionAnnotation);
+        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
+
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("email", "test.email.address");
+
+        Authentication auth = Authentication.build("test.email.address", attributes);
+
+        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, auth);
+
+        assertNotNull(result);
+        StepVerifier.create(result)
+                .expectNext(SecurityRuleResult.UNKNOWN)
+                .expectComplete()
+                .verify();
+    }
 }

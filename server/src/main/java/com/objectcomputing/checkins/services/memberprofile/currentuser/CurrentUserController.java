@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "current user")
 public class CurrentUserController {
-    // todo refactor controller to be non-blocking
+
     private final CurrentUserServices currentUserServices;
     private final RoleServices roleServices;
 

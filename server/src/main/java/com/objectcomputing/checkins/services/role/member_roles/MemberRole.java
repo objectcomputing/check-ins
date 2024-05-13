@@ -12,7 +12,6 @@ import java.util.UUID;
 @Table(name = "member_roles")
 public class MemberRole {
 
-    // todo matt
     @EmbeddedId
     private final MemberRoleId memberRoleId;
 

@@ -196,7 +196,6 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testFindPulseResponseAllParams(){
-        // TODO matt controller has date issue like survey
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);

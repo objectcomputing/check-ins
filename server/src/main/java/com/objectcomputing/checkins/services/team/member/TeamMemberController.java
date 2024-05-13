@@ -25,7 +25,6 @@ import java.util.UUID;
 @Tag(name = "team-member")
 public class TeamMemberController {
 
-    // TODO convert controller to non-blocking
     private final TeamMemberServices teamMemberServices;
 
     public TeamMemberController(TeamMemberServices teamMemberServices) {

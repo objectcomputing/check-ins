@@ -16,8 +16,6 @@ import java.util.UUID;
 @Controller("/services/roles/members")
 public class MemberRoleController {
 
-    // todo matt controller is blocking
-
     private final MemberRoleServices memberRoleServices;
 
     public MemberRoleController(MemberRoleServices memberRoleServices) {

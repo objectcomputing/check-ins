@@ -64,34 +64,33 @@ dependencies {
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.micronaut.validation:micronaut-validation")
     implementation("io.micronaut.views:micronaut-views-thymeleaf")
+    implementation("io.micronaut.email:micronaut-email-mailjet")
+    implementation "io.micronaut:micronaut-http-server-netty"
+
     implementation("io.swagger.core.v3:swagger-annotations")
 
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation "commons-io:commons-io:2.8.0"
-    implementation 'org.apache.commons:commons-csv:1.8'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation "commons-io:commons-io:2.16.1"
+    implementation 'org.apache.commons:commons-csv:1.11.0'
 
     implementation "jakarta.annotation:jakarta.annotation-api"
     implementation "jakarta.persistence:jakarta.persistence-api"
-    implementation "com.sun.mail:javax.mail:1.6.2" // todo matt switch to jakarta
-    implementation "com.mailjet:mailjet-client:4.2.1"
-    implementation "io.micronaut:micronaut-http-server-netty"
+
     implementation "com.google.api-client:google-api-client:1.30.9"
     implementation "com.google.oauth-client:google-oauth-client-jetty:1.28.0"
     implementation "com.google.apis:google-api-services-drive:v3-rev20200326-1.30.9"
     implementation "com.google.apis:google-api-services-gmail:v1-rev20200203-1.30.9"
     implementation "com.google.apis:google-api-services-admin-directory:directory_v1-rev118-1.25.0"
 
-    implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15' // todo matt
+    implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
 
     implementation("io.micronaut.reactor:micronaut-reactor")
-    //implementation("io.micronaut.reactor:micronaut-reactor-http-client") // todo matt
     implementation("io.micrometer:context-propagation")
-    implementation('io.projectreactor.addons:reactor-adapter:3.4.8') // todo matt
 
     testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
 
-    testImplementation('io.projectreactor:reactor-test') // todo matt
+    testImplementation('io.projectreactor:reactor-test')
     testImplementation 'io.github.bonigarcia:webdrivermanager:4.1.0'
     testImplementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"

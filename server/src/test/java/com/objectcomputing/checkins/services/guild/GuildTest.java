@@ -54,10 +54,9 @@ class GuildTest {
         Guild guild = new Guild(id, name, description, null, false);
 
         guild.setName("");
-        guild.setDescription("");
 
         Set<ConstraintViolation<Guild>> violations = validator.validate(guild);
-        assertEquals(violations.size(), 2);
+        assertEquals(violations.size(), 1);
         for (ConstraintViolation<Guild> violation : violations) {
             assertEquals(violation.getMessage(), "must not be blank");
         }

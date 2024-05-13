@@ -12,7 +12,6 @@ import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 
-// TODO matt there is no test for this
 @Controller("/services/email-notifications")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)

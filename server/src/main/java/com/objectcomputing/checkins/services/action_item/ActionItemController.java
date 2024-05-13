@@ -25,7 +25,7 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "action-items")
 public class ActionItemController {
-    // todo refactor to non blocking
+
     private ActionItemServices actionItemServices;
     public ActionItemController(ActionItemServices actionItemServices) {
         this.actionItemServices = actionItemServices;

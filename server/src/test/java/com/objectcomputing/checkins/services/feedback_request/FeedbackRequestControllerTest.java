@@ -1313,7 +1313,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
-    // todo matt date issue
+
     @Test
     void testRecipientGetBeforeSendDateAsPdlAuthorized() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();

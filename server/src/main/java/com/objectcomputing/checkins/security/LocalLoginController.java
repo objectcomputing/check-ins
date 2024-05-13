@@ -86,7 +86,6 @@ public class LocalLoginController {
                 newAttributes.put("picture", "");
                 Authentication updatedAuth = Authentication.build(authentication.getName(), authentication.getRoles(), newAttributes);
 
-                // TODO matt login success and failed my need more looking into and lots of raw parameter usage here
                 eventPublisher.publishEvent(new LoginSuccessfulEvent(updatedAuth, null, Locale.getDefault()));
                 return loginHandler.loginSuccess(updatedAuth, request);
             } else {

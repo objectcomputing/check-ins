@@ -81,7 +81,6 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
 
     @Test
     public void testGetAllMemberProfileRecords() {
-        // todo matt date issue
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
         MemberProfile member3 = createADefaultMemberProfileForPdl(member1);

@@ -24,8 +24,8 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "guild-member")
 public class GuildMemberController {
-// todo refactor to non-blocking
-    private GuildMemberServices guildMemberServices;
+
+    private final GuildMemberServices guildMemberServices;
 
     public GuildMemberController(GuildMemberServices guildMemberServices) {
         this.guildMemberServices = guildMemberServices;

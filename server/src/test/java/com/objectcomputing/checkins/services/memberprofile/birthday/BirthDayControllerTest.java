@@ -53,7 +53,6 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
 
     @Test
     public void testGETFindByValueNameOfTheMonthAndDay() {
-        // todo matt
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
 
@@ -63,7 +62,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
                 GET(String.format("/?month=%s&dayOfMonth=%s", memberProfile.getBirthDate().getMonth().toString(), memberProfile.getBirthDate().getDayOfMonth())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<List<BirthDayResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(BirthDayResponseDTO.class));
-        // todo matt date issue
+
         assertEquals(1, response.body().size());
         assertEquals(memberProfile.getId(), response.body().get(0).getUserId());
         assertEquals(HttpStatus.OK, response.getStatus());

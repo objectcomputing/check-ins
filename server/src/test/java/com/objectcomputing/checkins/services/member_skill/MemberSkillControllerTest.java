@@ -275,7 +275,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s", memberSkill.getMemberid(),
                 memberSkill.getSkillid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
-// todo matt date issue
+
         assertEquals(Set.of(memberSkill), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 

@@ -186,7 +186,6 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
 
     @Test
     void testFindOpportunitiesAllParams(){
-        // TODO matt time issue here as well
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
