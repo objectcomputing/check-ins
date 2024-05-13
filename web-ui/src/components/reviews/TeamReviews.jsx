@@ -527,7 +527,28 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   };
 
+  const validateReviewPeriod = period => {
+    if (!period) return 'No review period was created.';
+    if (!period.launchDate) return 'No launch date was specified.';
+    if (!period.selfReviewCloseDate)
+      return 'No self-review date was specified.';
+    if (!period.closeDate) return 'No close date was specified.';
+    if (teamMembers.length === 0) return 'No members were added.';
+    const haveReviewers = teamMembers.every(
+      member => member.reviewers.length > 0
+    );
+    if (!haveReviewers) return 'One or more members have no reviewer.';
+    return null;
+  };
+
   const requestApproval = async () => {
+    const msg = validateReviewPeriod(period);
+    if (msg) {
+      // TODO: Replace this with a better dialog.
+      alert(msg);
+      return;
+    }
+
     try {
       const res = await resolve({
         method: 'PUT',
@@ -627,6 +648,17 @@ const TeamReviews = ({ onBack, periodId }) => {
     );
   };
 
+  const approvalButton = () => {
+    switch (period.reviewStatus) {
+      case ReviewStatus.PLANNING:
+        return <Button onClick={requestApproval}>Request Approval</Button>;
+      case ReviewStatus.AWAITING_APPROVAL:
+        return <Button onClick={requestApproval}>Launch Review</Button>;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
@@ -689,11 +721,7 @@ const TeamReviews = ({ onBack, periodId }) => {
             label="Close Date"
             disabled={!isAdmin}
           />
-          <Button onClick={requestApproval}>
-            {period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
-              ? 'Launch Review'
-              : 'Request Approval'}
-          </Button>
+          {approvalButton()}
         </div>
       )}
       <MemberSelector
