@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { getQuarterBeginEnd } from './datetime';
+import { getQuarterBeginEnd, getQuarterDisplay } from './datetime';
 
 describe('getQuarterBeginEnd', () => {
   it('returns the start and end dates of the current quarter', () => {
@@ -66,5 +66,61 @@ describe('getQuarterBeginEnd', () => {
 
     expect(format(startOfQuarter, 'yyyy-MM-dd')).toBe(expectedStart);
     expect(format(endOfQuarter, 'yyyy-MM-dd')).toBe(expectedEnd);
+  });
+});
+
+describe('getQuarterDisplay', () => {
+  it('returns the current quarter number with year', () => {
+    const date = new Date('2024-04-15');
+    const expected = 'Q2 2024';
+
+    const result = getQuarterDisplay(date);
+
+    expect(result).toBe(expected);
+  });
+
+  it('returns the first quarter number with year', () => {
+    const date = new Date('2024-01-15');
+    const expected = 'Q1 2024';
+
+    const result = getQuarterDisplay(date);
+
+    expect(result).toBe(expected);
+  });
+
+  it('returns the fourth quarter number with year', () => {
+    const date = new Date('2023-10-20');
+    const expected = 'Q4 2023';
+
+    const result = getQuarterDisplay(date);
+
+    expect(result).toBe(expected);
+  });
+
+  it('returns the first quarter number with year in a leap year', () => {
+    const date = new Date('2020-02-15');
+    const expected = 'Q1 2020';
+
+    const result = getQuarterDisplay(date);
+
+    expect(result).toBe(expected);
+  });
+
+  it('returns the second quarter number with year in a non-leap year', () => {
+    const date = new Date('2021-05-20'); // Non-leap year (2021)
+    const expected = 'Q2 2021';
+
+    const result = getQuarterDisplay(date);
+
+    expect(result).toBe(expected);
+  });
+
+  it('returns the first quarter number with year in a different time zone', () => {
+    const date = new Date('2024-01-15T12:00:00-05:00'); // Eastern Standard Time (UTC-5)
+    const expected = 'Q1 2024';
+
+    const result = getQuarterDisplay(date);
+
+    expect(result).toBe(expected);
   });
 });
