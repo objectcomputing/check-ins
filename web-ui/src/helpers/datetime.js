@@ -1,4 +1,4 @@
-import { startOfQuarter, endOfQuarter } from 'date-fns';
+import { startOfQuarter, endOfQuarter, getQuarter } from 'date-fns';
 
 /**
  * Returns the start and end dates of the quarter that the given date falls in.
@@ -15,7 +15,5 @@ export const getQuarterBeginEnd = inputDate => ({
  * @param {Date} date - The date to get the quarter number for.
  * @returns {string} The quarter number with year.
  */
-export const getQuarterDisplay = date => {
-  const quarter = Math.floor((date.getMonth() + 3) / 3);
-  return `Q${quarter} ${date.getFullYear()}`;
-};
+export const getQuarterDisplay = date =>
+  `Q${getQuarter(date)} ${date.getFullYear()}`;
