@@ -131,7 +131,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [periodToAdd, setPeriodToAdd] = useState({
     name: '',
-    reviewStatus: ReviewStatus.OPEN,
+    reviewStatus: ReviewStatus.PLANNING,
     launchDate: null,
     selfReviewCloseDate: null,
     closeDate: null
@@ -163,6 +163,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     () => setReviewStatus(ReviewStatus.OPEN),
     [setReviewStatus]
   );
+
   const handleClose = useCallback(
     () => setReviewStatus(ReviewStatus.CLOSED),
     [setReviewStatus]
@@ -176,9 +177,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const addReviewPeriod = useCallback(
     async name => {
-      if (!csrf) {
-        return;
-      }
+      if (!csrf) return;
+
       const alreadyExists = findPeriodByName(periodToAdd?.name);
       if (!alreadyExists) {
         handleOpen();
