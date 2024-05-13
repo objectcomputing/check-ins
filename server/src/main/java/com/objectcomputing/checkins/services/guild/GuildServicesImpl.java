@@ -6,10 +6,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetConfig;
-import com.objectcomputing.checkins.services.guild.member.GuildMember;
-import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
-import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
-import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
+import com.objectcomputing.checkins.services.guild.member.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -31,6 +28,7 @@ public class GuildServicesImpl implements GuildServices {
 
     private final GuildRepository guildsRepo;
     private final GuildMemberRepository guildMemberRepo;
+    private final GuildMemberHistoryRepository guildMemberHistoryRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final GuildMemberServices guildMemberServices;
@@ -40,7 +38,7 @@ public class GuildServicesImpl implements GuildServices {
     public static final String WEB_ADDRESS = "check-ins.web-address";
 
     public GuildServicesImpl(GuildRepository guildsRepo,
-                             GuildMemberRepository guildMemberRepo,
+                             GuildMemberRepository guildMemberRepo, GuildMemberHistoryRepository guildMemberHistoryRepository,
                              CurrentUserServices currentUserServices,
                              MemberProfileServices memberProfileServices,
                              GuildMemberServices guildMemberServices,
@@ -50,6 +48,7 @@ public class GuildServicesImpl implements GuildServices {
     ) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
+        this.guildMemberHistoryRepository = guildMemberHistoryRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.guildMemberServices = guildMemberServices;
@@ -204,6 +203,7 @@ public class GuildServicesImpl implements GuildServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         if (isAdmin || (currentUser != null && !guildMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
+            guildMemberHistoryRepository.deleteByGuildId(id);
             guildMemberRepo.deleteByGuildId(id.toString());
             guildsRepo.deleteById(id);
         } else {
