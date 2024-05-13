@@ -71,14 +71,25 @@ describe('statusForPeriodByMemberScheduling', () => {
     expect(result).toBe('Not Scheduled');
   });
 
-  test('returns "Not Scheduled" when all check-ins are outside the reporting period', () => {
+  test('returns "Not Scheduled" when all check-ins are outside the reporting grace period', () => {
     const checkins = [
       { checkInDate: [2024, 2, 1, 10, 30], completed: false }, // Feb 1, 2024
       { checkInDate: [2024, 3, 31, 9, 0], completed: false }, // March 31, 2024
-      { checkInDate: [2024, 7, 2, 11, 15], completed: false } // July 2, 2024
+      { checkInDate: [2024, 8, 2, 11, 15], completed: false } // Aug 2, 2024
     ];
     const result = statusForPeriodByMemberScheduling(checkins, mockReportDate);
     expect(result).toBe('Not Scheduled');
+  });
+
+  // There is a grace period of one month after the quarter in which we consider a check-in "In Progress"
+  test('returns "Scheduled" when at least one check-in falls within the reporting grace period', () => {
+    const checkins = [
+      { checkInDate: [2024, 2, 1, 10, 30], completed: false }, // Feb 1, 2024
+      { checkInDate: [2024, 3, 31, 9, 0], completed: false }, // March 31, 2024
+      { checkInDate: [2024, 7, 10, 14, 0], completed: false } // Jul 10, 2024
+    ];
+    const result = statusForPeriodByMemberScheduling(checkins, mockReportDate);
+    expect(result).toBe('Scheduled');
   });
 
   test('returns "Scheduled" when some check-ins within the reporting period are completed', () => {
