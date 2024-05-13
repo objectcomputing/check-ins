@@ -673,6 +673,27 @@ const TeamReviews = ({ onBack, periodId }) => {
     setReviewerSelectorOpen(false);
   };
 
+  const REVIEWER_LIMIT = 2;
+  const renderReviewers = member => {
+    let reviewers = getReviewers(member);
+    const count = reviewers.length;
+    const excess = count - REVIEWER_LIMIT;
+    if (excess > 0) reviewers = reviewers.slice(0, REVIEWER_LIMIT);
+    return (
+      <>
+        {reviewers.map(reviewer => (
+          <Chip
+            key={reviewer.id}
+            label={reviewer.name}
+            variant="outlined"
+            onDelete={() => deleteReviewer(member, reviewer)}
+          />
+        ))}
+        {excess > 0 && <div>and {excess} more </div>}
+      </>
+    );
+  };
+
   return (
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
@@ -735,7 +756,11 @@ const TeamReviews = ({ onBack, periodId }) => {
             label="Close Date"
             disabled={!isAdmin}
           />
-          <Button onClick={requestApproval}>Request Approval</Button>
+          <Button onClick={requestApproval}>
+            {period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
+              ? 'Launch Review'
+              : 'Request Approval'}
+          </Button>
         </div>
       )}
       <MemberSelector
@@ -764,14 +789,7 @@ const TeamReviews = ({ onBack, periodId }) => {
             />
             <div className="chip-row">
               <Typography>Reviewers:</Typography>
-              {getReviewers(member).map(reviewer => (
-                <Chip
-                  key={reviewer.id}
-                  label={reviewer.name}
-                  variant="outlined"
-                  onDelete={() => deleteReviewer(member, reviewer)}
-                />
-              ))}
+              {renderReviewers(member)}
               <IconButton
                 aria-label="Edit Reviewers"
                 onClick={() => editReviewers(member)}
