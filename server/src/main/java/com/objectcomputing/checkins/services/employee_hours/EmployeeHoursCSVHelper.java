@@ -5,13 +5,15 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeeaHoursCSVHelper {
+public class EmployeeHoursCSVHelper {
 
     public static List<EmployeeHours> employeeHrsCsv(InputStream inputStream) {
         try {

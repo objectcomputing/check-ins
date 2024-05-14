@@ -2,9 +2,9 @@ package com.objectcomputing.checkins.services.skillcategory.skillcategory_skill;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.MappedEntity;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Table;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Table;
 import java.util.Objects;
 import java.util.UUID;
 

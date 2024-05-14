@@ -1,13 +1,15 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHours;
+import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursCSVHelper;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursServices;
-import com.objectcomputing.checkins.services.employee_hours.EmployeeaHoursCSVHelper;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.client.multipart.MultipartBody;
 
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public interface EmployeeHoursFixture extends RepositoryFixture {
         List<EmployeeHours> employeeHoursList = new ArrayList<>();
         try {
             InputStream inputStream = new FileInputStream(file);
-             employeeHoursList = EmployeeaHoursCSVHelper.employeeHrsCsv(inputStream);
+             employeeHoursList = EmployeeHoursCSVHelper.employeeHrsCsv(inputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

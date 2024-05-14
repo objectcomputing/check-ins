@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.demographics;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public interface DemographicsServices {
@@ -23,5 +22,5 @@ public interface DemographicsServices {
 
     List<Demographics> findAll();
 
-    Boolean deleteDemographics(UUID id);
+    void deleteDemographics(UUID id);
 }

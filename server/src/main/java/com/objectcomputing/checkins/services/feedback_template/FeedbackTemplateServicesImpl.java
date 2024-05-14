@@ -8,7 +8,10 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import java.util.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -65,7 +68,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     }
 
     @Override
-    public Boolean delete(UUID id) {
+    public void delete(UUID id) {
         final FeedbackTemplate template = getById(id);
 
         if (!deleteIsPermitted(template.getCreatorId())) {
@@ -74,7 +77,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
         // delete the template itself
         feedbackTemplateRepository.softDeleteById(Util.nullSafeUUIDToString(id));
-        return true;
     }
 
     @Override

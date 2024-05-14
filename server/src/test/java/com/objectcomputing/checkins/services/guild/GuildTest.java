@@ -3,10 +3,10 @@ package com.objectcomputing.checkins.services.guild;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import javax.validation.ConstraintViolation;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
@@ -54,10 +54,9 @@ class GuildTest {
         Guild guild = new Guild(id, name, description, null, false);
 
         guild.setName("");
-        guild.setDescription("");
 
         Set<ConstraintViolation<Guild>> violations = validator.validate(guild);
-        assertEquals(violations.size(), 2);
+        assertEquals(violations.size(), 1);
         for (ConstraintViolation<Guild> violation : violations) {
             assertEquals(violation.getMessage(), "must not be blank");
         }

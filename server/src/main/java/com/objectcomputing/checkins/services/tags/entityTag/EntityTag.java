@@ -5,16 +5,18 @@ import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@NoArgsConstructor
 @Table(name ="entity_tags")
 public class EntityTag {
 
@@ -22,25 +24,25 @@ public class EntityTag {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the id of the entity tag", required = true)
+    @Schema(description = "the id of the entity tag")
     private UUID id;
 
     @NotNull
     @TypeDef(type = DataType.STRING)
     @Column(name = "entity_id")
-    @Schema(description = "the id of the entity", required = true)
+    @Schema(description = "the id of the entity")
     private UUID entityId;
 
     @NotNull
     @Column(name = "type")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the type of the entity being tagged", required = true)
+    @Schema(description = "the type of the entity being tagged")
     private EntityType type;
 
     @NotNull
     @TypeDef(type = DataType.STRING)
     @Column(name = "tag_id")
-    @Schema(description = "the id of the tag", required = true)
+    @Schema(description = "the id of the tag")
     private UUID tagId;
 
     public enum EntityType {

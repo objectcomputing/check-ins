@@ -7,22 +7,20 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/review-periods")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -30,13 +28,9 @@ import java.util.concurrent.ExecutorService;
 public class ReviewPeriodController {
 
     private final ReviewPeriodServices reviewPeriodServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public ReviewPeriodController(ReviewPeriodServices reviewPeriodServices, EventLoopGroup eventLoopGroup, @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public ReviewPeriodController(ReviewPeriodServices reviewPeriodServices) {
         this.reviewPeriodServices = reviewPeriodServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -46,14 +40,11 @@ public class ReviewPeriodController {
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
     @Post()
-    public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<ReviewPeriodCreateDTO> request) {
-
+    public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<?> request) {
         return Mono.fromCallable(() -> reviewPeriodServices.save(period.convertToEntity()))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(reviewPeriod -> (HttpResponse<ReviewPeriod>) HttpResponse.created(reviewPeriod)
+                .map(reviewPeriod -> HttpResponse.created(reviewPeriod)
                         .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), reviewPeriod.getId())))))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                                URI.create(String.format("%s/%s", request.getPath(), reviewPeriod.getId())))));
 
     }
 
@@ -66,16 +57,13 @@ public class ReviewPeriodController {
 
     @Get("/{id}")
     public Mono<HttpResponse<ReviewPeriod>> getById(@NotNull UUID id) {
-
         return Mono.fromCallable(() -> {
             ReviewPeriod result = reviewPeriodServices.findById(id);
             if (result == null) {
                 throw new NotFoundException("No review period for UUID");
             }
             return result;
-        }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(reviewPeriod -> {
-            return (HttpResponse<ReviewPeriod>) HttpResponse.ok(reviewPeriod);
-        }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        }).map(HttpResponse::ok);
     }
 
     /**
@@ -87,13 +75,9 @@ public class ReviewPeriodController {
      */
 
     @Get("/{?name,reviewStatus}")
-    public Mono<HttpResponse<Set<ReviewPeriod>>> findByValue(@Nullable String name,
-                                                      @Nullable ReviewStatus reviewStatus) {
-
+    public Mono<HttpResponse<Set<ReviewPeriod>>> findByValue(@Nullable String name, @Nullable ReviewStatus reviewStatus) {
         return Mono.fromCallable(() -> reviewPeriodServices.findByValue(name, reviewStatus))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(reviewPeriods -> (HttpResponse<Set<ReviewPeriod>>) HttpResponse.ok(reviewPeriods))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(HttpResponse::ok);
     }
 
     /**
@@ -103,15 +87,12 @@ public class ReviewPeriodController {
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
     @Put()
-    public Mono<HttpResponse<ReviewPeriod>> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<ReviewPeriod> request) {
+    public Mono<HttpResponse<ReviewPeriod>> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> reviewPeriodServices.update(reviewPeriod))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedReviewPeriod -> (HttpResponse<ReviewPeriod>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewPeriod.getId()))))
-                        .body(updatedReviewPeriod))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                .map(updatedReviewPeriod -> HttpResponse.ok(updatedReviewPeriod)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),
+                                updatedReviewPeriod.getId())))));
     }
 
     /**
@@ -120,10 +101,9 @@ public class ReviewPeriodController {
      * @param id  the id of the review period to be deleted to delete
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteReviewPeriod(@NotNull UUID id) {
-        reviewPeriodServices.delete(id);
-        return HttpResponse
-                .ok();
+    public Mono<HttpResponse<?>> deleteReviewPeriod(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> reviewPeriodServices.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 
 }

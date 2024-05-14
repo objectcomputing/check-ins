@@ -9,24 +9,22 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @Controller("/services/review-assignments")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -34,13 +32,9 @@ import java.util.stream.Collectors;
 public class ReviewAssignmentController {
 
     private final ReviewAssignmentServices reviewAssignmentServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public ReviewAssignmentController(ReviewAssignmentServices reviewAssignmentServices, EventLoopGroup eventLoopGroup,  @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public ReviewAssignmentController(ReviewAssignmentServices reviewAssignmentServices) {
         this.reviewAssignmentServices = reviewAssignmentServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -51,14 +45,11 @@ public class ReviewAssignmentController {
      */
     @Post
     @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
-    public Mono<HttpResponse<ReviewAssignment>> createReviewAssignment(@Body @Valid ReviewAssignmentDTO assignment, HttpRequest<ReviewAssignmentDTO> request) {
-
+    public Mono<HttpResponse<ReviewAssignment>> createReviewAssignment(@Body @Valid ReviewAssignmentDTO assignment, HttpRequest<?> request) {
         return Mono.fromCallable(() -> reviewAssignmentServices.save(assignment.convertToEntity()))
-            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-            .map(reviewAssignment -> (HttpResponse<ReviewAssignment>) HttpResponse.created(reviewAssignment)
+            .map(reviewAssignment -> HttpResponse.created(reviewAssignment)
                 .headers(headers -> headers.location(
-                    URI.create(String.format("%s/%s", request.getPath(), reviewAssignment.getId())))))
-            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                    URI.create(String.format("%s/%s", request.getPath(), reviewAssignment.getId())))));
 
     }
 
@@ -71,14 +62,11 @@ public class ReviewAssignmentController {
      */
     @Post("/{reviewPeriodId}")
     @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
-    public Mono<HttpResponse<List<ReviewAssignment>>> createReviewAssignment(@NotNull UUID reviewPeriodId, @Body List<@Valid ReviewAssignmentDTO> assignments) {
-
+    public Mono<HttpResponse<List<ReviewAssignment>>> createReviewAssignment(@NotNull UUID reviewPeriodId,
+                                                                             @Body List<@Valid ReviewAssignmentDTO> assignments) {
         return Mono.fromCallable(() -> reviewAssignmentServices.saveAll(reviewPeriodId,
-                assignments.stream().map(ReviewAssignmentDTO::convertToEntity).collect(Collectors.toList()),
-                Boolean.TRUE))
-            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-            .map(reviewAssignments -> (HttpResponse<List<ReviewAssignment>>) HttpResponse.created(reviewAssignments))
-            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+                assignments.stream().map(ReviewAssignmentDTO::convertToEntity).collect(Collectors.toList()), Boolean.TRUE)
+                ).map(HttpResponse::created);
 
     }
 
@@ -92,26 +80,20 @@ public class ReviewAssignmentController {
     @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
     @Get("/{id}")
     public Mono<HttpResponse<ReviewAssignment>> getById(@NotNull UUID id) {
-
         return Mono.fromCallable(() -> {
             ReviewAssignment result = reviewAssignmentServices.findById(id);
             if (result == null) {
                 throw new NotFoundException("No review assignment for UUID");
             }
             return result;
-        }).publishOn(Schedulers.fromExecutor(eventLoopGroup))
-            .map(reviewAssignment -> (HttpResponse<ReviewAssignment>) HttpResponse.ok(reviewAssignment))
-            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        }).map(HttpResponse::ok);
     }
 
     @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
-    @Get("/period/{reviewPeriodId}")
+    @Get("/period/{reviewPeriodId}{?reviewerId}")
     public Mono<HttpResponse<Set<ReviewAssignment>>> findAssignmentsByPeriodId(@NotNull UUID reviewPeriodId, @Nullable @QueryValue UUID reviewerId) {
-
         return Mono.fromCallable(() -> reviewAssignmentServices.findAllByReviewPeriodIdAndReviewerId(reviewPeriodId, reviewerId))
-            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-            .map(assignments -> (HttpResponse<Set<ReviewAssignment>>) HttpResponse.ok(assignments))
-            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+            .map(HttpResponse::ok);
     }
 
     /**
@@ -122,15 +104,10 @@ public class ReviewAssignmentController {
      */
     @RequiredPermission(Permission.CAN_UPDATE_REVIEW_ASSIGNMENTS)
     @Put
-    public Mono<HttpResponse<ReviewAssignment>> update(@Body @Valid ReviewAssignment reviewAssignment, HttpRequest<ReviewAssignment> request) {
-
+    public Mono<HttpResponse<ReviewAssignment>> update(@Body @Valid ReviewAssignment reviewAssignment, HttpRequest<?> request) {
         return Mono.fromCallable(() -> reviewAssignmentServices.update(reviewAssignment))
-            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-            .map(updatedReviewAssignment -> (HttpResponse<ReviewAssignment>) HttpResponse
-                .ok()
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewAssignment.getId()))))
-                .body(updatedReviewAssignment))
-            .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+            .map(updatedReviewAssignment -> HttpResponse.ok(updatedReviewAssignment)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewAssignment.getId())))));
     }
 
     /**
@@ -140,10 +117,9 @@ public class ReviewAssignmentController {
      */
     @RequiredPermission(Permission.CAN_DELETE_REVIEW_ASSIGNMENTS)
     @Delete("/{id}")
-    public HttpResponse<?> deleteReviewAssignment(@NotNull UUID id) {
-        reviewAssignmentServices.delete(id);
-        return HttpResponse
-            .ok();
+    public Mono<HttpResponse<?>> deleteReviewAssignment(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> reviewAssignmentServices.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 
 }

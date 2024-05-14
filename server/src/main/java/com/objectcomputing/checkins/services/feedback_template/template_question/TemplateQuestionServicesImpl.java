@@ -7,8 +7,8 @@ import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
-
 import jakarta.inject.Singleton;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -91,7 +91,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     }
 
     @Override
-    public Boolean delete(UUID id) {
+    public void delete(UUID id) {
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
         if (templateQuestion.isEmpty()) {
             throw new NotFoundException("Could not find template question with ID " + id);
@@ -108,7 +108,6 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
         // Delete the question
         templateQuestionRepository.deleteById(id);
-        return true;
     }
 
     @Override

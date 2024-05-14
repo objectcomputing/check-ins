@@ -1,15 +1,19 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import io.micronaut.core.annotation.Introspected;
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import io.micronaut.core.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Introspected
 public class MemberProfileCreateDTO {
 
@@ -30,7 +34,7 @@ public class MemberProfileCreateDTO {
     private String suffix;
 
     @NotBlank
-    @Schema(description = "employee's title at the company", required = true)
+    @Schema(description = "employee's title at the company")
     private String title ;
 
     @Nullable
@@ -38,11 +42,11 @@ public class MemberProfileCreateDTO {
     private UUID pdlId;
 
     @NotBlank
-    @Schema(description = "where the employee is geographically located", required = true)
+    @Schema(description = "where the employee is geographically located")
     private String location;
 
     @NotBlank
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com")
     private String workEmail;
 
     @Nullable
@@ -50,7 +54,7 @@ public class MemberProfileCreateDTO {
     private String employeeId;
 
     @NotNull
-    @Schema(description = "employee's date of hire", required = true)
+    @Schema(description = "employee's date of hire")
     private LocalDate startDate;
 
     @Nullable
@@ -76,144 +80,6 @@ public class MemberProfileCreateDTO {
     @Nullable
     @Schema(description = "The employee is excluded from retention reports", nullable = true)
     private Boolean excluded;
-
-    @NotBlank
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(@NotBlank String firstName) {
-        this.firstName = firstName;
-    }
-
-    @Nullable
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(@Nullable String middleName) {
-        this.middleName = middleName;
-    }
-
-    @NotBlank
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(@NotBlank String lastName) {
-        this.lastName = lastName;
-    }
-
-    @Nullable
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(@Nullable String suffix) {
-        this.suffix = suffix;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Nullable
-    public UUID getPdlId() {
-        return pdlId;
-    }
-
-    public void setPdlId(@Nullable UUID pdlId) {
-        this.pdlId = pdlId;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getWorkEmail() {
-        return workEmail;
-    }
-
-    public void setWorkEmail(String workEmail) {
-        this.workEmail = workEmail;
-    }
-
-    @Nullable
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(@Nullable String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    @Nullable
-    public String getBioText() {
-        return bioText;
-    }
-
-    public void setBioText(@Nullable String bioText) {
-        this.bioText = bioText;
-    }
-
-    @Nullable
-    public UUID getSupervisorid() {
-        return supervisorid;
-    }
-
-    public void setSupervisorid(@Nullable UUID supervisorid) {
-        this.supervisorid = supervisorid;
-    }
-
-    @Nullable
-    public LocalDate getTerminationDate() {
-        return terminationDate;
-    }
-
-    public void setTerminationDate(@Nullable LocalDate terminationDate) {
-        this.terminationDate = terminationDate;
-    }
-
-    @Nullable
-    public LocalDate getBirthDay() { return birthDay; }
-
-    public void setBirthDay(@Nullable LocalDate birthDay) { this.birthDay = birthDay;}
-
-    @Nullable
-    public Boolean getVoluntary() {
-        return voluntary;
-    }
-
-    public void setVoluntary(@Nullable Boolean voluntary) {
-        this.voluntary = voluntary;
-    }
-
-    @Nullable
-    public Boolean getExcluded() {
-        return excluded;
-    }
-
-    public void setExcluded(@Nullable Boolean excluded) {
-        this.excluded = excluded;
-    }
-
-
 
     @Override
     public boolean equals(Object o) {

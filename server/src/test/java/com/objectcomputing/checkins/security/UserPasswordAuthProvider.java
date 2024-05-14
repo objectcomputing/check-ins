@@ -2,14 +2,16 @@ package com.objectcomputing.checkins.security;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.annotation.SingleResult;
 import io.micronaut.http.HttpRequest;
-import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import org.reactivestreams.Publisher;
-
+import io.micronaut.security.authentication.provider.ReactiveAuthenticationProvider;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
@@ -17,15 +19,16 @@ import java.util.Map;
 
 @Requires(env = Environment.TEST, missingBeans = LocalUserPasswordAuthProvider.class)
 @Singleton
-public class UserPasswordAuthProvider implements AuthenticationProvider {
+public class UserPasswordAuthProvider implements ReactiveAuthenticationProvider<HttpRequest<?>, String, String> {
 
     @Inject
     UsersStore store;
 
     @Override
-    public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authReq) {
-        String email = authReq.getIdentity().toString();
-        String roleCred = authReq.getSecret().toString();
+    @SingleResult
+    public @NonNull Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> requestContext, @NonNull AuthenticationRequest<String, String> authReq) {
+        String email = authReq.getIdentity();
+        String roleCred = authReq.getSecret();
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("email", email);
 

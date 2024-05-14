@@ -184,7 +184,7 @@ class MemberSkillServiceImplTest {
                 new MemberSkill(UUID.randomUUID(), UUID.randomUUID())
         );
 
-        when(memberSkillRepository.findAll()).thenReturn(memberSkillSet);
+        when(memberSkillRepository.findAll()).thenReturn(memberSkillSet.stream().toList());
 
         assertEquals(memberSkillSet, memberSkillsServices.findByFields(null, null));
 
@@ -266,7 +266,7 @@ class MemberSkillServiceImplTest {
                 new MemberSkill(UUID.randomUUID(), UUID.randomUUID())
         );
 
-        when(memberSkillRepository.findAll()).thenReturn(memberSkillSet);
+        when(memberSkillRepository.findAll()).thenReturn(memberSkillSet.stream().toList());
 
         assertEquals(memberSkillSet, memberSkillsServices.findByFields(null,null));
 

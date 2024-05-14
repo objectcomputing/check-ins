@@ -5,40 +5,30 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Controller("/services/feedback/templates")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "feedback_templates")
 public class FeedbackTemplateController {
     private final FeedbackTemplateServices feedbackTemplateServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final Scheduler scheduler;
 
-    public FeedbackTemplateController(FeedbackTemplateServices feedbackTemplateServices,
-                                      EventLoopGroup eventLoopGroup,
-                                      @Named(TaskExecutors.IO) ExecutorService executorService) {
+    public FeedbackTemplateController(FeedbackTemplateServices feedbackTemplateServices) {
         this.feedbackTemplateServices = feedbackTemplateServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.scheduler = Schedulers.fromExecutorService(executorService);
     }
 
     /**
@@ -50,11 +40,8 @@ public class FeedbackTemplateController {
     @Post()
     public Mono<HttpResponse<FeedbackTemplateResponseDTO>> save(@Body @Valid @NotNull FeedbackTemplateCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackTemplateServices.save(fromDTO(requestBody)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedTemplate -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse
-                        .created(fromEntity(savedTemplate))
-                        .headers(headers -> headers.location(URI.create("/feedback_templates/" + savedTemplate.getId()))))
-                .subscribeOn(scheduler);
+                .map(savedTemplate -> HttpResponse.created(fromEntity(savedTemplate))
+                        .headers(headers -> headers.location(URI.create("/feedback_templates/" + savedTemplate.getId()))));
     }
 
     /**
@@ -66,12 +53,8 @@ public class FeedbackTemplateController {
     @Put()
     public Mono<HttpResponse<FeedbackTemplateResponseDTO>> update(@Body @Valid @NotNull FeedbackTemplateUpdateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackTemplateServices.update(fromDTO(requestBody)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedTemplate -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create("/feedback_template/" + savedTemplate.getId())))
-                        .body(fromEntity(savedTemplate)))
-                .subscribeOn(scheduler);
+                .map(savedTemplate -> HttpResponse.ok(fromEntity(savedTemplate))
+                        .headers(headers -> headers.location(URI.create("/feedback_template/" + savedTemplate.getId()))));
     }
 
     /**
@@ -81,11 +64,9 @@ public class FeedbackTemplateController {
      * @return {@link FeedbackTemplateResponseDTO}
      */
     @Delete("/{id}")
-    public Mono<? extends HttpResponse<?>> delete(@NotNull UUID id) {
-        return Mono.fromCallable(() -> feedbackTemplateServices.delete(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(success -> (HttpResponse<?>) HttpResponse.ok())
-                .subscribeOn(scheduler);
+    public Mono<HttpResponse<?>> delete(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> feedbackTemplateServices.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 
     /**
@@ -96,9 +77,7 @@ public class FeedbackTemplateController {
     @Delete("/creator/{creatorId}")
     public Mono<? extends HttpResponse<?>> deleteByCreatorId(@Nullable UUID creatorId) {
         return Mono.fromCallable(() -> feedbackTemplateServices.setAdHocInactiveByCreator(creatorId))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(success -> (HttpResponse<?>) HttpResponse.ok())
-                .subscribeOn(scheduler);
+                .map(success -> (HttpResponse<?>) HttpResponse.ok());
     }
 
     /**
@@ -110,9 +89,7 @@ public class FeedbackTemplateController {
     @Get("/{id}")
     public Mono<HttpResponse<FeedbackTemplateResponseDTO>> getById(UUID id) {
         return Mono.fromCallable(() -> feedbackTemplateServices.getById(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(template -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse.ok(fromEntity(template)))
-                .subscribeOn(scheduler);
+                .map(template -> HttpResponse.ok(fromEntity(template)));
     }
 
     /**
@@ -125,12 +102,8 @@ public class FeedbackTemplateController {
     @Get("/{?creatorId,title}")
     public Mono<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable String title) {
         return Mono.fromCallable(() -> feedbackTemplateServices.findByFields(creatorId, title))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(feedbackTemplates -> {
-                    List<FeedbackTemplateResponseDTO> dtoList = feedbackTemplates.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
-                    return (HttpResponse<List<FeedbackTemplateResponseDTO>>) HttpResponse.ok(dtoList);
-                }).subscribeOn(scheduler);
+                .map(entities -> entities.stream().map(this::fromEntity).collect(Collectors.toList()))
+                .map(HttpResponse::ok);
     }
 
     /**

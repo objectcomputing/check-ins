@@ -10,9 +10,9 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Optional;
 
 @Singleton

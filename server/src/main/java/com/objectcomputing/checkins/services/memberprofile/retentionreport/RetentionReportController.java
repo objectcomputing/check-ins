@@ -8,21 +8,18 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/reports/retention")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -30,15 +27,9 @@ import java.util.concurrent.ExecutorService;
 public class RetentionReportController {
 
     private final RetentionReportServices retentionReportServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final Scheduler scheduler;
 
-    public RetentionReportController(RetentionReportServices retentionReportServices,
-                                     EventLoopGroup eventLoopGroup,
-                                     @Named(TaskExecutors.IO) ExecutorService executorService) {
+    public RetentionReportController(RetentionReportServices retentionReportServices) {
         this.retentionReportServices = retentionReportServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.scheduler = Schedulers.fromExecutorService(executorService);
     }
 
     /**
@@ -50,18 +41,15 @@ public class RetentionReportController {
     @Post()
     @RequiredPermission(Permission.CAN_VIEW_RETENTION_REPORT)
     public Mono<HttpResponse<RetentionReportResponseDTO>> reportRetention(@Body @Valid @NotNull RetentionReportRequestDTO requestBody,
-                                                                          HttpRequest<RetentionReportRequestDTO> request) {
+                                                                          HttpRequest<?> request) {
         if (requestBody.getStartDate().isAfter(requestBody.getEndDate()) ||
                 requestBody.getStartDate().isEqual(requestBody.getEndDate())) {
             throw new BadArgException("Start date must be before end date");
         }
 
         return Mono.fromCallable(() -> retentionReportServices.report(dtoFromRequest(requestBody)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(responseBody -> (HttpResponse<RetentionReportResponseDTO>) HttpResponse
-                        .created(responseBody)
-                        .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))))
-                .subscribeOn(scheduler);
+                .map(responseBody -> HttpResponse.created(responseBody)
+                        .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))));
     }
 
     private RetentionReportDTO dtoFromRequest(RetentionReportRequestDTO request) {
