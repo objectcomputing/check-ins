@@ -787,10 +787,6 @@ const TeamReviews = ({ onBack, periodId }) => {
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
-        <Typography variant="h6">
-          {approvalMode ? 'Approval' : 'Normal'} Mode
-        </Typography>
-
         {period && isAdmin && (
           <div>
             <Tooltip
