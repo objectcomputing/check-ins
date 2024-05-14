@@ -714,10 +714,14 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const approveAll = () => {
-    visibleTeamMembers().map(approveMember);
+    visibleTeamMembers().map(member => approveMember(member, true));
   };
 
-  const approveMember = async member => {
+  const unapproveAll = () => {
+    visibleTeamMembers().map(member => approveMember(member, false));
+  };
+
+  const toggleApproval = async member => {
     const toApprove = assignments.filter(
       assignment =>
         assignment.revieweeId === member.id &&
@@ -726,12 +730,25 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (toApprove.length === 0) return;
 
     const { approved } = toApprove[0];
+    approveMember(member, !approved);
+  };
+
+  const approveMember = async (member, approved) => {
+    const toApprove = assignments.filter(
+      assignment =>
+        assignment.revieweeId === member.id &&
+        assignment.reviewPeriodId === period.id
+    );
+    if (toApprove.length === 0) return;
+
     const promises = toApprove.map(assignment =>
-      approveReviewAssignment(assignment, !approved)
+      approveReviewAssignment(assignment, approved)
     );
     await Promise.all(promises);
+
+    // Update the UI by updating the assigments state.
     for (const assignment of toApprove) {
-      assignment.approved = !approved;
+      assignment.approved = approved;
     }
     setAssignments([...assignments]);
   };
@@ -871,7 +888,10 @@ const TeamReviews = ({ onBack, periodId }) => {
               )
             }}
           />
-          <Button onClick={approveAll}>Approve All</Button>
+          <div>
+            <Button onClick={approveAll}>Approve All</Button>
+            <Button onClick={unapproveAll}>Unapprove All</Button>
+          </div>
         </div>
       )}
 
@@ -905,7 +925,7 @@ const TeamReviews = ({ onBack, periodId }) => {
                 <AddCircle />
               </IconButton>
               {approvalMode && (
-                <Button onClick={() => approveMember(member)}>
+                <Button onClick={() => toggleApproval(member)}>
                   {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
                 </Button>
               )}
