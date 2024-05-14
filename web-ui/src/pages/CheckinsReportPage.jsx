@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { AppContext } from '../context/AppContext';
 import {
   selectCheckinPDLS,
-  selectTeamMembersWithCheckinPDL,
-  selectMappedPdls
+  selectMappedPdls,
+  selectNormalizedMembers
 } from '../context/selectors';
 
 import {
@@ -65,6 +65,8 @@ const CheckinsReportPage = () => {
   const [planned, setPlanned] = useState(true);
   const [closed, setClosed] = useState(true);
 
+  const [searchText, setSearchText] = useState('');
+
   const [reportDate, setReportDate] = useState(new Date());
   const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
 
@@ -121,14 +123,14 @@ const CheckinsReportPage = () => {
     }
   }, [processedQPs.current]);
 
-  // Set the mapped PDLs to the PDLs with members attached
-  // filtering out data about check-ins under a different PDL.
+  // Set the mapped PDLs to a full list of their members
   useEffect(() => {
     if (!pdls) return;
     pdls.forEach(pdl => {
-      pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id).filter(
+      const allMembers = selectNormalizedMembers(state, searchText).filter(
         member => member.pdlId === pdl.id
       );
+      pdl.members = allMembers;
     });
     pdls.filter(pdl => pdl.members.length > 0);
   }, [pdls, state]);

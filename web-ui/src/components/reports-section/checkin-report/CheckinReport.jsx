@@ -8,7 +8,10 @@ import { selectFilteredCheckinsForTeamMemberAndPDL } from '../../../context/sele
 import ExpandMore from '../../expand-more/ExpandMore.jsx';
 import HorizontalLinearStepper from './HorizontalLinearStepper.jsx';
 import TeamMemberMap from './TeamMemberMap.jsx';
-import { getCheckinDate } from './checkin-utils.js';
+import {
+  getCheckinDate,
+  statusForPeriodByMemberScheduling
+} from './checkin-utils.js';
 
 import { getQuarterBeginEnd } from '../../../helpers/index.js';
 
@@ -36,68 +39,51 @@ const CheckinsReport = ({ closed, pdl, planned, reportDate }) => {
   );
 
   const { name, id, members, workEmail, title } = pdl;
-
   const handleExpandClick = () => setExpanded(!expanded);
 
   /**
-   * Determine the status of the check-ins for a PDL during the reporting period.
-   * @param {Array} members - Members of the PDL.
-   * @returns {string} The status of check-ins.
+   * Determine the status of the check-ins for the period based on the members.
+   * @param {MemberProfile[]} members - The members of the PDL.
+   * @returns {CheckinStatus} The status of the check-ins for the period.
    */
   const statusForPeriodByMembers = (members = []) => {
     if (members.length === 0) return 'No Members';
 
-    const isCheckinCompletedDuringPeriod = (checkin, start, end) => {
-      const checkinDate = getCheckinDate(checkin);
-      return checkinDate >= start && checkinDate <= end && checkin.completed;
-    };
+    const allMembersCompleted = members.every(
+      member =>
+        statusForPeriodByMemberScheduling(
+          selectFilteredCheckinsForTeamMemberAndPDL(
+            state,
+            member.id,
+            id,
+            closed,
+            planned
+          ),
+          reportDate
+        ) === 'Completed'
+    );
 
-    const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
-
-    const allCheckinsCompleted = member => {
-      const checkins = selectFilteredCheckinsForTeamMemberAndPDL(
-        state,
-        member.id,
-        id,
-        closed,
-        planned
-      );
-      return checkins.every(checkin =>
-        isCheckinCompletedDuringPeriod(checkin, startOfQuarter, endOfQuarter)
-      );
-    };
-
-    const allMembersCompleted = members.every(allCheckinsCompleted);
+    // Done when all PDL team members have completed check-ins
     if (allMembersCompleted) return 'Done';
 
-    const isCheckinInProgress = (checkin, start, end) => {
-      const checkinDate = getCheckinDate(checkin);
-      const endOfPeriod = new Date(end);
-      return (
-        checkinDate >= start &&
-        checkinDate <= end &&
-        !checkin.completed &&
-        checkinDate < endOfPeriod
-      );
-    };
+    const anyInProgress = members.some(
+      member =>
+        statusForPeriodByMemberScheduling(
+          selectFilteredCheckinsForTeamMemberAndPDL(
+            state,
+            member.id,
+            id,
+            closed,
+            planned
+          ),
+          reportDate
+        ) === 'Scheduled'
+    );
 
-    const isInProgress = member => {
-      let checkins = selectFilteredCheckinsForTeamMemberAndPDL(
-        state,
-        member.id,
-        id,
-        closed,
-        planned
-      );
-      checkins = checkins.filter(checkin =>
-        isCheckinInProgress(checkin, startOfQuarter, endOfQuarter)
-      );
-      return checkins.length > 0;
-    };
-
-    const anyInProgress = members.some(isInProgress);
+    // In progress when there is at least one scheduled check-in
     if (anyInProgress) return 'In Progress';
 
+    // Not started when no check-ins are scheduled
     return 'Not Started';
   };
 
