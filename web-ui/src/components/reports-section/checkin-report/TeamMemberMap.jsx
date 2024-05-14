@@ -1,11 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Accordion,
   AccordionSummary,
   Avatar,
   Chip,
   Typography,
-  AccordionDetails
+  AccordionDetails,
+  Box
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getAvatarURL } from '../../../api/api.js';
@@ -21,21 +22,10 @@ import './TeamMemberMap.css';
 const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
   const { state } = useContext(AppContext);
 
-  const filteredMembers = members?.filter(member => {
-    const checkins = selectFilteredCheckinsForTeamMemberAndPDL(
-      state,
-      member.id,
-      id,
-      closed,
-      planned
-    );
-    return checkins && checkins.length > 0;
-  });
-
   return (
-    <>
-      {filteredMembers?.length > 0 ? (
-        filteredMembers.map(member => {
+    <Box className="team-member-map">
+      {members?.length > 0 ? (
+        members.map(member => {
           const checkins = selectFilteredCheckinsForTeamMemberAndPDL(
             state,
             member.id,
@@ -66,14 +56,20 @@ const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
                     sx={{ display: { xs: 'none', sm: 'flex' } }}
                     className="team-member-map-summmary-latest-activity"
                   >
-                    Latest Activity:{' '}
-                    {getLastCheckinDate(checkins).toLocaleDateString(
-                      navigator.language,
-                      {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: 'numeric'
-                      }
+                    {getLastCheckinDate(checkins).getFullYear() === 1969 ? (
+                      <p>No activity available.</p>
+                    ) : (
+                      <>
+                        Latest Activity:{' '}
+                        {getLastCheckinDate(checkins).toLocaleDateString(
+                          navigator.language,
+                          {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: 'numeric'
+                          }
+                        )}
+                      </>
                     )}
                   </Typography>
                   <Chip
@@ -93,13 +89,15 @@ const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
                 </div>
               </AccordionSummary>
               <AccordionDetails id="accordion-checkin-date">
-                {checkins.map(checkin => (
-                  <LinkSection
-                    key={checkin.id}
-                    checkin={checkin}
-                    member={member}
-                  />
-                ))}
+                {checkins.length === 0
+                  ? 'No check-in activity found for this member and PDL.'
+                  : checkins.map(checkin => (
+                      <LinkSection
+                        key={checkin.id}
+                        checkin={checkin}
+                        member={member}
+                      />
+                    ))}
               </AccordionDetails>
             </Accordion>
           );
@@ -109,7 +107,7 @@ const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
           <Typography>No team members associated with this PDL.</Typography>
         </div>
       )}
-    </>
+    </Box>
   );
 };
 
