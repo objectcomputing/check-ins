@@ -127,8 +127,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const [canSave, setCanSave] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [periodToAdd, setPeriodToAdd] = useState({
     name: '',
     reviewStatus: ReviewStatus.PLANNING,
@@ -136,6 +134,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     selfReviewCloseDate: null,
     closeDate: null
   });
+  const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
 

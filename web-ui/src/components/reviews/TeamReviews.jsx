@@ -50,12 +50,13 @@ import {
 import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
-  selectReviewPeriod,
+  selectCurrentMembers,
   selectCurrentUser,
   selectIsAdmin,
   selectMyTeam,
-  selectCurrentMembers,
-  selectSubordinates
+  selectReviewPeriod,
+  selectSubordinates,
+  selectSupervisors
 } from '../../context/selectors';
 
 import MemberSelector from '../member_selector/MemberSelector';
@@ -113,6 +114,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const history = useHistory();
   const location = useLocation();
 
+  const [approvalMode, setApprovalMode] = useState(false);
   const [assignments, setAssignments] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
@@ -144,6 +146,18 @@ const TeamReviews = ({ onBack, periodId }) => {
   useEffect(() => {
     loadTeamMembers();
   }, [currentMembers]);
+
+  useEffect(() => {
+    const myId = currentUser?.id;
+    const supervisors = selectSupervisors(state);
+    const isManager = supervisors.some(s => s.id === myId);
+    const period = selectReviewPeriod(state, periodId);
+    if (period) {
+      setApprovalMode(
+        isManager && period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
+      );
+    }
+  }, [state]);
 
   const editReviewers = member => {
     setSelectedMember(member);
@@ -537,7 +551,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (!period.closeDate) return 'No close date was specified.';
     if (teamMembers.length === 0) return 'No members were added.';
     const haveReviewers = teamMembers.every(
-      member => member.reviewers?.length > 0
+      member => getReviewers(member).length > 0
     );
     if (!haveReviewers) return 'One or more members have no reviewer.';
     return null;
@@ -662,6 +676,9 @@ const TeamReviews = ({ onBack, periodId }) => {
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
+        <Typography variant="h6">
+          {approvalMode ? 'Approval' : 'Normal'} Mode
+        </Typography>
 
         {period && isAdmin && (
           <div>
