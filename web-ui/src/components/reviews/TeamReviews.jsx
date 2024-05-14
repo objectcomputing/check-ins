@@ -22,10 +22,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControlLabel,
   IconButton,
   List,
   ListItem,
   ListItemText,
+  Switch,
   Tooltip,
   Typography
 } from '@mui/material';
@@ -124,6 +126,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [selectedMember, setSelectedMember] = useState(null);
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selfReviews, setSelfReviews] = useState({});
+  const [showAll, setShowAll] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   const [toDelete, setToDelete] = useState(null);
   const [validationMessage, setValidationMessage] = useState(null);
@@ -144,7 +147,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const reviewAssignmentsUrl = '/services/review-assignments';
 
   useEffect(() => {
-    loadTeamMembers();
+    loadAssignments();
   }, [currentMembers]);
 
   useEffect(() => {
@@ -159,6 +162,10 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   }, [state]);
 
+  useEffect(() => {
+    loadTeamMembers();
+  }, [approvalMode, assignments, showAll]);
+
   const editReviewers = member => {
     setSelectedMember(member);
     const reviewers = member ? getReviewers(member) : [];
@@ -166,7 +173,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     setReviewerSelectorOpen(true);
   };
 
-  const loadTeamMembers = async () => {
+  const loadAssignments = async () => {
     const myId = currentUser?.id;
     try {
       const res = await resolve({
@@ -181,12 +188,40 @@ const TeamReviews = ({ onBack, periodId }) => {
       if (res.error) throw new Error(res.error.message);
       const assignments = res.payload.data;
       setAssignments(assignments);
-      const memberIds = assignments.map(a => a.revieweeId);
-      const members = currentMembers.filter(m => memberIds.includes(m.id));
-      setTeamMembers(members);
     } catch (err) {
-      console.error('TeamReviews.jsx loadTeamMembers:', err);
+      console.error('TeamReviews.jsx loadAssignments:', err);
     }
+  };
+
+  const loadTeamMembers = () => {
+    let members = [];
+    if (approvalMode) {
+      // Get the direct reports of the current user who is a manager.
+      const myId = currentUser?.id;
+      members = currentMembers.filter(m => m.supervisorid === myId);
+      if (showAll) {
+        for (const member of members) {
+          walkHierarchy(member.id, members);
+        }
+      }
+    } else {
+      const memberIds = assignments.map(a => a.revieweeId);
+      members = currentMembers.filter(m => memberIds.includes(m.id));
+    }
+
+    setTeamMembers(members);
+  };
+
+  const walkHierarchy = (id, members) => {
+    const newMembers = currentMembers.filter(m => m.supervisorid === id);
+    if (newMembers.length) {
+      console.log('TeamReviews.jsx walkHierarchy: id =', id);
+      console.log('TeamReviews.jsx walkHierarchy: newMembers =', newMembers);
+    }
+    for (const member of newMembers) {
+      walkHierarchy(member.id, members);
+    }
+    members.push(...newMembers);
   };
 
   const updateTeamMembers = async teamMembers => {
@@ -713,6 +748,16 @@ const TeamReviews = ({ onBack, periodId }) => {
                 <Delete />
               </IconButton>
             </Tooltip>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={showAll}
+                  onChange={() => setShowAll(b => !b)}
+                />
+              }
+              label="Show All"
+              sx={{ marginLeft: '0.5rem' }}
+            />
           </div>
         )}
       </div>
