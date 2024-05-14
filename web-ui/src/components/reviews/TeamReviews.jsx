@@ -704,7 +704,11 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const approveAll = () => {
-    alert('Approving all.');
+    alert('Approving all');
+  };
+
+  const approveMember = member => {
+    alert('Approving ' + member?.name);
   };
 
   const visibleTeamMembers = () => {
@@ -854,6 +858,7 @@ const TeamReviews = ({ onBack, periodId }) => {
               >
                 <AddCircle />
               </IconButton>
+              <Button onClick={() => approveMember(member)}>Approve</Button>
             </div>
           </ListItem>
         ))}
