@@ -72,7 +72,7 @@ const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
                       ).getFullYear() === 1969 ? (
                         <Typography component="nobr" variant="h6">
                           No activity yet{' '}
-                          <span role="img" aria-label="scheduled">
+                          <span role="img" aria-label="unscheduled">
                             🚫
                           </span>
                         </Typography>
