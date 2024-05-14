@@ -22,6 +22,7 @@ import './TeamMemberMap.css';
 
 const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
   const { state } = useContext(AppContext);
+  const epoch = new Date(0);
 
   return (
     <Box className="team-member-map">
@@ -69,7 +70,7 @@ const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
                       {getCheckinDateForPeriod(
                         checkins,
                         reportDate
-                      ).getFullYear() === 1969 ? (
+                      ).getFullYear() === epoch.getFullYear() ? (
                         <Typography component="nobr" variant="h6">
                           No activity yet{' '}
                           <span role="img" aria-label="unscheduled">
