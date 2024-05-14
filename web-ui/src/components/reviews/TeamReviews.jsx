@@ -127,7 +127,8 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const [approvalMode, setApprovalMode] = useState(false);
   const [assignments, setAssignments] = useState([]);
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [nameQuery, setNameQuery] = useState('');
   const [query, setQuery] = useState({});
@@ -335,13 +336,17 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const confirmDelete = useCallback(() => {
     setToDelete(period.id);
-    setConfirmOpen(true);
-  }, [period, setToDelete, setConfirmOpen]);
+    setConfirmDeleteOpen(true);
+  }, [period, setToDelete, setConfirmDeleteOpen]);
 
-  const handleConfirmClose = useCallback(() => {
+  const handleConfirmDeleteClose = useCallback(() => {
     setToDelete(null);
-    setConfirmOpen(false);
-  }, [setToDelete, setConfirmOpen]);
+    setConfirmDeleteOpen(false);
+  }, [setToDelete, setConfirmDeleteOpen]);
+
+  const handleConfirmApproveAllClose = useCallback(() => {
+    setConfirmApproveAllOpen(false);
+  }, [setToDelete, setConfirmApproveAllOpen]);
 
   const deleteReviewPeriod = useCallback(async () => {
     if (!csrf) return;
@@ -351,9 +356,9 @@ const TeamReviews = ({ onBack, periodId }) => {
       type: DELETE_REVIEW_PERIOD,
       payload: toDelete
     });
-    handleConfirmClose();
+    handleConfirmDeleteClose();
     history.goBack();
-  }, [csrf, dispatch, toDelete, handleConfirmClose]);
+  }, [csrf, dispatch, toDelete, handleConfirmDeleteClose]);
 
   const getReviewers = useCallback(
     reviewee => {
@@ -715,6 +720,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const approveAll = () => {
     visibleTeamMembers().map(member => approveMember(member, true));
+    setConfirmApproveAllOpen(false);
   };
 
   const unapproveAll = () => {
@@ -885,7 +891,9 @@ const TeamReviews = ({ onBack, periodId }) => {
             }}
           />
           <div>
-            <Button onClick={approveAll}>Approve All</Button>
+            <Button onClick={() => setConfirmApproveAllOpen(true)}>
+              Approve All
+            </Button>
             <Button onClick={unapproveAll}>Unapprove All</Button>
           </div>
         </div>
@@ -948,8 +956,8 @@ const TeamReviews = ({ onBack, periodId }) => {
         }}
       />
       <Dialog
-        open={confirmOpen}
-        onClose={handleConfirmClose}
+        open={confirmDeleteOpen}
+        onClose={handleConfirmDeleteClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -963,8 +971,30 @@ const TeamReviews = ({ onBack, periodId }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleConfirmClose}>No</Button>
+          <Button onClick={handleConfirmDeleteClose}>No</Button>
           <Button onClick={deleteReviewPeriod} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={confirmApproveAllOpen}
+        onClose={handleConfirmApproveAllClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Approve Visible Review Assignments'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure that you want to approve all the visible review
+            assignments?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmApproveAllClose}>No</Button>
+          <Button onClick={approveAll} autoFocus>
             Yes
           </Button>
         </DialogActions>
