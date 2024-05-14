@@ -703,6 +703,10 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   };
 
+  const approveAll = () => {
+    alert('Approving all.');
+  };
+
   const visibleTeamMembers = () => {
     if (!approvalMode) return teamMembers;
 
@@ -769,26 +773,28 @@ const TeamReviews = ({ onBack, periodId }) => {
         )}
       </div>
       {period && (
-        <div className="datePickerFlexWrapper">
-          <DatePickerField
-            date={period.launchDate}
-            setDate={val => handleLaunchDateChange(val, period)}
-            label="Launch Date"
-            disabled={!isAdmin}
-            open={period?.reviewStatus === ReviewStatus?.PLANNING}
-          />
-          <DatePickerField
-            date={period.selfReviewCloseDate}
-            setDate={val => handleSelfReviewDateChange(val, period)}
-            label="Self-Review Date"
-            disabled={!isAdmin}
-          />
-          <DatePickerField
-            date={period.closeDate}
-            setDate={val => handleCloseDateChange(val, period)}
-            label="Close Date"
-            disabled={!isAdmin}
-          />
+        <div className="date-pickers-row">
+          <div className="date-pickers-container">
+            <DatePickerField
+              date={period.launchDate}
+              setDate={val => handleLaunchDateChange(val, period)}
+              label="Launch Date"
+              disabled={!isAdmin}
+              open={period?.reviewStatus === ReviewStatus?.PLANNING}
+            />
+            <DatePickerField
+              date={period.selfReviewCloseDate}
+              setDate={val => handleSelfReviewDateChange(val, period)}
+              label="Self-Review Date"
+              disabled={!isAdmin}
+            />
+            <DatePickerField
+              date={period.closeDate}
+              setDate={val => handleCloseDateChange(val, period)}
+              label="Close Date"
+              disabled={!isAdmin}
+            />
+          </div>
           {approvalButton()}
         </div>
       )}
@@ -799,21 +805,24 @@ const TeamReviews = ({ onBack, periodId }) => {
       )}
 
       {approvalMode && (
-        <TextField
-          className="name-search-field"
-          label="Name"
-          placeholder="Search by member name"
-          variant="outlined"
-          value={nameQuery}
-          onChange={event => setNameQuery(event.target.value)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end" color="gray">
-                <Search />
-              </InputAdornment>
-            )
-          }}
-        />
+        <div id="approval-row">
+          <TextField
+            className="name-search-field"
+            label="Name"
+            placeholder="Search by member name"
+            variant="outlined"
+            value={nameQuery}
+            onChange={event => setNameQuery(event.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end" color="gray">
+                  <Search />
+                </InputAdornment>
+              )
+            }}
+          />
+          <Button onClick={approveAll}>Approve All</Button>
+        </div>
       )}
 
       {/* TODO: Only render this if the user has a specific permission. */}
