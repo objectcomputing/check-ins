@@ -1,6 +1,7 @@
 .datePickerField {
   display: flex;
-  margin: 0.7rem;
+  margin-bottom: 0.7rem;
+  margin-right: 0.7rem;
   background-color: var(--white);
 }
 .datePickerField .MuiFormControl-root {

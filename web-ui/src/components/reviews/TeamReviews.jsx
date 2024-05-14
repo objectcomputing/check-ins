@@ -12,7 +12,13 @@ import React, {
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
-import { AddCircle, Archive, Delete, Unarchive } from '@mui/icons-material';
+import {
+  AddCircle,
+  Archive,
+  Delete,
+  Search,
+  Unarchive
+} from '@mui/icons-material';
 import {
   Alert,
   Button,
@@ -24,10 +30,12 @@ import {
   DialogTitle,
   FormControlLabel,
   IconButton,
+  InputAdornment,
   List,
   ListItem,
   ListItemText,
   Switch,
+  TextField,
   Tooltip,
   Typography
 } from '@mui/material';
@@ -54,11 +62,12 @@ import {
   selectCsrfToken,
   selectCurrentMembers,
   selectCurrentUser,
+  selectCurrentUserSubordinates,
   selectIsAdmin,
   selectMyTeam,
   selectReviewPeriod,
-  selectSubordinates,
-  selectSupervisors
+  selectSupervisors,
+  selectTeamMembersBySupervisorId
 } from '../../context/selectors';
 
 import MemberSelector from '../member_selector/MemberSelector';
@@ -120,6 +129,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [assignments, setAssignments] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
+  const [nameQuery, setNameQuery] = useState('');
   const [query, setQuery] = useState({});
   const [reviewerSelectorOpen, setReviewerSelectorOpen] = useState(false);
   const [reviews, setReviews] = useState(null);
@@ -195,33 +205,19 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const loadTeamMembers = () => {
     let members = [];
+
     if (approvalMode) {
       // Get the direct reports of the current user who is a manager.
       const myId = currentUser?.id;
-      members = currentMembers.filter(m => m.supervisorid === myId);
-      if (showAll) {
-        for (const member of members) {
-          walkHierarchy(member.id, members);
-        }
-      }
+      members = showAll
+        ? selectCurrentUserSubordinates(state)
+        : selectTeamMembersBySupervisorId(state, myId);
     } else {
       const memberIds = assignments.map(a => a.revieweeId);
       members = currentMembers.filter(m => memberIds.includes(m.id));
     }
 
     setTeamMembers(members);
-  };
-
-  const walkHierarchy = (id, members) => {
-    const newMembers = currentMembers.filter(m => m.supervisorid === id);
-    if (newMembers.length) {
-      console.log('TeamReviews.jsx walkHierarchy: id =', id);
-      console.log('TeamReviews.jsx walkHierarchy: newMembers =', newMembers);
-    }
-    for (const member of newMembers) {
-      walkHierarchy(member.id, members);
-    }
-    members.push(...newMembers);
   };
 
   const updateTeamMembers = async teamMembers => {
@@ -707,6 +703,15 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   };
 
+  const visibleTeamMembers = () => {
+    if (!approvalMode) return teamMembers;
+
+    const query = nameQuery.trim().toLowerCase();
+    return teamMembers.filter(member =>
+      member.name.toLowerCase().includes(query)
+    );
+  };
+
   return (
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
@@ -748,16 +753,18 @@ const TeamReviews = ({ onBack, periodId }) => {
                 <Delete />
               </IconButton>
             </Tooltip>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={showAll}
-                  onChange={() => setShowAll(b => !b)}
-                />
-              }
-              label="Show All"
-              sx={{ marginLeft: '0.5rem' }}
-            />
+            {approvalMode && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={showAll}
+                    onChange={() => setShowAll(b => !b)}
+                  />
+                }
+                label="Show All"
+                sx={{ marginLeft: '0.5rem' }}
+              />
+            )}
           </div>
         )}
       </div>
@@ -790,6 +797,26 @@ const TeamReviews = ({ onBack, periodId }) => {
           {validationMessage}
         </Alert>
       )}
+
+      {approvalMode && (
+        <TextField
+          className="name-search-field"
+          label="Name"
+          placeholder="Search by member name"
+          variant="outlined"
+          value={nameQuery}
+          onChange={event => setNameQuery(event.target.value)}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end" color="gray">
+                <Search />
+              </InputAdornment>
+            )
+          }}
+        />
+      )}
+
+      {/* TODO: Only render this if the user has a specific permission. */}
       <MemberSelector
         className="team-skill-member-selector"
         exportable
@@ -798,7 +825,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       />
 
       <List dense role="list" sx={{ height: '50%', overflowY: 'scroll' }}>
-        {teamMembers.map(member => (
+        {visibleTeamMembers().map(member => (
           <ListItem key={member.id} role="listitem" disablePadding>
             <ListItemText
               className="name-title"

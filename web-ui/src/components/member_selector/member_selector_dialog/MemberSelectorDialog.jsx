@@ -391,10 +391,10 @@ const MemberSelectorDialog = ({
 
     // Search by member name
     if (nameQuery) {
-      selectable = selectable.filter(member => {
-        const sanitizedQuery = nameQuery.trim().toLowerCase();
-        return member.name.toLowerCase().includes(sanitizedQuery);
-      });
+      const query = nameQuery.trim().toLowerCase();
+      selectable = selectable.filter(member =>
+        member.name.toLowerCase().includes(query)
+      );
     }
 
     setSelectableMembers(selectable);
