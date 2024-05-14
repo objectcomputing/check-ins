@@ -714,7 +714,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const approveAll = () => {
-    alert('Approving all');
+    visibleTeamMembers().map(approveMember);
   };
 
   const approveMember = async member => {
