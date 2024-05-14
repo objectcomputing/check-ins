@@ -370,7 +370,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const handleLaunchDateChange = (val, period) => {
     const newDate = val?.$d;
-    const isoDate = newDate.toISOString() ?? null;
+    const isoDate = newDate?.toISOString() ?? null;
     const newPeriod = { ...period, launchDate: isoDate };
 
     // Clear dates that are not correctly ordered.
@@ -535,7 +535,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (!period.closeDate) return 'No close date was specified.';
     if (teamMembers.length === 0) return 'No members were added.';
     const haveReviewers = teamMembers.every(
-      member => member.reviewers.length > 0
+      member => member.reviewers?.length > 0
     );
     if (!haveReviewers) return 'One or more members have no reviewer.';
     return null;
