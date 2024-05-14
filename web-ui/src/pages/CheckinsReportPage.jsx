@@ -135,6 +135,21 @@ const CheckinsReportPage = () => {
     pdls.filter(pdl => pdl.members.length > 0);
   }, [pdls, state]);
 
+  // Keyboard navigation for changing quarters.
+  useEffect(() => {
+    const handleKeyDown = evt => {
+      if (evt.key === 'ArrowLeft') {
+        document
+          .querySelector('button[aria-label="Previous quarter`"]')
+          .click();
+      } else if (evt.key === 'ArrowRight') {
+        document.querySelector('button[aria-label="Next quarter`"]').click();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <div className="checkins-report-page">
       <MemberSelector
