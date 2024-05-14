@@ -360,11 +360,13 @@ const TeamReviews = ({ onBack, periodId }) => {
       if (!reviewee) return [];
       const { id } = reviewee;
       const as = assignments.filter(a => a.revieweeId === id) ?? [];
-      const reviewerIds = new Set();
-      as.forEach(a => {
-        if (a.reviewerId) reviewerIds.add(a.reviewerId);
-      });
-      const reviewers = [...reviewerIds].map(id => memberMap[id]);
+      const reviewers = [];
+      for (const as of assignments) {
+        if (as.revieweeId === id) {
+          const member = { ...memberMap[as.reviewerId], approved: as.approved };
+          reviewers.push(member);
+        }
+      }
       return sortMembers(reviewers);
     },
     [assignments]
@@ -671,6 +673,11 @@ const TeamReviews = ({ onBack, periodId }) => {
     setReviewerSelectorOpen(false);
   };
 
+  const isMemberApproved = member => {
+    const reviewer = getReviewers(member)[0];
+    return reviewer && reviewer.approved;
+  };
+
   const REVIEWER_LIMIT = 2;
   const renderReviewers = member => {
     let reviewers = getReviewers(member);
@@ -685,6 +692,9 @@ const TeamReviews = ({ onBack, periodId }) => {
             label={reviewer.name}
             variant="outlined"
             onDelete={() => deleteReviewer(member, reviewer)}
+            style={{
+              backgroundColor: reviewer.approved ? 'lightgreen' : 'lightyellow'
+            }}
           />
         ))}
         {excess > 0 && <div>and {excess} more </div>}
@@ -707,8 +717,44 @@ const TeamReviews = ({ onBack, periodId }) => {
     alert('Approving all');
   };
 
-  const approveMember = member => {
-    alert('Approving ' + member?.name);
+  const approveMember = async member => {
+    const toApprove = assignments.filter(
+      assignment =>
+        assignment.revieweeId === member.id &&
+        assignment.reviewPeriodId === period.id
+    );
+    if (toApprove.length === 0) return;
+
+    const { approved } = toApprove[0];
+    const promises = toApprove.map(assignment =>
+      approveReviewAssignment(assignment, !approved)
+    );
+    await Promise.all(promises);
+    for (const assignment of toApprove) {
+      assignment.approved = !approved;
+    }
+    setAssignments([...assignments]);
+  };
+
+  const approveReviewAssignment = async (assignment, approved) => {
+    try {
+      const res = await resolve({
+        method: 'PUT',
+        url: '/services/review-assignments',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8',
+          'X-CSRF-Header': csrf
+        },
+        data: {
+          ...assignment,
+          approved
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+    } catch (err) {
+      console.error('TeamReviews.jsx approveReviewAssignment:', err);
+    }
   };
 
   const visibleTeamMembers = () => {
@@ -858,7 +904,11 @@ const TeamReviews = ({ onBack, periodId }) => {
               >
                 <AddCircle />
               </IconButton>
-              <Button onClick={() => approveMember(member)}>Approve</Button>
+              {approvalMode && (
+                <Button onClick={() => approveMember(member)}>
+                  {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
+                </Button>
+              )}
             </div>
           </ListItem>
         ))}
