@@ -30,6 +30,7 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   Modal,
   Toolbar
@@ -44,6 +45,7 @@ const classes = {
   menuButton: `${PREFIX}-menuButton`,
   drawerPaper: `${PREFIX}-drawerPaper`,
   content: `${PREFIX}-content`,
+  listItem: `${PREFIX}-listItem`,
   listStyle: `${PREFIX}-listStyle`,
   nested: `${PREFIX}-nested`,
   subListItem: `${PREFIX}-subListItem`
@@ -238,7 +240,7 @@ function Menu({ children }) {
 
   const createLinkJsx = (path, name, isSubLink) => {
     return (
-      <ListItem
+      <ListItemButton
         key={path}
         component={Link}
         to={path}
@@ -256,7 +258,7 @@ function Menu({ children }) {
           classes={isSubLink ? { primary: classes.subListItem } : null}
           primary={name}
         />
-      </ListItem>
+      </ListItemButton>
     );
   };
 
@@ -284,48 +286,57 @@ function Menu({ children }) {
 
       <List component="nav" className={classes.listStyle}>
         <div>
-          {createLinkJsx('/', 'HOME', false)}
+          <span className="Menu-listItem">
+            {createLinkJsx('/', 'HOME', false)}
+          </span>
           {isAdmin && (
             <>
-              <ListItem onClick={toggleAdmin} className={classes.listItem}>
+              <ListItemButton
+                onClick={toggleAdmin}
+                className={classes.listItem}
+              >
                 <ListItemText primary="ADMIN" />
-              </ListItem>
+              </ListItemButton>
               <Collapse in={adminOpen} timeout="auto" unmountOnExit>
                 {createListJsx(adminLinks, true)}
                 {isAdmin && (
-                  <ListItem
+                  <ListItemButton
+                    sx={{ pl: 4, py: 1.5 }}
                     className={classes.listItem}
                     onClick={openHoursUpload}
-                    style={{ marginLeft: '1rem' }}
                   >
                     Upload Hours
-                  </ListItem>
+                  </ListItemButton>
                 )}
               </Collapse>
             </>
           )}
-          {createLinkJsx('/checkins', 'CHECK-INS', false)}
-          <ListItem onClick={toggleDirectory} className={classes.listItem}>
+          <span className="Menu-listItem">
+            {createLinkJsx('/checkins', 'CHECK-INS', false)}
+          </span>
+          <ListItemButton
+            onClick={toggleDirectory}
+            className={classes.listItem}
+          >
             <ListItemText primary="DIRECTORY" />
-          </ListItem>
+          </ListItemButton>
           <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
             {createListJsx(directoryLinks, true)}
           </Collapse>
-          <ListItem onClick={toggleFeedback} className={classes.listItem}>
+          <ListItemButton onClick={toggleFeedback} className={classes.listItem}>
             <ListItemText primary="FEEDBACK" />
-          </ListItem>
+          </ListItemButton>
           <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
             {createListJsx(feedbackLinks, true)}
           </Collapse>
           {hasReportPermission && (
             <React.Fragment>
-              <ListItem
-                button
+              <ListItemButton
                 onClick={toggleReports}
                 className={classes.listItem}
               >
                 <ListItemText primary="REPORTS" />
-              </ListItem>
+              </ListItemButton>
               <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
                 {createListJsx(getReportLinks(), true)}
               </Collapse>
