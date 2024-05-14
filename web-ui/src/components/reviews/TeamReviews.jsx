@@ -14,6 +14,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 
 import { AddCircle, Archive, Delete, Unarchive } from '@mui/icons-material';
 import {
+  Alert,
   Button,
   Chip,
   Dialog,
@@ -123,6 +124,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [selfReviews, setSelfReviews] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
   const [toDelete, setToDelete] = useState(null);
+  const [validationMessage, setValidationMessage] = useState(null);
 
   const loadedReviews = useRef(false);
   const loadingReviews = useRef(false);
@@ -370,7 +372,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const handleLaunchDateChange = (val, period) => {
     const newDate = val?.$d;
-    const isoDate = newDate.toISOString() ?? null;
+    const isoDate = newDate?.toISOString() ?? null;
     const newPeriod = { ...period, launchDate: isoDate };
 
     // Clear dates that are not correctly ordered.
@@ -384,7 +386,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const handleSelfReviewDateChange = (val, period) => {
     const newDate = val?.$d;
-    const isoDate = newDate.toISOString() ?? null;
+    const isoDate = newDate?.toISOString() ?? null;
     const newPeriod = { ...period, selfReviewCloseDate: isoDate };
 
     // Clear dates that are not correctly ordered.
@@ -398,7 +400,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const handleCloseDateChange = (val, period) => {
     const newDate = val?.$d;
-    const isoDate = newDate.toISOString() ?? null;
+    const isoDate = newDate?.toISOString() ?? null;
     const newPeriod = { ...period, closeDate: isoDate };
 
     // Clear dates that are not correctly ordered.
@@ -527,7 +529,25 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   };
 
+  const validateReviewPeriod = period => {
+    if (!period) return 'No review period was created.';
+    if (!period.launchDate) return 'No launch date was specified.';
+    if (!period.selfReviewCloseDate)
+      return 'No self-review date was specified.';
+    if (!period.closeDate) return 'No close date was specified.';
+    if (teamMembers.length === 0) return 'No members were added.';
+    const haveReviewers = teamMembers.every(
+      member => member.reviewers?.length > 0
+    );
+    if (!haveReviewers) return 'One or more members have no reviewer.';
+    return null;
+  };
+
   const requestApproval = async () => {
+    const msg = validateReviewPeriod(period);
+    setValidationMessage(msg);
+    if (msg) return;
+
     try {
       const res = await resolve({
         method: 'PUT',
@@ -627,6 +647,17 @@ const TeamReviews = ({ onBack, periodId }) => {
     );
   };
 
+  const approvalButton = () => {
+    switch (period.reviewStatus) {
+      case ReviewStatus.PLANNING:
+        return <Button onClick={requestApproval}>Request Approval</Button>;
+      case ReviewStatus.AWAITING_APPROVAL:
+        return <Button onClick={requestApproval}>Launch Review</Button>;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
@@ -689,12 +720,13 @@ const TeamReviews = ({ onBack, periodId }) => {
             label="Close Date"
             disabled={!isAdmin}
           />
-          <Button onClick={requestApproval}>
-            {period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
-              ? 'Launch Review'
-              : 'Request Approval'}
-          </Button>
+          {approvalButton()}
         </div>
+      )}
+      {validationMessage && (
+        <Alert severity="error" style={{ marginBottom: '1rem' }}>
+          {validationMessage}
+        </Alert>
       )}
       <MemberSelector
         className="team-skill-member-selector"

@@ -401,9 +401,29 @@ Values('0ead3434-82e7-47b4-a0ef-d1f44d01732b', '1343411e-26bf-4274-81ca-1b46ba3f
 -- Mohit Bhatia Check-ins
 ---- 2020-09-29 - Active
 INSERT INTO checkins
-(id, teammemberid, pdlid, checkindate, completed) -- pdl: Michael Kimberlin
+(id, teammemberid, pdlid, checkindate, completed) -- pdl: Michael Kimberlin (reassigned to Geetika Sharma)
 VALUES
 ('8aa38f8c-2169-41b1-8548-1c2472fab7ff', 'b2d35288-7f1e-4549-aa2b-68396b162490', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2020-09-29 15:40:29.04' , false);
+
+---- NOW() - INTERVAL '2 weeks' - Completed
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  'ce666f85-4289-4fcd-b3c2-365ab965e30a',
+  'b2d35288-7f1e-4549-aa2b-68396b162490',
+  '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', -- pdl: Geetika Sharma
+  CURRENT_DATE - INTERVAL '2 weeks', -- 2 weeks ago
+  true
+);
+
+---- NOW() - INTERVAL '3 months' - Completed
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  '13d76100-a6a4-4d87-82e3-9faac4ea1a09',
+  'b2d35288-7f1e-4549-aa2b-68396b162490',
+  '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', -- pdl: Geetika Sharma
+  CURRENT_DATE - INTERVAL '3 months', -- 3 months ago
+  true
+);
 
 
 -- Zack Brown Check-ins
@@ -453,8 +473,30 @@ INSERT INTO checkins
 VALUES
 ('e60c3ca1-3894-4466-b418-9b743d058cc8', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-06-20 11:32:29.04' , false);
 
+-- Suman Maroju Check-ins
+---- NOW() - INTERVAL '2 days' - Completed
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  '34a48fe2-7db9-4e39-927c-ffe32467df71',
+  '1b4f99da-ef70-4a76-9b37-8bb783b749ad',
+  '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', -- pdl: Geetika Sharma
+  CURRENT_DATE - INTERVAL '2 days', -- 2 days ago
+  true
+);
+
+---- NOW() - INTERVAL '5 months' - Completed
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  'e70524e2-3f81-4f94-afae-a638aca0d3b5',
+  '1b4f99da-ef70-4a76-9b37-8bb783b749ad',
+  '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', -- pdl: Geetika Sharma
+  CURRENT_DATE - INTERVAL '5 months', -- 5 months ago
+  true
+);
+
+
 -- Julia Smith Check-ins
--- NOW() + INTERVAL '1 week'
+---- NOW() + INTERVAL '1 week' - Active
 INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
 VALUES (
   'b19a00d4-0225-412a-9456-d349ca293cdd',
@@ -463,6 +505,17 @@ VALUES (
   CURRENT_DATE + INTERVAL '1 week', -- 1 week from current date
   false
 );
+
+---- NOW() - INTERVAL '3 months' - Completed
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  '30026234-c228-48f5-aa93-53eab4b4dcef',
+  '59b790d2-fabc-11eb-9a03-0242ac130003',
+  '6207b3fd-042d-49aa-9e28-dcc04f537c2d', -- pdl: Michael Kimberlin
+  CURRENT_DATE - INTERVAL '3 months', -- 3 months ago from current date
+  true
+);
+
 
 -- Unreal Ulysses Check-ins
 ---- 2021-02-25 - Completed
@@ -512,6 +565,50 @@ INSERT INTO private_notes
 (id, checkinid, createdbyid, description) -- created by: Julia Smith
 VALUES
 ('73a5e7b5-9292-45c0-a605-5b5c63230892', '553aa528-d5f6-4d15-bfb6-b53738dc7954', '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Julia''s first private note for Ulysses', '${aeskey}'));
+
+
+-- Joe Warner Check-ins
+---- NOW() - INTERVAL '1 day' - Completed
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  'f5254f0d-97ba-4e5b-9c16-9a83bb545124',
+  '066b186f-1425-45de-89f2-4ddcc6ebe237',
+  '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', -- pdl: Mark Volkmann
+  CURRENT_DATE - INTERVAL '1 day', -- 1 day ago
+  true
+);
+
+---- NOW() - INTERVAL '3 months' - Completed
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  '962fa088-cf7d-476f-8d8d-625ce190de84',
+  '066b186f-1425-45de-89f2-4ddcc6ebe237',
+  '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', -- pdl: Mark Volkmann
+  CURRENT_DATE - INTERVAL '3 months', -- 3 months ago
+  true
+);
+
+
+-- Holly Williams Check-ins
+---- NOW() + INTERVAL '1 month' - Active
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  '1490caa7-1856-4c08-b287-5aa3684952e6',
+  '8fa673c0-ca19-4271-b759-41cb9db2e83a',
+  '802cb1f5-a255-4236-8719-773fa53d79d9', -- pdl: John Meyerin
+  CURRENT_DATE + INTERVAL '1 month', -- 1 month from now
+  false
+);
+
+---- NOW() - INTERVAL '3 months' - Completed
+INSERT INTO checkins (id, teammemberid, pdlid, checkindate, completed)
+VALUES (
+  'a41d9472-69b7-412a-9f76-8d41dae2b165',
+  '8fa673c0-ca19-4271-b759-41cb9db2e83a', -- Holly Williams
+  '802cb1f5-a255-4236-8719-773fa53d79d9', -- pdl: John Meyerin
+  CURRENT_DATE - INTERVAL '3 months', -- 3 months ago
+  true
+);
 
 
 -- Guilds
