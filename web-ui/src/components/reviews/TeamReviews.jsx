@@ -14,6 +14,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 
 import { AddCircle, Archive, Delete, Unarchive } from '@mui/icons-material';
 import {
+  Alert,
   Button,
   Chip,
   Dialog,
@@ -123,6 +124,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [selfReviews, setSelfReviews] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
   const [toDelete, setToDelete] = useState(null);
+  const [validationMessage, setValidationMessage] = useState(null);
 
   const loadedReviews = useRef(false);
   const loadingReviews = useRef(false);
@@ -384,7 +386,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const handleSelfReviewDateChange = (val, period) => {
     const newDate = val?.$d;
-    const isoDate = newDate.toISOString() ?? null;
+    const isoDate = newDate?.toISOString() ?? null;
     const newPeriod = { ...period, selfReviewCloseDate: isoDate };
 
     // Clear dates that are not correctly ordered.
@@ -398,7 +400,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const handleCloseDateChange = (val, period) => {
     const newDate = val?.$d;
-    const isoDate = newDate.toISOString() ?? null;
+    const isoDate = newDate?.toISOString() ?? null;
     const newPeriod = { ...period, closeDate: isoDate };
 
     // Clear dates that are not correctly ordered.
@@ -543,11 +545,8 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const requestApproval = async () => {
     const msg = validateReviewPeriod(period);
-    if (msg) {
-      // TODO: Replace this with a better dialog.
-      alert(msg);
-      return;
-    }
+    setValidationMessage(msg);
+    if (msg) return;
 
     try {
       const res = await resolve({
@@ -723,6 +722,11 @@ const TeamReviews = ({ onBack, periodId }) => {
           />
           {approvalButton()}
         </div>
+      )}
+      {validationMessage && (
+        <Alert severity="error" style={{ marginBottom: '1rem' }}>
+          {validationMessage}
+        </Alert>
       )}
       <MemberSelector
         className="team-skill-member-selector"
