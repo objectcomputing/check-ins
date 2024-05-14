@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecuredAnnotationRule;
@@ -12,9 +13,8 @@ import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.security.rules.SecurityRuleResult;
 import io.micronaut.web.router.MethodBasedRouteMatch;
 import io.micronaut.web.router.RouteMatch;
-import org.json.JSONArray;
-
 import jakarta.inject.Singleton;
+import org.json.JSONArray;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
-public class PermissionSecurityRule implements SecurityRule {
+public class PermissionSecurityRule implements SecurityRule<HttpRequest<?>> {
 
     public static final Integer ORDER = SecuredAnnotationRule.ORDER - 100;
 
@@ -37,14 +37,17 @@ public class PermissionSecurityRule implements SecurityRule {
     }
 
     @Override
-    public Publisher<SecurityRuleResult> check(HttpRequest<?> request, @Nullable RouteMatch<?> routeMatch, @Nullable Authentication authentication) {
-
+    public Publisher<SecurityRuleResult> check(@Nullable HttpRequest request, @Nullable Authentication authentication) {
+        RouteMatch routeMatch = request.getAttribute(HttpAttributes.ROUTE_MATCH, RouteMatch.class).orElse(null);
         if (routeMatch instanceof MethodBasedRouteMatch) {
             MethodBasedRouteMatch methodBasedRouteMatch = (MethodBasedRouteMatch) routeMatch;
             if (methodBasedRouteMatch.hasAnnotation(RequiredPermission.class)) {
 
-                AnnotationValue<RequiredPermission> requiredPermissionAnnotation = methodBasedRouteMatch.getAnnotation(RequiredPermission.class);
-                Optional<String> optionalPermission = requiredPermissionAnnotation != null ? requiredPermissionAnnotation.stringValue("value") : Optional.empty();
+                AnnotationValue<RequiredPermission> requiredPermissionAnnotation =
+                        methodBasedRouteMatch.getAnnotation(RequiredPermission.class);
+
+                Optional<String> optionalPermission = requiredPermissionAnnotation != null ?
+                        requiredPermissionAnnotation.stringValue("value") : Optional.empty();
 
                 Map<String, Object> claims = authentication != null ? authentication.getAttributes() : null;
 
@@ -58,11 +61,11 @@ public class PermissionSecurityRule implements SecurityRule {
 
 
                     roles.forEach(role -> rolePermissionServices.findByRole(role)
-                        .forEach(rolePermission -> userPermissions.add(rolePermission.getPermission()))
+                            .forEach(rolePermission -> userPermissions.add(rolePermission.getPermission()))
                     );
 
 
-                   return Mono.just(userPermissions.contains(requiredPermission)
+                    return Mono.just(userPermissions.contains(requiredPermission)
                             ? SecurityRuleResult.ALLOWED
                             : SecurityRuleResult.REJECTED);
                 }
@@ -71,6 +74,4 @@ public class PermissionSecurityRule implements SecurityRule {
 
         return Mono.just(SecurityRuleResult.UNKNOWN);
     }
-
-
 }

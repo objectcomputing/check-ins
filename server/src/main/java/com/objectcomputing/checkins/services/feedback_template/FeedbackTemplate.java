@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -7,14 +8,22 @@ import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "feedback_templates")
 public class FeedbackTemplate {
@@ -23,12 +32,12 @@ public class FeedbackTemplate {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "unique id of the feedback template ", required = true)
+    @Schema(description = "unique id of the feedback template")
     private UUID id;
 
     @Column(name = "title")
     @NotBlank
-    @Schema(description = "title of feedback template", required = true)
+    @Schema(description = "title of feedback template")
     private String title;
 
     @Column(name = "description")
@@ -37,34 +46,35 @@ public class FeedbackTemplate {
     private String description;
 
     @Column(name = "creator_id")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "UUID of person who created the feedback template", required = true)
+    @Schema(description = "UUID of person who created the feedback template")
     private UUID creatorId;
 
     @Column(name = "date_created")
     @DateCreated
-    @Schema(description = "date the template was created", required = true)
+    @Schema(description = "date the template was created")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate dateCreated;
 
     @Column(name = "active")
-    @NotBlank
-    @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
+    @NotNull
+    @Schema(description = "whether or not the template is allowed to be used for a feedback request")
     private Boolean active;
 
     @Column(name = "is_public")
-    @NotBlank
-    @Schema(description = "whether the template is accessible to everyone or just the creator", required = true)
+    @NotNull
+    @Schema(description = "whether the template is accessible to everyone or just the creator")
     private Boolean isPublic;
 
     @Column(name = "is_ad_hoc")
-    @NotBlank
-    @Schema(description = "whether the template is an ad-hoc template", required = true)
+    @NotNull
+    @Schema(description = "whether the template is an ad-hoc template")
     private Boolean isAdHoc;
 
     @Column(name = "is_review")
-    @NotBlank
-    @Schema(description = "indicates whether the template is utilized for performance reviews", required = true)
+    @NotNull
+    @Schema(description = "indicates whether the template is utilized for performance reviews")
     private Boolean isReview;
 
     /**
@@ -102,75 +112,6 @@ public class FeedbackTemplate {
 
     public FeedbackTemplate() {
     }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Nullable
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(@Nullable String description) {
-        this.description = description;
-    }
-
-    public UUID getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(UUID creatorId) {
-        this.creatorId = creatorId;
-    }
-
-    public LocalDate getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(LocalDate dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public void setIsPublic(Boolean isPublic) {
-        this.isPublic = isPublic;
-    }
-
-    public Boolean getIsPublic() {
-        return isPublic;
-    }
-
-    public Boolean getIsAdHoc() {
-        return isAdHoc;
-    }
-
-    public void setIsAdHoc(Boolean isAdHoc) {
-        this.isAdHoc = isAdHoc;
-    }
-
-    public Boolean getIsReview() { return isReview; }
-
-    public void setIsReview(Boolean review) { isReview = review; }
 
     @Override
     public boolean equals(Object o) {

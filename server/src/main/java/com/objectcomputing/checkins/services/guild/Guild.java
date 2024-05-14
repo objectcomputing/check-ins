@@ -3,19 +3,19 @@ package com.objectcomputing.checkins.services.guild;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -29,7 +29,7 @@ public class Guild {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the id of the guild", required = true)
+    @Schema(description = "the id of the guild")
     private UUID id;
 
     @NotBlank
@@ -50,7 +50,7 @@ public class Guild {
     @Schema(description="link to the homepage of the guild")
     private String link;
 
-    @NotBlank
+    @Nullable
     @Column(name = "description")
     @ColumnTransformer(
             read = "pgp_sym_decrypt(description::bytea,'${aes.key}')",
@@ -64,11 +64,11 @@ public class Guild {
     @Schema(description = "Is the guild a community")
     private boolean community;
 
-    public Guild(String name, String description, @Nullable String link, boolean community) {
+    public Guild(String name, @Nullable String description, @Nullable String link, boolean community) {
         this(null, name, description, link, community);
     }
 
-    public Guild(UUID id, String name, String description, @Nullable String link, boolean community) {
+    public Guild(UUID id, String name, @Nullable String description, @Nullable String link, boolean community) {
         this.id = id;
         this.name = name;
         this.description = description;

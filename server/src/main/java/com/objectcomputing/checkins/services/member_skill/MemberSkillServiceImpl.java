@@ -4,9 +4,9 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -55,8 +55,7 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
     }
 
     public Set<MemberSkill> findByFields(UUID memberid, UUID skillid) {
-        Set<MemberSkill> memberSkills = new HashSet<>();
-        memberSkillRepository.findAll().forEach(memberSkills::add);
+        Set<MemberSkill> memberSkills = new HashSet<>(memberSkillRepository.findAll());
 
         if (memberid != null) {
             memberSkills.retainAll(memberSkillRepository.findByMemberid(memberid));

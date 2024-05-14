@@ -8,40 +8,33 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import jakarta.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import java.io.File;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/skills/records")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class SkillRecordController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SkillRecordController.class);
     private final SkillRecordServices skillRecordServices;
-    private final Scheduler ioScheduler;
 
     public SkillRecordController(
-            SkillRecordServices skillRecordServices,
-            @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+            SkillRecordServices skillRecordServices) {
         this.skillRecordServices = skillRecordServices;
-        this.ioScheduler = Schedulers.fromExecutor(ioExecutorService);
     }
 
     @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
     @Get(value = "/csv", produces = MediaType.TEXT_CSV)
     public Mono<MutableHttpResponse<File>> generateCsv() {
         return Mono.defer(() -> Mono.just(skillRecordServices.generateFile()))
-                .subscribeOn(ioScheduler)
-                .map(file -> HttpResponse
-                        .ok(file)
+                .map(file -> HttpResponse.ok(file)
                         .header("Content-Disposition", String.format("attachment; filename=%s", file.getName())))
                 .onErrorResume(error -> {
                     LOG.error("Something went terribly wrong during export... ", error);

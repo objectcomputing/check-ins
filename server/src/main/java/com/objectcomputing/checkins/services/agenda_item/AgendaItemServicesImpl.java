@@ -1,17 +1,15 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
-import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +39,10 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         this.currentUserServices = currentUserServices;
         this.checkInServices = checkInServices;
     }
-
+    // todo remove manual validations throughout class in favor of jakarta validations at api level.
     @Override
     public AgendaItem save(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
-
         if (agendaItem != null) {
             validate(agendaItem.getId() != null, "Found unexpected id %s for agenda item", agendaItem.getId());
 
@@ -73,7 +70,9 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
             double lastDisplayOrder = agendaItemRepository.findMaxPriorityByCheckinid(agendaItem.getCheckinid()).orElse(0d);
             agendaItem.setPriority(lastDisplayOrder+1);
-            
+
+            LOG.info("Saving new AgendaItem");
+
             agendaItemRet = agendaItemRepository.save(agendaItem);
         }
         return agendaItemRet;
@@ -128,6 +127,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
                 validate(!currentUserIsCheckinParticipant, "User is unauthorized to do this operation");
             }
 
+            LOG.info("Updating new AgendaItem: {}", agendaItem.getId());
+
             agendaItemRet = agendaItemRepository.update(agendaItem);
         }
         return agendaItemRet;
@@ -135,6 +136,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
     @Override
     public Set<AgendaItem> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
+
+
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         final UUID currentUserId = currentUser.getId();
         boolean canViewAllCheckins = checkInServices.canViewAllCheckins(currentUserId);
@@ -147,7 +150,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         } else {
             validate(!canViewAllCheckins, "User is unauthorized to do this operation");
         }
-
+        LOG.info("Finding AgendaItem by checkinId: {}, and createById: {}", checkinid, createbyid);
         return agendaItemRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
     }
 
@@ -169,6 +172,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             boolean currentUserIsCheckinParticipant = currentUserId.equals(pdlId) || currentUserId.equals(createById);
             validate(!currentUserIsCheckinParticipant, "User is unauthorized to do this operation");
         }
+        LOG.info("Deleting AgendaItem by id: {}", id);
         agendaItemRepository.deleteById(id);
     }
 

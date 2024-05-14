@@ -17,12 +17,12 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import jakarta.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -405,7 +405,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?guildid=%s&memberid=%s&lead=%s", guildMember.getGuildId(),
-                guildMember.getMemberId(), guildMember.isLead())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                guildMember.getMemberId(), guildMember.getLead())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<GuildMember>> response = client.toBlocking().exchange(request, Argument.setOf(GuildMember.class));
 
         assertEquals(Set.of(guildMember), response.body());
@@ -431,7 +431,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         GuildMember result = response.body();
         assertNotNull(result);
         assertEquals(guildMember.getMemberId(), result.getMemberId());
-        assertTrue(result.isLead());
+        assertTrue(result.getLead());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), guildMember.getId()), response.getHeaders().get("location"));
     }
@@ -456,7 +456,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         GuildMember result = response.body();
         assertNotNull(result);
         assertEquals(guildMember.getMemberId(), result.getMemberId());
-        assertTrue(result.isLead());
+        assertTrue(result.getLead());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), guildMember.getId()), response.getHeaders().get("location"));
     }

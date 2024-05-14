@@ -4,33 +4,22 @@ import com.objectcomputing.checkins.services.memberprofile.anniversaryreport.Ann
 import com.objectcomputing.checkins.services.memberprofile.birthday.BirthDayResponseDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+@Setter
+@Getter
 @Introspected
 public class TodayResponseDTO {
-    @NotBlank
-    @Schema(description = "Today's birthdays", required = true)
+    @NotNull
+    @Schema(description = "Today's birthdays")
     private List<BirthDayResponseDTO> birthdays;
 
-    @NotBlank
-    @Schema(description = "Today's anniversaries", required = true)
+    @NotNull
+    @Schema(description = "Today's anniversaries")
     private List<AnniversaryReportResponseDTO> anniversaries;
 
-    public List<BirthDayResponseDTO> getBirthdays() {
-        return birthdays;
-    }
-
-    public void setBirthdays(List<BirthDayResponseDTO> birthdays) {
-        this.birthdays = birthdays;
-    }
-
-    public List<AnniversaryReportResponseDTO> getAnniversaries() {
-        return anniversaries;
-    }
-
-    public void setAnniversaries(List<AnniversaryReportResponseDTO> anniversaries) {
-        this.anniversaries = anniversaries;
-    }
 }

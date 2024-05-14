@@ -1,11 +1,11 @@
 package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
-
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -25,14 +25,14 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public ActionItem save(@Valid @NotNull ActionItem actionItem) {
-        ActionItem actionItemRet = null;
+        ActionItem actionItemRet;
 
         crudValidator.validateArgumentsCreate(actionItem);
         crudValidator.validatePermissionsCreate(actionItem);
 
-        double lastDisplayOrder = 0;
+        double lastDisplayOrder = 0.0;
         try {
-            lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
+            lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(0.0);
         } catch (NullPointerException npe) {
             //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
             //nothing needs to happen here.

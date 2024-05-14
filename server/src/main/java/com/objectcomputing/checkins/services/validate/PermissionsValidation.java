@@ -1,9 +1,8 @@
 package com.objectcomputing.checkins.services.validate;
 
 import com.objectcomputing.checkins.exceptions.PermissionException;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Singleton
 public class PermissionsValidation {

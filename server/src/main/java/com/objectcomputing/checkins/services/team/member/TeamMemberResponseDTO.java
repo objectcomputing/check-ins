@@ -8,16 +8,16 @@ import java.util.UUID;
 @Introspected
 public class TeamMemberResponseDTO {
 
-    @Schema(description = "id of the entry", required = true)
+    @Schema(description = "id of the entry")
     private UUID id;
 
-    @Schema(description = "first name of the member this entry is associated with", required = true)
+    @Schema(description = "first name of the member this entry is associated with")
     private String firstName;
 
-    @Schema(description = "last name of the member this entry is associated with", required = true)
+    @Schema(description = "last name of the member this entry is associated with")
     private String lastName;
 
-    @Schema(description = "full name of the member this entry is associated with", required = true)
+    @Schema(description = "full name of the member this entry is associated with")
     private String name;
 
     @Schema(description = "whether member is lead or not represented by true or false respectively",
