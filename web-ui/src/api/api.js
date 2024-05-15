@@ -1,4 +1,4 @@
-import { UPDATE_TOAST } from '../context/actions';
+import {UPDATE_TOAST} from '../context/actions';
 import qs from 'qs';
 
 export const BASE_API_URL = import.meta.env.VITE_APP_API_URL
@@ -76,15 +76,21 @@ export const resolve = async payload => {
   };
 
   resolved.payload = await promise;
+
   if (!resolved.payload.ok) {
-    const statusText = resolved.payload.statusText;
-    resolved.error = await resolved.payload.json();
+    try {
+      resolved.error = await resolved.payload.json();
+    } catch (error) {
+      resolved.error = resolved.payload.statusText;
+      console.log(error);
+    }
+
     if (window.snackDispatch) {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: 'error',
-          toast: resolved?.error?.message || statusText
+          toast: resolved?.error
         }
       });
     }

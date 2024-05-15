@@ -34,7 +34,7 @@ micronaut:
   executors:
     io:
       type: fixed
-      n-threads: 80 # todo set value based on some multiple of available processors for better scalability. Micronaut's default is cores * 2, but that seems low.
+      n-threads: 40 # Keep in sync with max pool size on datasource
 
   security:
     enabled: true
