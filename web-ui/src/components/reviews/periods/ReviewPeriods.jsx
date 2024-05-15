@@ -32,6 +32,7 @@ import { UPDATE_TOAST } from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
 
+import { resolve } from '../../../api/api.js';
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
 import {
@@ -45,6 +46,7 @@ import {
 } from '../../../context/actions';
 import {
   selectCsrfToken,
+  selectCurrentMembers,
   selectCurrentUserId,
   selectReviewPeriod,
   selectReviewPeriods,
@@ -140,6 +142,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
+  const currentMembers = selectCurrentMembers(state);
   const periods = selectReviewPeriods(state);
   const userProfile = selectUserProfile(state);
   const isAdmin = userProfile?.role?.includes('ADMIN');
@@ -300,6 +303,55 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       getAllReviewPeriods();
     }
   }, [csrf, dispatch, setLoading]);
+
+  const getApprovalPercentages = async periodId => {
+    try {
+      const res = await resolve({
+        method: 'GET',
+        url: `/services/review-assignments/period/${periodId}`,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+      const assignments = res.payload.data;
+      const reviewerIds = new Set();
+      for (const assignment of assignments) {
+        reviewerIds.add(assignment.reviewerId);
+      }
+      const reviewers = [...reviewerIds].map(id =>
+        currentMembers.find(m => m.id === id)
+      );
+      reviewers.sort((a, b) => a.name.localeCompare(b.name));
+      const data = reviewers.map(reviewer => {
+        const { id } = reviewer;
+        const assignmentsForReviewer = assignments.filter(
+          assignment => assignment.reviewerId === id
+        );
+        const approved = assignmentsForReviewer.filter(
+          assignment => assignment.approved
+        ).length;
+        return {
+          name: reviewer.name,
+          percent:
+            ((100 * approved) / assignmentsForReviewer.length).toFixed(0) + '%'
+        };
+      });
+      console.log('ReviewPeriods.jsx getApprovalPercentages: data =', data);
+    } catch (err) {
+      console.error('ReviewPeriods.jsx getApprovalPercentages:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (!csrf || currentMembers.length === 0) return;
+
+    for (const period of periods) {
+      getApprovalPercentages(period.id);
+    }
+  }, [csrf, currentMembers, periods]);
 
   useEffect(() => {
     const getSelfReviews = async () => {
