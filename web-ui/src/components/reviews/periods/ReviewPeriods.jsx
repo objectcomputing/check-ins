@@ -5,10 +5,6 @@ import {
   Avatar,
   Box,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  Collapse,
   FormControl,
   InputLabel,
   List,
@@ -41,14 +37,11 @@ import {
 } from '../../../context/actions';
 import {
   selectCsrfToken,
-  selectCurrentMembers,
   selectCurrentUserId,
   selectReviewPeriod,
   selectReviewPeriods,
   selectUserProfile
 } from '../../../context/selectors';
-
-import ExpandMore from '../../expand-more/ExpandMore';
 
 import ReviewPeriodCard from './ReviewPeriodCard.jsx';
 
@@ -131,7 +124,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
-  const currentMembers = selectCurrentMembers(state);
   const periods = selectReviewPeriods(state);
   const userProfile = selectUserProfile(state);
   const isAdmin = userProfile?.role?.includes('ADMIN');
