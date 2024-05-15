@@ -134,10 +134,16 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
     }
   };
 
-  const iconStyles = { height: '2.5rem', width: '2.5rem' };
+  const iconStyles = {
+    position: 'absolute',
+    bottom: '0.5rem',
+    right: '0.5rem',
+    height: '2.5rem',
+    width: '2.5rem'
+  };
 
-  return (
-    <StyledCard className={classes.card}>
+  const guildIcon = () => {
+    return (
       <Tooltip
         title={`This is a ${guild.community ? 'Community' : 'Guild'}.`}
         aria-label="icon meaning"
@@ -150,6 +156,11 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
           />
         )}
       </Tooltip>
+    );
+  };
+
+  return (
+    <StyledCard className={classes.card} sx={{ position: 'relative' }}>
       <CardHeader
         classes={{
           content: classes.header,
@@ -250,6 +261,7 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
           </>
         )}
       </CardActions>
+      {guildIcon()}
       <EditGuildModal
         guild={guild}
         open={open}
