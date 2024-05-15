@@ -1,5 +1,11 @@
 .team-reviews {
-  & .chip-row {
+  & #approval-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .chip-row {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -7,7 +13,7 @@
     margin-left: 2rem;
   }
 
-  & .name-title {
+  .name-title {
     min-width: 10rem;
   }
 }
