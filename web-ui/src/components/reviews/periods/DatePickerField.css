@@ -1,8 +1,7 @@
 .date-picker-field {
   display: flex;
-  margin-right: 0.7rem;
-  background-color: var(--white);
-
+  margin: 0.7rem;
+  
   .MuiFormControl-root {
     width: auto;
   }
@@ -25,9 +24,9 @@
   margin-bottom: 1rem;
   background-color: var(--checkins-palette-gray-light);
   cursor: pointer;
-}
-
-.reviewPeriodSection:hover {
-  background-color: transparent;
-  transition: all 0.4s ease-out;
+  
+  &:hover {
+    background-color: transparent;
+    transition: all 0.4s ease-out;
+  }
 }
