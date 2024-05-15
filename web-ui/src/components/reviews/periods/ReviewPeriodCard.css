@@ -3,9 +3,12 @@
     padding: 0.5rem;
   }
 
-  .top-row {
+  .row {
     display: flex;
     align-items: center;
+  }
+
+  .top-row {
     padding-left: 0.7rem;
 
     &:hover {

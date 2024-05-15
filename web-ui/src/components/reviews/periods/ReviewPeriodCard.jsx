@@ -58,6 +58,7 @@ const reviewStatusIconMap = {
 const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
   const { state } = useContext(AppContext);
   const [approvalStats, setApprovalStats] = useState([]);
+  const [overallApprovalPercentage, setOverallApprovalPercentage] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
   const csrf = selectCsrfToken(state);
@@ -83,6 +84,8 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
       });
       if (res.error) throw new Error(res.error.message);
       const assignments = res.payload.data;
+      const approvedCount = assignments.filter(a => a.approved).length;
+      setOverallApprovalPercentage((100 * approvedCount) / assignments.length);
 
       // Get a list of all the reviewers in this period.
       const reviewerIds = new Set();
@@ -150,7 +153,7 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
 
   return (
     <Card className="review-period-card" key={`period-${periodId}`}>
-      <div className="top-row">
+      <div className="row top-row">
         <ListItemAvatar
           key={`period-lia-${periodId}`}
           onClick={() => onSelect(periodId)}
@@ -163,16 +166,21 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
           primary={`${name} - ${titleCase(ReviewStatus[reviewStatus])}`}
           secondary={getSecondaryLabel(periodId)}
         />
-
-        <CardActions disableSpacing>
-          <ExpandMore
-            expand={expanded}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label={expanded ? 'show less' : 'show more'}
-            size="large"
+        <div className="row">
+          <ListItemText
+            key={`period-percent-${periodId}`}
+            primary={overallApprovalPercentage.toFixed(0) + '%'}
           />
-        </CardActions>
+          <CardActions disableSpacing>
+            <ExpandMore
+              expand={expanded}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label={expanded ? 'show less' : 'show more'}
+              size="large"
+            />
+          </CardActions>
+        </div>
       </div>
       <Collapse
         className="bottom-row"
