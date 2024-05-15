@@ -2,17 +2,13 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import {
-  BorderColor,
-  DoorFront,
-  HourglassTop,
-  MeetingRoom,
-  QuestionMark
-} from '@mui/icons-material';
-
-import {
   Avatar,
   Box,
   Button,
+  Card,
+  CardActions,
+  CardContent,
+  Collapse,
   FormControl,
   InputLabel,
   List,
@@ -32,7 +28,6 @@ import { UPDATE_TOAST } from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
 
-import { resolve } from '../../../api/api.js';
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
 import {
@@ -53,7 +48,9 @@ import {
   selectUserProfile
 } from '../../../context/selectors';
 
-import { titleCase } from '../../../helpers/strings.js';
+import ExpandMore from '../../expand-more/ExpandMore';
+
+import ReviewPeriodCard from './ReviewPeriodCard.jsx';
 
 const propTypes = {
   message: PropTypes.string,
@@ -116,14 +113,6 @@ const ReviewStatus = {
   UNKNOWN: 'UNKNOWN'
 };
 
-const reviewStatusIconMap = {
-  [ReviewStatus.PLANNING]: <BorderColor />,
-  [ReviewStatus.AWAITING_APPROVAL]: <HourglassTop />,
-  [ReviewStatus.OPEN]: <MeetingRoom />,
-  [ReviewStatus.CLOSED]: <DoorFront />,
-  [ReviewStatus.UNKNOWN]: <QuestionMark />
-};
-
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
@@ -137,7 +126,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     closeDate: null
   });
   const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
-  const [selfReviews, setSelfReviews] = useState(null);
+  const [selfReviews, setSelfReviews] = useState({});
   const [templates, setTemplates] = useState([]);
 
   const currentUserId = selectCurrentUserId(state);
@@ -219,34 +208,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     ]
   );
 
-  const getSecondaryLabel = useCallback(
-    periodId => {
-      if (mode === 'self') {
-        if (
-          selectReviewPeriod(state, periodId)?.reviewStatus ===
-          ReviewStatus.OPEN
-        ) {
-          if (
-            !selfReviews ||
-            !selfReviews[periodId] ||
-            selfReviews[periodId] === null
-          ) {
-            return 'Click to start your review.';
-          } else {
-            if (selfReviews[periodId].status.toUpperCase() === 'SUBMITTED') {
-              return 'Your review has been submitted. Thank you!';
-            } else {
-              return 'Click to finish your review.';
-            }
-          }
-        } else {
-          return 'This review period is closed.';
-        }
-      }
-    },
-    [selfReviews, state, mode]
-  );
-
   const loadFeedbackTemplates = useCallback(async () => {
     const res = await getAllFeedbackTemplates(csrf);
     const templates = res?.payload?.data;
@@ -304,55 +265,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     }
   }, [csrf, dispatch, setLoading]);
 
-  const getApprovalPercentages = async periodId => {
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: `/services/review-assignments/period/${periodId}`,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
-      const assignments = res.payload.data;
-      const reviewerIds = new Set();
-      for (const assignment of assignments) {
-        reviewerIds.add(assignment.reviewerId);
-      }
-      const reviewers = [...reviewerIds].map(id =>
-        currentMembers.find(m => m.id === id)
-      );
-      reviewers.sort((a, b) => a.name.localeCompare(b.name));
-      const data = reviewers.map(reviewer => {
-        const { id } = reviewer;
-        const assignmentsForReviewer = assignments.filter(
-          assignment => assignment.reviewerId === id
-        );
-        const approved = assignmentsForReviewer.filter(
-          assignment => assignment.approved
-        ).length;
-        return {
-          name: reviewer.name,
-          percent:
-            ((100 * approved) / assignmentsForReviewer.length).toFixed(0) + '%'
-        };
-      });
-      console.log('ReviewPeriods.jsx getApprovalPercentages: data =', data);
-    } catch (err) {
-      console.error('ReviewPeriods.jsx getApprovalPercentages:', err);
-    }
-  };
-
-  useEffect(() => {
-    if (!csrf || currentMembers.length === 0) return;
-
-    for (const period of periods) {
-      getApprovalPercentages(period.id);
-    }
-  }, [csrf, currentMembers, periods]);
-
   useEffect(() => {
     const getSelfReviews = async () => {
       let reviews = {};
@@ -387,7 +299,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       periods &&
       periods.length > 0 &&
       currentUserId &&
-      selfReviews == null
+      Object.keys(selfReviews).length === 0
     ) {
       getSelfReviews();
     }
@@ -478,22 +390,12 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   : 1;
             })
             .map(({ name, reviewStatus, id }, i) => (
-              <div key={i} className="reviewPeriodSection">
-                <ListItem key={`period-${id}`}>
-                  <ListItemAvatar
-                    key={`period-lia-${id}`}
-                    onClick={() => onPeriodClick(id)}
-                  >
-                    <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    key={`period-lit-${id}`}
-                    onClick={() => onPeriodClick(id)}
-                    primary={`${name} - ${titleCase(ReviewStatus[reviewStatus])}`}
-                    secondary={getSecondaryLabel(id)}
-                  />
-                </ListItem>
-              </div>
+              <ReviewPeriodCard
+                mode={mode}
+                onSelect={onPeriodClick}
+                periodId={id}
+                selfReviews={selfReviews}
+              />
             ))
         ) : (
           <Typography variant="body1">

@@ -1,0 +1,9 @@
+.review-period-card {
+  display: flex;
+  align-items: center;
+  padding-left: 0.7rem;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
