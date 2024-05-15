@@ -66,6 +66,8 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
   const periods = selectReviewPeriods(state);
 
   const period = periods.find(period => period.id === periodId);
+  const showPercentages =
+    period.reviewStatus === ReviewStatus.AWAITING_APPROVAL;
   const { name, reviewStatus } = period;
 
   const handleExpandClick = () => setExpanded(!expanded);
@@ -97,11 +99,23 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
       );
       reviewers.sort((a, b) => a.name.localeCompare(b.name));
 
+      console.log(
+        'ReviewPeriodCard.jsx loadApprovalStats: periodId =',
+        periodId
+      );
       // Build an array containing statistics for each reviewer.
       const stats = reviewers.map(reviewer => {
         const { id } = reviewer;
+        console.log(
+          'ReviewPeriodCard.jsx loadApprovalStats: reviewer.name =',
+          reviewer.name
+        );
         const assignmentsForReviewer = assignments.filter(
           assignment => assignment.reviewerId === id
+        );
+        console.log(
+          'ReviewPeriodCard.jsx loadApprovalStats: assignmentsForReviewer =',
+          assignmentsForReviewer
         );
         const approved = assignmentsForReviewer.filter(
           assignment => assignment.approved
@@ -166,34 +180,38 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
           primary={`${name} - ${titleCase(ReviewStatus[reviewStatus])}`}
           secondary={getSecondaryLabel(periodId)}
         />
-        <div className="row">
-          <ListItemText
-            key={`period-percent-${periodId}`}
-            primary={overallApprovalPercentage.toFixed(0) + '%'}
-          />
-          <CardActions disableSpacing>
-            <ExpandMore
-              expand={expanded}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label={expanded ? 'show less' : 'show more'}
-              size="large"
+        {showPercentages && (
+          <div className="row">
+            <ListItemText
+              key={`period-percent-${periodId}`}
+              primary={overallApprovalPercentage.toFixed(0) + '%'}
             />
-          </CardActions>
-        </div>
-      </div>
-      <Collapse
-        className="bottom-row"
-        in={expanded}
-        timeout="auto"
-        unmountOnExit
-      >
-        {approvalStats.map(stats => (
-          <div key={stats.name}>
-            {stats.name} - {stats.percent}
+            <CardActions disableSpacing>
+              <ExpandMore
+                expand={expanded}
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label={expanded ? 'show less' : 'show more'}
+                size="large"
+              />
+            </CardActions>
           </div>
-        ))}
-      </Collapse>
+        )}
+      </div>
+      {showPercentages && (
+        <Collapse
+          className="bottom-row"
+          in={expanded}
+          timeout="auto"
+          unmountOnExit
+        >
+          {approvalStats.map(stats => (
+            <div key={stats.name}>
+              {stats.name} - {stats.percent}
+            </div>
+          ))}
+        </Collapse>
+      )}
     </Card>
   );
 };

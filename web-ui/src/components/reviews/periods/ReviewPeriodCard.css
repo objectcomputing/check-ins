@@ -1,4 +1,8 @@
 .review-period-card {
+  .MuiListItemAvatar-root {
+    padding: 0.7rem 0;
+  }
+
   .bottom-row {
     padding: 0.5rem;
   }
