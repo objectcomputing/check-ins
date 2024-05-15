@@ -57,6 +57,7 @@ const reviewStatusIconMap = {
 
 const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
   const { state } = useContext(AppContext);
+  const [approvalStats, setApprovalStats] = useState([]);
   const [expanded, setExpanded] = useState(false);
 
   const csrf = selectCsrfToken(state);
@@ -68,8 +69,9 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
 
   const handleExpandClick = () => setExpanded(!expanded);
 
-  const getApprovalPercentages = async periodId => {
+  const loadApprovalStats = async () => {
     try {
+      // Get all the review assignments for this period.
       const res = await resolve({
         method: 'GET',
         url: `/services/review-assignments/period/${periodId}`,
@@ -81,6 +83,8 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
       });
       if (res.error) throw new Error(res.error.message);
       const assignments = res.payload.data;
+
+      // Get a list of all the reviewers in this period.
       const reviewerIds = new Set();
       for (const assignment of assignments) {
         reviewerIds.add(assignment.reviewerId);
@@ -89,7 +93,9 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
         currentMembers.find(m => m.id === id)
       );
       reviewers.sort((a, b) => a.name.localeCompare(b.name));
-      const data = reviewers.map(reviewer => {
+
+      // Build an array containing statistics for each reviewer.
+      const stats = reviewers.map(reviewer => {
         const { id } = reviewer;
         const assignmentsForReviewer = assignments.filter(
           assignment => assignment.reviewerId === id
@@ -103,19 +109,16 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
             ((100 * approved) / assignmentsForReviewer.length).toFixed(0) + '%'
         };
       });
-      console.log('ReviewPeriods.jsx getApprovalPercentages: data =', data);
+
+      setApprovalStats(stats);
     } catch (err) {
-      console.error('ReviewPeriods.jsx getApprovalPercentages:', err);
+      console.error('ReviewPeriods.jsx getApprovalStats:', err);
     }
   };
 
   useEffect(() => {
-    if (!csrf || currentMembers.length === 0) return;
-
-    for (const period of periods) {
-      getApprovalPercentages(period.id);
-    }
-  }, [csrf, currentMembers, periods]);
+    if (csrf && currentMembers.length) loadApprovalStats();
+  }, [csrf, currentMembers]);
 
   const getSecondaryLabel = useCallback(
     periodId => {
@@ -147,32 +150,41 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
 
   return (
     <Card className="review-period-card" key={`period-${periodId}`}>
-      <ListItemAvatar
-        key={`period-lia-${periodId}`}
-        onClick={() => onSelect(periodId)}
-      >
-        <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
-      </ListItemAvatar>
-      <ListItemText
-        key={`period-lit-${periodId}`}
-        onClick={() => onSelect(periodId)}
-        primary={`${name} - ${titleCase(ReviewStatus[reviewStatus])}`}
-        secondary={getSecondaryLabel(periodId)}
-      />
-
-      <CardActions disableSpacing>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label={expanded ? 'show less' : 'show more'}
-          size="large"
+      <div className="top-row">
+        <ListItemAvatar
+          key={`period-lia-${periodId}`}
+          onClick={() => onSelect(periodId)}
+        >
+          <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
+        </ListItemAvatar>
+        <ListItemText
+          key={`period-lit-${periodId}`}
+          onClick={() => onSelect(periodId)}
+          primary={`${name} - ${titleCase(ReviewStatus[reviewStatus])}`}
+          secondary={getSecondaryLabel(periodId)}
         />
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent style={{ padding: 0 }}>
-          Reviewer percentages go here!
-        </CardContent>
+
+        <CardActions disableSpacing>
+          <ExpandMore
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label={expanded ? 'show less' : 'show more'}
+            size="large"
+          />
+        </CardActions>
+      </div>
+      <Collapse
+        className="bottom-row"
+        in={expanded}
+        timeout="auto"
+        unmountOnExit
+      >
+        {approvalStats.map(stats => (
+          <div key={stats.name}>
+            {stats.name} - {stats.percent}
+          </div>
+        ))}
       </Collapse>
     </Card>
   );

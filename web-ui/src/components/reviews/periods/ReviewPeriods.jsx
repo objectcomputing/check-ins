@@ -391,6 +391,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             })
             .map(({ name, reviewStatus, id }, i) => (
               <ReviewPeriodCard
+                key={`review-period-card-${id}`}
                 mode={mode}
                 onSelect={onPeriodClick}
                 periodId={id}

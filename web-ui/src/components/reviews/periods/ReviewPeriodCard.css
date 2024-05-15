@@ -1,9 +1,15 @@
 .review-period-card {
-  display: flex;
-  align-items: center;
-  padding-left: 0.7rem;
+  .bottom-row {
+    padding: 0.5rem;
+  }
 
-  &:hover {
-    cursor: pointer;
+  .top-row {
+    display: flex;
+    align-items: center;
+    padding-left: 0.7rem;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
