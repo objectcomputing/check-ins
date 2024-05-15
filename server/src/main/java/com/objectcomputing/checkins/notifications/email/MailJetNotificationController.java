@@ -9,7 +9,6 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 
 @Controller("/services/email-notifications")
@@ -21,18 +20,24 @@ public class MailJetNotificationController {
     private final EmailSender emailSender;
 
     public MailJetNotificationController(CurrentUserServices currentUserServices,
-                                         @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender) {
+                                         EmailSender emailSender) {
         this.currentUserServices = currentUserServices;
         this.emailSender = emailSender;
     }
 
     @Post()
-    public Mono<? extends HttpResponse<?>> sendEmailReceivesStatus(String subject, String content, String... recipients) {
+    public Mono<HttpResponse<?>> sendEmailReceivesStatus(String subject, String content, String... recipients) {
         return Mono.fromCallable(currentUserServices::getCurrentUser)
                 .map(currentUser -> {
                     String fromName = currentUser.getFirstName() + " " + currentUser.getLastName();
                     return emailSender.sendEmailReceivesStatus(fromName, currentUser.getWorkEmail(), subject, content, recipients);
                 })
-                .map(success -> (HttpResponse<?>) HttpResponse.ok());
+                .map(success -> {
+                    if(success){
+                        return HttpResponse.ok();
+                    } else {
+                        return HttpResponse.serverError();
+                    }
+                });
     }
 }
