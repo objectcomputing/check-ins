@@ -142,22 +142,18 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
     width: '2.5rem'
   };
 
-  const guildIcon = () => {
-    return (
-      <Tooltip
-        title={`This is a ${guild.community ? 'Community' : 'Guild'}.`}
-        aria-label="icon meaning"
-      >
-        {guild.community ? (
-          <Groups sx={{ color: 'var(--oci-orange)', ...iconStyles }} />
-        ) : (
-          <Construction
-            sx={{ color: 'var(--oci-light-blue)', ...iconStyles }}
-          />
-        )}
-      </Tooltip>
-    );
-  };
+  const guildIcon = () => (
+    <Tooltip
+      title={`This is a ${guild.community ? 'Community' : 'Guild'}.`}
+      aria-label="icon meaning"
+    >
+      {guild.community ? (
+        <Groups sx={{ color: 'var(--oci-orange)', ...iconStyles }} />
+      ) : (
+        <Construction sx={{ color: 'var(--oci-light-blue)', ...iconStyles }} />
+      )}
+    </Tooltip>
+  );
 
   return (
     <StyledCard className={classes.card} sx={{ position: 'relative' }}>
