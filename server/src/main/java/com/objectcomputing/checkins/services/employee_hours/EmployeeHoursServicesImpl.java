@@ -6,10 +6,10 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.memberprofile.memberphoto.MemberPhotoServiceImpl;
 import io.micronaut.http.multipart.CompletedFileUpload;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Singleton;
 import java.io.IOException;
 import java.util.*;
 
@@ -43,7 +43,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
         responseDTO.setRecordCountDeleted(employeehourRepo.count());
         employeehourRepo.deleteAll();
         try {
-           employeeHoursList = EmployeeaHoursCSVHelper.employeeHrsCsv(file.getInputStream());
+           employeeHoursList = EmployeeHoursCSVHelper.employeeHrsCsv(file.getInputStream());
             employeehourRepo.saveAll(employeeHoursList);
             for(EmployeeHours hours: employeeHoursList) {
                 employeeHours.add(hours);
@@ -59,9 +59,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
     @Override
     public EmployeeHours read(UUID id) {
-        EmployeeHours result = employeehourRepo.findById(id).orElse(null);
-
-        return result;
+        return employeehourRepo.findById(id).orElse(null);
     }
 
     @Override

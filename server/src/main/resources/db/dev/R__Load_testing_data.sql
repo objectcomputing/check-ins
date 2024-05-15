@@ -795,7 +795,27 @@ values
 insert into role_permissions
 (roleid, permission)
 values
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_UPDATE_ALL_CHECKINS'); 
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_UPDATE_ALL_CHECKINS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_CREATE_REVIEW_ASSIGNMENTS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_REVIEW_ASSIGNMENTS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_UPDATE_REVIEW_ASSIGNMENTS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_DELETE_REVIEW_ASSIGNMENTS');
 
 
 -- PDL Permissions

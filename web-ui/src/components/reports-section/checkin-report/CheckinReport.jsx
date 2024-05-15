@@ -66,6 +66,20 @@ const CheckinsReport = ({ closed, pdl, planned, reportDate }) => {
     // Done when all PDL team members have completed check-ins
     if (allMembersCompleted) return 'Done';
 
+    const anyMembersCompleted = members.some(
+      member =>
+        statusForPeriodByMemberScheduling(
+          selectFilteredCheckinsForTeamMemberAndPDL(
+            state,
+            member.id,
+            id,
+            closed,
+            planned
+          ),
+          reportDate
+        ) === 'Completed'
+    );
+
     const anyInProgress = members.some(
       member =>
         statusForPeriodByMemberScheduling(
@@ -81,7 +95,7 @@ const CheckinsReport = ({ closed, pdl, planned, reportDate }) => {
     );
 
     // In progress when there is at least one scheduled check-in
-    if (anyInProgress) return 'In Progress';
+    if (anyMembersCompleted || anyInProgress) return 'In Progress';
 
     // Not started when no check-ins are scheduled
     return 'Not Started';

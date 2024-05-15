@@ -1,16 +1,16 @@
 package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.member_skill.MemberSkill;
-import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.*;
 
 @Singleton
@@ -30,8 +30,8 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         this.skillRepo = skillRepo;
     }
 
-    @NotNull
-    public SkillsReportResponseDTO report(@NotNull SkillsReportRequestDTO request) {
+
+    public @NotNull SkillsReportResponseDTO report(@NotNull SkillsReportRequestDTO request) {
         SkillsReportResponseDTO response = null;
         if (request != null) {
             final List<SkillLevelDTO> skills = request.getSkills();
@@ -76,7 +76,6 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         return response;
     }
 
-    @NotNull
     private List<TeamMemberSkillDTO> getPotentialQualifyingMembers(List<SkillLevelDTO> skills) {
         // Get all member_skill entries that satisfy a requested skill
         final List<MemberSkill> entries = new ArrayList<>();
@@ -131,7 +130,6 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         return new ArrayList<>(map.values());
     }
 
-    @NotNull
     private List<TeamMemberSkillDTO> getMembersSatisfyingAllSkills(List<TeamMemberSkillDTO> potentialMembers,
                                                                    List<SkillLevelDTO> requestedSkills) {
         final List<TeamMemberSkillDTO> ret = new ArrayList<>();
@@ -161,7 +159,6 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         return ret;
     }
 
-    @NotNull
     private List<TeamMemberSkillDTO> removeMembersNotRequested(List<TeamMemberSkillDTO> potentialMembers,
                                                                Set<UUID> requestedMembers) {
         final List<TeamMemberSkillDTO> ret = new ArrayList<>();

@@ -2,41 +2,28 @@ package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
-
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Put;
-import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @Controller("/services/member-profiles")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -45,15 +32,9 @@ public class MemberProfileController {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberProfileController.class);
     private final MemberProfileServices memberProfileServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final Scheduler scheduler;
 
-    public MemberProfileController(MemberProfileServices memberProfileServices,
-                                   EventLoopGroup eventLoopGroup,
-                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public MemberProfileController(MemberProfileServices memberProfileServices) {
         this.memberProfileServices = memberProfileServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -64,13 +45,9 @@ public class MemberProfileController {
      */
     @Get("/{id}")
     public Mono<HttpResponse<MemberProfileResponseDTO>> getById(UUID id) {
-
         return Mono.fromCallable(() -> memberProfileServices.getById(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(memberProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
-                        .ok(fromEntity(memberProfile))
-                        .headers(headers -> headers.location(location(memberProfile.getId()))))
-                .subscribeOn(scheduler);
+                .map(memberProfile -> HttpResponse.ok(fromEntity(memberProfile))
+                        .headers(headers -> headers.location(location(memberProfile.getId()))));
     }
 
     /**
@@ -81,16 +58,10 @@ public class MemberProfileController {
      */
     @Get("/{id}/supervisors")
     public Mono<HttpResponse<List<MemberProfileResponseDTO>>> getSupervisorsForId(UUID id) {
-
         return Mono.fromCallable(() -> memberProfileServices.getSupervisorsForId(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(memberProfiles -> {
-                    List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
-                    return (HttpResponse<List<MemberProfileResponseDTO>>) HttpResponse
-                            .ok(dtoList);
-
-                }).subscribeOn(scheduler);
+                .map(entities -> entities.stream()
+                        .map(this::fromEntity).collect(Collectors.toList()))
+                .map(HttpResponse::ok);
     }
 
     /**
@@ -113,14 +84,8 @@ public class MemberProfileController {
                                                                             @Nullable UUID supervisorId,
                                                                             @QueryValue(value = "terminated" , defaultValue = "false") Boolean terminated) {
         return Mono.fromCallable(() -> memberProfileServices.findByValues(firstName, lastName, title, pdlId, workEmail, supervisorId, terminated))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(memberProfiles -> {
-                    List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
-                    return (HttpResponse<List<MemberProfileResponseDTO>>) HttpResponse
-                            .ok(dtoList);
-
-                }).subscribeOn(scheduler);
+                .map(entities -> entities.stream().map(this::fromEntity).collect(Collectors.toList()))
+                .map(HttpResponse::ok);
     }
 
     /**
@@ -134,11 +99,8 @@ public class MemberProfileController {
     public Mono<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 
         return Mono.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
-                        .created(fromEntity(savedProfile))
-                        .headers(headers -> headers.location(location(savedProfile.getId()))))
-                .subscribeOn(scheduler);
+                .map(savedProfile -> HttpResponse.created(fromEntity(savedProfile))
+                        .headers(headers -> headers.location(location(savedProfile.getId()))));
     }
 
     /**
@@ -151,15 +113,11 @@ public class MemberProfileController {
     public Mono<HttpResponse<MemberProfileResponseDTO>> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
 
         return Mono.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
                 .map(savedProfile -> {
                     MemberProfileResponseDTO updatedMemberProfile = fromEntity(savedProfile);
-                    return (HttpResponse<MemberProfileResponseDTO>) HttpResponse
-                            .ok()
-                            .headers(headers -> headers.location(location(updatedMemberProfile.getId())))
-                            .body(updatedMemberProfile);
-                })
-                .subscribeOn(scheduler);
+                    return HttpResponse.ok(updatedMemberProfile)
+                            .headers(headers -> headers.location(location(updatedMemberProfile.getId())));
+                });
     }
 
     /**
@@ -170,11 +128,9 @@ public class MemberProfileController {
      */
     @Delete("/{id}")
     @RequiredPermission(Permission.CAN_DELETE_ORGANIZATION_MEMBERS)
-    public Mono<HttpResponse> delete(@NotNull UUID id) {
+    public Mono<HttpResponse<?>> delete(@NotNull UUID id) {
         return Mono.fromCallable(() -> memberProfileServices.deleteProfile(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(successFlag -> (HttpResponse) HttpResponse.ok())
-                .subscribeOn(scheduler);
+                .map(successFlag -> HttpResponse.ok());
     }
 
     protected URI location(UUID id) {

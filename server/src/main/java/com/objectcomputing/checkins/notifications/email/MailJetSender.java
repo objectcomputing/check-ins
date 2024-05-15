@@ -13,7 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Requires(property = MailJetSender.FROM_ADDRESS)
@@ -101,10 +104,10 @@ public class MailJetSender implements EmailSender {
                                     .put(emailFormat, content)));
             try {
                 MailjetResponse response = client.post(request);
-                LOG.info("Mailjet response status: " + response.getStatus());
-                LOG.info("Mailjet response data: " + response.getData());
+                LOG.info("Mailjet response status: {}", response.getStatus());
+                LOG.info("Mailjet response data: {}", response.getData());
             } catch (MailjetException e) {
-                LOG.error("An unexpected error occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
+                LOG.error("An unexpected error occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
                 failedBatches.add(recipientList);
             }
         });
@@ -119,10 +122,10 @@ public class MailJetSender implements EmailSender {
         try {
             sendEmail(fromName, fromAddress, subject, content, recipients);
         } catch (Exception e){
-            LOG.error("An unexpected exception occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
+            LOG.error("An unexpected exception occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
             return false;
         } catch (Error e) {
-            LOG.error("An unexpected error occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
+            LOG.error("An unexpected error occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
             return false;
         }
         return true;

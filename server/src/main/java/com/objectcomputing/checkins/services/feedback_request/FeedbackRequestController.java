@@ -7,46 +7,36 @@ import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @Validated
 @Controller("/services/feedback/requests")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-
 @Tag(name = "feedback request")
 public class FeedbackRequestController {
 
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestController.class);
 
     private final FeedbackRequestServices feedbackReqServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService executorService;
 
-    public FeedbackRequestController(FeedbackRequestServices feedbackReqServices,
-                                     EventLoopGroup eventLoopGroup,
-                                     @Named(TaskExecutors.IO) ExecutorService executorService) {
+    public FeedbackRequestController(FeedbackRequestServices feedbackReqServices) {
         this.feedbackReqServices = feedbackReqServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.executorService = executorService;
     }
 
     /**
@@ -59,11 +49,8 @@ public class FeedbackRequestController {
     @Post()
     public Mono<HttpResponse<FeedbackRequestResponseDTO>> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackReqServices.save(fromDTO(requestBody)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedFeedbackRequest -> (HttpResponse<FeedbackRequestResponseDTO>) HttpResponse
-                        .created(fromEntity(savedFeedbackRequest))
-                        .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedbackRequest.getId()))))
-                .subscribeOn(Schedulers.fromExecutor(executorService));
+                .map(savedFeedbackRequest -> HttpResponse.created(fromEntity(savedFeedbackRequest))
+                        .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedbackRequest.getId()))));
     }
 
     /**
@@ -75,12 +62,8 @@ public class FeedbackRequestController {
     @Put()
     public Mono<HttpResponse<FeedbackRequestResponseDTO>> update(@Body @Valid @NotNull FeedbackRequestUpdateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackReqServices.update(requestBody))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedFeedback -> (HttpResponse<FeedbackRequestResponseDTO>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedback.getId())))
-                        .body(fromEntity(savedFeedback)))
-                .subscribeOn(Schedulers.fromExecutor(executorService));
+                .map(savedFeedback -> HttpResponse.ok(fromEntity(savedFeedback))
+                        .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedback.getId()))));
     }
 
     /**
@@ -91,11 +74,9 @@ public class FeedbackRequestController {
      */
     @RequiredPermission(Permission.CAN_DELETE_FEEDBACK_REQUEST)
     @Delete("/{id}")
-    public Mono<? extends HttpResponse<?>> delete(@NotNull UUID id) {
-        return Mono.fromCallable(() -> feedbackReqServices.delete(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(success -> (HttpResponse<?>) HttpResponse.ok())
-                .subscribeOn(Schedulers.fromExecutor(executorService));
+    public Mono<HttpResponse<?>> delete(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> feedbackReqServices.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 
     /**
@@ -108,11 +89,8 @@ public class FeedbackRequestController {
     @Get("/{id}")
     public Mono<HttpResponse<FeedbackRequestResponseDTO>> getById(UUID id) {
         return Mono.fromCallable(() -> feedbackReqServices.getById(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(savedFeedbackRequest -> (HttpResponse<FeedbackRequestResponseDTO>) HttpResponse
-                        .ok(fromEntity(savedFeedbackRequest))
-                        .headers(headers -> headers.location(URI.create("/feedback_request" + savedFeedbackRequest.getId()))))
-                .subscribeOn(Schedulers.fromExecutor(executorService));
+                .map(savedFeedbackRequest -> HttpResponse.ok(fromEntity(savedFeedbackRequest))
+                        .headers(headers -> headers.location(URI.create("/feedback_request" + savedFeedbackRequest.getId()))));
     }
 
     /**
@@ -129,12 +107,8 @@ public class FeedbackRequestController {
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,requesteeIds}")
     public Mono<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable List<UUID> requesteeIds) {
         return Mono.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, requesteeIds))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(feedbackReqs -> {
-                    List<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
-                    return (HttpResponse<List<FeedbackRequestResponseDTO>>) HttpResponse.ok(dtoList);
-                }).subscribeOn(Schedulers.fromExecutor(executorService));
+                .map(entities -> entities.stream().map(this::fromEntity).collect(Collectors.toList()))
+                .map(HttpResponse::ok);
     }
 
     private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {

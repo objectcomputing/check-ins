@@ -1,15 +1,10 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.role.Role;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.MappedEntity;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Table;
 
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
-
-import javax.persistence.*;
 import java.util.UUID;
 
 @Introspected

@@ -2,8 +2,6 @@ package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 
-import javax.validation.constraints.NotNull;
-
 public enum SkillLevel {
     INTERESTED(1),
     NOVICE(2),

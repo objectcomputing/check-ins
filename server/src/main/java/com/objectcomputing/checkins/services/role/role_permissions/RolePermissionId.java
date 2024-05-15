@@ -3,8 +3,8 @@ package com.objectcomputing.checkins.services.role.role_permissions;
 import io.micronaut.data.annotation.Embeddable;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
+import jakarta.persistence.Column;
 
-import javax.persistence.Column;
 import java.util.Objects;
 import java.util.UUID;
 

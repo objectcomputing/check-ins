@@ -6,10 +6,12 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.skillcategory.skillcategory_skill.SkillCategorySkillServices;
 import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 
-import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Singleton
 public class SkillCategoryServicesImpl implements SkillCategoryServices {

@@ -11,6 +11,8 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface MemberSkillRepository extends CrudRepository<MemberSkill, UUID> {
 
+    List<MemberSkill> findAll();
+
     Optional<MemberSkill> findById(UUID id);
 
     List<MemberSkill> findByMemberid(UUID uuid);

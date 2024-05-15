@@ -1,11 +1,11 @@
 .member-modal {
-  background-color: #fff;
-  border: 2px solid #fff;
+  background: var(--checkins-palette-background-paper);
+  border: 2px solid var(--muted);
   height: 75%;
   left: 50%;
   max-width: 600px;
   min-width: 400px;
-  overflow: scroll;
+  overflow-y: auto;
   position: absolute;
   padding: 0.5rem;
   top: 50%;
@@ -25,15 +25,17 @@
   justify-content: flex-end;
 }
 
-.member-modal .MuiTextField-root.fullWidth {
-  width: calc(100% - 1rem);
-}
+.member-modal {
+  .MuiTextField-root.fullWidth {
+    width: calc(100% - 1rem);
+  }
 
-.member-modal .MuiTextField-root.halfWidth {
-  width: calc(50% - 0.5rem);
-}
+  .MuiTextField-root.halfWidth {
+    width: calc(50% - 0.5rem);
+  }
 
-.member-modal .MuiTextField-root {
-  margin: 0.5rem;
-  width: 25ch;
+  .MuiTextField-root {
+    margin: 0.5rem;
+    width: 25ch;
+  }
 }

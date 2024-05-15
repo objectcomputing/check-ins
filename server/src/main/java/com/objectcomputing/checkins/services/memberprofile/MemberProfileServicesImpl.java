@@ -13,16 +13,10 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.core.annotation.Nullable;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 

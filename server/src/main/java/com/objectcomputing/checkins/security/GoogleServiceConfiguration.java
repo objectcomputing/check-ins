@@ -2,8 +2,7 @@ package com.objectcomputing.checkins.security;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.core.annotation.Introspected;
-
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @ConfigurationProperties("service-account-credentials")
 @Introspected
