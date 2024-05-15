@@ -9,6 +9,7 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import jakarta.inject.Named;
 import reactor.core.publisher.Mono;
 
 @Controller("/services/email-notifications")
@@ -20,7 +21,7 @@ public class MailJetNotificationController {
     private final EmailSender emailSender;
 
     public MailJetNotificationController(CurrentUserServices currentUserServices,
-                                         EmailSender emailSender) {
+                                         @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender) {
         this.currentUserServices = currentUserServices;
         this.emailSender = emailSender;
     }
