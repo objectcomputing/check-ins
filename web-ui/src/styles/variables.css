@@ -18,6 +18,7 @@
   --gray-light: #e5e5e5;
   --gray: #808080;
   --red: #f00;
+  --orange: #b26801;
   --yellow: #ee8c00;
   --green: #006400;
 
@@ -62,6 +63,8 @@
   --checkins-palette-green: var(--green);
   --checkins-palette-action: var(--action);
   --checkins-palette-action-disabled: var(--action-disabled);
+  --checkins-palette-action-yellow: lightyellow;
+  --checkins-palette-action-green: lightgreen;
 
   &[data-mui-color-scheme='dark'] {
     --primary-text: color-mix(in oklab, var(--white), var(--black) 10%);
@@ -86,6 +89,8 @@
     --checkins-palette-content-color: var(--white);
     --checkins-palette-gray-light: #e5e5e526;
     --checkins-palette-gray-dark: var(--gray);
+    --checkins-palette-action-yellow: var(--orange);
+    --checkins-palette-action-green: var(--green);
   }
 
   /* Sizing */

@@ -87,6 +87,7 @@
     font-size: 14px;
   }
 
+  .Menu-listItem,
   .Menu-subListItem,
   .MuiListItem-root {
     color: var(--checkins-palette-primary-menuItem);

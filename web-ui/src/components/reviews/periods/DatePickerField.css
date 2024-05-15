@@ -1,15 +1,21 @@
-.datePickerField {
+.date-picker-field {
   display: flex;
   margin: 0.7rem;
-  background-color: var(--white);
+  
+  .MuiFormControl-root {
+    width: auto;
+  }
 }
-.datePickerField .MuiFormControl-root {
-  width: auto;
-}
-.datePickerFlexWrapper {
+
+.date-pickers-container {
   display: flex;
-  flex-direction: row;
-  margin-right: 2rem;
+}
+
+.date-pickers-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .reviewPeriodSection {
@@ -18,9 +24,9 @@
   margin-bottom: 1rem;
   background-color: var(--checkins-palette-gray-light);
   cursor: pointer;
-}
-
-.reviewPeriodSection:hover {
-  background-color: transparent;
-  transition: all 0.4s ease-out;
+  
+  &:hover {
+    background-color: transparent;
+    transition: all 0.4s ease-out;
+  }
 }

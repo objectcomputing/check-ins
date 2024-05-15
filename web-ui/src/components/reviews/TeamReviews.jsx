@@ -12,7 +12,13 @@ import React, {
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
-import { AddCircle, Archive, Delete, Unarchive } from '@mui/icons-material';
+import {
+  AddCircle,
+  Archive,
+  Delete,
+  Search,
+  Unarchive
+} from '@mui/icons-material';
 import {
   Alert,
   Button,
@@ -22,10 +28,14 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControlLabel,
   IconButton,
+  InputAdornment,
   List,
   ListItem,
   ListItemText,
+  Switch,
+  TextField,
   Tooltip,
   Typography
 } from '@mui/material';
@@ -50,12 +60,14 @@ import {
 import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
-  selectReviewPeriod,
+  selectCurrentMembers,
   selectCurrentUser,
+  selectCurrentUserSubordinates,
   selectIsAdmin,
   selectMyTeam,
-  selectCurrentMembers,
-  selectSubordinates
+  selectReviewPeriod,
+  selectSupervisors,
+  selectTeamMembersBySupervisorId
 } from '../../context/selectors';
 
 import MemberSelector from '../member_selector/MemberSelector';
@@ -113,15 +125,19 @@ const TeamReviews = ({ onBack, periodId }) => {
   const history = useHistory();
   const location = useLocation();
 
+  const [approvalMode, setApprovalMode] = useState(false);
   const [assignments, setAssignments] = useState([]);
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
+  const [nameQuery, setNameQuery] = useState('');
   const [query, setQuery] = useState({});
   const [reviewerSelectorOpen, setReviewerSelectorOpen] = useState(false);
   const [reviews, setReviews] = useState(null);
   const [selectedMember, setSelectedMember] = useState(null);
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selfReviews, setSelfReviews] = useState({});
+  const [showAll, setShowAll] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   const [toDelete, setToDelete] = useState(null);
   const [validationMessage, setValidationMessage] = useState(null);
@@ -142,8 +158,24 @@ const TeamReviews = ({ onBack, periodId }) => {
   const reviewAssignmentsUrl = '/services/review-assignments';
 
   useEffect(() => {
-    loadTeamMembers();
+    loadAssignments();
   }, [currentMembers]);
+
+  useEffect(() => {
+    const myId = currentUser?.id;
+    const supervisors = selectSupervisors(state);
+    const isManager = supervisors.some(s => s.id === myId);
+    const period = selectReviewPeriod(state, periodId);
+    if (period) {
+      setApprovalMode(
+        isManager && period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
+      );
+    }
+  }, [state]);
+
+  useEffect(() => {
+    loadTeamMembers();
+  }, [approvalMode, assignments, showAll]);
 
   const editReviewers = member => {
     setSelectedMember(member);
@@ -152,7 +184,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     setReviewerSelectorOpen(true);
   };
 
-  const loadTeamMembers = async () => {
+  const loadAssignments = async () => {
     const myId = currentUser?.id;
     try {
       const res = await resolve({
@@ -167,12 +199,26 @@ const TeamReviews = ({ onBack, periodId }) => {
       if (res.error) throw new Error(res.error.message);
       const assignments = res.payload.data;
       setAssignments(assignments);
-      const memberIds = assignments.map(a => a.revieweeId);
-      const members = currentMembers.filter(m => memberIds.includes(m.id));
-      setTeamMembers(members);
     } catch (err) {
-      console.error('TeamReviews.jsx loadTeamMembers:', err);
+      console.error('TeamReviews.jsx loadAssignments:', err);
     }
+  };
+
+  const loadTeamMembers = () => {
+    let members = [];
+
+    if (approvalMode) {
+      // Get the direct reports of the current user who is a manager.
+      const myId = currentUser?.id;
+      members = showAll
+        ? selectCurrentUserSubordinates(state)
+        : selectTeamMembersBySupervisorId(state, myId);
+    } else {
+      const memberIds = assignments.map(a => a.revieweeId);
+      members = currentMembers.filter(m => memberIds.includes(m.id));
+    }
+
+    setTeamMembers(members);
   };
 
   const updateTeamMembers = async teamMembers => {
@@ -290,13 +336,17 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const confirmDelete = useCallback(() => {
     setToDelete(period.id);
-    setConfirmOpen(true);
-  }, [period, setToDelete, setConfirmOpen]);
+    setConfirmDeleteOpen(true);
+  }, [period, setToDelete, setConfirmDeleteOpen]);
 
-  const handleConfirmClose = useCallback(() => {
+  const handleConfirmDeleteClose = useCallback(() => {
     setToDelete(null);
-    setConfirmOpen(false);
-  }, [setToDelete, setConfirmOpen]);
+    setConfirmDeleteOpen(false);
+  }, [setToDelete, setConfirmDeleteOpen]);
+
+  const handleConfirmApproveAllClose = useCallback(() => {
+    setConfirmApproveAllOpen(false);
+  }, [setToDelete, setConfirmApproveAllOpen]);
 
   const deleteReviewPeriod = useCallback(async () => {
     if (!csrf) return;
@@ -306,20 +356,22 @@ const TeamReviews = ({ onBack, periodId }) => {
       type: DELETE_REVIEW_PERIOD,
       payload: toDelete
     });
-    handleConfirmClose();
+    handleConfirmDeleteClose();
     history.goBack();
-  }, [csrf, dispatch, toDelete, handleConfirmClose]);
+  }, [csrf, dispatch, toDelete, handleConfirmDeleteClose]);
 
   const getReviewers = useCallback(
     reviewee => {
       if (!reviewee) return [];
       const { id } = reviewee;
       const as = assignments.filter(a => a.revieweeId === id) ?? [];
-      const reviewerIds = new Set();
-      as.forEach(a => {
-        if (a.reviewerId) reviewerIds.add(a.reviewerId);
-      });
-      const reviewers = [...reviewerIds].map(id => memberMap[id]);
+      const reviewers = [];
+      for (const as of assignments) {
+        if (as.revieweeId === id) {
+          const member = { ...memberMap[as.reviewerId], approved: as.approved };
+          reviewers.push(member);
+        }
+      }
       return sortMembers(reviewers);
     },
     [assignments]
@@ -537,7 +589,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (!period.closeDate) return 'No close date was specified.';
     if (teamMembers.length === 0) return 'No members were added.';
     const haveReviewers = teamMembers.every(
-      member => member.reviewers?.length > 0
+      member => getReviewers(member).length > 0
     );
     if (!haveReviewers) return 'One or more members have no reviewer.';
     return null;
@@ -626,6 +678,11 @@ const TeamReviews = ({ onBack, periodId }) => {
     setReviewerSelectorOpen(false);
   };
 
+  const isMemberApproved = member => {
+    const reviewer = getReviewers(member)[0];
+    return reviewer && reviewer.approved;
+  };
+
   const REVIEWER_LIMIT = 2;
   const renderReviewers = member => {
     let reviewers = getReviewers(member);
@@ -640,6 +697,11 @@ const TeamReviews = ({ onBack, periodId }) => {
             label={reviewer.name}
             variant="outlined"
             onDelete={() => deleteReviewer(member, reviewer)}
+            style={{
+              backgroundColor: reviewer.approved
+                ? 'var(--checkins-palette-action-green)'
+                : 'var(--checkins-palette-action-yellow)'
+            }}
           />
         ))}
         {excess > 0 && <div>and {excess} more </div>}
@@ -658,11 +720,81 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   };
 
+  const approveAll = () => {
+    visibleTeamMembers().map(member => approveMember(member, true));
+    setConfirmApproveAllOpen(false);
+  };
+
+  const unapproveAll = () => {
+    visibleTeamMembers().map(member => approveMember(member, false));
+  };
+
+  const toggleApproval = async member => {
+    const toApprove = assignments.filter(
+      assignment =>
+        assignment.revieweeId === member.id &&
+        assignment.reviewPeriodId === period.id
+    );
+    if (toApprove.length === 0) return;
+
+    const { approved } = toApprove[0];
+    approveMember(member, !approved);
+  };
+
+  const approveMember = async (member, approved) => {
+    const toApprove = assignments.filter(
+      assignment =>
+        assignment.revieweeId === member.id &&
+        assignment.reviewPeriodId === period.id
+    );
+    if (toApprove.length === 0) return;
+
+    const promises = toApprove.map(assignment =>
+      approveReviewAssignment(assignment, approved)
+    );
+    await Promise.all(promises);
+
+    // Update the UI by updating the assigments state.
+    for (const assignment of toApprove) {
+      assignment.approved = approved;
+    }
+    setAssignments([...assignments]);
+  };
+
+  const approveReviewAssignment = async (assignment, approved) => {
+    try {
+      const res = await resolve({
+        method: 'PUT',
+        url: '/services/review-assignments',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8',
+          'X-CSRF-Header': csrf
+        },
+        data: {
+          ...assignment,
+          approved
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+    } catch (err) {
+      console.error('TeamReviews.jsx approveReviewAssignment:', err);
+    }
+  };
+
+  const visibleTeamMembers = () => {
+    if (!approvalMode) return teamMembers;
+
+    const query = nameQuery.trim().toLowerCase();
+    return teamMembers.filter(member =>
+      member.name.toLowerCase().includes(query)
+    );
+  };
+
   return (
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
-
         {period && isAdmin && (
           <div>
             <Tooltip
@@ -696,30 +828,44 @@ const TeamReviews = ({ onBack, periodId }) => {
                 <Delete />
               </IconButton>
             </Tooltip>
+            {approvalMode && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={showAll}
+                    onChange={() => setShowAll(b => !b)}
+                  />
+                }
+                label="Show All"
+                sx={{ marginLeft: '0.5rem' }}
+              />
+            )}
           </div>
         )}
       </div>
       {period && (
-        <div className="datePickerFlexWrapper">
-          <DatePickerField
-            date={period.launchDate}
-            setDate={val => handleLaunchDateChange(val, period)}
-            label="Launch Date"
-            disabled={!isAdmin}
-            open={period?.reviewStatus === ReviewStatus?.PLANNING}
-          />
-          <DatePickerField
-            date={period.selfReviewCloseDate}
-            setDate={val => handleSelfReviewDateChange(val, period)}
-            label="Self-Review Date"
-            disabled={!isAdmin}
-          />
-          <DatePickerField
-            date={period.closeDate}
-            setDate={val => handleCloseDateChange(val, period)}
-            label="Close Date"
-            disabled={!isAdmin}
-          />
+        <div className="date-pickers-row">
+          <div className="date-pickers-container">
+            <DatePickerField
+              date={period.launchDate}
+              setDate={val => handleLaunchDateChange(val, period)}
+              label="Launch Date"
+              disabled={!isAdmin}
+              open={period?.reviewStatus === ReviewStatus?.PLANNING}
+            />
+            <DatePickerField
+              date={period.selfReviewCloseDate}
+              setDate={val => handleSelfReviewDateChange(val, period)}
+              label="Self-Review Date"
+              disabled={!isAdmin}
+            />
+            <DatePickerField
+              date={period.closeDate}
+              setDate={val => handleCloseDateChange(val, period)}
+              label="Close Date"
+              disabled={!isAdmin}
+            />
+          </div>
           {approvalButton()}
         </div>
       )}
@@ -728,6 +874,34 @@ const TeamReviews = ({ onBack, periodId }) => {
           {validationMessage}
         </Alert>
       )}
+
+      {approvalMode && (
+        <div id="approval-row">
+          <TextField
+            className="name-search-field"
+            label="Name"
+            placeholder="Search by member name"
+            variant="outlined"
+            value={nameQuery}
+            onChange={event => setNameQuery(event.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end" color="gray">
+                  <Search />
+                </InputAdornment>
+              )
+            }}
+          />
+          <div>
+            <Button onClick={() => setConfirmApproveAllOpen(true)}>
+              Approve All
+            </Button>
+            <Button onClick={unapproveAll}>Unapprove All</Button>
+          </div>
+        </div>
+      )}
+
+      {/* TODO: Only render this if the user has a specific permission. */}
       <MemberSelector
         className="team-skill-member-selector"
         exportable
@@ -736,7 +910,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       />
 
       <List dense role="list" sx={{ height: '50%', overflowY: 'scroll' }}>
-        {teamMembers.map(member => (
+        {visibleTeamMembers().map(member => (
           <ListItem key={member.id} role="listitem" disablePadding>
             <ListItemText
               className="name-title"
@@ -756,6 +930,11 @@ const TeamReviews = ({ onBack, periodId }) => {
               >
                 <AddCircle />
               </IconButton>
+              {approvalMode && (
+                <Button onClick={() => toggleApproval(member)}>
+                  {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
+                </Button>
+              )}
             </div>
           </ListItem>
         ))}
@@ -779,8 +958,8 @@ const TeamReviews = ({ onBack, periodId }) => {
         }}
       />
       <Dialog
-        open={confirmOpen}
-        onClose={handleConfirmClose}
+        open={confirmDeleteOpen}
+        onClose={handleConfirmDeleteClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -794,8 +973,30 @@ const TeamReviews = ({ onBack, periodId }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleConfirmClose}>No</Button>
+          <Button onClick={handleConfirmDeleteClose}>No</Button>
           <Button onClick={deleteReviewPeriod} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={confirmApproveAllOpen}
+        onClose={handleConfirmApproveAllClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Approve Visible Review Assignments'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure that you want to approve all the visible review
+            assignments?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmApproveAllClose}>No</Button>
+          <Button onClick={approveAll} autoFocus>
             Yes
           </Button>
         </DialogActions>
