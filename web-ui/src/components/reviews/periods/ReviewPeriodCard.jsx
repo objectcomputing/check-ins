@@ -136,11 +136,7 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
           selectReviewPeriod(state, periodId)?.reviewStatus ===
           ReviewStatus.OPEN
         ) {
-          if (
-            !selfReviews ||
-            !selfReviews[periodId] ||
-            selfReviews[periodId] === null
-          ) {
+          if (!selfReviews[periodId] || selfReviews[periodId] === null) {
             return 'Click to start your review.';
           } else {
             if (selfReviews[periodId].status.toUpperCase() === 'SUBMITTED') {
