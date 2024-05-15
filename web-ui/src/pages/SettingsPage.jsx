@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
+import SettingsLogo from "../components/settings/logo";
+import './SettingsPage.css';
 
 const displayName = "SettingsPage";
 
 const SettingsPage = () => {
+  const hiddenFileInput = React.useRef(null);
   return (
     <div className="settings-page">
-      <blockquote>Settings Page Stuff to go here</blockquote>
+      <SettingsLogo fileRef={hiddenFileInput} />
     </div>
   );
 }

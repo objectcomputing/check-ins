@@ -1,0 +1,35 @@
+.settings-page {
+  /*
+    Would like to see an @global setting for this type of variable
+  */
+  --settings-page-padding: 3rem;
+
+  margin: 0 var(--settings-page-padding);
+}
+
+[class^="settings-grid"] {
+  display: grid;
+  grid-gap: var(--settings-page-padding);
+}
+
+.grid-items-center {
+  align-items: center;
+}
+
+.grid-items-start {
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .settings-grid-2col {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .settings-grid-3col {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .settings-grid-4col {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
