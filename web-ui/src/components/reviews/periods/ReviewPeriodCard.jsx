@@ -25,6 +25,7 @@ import { AppContext } from '../../../context/AppContext';
 import {
   selectCsrfToken,
   selectCurrentMembers,
+  selectHasUpdateReviewAssignmentsPermission,
   selectReviewPeriods
 } from '../../../context/selectors';
 import { titleCase } from '../../../helpers/strings.js';
@@ -63,10 +64,13 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
 
   const csrf = selectCsrfToken(state);
   const currentMembers = selectCurrentMembers(state);
+  const canUpdateReviewAssignments =
+    selectHasUpdateReviewAssignmentsPermission(state);
   const periods = selectReviewPeriods(state);
 
   const period = periods.find(period => period.id === periodId);
   const showPercentages =
+    canUpdateReviewAssignments &&
     period.reviewStatus === ReviewStatus.AWAITING_APPROVAL;
   const { name, reviewStatus } = period;
 
@@ -99,23 +103,11 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
       );
       reviewers.sort((a, b) => a.name.localeCompare(b.name));
 
-      console.log(
-        'ReviewPeriodCard.jsx loadApprovalStats: periodId =',
-        periodId
-      );
       // Build an array containing statistics for each reviewer.
       const stats = reviewers.map(reviewer => {
         const { id } = reviewer;
-        console.log(
-          'ReviewPeriodCard.jsx loadApprovalStats: reviewer.name =',
-          reviewer.name
-        );
         const assignmentsForReviewer = assignments.filter(
           assignment => assignment.reviewerId === id
-        );
-        console.log(
-          'ReviewPeriodCard.jsx loadApprovalStats: assignmentsForReviewer =',
-          assignmentsForReviewer
         );
         const approved = assignmentsForReviewer.filter(
           assignment => assignment.approved
