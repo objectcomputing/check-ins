@@ -33,7 +33,7 @@ export default function DatePickerField({
   }, [launchDatePickerRef.current]);
 
   return (
-    <div className="datePickerField">
+    <div className="date-picker-field">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
           label={label}
