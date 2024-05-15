@@ -698,7 +698,9 @@ const TeamReviews = ({ onBack, periodId }) => {
             variant="outlined"
             onDelete={() => deleteReviewer(member, reviewer)}
             style={{
-              backgroundColor: reviewer.approved ? 'lightgreen' : 'lightyellow'
+              backgroundColor: reviewer.approved
+                ? 'var(--checkins-palette-action-green)'
+                : 'var(--checkins-palette-action-yellow)'
             }}
           />
         ))}

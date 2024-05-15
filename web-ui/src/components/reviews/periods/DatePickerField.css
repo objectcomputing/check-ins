@@ -2,7 +2,8 @@
   display: flex;
   margin-right: 0.7rem;
   background-color: var(--white);
-  & .MuiFormControl-root {
+
+  .MuiFormControl-root {
     width: auto;
   }
 }
