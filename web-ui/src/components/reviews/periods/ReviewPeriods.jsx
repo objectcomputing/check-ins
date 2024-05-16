@@ -2,14 +2,6 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import {
-  BorderColor,
-  DoorFront,
-  HourglassTop,
-  MeetingRoom,
-  QuestionMark
-} from '@mui/icons-material';
-
-import {
   Avatar,
   Box,
   Button,
@@ -51,7 +43,7 @@ import {
   selectUserProfile
 } from '../../../context/selectors';
 
-import { titleCase } from '../../../helpers/strings.js';
+import ReviewPeriodCard from './ReviewPeriodCard.jsx';
 
 const propTypes = {
   message: PropTypes.string,
@@ -114,14 +106,6 @@ const ReviewStatus = {
   UNKNOWN: 'UNKNOWN'
 };
 
-const reviewStatusIconMap = {
-  [ReviewStatus.PLANNING]: <BorderColor />,
-  [ReviewStatus.AWAITING_APPROVAL]: <HourglassTop />,
-  [ReviewStatus.OPEN]: <MeetingRoom />,
-  [ReviewStatus.CLOSED]: <DoorFront />,
-  [ReviewStatus.UNKNOWN]: <QuestionMark />
-};
-
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
@@ -135,7 +119,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     closeDate: null
   });
   const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
-  const [selfReviews, setSelfReviews] = useState(null);
+  const [selfReviews, setSelfReviews] = useState({});
   const [templates, setTemplates] = useState([]);
 
   const currentUserId = selectCurrentUserId(state);
@@ -214,34 +198,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       setPeriodToAdd,
       findPeriodByName
     ]
-  );
-
-  const getSecondaryLabel = useCallback(
-    periodId => {
-      if (mode === 'self') {
-        if (
-          selectReviewPeriod(state, periodId)?.reviewStatus ===
-          ReviewStatus.OPEN
-        ) {
-          if (
-            !selfReviews ||
-            !selfReviews[periodId] ||
-            selfReviews[periodId] === null
-          ) {
-            return 'Click to start your review.';
-          } else {
-            if (selfReviews[periodId].status.toUpperCase() === 'SUBMITTED') {
-              return 'Your review has been submitted. Thank you!';
-            } else {
-              return 'Click to finish your review.';
-            }
-          }
-        } else {
-          return 'This review period is closed.';
-        }
-      }
-    },
-    [selfReviews, state, mode]
   );
 
   const loadFeedbackTemplates = useCallback(async () => {
@@ -335,7 +291,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       periods &&
       periods.length > 0 &&
       currentUserId &&
-      selfReviews == null
+      Object.keys(selfReviews).length === 0
     ) {
       getSelfReviews();
     }
@@ -426,22 +382,13 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                   : 1;
             })
             .map(({ name, reviewStatus, id }, i) => (
-              <div key={i} className="reviewPeriodSection">
-                <ListItem key={`period-${id}`}>
-                  <ListItemAvatar
-                    key={`period-lia-${id}`}
-                    onClick={() => onPeriodClick(id)}
-                  >
-                    <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    key={`period-lit-${id}`}
-                    onClick={() => onPeriodClick(id)}
-                    primary={`${name} - ${titleCase(ReviewStatus[reviewStatus])}`}
-                    secondary={getSecondaryLabel(id)}
-                  />
-                </ListItem>
-              </div>
+              <ReviewPeriodCard
+                key={`review-period-card-${id}`}
+                mode={mode}
+                onSelect={onPeriodClick}
+                periodId={id}
+                selfReviews={selfReviews}
+              />
             ))
         ) : (
           <Typography variant="body1">

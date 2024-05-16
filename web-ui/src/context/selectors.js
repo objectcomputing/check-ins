@@ -114,6 +114,16 @@ export const selectHasTeamSkillsReportPermission = createSelector(
     )
 );
 
+export const selectHasUpdateReviewAssignmentsPermission = createSelector(
+  selectUserProfile,
+  userProfile =>
+    userProfile &&
+    userProfile.role &&
+    userProfile.permissions.some(p =>
+      p?.permission?.includes('CAN_UPDATE_REVIEW_ASSIGNMENTS')
+    )
+);
+
 export const selectIsPDL = createSelector(
   selectUserProfile,
   userProfile =>
