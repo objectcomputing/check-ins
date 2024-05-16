@@ -13,10 +13,22 @@
     background-color: gray;
   }
 
-  .pulse {
+  .icon-row {
     display: inline-block;
     background-color: #999;
     border-radius: 1rem;
+    margin-bottom: 1rem;
     padding: 1rem;
+  }
+
+  h2,
+  .MuiButton-root {
+    margin-top: 3rem;
+  }
+
+  .pulse {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
