@@ -8,7 +8,13 @@ import {
   SentimentVeryDissatisfied,
   SentimentVerySatisfied
 } from '@mui/icons-material';
-import { Button, IconButton, TextField, Tooltip } from '@mui/material';
+import {
+  Button,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material';
 
 import { AppContext } from '../context/AppContext';
 import { selectCsrfToken, selectCurrentUser } from '../context/selectors';
@@ -80,20 +86,42 @@ const PulsePage = () => {
   const [internalComment, setInternalComment] = useState('');
   const [internalScore, setInternalScore] = useState(0);
   const [pulse, setPulse] = useState(null);
+  const [submittedToday, setSubmittedToday] = useState(false);
+  const today = format(new Date(), 'yyyy-MM-dd');
 
   useEffect(() => {
-    setInternalComment(pulse?.internalFeelings ?? '');
-    setExternalComment(pulse?.externalFeelings ?? '');
+    if (!pulse) return;
+
+    const now = new Date();
+    const [year, month, day] = pulse.submissionDate;
+    setSubmittedToday(
+      year === now.getFullYear() &&
+        month === now.getMonth() + 1 &&
+        day === now.getDate()
+    );
+
+    setInternalComment(pulse.internalFeelings ?? '');
+    setExternalComment(pulse.externalFeelings ?? '');
     setInternalScore(2);
     setExternalScore(3);
   }, [pulse]);
 
   const loadPulse = async () => {
-    const myId = currentUser?.id;
+    if (!csrf || !currentUser) return;
+
+    const query = {
+      dateFrom: today,
+      dateTo: today,
+      teamMemberId: currentUser.id
+    };
+    const queryString = Object.entries(query)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
     try {
       const res = await resolve({
         method: 'GET',
-        url: '/services/pulse-responses',
+        url: `/services/pulse-responses?${queryString}`,
         headers: {
           'X-CSRF-Header': csrf,
           Accept: 'application/json',
@@ -105,9 +133,7 @@ const PulsePage = () => {
       // TODO: Currently these objects only contain the comment text,
       //       not the 1 - 5 scores.
       //       Story 2345 that Syd is working will add those.
-      // TODO: Can we assume that the first object in the pulses array
-      //       contains the most recent data ?
-      setPulse(pulses[0]);
+      setPulse(pulses.at(-1)); // last element is most recent
     } catch (err) {
       console.error('PulsePage.jsx loadPulse:', err);
     }
@@ -115,7 +141,7 @@ const PulsePage = () => {
 
   useEffect(() => {
     loadPulse();
-  }, []);
+  }, [csrf, currentUser]);
 
   const submit = async () => {
     const myId = currentUser?.id;
@@ -124,11 +150,11 @@ const PulsePage = () => {
       externalScore,
       internalFeelings: internalComment,
       internalScore,
-      submissionDate: format(new Date(), 'yyyy-MM-dd'),
+      submissionDate: today,
+      updatedDate: today,
       teamMemberId: myId
     };
     console.log('PulsePage.jsx submit: data =', data);
-    /*
     try {
       const res = await resolve({
         method: 'POST',
@@ -144,30 +170,39 @@ const PulsePage = () => {
     } catch (err) {
       console.error('PulsePage.jsx submit:', err);
     }
-    */
   };
 
   return (
     <div className="pulse-page">
-      <h2>Internal Feelings</h2>
-      <Pulse
-        key="pulse-internal"
-        comment={internalComment}
-        score={internalScore}
-        setComment={setInternalComment}
-        setScore={setInternalScore}
-      />
-      <h2>External Feelings</h2>
-      <Pulse
-        key="pulse-external"
-        comment={externalComment}
-        score={externalScore}
-        setComment={setExternalComment}
-        setScore={setExternalScore}
-      />
-      <Button onClick={submit} variant="contained">
-        Submit
-      </Button>
+      {submittedToday ? (
+        <Typography variant="h6">
+          Thank you for submitting your pulse!
+          <br />
+          Please do so again tomorrow.
+        </Typography>
+      ) : (
+        <>
+          <h2>Internal Feelings</h2>
+          <Pulse
+            key="pulse-internal"
+            comment={internalComment}
+            score={internalScore}
+            setComment={setInternalComment}
+            setScore={setInternalScore}
+          />
+          <h2>External Feelings</h2>
+          <Pulse
+            key="pulse-external"
+            comment={externalComment}
+            score={externalScore}
+            setComment={setExternalComment}
+            setScore={setExternalScore}
+          />
+          <Button onClick={submit} variant="contained">
+            Submit
+          </Button>
+        </>
+      )}
     </div>
   );
 };
