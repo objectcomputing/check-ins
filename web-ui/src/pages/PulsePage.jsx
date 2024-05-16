@@ -35,11 +35,13 @@ const PulsePage = () => {
 
     setInternalComment(pulse.internalFeelings ?? '');
     setExternalComment(pulse.externalFeelings ?? '');
+    //TODO: Change the next two lines to use scores from server
+    //      when story #2345 is completed.
     setInternalScore(2);
     setExternalScore(3);
   }, [pulse]);
 
-  const loadPulse = async () => {
+  const loadTodayPulse = async () => {
     if (!csrf || !currentUser?.id) return;
 
     const query = {
@@ -67,12 +69,12 @@ const PulsePage = () => {
       //      not scores, but story 2345 will add those.
       setPulse(pulses.at(-1)); // last element is most recent
     } catch (err) {
-      console.error('PulsePage.jsx loadPulse:', err);
+      console.error('PulsePage.jsx loadTodayPulse:', err);
     }
   };
 
   useEffect(() => {
-    loadPulse();
+    loadTodayPulse();
   }, [csrf, currentUser]);
 
   const submit = async () => {
