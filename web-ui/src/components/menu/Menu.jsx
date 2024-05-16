@@ -9,6 +9,7 @@ import {
   selectHasAnniversaryReportPermission,
   selectHasBirthdayReportPermission,
   selectHasCheckinsReportPermission,
+  selectHasPulseReportPermission,
   selectHasSkillsReportPermission,
   selectHasTeamSkillsReportPermission
 } from '../../context/selectors';
@@ -120,6 +121,12 @@ function Menu({ children }) {
     if (selectHasCheckinsReportPermission(state)) {
       links.push(['/checkins-reports', 'Check-ins']);
     }
+
+    //TODO: Skipping the permission check during testing
+    //      because this permission has not been implemented yet.
+    // if (selectHasPulseReportPermission(state)) {
+    links.push(['/pulse-reports', 'Pulses']);
+    // }
 
     if (selectHasSkillsReportPermission(state)) {
       links.push(['/skills-reports', 'Skills']);
