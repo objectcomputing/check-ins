@@ -27,13 +27,11 @@ const PulsePage = () => {
 
     const now = new Date();
     const [year, month, day] = pulse.submissionDate;
-    /*
     setSubmittedToday(
       year === now.getFullYear() &&
         month === now.getMonth() + 1 &&
         day === now.getDate()
     );
-    */
 
     setInternalComment(pulse.internalFeelings ?? '');
     setExternalComment(pulse.externalFeelings ?? '');
