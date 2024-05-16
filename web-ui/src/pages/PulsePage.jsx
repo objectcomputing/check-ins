@@ -65,9 +65,8 @@ const PulsePage = () => {
       });
       if (res.error) throw new Error(res.error.message);
       const pulses = res.payload.data;
-      // TODO: Currently these objects only contain the comment text,
-      //       not the 1 - 5 scores.
-      //       Story 2345 that Syd is working will add those.
+      //TODO: Currently these objects only contain the comment text value,
+      //      not scores, but story 2345 will add those.
       setPulse(pulses.at(-1)); // last element is most recent
     } catch (err) {
       console.error('PulsePage.jsx loadPulse:', err);
@@ -80,6 +79,8 @@ const PulsePage = () => {
 
   const submit = async () => {
     const myId = currentUser?.id;
+    //TODO: The POST endpoint doesn't currently save the score values,
+    //      but story #2345 will fix that.
     const data = {
       externalFeelings: externalComment,
       externalScore,

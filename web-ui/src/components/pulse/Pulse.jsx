@@ -68,6 +68,7 @@ const Pulse = ({ comment, score, setComment, setScore }) => (
     />
   </div>
 );
+Pulse.displayName = 'Pulse';
 Pulse.propTypes = propTypes;
 
 export default Pulse;
