@@ -1,80 +1,13 @@
 import { format } from 'date-fns';
-import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
-import {
-  SentimentDissatisfied,
-  SentimentNeutral,
-  SentimentSatisfied,
-  SentimentVeryDissatisfied,
-  SentimentVerySatisfied
-} from '@mui/icons-material';
-import {
-  Button,
-  IconButton,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
+import { resolve } from '../api/api.js';
+import Pulse from '../components/pulse/Pulse.jsx';
 import { AppContext } from '../context/AppContext';
 import { selectCsrfToken, selectCurrentUser } from '../context/selectors';
-import { resolve } from '../api/api.js';
 
 import './PulsePage.css';
-
-const colors = ['red', 'orange', 'yellow', 'lightgreen', 'green'];
-const displayName = 'PulsePage';
-const icons = [
-  <SentimentVeryDissatisfied />,
-  <SentimentDissatisfied />,
-  <SentimentNeutral />,
-  <SentimentSatisfied />,
-  <SentimentVerySatisfied />
-];
-const tooltips = [
-  'Very Dissatisfied',
-  'Dissatisfied',
-  'Neutral',
-  'Satisfied',
-  'Very Satisfied'
-];
-
-const propTypes = {
-  comment: PropTypes.string,
-  score: PropTypes.number,
-  setComment: PropTypes.func,
-  setScore: PropTypes.func
-};
-const Pulse = ({ comment, score, setComment, setScore }) => {
-  return (
-    <div className="pulse">
-      <div className="icon-row">
-        {icons.map((sentiment, index) => (
-          <Tooltip key={`sentiment-${index}`} title={tooltips[index]} arrow>
-            <IconButton
-              aria-label="sentiment"
-              className={index === score ? 'selected' : ''}
-              onClick={() => setScore(index)}
-              sx={{ color: colors[index] }}
-            >
-              {sentiment}
-            </IconButton>
-          </Tooltip>
-        ))}
-      </div>
-      <TextField
-        fullWidth
-        label="Comment"
-        onChange={e => {
-          setComment(e.target.value);
-        }}
-        placeholder="Comment"
-        value={comment}
-      />
-    </div>
-  );
-};
-Pulse.propTypes = propTypes;
 
 const PulsePage = () => {
   const { state } = useContext(AppContext);
@@ -107,7 +40,7 @@ const PulsePage = () => {
   }, [pulse]);
 
   const loadPulse = async () => {
-    if (!csrf || !currentUser) return;
+    if (!csrf || !currentUser?.id) return;
 
     const query = {
       dateFrom: today,
@@ -154,7 +87,6 @@ const PulsePage = () => {
       updatedDate: today,
       teamMemberId: myId
     };
-    console.log('PulsePage.jsx submit: data =', data);
     try {
       const res = await resolve({
         method: 'POST',
@@ -175,14 +107,14 @@ const PulsePage = () => {
   return (
     <div className="pulse-page">
       {submittedToday ? (
-        <Typography variant="h6">
-          Thank you for submitting your pulse!
+        <Typography className="submitted-today" variant="h6">
+          Thank you for submitting your pulse today!
           <br />
           Please do so again tomorrow.
         </Typography>
       ) : (
         <>
-          <h2>Internal Feelings</h2>
+          <Typography variant="h6">Internal Feelings</Typography>
           <Pulse
             key="pulse-internal"
             comment={internalComment}
@@ -190,7 +122,7 @@ const PulsePage = () => {
             setComment={setInternalComment}
             setScore={setInternalScore}
           />
-          <h2>External Feelings</h2>
+          <Typography variant="h6">External Feelings</Typography>
           <Pulse
             key="pulse-external"
             comment={externalComment}
@@ -207,6 +139,6 @@ const PulsePage = () => {
   );
 };
 
-PulsePage.displayName = displayName;
+PulsePage.displayName = 'PulsePage';
 
 export default PulsePage;

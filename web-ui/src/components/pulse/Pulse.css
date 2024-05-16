@@ -1,0 +1,23 @@
+.pulse {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  button > svg {
+    --size: 5rem;
+    width: var(--size);
+    height: var(--size);
+  }
+
+  button.selected {
+    background-color: gray;
+  }
+
+  .icon-row {
+    display: inline-block;
+    background-color: #999;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+}
