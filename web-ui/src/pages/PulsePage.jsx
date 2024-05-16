@@ -27,11 +27,13 @@ const PulsePage = () => {
 
     const now = new Date();
     const [year, month, day] = pulse.submissionDate;
+    /*
     setSubmittedToday(
       year === now.getFullYear() &&
         month === now.getMonth() + 1 &&
         day === now.getDate()
     );
+    */
 
     setInternalComment(pulse.internalFeelings ?? '');
     setExternalComment(pulse.externalFeelings ?? '');
@@ -114,7 +116,7 @@ const PulsePage = () => {
         </Typography>
       ) : (
         <>
-          <Typography variant="h6">Internal Feelings</Typography>
+          <Typography variant="h6">Internal Feelings (work)</Typography>
           <Pulse
             key="pulse-internal"
             comment={internalComment}
@@ -122,7 +124,7 @@ const PulsePage = () => {
             setComment={setInternalComment}
             setScore={setInternalScore}
           />
-          <Typography variant="h6">External Feelings</Typography>
+          <Typography variant="h6">External Feelings (life)</Typography>
           <Pulse
             key="pulse-external"
             comment={externalComment}
