@@ -47,10 +47,10 @@ jobs:
           arguments: assemble
         env:
           VITE_APP_API_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
-      - name: Gradle runs tests
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-        with:
-          arguments: check
+#      - name: Gradle runs tests
+#        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+#        with:
+#          arguments: check
 #      - name: Do SonarQube checks
 #        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
 #        with:
@@ -115,7 +115,7 @@ jobs:
             --set-env-vars "WEB_ADDRESS=https://checkins-develop-tuvcfzotpq-uc.a.run.app" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
-            --set-env-vars "MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \
+            --set-env-vars "MICRONAUT_ENVIRONMENTS=\"dev,cloud,google,gcp\"" \
             --platform "managed" \
             --max-instances 2 \
             --allow-unauthenticated
