@@ -12,7 +12,13 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import { Button, Typography } from '@mui/material';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography
+} from '@mui/material';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -29,6 +35,20 @@ import {
 } from '../context/selectors.js';
 
 import './PulseReportPage.css';
+
+const randomScore = previousScore => {
+  if (!previousScore) return Math.ceil(Math.random() * 5);
+
+  const atLow = previousScore === 1;
+  const atHigh = previousScore === 5;
+  const spread = atLow || atHigh ? 1 : 2;
+  const delta = Math.round(Math.random() * spread);
+  return atLow
+    ? previousScore + delta
+    : atHigh
+      ? previousScore - delta
+      : previousScore - 1 + delta;
+};
 
 const data = [
   {
@@ -81,12 +101,34 @@ const PulseReportPage = () => {
   const initialDateFrom = new Date();
   initialDateFrom.setMonth(initialDateFrom.getMonth() - 3);
   const [dateFrom, setDateFrom] = useState(initialDateFrom);
-
   const [dateTo, setDateTo] = useState(new Date());
 
   const [pulses, setPulses] = useState(null);
   if (pulses) console.log('PulseReportPage.jsx: pulses =', pulses);
   const [teamMembers, setTeamMembers] = useState([]);
+
+  const [lineChartData, setLineChartData] = useState([]);
+
+  // This generates random data to use in the line chart
+  // since we do not yet have data in the database.
+  useEffect(() => {
+    const data = [];
+    let internalScore = null;
+    let externalScore = null;
+    let date = new Date(dateFrom);
+    while (date < dateTo) {
+      internalScore = randomScore(internalScore);
+      externalScore = randomScore(externalScore);
+      data.push({
+        date: format(date, `yyyy-MM-dd`),
+        internalScore: internalScore,
+        externalScore: externalScore
+      });
+      date.setDate(date.getDate() + 1);
+    }
+    setLineChartData(data);
+    console.log('PulseReportPage.jsx useEffect: data =', data);
+  }, [dateFrom, dateTo]);
 
   const loadPulses = async () => {
     if (!csrf) return;
@@ -128,12 +170,14 @@ const PulseReportPage = () => {
 
   const handleDateFromChange = dayJsDate => {
     const date = new Date(dayJsDate.valueOf());
+    console.log('PulseReportPage.jsx handleDateFromChange: date =', date);
     setDateFrom(date);
     if (date > dateTo) setDateTo(date);
   };
 
   const handleDateToChange = dayJsDate => {
     const date = new Date(dayJsDate.valueOf());
+    console.log('PulseReportPage.jsx handleDateToChange: date =', date);
     if (date < dateFrom) setDateFrom(date);
     setDateTo(date);
   };
@@ -167,40 +211,56 @@ const PulseReportPage = () => {
         selected={teamMembers}
       />
 
-      <LineChart width={500} height={300} data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line
-          type="monotone"
-          dataKey="pv"
-          stroke="#8884d8"
-          activeDot={{ r: 8 }}
+      <Card>
+        <CardHeader
+          title={'Average pulse scores for "At Work" and "Outside Work"'}
+          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
         />
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-      </LineChart>
+        <CardContent>
+          <LineChart width={800} height={300} data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" padding={{ left: 30, right: 30 }} />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="internalScore"
+              stroke="#8884d8"
+              activeDot={{ r: 8 }}
+            />
+            <Line type="monotone" dataKey="externalScore" stroke="#82ca9d" />
+          </LineChart>
+        </CardContent>
+      </Card>
 
-      <BarChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="pv" fill="#8884d8" />
-        <Bar dataKey="uv" fill="#82ca9d" />
-      </BarChart>
+      <Card>
+        <CardHeader
+          title="Distribution of pulse scores for selected team members"
+          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+        />
+        <CardContent>
+          <BarChart
+            width={500}
+            height={300}
+            data={data}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="pv" fill="#8884d8" />
+            <Bar dataKey="uv" fill="#82ca9d" />
+          </BarChart>
+        </CardContent>
+      </Card>
     </div>
   );
 };
