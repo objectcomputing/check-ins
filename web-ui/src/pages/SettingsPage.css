@@ -33,3 +33,25 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
+
+.hidden {
+  display: none;
+}
+
+/* Settings Types */
+.settings-type {
+  display: grid;
+  grid-template-areas: "label control" "description control";
+
+  > label {
+    grid-area: label;
+    align-self: center;
+  }
+  > p {
+    grid-area: description;
+    align-self: center;
+  }
+  > input {
+    grid-area: control;
+  }
+}
