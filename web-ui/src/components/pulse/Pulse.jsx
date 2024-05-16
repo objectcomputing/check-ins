@@ -47,6 +47,7 @@ const Pulse = ({ comment, score, setComment, setScore }) => (
           <IconButton
             aria-label="sentiment"
             className={index === score ? 'selected' : ''}
+            data-testid={`score-button-${index}`}
             onClick={() => setScore(index)}
             sx={{ color: colors[index] }}
           >
@@ -56,6 +57,7 @@ const Pulse = ({ comment, score, setComment, setScore }) => (
       ))}
     </div>
     <TextField
+      data-testid={`comment-input`}
       fullWidth
       label="Comment"
       onChange={e => {

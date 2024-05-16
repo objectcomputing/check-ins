@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
+exports[`renders correctly 1`] = `
 <div
   className="pulse"
 >
@@ -12,6 +12,7 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
       aria-labelledby={null}
       className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1n6yaer-MuiButtonBase-root-MuiIconButton-root"
       data-mui-internal-clone-element={true}
+      data-testid="score-button-0"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -60,6 +61,7 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
       aria-labelledby={null}
       className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3yajy8-MuiButtonBase-root-MuiIconButton-root"
       data-mui-internal-clone-element={true}
+      data-testid="score-button-1"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -108,6 +110,7 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
       aria-labelledby={null}
       className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium selected css-1ux1z47-MuiButtonBase-root-MuiIconButton-root"
       data-mui-internal-clone-element={true}
+      data-testid="score-button-2"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -159,6 +162,7 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
       aria-labelledby={null}
       className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-e8i9rs-MuiButtonBase-root-MuiIconButton-root"
       data-mui-internal-clone-element={true}
+      data-testid="score-button-3"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -207,6 +211,7 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
       aria-labelledby={null}
       className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1071bba-MuiButtonBase-root-MuiIconButton-root"
       data-mui-internal-clone-element={true}
+      data-testid="score-button-4"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -253,6 +258,7 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
   </div>
   <div
     className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
+    data-testid="comment-input"
   >
     <label
       className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
