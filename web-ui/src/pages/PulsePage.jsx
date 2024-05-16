@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
 import {
@@ -33,16 +34,12 @@ const tooltips = [
 ];
 
 const propTypes = {
-  initialComment: PropTypes.string,
-  initialScore: PropTypes.number
+  comment: PropTypes.string,
+  score: PropTypes.number,
+  setComment: PropTypes.func,
+  setScore: PropTypes.func
 };
-const Pulse = ({ initialComment, initialScore }) => {
-  console.log('PulsePage.jsx Pulse: initialComment =', initialComment);
-  console.log('PulsePage.jsx Pulse: initialScore =', initialScore);
-  const [comment, setComment] = useState(initialComment);
-  console.log('PulsePage.jsx Pulse: comment =', comment);
-  const [score, setScore] = useState(initialScore);
-
+const Pulse = ({ comment, score, setComment, setScore }) => {
   return (
     <div className="pulse">
       <div className="icon-row">
@@ -78,8 +75,18 @@ const PulsePage = () => {
   const currentUser = selectCurrentUser(state);
   const csrf = selectCsrfToken(state);
 
+  const [externalComment, setExternalComment] = useState('');
+  const [externalScore, setExternalScore] = useState(0);
+  const [internalComment, setInternalComment] = useState('');
+  const [internalScore, setInternalScore] = useState(0);
   const [pulse, setPulse] = useState(null);
-  console.log('PulsePage.jsx: pulse =', pulse);
+
+  useEffect(() => {
+    setInternalComment(pulse?.internalFeelings ?? '');
+    setExternalComment(pulse?.externalFeelings ?? '');
+    setInternalScore(2);
+    setExternalScore(3);
+  }, [pulse]);
 
   const loadPulse = async () => {
     const myId = currentUser?.id;
@@ -98,7 +105,6 @@ const PulsePage = () => {
       // TODO: Currently these objects only contain the comment text,
       //       not the 1 - 5 scores.
       //       Story 2345 that Syd is working will add those.
-      console.log('PulsePage.jsx loadPulse: pulses =', pulses);
       // TODO: Can we assume that the first object in the pulses array
       //       contains the most recent data ?
       setPulse(pulses[0]);
@@ -111,8 +117,34 @@ const PulsePage = () => {
     loadPulse();
   }, []);
 
-  const submit = () => {
-    alert('Submitted');
+  const submit = async () => {
+    const myId = currentUser?.id;
+    const data = {
+      externalFeelings: externalComment,
+      externalScore,
+      internalFeelings: internalComment,
+      internalScore,
+      submissionDate: format(new Date(), 'yyyy-MM-dd'),
+      teamMemberId: myId
+    };
+    console.log('PulsePage.jsx submit: data =', data);
+    /*
+    try {
+      const res = await resolve({
+        method: 'POST',
+        url: '/services/pulse-responses',
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data
+      });
+      if (res.error) throw new Error(res.error.message);
+    } catch (err) {
+      console.error('PulsePage.jsx submit:', err);
+    }
+    */
   };
 
   return (
@@ -120,14 +152,18 @@ const PulsePage = () => {
       <h2>Internal Feelings</h2>
       <Pulse
         key="pulse-internal"
-        initialComment={pulse?.internalFeelings ?? ''}
-        initialScore={2}
+        comment={internalComment}
+        score={internalScore}
+        setComment={setInternalComment}
+        setScore={setInternalScore}
       />
       <h2>External Feelings</h2>
       <Pulse
         key="pulse-external"
-        initialComment={pulse?.externalFeelings ?? ''}
-        initialScore={3}
+        comment={externalComment}
+        score={externalScore}
+        setComment={setExternalComment}
+        setScore={setExternalScore}
       />
       <Button onClick={submit} variant="contained">
         Submit
