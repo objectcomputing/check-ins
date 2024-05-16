@@ -1,0 +1,6 @@
+.pulse-report-page {
+  .date-pickers {
+    display: flex;
+    gap: 1rem;
+  }
+}
