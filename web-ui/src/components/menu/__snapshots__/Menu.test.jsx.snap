@@ -107,28 +107,24 @@ exports[`<Menu /> > renders correctly 1`] = `
                     />
                   </a>
                 </span>
-                <span
-                  class="Menu-listItem"
+                <div
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  role="button"
+                  tabindex="0"
                 >
-                  <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
-                    href="/checkins"
-                    tabindex="0"
+                  <div
+                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
                   >
-                    <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                    >
-                      <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
-                      >
-                        CHECK-INS
-                      </span>
-                    </div>
                     <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
-                  </a>
-                </span>
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                    >
+                      CHECK-IN
+                    </span>
+                  </div>
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </div>
                 <div
                   class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
@@ -284,28 +280,24 @@ exports[`<Menu /> > renders correctly 1`] = `
                     />
                   </a>
                 </span>
-                <span
-                  class="Menu-listItem"
+                <div
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  role="button"
+                  tabindex="0"
                 >
-                  <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
-                    href="/checkins"
-                    tabindex="0"
+                  <div
+                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
                   >
-                    <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                    >
-                      <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
-                      >
-                        CHECK-INS
-                      </span>
-                    </div>
                     <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
-                  </a>
-                </span>
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                    >
+                      CHECK-IN
+                    </span>
+                  </div>
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </div>
                 <div
                   class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
@@ -549,28 +541,24 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                   />
                 </div>
-                <span
-                  class="Menu-listItem"
+                <div
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  role="button"
+                  tabindex="0"
                 >
-                  <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
-                    href="/checkins"
-                    tabindex="0"
+                  <div
+                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
                   >
-                    <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                    >
-                      <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
-                      >
-                        CHECK-INS
-                      </span>
-                    </div>
                     <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
-                  </a>
-                </span>
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                    >
+                      CHECK-IN
+                    </span>
+                  </div>
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </div>
                 <div
                   class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
@@ -762,28 +750,24 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                   />
                 </div>
-                <span
-                  class="Menu-listItem"
+                <div
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  role="button"
+                  tabindex="0"
                 >
-                  <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
-                    href="/checkins"
-                    tabindex="0"
+                  <div
+                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
                   >
-                    <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                    >
-                      <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
-                      >
-                        CHECK-INS
-                      </span>
-                    </div>
                     <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
-                  </a>
-                </span>
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                    >
+                      CHECK-IN
+                    </span>
+                  </div>
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </div>
                 <div
                   class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
@@ -1027,28 +1011,24 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     />
                   </a>
                 </span>
-                <span
-                  class="Menu-listItem"
+                <div
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  role="button"
+                  tabindex="0"
                 >
-                  <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
-                    href="/checkins"
-                    tabindex="0"
+                  <div
+                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
                   >
-                    <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                    >
-                      <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
-                      >
-                        CHECK-INS
-                      </span>
-                    </div>
                     <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
-                  </a>
-                </span>
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                    >
+                      CHECK-IN
+                    </span>
+                  </div>
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </div>
                 <div
                   class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
@@ -1204,28 +1184,24 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
                     />
                   </a>
                 </span>
-                <span
-                  class="Menu-listItem"
+                <div
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  role="button"
+                  tabindex="0"
                 >
-                  <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
-                    href="/checkins"
-                    tabindex="0"
+                  <div
+                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
                   >
-                    <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                    >
-                      <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
-                      >
-                        CHECK-INS
-                      </span>
-                    </div>
                     <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
-                  </a>
-                </span>
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                    >
+                      CHECK-IN
+                    </span>
+                  </div>
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </div>
                 <div
                   class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
