@@ -10,14 +10,22 @@
   }
 
   button.selected {
-    background-color: gray;
+    background-color: #777;
   }
 
   .icon-row {
     display: inline-block;
-    background-color: #aaa;
+    background-color: #999;
     border-radius: 1rem;
     margin-bottom: 1rem;
     padding: 1rem;
+  }
+}
+
+:root[data-mui-color-scheme='dark'] {
+  .pulse {
+    .icon-row {
+      background-color: transparent;
+    }
   }
 }
