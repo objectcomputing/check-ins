@@ -37,10 +37,12 @@ const propTypes = {
   comment: PropTypes.string,
   score: PropTypes.number,
   setComment: PropTypes.func,
-  setScore: PropTypes.func
+  setScore: PropTypes.func,
+  title: PropTypes.string
 };
-const Pulse = ({ comment, score, setComment, setScore }) => (
+const Pulse = ({ comment, score, setComment, setScore, title }) => (
   <div className="pulse">
+    <Typography variant="h6">{title}</Typography>
     <div className="icon-row">
       {icons.map((sentiment, index) => (
         <Tooltip key={`sentiment-${index}`} title={tooltips[index]} arrow>

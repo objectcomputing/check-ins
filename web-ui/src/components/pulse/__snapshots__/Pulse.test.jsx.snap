@@ -4,6 +4,9 @@ exports[`renders correctly 1`] = `
 <div
   className="pulse"
 >
+  <h6
+    className="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+  />
   <div
     className="icon-row"
   >

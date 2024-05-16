@@ -117,21 +117,21 @@ const PulsePage = () => {
         </Typography>
       ) : (
         <>
-          <Typography variant="h6">Internal Feelings (work)</Typography>
           <Pulse
             key="pulse-internal"
             comment={internalComment}
             score={internalScore}
             setComment={setInternalComment}
             setScore={setInternalScore}
+            title="Internal Feelings (work)"
           />
-          <Typography variant="h6">External Feelings (life)</Typography>
           <Pulse
             key="pulse-external"
             comment={externalComment}
             score={externalScore}
             setComment={setExternalComment}
             setScore={setExternalScore}
+            title="External Feelings (life)"
           />
           <Button onClick={submit} variant="contained">
             Submit
