@@ -29,7 +29,6 @@ import {
   Drawer,
   IconButton,
   List,
-  ListItem,
   ListItemButton,
   ListItemText,
   Modal,
@@ -57,6 +56,11 @@ const adminLinks = [
   ['/admin/users', 'Users'],
   ['/admin/email', 'Send Email'],
   ['/admin/edit-skills', 'Skills']
+];
+
+const checkInLinks = [
+  ['/pulse', 'Pulse'],
+  ['/checkins', 'Quarterly']
 ];
 
 const directoryLinks = [
@@ -169,6 +173,9 @@ function Menu({ children }) {
     }
   };
 
+  const [checkInOpen, setCheckInOpen] = useState(
+    isCollapsibleListOpen(checkInLinks, location.pathname)
+  );
   const [directoryOpen, setDirectoryOpen] = useState(
     isCollapsibleListOpen(directoryLinks, location.pathname)
   );
@@ -206,6 +213,10 @@ function Menu({ children }) {
 
   const toggleFeedback = () => {
     setFeedbackOpen(!feedbackOpen);
+  };
+
+  const toggleCheckIn = () => {
+    setCheckInOpen(!checkInOpen);
   };
 
   const toggleDirectory = () => {
@@ -289,6 +300,7 @@ function Menu({ children }) {
           <span className="Menu-listItem">
             {createLinkJsx('/', 'HOME', false)}
           </span>
+
           {isAdmin && (
             <>
               <ListItemButton
@@ -311,9 +323,14 @@ function Menu({ children }) {
               </Collapse>
             </>
           )}
-          <span className="Menu-listItem">
-            {createLinkJsx('/checkins', 'CHECK-INS', false)}
-          </span>
+
+          <ListItemButton onClick={toggleCheckIn} className={classes.listItem}>
+            <ListItemText primary="CHECK-IN" />
+          </ListItemButton>
+          <Collapse in={checkInOpen} timeout="auto" unmountOnExit>
+            {createListJsx(checkInLinks, true)}
+          </Collapse>
+
           <ListItemButton
             onClick={toggleDirectory}
             className={classes.listItem}
@@ -323,12 +340,14 @@ function Menu({ children }) {
           <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
             {createListJsx(directoryLinks, true)}
           </Collapse>
+
           <ListItemButton onClick={toggleFeedback} className={classes.listItem}>
             <ListItemText primary="FEEDBACK" />
           </ListItemButton>
           <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
             {createListJsx(feedbackLinks, true)}
           </Collapse>
+
           {hasReportPermission && (
             <React.Fragment>
               <ListItemButton
