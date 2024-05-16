@@ -9,9 +9,14 @@
     height: var(--size);
   }
 
+  button.selected {
+    background-color: gray;
+  }
+
   .pulse {
     display: inline-block;
     background-color: #999;
     border-radius: 1rem;
+    padding: 1rem;
   }
 }

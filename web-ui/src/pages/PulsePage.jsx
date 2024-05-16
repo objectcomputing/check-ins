@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SentimentDissatisfied,
   SentimentNeutral,
@@ -11,7 +11,7 @@ import { IconButton, Tooltip } from '@mui/material';
 
 import './PulsePage.css';
 
-const colors = ['red', 'orange', 'yellow', 'green', 'blue'];
+const colors = ['red', 'orange', 'yellow', 'lightgreen', 'green'];
 const displayName = 'PulsePage';
 const icons = [
   <SentimentVeryDissatisfied />,
@@ -30,16 +30,17 @@ const tooltips = [
 
 const Pulse = () => {
   const handleClick = () => {};
+  const [score, setScore] = useState(2);
 
   return (
     <div className="pulse">
       {icons.map((sentiment, index) => (
-        <Tooltip title={tooltips[index]} arrow>
+        <Tooltip key={`sentiment-${index}`} title={tooltips[index]} arrow>
           <IconButton
             aria-label="sentiment"
+            className={index === score ? 'selected' : ''}
+            onClick={() => setScore(index)}
             sx={{ color: colors[index] }}
-            key={`sentiment-${index}`}
-            onClick={handleClick}
           >
             {sentiment}
           </IconButton>
