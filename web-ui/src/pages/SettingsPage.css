@@ -3,11 +3,12 @@
     Would like to see an @global setting for this type of variable
   */
   --settings-page-padding: 3rem;
+  --control-color-size: 3rem;
 
   margin: 0 var(--settings-page-padding);
 }
 
-[class^="settings-grid"] {
+[class^='settings-grid'] {
   display: grid;
   grid-gap: var(--settings-page-padding);
 }
@@ -41,17 +42,31 @@
 /* Settings Types */
 .settings-type {
   display: grid;
-  grid-template-areas: "label control" "description control";
+  gap: 0 1rem;
+  grid-template-areas: 'label control' 'description control';
+  grid-template-columns: minmax(10rem, 1fr) 1fr;
+  grid-template-rows: auto auto;
+  margin: 1rem 0 2rem;
 
   > label {
     grid-area: label;
     align-self: center;
+
+    * {
+      line-height: 1;
+    }
   }
   > p {
     grid-area: description;
     align-self: center;
   }
-  > input {
+  > .settings-control {
     grid-area: control;
+    align-self: start;
+  }
+
+  input[type='color'] {
+    height: var(--control-color-size);
+    width: var(--control-color-size);
   }
 }
