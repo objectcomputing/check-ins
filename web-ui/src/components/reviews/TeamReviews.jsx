@@ -599,8 +599,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       member => getReviewers(member).length > 0
     );
     if (!haveReviewers) return 'One or more members have no reviewer.';
-
-    return null;
+    return null; // no validtation errors
   };
 
   const launchReviewPeriod = async () => {
@@ -642,17 +641,15 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
     */
     setUnapproved(unapproved);
-    if (unapproved.length === 0) {
-      setConfirmationText('Are you sure you want to launch the review period?');
-    } else {
-      setConfirmationText(
-        unapproved.length === 1
+    setConfirmationText(
+      unapproved.length === 0
+        ? 'Are you sure you want to launch the review period?'
+        : unapproved.length === 1
           ? 'There is one visible, unapproved review assignment. ' +
-              'Would you like to approve it and launch this review period?'
+            'Would you like to approve it and launch this review period?'
           : `There are ${unapproved.length} visible, unapproved review assignments. ` +
-              'Would you like to approve all of them and launch this review period?'
-      );
-    }
+            'Would you like to approve all of them and launch this review period?'
+    );
     setConfirmationDialogOpen(true);
   };
 
