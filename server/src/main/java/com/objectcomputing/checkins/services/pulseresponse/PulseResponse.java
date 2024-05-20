@@ -24,7 +24,6 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @Introspected
 @Table(name = "pulse_response")
 public class PulseResponse {
