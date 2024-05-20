@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.annotation.sql.ColumnTransformer;
@@ -41,7 +42,7 @@ public class PulseResponse {
     private Integer internalScore;
 
     @Column(name="external_score")
-    @NotNull
+    @Nullable
     @Schema(description = "integer for externalScore", required = true)
     private Integer externalScore;
 
@@ -62,7 +63,7 @@ public class PulseResponse {
             read =  "pgp_sym_decrypt(internalFeelings::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
+    @Nullable
     @Schema(description = "description of internalfeelings")
     private String internalFeelings;
 
@@ -71,7 +72,7 @@ public class PulseResponse {
             read =  "pgp_sym_decrypt(externalFeelings::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
+    @Nullable
     @Schema(description = "description of externalfeelings")
     private String externalFeelings;
 

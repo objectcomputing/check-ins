@@ -15,12 +15,12 @@ import java.util.UUID;
 @Introspected
 public class PulseResponseCreateDTO {
 
-    @Nullable
+    @NotNull
     @Schema(required = true, description = "integer value of internal score")
     private Integer internalScore;
 
     @Nullable
-    @Schema(required = true, description = "integer value of external score")
+    @Schema(description = "integer value of external score")
     private Integer externalScore;
 
     @NotNull
@@ -31,11 +31,11 @@ public class PulseResponseCreateDTO {
     @Schema(description = "id of the associated member")
     private UUID teamMemberId;
 
-    @NotNull
+    @Nullable
     @Schema(description = "description of internal feelings")
     private String internalFeelings;
 
-    @NotNull
+    @Nullable
     @Schema(description = "description of external feelings")
     private String externalFeelings;
 

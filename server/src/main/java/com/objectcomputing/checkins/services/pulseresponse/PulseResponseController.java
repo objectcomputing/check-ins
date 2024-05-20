@@ -63,8 +63,8 @@ public class PulseResponseController {
                                                                     HttpRequest<?> request) {
         return Mono.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getInternalScore(), pulseResponse.getExternalScore(), pulseResponse.getSubmissionDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
                 .map(pulseresponse -> HttpResponse.created(pulseresponse)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), pulseresponse.getId()))));
-                })
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), pulseresponse.getId()))))
+                );
     }
 
      /**
