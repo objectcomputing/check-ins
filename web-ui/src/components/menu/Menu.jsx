@@ -56,7 +56,8 @@ const adminLinks = [
   ['/admin/roles', 'Roles'],
   ['/admin/users', 'Users'],
   ['/admin/email', 'Send Email'],
-  ['/admin/edit-skills', 'Skills']
+  ['/admin/edit-skills', 'Skills'],
+  ['/admin/settings', 'Settings']
 ];
 
 const checkInLinks = [

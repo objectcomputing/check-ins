@@ -22,6 +22,10 @@ import {
 import {
   Alert,
   Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
   Chip,
   Dialog,
   DialogActions,
@@ -34,6 +38,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Modal,
   Switch,
   TextField,
   Tooltip,
@@ -121,12 +126,13 @@ const ReviewStatus = {
 
 const TeamReviews = ({ onBack, periodId }) => {
   const { state, dispatch } = useContext(AppContext);
-  const history = useHistory();
   const location = useLocation();
 
   const [approvalMode, setApprovalMode] = useState(false);
   const [assignments, setAssignments] = useState([]);
   const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
+  const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+  const [confirmationText, setConfirmationText] = useState('');
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [nameQuery, setNameQuery] = useState('');
@@ -139,6 +145,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [showAll, setShowAll] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   const [toDelete, setToDelete] = useState(null);
+  const [unapproved, setUnapproved] = useState([]);
   const [validationMessage, setValidationMessage] = useState(null);
 
   const loadedReviews = useRef(false);
@@ -356,7 +363,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       payload: toDelete
     });
     handleConfirmDeleteClose();
-    history.goBack();
+    onBack();
   }, [csrf, dispatch, toDelete, handleConfirmDeleteClose]);
 
   const getReviewers = useCallback(
@@ -591,14 +598,10 @@ const TeamReviews = ({ onBack, periodId }) => {
       member => getReviewers(member).length > 0
     );
     if (!haveReviewers) return 'One or more members have no reviewer.';
-    return null;
+    return null; // no validtation errors
   };
 
-  const requestApproval = async () => {
-    const msg = validateReviewPeriod(period);
-    setValidationMessage(msg);
-    if (msg) return;
-
+  const launchReviewPeriod = async () => {
     try {
       const res = await resolve({
         method: 'PUT',
@@ -610,7 +613,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         },
         data: {
           ...period,
-          reviewStatus: ReviewStatus.AWAITING_APPROVAL
+          reviewStatus: ReviewStatus.OPEN
         }
       });
       if (res.error) throw new Error(res.error.message);
@@ -618,6 +621,35 @@ const TeamReviews = ({ onBack, periodId }) => {
     } catch (err) {
       console.error('TeamReviews.jsx deleteReviewer:', err);
     }
+  };
+
+  const requestApproval = async () => {
+    const msg = validateReviewPeriod(period);
+    setValidationMessage(msg);
+    if (msg) return;
+
+    const visibleIds = new Set(visibleTeamMembers().map(m => m.id));
+    const unapproved = assignments.filter(
+      a => !a.approved && visibleIds.has(a.revieweeId)
+    );
+    /* For debugging ...
+    for (const assignment of unapproved) {
+      const reviewee = currentMembers.find(m => m.id === assignment.revieweeId);
+      const reviewer = currentMembers.find(m => m.id === assignment.reviewerId);
+      console.log(reviewer.name, 'reviewing', reviewee.name, 'is unapproved.');
+    }
+    */
+    setUnapproved(unapproved);
+    setConfirmationText(
+      unapproved.length === 0
+        ? 'Are you sure you want to launch the review period?'
+        : unapproved.length === 1
+          ? 'There is one visible, unapproved review assignment. ' +
+            'Would you like to approve it and launch this review period?'
+          : `There are ${unapproved.length} visible, unapproved review assignments. ` +
+            'Would you like to approve all of them and launch this review period?'
+    );
+    setConfirmationDialogOpen(true);
   };
 
   const compareStrings = (s1, s2) => (s1 || '').localeCompare(s2 || '');
@@ -722,6 +754,13 @@ const TeamReviews = ({ onBack, periodId }) => {
   const approveAll = () => {
     visibleTeamMembers().map(member => approveMember(member, true));
     setConfirmApproveAllOpen(false);
+  };
+
+  const approveAllAndLaunch = () => {
+    if (unapproved.length) approveAll();
+    launchReviewPeriod();
+    setConfirmationDialogOpen(false);
+    onBack();
   };
 
   const unapproveAll = () => {
@@ -1000,6 +1039,34 @@ const TeamReviews = ({ onBack, periodId }) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Modal
+        onClose={() => setConfirmationDialogOpen(false)}
+        open={confirmationDialogOpen}
+      >
+        <Card>
+          <CardHeader
+            title={
+              <Typography variant="h5" fontWeight="bold">
+                Approve and Launch
+              </Typography>
+            }
+          />
+          <CardContent>
+            <Typography variant="body1">{confirmationText}</Typography>
+          </CardContent>
+          <CardActions>
+            <Button
+              color="primary"
+              onClick={() => setConfirmationDialogOpen(false)}
+            >
+              No
+            </Button>
+            <Button color="primary" onClick={approveAllAndLaunch}>
+              Yes
+            </Button>
+          </CardActions>
+        </Card>
+      </Modal>
     </Root>
   );
 };

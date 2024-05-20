@@ -8,6 +8,7 @@ import BirthdayReportPage from '../../pages/BirthdayReportPage';
 import CheckinsPage from '../../pages/CheckinsPage';
 import CheckinsReportPage from '../../pages/CheckinsReportPage';
 import EditSkillsPage from '../../pages/EditSkillsPage';
+import SettingsPage from '../../pages/SettingsPage';
 import EditPermissionsPage from '../../pages/PermissionsPage';
 import GroupIcon from '@mui/icons-material/Group';
 import GuildsPage from '../../pages/GuildsPage';
@@ -108,6 +109,10 @@ export default function Routes() {
           <Route path="/admin/edit-skills">
             <Header title="Skills" />
             <EditSkillsPage />
+          </Route>
+          <Route path="/admin/settings">
+            <Header title="Settings" />
+            <SettingsPage />
           </Route>
           <Route path="/admin/permissions">
             <Header title="Permissions" />
