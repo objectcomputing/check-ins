@@ -1,11 +1,9 @@
 import React from 'react';
-import { configure, fireEvent, render, screen } from '@testing-library/react';
-import { act } from '@testing-library/react-hooks';
-import '@testing-library/jest-dom';
+import { fireEvent, render, screen } from '@testing-library/react';
 import Pulse from './Pulse';
 
 it('renders correctly', () => {
-  snapshot(
+  const component = render(
     <Pulse
       comment="Just testing"
       score={2}
@@ -13,45 +11,31 @@ it('renders correctly', () => {
       setScore={() => {}}
     />
   );
+  expect(component).toMatchSnapshot();
 });
 
-it('calls setComment', async () => {
-  beforeEach(() => {
-    configure({ testIdAttribute: 'data-testid' });
-  });
-
+it('calls setComment', () => {
   const setComment = vi.fn();
-  await act(async () => {
-    const { getByTestId } = render(
-      <Pulse
-        comment="test"
-        score={2}
-        setComment={setComment}
-        setScore={() => {}}
-      />
-    );
-  });
+  render(
+    <Pulse
+      comment="test"
+      score={2}
+      setComment={setComment}
+      setScore={() => {}}
+    />
+  );
+  const input = screen.getByTestId('comment-input').querySelector('textarea');
   const text = 'new comment';
-
-  const textArea = await screen.getByTestId('comment-input').querySelector('textarea'); // The field rendered is a textarea not an input
-  expect(textArea).toBeTruthy();
-
-  fireEvent.change(textArea, { target: { value: text } });
+  fireEvent.change(input, { target: { value: text } });
   expect(setComment).toHaveBeenCalledWith(text);
 });
 
-it('calls setScore', async () => {
-  beforeEach(() => {
-    configure({ testIdAttribute: 'data-testid' });
-  });
+it('calls setScore', () => {
   const setScore = vi.fn();
-  await act(async () => {
-    const { getByTestId } = render(
-      <Pulse comment="" score={4} setComment={() => {}} setScore={setScore} />
-    );
-  });
-  const button = await screen.getByTestId('score-button-3');
-
+  render(
+    <Pulse comment="" score={2} setComment={() => {}} setScore={setScore} />
+  );
+  const button = screen.getByTestId('score-button-4');
   fireEvent.click(button);
-  expect(setScore).toHaveBeenCalledWith(3); // This is only happening 3 times. There may be an indexing problem with the Pulse.jsx component for these buttons.
+  expect(setScore).toHaveBeenCalledWith(4);
 });
