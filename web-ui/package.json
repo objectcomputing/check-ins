@@ -47,10 +47,12 @@
     "universal-cookie": "^4.0.4"
   },
   "scripts": {
+    "build-ladle": "ladle build",
     "build-storybook": "storybook build",
     "build": "vite build",
     "coverage": "vitest run --coverage --watch=false",
     "format": "prettier --write 'src/**/*.{css,html,js,jsx,ts,tsx}'",
+    "ladle": "ladle serve",
     "lint": "eslint --fix --quiet",
     "serve": "vite preview",
     "start": "vite",
@@ -74,6 +76,7 @@
     ]
   },
   "devDependencies": {
+    "@ladle/react": "^4.0.3",
     "@storybook/addon-actions": "^8.0.4",
     "@storybook/addon-essentials": "^8.0.4",
     "@storybook/addon-links": "^8.0.4",
