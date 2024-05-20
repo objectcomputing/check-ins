@@ -204,7 +204,7 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon filter-input css-clttge-MuiAutocomplete-root"
+                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon filter-input css-1j0qgw8-MuiAutocomplete-root"
               >
                 <div
                   class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
