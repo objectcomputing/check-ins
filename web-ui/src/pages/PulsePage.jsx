@@ -123,7 +123,7 @@ const PulsePage = () => {
             score={internalScore}
             setComment={setInternalComment}
             setScore={setInternalScore}
-            title="Internal Feelings (work)"
+            title="How are you feeling about work today? (*)"
           />
           <Pulse
             key="pulse-external"
@@ -131,9 +131,13 @@ const PulsePage = () => {
             score={externalScore}
             setComment={setExternalComment}
             setScore={setExternalScore}
-            title="External Feelings (life)"
+            title="How you feeling about life outside of work?"
           />
-          <Button onClick={submit} variant="contained">
+          <Button
+            disabled={!internalComment}
+            onClick={submit}
+            variant="contained"
+          >
             Submit
           </Button>
         </>

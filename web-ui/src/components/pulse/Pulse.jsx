@@ -7,13 +7,7 @@ import {
   SentimentVeryDissatisfied,
   SentimentVerySatisfied
 } from '@mui/icons-material';
-import {
-  Button,
-  IconButton,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material';
+import { IconButton, TextField, Tooltip, Typography } from '@mui/material';
 
 import './Pulse.css';
 
@@ -35,12 +29,20 @@ const tooltips = [
 
 const propTypes = {
   comment: PropTypes.string,
+  commentRequired: PropTypes.bool,
   score: PropTypes.number,
   setComment: PropTypes.func,
   setScore: PropTypes.func,
   title: PropTypes.string
 };
-const Pulse = ({ comment, score, setComment, setScore, title }) => (
+const Pulse = ({
+  comment,
+  commentRequired,
+  score,
+  setComment,
+  setScore,
+  title
+}) => (
   <div className="pulse">
     <Typography variant="h6">{title}</Typography>
     <div className="icon-row">
@@ -62,10 +64,13 @@ const Pulse = ({ comment, score, setComment, setScore, title }) => (
       data-testid={`comment-input`}
       fullWidth
       label="Comment"
+      multiline
       onChange={e => {
         setComment(e.target.value);
       }}
       placeholder="Comment"
+      required={commentRequired}
+      rows={4}
       value={comment}
     />
   </div>
