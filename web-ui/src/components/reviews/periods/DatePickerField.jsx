@@ -1,7 +1,8 @@
+import dayjs from 'dayjs';
 import React, { useRef, useEffect, useState } from 'react';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import './DatePickerField.css';
 
 export default function DatePickerField({
@@ -32,11 +33,11 @@ export default function DatePickerField({
   }, [launchDatePickerRef.current]);
 
   return (
-    <div className="datePickerField">
+    <div className="date-picker-field">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
           label={label}
-          value={date}
+          value={date ? dayjs(date) : null}
           format="YYYY-MM-DD"
           onChange={setDate}
           slotProps={{

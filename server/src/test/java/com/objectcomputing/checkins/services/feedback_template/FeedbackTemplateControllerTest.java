@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
@@ -18,19 +17,19 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Inject;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
 
 public class FeedbackTemplateControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, TemplateQuestionFixture, FeedbackTemplateFixture {
 
@@ -41,12 +40,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackTemplateControllerTest.class);
 
     private String encodeValue(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            LOG.error(e.getMessage());
-            return "";
-        }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     FeedbackTemplate saveDefaultFeedbackTemplate(UUID creatorId) {
@@ -79,6 +73,8 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         dto.setCreatorId(feedbackTemplate.getCreatorId());
         dto.setIsPublic(feedbackTemplate.getIsPublic());
         dto.setIsAdHoc(feedbackTemplate.getIsAdHoc());
+        dto.setIsReview(feedbackTemplate.getIsReview());
+        dto.setActive(true);
         return dto;
     }
 
@@ -104,8 +100,6 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     }
 
     void assertUnauthorized(HttpClientResponseException exception) {
-        final JsonNode body = exception.getResponse().getBody(JsonNode.class).orElse(null);
-        assertNull(body);
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
         assertEquals("Unauthorized", exception.getMessage());
     }
@@ -242,7 +236,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals("Attempted to update template with null ID", exception.getMessage());
+        assertTrue(exception.getResponse().body().toString().contains("requestBody.id: must not be null"));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     }
 

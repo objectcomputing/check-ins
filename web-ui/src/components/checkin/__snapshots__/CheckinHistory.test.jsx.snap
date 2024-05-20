@@ -47,10 +47,10 @@ exports[`CheckinHistory > renders correctly 1`] = `
           class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd Mui-readOnly MuiInputBase-readOnly css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
           id=":r1:"
           inputmode="text"
-          placeholder="MMMM DD, YYYY @hh:mm aaaa"
+          placeholder="MMMM DD, YYYY @hh:mm aa"
           readonly=""
           type="text"
-          value="October 21, 2020 @12:00 amAM"
+          value="October 21, 2020 @12:00 AM"
         />
         <fieldset
           aria-hidden="true"

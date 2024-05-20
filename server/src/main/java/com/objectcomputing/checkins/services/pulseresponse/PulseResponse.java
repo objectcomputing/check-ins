@@ -1,24 +1,29 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
-import java.util.Objects;
-import java.util.UUID;
-
-import java.time.LocalDate;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Introspected
 @Table(name = "pulse_response")
 public class PulseResponse {
@@ -27,7 +32,7 @@ public class PulseResponse {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "the id of the pulse_response", required = true)
+    @Schema(description = "the id of the pulse_response")
     private UUID id;
 
     @Column(name="internal_score")
@@ -42,13 +47,14 @@ public class PulseResponse {
 
     @Column(name="submissiondate")
     @NotNull
-    @Schema(description = "date for submissionDate", required = true)
+    @Schema(description = "date for submissionDate")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate submissionDate;
 
     @Column(name="teammemberid")
     @TypeDef(type=DataType.STRING)
     @NotNull
-    @Schema(description = "id of the teamMember this entry is associated with", required = true)
+    @Schema(description = "id of the teamMember this entry is associated with")
     private UUID teamMemberId;
 
     @Column(name="internalfeelings")
@@ -57,7 +63,7 @@ public class PulseResponse {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @NotNull
-    @Schema(description = "description of internalfeelings", required = true)
+    @Schema(description = "description of internalfeelings")
     private String internalFeelings;
 
     @Column(name="externalfeelings")
@@ -66,7 +72,7 @@ public class PulseResponse {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @NotNull
-    @Schema(description = "description of externalfeelings", required = true)
+    @Schema(description = "description of externalfeelings")
     private String externalFeelings;
 
     protected PulseResponse() {

@@ -9,12 +9,12 @@ import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.micronaut.core.annotation.Nullable;
-import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,6 +39,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
     }
+    // todo remove manual validations throughout class in favor of jakarta validations at api level.
 
     @Override
     public CheckinNote save(@NotNull CheckinNote checkinNote) {
@@ -65,6 +66,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         if (!canUpdateAllCheckins && isCompleted) {
             validate(true, "User is unauthorized to do this operation");
         }
+        LOG.info("Saving new checkinNote");
         return checkinNoteRepository.save(checkinNote);
     }
 
@@ -83,7 +85,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         if (!allowedToView) {
             throw new PermissionException("User is unauthorized to do this operation");
         }
-
+        LOG.info("Found checkin note with id {}", id);
         return checkInNoteResult;
     }
 
@@ -117,6 +119,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             validate(!currentUserId.equals(pdlId), "User is unauthorized to do this operation");
         }
 
+        LOG.info("Updating checkinNote {}", checkinNote.getId());
         return checkinNoteRepository.update(checkinNote);
     }
 
@@ -133,7 +136,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         } else {
             validate(!canViewAllCheckins, "User is unauthorized to do this operation");
         }
-
+        LOG.info("Finding AgendaItem by checkinId: {}, and createById: {}", checkinid, createbyid);
         return checkinNoteRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
     }
 

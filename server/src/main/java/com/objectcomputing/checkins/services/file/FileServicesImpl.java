@@ -15,15 +15,16 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.multipart.CompletedFileUpload;
+import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.micronaut.core.annotation.Nullable;
-import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

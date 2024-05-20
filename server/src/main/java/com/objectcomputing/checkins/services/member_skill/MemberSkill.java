@@ -1,21 +1,26 @@
 package com.objectcomputing.checkins.services.member_skill;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "member_skills")
 public class MemberSkill {
@@ -24,19 +29,19 @@ public class MemberSkill {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type= DataType.STRING)
-    @Schema(description = "the id of the memberskill", required = true)
+    @Schema(description = "the id of the memberskill")
     private UUID id;
 
     @NotNull
     @Column(name="memberid")
     @TypeDef(type= DataType.STRING)
-    @Schema(description = "the id of the member profile", required = true)
+    @Schema(description = "the id of the member profile")
     private UUID memberid;
 
     @NotNull
     @Column(name="skillid")
     @TypeDef(type= DataType.STRING)
-    @Schema(description = "the id of the skill", required = true)
+    @Schema(description = "the id of the skill")
     private UUID skillid;
 
     @Column(name="skilllevel")
@@ -45,7 +50,7 @@ public class MemberSkill {
     private String skilllevel;
 
     @Column(name="lastuseddate")
-    @TypeDef(type= DataType.DATE)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     @Schema(description = "the last used date of the skill")
     private LocalDate lastuseddate;
 
@@ -67,46 +72,6 @@ public class MemberSkill {
         this.memberid = memberid;
         this.skillid = skillid;
         this.skilllevel = skilllevel;
-        this.lastuseddate = lastuseddate;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getMemberid() {
-        return memberid;
-    }
-
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
-    }
-
-    public UUID getSkillid() {
-        return skillid;
-    }
-
-    public void setSkillid(UUID skillid) {
-        this.skillid = skillid;
-    }
-
-    public String getSkilllevel() {
-        return skilllevel;
-    }
-
-    public void setSkilllevel(String skilllevel) {
-        this.skilllevel = skilllevel;
-    }
-
-    public LocalDate getLastuseddate() {
-        return lastuseddate;
-    }
-
-    public void setLastuseddate(LocalDate lastuseddate) {
         this.lastuseddate = lastuseddate;
     }
 

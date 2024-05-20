@@ -3,11 +3,10 @@ package com.objectcomputing.checkins.services.skill_record;
 import com.objectcomputing.checkins.services.skillcategory.skillcategory_skill.SkillCategorySkillId;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.MappedEntity;
-
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @MappedEntity
 @Introspected

@@ -2,27 +2,10 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import {
-  Archive,
-  BorderColor,
-  Delete,
-  DoorFront,
-  HourglassTop,
-  MeetingRoom,
-  QuestionMark,
-  Unarchive
-} from '@mui/icons-material';
-
-import {
   Avatar,
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   FormControl,
-  IconButton,
   InputLabel,
   List,
   ListItem,
@@ -33,7 +16,6 @@ import {
   Select,
   Skeleton,
   TextField,
-  Tooltip,
   Typography
 } from '@mui/material';
 
@@ -41,15 +23,12 @@ import { useQueryParameters } from '../../../helpers/query-parameters';
 import { UPDATE_TOAST } from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
-import './DatePickerField.css';
 
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
 import {
   createReviewPeriod,
-  getReviewPeriods,
-  removeReviewPeriod,
-  updateReviewPeriod
+  getReviewPeriods
 } from '../../../api/reviewperiods.js';
 import { AppContext } from '../../../context/AppContext';
 import {
@@ -63,16 +42,14 @@ import {
   selectReviewPeriods,
   selectUserProfile
 } from '../../../context/selectors';
-import DatePickerField from './DatePickerField.jsx';
 
-import { titleCase } from '../../../helpers/strings.js';
+import ReviewPeriodCard from './ReviewPeriodCard.jsx';
 
 const propTypes = {
   message: PropTypes.string,
   onSelect: PropTypes.func
 };
 const displayName = 'ReviewPeriods';
-const feedbackTemplateUrl = '/services/feedback/templates';
 
 const PREFIX = displayName;
 const classes = {
@@ -129,32 +106,21 @@ const ReviewStatus = {
   UNKNOWN: 'UNKNOWN'
 };
 
-const reviewStatusIconMap = {
-  [ReviewStatus.PLANNING]: <BorderColor />,
-  [ReviewStatus.AWAITING_APPROVAL]: <HourglassTop />,
-  [ReviewStatus.OPEN]: <MeetingRoom />,
-  [ReviewStatus.CLOSED]: <DoorFront />,
-  [ReviewStatus.UNKNOWN]: <QuestionMark />
-};
-
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
   const [canSave, setCanSave] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [periodToAdd, setPeriodToAdd] = useState({
     name: '',
-    reviewStatus: ReviewStatus.OPEN,
+    reviewStatus: ReviewStatus.PLANNING,
     launchDate: null,
     selfReviewCloseDate: null,
     closeDate: null
   });
-  const [selfReviews, setSelfReviews] = useState(null);
+  const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
+  const [selfReviews, setSelfReviews] = useState({});
   const [templates, setTemplates] = useState([]);
-  const [toDelete, setToDelete] = useState(null);
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
@@ -180,6 +146,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     () => setReviewStatus(ReviewStatus.OPEN),
     [setReviewStatus]
   );
+
   const handleClose = useCallback(
     () => setReviewStatus(ReviewStatus.CLOSED),
     [setReviewStatus]
@@ -193,9 +160,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const addReviewPeriod = useCallback(
     async name => {
-      if (!csrf) {
-        return;
-      }
+      if (!csrf) return;
+
       const alreadyExists = findPeriodByName(periodToAdd?.name);
       if (!alreadyExists) {
         handleOpen();
@@ -232,104 +198,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       setPeriodToAdd,
       findPeriodByName
     ]
-  );
-
-  const toggleReviewPeriod = useCallback(
-    async id => {
-      if (!csrf) {
-        return;
-      }
-      const toUpdate = selectReviewPeriod(state, id);
-      toUpdate.reviewStatus =
-        toUpdate?.reviewStatus === ReviewStatus.CLOSED
-          ? ReviewStatus.OPEN
-          : ReviewStatus.CLOSED;
-      const res = await updateReviewPeriod(toUpdate, csrf);
-      const data = res?.payload?.data ? res.payload.data : null;
-      if (data) {
-        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
-      } else {
-        console.error(res?.error);
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'error',
-            toast: 'Error selecting review period'
-          }
-        });
-      }
-    },
-    [csrf, state, periods, dispatch]
-  );
-
-  const getSecondaryLabel = useCallback(
-    periodId => {
-      if (mode === 'self') {
-        if (
-          selectReviewPeriod(state, periodId)?.reviewStatus ===
-          ReviewStatus.OPEN
-        ) {
-          if (
-            !selfReviews ||
-            !selfReviews[periodId] ||
-            selfReviews[periodId] === null
-          ) {
-            return 'Click to start your review.';
-          } else {
-            if (selfReviews[periodId].status.toUpperCase() === 'SUBMITTED') {
-              return 'Your review has been submitted. Thank you!';
-            } else {
-              return 'Click to finish your review.';
-            }
-          }
-        } else {
-          return 'This review period is closed.';
-        }
-      }
-    },
-    [selfReviews, state, mode]
-  );
-
-  const handleConfirmClose = useCallback(() => {
-    setToDelete(null);
-    setConfirmOpen(false);
-  }, [setToDelete, setConfirmOpen]);
-
-  const deleteReviewPeriod = useCallback(async () => {
-    if (!csrf) {
-      return;
-    }
-
-    await removeReviewPeriod(toDelete, csrf);
-    dispatch({
-      type: UPDATE_REVIEW_PERIODS,
-      payload: periods.filter(period => period?.id !== toDelete)
-    });
-    handleConfirmClose();
-  }, [csrf, periods, dispatch, toDelete, handleConfirmClose]);
-
-  const updateReviewPeriodDates = useCallback(
-    async period => {
-      if (!csrf) {
-        return;
-      }
-      const res = await updateReviewPeriod(period, csrf);
-      const data = res?.payload?.data ?? null;
-      if (data) {
-        dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
-      } else {
-        console.error(res?.error);
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'error',
-            toast: 'Error updating review period'
-          }
-        });
-      }
-      setPeriodToAdd(period);
-    },
-    [csrf, state, periods, dispatch]
   );
 
   const loadFeedbackTemplates = useCallback(async () => {
@@ -423,7 +291,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       periods &&
       periods.length > 0 &&
       currentUserId &&
-      selfReviews == null
+      Object.keys(selfReviews).length === 0
     ) {
       getSelfReviews();
     }
@@ -431,19 +299,26 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const onPeriodClick = useCallback(
     id => {
-      if (selectReviewPeriod(state, id)?.reviewStatus === ReviewStatus.OPEN) {
-        onPeriodSelected(id);
+      const status = selectReviewPeriod(state, id)?.reviewStatus;
+      switch (status) {
+        case ReviewStatus.PLANNING:
+          onPeriodSelected(id);
+          break;
+        case ReviewStatus.AWAITING_APPROVAL:
+          // TODO: Check for the required permission.
+          onPeriodSelected(id);
+          break;
+        case ReviewStatus.OPEN:
+          alert(
+            'The page for viewing review periods in the OPEN state has not been created yet.'
+          );
+          break;
+        default:
+          // We do nothing if the status is CLOSED or UNKNOWN.
+          break;
       }
     },
     [state, onPeriodSelected]
-  );
-
-  const confirmDelete = useCallback(
-    id => {
-      setToDelete(id);
-      setConfirmOpen(true);
-    },
-    [setToDelete, setConfirmOpen]
   );
 
   const handleReviewTemplateChange = event => {
@@ -459,30 +334,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     setPeriodToAdd({
       ...periodToAdd,
       selfReviewTemplateId: templateId
-    });
-  };
-
-  const handleLaunchDateChange = (val, period) => {
-    const isoDate = val?.$d.toISOString() ?? null;
-    updateReviewPeriodDates({
-      ...period,
-      launchDate: isoDate
-    });
-  };
-
-  const handleSelfReviewDateChange = (val, period) => {
-    const isoDate = val?.$d.toISOString() ?? null;
-    updateReviewPeriodDates({
-      ...period,
-      selfReviewCloseDate: isoDate
-    });
-  };
-
-  const handleCloseDateChange = (val, period) => {
-    const isoDate = val?.$d.toISOString() ?? null;
-    updateReviewPeriodDates({
-      ...period,
-      closeDate: isoDate
     });
   };
 
@@ -525,128 +376,20 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           periods
             .sort((a, b) => {
               return a.reviewStatus === b.reviewStatus
-                ? ('' + a.name).localeCompare(b.name)
+                ? (a.name || '').localeCompare(b.name)
                 : a.reviewStatus === ReviewStatus.OPEN
                   ? -1
                   : 1;
             })
-            .map(
-              (
-                {
-                  name,
-                  reviewStatus,
-                  id,
-                  launchDate,
-                  selfReviewCloseDate,
-                  closeDate
-                },
-                i
-              ) => (
-                <div key={i} className="reviewPeriodSection">
-                  <ListItem
-                    secondaryAction={
-                      isAdmin && (
-                        <>
-                          <Tooltip
-                            title={
-                              reviewStatus === ReviewStatus.OPEN
-                                ? 'Archive'
-                                : 'Unarchive'
-                            }
-                          >
-                            <IconButton
-                              onClick={() => toggleReviewPeriod(id)}
-                              aria-label={
-                                reviewStatus === ReviewStatus.OPEN
-                                  ? 'Archive'
-                                  : 'Unarchive'
-                              }
-                            >
-                              {reviewStatus === ReviewStatus.OPEN ? (
-                                <Archive />
-                              ) : (
-                                <Unarchive />
-                              )}
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Delete">
-                            <IconButton
-                              onClick={() => confirmDelete(id)}
-                              edge="end"
-                              aria-label="Delete"
-                            >
-                              <Delete />
-                            </IconButton>
-                          </Tooltip>
-                        </>
-                      )
-                    }
-                    key={`period-${id}`}
-                  >
-                    <ListItemAvatar
-                      key={`period-lia-${id}`}
-                      onClick={() => onPeriodClick(id)}
-                    >
-                      <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      key={`period-lit-${id}`}
-                      onClick={() => onPeriodClick(id)}
-                      primary={`${name} - ${titleCase(reviewStatus)}`}
-                      secondary={getSecondaryLabel(id)}
-                    />
-                    <div className="datePickerFlexWrapper">
-                      <DatePickerField
-                        date={launchDate}
-                        setDate={val =>
-                          handleLaunchDateChange(val, {
-                            id,
-                            name,
-                            reviewStatus,
-                            launchDate,
-                            selfReviewCloseDate,
-                            closeDate
-                          })
-                        }
-                        label="Launch Date"
-                        disabled={!isAdmin}
-                        open={reviewStatus === ReviewStatus.PLANNING}
-                      />
-                      <DatePickerField
-                        date={selfReviewCloseDate}
-                        setDate={val =>
-                          handleSelfReviewDateChange(val, {
-                            id,
-                            name,
-                            reviewStatus,
-                            launchDate,
-                            selfReviewCloseDate,
-                            closeDate
-                          })
-                        }
-                        label="Self-Review Date"
-                        disabled={!isAdmin}
-                      />
-                      <DatePickerField
-                        date={closeDate}
-                        setDate={val =>
-                          handleCloseDateChange(val, {
-                            id,
-                            name,
-                            reviewStatus,
-                            launchDate,
-                            selfReviewCloseDate,
-                            closeDate
-                          })
-                        }
-                        label="Close Date"
-                        disabled={!isAdmin}
-                      />
-                    </div>
-                  </ListItem>
-                </div>
-              )
-            )
+            .map(({ name, reviewStatus, id }, i) => (
+              <ReviewPeriodCard
+                key={`review-period-card-${id}`}
+                mode={mode}
+                onSelect={onPeriodClick}
+                periodId={id}
+                selfReviews={selfReviews}
+              />
+            ))
         ) : (
           <Typography variant="body1">
             There are currently no review periods.
@@ -732,28 +475,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </div>
         </Box>
       </Modal>
-      <Dialog
-        open={confirmOpen}
-        onClose={handleConfirmClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {'Delete this review period?'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure that you would like to delete period{' '}
-            {selectReviewPeriod(state, toDelete)?.name}?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirmClose}>No</Button>
-          <Button onClick={deleteReviewPeriod} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Root>
   );
 };

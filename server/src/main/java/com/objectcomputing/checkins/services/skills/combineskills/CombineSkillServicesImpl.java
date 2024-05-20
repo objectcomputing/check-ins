@@ -6,11 +6,13 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillServices;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
-
 import jakarta.inject.Singleton;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Singleton
 public class CombineSkillServicesImpl implements CombineSkillServices {

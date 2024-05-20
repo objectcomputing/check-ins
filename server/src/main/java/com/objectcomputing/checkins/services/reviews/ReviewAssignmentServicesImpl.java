@@ -7,7 +7,7 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.*;
 
 @Singleton
@@ -61,7 +61,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
                 reviewAssignment.setReviewPeriodId(reviewPeriodId);
             }
 
-            reviewAssignmentRepository.saveAll(reviewAssignments).forEach(newAssignments::add);
+            newAssignments.addAll(reviewAssignmentRepository.saveAll(reviewAssignments));
         }
         return newAssignments;
     }

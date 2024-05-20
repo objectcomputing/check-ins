@@ -18,6 +18,7 @@
   --gray-light: #e5e5e5;
   --gray: #808080;
   --red: #f00;
+  --orange: #b26801;
   --yellow: #ee8c00;
   --green: #006400;
 
@@ -36,6 +37,7 @@
   --primary-link-dark-hover: #4f5f8c;
   --action: color-mix(in oklab, var(--black), var(--white) 50%);
   --action-disabled: color-mix(in oklab, var(--black), var(--white) 5%);
+  --muted: color-mix(in oklab, var(--black), var(--white) 47%);
 
   --checkins-palette-action-disabledOpacity: 0.58;
 
@@ -61,11 +63,14 @@
   --checkins-palette-green: var(--green);
   --checkins-palette-action: var(--action);
   --checkins-palette-action-disabled: var(--action-disabled);
+  --checkins-palette-action-yellow: lightyellow;
+  --checkins-palette-action-green: lightgreen;
 
   &[data-mui-color-scheme='dark'] {
     --primary-text: color-mix(in oklab, var(--white), var(--black) 10%);
     --action: var(--white);
     --action-disabled: color-mix(in oklab, var(--white), var(--black) 30%);
+    --muted: color-mix(in oklab, var(--black), var(--white) 53%);
 
     --primary-main: var(--oci-light-blue);
     --primary-light: color-mix(
@@ -84,6 +89,8 @@
     --checkins-palette-content-color: var(--white);
     --checkins-palette-gray-light: #e5e5e526;
     --checkins-palette-gray-dark: var(--gray);
+    --checkins-palette-action-yellow: var(--orange);
+    --checkins-palette-action-green: var(--green);
   }
 
   /* Sizing */

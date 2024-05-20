@@ -1,5 +1,6 @@
 import {
   getCheckinDate,
+  getCheckinDateForPeriod,
   getLastCheckinDate,
   statusForPeriodByMemberScheduling
 } from './checkin-utils';
@@ -63,6 +64,61 @@ describe('getLastCheckinDate', () => {
   });
 });
 
+describe('getCheckinDateForPeriod', () => {
+  const mockReportDate = new Date(2024, 3, 15); // April 15, 2024 (example report date)
+
+  test('returns correct date when check-in is within the reporting period', () => {
+    const checkins = [
+      { checkInDate: [2024, 3, 1, 10, 0] }, // March 1, 2024
+      { checkInDate: [2024, 4, 1, 9, 0] }, // April 1, 2024
+      { checkInDate: [2024, 4, 15, 14, 30] } // April 15, 2024
+    ];
+
+    const result = getCheckinDateForPeriod(checkins, mockReportDate);
+
+    expect(result).toBeInstanceOf(Date);
+    expect(result.getFullYear()).toBe(2024);
+    expect(result.getMonth()).toBe(3); // April is 3 (zero-indexed)
+    expect(result.getDate()).toBe(15); // Latest date in the array
+    expect(result.getHours()).toBe(14);
+    expect(result.getMinutes()).toBe(30);
+  });
+
+  test('returns correct date when check-in is within the reporting period and grace period', () => {
+    const checkins = [
+      { checkInDate: [2024, 3, 1, 10, 0] }, // March 1, 2024
+      { checkInDate: [2024, 4, 1, 9, 0] }, // April 1, 2024
+      { checkInDate: [2024, 5, 1, 14, 30] } // May 1, 2024
+    ];
+
+    const result = getCheckinDateForPeriod(checkins, mockReportDate);
+
+    expect(result).toBeInstanceOf(Date);
+    expect(result.getFullYear()).toBe(2024);
+    expect(result.getMonth()).toBe(4); // May is 4 (zero-indexed)
+    expect(result.getDate()).toBe(1); // Latest date in the array
+    expect(result.getHours()).toBe(14);
+    expect(result.getMinutes()).toBe(30);
+  });
+
+  test('returns correct date regardless of checkin status (completed or not)', () => {
+    const checkins = [
+      { checkInDate: [2024, 3, 1, 10, 0], completed: true }, // March 1, 2024 (completed)
+      { checkInDate: [2024, 4, 1, 9, 0], completed: false }, // April 1, 2024 (not completed)
+      { checkInDate: [2024, 4, 15, 14, 30], completed: false } // April 15, 2024 (not completed)
+    ];
+
+    const result = getCheckinDateForPeriod(checkins, mockReportDate);
+
+    expect(result).toBeInstanceOf(Date);
+    expect(result.getFullYear()).toBe(2024);
+    expect(result.getMonth()).toBe(3); // April is 3 (zero-indexed)
+    expect(result.getDate()).toBe(15); // Latest date in the array
+    expect(result.getHours()).toBe(14);
+    expect(result.getMinutes()).toBe(30);
+  });
+});
+
 describe('statusForPeriodByMemberScheduling', () => {
   const mockReportDate = new Date(2024, 3, 15); // April 15, 2024 (example report date)
 
@@ -71,14 +127,25 @@ describe('statusForPeriodByMemberScheduling', () => {
     expect(result).toBe('Not Scheduled');
   });
 
-  test('returns "Not Scheduled" when all check-ins are outside the reporting period', () => {
+  test('returns "Not Scheduled" when all check-ins are outside the reporting grace period', () => {
     const checkins = [
       { checkInDate: [2024, 2, 1, 10, 30], completed: false }, // Feb 1, 2024
       { checkInDate: [2024, 3, 31, 9, 0], completed: false }, // March 31, 2024
-      { checkInDate: [2024, 7, 2, 11, 15], completed: false } // July 2, 2024
+      { checkInDate: [2024, 8, 2, 11, 15], completed: false } // Aug 2, 2024
     ];
     const result = statusForPeriodByMemberScheduling(checkins, mockReportDate);
     expect(result).toBe('Not Scheduled');
+  });
+
+  // There is a grace period of one month after the quarter in which we consider a check-in "In Progress"
+  test('returns "Scheduled" when at least one check-in falls within the reporting grace period', () => {
+    const checkins = [
+      { checkInDate: [2024, 2, 1, 10, 30], completed: false }, // Feb 1, 2024
+      { checkInDate: [2024, 3, 31, 9, 0], completed: false }, // March 31, 2024
+      { checkInDate: [2024, 7, 10, 14, 0], completed: false } // Jul 10, 2024
+    ];
+    const result = statusForPeriodByMemberScheduling(checkins, mockReportDate);
+    expect(result).toBe('Scheduled');
   });
 
   test('returns "Scheduled" when some check-ins within the reporting period are completed', () => {

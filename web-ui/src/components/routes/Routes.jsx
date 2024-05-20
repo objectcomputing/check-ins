@@ -14,6 +14,7 @@ import GuildsPage from '../../pages/GuildsPage';
 import Header from '../header/Header';
 import HomePage from '../../pages/HomePage';
 import PeoplePage from '../../pages/PeoplePage';
+import PulsePage from '../../pages/PulsePage';
 import MemberProfilePage from '../../pages/MemberProfilePage';
 import Roles from '../admin/roles/Roles';
 import SkillReportPage from '../../pages/SkillReportPage';
@@ -60,6 +61,10 @@ export default function Routes() {
       <Route path="/people">
         <Header title="People" />
         <PeoplePage />
+      </Route>
+      <Route path="/pulse">
+        <Header title="Pulse" />
+        <PulsePage />
       </Route>
       <Route path="/checkins/:memberId?/:checkinId?">
         <Header title="Check-ins" />

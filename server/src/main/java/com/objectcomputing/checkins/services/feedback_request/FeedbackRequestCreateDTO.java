@@ -1,29 +1,34 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Introspected
 public class FeedbackRequestCreateDTO {
 
     @NotNull
-    @Schema(description = "id of the feedback request creator", required = true)
+    @Schema(description = "id of the feedback request creator")
     private UUID creatorId;
 
     @NotNull
-    @Schema(description = "id of the person who is getting feedback requested on them", required = true)
+    @Schema(description = "id of the person who is getting feedback requested on them")
     private UUID requesteeId;
 
     @NotNull
-    @Schema(description = "id of the person who was requested to give feedback", required = true)
+    @Schema(description = "id of the person who was requested to give feedback")
     private UUID recipientId;
 
     @NotNull
-    @Schema(description = "id of the template the feedback request references", required = true)
+    @Schema(description = "id of the template the feedback request references")
     private UUID templateId;
 
     @NotNull
@@ -35,7 +40,7 @@ public class FeedbackRequestCreateDTO {
     private LocalDate dueDate;
 
     @NotNull
-    @Schema(description = "completion status of request", required = true)
+    @Schema(description = "completion status of request")
     private String status;
 
     @Nullable
@@ -45,81 +50,6 @@ public class FeedbackRequestCreateDTO {
     @Nullable
     @Schema(description = "the id of the review period in that this request was created for")
     private UUID reviewPeriodId;
-
-    public UUID getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(UUID creatorId) {
-        this.creatorId = creatorId;
-    }
-
-    public UUID getRequesteeId() {
-        return requesteeId;
-    }
-
-    public void setRequesteeId(UUID requesteeId) {
-        this.requesteeId = requesteeId;
-    }
-
-    public UUID getRecipientId() {
-        return recipientId;
-    }
-
-    public void setRecipientId(UUID recipientId) {
-        this.recipientId = recipientId;
-    }
-
-    public UUID getTemplateId() {
-        return templateId;
-    }
-
-    public void setTemplateId(UUID templateId) {
-        this.templateId = templateId;
-    }
-
-    public LocalDate getSendDate() {
-        return sendDate;
-    }
-
-    public void setSendDate(LocalDate sendDate) {
-        this.sendDate = sendDate;
-    }
-
-    @Nullable
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(@Nullable LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @Nullable
-    public LocalDate getSubmitDate() {
-        return submitDate;
-    }
-
-    public void setSubmitDate(@Nullable LocalDate submitDate) {
-        this.submitDate = submitDate;
-    }
-
-    @Nullable
-    public UUID getReviewPeriodId() {
-        return reviewPeriodId;
-    }
-
-    public void setReviewPeriodId(@Nullable UUID reviewPeriodId) {
-        this.reviewPeriodId = reviewPeriodId;
-    }
 
 }
 

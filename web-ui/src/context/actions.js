@@ -5,6 +5,7 @@ export const ADD_SKILL = '@@check-ins/add-skill';
 export const ADD_TEAM = '@@check-ins/add_team';
 export const DELETE_MEMBER_PROFILE = '@@check-ins/delete_member_profile';
 export const DELETE_MEMBER_SKILL = '@@check-ins/delete_member_skill';
+export const DELETE_REVIEW_PERIOD = '@@check-ins/delete_review_period';
 export const DELETE_SKILL = '@@check-ins/delete-skill';
 export const DELETE_ROLE = '@@check-ins/delete-role';
 export const MY_PROFILE_UPDATE = '@@check-ins/update_profile';
@@ -31,5 +32,6 @@ export const UPDATE_FEEEDBACK_SUGGESTIONS =
   '@@check-ins/update_feedback_suggestions';
 export const UPDATE_PEOPLE_LOADING = '@@check-ins/update_people_loading';
 export const UPDATE_TEAMS_LOADING = '@@check-ins/update_teams_loading';
+export const UPDATE_REVIEW_PERIOD = '@@check-ins/update_review_period';
 export const UPDATE_REVIEW_PERIODS = '@@check-ins/update_review_periods';
 export const ADD_REVIEW_PERIOD = '@@check-ins/add_review_period';

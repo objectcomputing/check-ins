@@ -1,13 +1,9 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
-import java.util.List;
-import java.util.UUID;
-
-import com.objectcomputing.checkins.services.action_item.ActionItem;
 import io.micronaut.core.annotation.Nullable;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.UUID;
 
 public interface FeedbackAnswerServices {
 

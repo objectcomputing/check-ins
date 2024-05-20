@@ -2,45 +2,27 @@ package com.objectcomputing.checkins.services.action_item;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+@Setter
+@Getter
 @Introspected
 public class ActionItemCreateDTO {
     @NotNull
-    @Schema(description = "id of the checkin this entry is associated with", required = true)
+    @Schema(description = "id of the checkin this entry is associated with")
     private UUID checkinid;
 
     @NotNull
-    @Schema(description = "id of the member this entry is associated with", required = true)
+    @Schema(description = "id of the member this entry is associated with")
     private UUID createdbyid;
 
-    @Schema(description = "description of the action item",
-            nullable = true)
+    @Nullable
+    @Schema(description = "description of the action item")
     private String description;
 
-    public UUID getCheckinid() {
-        return checkinid;
-    }
-
-    public void setCheckinid(UUID checkinid) {
-        this.checkinid = checkinid;
-    }
-
-    public UUID getCreatedbyid() {
-        return createdbyid;
-    }
-
-    public void setCreatedbyid(UUID createdbyid) {
-        this.createdbyid = createdbyid;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

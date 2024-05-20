@@ -110,7 +110,6 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
     void testFindRecordsWithEmployeeId() {
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
-
         List<EmployeeHours> employeeHoursList = createEmployeeHours();
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?employeeId=%s",employeeHoursList.get(0).getEmployeeId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         final HttpResponse<Set<EmployeeHours>> response = client.toBlocking().exchange(request, Argument.setOf(EmployeeHours.class));

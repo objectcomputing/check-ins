@@ -1,24 +1,28 @@
 package com.objectcomputing.checkins.services.survey;
 
-import java.util.Objects;
-import java.util.UUID;
-
-import java.time.LocalDate;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "surveys")
 public class Survey {
@@ -27,16 +31,16 @@ public class Survey {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "the id of the survey", required = true)
+    @Schema(description = "the id of the survey")
     private UUID id;
 
-    @Column(name="name")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(name::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
-    @Schema(description = "description of Name", required = true)
+    @NotBlank
+    @Schema(description = "description of Name")
+    @Column(name="name")
     private String name;
 
     @Column(name="description")
@@ -44,19 +48,20 @@ public class Survey {
             read =  "pgp_sym_decrypt(description::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
-    @Schema(description = "description of Description", required = true)
+    @NotBlank
+    @Schema(description = "description of Description")
     private String description;
 
     @Column(name="createdon")
     @NotNull
-    @Schema(description = "date for createdOn", required = true)
+    @Schema(description = "date for createdOn")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate createdOn;
 
     @Column(name="createdby")
     @TypeDef(type=DataType.STRING)
     @NotNull
-    @Schema(description = "id of the teamMember this entry is associated with", required = true)
+    @Schema(description = "id of the teamMember this entry is associated with")
     private UUID createdBy;
 
     public Survey(UUID id,LocalDate createdOn, UUID createdBy, String name, String description) {
@@ -71,44 +76,8 @@ public class Survey {
         this(null,createdOn, createdBy, name, description);
     }
 
-    public UUID getId() {
-        return this.id;
-    }
+    public Survey() {
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDate getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(LocalDate createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public UUID getCreatedBy() {
-        return this.createdBy;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
     }
 
     @Override

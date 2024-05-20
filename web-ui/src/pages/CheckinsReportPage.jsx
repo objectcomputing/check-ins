@@ -3,17 +3,17 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { AppContext } from '../context/AppContext';
 import {
   selectCheckinPDLS,
-  selectTeamMembersWithCheckinPDL,
-  selectMappedPdls
+  selectMappedPdls,
+  selectNormalizedMembers
 } from '../context/selectors';
 
 import {
   Grid,
-  Typography,
   IconButton,
   Box,
   ButtonGroup,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -24,7 +24,8 @@ import { FilterType } from '../components/member_selector/member_selector_dialog
 import {
   getQuarterBeginEnd,
   useQueryParameters,
-  isArrayPresent
+  isArrayPresent,
+  getQuarterDisplay
 } from '../helpers';
 
 import './CheckinsReportPage.css';
@@ -64,6 +65,8 @@ const CheckinsReportPage = () => {
   const [planned, setPlanned] = useState(true);
   const [closed, setClosed] = useState(true);
 
+  const [searchText, setSearchText] = useState('');
+
   const [reportDate, setReportDate] = useState(new Date());
   const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
 
@@ -97,7 +100,7 @@ const CheckinsReportPage = () => {
           const newPdls = ids
             .map(id => pdls.find(pdl => pdl.id === id))
             .filter(Boolean);
-          setSelectedPdls(newPdls);
+          newPdls.length > 0 && setSelectedPdls(newPdls);
         },
         toQP(newPdls) {
           if (isArrayPresent(newPdls)) {
@@ -113,21 +116,39 @@ const CheckinsReportPage = () => {
     processedQPs
   );
 
-  // Set the selected PDLs to the mapped PDLs unless they are already set
+  // Update selected PDLs when processedQPs is updated
   useEffect(() => {
-    if (pdls.length > 0) return;
-    const mapped = selectMappedPdls(state);
-    setSelectedPdls(mapped);
-  }, [state]);
+    if (selectedPdls.length === 0 && processedQPs.current) {
+      setSelectedPdls(selectMappedPdls(state));
+    }
+  }, [processedQPs.current]);
 
-  // Set the mapped PDLs to the PDLs with members
+  // Set the mapped PDLs to a full list of their members
   useEffect(() => {
     if (!pdls) return;
-    pdls.forEach(
-      pdl => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
-    );
+    pdls.forEach(pdl => {
+      const allMembers = selectNormalizedMembers(state, searchText).filter(
+        member => member.pdlId === pdl.id
+      );
+      pdl.members = allMembers;
+    });
     pdls.filter(pdl => pdl.members.length > 0);
   }, [pdls, state]);
+
+  // Keyboard navigation for changing quarters.
+  useEffect(() => {
+    const handleKeyDown = evt => {
+      if (evt.key === 'ArrowLeft') {
+        document
+          .querySelector('button[aria-label="Previous quarter`"]')
+          .click();
+      } else if (evt.key === 'ArrowRight') {
+        document.querySelector('button[aria-label="Next quarter`"]').click();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <div className="checkins-report-page">
@@ -136,7 +157,6 @@ const CheckinsReportPage = () => {
         title="Select PDLs"
         selected={selectedPdls}
         onChange={setSelectedPdls}
-        listHeight={180}
         exportable
         expand={false}
       />
@@ -151,6 +171,12 @@ const CheckinsReportPage = () => {
               <ArrowBackIcon style={{ fontSize: '1.2em' }} />
             </IconButton>
           </Tooltip>
+          <Typography
+            variant="h6"
+            sx={{ fontSize: '1.5rem', alignContent: 'center', p: 1 }}
+          >
+            <nobr>{getQuarterDisplay(reportDate)}</nobr>
+          </Typography>
           <Tooltip title="Next quarter">
             <IconButton
               aria-label="Next quarter`"

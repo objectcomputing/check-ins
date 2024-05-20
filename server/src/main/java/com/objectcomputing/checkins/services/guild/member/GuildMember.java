@@ -6,17 +6,21 @@ import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @Introspected
 @Table(name = "guild_member")
@@ -26,19 +30,19 @@ public class GuildMember {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this member to guild entry", required = true)
+    @Schema(description = "id of this member to guild entry")
     private UUID id;
 
     @NotNull
     @Column(name = "guildid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the guild this entry is associated with", required = true)
+    @Schema(description = "id of the guild this entry is associated with")
     private UUID guildId;
 
     @NotNull
     @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
+    @Schema(description = "id of the member this entry is associated with")
     private UUID memberId;
 
     @Nullable
@@ -51,42 +55,10 @@ public class GuildMember {
         this(null, guildId, memberId, lead);
     }
 
-    public GuildMember(UUID id, UUID guildId, UUID memberId, Boolean lead) {
+    public GuildMember(UUID id, UUID guildId, UUID memberId, @Nullable Boolean lead) {
         this.id = id;
         this.guildId = guildId;
         this.memberId = memberId;
-        this.lead = lead;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getGuildId() {
-        return guildId;
-    }
-
-    public void setGuildId(UUID guildId) {
-        this.guildId = guildId;
-    }
-
-    public UUID getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(UUID memberId) {
-        this.memberId = memberId;
-    }
-
-    public boolean isLead() {
-        return lead != null && lead;
-    }
-
-    public void setLead(boolean lead) {
         this.lead = lead;
     }
 
@@ -112,7 +84,7 @@ public class GuildMember {
                 "id=" + id +
                 ", guildId=" + guildId +
                 ", memberId=" + memberId +
-                ", lead=" + isLead() +
+                ", lead=" + getLead() +
                 '}';
     }
 }

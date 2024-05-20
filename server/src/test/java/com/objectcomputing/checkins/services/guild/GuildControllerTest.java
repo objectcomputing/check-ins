@@ -74,7 +74,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         // create list of existing guild lead and new member and add it to the request
         List<GuildUpdateDTO.GuildMemberUpdateDTO> newAndExistingMembers = new ArrayList<>();
         newAndExistingMembers.add(newMemberDTO);
-        newAndExistingMembers.add(updateDefaultGuildMemberDto(guildLead, guildLead.isLead()));
+        newAndExistingMembers.add(updateDefaultGuildMemberDto(guildLead, guildLead.getLead()));
         requestBody.setGuildMembers(newAndExistingMembers);
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -104,7 +104,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         // create a guildUpdateDTO from existing guild
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
         // only include the guild lead in the request (effectively removes the guild member)
-        requestBody.setGuildMembers(Collections.singletonList(updateDefaultGuildMemberDto(guildLead, guildLead.isLead())));
+        requestBody.setGuildMembers(Collections.singletonList(updateDefaultGuildMemberDto(guildLead, guildLead.getLead())));
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         client.toBlocking().exchange(request, GuildResponseDTO.class);

@@ -106,7 +106,7 @@ const CheckinsHistory = () => {
         </IconButton>
         <MobileDateTimePicker
           slotProps={{ textField: { style: { width: '18em' } } }}
-          format="MMMM dd, yyyy @hh:mm aaaa"
+          format="MMMM dd, yyyy @hh:mm aa"
           value={getCheckinDate()}
           onChange={pickDate}
           label="Check-In Date"

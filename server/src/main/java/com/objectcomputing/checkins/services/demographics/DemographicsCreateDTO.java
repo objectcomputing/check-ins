@@ -1,17 +1,21 @@
 package com.objectcomputing.checkins.services.demographics;
 
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Introspected
 public class DemographicsCreateDTO {
 
     @NotNull
-    @Schema(description = "the userId of the employee", required = true)
+    @Schema(description = "the userId of the employee")
     private UUID memberId;
 
     @Nullable
@@ -41,75 +45,4 @@ public class DemographicsCreateDTO {
     @Nullable
     @Schema(description = "the military branch of the employee")
     private String militaryBranch;
-
-    public UUID getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(UUID memberId) {
-        this.memberId = memberId;
-    }
-
-    @Nullable
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(@Nullable String gender) {
-        this.gender = gender;
-    }
-
-    @Nullable
-    public String getDegreeLevel() {
-        return degreeLevel;
-    }
-
-    public void setDegreeLevel(@Nullable String degreeLevel) {
-        this.degreeLevel = degreeLevel;
-    }
-
-    @Nullable
-    public Integer getIndustryTenure() {
-        return industryTenure;
-    }
-
-    public void setIndustryTenure(@Nullable Integer industryTenure) {
-        this.industryTenure = industryTenure;
-    }
-
-    @Nullable
-    public Boolean getPersonOfColor() {
-        return personOfColor;
-    }
-
-    public void setPersonOfColor(@Nullable Boolean personOfColor) {
-        this.personOfColor = personOfColor;
-    }
-
-    @Nullable
-    public Boolean getVeteran() {
-        return veteran;
-    }
-
-    public void setVeteran(@Nullable Boolean veteran) {
-        this.veteran = veteran;
-    }
-
-    @Nullable
-    public Integer getMilitaryTenure() {
-        return militaryTenure;
-    }
-
-    public void setMilitaryTenure(@Nullable Integer militaryTenure) {
-        this.militaryTenure = militaryTenure;
-    }
-
-    @Nullable
-    public String getMilitaryBranch() {
-        return militaryBranch;
-    }
-
-    public void setMilitaryBranch(@Nullable String militaryBranch) {
-        this.militaryBranch = militaryBranch;
-    }
 }

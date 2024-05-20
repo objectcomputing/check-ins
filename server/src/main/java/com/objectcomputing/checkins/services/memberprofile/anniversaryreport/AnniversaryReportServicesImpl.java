@@ -4,12 +4,11 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-
+import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.micronaut.core.annotation.Nullable;
-import jakarta.inject.Singleton;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -39,7 +38,7 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
         List<MemberProfile> memberProfileAll = new ArrayList<>();
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null,
                 false);
-        LOG.info(memberProfiles.toString());
+
         if (months != null) {
             for (String month : months) {
                 List<MemberProfile> memberProfile = new ArrayList<>();

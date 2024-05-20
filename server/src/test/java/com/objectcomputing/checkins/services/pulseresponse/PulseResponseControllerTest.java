@@ -2,9 +2,8 @@ package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.fixture.PulseResponseFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-
+import com.objectcomputing.checkins.services.fixture.PulseResponseFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.util.Util;
@@ -18,7 +17,6 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;

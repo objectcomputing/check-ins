@@ -1,0 +1,19 @@
+.team-reviews {
+  & #approval-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .chip-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-left: 2rem;
+  }
+
+  .name-title {
+    min-width: 10rem;
+  }
+}
