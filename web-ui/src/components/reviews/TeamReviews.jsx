@@ -615,7 +615,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         },
         data: {
           ...period,
-          reviewStatus: ReviewStatus.AWAITING_APPROVAL
+          reviewStatus: ReviewStatus.OPEN
         }
       });
       if (res.error) throw new Error(res.error.message);
@@ -634,11 +634,13 @@ const TeamReviews = ({ onBack, periodId }) => {
     const unapproved = assignments.filter(
       a => !a.approved && visibleIds.has(a.revieweeId)
     );
+    /* For debugging ...
     for (const assignment of unapproved) {
       const reviewee = currentMembers.find(m => m.id === assignment.revieweeId);
       const reviewer = currentMembers.find(m => m.id === assignment.reviewerId);
       console.log(reviewer.name, 'reviewing', reviewee.name, 'is unapproved.');
     }
+    */
     setUnapproved(unapproved);
     if (unapproved.length === 0) {
       setConfirmationText('Are you sure you want to launch the review period?');
