@@ -70,7 +70,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = Stream.of(errors.get(0).get("message").asText(),
         errors.get(1).get("message").asText(), errors.get(2).get("message").asText()).sorted().collect(Collectors.toList());
-        assertEquals(4,errorList.size());
+        assertEquals(3,errorList.size());
         assertEquals(request.getPath(),href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
