@@ -4,7 +4,7 @@ micronaut:
       enabled: true
       configurations:
         web:
-          allowedOrigins:
+          allowedOriginsRegex:
             - ^http(|s):\/\/localhost:.*$
   security:
     authentication: cookie

@@ -24,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@MicronautTest(environments = "prodtest", transactional = false)
+@MicronautTest(environments = {"prodtest","google"}, transactional = false)
 public class CheckinsOpenIdAuthenticationMapperTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject

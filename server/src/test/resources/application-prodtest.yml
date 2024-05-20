@@ -1,0 +1,12 @@
+micronaut:
+  security:
+    enabled: true
+    oauth2:
+      enabled: true
+      callback-uri: 'https://localhost:8080/callback'
+      clients:
+        google:
+          client-id: 'FAKE_CLIENT_ID'
+          client-secret: 'FAKE_SECRET'
+          openid:
+            issuer: 'https://accounts.google.com'
