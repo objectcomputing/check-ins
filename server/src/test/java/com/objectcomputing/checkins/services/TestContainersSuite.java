@@ -40,15 +40,7 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
     @Value("${aes.key}")
     protected String key;
 
-    private final boolean shouldResetDBAfterEachTest;
-
-    public TestContainersSuite() {
-        this(true);
-    }
-
-    public TestContainersSuite(boolean shouldResetDBAfterEachTest) {
-        this.shouldResetDBAfterEachTest = shouldResetDBAfterEachTest;
-    }
+    public TestContainersSuite() {}
 
     private void deleteAllEntities() {
         // Note order can matter here.
