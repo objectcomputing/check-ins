@@ -1,18 +1,18 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import { fireEvent, render, screen } from '@testing-library/react';
 import Pulse from './Pulse';
 
 it('renders correctly', () => {
-  const component = renderer.create(
+  const component = render(
     <Pulse
       comment="Just testing"
       score={2}
       setComment={() => {}}
       setScore={() => {}}
+      title="How are you feeling about work today? (*)"
     />
   );
-  expect(component.toJSON()).toMatchSnapshot();
+  expect(component.baseElement).toMatchSnapshot();
 });
 
 it('calls setComment', () => {
@@ -25,7 +25,7 @@ it('calls setComment', () => {
       setScore={() => {}}
     />
   );
-  const input = screen.getByTestId('comment-input').querySelector('input');
+  const input = screen.getByTestId('comment-input').querySelector('textarea');
   const text = 'new comment';
   fireEvent.change(input, { target: { value: text } });
   expect(setComment).toHaveBeenCalledWith(text);
