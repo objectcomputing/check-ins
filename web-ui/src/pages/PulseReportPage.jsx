@@ -36,6 +36,7 @@ import {
 
 import './PulseReportPage.css';
 
+// Returns a random, integer score between 1 and 5.
 const randomScore = previousScore => {
   if (!previousScore) return Math.ceil(Math.random() * 5);
 
@@ -50,50 +51,7 @@ const randomScore = previousScore => {
       : previousScore - 1 + delta;
 };
 
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100
-  }
-];
+let responseFrequencies = [];
 const PulseReportPage = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
@@ -104,30 +62,40 @@ const PulseReportPage = () => {
   const [dateTo, setDateTo] = useState(new Date());
 
   const [pulses, setPulses] = useState(null);
-  if (pulses) console.log('PulseReportPage.jsx: pulses =', pulses);
   const [teamMembers, setTeamMembers] = useState([]);
 
+  const [barChartData, setBarChartData] = useState([]);
   const [lineChartData, setLineChartData] = useState([]);
 
   // This generates random data to use in the line chart
   // since we do not yet have data in the database.
   useEffect(() => {
     const data = [];
-    let internalScore = null;
-    let externalScore = null;
+    let internal = null;
+    let external = null;
     let date = new Date(dateFrom);
     while (date < dateTo) {
-      internalScore = randomScore(internalScore);
-      externalScore = randomScore(externalScore);
+      internal = randomScore(internal);
+      external = randomScore(external);
       data.push({
         date: format(date, `yyyy-MM-dd`),
-        internalScore: internalScore,
-        externalScore: externalScore
+        internal,
+        external
       });
       date.setDate(date.getDate() + 1);
     }
     setLineChartData(data);
-    console.log('PulseReportPage.jsx useEffect: data =', data);
+
+    const frequencies = [];
+    for (let i = 1; i <= 5; i++) {
+      frequencies.push({ score: i, internal: 0, external: 0 });
+    }
+    for (const d of data) {
+      frequencies[d.internal - 1].internal++;
+      frequencies[d.external - 1].external++;
+    }
+    console.log('PulseReportPage.jsx : frequencies =', frequencies);
+    setBarChartData(frequencies);
   }, [dateFrom, dateTo]);
 
   const loadPulses = async () => {
@@ -217,19 +185,30 @@ const PulseReportPage = () => {
           titleTypographyProps={{ variant: 'h5', component: 'h2' }}
         />
         <CardContent>
-          <LineChart width={800} height={300} data={data}>
+          <LineChart data={lineChartData} height={300} width={800}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" padding={{ left: 30, right: 30 }} />
+            <XAxis
+              angle={-90}
+              dataKey="date"
+              height={100}
+              padding={{ left: 30, right: 30 }}
+              tickMargin={45}
+            />
             <YAxis />
             <Tooltip />
             <Legend />
             <Line
               type="monotone"
-              dataKey="internalScore"
+              dataKey="internal"
               stroke="#8884d8"
-              activeDot={{ r: 8 }}
+              dot={false}
             />
-            <Line type="monotone" dataKey="externalScore" stroke="#82ca9d" />
+            <Line
+              dataKey="external"
+              dot={false}
+              stroke="#82ca9d"
+              type="monotone"
+            />
           </LineChart>
         </CardContent>
       </Card>
@@ -243,7 +222,7 @@ const PulseReportPage = () => {
           <BarChart
             width={500}
             height={300}
-            data={data}
+            data={barChartData}
             margin={{
               top: 5,
               right: 30,
@@ -252,12 +231,12 @@ const PulseReportPage = () => {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="score" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="pv" fill="#8884d8" />
-            <Bar dataKey="uv" fill="#82ca9d" />
+            <Bar dataKey="internal" fill="#8884d8" />
+            <Bar dataKey="external" fill="#82ca9d" />
           </BarChart>
         </CardContent>
       </Card>
