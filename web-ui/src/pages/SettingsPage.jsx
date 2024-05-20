@@ -59,7 +59,6 @@ const SettingsPage = () => {
     {
       componentName: 'SettingsBoolean',
       label: 'Boolean Control',
-      value: true,
       description: 'A control to hold a boolean value',
       handleChange: event => console.log(`BOOLEAN ${event.target.checked}`)
     },
