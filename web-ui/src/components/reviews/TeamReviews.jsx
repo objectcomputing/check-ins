@@ -1048,7 +1048,7 @@ const TeamReviews = ({ onBack, periodId }) => {
           <CardHeader
             title={
               <Typography variant="h5" fontWeight="bold">
-                Approve All Assignments?
+                Approve and Launch
               </Typography>
             }
           />
