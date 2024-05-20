@@ -13,6 +13,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
@@ -38,16 +39,13 @@ public class ActionItemController {
      */
     @Post()
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
-    public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
+    public Mono<HttpResponse<ActionItem>> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
                                                      HttpRequest<?> request) {
-        ActionItem newActionItem = actionItemServices.save(new ActionItem(actionItem.getCheckinid(),
-                actionItem.getCreatedbyid(), actionItem.getDescription()));
-        return HttpResponse
-                .created(newActionItem)
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), newActionItem.getId()))));
+        return Mono.fromCallable(() -> actionItemServices.save(new ActionItem(actionItem.getCheckinid(),
+                        actionItem.getCreatedbyid(), actionItem.getDescription())))
+                .map(actionItemNew -> HttpResponse.created(actionItemNew).headers(headers -> headers.location(
+                        URI.create(String.format("%s/%s", request.getPath(), actionItemNew.getId())))));
     }
-
     /**
      * Update actionItem.
      *
@@ -56,14 +54,9 @@ public class ActionItemController {
      */
     @Put()
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
-    public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<?> request) {
-        ActionItem updatedActionItem = actionItemServices.update(actionItem);
-        return HttpResponse
-                .ok()
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), updatedActionItem.getId()))))
-                .body(updatedActionItem);
-
+    public Mono<HttpResponse<?>> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<?> request) {
+        return Mono.fromCallable(() -> actionItemServices.update(actionItem))
+                .map(actionItemNew -> HttpResponse.ok(actionItemNew).headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), actionItemNew.getId())))));
     }
 
     /**
@@ -73,10 +66,9 @@ public class ActionItemController {
      */
     @Delete("/{id}")
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
-    public HttpResponse<?> deleteActionItem(UUID id) {
-        actionItemServices.delete(id);
-        return HttpResponse
-                .ok();
+    public Mono<HttpResponse<?>> deleteActionItem(UUID id) {
+        return Mono.fromRunnable(() -> actionItemServices.delete(id))
+                .map(actionItemNew -> HttpResponse.ok());
     }
 
     /**
@@ -87,8 +79,8 @@ public class ActionItemController {
      */
     @Get("/{id}")
     @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
-    public ActionItem readActionItem(UUID id) {
-        return actionItemServices.read(id);
+    public Mono<ActionItem> readActionItem(UUID id) {
+        return Mono.fromCallable(() -> actionItemServices.read(id));
     }
 
     /**
@@ -100,9 +92,9 @@ public class ActionItemController {
      */
     @Get("/{?checkinid,createdbyid}")
     @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
-    public Set<ActionItem> findActionItems(@Nullable UUID checkinid,
+    public Mono<Set<ActionItem>> findActionItems(@Nullable UUID checkinid,
                                            @Nullable UUID createdbyid) {
-        return actionItemServices.findByFields(checkinid, createdbyid);
+        return Mono.fromCallable(() -> actionItemServices.findByFields(checkinid, createdbyid));
     }
 
 }
