@@ -3,6 +3,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.3.6"
+    id("io.micronaut.test-resources") version "4.3.6"
     id "idea"
     id "jacoco"
     id("org.openrewrite.rewrite") version "latest.release"

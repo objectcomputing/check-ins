@@ -40,8 +40,7 @@ micronaut:
 ---
 datasources:
   default:
-    url:  jdbc:tc:postgresql:11.6:///
-    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
+    db-type: postgres
 ---
 credentials:
   roles:
@@ -55,3 +54,10 @@ credentials:
       - PDL
     MEMBER:
       - MEMBER
+---
+test-resources:
+  containers:
+    postgres:
+      image-name: postgres:11.6
+      username: postgres
+      password: postgres
