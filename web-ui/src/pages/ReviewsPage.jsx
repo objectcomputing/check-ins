@@ -80,6 +80,7 @@ const ReviewPage = () => {
 
   const onPeriodSelected = useCallback(
     period => {
+      setSelectedPeriod(period);
       handleQueryChange('period', period);
     },
     [handleQueryChange]
