@@ -37,6 +37,13 @@ import {
 
 import './PulseReportPage.css';
 
+// Recharts doesn't support using CSS variables, so we can't
+// easily used color variables defined in variables.css.
+const ociDarkBlue = '#2c519e';
+//const ociLightBlue = '#76c8d4'; // not currently used
+// const ociOrange = '#f8b576'; // too light
+const orange = '#b26801';
+
 // Returns a random, integer score between 1 and 5.
 const randomScore = previousScore => {
   if (!previousScore) return Math.ceil(Math.random() * 5);
@@ -202,13 +209,13 @@ const PulseReportPage = () => {
               <Line
                 type="monotone"
                 dataKey="internal"
-                stroke="#8884d8"
+                stroke={ociDarkBlue}
                 dot={false}
               />
               <Line
                 dataKey="external"
                 dot={false}
-                stroke="#82ca9d"
+                stroke={orange}
                 type="monotone"
               />
             </LineChart>
@@ -238,8 +245,8 @@ const PulseReportPage = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="internal" fill="#8884d8" />
-            <Bar dataKey="external" fill="#82ca9d" />
+            <Bar dataKey="internal" fill={ociDarkBlue} />
+            <Bar dataKey="external" fill={orange} />
           </BarChart>
         </CardContent>
       </Card>
