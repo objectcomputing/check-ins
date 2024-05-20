@@ -13,16 +13,17 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
-public class PulseReponseCreateDTOTest {
+public class PulseResponseCreateDTOTest {
 
     @Inject
-    private Validator validator;
+    protected Validator validator;
 
     @Test
     void testDTOInstantiation() {
         PulseResponseCreateDTO dto = new PulseResponseCreateDTO();
+        assertNull(dto.getInternalScore());
+        assertNull(dto.getExternalScore());
         assertNull(dto.getSubmissionDate());
-        assertNull(dto.getUpdatedDate());
         assertNull(dto.getTeamMemberId());
         assertNull(dto.getInternalFeelings());
         assertNull(dto.getExternalFeelings());
@@ -33,7 +34,7 @@ public class PulseReponseCreateDTOTest {
         PulseResponseCreateDTO dto = new PulseResponseCreateDTO();
 
         Set<ConstraintViolation<PulseResponseCreateDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 5);
+        assertEquals(violations.size(), 3);
         for (ConstraintViolation<PulseResponseCreateDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
@@ -45,11 +46,14 @@ public class PulseReponseCreateDTOTest {
 
         UUID teamMemberId = UUID.randomUUID();
 
-        dto.setSubmissionDate(LocalDate.of(2019, 1, 01));
-        assertEquals(dto.getSubmissionDate(), LocalDate.of(2019, 1, 01));
+        dto.setInternalScore(1);
+        assertEquals(1, dto.getInternalScore());
 
-        dto.setUpdatedDate(LocalDate.of(2019, 1, 01));
-        assertEquals(dto.getUpdatedDate(), LocalDate.of(2019, 1, 01));
+        dto.setExternalScore(2);
+        assertEquals(2, dto.getExternalScore());
+
+        dto.setSubmissionDate(LocalDate.of(2019, 1, 1));
+        assertEquals(dto.getSubmissionDate(), LocalDate.of(2019, 1, 1));
 
         dto.setTeamMemberId(teamMemberId);
         assertEquals(dto.getTeamMemberId(), teamMemberId);
