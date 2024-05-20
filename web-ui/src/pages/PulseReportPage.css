@@ -3,4 +3,12 @@
     display: flex;
     gap: 1rem;
   }
+
+  .expand-more {
+    margin-bottom: 1rem;
+  }
+
+  .recharts-wrapper {
+    display: inline-block;
+  }
 }

@@ -18,6 +18,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Collapse,
   Typography
 } from '@mui/material';
 
@@ -34,6 +35,7 @@ import {
   selectCurrentUser,
   selectHasPulseReportPermission
 } from '../context/selectors.js';
+import ExpandMore from '../components/expand-more/ExpandMore';
 
 import './PulseReportPage.css';
 
@@ -69,11 +71,11 @@ const PulseReportPage = () => {
   const [dateFrom, setDateFrom] = useState(initialDateFrom);
   const [dateTo, setDateTo] = useState(new Date());
 
+  const [barChartData, setBarChartData] = useState([]);
+  const [expanded, setExpanded] = useState(false);
+  const [lineChartData, setLineChartData] = useState([]);
   const [pulses, setPulses] = useState(null);
   const [teamMembers, setTeamMembers] = useState([]);
-
-  const [barChartData, setBarChartData] = useState([]);
-  const [lineChartData, setLineChartData] = useState([]);
 
   // This generates random data to use in the line chart
   // since we do not yet have data in the database.
@@ -102,7 +104,6 @@ const PulseReportPage = () => {
       frequencies[d.internal - 1].internal++;
       frequencies[d.external - 1].external++;
     }
-    console.log('PulseReportPage.jsx : frequencies =', frequencies);
     setBarChartData(frequencies);
   }, [dateFrom, dateTo]);
 
@@ -248,6 +249,21 @@ const PulseReportPage = () => {
             <Bar dataKey="internal" fill={ociDarkBlue} />
             <Bar dataKey="external" fill={orange} />
           </BarChart>
+          <ExpandMore
+            expand={expanded}
+            onClick={() => setExpanded(!expanded)}
+            aria-expanded={expanded}
+            aria-label={expanded ? 'show less' : 'show more'}
+            size="large"
+          />
+          <Collapse
+            className="bottom-row"
+            in={expanded}
+            timeout="auto"
+            unmountOnExit
+          >
+            Member data goes here.
+          </Collapse>
         </CardContent>
       </Card>
     </div>
