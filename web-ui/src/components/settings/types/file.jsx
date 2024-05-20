@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Typography } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
+import { createLabelId } from '../../../helpers/strings.js';
 
 /**
  * A component for handling file settings.
@@ -14,7 +15,7 @@ import { AddCircle } from '@mui/icons-material';
  * @returns {JSX.Element} The rendered component.
  */
 const SettingsFile = ({ fileRef, handleFile, label, description }) => {
-  const labelId = label.replace(/\s/g, '-').toLowerCase();
+  const labelId = createLabelId(label);
 
   const handleClick = event => {
     fileRef.current.click();

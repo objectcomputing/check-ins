@@ -1,5 +1,6 @@
 import React from 'react';
 import { Input, Typography } from '@mui/material';
+import { createLabelId } from '../../../helpers/strings.js';
 
 /**
  * A component for rendering a number input field in the settings.
@@ -13,7 +14,7 @@ import { Input, Typography } from '@mui/material';
  * @returns {JSX.Element} - The rendered component.
  */
 const SettingsNumber = ({ label, description, value, handleChange }) => {
-  const labelId = label.replace(/\s/g, '-').toLowerCase();
+  const labelId = createLabelId(label);
 
   return (
     <div className="settings-type">
