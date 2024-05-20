@@ -38,7 +38,7 @@ export const getLastCheckinDate = checkins => {
 export const getCheckinDateForPeriod = (checkins, reportDate) => {
   const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
   const endOfQuarterWithGrace = new Date(endOfQuarter);
-  endOfQuarterWithGrace.setMonth(endOfQuarter.getMonth() + 1);
+  endOfQuarterWithGrace.setDate(endOfQuarter.getDate() + 30);
   const scheduled = checkins.filter(checkin => {
     const checkinDate = getCheckinDate(checkin);
     return (

@@ -1,4 +1,4 @@
-import {UPDATE_TOAST} from '../context/actions';
+import { UPDATE_TOAST } from '../context/actions';
 import qs from 'qs';
 
 export const BASE_API_URL = import.meta.env.VITE_APP_API_URL

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public interface PulseResponseFixture extends RepositoryFixture {
     default PulseResponse createADefaultPulseResponse(MemberProfile memberprofile) {
-        return getPulseResponseRepository().save(new PulseResponse(LocalDate.now(), LocalDate.now(),
+        return getPulseResponseRepository().save(new PulseResponse(0, 0, LocalDate.now(),
                 memberprofile.getId(), "internalfeelings", "externalfeelings"));
     }
 }
