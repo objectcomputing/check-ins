@@ -8,7 +8,6 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -41,26 +40,53 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
     @Value("${aes.key}")
     protected String key;
 
-    private final boolean shouldResetDBAfterEachTest;
+    public TestContainersSuite() {}
 
-    public TestContainersSuite() {
-        this(true);
-    }
-
-    public TestContainersSuite(boolean shouldResetDBAfterEachTest) {
-        this.shouldResetDBAfterEachTest = shouldResetDBAfterEachTest;
+    private void deleteAllEntities() {
+        // Note order can matter here.
+        getEntityTagRepository().deleteAll();
+        getTagRepository().deleteAll();
+        getPulseResponseRepository().deleteAll();
+        getCheckInNoteRepository().deleteAll();
+        getPrivateNoteRepository().deleteAll();
+        getCheckInDocumentRepository().deleteAll();
+        getActionItemRepository().deleteAll();
+        getAgendaItemRepository().deleteAll();
+        getQuestionRepository().deleteAll();
+        getMemberHistoryRepository().deleteAll();
+        getMemberSkillRepository().deleteAll();
+        getSkillCategorySkillRepository().deleteAll();
+        getSkillCategoryRepository().deleteAll();
+        getSkillRepository().deleteAll();
+        getQuestionCategoryRepository().deleteAll();
+        getSurveyRepository().deleteAll();
+        getEmployeeHoursRepository().deleteAll();
+        getFeedbackAnswerRepository().deleteAll();
+        getTemplateQuestionRepository().deleteAll();
+        getSettingsRepository().deleteAll();
+        getOpportunitiesRepository().deleteAll();
+        getDemographicsRepository().deleteAll();
+        getRolePermissionRepository().deleteAll();
+        getEmailRepository().deleteAll();
+        getGuildMemberRepository().deleteAll();
+        getGuildMemberHistoryRepository().deleteAll();
+        getGuildRepository().deleteAll();
+        getTeamMemberRepository().deleteAll();
+        getTeamRepository().deleteAll();
+        getMemberRoleRepository().deleteAll();
+        getRoleRepository().deleteAll();
+        getCheckInRepository().deleteAll();
+        getFeedbackRequestRepository().deleteAll();
+        getFeedbackTemplateRepository().deleteAll();
+        getMemberProfileRepository().deleteAll();
+        getReviewPeriodRepository().deleteAll();
+        getReviewAssignmentRepository().deleteAll();
     }
 
     @BeforeEach
     public void setup() {
+        deleteAllEntities();
         flyway.migrate();
-    }
-
-    @AfterEach
-    public void teardown() {
-        if(shouldResetDBAfterEachTest) {
-            flyway.clean();
-        }
     }
 
     @Override
