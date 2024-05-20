@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.settings;
 
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -10,6 +11,7 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
@@ -24,14 +26,13 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "settings")
+@Validated
 public class SettingsController {
 
     private final SettingsServices settingsServices;
-    private final CurrentUserServices currentUserServices;
 
-    public SettingsController(SettingsServices settingsServices, CurrentUserServices currentUserServices) {
+    public SettingsController(SettingsServices settingsServices) {
         this.settingsServices = settingsServices;
-        this.currentUserServices = currentUserServices;
     }
 
     /**
@@ -41,11 +42,18 @@ public class SettingsController {
      * @return {@link <List<SettingResponseDTO>>} Returned setting
      */
     @Get("/{?name}")
-    public Mono<HttpResponse<List<SettingsResponseDTO>>> getByValue(@Nullable String name) {
+    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
+    public Mono<HttpResponse<List<SettingsResponseDTO>>> findByName(@Nullable String name) {
         return Mono.fromCallable(() -> settingsServices.findByName(name))
                 .map(HttpResponse::ok);
     }
 
+    @Get("/options")
+    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
+    public Mono<HttpResponse<List<SettingOption>>> getOptions() {
+        return Mono.just(SettingOption.getOptions())
+                .map(HttpResponse::ok);
+    }
     /**
      * Create and save a new setting.
      *
@@ -53,6 +61,7 @@ public class SettingsController {
      * @return {@link HttpResponse<SettingsResponseDTO>}
      */
     @Post()
+    @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public Mono<HttpResponse<SettingsResponseDTO>> save(@Body @Valid SettingsCreateDTO settingDTO, HttpRequest<?> request) {
         return Mono.fromCallable(() -> settingsServices.save(fromDTO(settingDTO)))
                 .map(savedSetting -> HttpResponse.created(fromEntity(savedSetting))
@@ -67,13 +76,13 @@ public class SettingsController {
      * @return {@link <SettingsReponseDTO>}
      */
     @Put()
+    @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public Mono<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO, HttpRequest<?> request) {
         return Mono.fromCallable(() -> settingsServices.update(fromUpdateDTO(settingDTO)))
                 .map(savedSetting -> HttpResponse.ok(fromEntity(savedSetting))
-                        .headers(headers -> headers
-                                .location(URI.create(String.format("%s/%s", request.getPath(), savedSetting.getId())))));
+                        .headers(headers -> headers.location(
+                                URI.create(String.format("%s/%s", request.getPath(), savedSetting.getId())))));
     }
-       
     
      /**
      * Delete the setting.
@@ -81,18 +90,18 @@ public class SettingsController {
      * @param id, id of {@link Setting} to delete
      */
     @Delete("/{id}")
+    @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public Mono<HttpResponse<?>> delete(UUID id) {
         return Mono.fromCallable(() -> settingsServices.delete(id))
                 .thenReturn(HttpResponse.ok());
     }
                     
     private Setting fromDTO(SettingsCreateDTO settingsCreateDTO) {
-        return new Setting(settingsCreateDTO.getName(), currentUserServices.getCurrentUser().getId(), settingsCreateDTO.getValue());
+        return new Setting(settingsCreateDTO.getName(), settingsCreateDTO.getValue());
     }
 
     private Setting fromUpdateDTO(SettingsUpdateDTO settingsUpdateDTO) {
-        return new Setting(settingsUpdateDTO.getId(), settingsUpdateDTO.getName(), currentUserServices.getCurrentUser().getId(),
-                settingsUpdateDTO.getValue());
+        return new Setting(settingsUpdateDTO.getId(), settingsUpdateDTO.getName(), settingsUpdateDTO.getValue());
     }
       
     private SettingsResponseDTO fromEntity(Setting entity) {

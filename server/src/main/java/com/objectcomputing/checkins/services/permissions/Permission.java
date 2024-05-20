@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.permissions;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.micronaut.core.annotation.Introspected;
 
 @Introspected
@@ -39,7 +39,9 @@ public enum Permission {
   CAN_CREATE_REVIEW_ASSIGNMENTS("Create review assignments", "Reviews"),
   CAN_VIEW_REVIEW_ASSIGNMENTS("View review assignments", "Reviews"),
   CAN_UPDATE_REVIEW_ASSIGNMENTS("Update review assignments", "Reviews"),
-  CAN_DELETE_REVIEW_ASSIGNMENTS("Delete review assignments", "Reviews");
+  CAN_DELETE_REVIEW_ASSIGNMENTS("Delete review assignments", "Reviews"),
+  CAN_ADMINISTER_SETTINGS("Add or edit settings", "Settings"),
+  CAN_VIEW_SETTINGS("View settings", "Settings");
 
   private final String description;
   private final String category;
