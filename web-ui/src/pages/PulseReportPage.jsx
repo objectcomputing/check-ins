@@ -8,6 +8,7 @@ import {
   Legend,
   Line,
   LineChart,
+  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis
@@ -185,31 +186,33 @@ const PulseReportPage = () => {
           titleTypographyProps={{ variant: 'h5', component: 'h2' }}
         />
         <CardContent>
-          <LineChart data={lineChartData} height={300} width={800}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              angle={-90}
-              dataKey="date"
-              height={100}
-              padding={{ left: 30, right: 30 }}
-              tickMargin={45}
-            />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="internal"
-              stroke="#8884d8"
-              dot={false}
-            />
-            <Line
-              dataKey="external"
-              dot={false}
-              stroke="#82ca9d"
-              type="monotone"
-            />
-          </LineChart>
+          <ResponsiveContainer width="100%" aspect={3.0}>
+            <LineChart data={lineChartData} height={300}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                angle={-90}
+                dataKey="date"
+                height={100}
+                padding={{ left: 30, right: 30 }}
+                tickMargin={45}
+              />
+              <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="internal"
+                stroke="#8884d8"
+                dot={false}
+              />
+              <Line
+                dataKey="external"
+                dot={false}
+                stroke="#82ca9d"
+                type="monotone"
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </CardContent>
       </Card>
 
