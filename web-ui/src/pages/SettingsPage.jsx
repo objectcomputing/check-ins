@@ -39,7 +39,7 @@ const SettingsPage = () => {
   const settingsControls = [
     {
       componentName: 'SettingsFile',
-      title: 'Branding',
+      label: 'File Control',
       description: 'Upload your logo file',
       fileRef: hiddenFileInput,
       handleFile
@@ -59,6 +59,7 @@ const SettingsPage = () => {
     {
       componentName: 'SettingsBoolean',
       label: 'Boolean Control',
+      value: true,
       description: 'A control to hold a boolean value',
       handleChange: event => console.log(`BOOLEAN ${event.target.checked}`)
     },
@@ -66,6 +67,7 @@ const SettingsPage = () => {
       componentName: 'SettingsColor',
       label: 'Color Control',
       description: 'A control to hold a color value',
+      value: '#2c519e',
       handleChange: event => console.log(`COLOR: ${event.target.value}`)
     }
   ];

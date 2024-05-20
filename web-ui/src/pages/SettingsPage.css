@@ -56,10 +56,12 @@
       line-height: 1;
     }
   }
+
   > p {
     grid-area: description;
     align-self: center;
   }
+
   > .settings-control {
     grid-area: control;
     align-self: start;

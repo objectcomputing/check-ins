@@ -1,8 +1,21 @@
 import React from 'react';
-import { Avatar, Button, Typography } from '@mui/material';
-import { AddCircle, Palette } from '@mui/icons-material';
+import { Button, Typography } from '@mui/material';
+import { AddCircle } from '@mui/icons-material';
 
-const SettingsFile = ({ branding, fileRef, handleFile, title, description }) => {
+/**
+ * A component for handling file settings.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.label - The label of the file settings.
+ * @param {string} [props.description] - The description of the file settings.
+ * @param {Object} props.fileRef - The reference to the file input element.
+ * @param {Function} props.handleFile - The function to handle file upload.
+ * @returns {JSX.Element} The rendered component.
+ */
+const SettingsFile = ({ fileRef, handleFile, label, description }) => {
+  const labelId = label.replace(/\s/g, '-').toLowerCase();
+
   const handleClick = event => {
     fileRef.current.click();
   };
@@ -13,33 +26,28 @@ const SettingsFile = ({ branding, fileRef, handleFile, title, description }) => 
   };
 
   return (
-    <>
-      <Typography variant="h5" gutterBottom>{title}</Typography>
-      <div className="settings-grid-2col grid-items-start">
-        <div>
-          {branding ? (
-            <Avatar alt="Branding" src={branding} sx={{ width: 100, height: 100 }} />
-          ) : (
-            <Avatar sx={{ width: 100, height: 100 }}>
-              <Palette sx={{ fontSize: 60 }} />
-            </Avatar>
-            )}
-        </div>
-        <div>
-          <p>{description}</p>
-          <Button onClick={handleClick}>
-            <AddCircle />&nbsp; Upload
-          </Button>
-          <input
-            type="file"
-            ref={fileRef}
-            onChange={handleChange}
-            className="hidden"
-          />
-        </div>
+    <div className="settings-type">
+      <label htmlFor={labelId}>
+        <Typography variant="h5" gutterBottom>
+          {label}
+        </Typography>
+      </label>
+      {description ?? <p>{description}</p>}
+      <div className="settings-control">
+        <Button onClick={handleClick}>
+          <AddCircle />
+          &nbsp; Upload
+        </Button>
+        <input
+          id={labelId}
+          type="file"
+          ref={fileRef}
+          onChange={handleChange}
+          className="hidden"
+        />
       </div>
-    </>
+    </div>
   );
-}
+};
 
 export default SettingsFile;
