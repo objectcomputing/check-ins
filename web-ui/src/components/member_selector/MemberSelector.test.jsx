@@ -32,7 +32,7 @@ describe('MemberSelector', () => {
   it('renders correctly with default props', () => {
     snapshot(
       <AppContextProvider value={initialState}>
-        <MemberSelector onChange={vi.fn()} />
+        <MemberSelector onChange={vi.fn()} selected={[]} />
       </AppContextProvider>
     );
   });
@@ -46,7 +46,6 @@ describe('MemberSelector', () => {
           title="Custom Title"
           outlined
           exportable
-          listHeight={300}
           className="test-class"
           style={{ margin: '10px' }}
         />

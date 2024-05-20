@@ -10,17 +10,13 @@ import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import com.objectcomputing.checkins.util.Util;
+import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -51,7 +47,7 @@ public class CheckInServicesImpl implements CheckInServices {
         List<Permission> userPermissions = rolePermissionServices.findUserPermissions(memberId);
         if (!userPermissions.isEmpty()) {
             hasPermission = userPermissions.stream().map(Permission::name).anyMatch(str -> str.equals(permission.name()));
-            LOG.debug("Member has elevated access permisson: {}", hasPermission);
+            LOG.debug("Member has elevated access permission: {}", hasPermission);
         }
         return hasPermission;
     }

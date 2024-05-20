@@ -1,47 +1,36 @@
 package com.objectcomputing.checkins.services.survey;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
-import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 
 @Controller("/services/surveys")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="survey")
-
 public class SurveyController {
 
     private final SurveyService surveyResponseServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public SurveyController(SurveyService surveyResponseServices,
-                                   EventLoopGroup eventLoopGroup,
-                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public SurveyController(SurveyService surveyResponseServices) {
         this.surveyResponseServices = surveyResponseServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -52,18 +41,14 @@ public class SurveyController {
      * @return
      */
     @Get("/{?name,createdBy}")
-    public Mono<HttpResponse<Set<Survey>>> findSurveys(@Nullable String name,
-                                                       @Nullable UUID createdBy) {
+    public Mono<HttpResponse<Set<Survey>>> findSurveys(@Nullable String name, @Nullable UUID createdBy) {
         return Mono.fromCallable(() -> {
             if (name!=null || createdBy!=null) {
                 return surveyResponseServices.findByFields(name, createdBy);
             } else {
                 return surveyResponseServices.readAll();
             }
-        })
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(survey -> (HttpResponse<Set<Survey>>) HttpResponse.ok(survey))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        }).map(HttpResponse::ok);
     }
 
     /**
@@ -74,14 +59,11 @@ public class SurveyController {
      */
 
     @Post()
-    public Mono<HttpResponse<Survey>> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse,
-                                                                   HttpRequest<SurveyCreateDTO> request) {
-        return Mono.fromCallable(() -> surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(), surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription())))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(survey -> {return (HttpResponse<Survey>) HttpResponse
-                        .created(survey)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), survey.getId()))));
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public Mono<HttpResponse<Survey>> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse, HttpRequest<?> request) {
+        return Mono.fromCallable(() -> surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(),
+                        surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription())))
+                .map(survey -> HttpResponse.created(survey)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), survey.getId())))));
     }
 
     /**
@@ -91,16 +73,10 @@ public class SurveyController {
      * @return {@link HttpResponse<Survey>}
      */
     @Put()
-    public Mono<HttpResponse<Survey>> update(@Body @Valid @NotNull Survey surveyResponse,
-                                                      HttpRequest<Survey> request) {
+    public Mono<HttpResponse<Survey>> update(@Body @Valid @NotNull Survey surveyResponse, HttpRequest<?> request) {
         return Mono.fromCallable(() -> surveyResponseServices.update(surveyResponse))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedSurvey -> (HttpResponse<Survey>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSurvey.getId()))))
-                        .body(updatedSurvey))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
-
+                .map(updatedSurvey -> HttpResponse.ok(updatedSurvey)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSurvey.getId())))));
     }
 
     /**
@@ -109,9 +85,8 @@ public class SurveyController {
      * @param id, id of {@link Survey} to delete
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteSurvey(@NotNull UUID id) {
-        surveyResponseServices.delete(id);
-        return HttpResponse
-                .ok();
+    public Mono<HttpResponse<?>> deleteSurvey(@NotNull UUID id) {
+        return Mono.fromRunnable(() -> surveyResponseServices.delete(id))
+                .thenReturn(HttpResponse.ok());
     }
 }

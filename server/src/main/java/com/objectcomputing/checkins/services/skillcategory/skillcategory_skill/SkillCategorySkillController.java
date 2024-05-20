@@ -7,19 +7,17 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
+import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/skills/category-skills")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,39 +25,24 @@ import java.util.concurrent.ExecutorService;
 public class SkillCategorySkillController {
 
     private final SkillCategorySkillServices skillCategorySkillServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public SkillCategorySkillController(SkillCategorySkillServices skillCategorySkillServices,
-                                        EventLoopGroup eventLoopGroup,
-                                        @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public SkillCategorySkillController(SkillCategorySkillServices skillCategorySkillServices) {
         this.skillCategorySkillServices = skillCategorySkillServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     @Post()
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
-    public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkillId dto,
-                                                         HttpRequest<SkillCategorySkillId> request) {
-        return Mono
-                .fromCallable(() -> skillCategorySkillServices.save(dto))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(skillCategorySkill -> {
-                    URI uri = URI.create(String.format("%s", request.getPath()));
-                    return (HttpResponse<SkillCategorySkill>) HttpResponse
-                            .created(skillCategorySkill)
-                            .headers(headers -> headers.location(uri));
-                })
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkillId dto, HttpRequest<?> request) {
+        return Mono.fromCallable(() -> skillCategorySkillServices.save(dto))
+                .map(skillCategorySkill -> HttpResponse.created(skillCategorySkill)
+                        .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))));
     }
 
     @Delete()
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<?>> delete(@Body @Valid SkillCategorySkillId dto) {
         return Mono.fromRunnable(() -> skillCategorySkillServices.delete(dto))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService)).thenReturn(HttpResponse.ok());
+                .thenReturn(HttpResponse.ok());
     }
 
 }

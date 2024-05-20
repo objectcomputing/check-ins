@@ -1,7 +1,11 @@
 import fileDownload from 'js-file-download';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
+import DownloadIcon from '@mui/icons-material/FileDownload';
+import PersonIcon from '@mui/icons-material/Person';
+import { Button, Grid, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
 import { createMember, reportAllMembersCsv } from '../../../api/member';
@@ -12,10 +16,7 @@ import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin
 } from '../../../context/selectors';
-
-import { Button, Grid, TextField } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/FileDownload';
-import PersonIcon from '@mui/icons-material/Person';
+import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import './Users.css';
 
@@ -68,6 +69,27 @@ const Users = () => {
     isAdmin && includeTerminated
       ? selectNormalizedMembersAdmin(state, searchText)
       : selectNormalizedMembers(state, searchText);
+
+  useQueryParameters([
+    {
+      name: 'addUser',
+      default: false,
+      value: open,
+      setter: setOpen
+    },
+    {
+      name: 'includeTerminated',
+      default: false,
+      value: includeTerminated,
+      setter: setIncludeTerminated
+    },
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
+    }
+  ]);
 
   const handleOpen = () => setOpen(true);
 

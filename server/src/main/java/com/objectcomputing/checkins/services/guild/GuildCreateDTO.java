@@ -1,17 +1,22 @@
 package com.objectcomputing.checkins.services.guild;
 
 import io.micronaut.core.annotation.Introspected;
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import io.micronaut.core.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
+@Data
+@NoArgsConstructor
 @Introspected
 public class GuildCreateDTO {
+    @Setter
     @NotBlank
     @Schema(required = true, description = "name of the guild")
     private String name;
@@ -26,65 +31,20 @@ public class GuildCreateDTO {
     @Nullable
     @Schema(description="link to the homepage of the guild")
     private String link;
-    
 
-    public GuildCreateDTO(String name, @Nullable String description, @Nullable String link) {
+    @NotNull
+    @Schema(description = "Is the guild a community")
+    private boolean community;
+
+    public GuildCreateDTO(String name, @Nullable String description, @Nullable String link, boolean community) {
         this.name = name;
         this.description = description;
         this.link =link;
+        this.community = community;
     }
 
-    public GuildCreateDTO() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        com.objectcomputing.checkins.services.guild.GuildCreateDTO that = (com.objectcomputing.checkins.services.guild.GuildCreateDTO) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description) && Objects.equals(link, that.link);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, description);
-    }
-
-    public List<GuildMemberCreateDTO> getGuildMembers() {
-        return guildMembers;
-    }
-
-    public void setGuildMembers(List<GuildMemberCreateDTO> guildMembers) {
-        this.guildMembers = guildMembers;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Nullable
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(@Nullable String description) {
-        this.description = description;
-    }
-
-    @Nullable
-    public String getLink() {
-        return this.link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
+    @Data
+    @NoArgsConstructor
     @Introspected
     public static class GuildMemberCreateDTO {
 
@@ -99,22 +59,6 @@ public class GuildCreateDTO {
         public GuildMemberCreateDTO(UUID memberId, Boolean lead) {
             this.memberId = memberId;
             this.lead = lead;
-        }
-
-        public Boolean getLead() {
-            return lead;
-        }
-
-        public void setLead(Boolean lead) {
-            this.lead = lead;
-        }
-
-        public UUID getMemberId() {
-            return memberId;
-        }
-
-        public void setMemberId(UUID memberId) {
-            this.memberId = memberId;
         }
     }
 }

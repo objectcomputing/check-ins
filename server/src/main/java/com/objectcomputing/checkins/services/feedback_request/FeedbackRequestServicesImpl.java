@@ -16,11 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -204,7 +200,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
-    public Boolean delete(UUID id) {
+    public void delete(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
         if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback request with id " + id);
@@ -215,7 +211,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         feedbackReqRepository.deleteById(id);
-        return true;
     }
 
     @Override

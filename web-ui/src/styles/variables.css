@@ -1,0 +1,115 @@
+:root {
+  /** Breakpoints
+      (more of a reference unless we bring in 
+      postcss & custom-media)
+  */
+  --sm: 600px;
+  --md: 900px;
+  --lg: 1200px;
+  --xl: 1536px;
+
+  /* Colors */
+  --oci-light-blue: #76c8d4;
+  --oci-dark-blue: #2c519e;
+  --oci-orange: #f8b576;
+  --black: #121212;
+  --white: #fff;
+  --gray-dark: #555353;
+  --gray-light: #e5e5e5;
+  --gray: #808080;
+  --red: #f00;
+  --orange: #b26801;
+  --yellow: #ee8c00;
+  --green: #006400;
+
+  --primary: var(--oci-dark-blue);
+  --primary-light: color-mix(in oklab, var(--oci-dark-blue), var(--white) 10%);
+  --primary-dark: #1a2e4f;
+  --secondary: var(--oci-orange) --secondary-main: var(--oci-light-blue);
+  --primary-text: var(--black);
+  --primary-link-light: var(--primary-light);
+  --primary-link-light-hover: #6084d1;
+  --primary-link-dark: color-mix(
+    in oklab,
+    var(--oci-dark-blue),
+    var(--white) 35%
+  );
+  --primary-link-dark-hover: #4f5f8c;
+  --action: color-mix(in oklab, var(--black), var(--white) 50%);
+  --action-disabled: color-mix(in oklab, var(--black), var(--white) 5%);
+  --muted: color-mix(in oklab, var(--black), var(--white) 47%);
+
+  --checkins-palette-action-disabledOpacity: 0.58;
+
+  /* MUI Prefixes */
+  --checkins-palette-primary-main: var(--primary-light);
+  --checkins-palette-primary-mainChannel: 118, 200, 212;
+  --checkins-palette-primary-link: var(--primary-light);
+  --checkins-palette-primary-link-hover: var(--primary-link-light-hover);
+  --checkins-palette-primary-text: var(--primary-text);
+  --checkins-palette-primary-contrastText: var(--white);
+  --checkins-palette-primary-menuItem: #111;
+  --checkins-palette-secondary-main: var(--secondary);
+  --checkins-palette-alternate-main: rebeccapurple;
+  --checkins-palette-secondary-mainChannel: 240 184 125;
+  --checkins-palette-background-paper: var(--white);
+  --checkins-palette-background-default: #f5f5f5;
+  --checkins-palette-content-color: var(--checkins-palette-primary-menuItem);
+  --checkins-palette-gray-light: var(--gray-light);
+  --checkins-palette-gray-dark: var(--gray-dark);
+  --checkins-palette-gray: var(--gray);
+  --checkins-palette-red: var(--red);
+  --checkins-palette-yellow: var(--yellow);
+  --checkins-palette-green: var(--green);
+  --checkins-palette-action: var(--action);
+  --checkins-palette-action-disabled: var(--action-disabled);
+  --checkins-palette-action-yellow: lightyellow;
+  --checkins-palette-action-green: lightgreen;
+
+  &[data-mui-color-scheme='dark'] {
+    --primary-text: color-mix(in oklab, var(--white), var(--black) 10%);
+    --action: var(--white);
+    --action-disabled: color-mix(in oklab, var(--white), var(--black) 30%);
+    --muted: color-mix(in oklab, var(--black), var(--white) 53%);
+
+    --primary-main: var(--oci-light-blue);
+    --primary-light: color-mix(
+      in oklab,
+      var(--oci-dark-blue),
+      var(--white) 30%
+    );
+    --checkins-palette-primary-main: var(--primary-link-dark);
+    --checkins-palette-primary-light: var(--primary-light);
+    --checkins-palette-primary-link: var(--primary-link-dark);
+    --checkins-palette-primary-link-hover: var(--primary-link-dark-hover);
+    --checkins-palette-primary-menuItem: var(--primary-link-light);
+    --checkins-palette-AppBar-darkBg: var(--checkins-palette-primary-main);
+    --checkins-palette-background-paper: #121212;
+    --checkins-palette-background-default: #121212;
+    --checkins-palette-content-color: var(--white);
+    --checkins-palette-gray-light: #e5e5e526;
+    --checkins-palette-gray-dark: var(--gray);
+    --checkins-palette-action-yellow: var(--orange);
+    --checkins-palette-action-green: var(--green);
+  }
+
+  /* Sizing */
+  --nav-width: 250px;
+
+  @media (min-width: 600px) {
+    --nav-width: 150px;
+  }
+
+  /* Accessibility */
+  --transition-timing: 0.5s;
+  --transition-timing-short: 0.25s;
+  --transition-timing-long: 0.75s;
+  --transition-timing-extra-long: 5s;
+
+  @media (prefers-reduced-motion: reduce) {
+    --transition-timing: 0s;
+    --transition-timing-short: 0s;
+    --transition-timing-long: 0s;
+    --transition-timing-extra-long: 0s;
+  }
+}

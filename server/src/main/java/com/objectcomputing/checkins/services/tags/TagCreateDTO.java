@@ -2,21 +2,17 @@ package com.objectcomputing.checkins.services.tags;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
+@Setter
+@Getter
 @Introspected
 public class TagCreateDTO {
 
     @NotNull
-    @Schema(description = "the name of the tag", required = true)
+    @Schema(description = "the name of the tag")
     private String name;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

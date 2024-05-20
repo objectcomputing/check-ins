@@ -1,45 +1,35 @@
 package com.objectcomputing.checkins.services.guild;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
-import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/guilds")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "guilds")
 public class GuildController {
 
-    private GuildServices guildService;
-    private EventLoopGroup eventLoopGroup;
-    private final Scheduler scheduler;
+    private final GuildServices guildService;
 
-    public GuildController(GuildServices guildService,
-                           EventLoopGroup eventLoopGroup,
-                           @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public GuildController(GuildServices guildService) {
         this.guildService = guildService;
-        this.eventLoopGroup = eventLoopGroup;
-        this.scheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -49,14 +39,10 @@ public class GuildController {
      * @return {@link HttpResponse<GuildResponseDTO>}
      */
     @Post()
-    public Mono<HttpResponse<GuildResponseDTO>> createAGuild(@Body @Valid GuildCreateDTO guild, HttpRequest<GuildCreateDTO> request) {
-
+    public Mono<HttpResponse<GuildResponseDTO>> createAGuild(@Body @Valid GuildCreateDTO guild, HttpRequest<?> request) {
         return Mono.fromCallable(() -> guildService.save(guild))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(createdGuild -> (HttpResponse<GuildResponseDTO>) HttpResponse
-                        .created(createdGuild)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdGuild.getId())))))
-                .subscribeOn(scheduler);
+                .map(createdGuild -> HttpResponse.created(createdGuild)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdGuild.getId())))));
     }
 
     /**
@@ -69,43 +55,35 @@ public class GuildController {
     @Get("/{id}")
     public Mono<HttpResponse<GuildResponseDTO>> readGuild(@NotNull UUID id) {
         return Mono.fromCallable(() -> guildService.read(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(guild -> (HttpResponse<GuildResponseDTO>) HttpResponse.ok(guild))
-                .subscribeOn(scheduler);
+                .map(HttpResponse::ok);
     }
 
     /**
      * Find guild(s) given a combination of the following parameters
      *
      * @param name,     name of the guild
-     * @param memberid, {@link UUID} of the member you wish to inquire in to which guilds they are a part of
+     * @param memberId, {@link UUID} of the member you wish to inquire in to which guilds they are a part of
      * @return {@link List < GuildResponseDTO > list of guilds}, return all guilds when no parameters filled in else
-     * return all guilds that match all of the filled in params
+     * return all guilds that match the filled in params
      */
 
     @Get("/{?name,memberid}")
-    public Mono<HttpResponse<Set<GuildResponseDTO>>> findGuilds(@Nullable String name, @Nullable UUID memberid) {
-        return Mono.fromCallable(() -> guildService.findByFields(name, memberid))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(guilds -> (HttpResponse<Set<GuildResponseDTO>>) HttpResponse.ok(guilds))
-                .subscribeOn(scheduler);
+    public Mono<HttpResponse<Set<GuildResponseDTO>>> findGuilds(@Nullable String name, @Nullable UUID memberId) {
+        return Mono.fromCallable(() -> guildService.findByFields(name, memberId))
+                .map(HttpResponse::ok);
     }
 
     /**
      * Update guild.
      *
      * @param guild, {@link GuildUpdateDTO}
-     * @return {@link HttpResponse< GuildResponseDTO >}
+     * @return {@link HttpResponse<GuildResponseDTO>}
      */
     @Put()
-    public Mono<HttpResponse<GuildResponseDTO>> update(@Body @Valid GuildUpdateDTO guild, HttpRequest<GuildUpdateDTO> request) {
+    public Mono<HttpResponse<GuildResponseDTO>> update(@Body @Valid GuildUpdateDTO guild, HttpRequest<?> request) {
         return Mono.fromCallable(() -> guildService.update(guild))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updated -> (HttpResponse<GuildResponseDTO>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), guild.getId()))))
-                        .body(updated))
-                .subscribeOn(scheduler);
+                .map(updated -> HttpResponse.ok(updated)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), guild.getId())))));
 
     }
 
@@ -113,14 +91,12 @@ public class GuildController {
      * Delete Guild
      *
      * @param id, id of {@link GuildUpdateDTO} to delete
-     * @return
+     * @return http ok response
      */
     @Delete("/{id}")
-    public Mono<HttpResponse> deleteGuild(@NotNull UUID id) {
+    public Mono<HttpResponse<Object>> deleteGuild(@NotNull UUID id) {
         return Mono.fromCallable(() -> guildService.delete(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(success -> (HttpResponse) HttpResponse.ok())
-                .subscribeOn(scheduler);
+                .map(success -> HttpResponse.ok());
     }
 
 }

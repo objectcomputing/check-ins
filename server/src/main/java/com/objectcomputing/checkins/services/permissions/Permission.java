@@ -35,7 +35,11 @@ public enum Permission {
   CAN_DELETE_CHECKIN_DOCUMENT("Delete check-ins document", "Check-ins"),
   CAN_VIEW_ALL_CHECKINS("View all check-ins", "Check-ins"),
   CAN_UPDATE_ALL_CHECKINS("Update all check-ins, including completed check-ins", "Check-ins"),
-  CAN_EDIT_SKILL_CATEGORIES("Edit skill categories", "Skill Categories");
+  CAN_EDIT_SKILL_CATEGORIES("Edit skill categories", "Skill Categories"),
+  CAN_CREATE_REVIEW_ASSIGNMENTS("Create review assignments", "Reviews"),
+  CAN_VIEW_REVIEW_ASSIGNMENTS("View review assignments", "Reviews"),
+  CAN_UPDATE_REVIEW_ASSIGNMENTS("Update review assignments", "Reviews"),
+  CAN_DELETE_REVIEW_ASSIGNMENTS("Delete review assignments", "Reviews");
 
   private final String description;
   private final String category;

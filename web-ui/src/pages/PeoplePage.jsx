@@ -1,15 +1,17 @@
 import React, { useContext, useState } from 'react';
+import { TextField, Grid, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 import MemberSummaryCard from '../components/member-directory/MemberSummaryCard';
+import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 import { AppContext } from '../context/AppContext';
 import {
   selectMemberProfilesLoading,
   selectNormalizedMembers
 } from '../context/selectors';
-import { TextField, Grid, Button } from '@mui/material';
 import './PeoplePage.css';
+import { useQueryParameters } from '../helpers/query-parameters';
 import KudosDialog from '../components/kudos_dialog/KudosDialog';
-import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 import StarIcon from '@mui/icons-material/Star';
 
 const PREFIX = 'PeoplePage';
@@ -44,6 +46,15 @@ const PeoplePage = () => {
   const [searchText, setSearchText] = useState('');
 
   const normalizedMembers = selectNormalizedMembers(state, searchText);
+
+  useQueryParameters([
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
+    }
+  ]);
 
   const createMemberCards = normalizedMembers.map((member, index) => {
     return (

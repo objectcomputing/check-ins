@@ -1,18 +1,18 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
 @Secured(SecurityRule.IS_ANONYMOUS)
+@ExecuteOn(TaskExecutors.IO)
 @Controller("/services/roles/members")
 public class MemberRoleController {
 
@@ -34,7 +34,7 @@ public class MemberRoleController {
     }
 
     @Post
-    HttpResponse<MemberRole> saveMemberRole(@NotNull MemberRoleId id){
+    HttpResponse<MemberRole> saveMemberRole(@NotNull @Body MemberRoleId id){
         MemberRole memberRole = memberRoleServices.saveByIds(id.getMemberId(), id.getRoleId());
         return HttpResponse.ok(memberRole);
     }

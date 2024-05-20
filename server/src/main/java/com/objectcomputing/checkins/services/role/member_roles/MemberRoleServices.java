@@ -2,8 +2,8 @@ package com.objectcomputing.checkins.services.role.member_roles;
 
 
 import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

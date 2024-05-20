@@ -37,17 +37,19 @@ import {
   FormHelperText,
   Divider
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '@mui/icons-material/Add';
 
-import { isArrayPresent } from './../../../helpers/checks';
+import { isArrayPresent } from '../../../helpers/checks';
+import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import './Roles.css';
-import EditIcon from '@mui/icons-material/Edit';
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
+  // roles here is all possible roles, not the selected roles.
   const { csrf, memberProfiles, roles, userRoles } = state;
 
   const [showAddUser, setShowAddUser] = useState(false);
@@ -61,11 +63,27 @@ const Roles = () => {
 
   memberProfiles?.sort((a, b) => a.name.localeCompare(b.name));
 
-  useEffect(() => {
-    if (roles) {
-      setSelectedRoles(roles.map(roleObj => roleObj.role));
+  if (!roles) console.error('Roles.jsx: state.roles is not set!');
+  const allRoles = roles.map(r => r.role).sort();
+  useQueryParameters([
+    {
+      name: 'roles',
+      default: allRoles,
+      value: selectedRoles,
+      setter(value) {
+        setSelectedRoles(isArrayPresent(value) ? value.sort() : allRoles);
+      },
+      toQP() {
+        return selectedRoles.join(',');
+      }
+    },
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
     }
-  }, [roles]);
+  ]);
 
   useEffect(() => {
     const memberMap = {};
@@ -208,9 +226,7 @@ const Roles = () => {
                   value={selectedRoles}
                   onChange={event => {
                     const value = event.target.value;
-                    setSelectedRoles(
-                      typeof value === 'string' ? value.split(',') : value
-                    );
+                    setSelectedRoles(value.sort());
                   }}
                   input={<OutlinedInput label="Roles" />}
                   renderValue={selected => selected.join(', ')}
@@ -280,7 +296,7 @@ const Roles = () => {
                 />
               )}
             />
-            <Button color="primary" onClick={() => addToRole(selectedMember)}>
+            <Button color="secondary" onClick={() => addToRole(selectedMember)}>
               Save
             </Button>
           </div>
@@ -295,9 +311,7 @@ const Roles = () => {
                       <ListSubheader style={{ padding: 0 }}>
                         <div className="role-header">
                           <div className="role-header-title">
-                            <Typography variant="h4" color="black">
-                              {roleObj.role}
-                            </Typography>
+                            <Typography variant="h4">{roleObj.role}</Typography>
                             <Typography
                               variant="subtitle1"
                               style={{

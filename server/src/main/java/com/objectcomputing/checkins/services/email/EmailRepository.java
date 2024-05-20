@@ -1,12 +1,11 @@
 package com.objectcomputing.checkins.services.email;
 
-import com.objectcomputing.checkins.services.email.Email;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import TeamSummaryCard from './TeamSummaryCard';
 import { AppContext } from '../../context/AppContext';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { TextField } from '@mui/material';
 import './TeamResults.css';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
+import { useQueryParameters } from '../../helpers/query-parameters';
 
 const PREFIX = 'TeamResults';
 const classes = {
@@ -38,7 +39,9 @@ const displayName = 'TeamResults';
 const TeamResults = () => {
   const { state } = useContext(AppContext);
   const loading = selectTeamsLoading(state);
+  const [addingTeam, setAddingTeam] = useState(false);
   const [searchText, setSearchText] = useState('');
+  const [selectedTeamId, setSelectedTeamId] = useState('');
   const teams = selectNormalizedTeams(state, searchText);
 
   const teamCards = teams.map((team, index) => {
@@ -47,9 +50,32 @@ const TeamResults = () => {
         key={`team-summary-${team.id}`}
         index={index}
         team={team}
+        onTeamSelect={setSelectedTeamId}
+        selectedTeamId={selectedTeamId}
       />
     );
   });
+
+  useQueryParameters([
+    {
+      name: 'addNew',
+      default: false,
+      value: addingTeam,
+      setter: setAddingTeam
+    },
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
+    },
+    {
+      name: 'team',
+      default: '',
+      value: selectedTeamId,
+      setter: setSelectedTeamId
+    }
+  ]);
 
   return (
     <Root>
@@ -63,7 +89,7 @@ const TeamResults = () => {
             setSearchText(e.target.value);
           }}
         />
-        <TeamsActions />
+        <TeamsActions isOpen={addingTeam} onOpen={setAddingTeam} />
       </div>
       <div className="teams">
         {loading

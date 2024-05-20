@@ -19,6 +19,7 @@ import {
   selectRoles,
   selectHasPermissionAssignmentPermission
 } from '../context/selectors';
+import { useQueryParameters } from '../helpers/query-parameters';
 
 import './PermissionsPage.css';
 
@@ -66,13 +67,26 @@ const EditPermissionsPage = () => {
   const { csrf } = state;
   const roles = selectRoles(state);
   const hasPermission = selectHasPermissionAssignmentPermission(state);
-  const [selectedRole, setSelectedRole] = useState(
-    roles && roles.find(() => true)
-  );
+  const [selectedRole, setSelectedRole] = useState(roles[0]);
   const [categoriesList, setCategoriesList] = useState([]);
   const [rolePermissionsList, setRolePermissionsList] = useState([]);
   const [rolePermissions, setRolePermissions] = useState([]);
   const [refresh, setRefresh] = useState(true);
+
+  useQueryParameters([
+    {
+      name: 'role',
+      default: roles[0],
+      value: selectedRole,
+      setter(value) {
+        const role = roles.find(r => r.role === value);
+        setSelectedRole(role);
+      },
+      toQP(selectedRole) {
+        return selectedRole?.role ?? '';
+      }
+    }
+  ]);
 
   useEffect(() => {
     const getRolePermissions = async () => {

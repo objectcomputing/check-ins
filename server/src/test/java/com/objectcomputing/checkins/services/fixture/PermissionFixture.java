@@ -66,7 +66,11 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_UPDATE_CHECKIN_DOCUMENT,
         Permission.CAN_DELETE_CHECKIN_DOCUMENT,
         Permission.CAN_VIEW_ALL_CHECKINS,
-        Permission.CAN_UPDATE_ALL_CHECKINS
+        Permission.CAN_UPDATE_ALL_CHECKINS,
+        Permission.CAN_CREATE_REVIEW_ASSIGNMENTS,
+        Permission.CAN_VIEW_REVIEW_ASSIGNMENTS,
+        Permission.CAN_UPDATE_REVIEW_ASSIGNMENTS,
+        Permission.CAN_DELETE_REVIEW_ASSIGNMENTS
     );
 
 

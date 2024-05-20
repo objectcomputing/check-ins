@@ -3,9 +3,9 @@ package com.objectcomputing.checkins.services.questions;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -30,7 +30,7 @@ public class QuestionServicesImpl implements QuestionServices {
     }
 
     public Set<Question> readAllQuestions() {
-        return questionRepository.findAll();
+        return new HashSet<>(questionRepository.findAll());
     }
 
     public Question findById(@NotNull UUID id) {
@@ -38,7 +38,7 @@ public class QuestionServicesImpl implements QuestionServices {
     }
 
     protected Set<Question> findByValue(String text) {
-        Set<Question> questionList = questionRepository.findAll();
+        Set<Question> questionList = new HashSet<>(questionRepository.findAll());
         if (text != null) {
             questionList.retainAll(findByText(text));
         }

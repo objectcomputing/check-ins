@@ -91,7 +91,10 @@ const ReviewPage = () => {
         {selectedPeriod === null ? (
           <ReviewPeriods onPeriodSelected={onPeriodSelected} />
         ) : (
-          <TeamReviews periodId={selectedPeriod} />
+          <TeamReviews
+            onBack={() => setSelectedPeriod(null)}
+            periodId={selectedPeriod}
+          />
         )}
       </div>
     </Root>

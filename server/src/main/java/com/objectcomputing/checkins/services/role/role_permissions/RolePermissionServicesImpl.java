@@ -5,13 +5,12 @@ import com.objectcomputing.checkins.services.permissions.PermissionDTO;
 import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
-
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.CacheInvalidate;
 import io.micronaut.cache.annotation.Cacheable;
 import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotBlank;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,7 +84,7 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
 
     @Cacheable
     @Override
-    public List<Permission> findUserPermissions(@NotBlank UUID id) {
+    public List<Permission> findUserPermissions(@NotNull UUID id) {
 
         Set<Role> memberRoles = roleServices.findUserRoles(id);
 

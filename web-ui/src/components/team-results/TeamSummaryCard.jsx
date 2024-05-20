@@ -56,10 +56,9 @@ const propTypes = {
 
 const displayName = 'TeamSummaryCard';
 
-const TeamSummaryCard = ({ team, index }) => {
+const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
   const { state, dispatch } = useContext(AppContext);
   const { teams, userProfile, csrf } = state;
-  const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openKudos, setOpenKudos] = useState(false);
   // const [selectedTeam, setSelectedTeam] = useState(null);
@@ -82,11 +81,9 @@ const TeamSummaryCard = ({ team, index }) => {
       ? false
       : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
 
-  const handleOpen = () => setOpen(true);
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
   const handleOpenKudos = () => setOpenKudos(true);
 
-  const handleClose = () => setOpen(false);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
   const handleCloseKudos = () => setOpenKudos(false);
 
@@ -118,7 +115,7 @@ const TeamSummaryCard = ({ team, index }) => {
 
   const handleAction = (e, index) => {
     if (index === 0) {
-      handleOpen();
+      onTeamSelect(team.id);
     } else if (index === 1) {
       handleOpenKudos();
     } else if (index === 2) {
@@ -165,7 +162,7 @@ const TeamSummaryCard = ({ team, index }) => {
                   to={`/profile/${lead?.memberId}`}
                   style={{
                     textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.87)'
+                    color: 'inherit'
                   }}
                 >
                   {index !== leads.length - 1 ? `${lead?.name}, ` : lead?.name}
@@ -180,8 +177,9 @@ const TeamSummaryCard = ({ team, index }) => {
                   key={member?.memberId}
                   to={`/profile/${member?.memberId}`}
                   style={{
-                    textDecoration: 'none',
-                    color: 'rgba(0, 0, 0, 0.87)'
+                    color: 'inherit',
+                    opacity: 0.87,
+                    textDecoration: 'none'
                   }}
                 >
                   {index !== nonLeads.length - 1
@@ -228,8 +226,8 @@ const TeamSummaryCard = ({ team, index }) => {
       </CardActions>
       <EditTeamModal
         team={team}
-        open={open}
-        onClose={handleClose}
+        open={team.id === selectedTeamId}
+        onClose={() => onTeamSelect('')}
         onSave={async editedTeam => {
           const res = await updateTeam(editedTeam, csrf);
           const data =

@@ -17,10 +17,9 @@ import { UPDATE_TOAST } from '../../context/actions';
 import { useLocation, Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import { getAvatarURL } from '../../api/api';
-import AvatarMenu from '@mui/material/Menu';
 
 import MenuIcon from '@mui/icons-material/Menu';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import {
   AppBar,
   Avatar,
@@ -31,16 +30,15 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
-  MenuItem,
   Modal,
   Toolbar
 } from '@mui/material';
-
 import './Menu.css';
 
 const drawerWidth = 150;
-const PREFIX = "Menu";
+const PREFIX = 'Menu';
 const classes = {
   root: `${PREFIX}-root`,
   drawer: `${PREFIX}-drawer`,
@@ -48,59 +46,11 @@ const classes = {
   menuButton: `${PREFIX}-menuButton`,
   drawerPaper: `${PREFIX}-drawerPaper`,
   content: `${PREFIX}-content`,
+  listItem: `${PREFIX}-listItem`,
   listStyle: `${PREFIX}-listStyle`,
   nested: `${PREFIX}-nested`,
   subListItem: `${PREFIX}-subListItem`,
 };
-
-const Root = styled('div')(({ theme }) => ({
-  [`&.${classes.root}`]: {
-    display: "flex",
-    paddingRight: `${drawerWidth}px`,
-  },
-  [`& .${classes.drawer}`]: {
-    [theme.breakpoints.up('sm')]: {
-      width: drawerWidth,
-      flexShrink: 0
-    }
-  },
-  [`& .${classes.appBar}`]: {
-    [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-      ['@media print']: {
-        // eslint-disable-line no-useless-computed-key
-        width: `100%`,
-        marginLeft: '0px'
-      }
-    }
-  },
-  [`& .${classes.menuButton}`]: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-      display: 'none'
-    }
-  },
-  // necessary for content to be below app bar
-  // toolbar: theme.mixins.toolbar,
-  [`& .${classes.drawerPaper}`]: {
-    width: drawerWidth
-  },
-  [`& .${classes.content}`]: {
-    flexGrow: 1,
-    padding: theme.spacing(3)
-  },
-  [`& .${classes.listStyle}`]: {
-    textDecoration: 'none',
-    textAlign: 'left'
-  },
-  [`& .${classes.nested}`]: {
-    paddingLeft: theme.spacing(4)
-  },
-  [`& .${classes.subListItem}`]: {
-    fontSize: '0.9rem'
-  }
-}));
 
 const adminLinks = [
   ['/admin/manage-kudos', 'Manage Kudos'],
@@ -112,7 +62,7 @@ const adminLinks = [
 ];
 
 const directoryLinks = [
-  ['/guilds', 'Guilds'],
+  ['/guilds', 'Guilds & Communities'],
   ['/people', 'People'],
   ['/teams', 'Teams']
 ];
@@ -134,7 +84,7 @@ const isCollapsibleListOpen = (linksArr, loc) => {
   return false;
 };
 
-function Menu() {
+function Menu({ children }) {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
   const csrf = selectCsrfToken(state);
@@ -151,7 +101,6 @@ function Menu() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [showHoursUpload, setShowHoursUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
@@ -180,10 +129,6 @@ function Menu() {
     }
 
     return links;
-  };
-
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
   };
 
   const uploadFile = async file => {
@@ -280,10 +225,6 @@ function Menu() {
     setFeedbackOpen(false);
   };
 
-  const closeAvatarMenu = () => {
-    setAnchorEl(null);
-  };
-
   const closeHoursUpload = () => {
     setShowHoursUpload(false);
     setSelectedFile(null);
@@ -302,12 +243,11 @@ function Menu() {
 
   const createLinkJsx = (path, name, isSubLink) => {
     return (
-      <ListItem
+      <ListItemButton
         key={path}
         component={Link}
         to={path}
         className={isSubLink ? classes.nested : null}
-        button
         onClick={
           isSubLink
             ? undefined
@@ -321,7 +261,7 @@ function Menu() {
           classes={isSubLink ? { primary: classes.subListItem } : null}
           primary={name}
         />
-      </ListItem>
+      </ListItemButton>
     );
   };
 
@@ -348,59 +288,71 @@ function Menu() {
       </div>
 
       <List component="nav" className={classes.listStyle}>
-        {createLinkJsx('/', 'HOME', false)}
-        {isAdmin && (
-          <>
-            <ListItem onClick={toggleAdmin} className={classes.listItem}>
-              <ListItemText primary="ADMIN" />
-            </ListItem>
-            <Collapse in={adminOpen} timeout="auto" unmountOnExit>
-              {createListJsx(adminLinks, true)}
-              {isAdmin && (
-                <ListItem
-                  className={classes.listItem}
-                  onClick={openHoursUpload}
-                  style={{ marginLeft: '1rem' }}
-                >
-                  Upload Hours
-                </ListItem>
-              )}
-            </Collapse>
-          </>
-        )}
-        {createLinkJsx('/checkins', 'CHECK-INS', false)}
-        <ListItem onClick={toggleDirectory} className={classes.listItem}>
-          <ListItemText primary="DIRECTORY" />
-        </ListItem>
-        <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
-          {createListJsx(directoryLinks, true)}
-        </Collapse>
-        <ListItem onClick={toggleFeedback} className={classes.listItem}>
-          <ListItemText primary="FEEDBACK" />
-        </ListItem>
-        <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
-          {createListJsx(feedbackLinks, true)}
-        </Collapse>
-        {hasReportPermission && (
-          <React.Fragment>
-            <ListItem
-              button
-              onClick={toggleReports}
-              className={classes.listItem}
-            >
-              <ListItemText primary="REPORTS" />
-            </ListItem>
-            <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
-              {createListJsx(getReportLinks(), true)}
-            </Collapse>
-          </React.Fragment>
-        )}
+        <div>
+          <span className="Menu-listItem">
+            {createLinkJsx('/', 'HOME', false)}
+          </span>
+          {isAdmin && (
+            <>
+              <ListItemButton
+                onClick={toggleAdmin}
+                className={classes.listItem}
+              >
+                <ListItemText primary="ADMIN" />
+              </ListItemButton>
+              <Collapse in={adminOpen} timeout="auto" unmountOnExit>
+                {createListJsx(adminLinks, true)}
+                {isAdmin && (
+                  <ListItemButton
+                    sx={{ pl: 4, py: 1.5 }}
+                    className={classes.listItem}
+                    onClick={openHoursUpload}
+                  >
+                    Upload Hours
+                  </ListItemButton>
+                )}
+              </Collapse>
+            </>
+          )}
+          <span className="Menu-listItem">
+            {createLinkJsx('/checkins', 'CHECK-INS', false)}
+          </span>
+          <ListItemButton
+            onClick={toggleDirectory}
+            className={classes.listItem}
+          >
+            <ListItemText primary="DIRECTORY" />
+          </ListItemButton>
+          <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
+            {createListJsx(directoryLinks, true)}
+          </Collapse>
+          <ListItemButton onClick={toggleFeedback} className={classes.listItem}>
+            <ListItemText primary="FEEDBACK" />
+          </ListItemButton>
+          <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
+            {createListJsx(feedbackLinks, true)}
+          </Collapse>
+          {hasReportPermission && (
+            <React.Fragment>
+              <ListItemButton
+                onClick={toggleReports}
+                className={classes.listItem}
+              >
+                <ListItemText primary="REPORTS" />
+              </ListItemButton>
+              <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
+                {createListJsx(getReportLinks(), true)}
+              </Collapse>
+            </React.Fragment>
+          )}
+        </div>
+        {children}
       </List>
     </div>
   );
 
   return (
-    <Root className={classes.root}>
+    <div className={classes.root}>
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
@@ -415,14 +367,8 @@ function Menu() {
             <MenuIcon />
           </IconButton>
         </Toolbar>
-        <div
-          ref={anchorRef}
-          aria-controls={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}
-        >
+        <Link to={`/profile/${id}`}>
           <Avatar
-            onClick={handleClick}
             src={getAvatarURL(workEmail)}
             style={{
               position: 'absolute',
@@ -431,33 +377,9 @@ function Menu() {
               top: '10px',
               textDecoration: 'none'
             }}
+            alt={`${userProfile?.name}'s avatar`}
           />
-          <AvatarMenu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={closeAvatarMenu}
-          >
-            <MenuItem
-              component={Link}
-              onClick={closeAvatarMenu}
-              to={`/profile/${id}`}
-            >
-              Profile
-            </MenuItem>
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  closeAvatarMenu();
-                  openHoursUpload();
-                }}
-              >
-                Upload Hours
-              </MenuItem>
-            )}
-          </AvatarMenu>
-        </div>
+        </Link>
       </AppBar>
       <nav className={classes.drawer}>
         <Drawer
@@ -523,7 +445,7 @@ function Menu() {
       <main className={classes.content}>
         <div className={classes.toolbar} />
       </main>
-    </Root>
+    </div>
   );
 }
 

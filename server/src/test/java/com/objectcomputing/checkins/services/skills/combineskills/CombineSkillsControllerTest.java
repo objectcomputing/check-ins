@@ -9,7 +9,6 @@ import com.objectcomputing.checkins.services.fixture.SkillFixture;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.skills.Skill;
-import com.objectcomputing.checkins.services.skills.SkillServices;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -18,9 +17,9 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
@@ -48,11 +47,12 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     @Client("/services/member-skills")
     private HttpClient memberSkillClient;
 
-    private final SkillServices skillServices;
-
-    public CombineSkillsControllerTest(SkillServices skillServices1) {
-        this.skillServices = skillServices1;
-    }
+//    @Inject
+//    private SkillServices skillServices;
+//
+//    public CombineSkillsControllerTest(SkillServices skillServices1) {
+//        this.skillServices = skillServices1;
+//    }
 
     @Test
     public void testPOSTCombine2SkillsIntoOne() {

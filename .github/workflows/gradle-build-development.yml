@@ -15,25 +15,26 @@ jobs:
       name: Development
       url: https://checkins-develop-tuvcfzotpq-uc.a.run.app/
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up Node 14
-        uses: actions/setup-node@v2-beta
+      - name: Set up Node LTS
+        uses: actions/setup-node@v4
         with:
-          node-version: '14'
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
+          node-version: '20'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: 11
+          distribution: 'adopt' # See 'Supported distributions' for available options
+          java-version: 17
       - name: Cache SonarQube packages
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache Gradle packages
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}

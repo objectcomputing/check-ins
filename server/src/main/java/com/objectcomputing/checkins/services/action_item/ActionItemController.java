@@ -1,18 +1,18 @@
 package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.micronaut.core.annotation.Nullable;
-import javax.validation.Valid;
-
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import jakarta.validation.Valid;
 
 import java.net.URI;
 import java.util.List;
@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/action-items")
+@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "action-items")
@@ -38,7 +39,7 @@ public class ActionItemController {
     @Post()
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
-                                                     HttpRequest<ActionItemCreateDTO> request) {
+                                                     HttpRequest<?> request) {
         ActionItem newActionItem = actionItemServices.save(new ActionItem(actionItem.getCheckinid(),
                 actionItem.getCreatedbyid(), actionItem.getDescription()));
         return HttpResponse
@@ -55,7 +56,7 @@ public class ActionItemController {
      */
     @Put()
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
-    public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<ActionItem> request) {
+    public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<?> request) {
         ActionItem updatedActionItem = actionItemServices.update(actionItem);
         return HttpResponse
                 .ok()

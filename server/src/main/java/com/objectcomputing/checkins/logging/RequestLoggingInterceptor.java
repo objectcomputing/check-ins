@@ -7,7 +7,7 @@ import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.inject.ExecutableMethod;
 import io.micronaut.security.authentication.Authentication;
-import io.micronaut.web.router.MethodBasedRoute;
+import io.micronaut.web.router.MethodBasedRouteInfo;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +32,9 @@ public class RequestLoggingInterceptor implements HttpServerFilter {
         else if (!auth.get().getName().isBlank()){
             username = auth.get().getName();
         }
-        Optional<MethodBasedRoute> route = request.getAttribute("micronaut.http.route", MethodBasedRoute.class);
+        Optional<MethodBasedRouteInfo> route = request.getAttribute("micronaut.http.route", MethodBasedRouteInfo.class);
         if(route.isPresent()) {
-            MethodBasedRoute routeBuilder = route.get();
+            MethodBasedRouteInfo routeBuilder = route.get();
             ExecutableMethod targetMethod = routeBuilder.getTargetMethod().getExecutableMethod();
             String params = "";
             request.getParameters().forEach((key, value) -> params.concat(key).concat(":").concat(value.toString()));

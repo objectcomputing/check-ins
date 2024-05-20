@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import io.micronaut.core.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 public class MemberProfileUtils {
     public static String getFullName(MemberProfile memberProfile) {

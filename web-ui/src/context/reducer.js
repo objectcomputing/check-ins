@@ -7,6 +7,7 @@ import {
   DELETE_MEMBER_PROFILE,
   DELETE_MEMBER_SKILL,
   DELETE_ROLE,
+  DELETE_REVIEW_PERIOD,
   DELETE_SKILL,
   MY_PROFILE_UPDATE,
   SET_CSRF,
@@ -28,6 +29,7 @@ import {
   UPDATE_USER_BIO,
   UPDATE_PEOPLE_LOADING,
   UPDATE_TEAMS_LOADING,
+  UPDATE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIODS,
   ADD_REVIEW_PERIOD
 } from './actions';
@@ -225,11 +227,22 @@ export const reducer = (state, action) => {
       state.guilds.sort((a, b) => a.name.localeCompare(b.name));
       state.guilds = [...state.guilds];
       break;
-    case UPDATE_REVIEW_PERIODS:
-      state.reviewPeriods = action.payload;
-      break;
     case ADD_REVIEW_PERIOD:
       state.reviewPeriods = [...state.reviewPeriods, action.payload];
+      break;
+    case DELETE_REVIEW_PERIOD:
+      const periodId = action.payload;
+      state.reviewPeriods = state.reviewPeriods.filter(p => p.id !== periodId);
+      break;
+    case UPDATE_REVIEW_PERIOD:
+      const period = action.payload;
+      const periodIndex = state.reviewPeriods.findIndex(
+        p => p.id === period.id
+      );
+      if (periodIndex !== -1) state.reviewPeriods[periodIndex] = period;
+      break;
+    case UPDATE_REVIEW_PERIODS:
+      state.reviewPeriods = action.payload;
       break;
     default:
   }

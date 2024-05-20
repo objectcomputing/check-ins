@@ -28,6 +28,7 @@
   .email-format-button
   .email-format-button-content {
   width: 250px;
+  color: var(--checkins-palette-primary-text);
   height: 250px;
   padding: 1rem;
   display: flex;

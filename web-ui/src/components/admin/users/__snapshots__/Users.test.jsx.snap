@@ -75,7 +75,7 @@ exports[`renders correctly 1`] = `
             >
               <a
                 href="/profile/9876"
-                style="color: black; text-decoration: none;"
+                style="text-decoration: none;"
               >
                 <div
                   class="MuiCardHeader-root AdminMemberCard-header css-185gdzj-MuiCardHeader-root"
@@ -130,7 +130,7 @@ exports[`renders correctly 1`] = `
                      
                     <a
                       href="/profile/8765"
-                      style="text-decoration: none; color: rgba(0, 0, 0, 0.6);"
+                      style="text-decoration: none;"
                     />
                     <br />
                   </p>

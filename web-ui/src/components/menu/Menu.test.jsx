@@ -1,13 +1,17 @@
 import React from 'react';
+import { render } from '@testing-library/react';
 import Menu from './Menu';
+import { BrowserRouter } from 'react-router-dom';
 import { MemoryRouter } from 'react-router-dom';
 import { AppContextProvider } from '../../context/AppContext';
 
+const testId = 'some-id';
 const initialState = {
   state: {
     userProfile: {
       name: 'holmes',
       memberProfile: {
+        id: testId,
         pdlId: '',
         title: 'Tester',
         workEmail: 'test@tester.com'
@@ -55,6 +59,24 @@ const pdlState = {
 };
 
 describe('<Menu />', () => {
+  let originalMatchMedia;
+  beforeAll(() => {
+    originalMatchMedia = window.matchMedia;
+    window.matchMedia = query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {}, // Deprecated
+      removeListener: () => {}, // Deprecated
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => {}
+    });
+  });
+
+  afterAll(() => {
+    window.matchMedia = originalMatchMedia;
+  });
   it('renders correctly', () => {
     snapshot(
       <AppContextProvider value={initialState}>
@@ -83,5 +105,20 @@ describe('<Menu />', () => {
         </MemoryRouter>
       </AppContextProvider>
     );
+  });
+
+  it('adds link to avatar', () => {
+    const { container } = render(
+      <AppContextProvider value={initialState}>
+        <BrowserRouter>
+          <Menu />
+        </BrowserRouter>
+      </AppContextProvider>
+    );
+    const link = container.querySelector('header > a');
+    const href = link.getAttribute('href');
+    const lastIndex = href.lastIndexOf('/');
+    const id = href.substring(lastIndex + 1);
+    expect(id).toBe(testId);
   });
 });

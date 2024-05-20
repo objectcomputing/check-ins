@@ -1,63 +1,63 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import ArchiveIcon from '@mui/icons-material/Archive';
-import DeleteIcon from '@mui/icons-material/Delete';
-import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import WorkIcon from '@mui/icons-material/Work';
+import {
+  BorderColor,
+  DoorFront,
+  HourglassTop,
+  MeetingRoom,
+  QuestionMark
+} from '@mui/icons-material';
 
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
-import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import MenuItem from '@mui/material/MenuItem';
-import Modal from '@mui/material/Modal';
-import Select from '@mui/material/Select';
-import Skeleton from '@mui/material/Skeleton';
-import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
+import {
+  Avatar,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  MenuItem,
+  Modal,
+  Select,
+  Skeleton,
+  TextField,
+  Typography
+} from '@mui/material';
+
+import { useQueryParameters } from '../../../helpers/query-parameters';
+import { UPDATE_TOAST } from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
 
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
 import {
-  getReviewPeriods,
   createReviewPeriod,
-  updateReviewPeriod,
-  removeReviewPeriod
+  getReviewPeriods
 } from '../../../api/reviewperiods.js';
 import { AppContext } from '../../../context/AppContext';
 import {
-  UPDATE_REVIEW_PERIODS,
-  ADD_REVIEW_PERIOD
+  ADD_REVIEW_PERIOD,
+  UPDATE_REVIEW_PERIODS
 } from '../../../context/actions';
 import {
   selectCsrfToken,
-  selectUserProfile,
   selectCurrentUserId,
   selectReviewPeriod,
-  selectReviewPeriods
+  selectReviewPeriods,
+  selectUserProfile
 } from '../../../context/selectors';
+
+import { titleCase } from '../../../helpers/strings.js';
 
 const propTypes = {
   message: PropTypes.string,
   onSelect: PropTypes.func
 };
 const displayName = 'ReviewPeriods';
-const feedbackTemplateUrl = '/services/feedback/templates';
 
 const PREFIX = displayName;
 const classes = {
@@ -106,17 +106,37 @@ const Root = styled('div')(({ theme }) => ({
   }
 }));
 
+const ReviewStatus = {
+  PLANNING: 'PLANNING',
+  AWAITING_APPROVAL: 'AWAITING_APPROVAL',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  UNKNOWN: 'UNKNOWN'
+};
+
+const reviewStatusIconMap = {
+  [ReviewStatus.PLANNING]: <BorderColor />,
+  [ReviewStatus.AWAITING_APPROVAL]: <HourglassTop />,
+  [ReviewStatus.OPEN]: <MeetingRoom />,
+  [ReviewStatus.CLOSED]: <DoorFront />,
+  [ReviewStatus.UNKNOWN]: <QuestionMark />
+};
+
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
   const [canSave, setCanSave] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [periodToAdd, setPeriodToAdd] = useState({ name: '', open: true });
+  const [periodToAdd, setPeriodToAdd] = useState({
+    name: '',
+    reviewStatus: ReviewStatus.PLANNING,
+    launchDate: null,
+    selfReviewCloseDate: null,
+    closeDate: null
+  });
+  const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [selfReviews, setSelfReviews] = useState(null);
   const [templates, setTemplates] = useState([]);
-  const [toDelete, setToDelete] = useState(null);
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
@@ -124,8 +144,29 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const userProfile = selectUserProfile(state);
   const isAdmin = userProfile?.role?.includes('ADMIN');
 
-  const handleOpen = useCallback(() => setOpen(true), [setOpen]);
-  const handleClose = useCallback(() => setOpen(false), [setOpen]);
+  useQueryParameters([
+    {
+      name: 'add',
+      default: false,
+      value: reviewStatus,
+      setter(open) {
+        setReviewStatus(open ? ReviewStatus.OPEN : ReviewStatus.CLOSED);
+      },
+      toQP(reviewStatus) {
+        return reviewStatus === ReviewStatus.OPEN;
+      }
+    }
+  ]);
+
+  const handleOpen = useCallback(
+    () => setReviewStatus(ReviewStatus.OPEN),
+    [setReviewStatus]
+  );
+
+  const handleClose = useCallback(
+    () => setReviewStatus(ReviewStatus.CLOSED),
+    [setReviewStatus]
+  );
 
   const findPeriodByName = useCallback(
     name =>
@@ -135,19 +176,34 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const addReviewPeriod = useCallback(
     async name => {
-      if (!csrf) {
-        return;
-      }
+      if (!csrf) return;
+
       const alreadyExists = findPeriodByName(periodToAdd?.name);
       if (!alreadyExists) {
         handleOpen();
         const res = await createReviewPeriod(periodToAdd, csrf);
-        const data =
-          res && res.payload && res.payload.data ? res.payload.data : null;
-        data && dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
+        const data = res?.payload?.data ?? null;
+        if (data) {
+          dispatch({ type: ADD_REVIEW_PERIOD, payload: data });
+        } else {
+          console.error(res?.error);
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'error',
+              toast: 'Error adding review period'
+            }
+          });
+        }
       }
       handleClose();
-      setPeriodToAdd({ name: '', open: true });
+      setPeriodToAdd({
+        name: '',
+        reviewStatus: ReviewStatus.OPEN,
+        launchDate: null,
+        selfReviewCloseDate: null,
+        closeDate: null
+      });
     },
     [
       csrf,
@@ -160,25 +216,13 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     ]
   );
 
-  const toggleReviewPeriod = useCallback(
-    async id => {
-      if (!csrf) {
-        return;
-      }
-      const toUpdate = selectReviewPeriod(state, id);
-      toUpdate.open = !toUpdate?.open;
-      const res = await updateReviewPeriod(toUpdate, csrf);
-      const data =
-        res && res.payload && res.payload.data ? res.payload.data : null;
-      data && dispatch({ type: UPDATE_REVIEW_PERIODS, payload: [...periods] });
-    },
-    [csrf, state, periods, dispatch]
-  );
-
   const getSecondaryLabel = useCallback(
     periodId => {
       if (mode === 'self') {
-        if (selectReviewPeriod(state, periodId)?.open) {
+        if (
+          selectReviewPeriod(state, periodId)?.reviewStatus ===
+          ReviewStatus.OPEN
+        ) {
           if (
             !selfReviews ||
             !selfReviews[periodId] ||
@@ -200,34 +244,28 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     [selfReviews, state, mode]
   );
 
-  const handleConfirmClose = useCallback(() => {
-    setToDelete(null);
-    setConfirmOpen(false);
-  }, [setToDelete, setConfirmOpen]);
-
-  const deleteReviewPeriod = useCallback(async () => {
-    if (!csrf) {
-      return;
-    }
-
-    await removeReviewPeriod(toDelete, csrf);
-    dispatch({
-      type: UPDATE_REVIEW_PERIODS,
-      payload: periods.filter(period => period?.id !== toDelete)
-    });
-    handleConfirmClose();
-  }, [csrf, periods, dispatch, toDelete, handleConfirmClose]);
-
   const loadFeedbackTemplates = useCallback(async () => {
     const res = await getAllFeedbackTemplates(csrf);
-    const templates = res.payload.data;
-    templates?.sort((t1, t2) => t1.title.localeCompare(t2.title));
-    setTemplates(templates);
+    const templates = res?.payload?.data;
+    if (templates) {
+      templates?.sort((t1, t2) => t1.title.localeCompare(t2.title));
+      setTemplates(templates);
+    } else {
+      console.error(res?.error);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'Error fetching feedback templates'
+        }
+      });
+    }
   }, [csrf, dispatch]);
 
   useEffect(() => {
     const valid = Boolean(
       periodToAdd.name &&
+        periodToAdd.reviewStatus &&
         periodToAdd.reviewTemplateId &&
         periodToAdd.selfReviewTemplateId
     );
@@ -241,16 +279,21 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       setLoading(true);
       const res = await getReviewPeriods(csrf);
       const data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
+        res?.payload?.data && res.payload.status === 200 && !res.error
           ? res.payload.data
           : null;
       if (data) {
         dispatch({ type: UPDATE_REVIEW_PERIODS, payload: data });
         setLoading(false);
+      } else {
+        console.error(res?.error);
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Error fetching review periods'
+          }
+        });
       }
     };
     if (csrf) {
@@ -269,15 +312,20 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             csrf
           );
           const data =
-            res &&
-            res.payload &&
-            res.payload.data &&
-            res.payload.status === 200 &&
-            !res.error
+            res?.payload?.data && res?.payload?.status === 200 && !res?.error
               ? res.payload.data
               : null;
           if (data) {
             reviews[period.id] = data[0];
+          } else {
+            console.error(res?.error);
+            window.snackDispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: 'error',
+                toast: 'Error finding review request'
+              }
+            });
           }
         })
       ).then(() => setSelfReviews(reviews));
@@ -295,19 +343,26 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const onPeriodClick = useCallback(
     id => {
-      if (selectReviewPeriod(state, id)?.open) {
-        onPeriodSelected(id);
+      const status = selectReviewPeriod(state, id)?.reviewStatus;
+      switch (status) {
+        case ReviewStatus.PLANNING:
+          onPeriodSelected(id);
+          break;
+        case ReviewStatus.AWAITING_APPROVAL:
+          // TODO: Check for the required permission.
+          onPeriodSelected(id);
+          break;
+        case ReviewStatus.OPEN:
+          alert(
+            'The page for viewing review periods in the OPEN state has not been created yet.'
+          );
+          break;
+        default:
+          // We do nothing if the status is CLOSED or UNKNOWN.
+          break;
       }
     },
     [state, onPeriodSelected]
-  );
-
-  const confirmDelete = useCallback(
-    id => {
-      setToDelete(id);
-      setConfirmOpen(true);
-    },
-    [setToDelete, setConfirmOpen]
   );
 
   const handleReviewTemplateChange = event => {
@@ -364,56 +419,29 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         ) : periods.length > 0 ? (
           periods
             .sort((a, b) => {
-              return Boolean(a.open) === Boolean(b.open)
-                ? ('' + a.name).localeCompare(b.name)
-                : Boolean(a.open)
+              return a.reviewStatus === b.reviewStatus
+                ? (a.name || '').localeCompare(b.name)
+                : a.reviewStatus === ReviewStatus.OPEN
                   ? -1
                   : 1;
             })
-            .map(({ name, open, id }, i) => (
-              <>
-                <ListItem
-                  secondaryAction={
-                    isAdmin && (
-                      <>
-                        <Tooltip title={open ? 'Archive' : 'Unarchive'}>
-                          <IconButton
-                            onClick={() => toggleReviewPeriod(id)}
-                            aria-label={open ? 'Archive' : 'Unarchive'}
-                          >
-                            {open ? <ArchiveIcon /> : <UnarchiveIcon />}
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                          <IconButton
-                            onClick={() => confirmDelete(id)}
-                            edge="end"
-                            aria-label="Delete"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </>
-                    )
-                  }
-                  key={`period-${id}`}
-                >
+            .map(({ name, reviewStatus, id }, i) => (
+              <div key={i} className="reviewPeriodSection">
+                <ListItem key={`period-${id}`}>
                   <ListItemAvatar
                     key={`period-lia-${id}`}
                     onClick={() => onPeriodClick(id)}
                   >
-                    <Avatar>
-                      <WorkIcon />
-                    </Avatar>
+                    <Avatar>{reviewStatusIconMap[reviewStatus]}</Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     key={`period-lit-${id}`}
                     onClick={() => onPeriodClick(id)}
-                    primary={name + (open ? ' - Open' : '')}
+                    primary={`${name} - ${titleCase(ReviewStatus[reviewStatus])}`}
                     secondary={getSecondaryLabel(id)}
                   />
                 </ListItem>
-              </>
+              </div>
             ))
         ) : (
           <Typography variant="body1">
@@ -421,7 +449,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </Typography>
         )}
       </List>
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={reviewStatus === ReviewStatus.OPEN} onClose={handleClose}>
         <Box sx={modalStyles}>
           <TextField
             className="fullWidth"
@@ -500,28 +528,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           </div>
         </Box>
       </Modal>
-      <Dialog
-        open={confirmOpen}
-        onClose={handleConfirmClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {'Delete this review period?'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure that you would like to delete period{' '}
-            {selectReviewPeriod(state, toDelete)?.name}?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirmClose}>No</Button>
-          <Button onClick={deleteReviewPeriod} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Root>
   );
 };

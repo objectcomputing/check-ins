@@ -1,22 +1,25 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity
+@Setter
+@Getter
 @Introspected
 @Table(name = "checkins")
 public class CheckIn {
@@ -25,19 +28,19 @@ public class CheckIn {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "id of the checkin", required = true)
+    @Schema(description = "id of the checkin")
     private UUID id;
 
     @Column(name="teammemberid")
     @NotNull
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "id of team member", required = true)
+    @Schema(description = "id of team member")
     private UUID teamMemberId;
 
     @Column(name="pdlid")
     @NotNull
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "id of pdl", required = true)
+    @Schema(description = "id of pdl")
     private UUID pdlId;
 
     @Column(name="checkindate")
@@ -46,9 +49,8 @@ public class CheckIn {
 
     @NotNull
     @Column(name = "completed")
-    @Schema(description = "whether checkin is completed or not",
-            required = true)
-    private Boolean completed;
+    @Schema(description = "whether checkin is completed or not")
+    private boolean completed;
 
     public CheckIn() {}
 
@@ -62,46 +64,6 @@ public class CheckIn {
     
     public CheckIn(UUID teamMemberId, UUID pdlId, LocalDateTime checkInDate, Boolean completed) {
         this(null, teamMemberId, pdlId, checkInDate,completed);
-    }
-    
-    public boolean isCompleted() {
-        return completed != null && completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    };
-
-    public UUID getId() {
-        return this.id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getTeamMemberId() {
-        return this.teamMemberId;
-    }
-
-    public void setTeamMemberId(UUID teamMemberId) {
-        this.teamMemberId = teamMemberId;
-    }
-   
-    public UUID getPdlId() {
-        return this.pdlId;
-    }
-
-    public void setPdlId(UUID pdlId) {
-        this.pdlId = pdlId;
-    }
-
-    public LocalDateTime getCheckInDate() {
-        return this.checkInDate;
-    }
-
-    public void setCheckInDate(LocalDateTime checkInDate) {
-        this.checkInDate = checkInDate;
     }
 
     @Override
