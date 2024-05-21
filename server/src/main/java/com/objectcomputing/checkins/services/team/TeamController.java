@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/teams")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "teams")

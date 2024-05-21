@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/reports/member")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class MemberProfileReportController {
 
