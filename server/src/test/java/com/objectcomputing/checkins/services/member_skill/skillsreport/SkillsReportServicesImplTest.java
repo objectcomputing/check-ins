@@ -145,13 +145,13 @@ public class SkillsReportServicesImplTest {
         when(memberSkillRepository.findBySkillid(skillId4)).thenReturn(skillList4);
         MemberProfile joey = new MemberProfile("Joey", null, "Tribbiani", null,
                 null, null, null, null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, null);
         MemberProfile chandler = new MemberProfile("Chandler", null, "Bing", null,
                 null, null, null, null, null, null, null,
-                null, null,null, null, null);
+                null, null,null, null, null, null);
         MemberProfile ross = new MemberProfile("Ross", null, "Geller", null,
                 null, null, null, null, null, null, null,
-                null, null,null, null, null);
+                null, null,null, null, null, null);
         when(memberProfileServices.getById(memberId1)).thenReturn(joey);
         when(memberProfileServices.getById(memberId2)).thenReturn(chandler);
         when(memberProfileServices.getById(memberId3)).thenReturn(null);

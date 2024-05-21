@@ -149,7 +149,7 @@ public class MemberProfile {
     @Nullable
     private Boolean excluded;
 
-    @Column(name="lastseen")
+    @Column(name="last_seen")
     @Schema(description = "employee's last login")
     @Nullable
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
