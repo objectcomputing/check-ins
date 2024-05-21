@@ -78,6 +78,7 @@ const PulseReportPage = () => {
   const [lineChartData, setLineChartData] = useState([]);
   const [pulses, setPulses] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
+  console.log('PulseReportPage.jsx : teamMembers =', teamMembers);
 
   /*
   // This generates random data to use in the line chart
@@ -118,8 +119,11 @@ const PulseReportPage = () => {
     for (let i = 1; i <= 5; i++) {
       frequencies.push({ score: i, internal: 0, external: 0 });
     }
+    const teamMemberIds = teamMembers.map(member => member.id);
 
     for (const pulse of pulses) {
+      if (teamMemberIds.length && !teamMemberIds.includes(pulse.teamMemberId)) continue;
+
       const { date, externalScore, internalScore, submissionDate } = pulse;
       const [year, month, day] = submissionDate;
       const monthPadded = month.toString().padStart(2, '0');
@@ -135,7 +139,7 @@ const PulseReportPage = () => {
 
     setLineChartData(data);
     setBarChartData(frequencies);
-  }, [pulses]);
+  }, [pulses, teamMembers]);
 
   const loadPulses = async () => {
     if (!csrf) return;
