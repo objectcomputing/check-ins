@@ -35,7 +35,7 @@ configurations {
 }
 
 dependencies {
-    rewrite('org.openrewrite.recipe:rewrite-micronaut:2.1.1')
+    rewrite('org.openrewrite.recipe:rewrite-micronaut:2.5.0')
 
     runtimeOnly("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("org.yaml:snakeyaml")
