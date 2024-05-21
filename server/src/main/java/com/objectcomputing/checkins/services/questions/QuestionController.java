@@ -6,6 +6,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -20,16 +21,17 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Controller("/services/questions")
+@Controller(QuestionController.PATH)
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "questions")
-public class QuestionController {
+class QuestionController {
 
+    public static final String PATH = "/services/questions";
     private final QuestionServices questionService;
 
-    public QuestionController(QuestionServices questionService) {
+    QuestionController(QuestionServices questionService) {
         this.questionService = questionService;
     }
 
@@ -41,29 +43,26 @@ public class QuestionController {
      */
 
     @Post()
-    public Mono<HttpResponse<QuestionResponseDTO>> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> questionService.saveQuestion(toModel(question)))
-                .map(newQuestion -> HttpResponse.created(fromModel(newQuestion))
-                        .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), newQuestion.getId())))));
-
+    HttpResponse<QuestionResponseDTO> createAQuestion(@Body @Valid QuestionCreateDTO question) {
+        Question newQuestion = questionService.saveQuestion(toModel(question));
+        URI location = UriBuilder.of(PATH).path(newQuestion.getId().toString()).build();
+        return HttpResponse.created(fromModel(newQuestion))
+                .headers(headers -> headers.location(location));
     }
 
     /**
      * Find and read a question given its id.
      *
      * @param id {@link UUID} of the question entry
-     * @return {@link HttpResponse< QuestionResponseDTO >}
+     * @return {@link QuestionResponseDTO}
      */
     @Get("/{id}")
-    public Mono<HttpResponse<QuestionResponseDTO>> getById(UUID id) {
-        return Mono.fromCallable(() -> {
-            Question found = questionService.findById(id);
-            if (found == null) {
-                throw new NotFoundException("No question for UUID");
-            }
-            return found;
-        }).map(question -> HttpResponse.ok(fromModel(question)));
+    public QuestionResponseDTO getById(UUID id) {
+        Question found = questionService.findById(id);
+        if (found == null) {
+            throw new NotFoundException("No question for UUID");
+        }
+        return fromModel(found);
     }
 
     /**
@@ -71,25 +70,21 @@ public class QuestionController {
      *
      * @param text, the text of the question
      * @param categoryId, the category id of the question
-     * @return {@link List HttpResponse<QuestionResponseDTO >
+     * @return {@link Set<QuestionResponseDTO>}
      */
     @Get("/{?text,categoryId}")
-    public Mono<HttpResponse<Set<QuestionResponseDTO>>> findByText(@Nullable String text, @Nullable UUID categoryId) {
-        return Mono.fromCallable(() -> {
-            if (text != null) {
-                return questionService.findByText(text);
-            } else if (categoryId != null) {
-                return questionService.findByCategoryId(categoryId);
-            } else {
-                return questionService.readAllQuestions();
-            }
-        })
-        .map(questions -> {
-            Set<QuestionResponseDTO> responseBody = questions.stream()
-                    .map(this::fromModel)
-                    .collect(Collectors.toSet());
-            return HttpResponse.ok(responseBody);
-        });
+    Set<QuestionResponseDTO> findByText(@Nullable String text, @Nullable UUID categoryId) {
+        Set<Question> questions;
+        if (text != null) {
+             questions = questionService.findByText(text);
+        } else if (categoryId != null) {
+            questions = questionService.findByCategoryId(categoryId);
+        } else {
+            questions = questionService.readAllQuestions();
+        }
+        return questions.stream()
+                .map(this::fromModel)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -99,15 +94,14 @@ public class QuestionController {
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
     @Put()
-    public Mono<HttpResponse<QuestionResponseDTO>> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<?> request) {
+    HttpResponse<QuestionResponseDTO> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<?> request) {
         if (question == null) {
-            return Mono.just(HttpResponse.ok());
+            return HttpResponse.ok();
         }
-        return Mono.fromCallable(() -> questionService.update(toModel(question)))
-                .map(updatedQuestion -> HttpResponse.created(fromModel(updatedQuestion))
-                        .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), updatedQuestion.getId())))));
-
+        Question updatedQuestion = questionService.update(toModel(question));
+        URI location = UriBuilder.of(PATH).path(updatedQuestion.getId().toString()).build();
+        return HttpResponse.created(fromModel(updatedQuestion))
+                .headers(headers -> headers.location(location));
     }
 
     private QuestionResponseDTO fromModel(Question question) {

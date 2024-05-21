@@ -6,8 +6,10 @@ import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -21,16 +23,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Controller("/services/agenda-items")
+@Controller(AgendaItemController.PATH)
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "agenda-items")
-public class AgendaItemController {
+class AgendaItemController {
+    public static final String PATH = "/services/agenda-items";
 
     private final AgendaItemServices agendaItemServices;
 
-    public AgendaItemController(AgendaItemServices agendaItemServices) {
+    AgendaItemController(AgendaItemServices agendaItemServices) {
         this.agendaItemServices = agendaItemServices;
     }
 
@@ -42,10 +45,11 @@ public class AgendaItemController {
      */
     @Post("/")
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
-    public Mono<HttpResponse<AgendaItem>> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(), agendaItem.getCreatedbyid(), agendaItem.getDescription())))
-            .map(createAgendaItem -> HttpResponse.created(createAgendaItem)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createAgendaItem.getId())))));
+    HttpResponse<AgendaItem> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem) {
+        AgendaItem createAgendaItem = agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(), agendaItem.getCreatedbyid(), agendaItem.getDescription()));
+        URI location = UriBuilder.of(PATH).path(createAgendaItem.getId().toString()).build();
+        return HttpResponse.created(createAgendaItem)
+                .headers(headers -> headers.location(location));
     }
 
      /**
@@ -56,14 +60,14 @@ public class AgendaItemController {
      */
     @Put("/")
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
-    public Mono<HttpResponse<AgendaItem>> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<?> request) {
+    HttpResponse<?> updateAgendaItem(@Body @Valid AgendaItem agendaItem) {
         if (agendaItem == null) {
-            return Mono.just(HttpResponse.ok());
+            return HttpResponse.ok();
         }
-        return Mono.fromCallable(() -> agendaItemServices.update(agendaItem))
-                .map(updatedAgendaItem ->
-                        HttpResponse.ok(updatedAgendaItem)
-                                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedAgendaItem.getId())))));
+        AgendaItem updatedAgendaItem = agendaItemServices.update(agendaItem);
+        URI location = UriBuilder.of(PATH).path(updatedAgendaItem.getId().toString()).build();
+        return HttpResponse.ok(updatedAgendaItem)
+                .headers(headers -> headers.location(location));
     }
 
     /**
@@ -75,9 +79,8 @@ public class AgendaItemController {
      */
     @Get("/{?checkinid,createdbyid}")
     @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
-    public Mono<HttpResponse<Set<AgendaItem>>> findAgendaItems(@Nullable UUID checkinid, @Nullable UUID createdbyid) {
-        return Mono.fromCallable(() -> agendaItemServices.findByFields(checkinid, createdbyid))
-                .map(HttpResponse::ok);
+    Set<AgendaItem> findAgendaItems(@Nullable UUID checkinid, @Nullable UUID createdbyid) {
+        return agendaItemServices.findByFields(checkinid, createdbyid);
     }
 
      /**	
@@ -88,11 +91,12 @@ public class AgendaItemController {
      */
     @Get("/{id}")
     @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
-    public Mono<HttpResponse<AgendaItem>> readAgendaItem(UUID id) {
-        return Mono.fromCallable(() -> agendaItemServices.read(id))
-                .switchIfEmpty(Mono.error(new NotFoundException("No agenda item for UUID")))
-                .map(HttpResponse::ok);
-
+    AgendaItem readAgendaItem(UUID id) {
+        AgendaItem read = agendaItemServices.read(id);
+        if (read == null) {
+            throw new NotFoundException("No agenda item for UUID");
+        }
+        return read;
     }
 
     /**
@@ -101,8 +105,8 @@ public class AgendaItemController {
      * @param id, id of {@link AgendaItem} to delete
      */
     @Delete("/{id}")
-    public Mono<HttpResponse<?>> deleteAgendaItem(UUID id) {
-        return Mono.fromRunnable(() -> agendaItemServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    void deleteAgendaItem(UUID id) {
+        agendaItemServices.delete(id);
     }
 }

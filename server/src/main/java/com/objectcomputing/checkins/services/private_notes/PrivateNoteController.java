@@ -8,6 +8,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -20,16 +21,17 @@ import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 
-@Controller("/services/private-notes")
+@Controller(PrivateNoteController.PATH)
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "private-notes")
-public class PrivateNoteController {
+class PrivateNoteController {
+    public static final String PATH = "/services/private-notes";
 
     private final PrivateNoteServices privateNoteServices;
 
-    public PrivateNoteController(PrivateNoteServices privateNoteServices) {
+    PrivateNoteController(PrivateNoteServices privateNoteServices) {
         this.privateNoteServices = privateNoteServices;
     }
 
@@ -42,13 +44,11 @@ public class PrivateNoteController {
      */
     @Post()
     @RequiredPermission(Permission.CAN_CREATE_PRIVATE_NOTE)
-    public Mono<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
-                privateNote.getCreatedbyid(), privateNote.getDescription())))
-                .map(createPrivateNote -> HttpResponse.created(createPrivateNote)
-                        .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createPrivateNote.getId())))));
-
+    HttpResponse<PrivateNote> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<?> request) {
+        PrivateNote createPrivateNote = privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(), privateNote.getCreatedbyid(), privateNote.getDescription()));
+        URI location = UriBuilder.of(PATH).path(createPrivateNote.getId().toString()).build();
+        return HttpResponse.created(createPrivateNote)
+                .headers(headers -> headers.location(location));
     }
 
     /**
@@ -60,15 +60,14 @@ public class PrivateNoteController {
      */
     @Put()
     @RequiredPermission(Permission.CAN_UPDATE_PRIVATE_NOTE)
-    public Mono<HttpResponse<PrivateNote>> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<?> request) {
+    HttpResponse<PrivateNote> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<?> request) {
         if (privateNote == null) {
-            return Mono.just(HttpResponse.ok());
+            return HttpResponse.ok();
         }
-        return Mono.fromCallable(() -> privateNoteServices.update(privateNote))
-                .map(updatePrivateNote ->
-                        HttpResponse.ok(updatePrivateNote)
-                                .headers(headers -> headers.location(
-                                        URI.create(String.format("%s/%s", request.getPath(), updatePrivateNote.getId())))));
+        PrivateNote updatePrivateNote = privateNoteServices.update(privateNote);
+        URI location = UriBuilder.of(PATH).path(updatePrivateNote.getId().toString()).build();
+        return HttpResponse.ok(updatePrivateNote)
+                .headers(headers -> headers.location(location));
     }
 
     /**
@@ -80,9 +79,9 @@ public class PrivateNoteController {
      */
     @Get("/{?checkinid,createdbyid}")
     @RequiredPermission(Permission.CAN_VIEW_PRIVATE_NOTE)
-    public Mono<Set<PrivateNote>> findPrivateNote(@Nullable UUID checkinid,
+    public Set<PrivateNote> findPrivateNote(@Nullable UUID checkinid,
                                             @Nullable UUID createdbyid) {
-        return Mono.fromCallable(() -> privateNoteServices.findByFields(checkinid, createdbyid));
+        return privateNoteServices.findByFields(checkinid, createdbyid);
     }
 
     /**
@@ -93,15 +92,11 @@ public class PrivateNoteController {
      */
     @Get("/{id}")
     @RequiredPermission(Permission.CAN_VIEW_PRIVATE_NOTE)
-    public Mono<HttpResponse<PrivateNote>> readPrivateNote(UUID id) {
-        return Mono.fromCallable(() -> {
-            PrivateNote result = privateNoteServices.read(id);
-            if (result == null) {
-                throw new NotFoundException("No private note for UUID");
-            }
-            return result;
-        }).map(HttpResponse::ok);
-
+    public PrivateNote readPrivateNote(UUID id) {
+        PrivateNote result = privateNoteServices.read(id);
+        if (result == null) {
+            throw new NotFoundException("No private note for UUID");
+        }
+        return result;
     }
-
 }
