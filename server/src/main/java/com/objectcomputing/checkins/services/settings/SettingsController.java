@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller("/services/settings")
-@ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -41,6 +40,7 @@ public class SettingsController {
      * @param name {@link String} name of the setting
      * @return {@link <List<SettingResponseDTO>>} Returned setting
      */
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @Get("/{?name}")
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public Mono<HttpResponse<List<SettingsResponseDTO>>> findByName(@Nullable String name) {
@@ -61,6 +61,7 @@ public class SettingsController {
      * @return {@link HttpResponse<SettingsResponseDTO>}
      */
     @Post()
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public Mono<HttpResponse<SettingsResponseDTO>> save(@Body @Valid SettingsCreateDTO settingDTO, HttpRequest<?> request) {
         return Mono.fromCallable(() -> settingsServices.save(fromDTO(settingDTO)))
@@ -76,6 +77,7 @@ public class SettingsController {
      * @return {@link <SettingsReponseDTO>}
      */
     @Put()
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public Mono<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO, HttpRequest<?> request) {
         return Mono.fromCallable(() -> settingsServices.update(fromUpdateDTO(settingDTO)))
@@ -90,6 +92,7 @@ public class SettingsController {
      * @param id, id of {@link Setting} to delete
      */
     @Delete("/{id}")
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public Mono<HttpResponse<?>> delete(UUID id) {
         return Mono.fromCallable(() -> settingsServices.delete(id))
