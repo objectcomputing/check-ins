@@ -20,7 +20,7 @@ exports[`MobileTable > renders correctly 1`] = `
             scope="col"
           >
             <div
-              class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-ia8vjw-MuiAutocomplete-root"
+              class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-1p6gcs-MuiAutocomplete-root"
               style="min-width: 200px; max-width: 350px;"
             >
               <div

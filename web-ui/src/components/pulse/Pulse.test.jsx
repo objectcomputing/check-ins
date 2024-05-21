@@ -11,7 +11,7 @@ it('renders correctly', () => {
       setScore={() => {}}
     />
   );
-  expect(component).toMatchSnapshot();
+  expect(component.baseElement).toMatchSnapshot();
 });
 
 it('calls setComment', () => {
