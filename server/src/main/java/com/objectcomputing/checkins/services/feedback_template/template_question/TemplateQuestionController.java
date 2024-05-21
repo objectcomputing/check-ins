@@ -53,7 +53,7 @@ public class TemplateQuestionController {
      * @param requestBody {@link TemplateQuestionUpdateDTO} The updated template question
      * @return {@link TemplateQuestionResponseDTO}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<TemplateQuestionResponseDTO>> update(@Body @Valid @NotNull TemplateQuestionUpdateDTO requestBody) {
         return Mono.fromCallable(() -> templateQuestionServices.update(fromDTO(requestBody)))
                 .map(savedFeedbackTemplateQ -> HttpResponse.ok(fromEntity(savedFeedbackTemplateQ))

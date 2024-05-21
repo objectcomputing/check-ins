@@ -96,7 +96,7 @@ public class MemberSkillController {
      * @param memberSkill, {@link MemberSkill}
      * @return {@link MemberSkill}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<MemberSkill>> update(@Body @Valid MemberSkill memberSkill, HttpRequest<?> request) {
         return Mono.fromCallable(() -> memberSkillsService.update(memberSkill))
                 .map(updatedMemberSkill -> HttpResponse.ok(updatedMemberSkill)

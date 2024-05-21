@@ -66,7 +66,7 @@ public class SettingsController {
      * @param settingDTO, {@link SettingsUpdateDTO}
      * @return {@link <SettingsReponseDTO>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO, HttpRequest<?> request) {
         return Mono.fromCallable(() -> settingsServices.update(fromUpdateDTO(settingDTO)))
                 .map(savedSetting -> HttpResponse.ok(fromEntity(savedSetting))

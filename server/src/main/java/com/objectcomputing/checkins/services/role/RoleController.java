@@ -51,7 +51,7 @@ public class RoleController {
      * @param role, {@link Role}
      * @return {@link HttpResponse<Role>}
      */
-    @Put()
+    @Put
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Mono<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<?> request) {
         return Mono.fromCallable(() -> roleServices.update(role))

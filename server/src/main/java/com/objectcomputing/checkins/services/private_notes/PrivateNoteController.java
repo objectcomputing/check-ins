@@ -58,7 +58,7 @@ public class PrivateNoteController {
      * @param request
      * @return
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_PRIVATE_NOTE)
     public Mono<HttpResponse<PrivateNote>> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<?> request) {
         if (privateNote == null) {

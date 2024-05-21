@@ -109,7 +109,7 @@ public class MemberProfileController {
      * @param memberProfile {@link MemberProfileUpdateDTO} Information of the member profile being updated
      * @return {@link MemberProfileResponseDTO} The updated member profile
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<MemberProfileResponseDTO>> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
 
         return Mono.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))

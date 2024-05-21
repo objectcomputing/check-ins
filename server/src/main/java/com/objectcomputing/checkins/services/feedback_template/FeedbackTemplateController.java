@@ -50,7 +50,7 @@ public class FeedbackTemplateController {
      * @param requestBody {@link FeedbackTemplateUpdateDTO} The updated feedback template
      * @return {@link FeedbackTemplateResponseDTO}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<FeedbackTemplateResponseDTO>> update(@Body @Valid @NotNull FeedbackTemplateUpdateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackTemplateServices.update(fromDTO(requestBody)))
                 .map(savedTemplate -> HttpResponse.ok(fromEntity(savedTemplate))

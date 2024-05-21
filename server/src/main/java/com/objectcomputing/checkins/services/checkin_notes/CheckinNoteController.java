@@ -56,7 +56,7 @@ public class CheckinNoteController {
      * @param request
      * @return
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<CheckinNote> updateCheckinNote(@Body @Valid CheckinNote checkinNote, HttpRequest<?> request) {
         CheckinNote updateCheckinNote = checkinNoteServices.update(checkinNote);

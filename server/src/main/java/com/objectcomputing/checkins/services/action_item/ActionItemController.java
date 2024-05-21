@@ -54,7 +54,7 @@ public class ActionItemController {
      * @param actionItem, {@link ActionItem}
      * @return {@link HttpResponse< ActionItem >}
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<?> request) {
         ActionItem updatedActionItem = actionItemServices.update(actionItem);

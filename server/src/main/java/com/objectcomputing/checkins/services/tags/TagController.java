@@ -92,7 +92,7 @@ public class TagController {
      * @param tag, {@link Tag}
      * @return {@link Tag}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<Tag>> update(@Body @Valid Tag tag, HttpRequest<?> request) {
         return Mono.fromCallable(() -> tagServices.update(tag))
                 .map(tag1 -> HttpResponse.ok(tag1)

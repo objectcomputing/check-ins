@@ -54,7 +54,7 @@ public class GuildMemberController {
      * @param guildMember, {@link GuildMember}
      * @return {@link HttpResponse<GuildMember>}
      */
-    @Put()
+    @Put
     public HttpResponse<?> updateMembers(@Body @Valid GuildMemberUpdateDTO guildMember, HttpRequest<?> request) {
         GuildMember updatedGuildMember = guildMemberServices.update(new GuildMember(guildMember.getId(), guildMember.getGuildId(), guildMember.getMemberId(), guildMember.getLead()));
         return HttpResponse

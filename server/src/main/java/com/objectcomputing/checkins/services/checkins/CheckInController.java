@@ -70,7 +70,7 @@ public class CheckInController {
      * @param checkIn, {@link CheckIn}
      * @return {@link HttpResponse<CheckIn>}
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public Mono<HttpResponse<CheckIn>> update(@Body @Valid @NotNull CheckIn checkIn, HttpRequest<?> request) {
         return Mono.fromCallable(() -> checkInServices.update(checkIn))

@@ -88,7 +88,7 @@ public class SkillController {
      * @param skill, {@link Skill}
      * @return {@link HttpResponse<Skill>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<Skill>> update(@Body @Valid Skill skill, HttpRequest<?> request) {
         return Mono.fromCallable(() -> skillServices.update(skill))
                 .map(updatedSkill -> HttpResponse.ok(updatedSkill)

@@ -98,7 +98,7 @@ public class DemographicsController {
      * @param demographics {@link DemographicsUpdateDTO} Information of the demographics being updated
      * @return {@link DemographicsResponseDTO} The updated demographics
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<DemographicsResponseDTO>> update(@Body @Valid DemographicsUpdateDTO demographics,
                                                                 HttpRequest<?> request) {
 

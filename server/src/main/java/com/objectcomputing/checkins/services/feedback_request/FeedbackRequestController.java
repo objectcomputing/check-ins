@@ -59,7 +59,7 @@ public class FeedbackRequestController {
      * @param requestBody {@link FeedbackRequestUpdateDTO} The updated feedback request
      * @return {@link FeedbackRequestResponseDTO}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<FeedbackRequestResponseDTO>> update(@Body @Valid @NotNull FeedbackRequestUpdateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackReqServices.update(requestBody))
                 .map(savedFeedback -> HttpResponse.ok(fromEntity(savedFeedback))

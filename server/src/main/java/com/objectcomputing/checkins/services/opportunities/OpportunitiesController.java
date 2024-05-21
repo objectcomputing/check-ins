@@ -74,7 +74,7 @@ public class OpportunitiesController {
      * @param opportunitiesResponse, {@link Opportunities}
      * @return {@link HttpResponse<Opportunities>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<Opportunities>> update(@Body @Valid @NotNull Opportunities opportunitiesResponse,
                                                HttpRequest<?> request) {
         return Mono.fromCallable(() -> opportunitiesResponseServices.update(opportunitiesResponse))

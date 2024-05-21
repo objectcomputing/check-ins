@@ -98,7 +98,7 @@ public class QuestionController {
      * @param question, {@link QuestionUpdateDTO}
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<QuestionResponseDTO>> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<?> request) {
         if (question == null) {
             return Mono.just(HttpResponse.ok());

@@ -73,7 +73,7 @@ public class PulseResponseController {
      * @param pulseResponse, {@link PulseResponse}
      * @return {@link HttpResponse<PulseResponse>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<PulseResponse>> update(@Body @Valid @NotNull PulseResponse pulseResponse,
                                                       HttpRequest<?> request) {
         return Mono.fromCallable(() -> pulseResponseServices.update(pulseResponse))

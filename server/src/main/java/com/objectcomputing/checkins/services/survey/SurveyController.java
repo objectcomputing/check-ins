@@ -72,7 +72,7 @@ public class SurveyController {
      * @param surveyResponse, {@link Survey}
      * @return {@link HttpResponse<Survey>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<Survey>> update(@Body @Valid @NotNull Survey surveyResponse, HttpRequest<?> request) {
         return Mono.fromCallable(() -> surveyResponseServices.update(surveyResponse))
                 .map(updatedSurvey -> HttpResponse.ok(updatedSurvey)

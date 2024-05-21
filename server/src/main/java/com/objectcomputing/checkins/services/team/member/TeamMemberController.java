@@ -54,7 +54,7 @@ public class TeamMemberController {
      * @param teamMember, {@link TeamMember}
      * @return {@link HttpResponse<TeamMember>}
      */
-    @Put()
+    @Put
     public HttpResponse<?> updateMembers(@Body @Valid TeamMemberUpdateDTO teamMember, HttpRequest<?> request) {
         TeamMember updatedTeamMember = teamMemberServices.update(new TeamMember(teamMember.getId(), teamMember.getTeamId(), teamMember.getMemberId(), teamMember.getLead()));
         return HttpResponse

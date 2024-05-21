@@ -86,7 +86,7 @@ public class ReviewPeriodController {
      * @param reviewPeriod  the updated {@link ReviewPeriod}
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<ReviewPeriod>> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<?> request) {
 
         return Mono.fromCallable(() -> reviewPeriodServices.update(reviewPeriod))

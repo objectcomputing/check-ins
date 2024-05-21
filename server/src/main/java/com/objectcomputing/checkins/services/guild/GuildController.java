@@ -79,7 +79,7 @@ public class GuildController {
      * @param guild, {@link GuildUpdateDTO}
      * @return {@link HttpResponse<GuildResponseDTO>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<GuildResponseDTO>> update(@Body @Valid GuildUpdateDTO guild, HttpRequest<?> request) {
         return Mono.fromCallable(() -> guildService.update(guild))
                 .map(updated -> HttpResponse.ok(updated)
