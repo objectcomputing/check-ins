@@ -38,7 +38,7 @@ public class SkillCategorySkillController {
                         .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))));
     }
 
-    @Delete()
+    @Delete
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<?>> delete(@Body @Valid SkillCategorySkillId dto) {
         return Mono.fromRunnable(() -> skillCategorySkillServices.delete(dto))
