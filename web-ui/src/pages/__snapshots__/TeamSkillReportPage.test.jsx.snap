@@ -72,7 +72,7 @@ exports[`renders correctly 1`] = `
       class="select-skills-section"
     >
       <div
-        class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-clttge-MuiAutocomplete-root"
+        class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-1tw9w9k-MuiAutocomplete-root"
       >
         <div
           class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root fullWidth css-wb57ya-MuiFormControl-root-MuiTextField-root"

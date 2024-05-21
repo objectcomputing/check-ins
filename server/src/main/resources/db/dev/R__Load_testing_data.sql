@@ -646,9 +646,9 @@ values('dd694cf2-c0f9-4470-b897-00c564c1252b','06cd3202-a209-4ae1-a49a-10395fbe3
 
 -- Pulse
 INSERT INTO pulse_response
-(id, submissiondate, teammemberid, internalfeelings, externalfeelings) -- Holly Williams
+(id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Holly Williams
 VALUES
-('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2021-01-29', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'));
+('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2021-01-29', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'), 1, 3);
 
 
 -- Admin Permissions
