@@ -160,6 +160,14 @@ const PulseReportPage = () => {
       });
       if (res.error) throw new Error(res.error.message);
       const pulses = res.payload.data;
+      pulses.sort((p1, p2) => {
+        const [year1, month1, day1] = p1.submissionDate;
+        const [year2, month2, day2] = p2.submissionDate;
+        let compare = year1 - year2;
+        if (compare === 0) compare = month1 - month2;
+        if (compare === 0) compare = day1 - day2;
+        return compare;
+      });
       console.log('PulseReportPage.jsx loadPulses: pulses =', pulses);
       setPulses(pulses);
     } catch (err) {
