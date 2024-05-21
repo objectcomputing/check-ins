@@ -15,5 +15,8 @@ public interface SettingsRepository extends CrudRepository<Setting, UUID> {
 
     boolean existsByIdAndName(@NonNull UUID id, @NonNull String name);
 
+    @NonNull
     List<Setting> findAll();
+
+    @NonNull List<Setting> findByName(@NonNull String name);
 }
