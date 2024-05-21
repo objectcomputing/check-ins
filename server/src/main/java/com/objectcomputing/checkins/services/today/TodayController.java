@@ -16,7 +16,6 @@ import reactor.core.publisher.Mono;
 @Controller("/services/today")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Today")
 public class TodayController {

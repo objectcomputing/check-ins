@@ -21,7 +21,6 @@ import java.net.URI;
 @Controller("/services/skills/combine")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "combineskill")
 public class CombineSkillController {
 

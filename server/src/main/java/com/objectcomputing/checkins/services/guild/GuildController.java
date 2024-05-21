@@ -22,7 +22,6 @@ import java.util.UUID;
 @Controller("/services/guilds")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "guilds")
 public class GuildController {
 

@@ -21,7 +21,6 @@ import java.util.UUID;
 @Controller("/services/teams/members")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "team-member")
 public class TeamMemberController {
 

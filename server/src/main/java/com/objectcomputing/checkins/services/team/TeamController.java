@@ -23,7 +23,6 @@ import java.util.UUID;
 @Controller("/services/teams")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "teams")
 public class TeamController {
 

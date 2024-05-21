@@ -22,7 +22,6 @@ import java.util.UUID;
 @Controller("/services/tags")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @io.swagger.v3.oas.annotations.tags.Tag(name = "tags")
 public class TagController {
 

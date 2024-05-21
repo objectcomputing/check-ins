@@ -20,7 +20,6 @@ import java.util.UUID;
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "feedback")
 public class FeedbackSuggestionsController {
 

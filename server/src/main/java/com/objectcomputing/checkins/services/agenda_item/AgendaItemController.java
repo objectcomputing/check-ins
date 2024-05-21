@@ -24,7 +24,6 @@ import java.util.UUID;
 @Controller("/services/agenda-items")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "agenda-items")
 public class AgendaItemController {
 

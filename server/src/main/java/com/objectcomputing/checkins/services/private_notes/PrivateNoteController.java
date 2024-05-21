@@ -23,7 +23,6 @@ import java.util.UUID;
 @Controller("/services/private-notes")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "private-notes")
 public class PrivateNoteController {
 

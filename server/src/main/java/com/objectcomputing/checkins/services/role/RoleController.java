@@ -21,7 +21,6 @@ import java.util.UUID;
 @Controller("/services/roles")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "roles")
 public class RoleController {
 

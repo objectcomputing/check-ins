@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @Controller("/services/questions")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "questions")
 public class QuestionController {
 
