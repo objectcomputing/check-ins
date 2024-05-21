@@ -15,9 +15,9 @@ const PulsePage = () => {
   const csrf = selectCsrfToken(state);
 
   const [externalComment, setExternalComment] = useState('');
-  const [externalScore, setExternalScore] = useState(0);
+  const [externalScore, setExternalScore] = useState(2); // zero-based
   const [internalComment, setInternalComment] = useState('');
-  const [internalScore, setInternalScore] = useState(0);
+  const [internalScore, setInternalScore] = useState(2); // zero-based
   const [pulse, setPulse] = useState(null);
   const [submittedToday, setSubmittedToday] = useState(false);
   const today = format(new Date(), 'yyyy-MM-dd');
@@ -79,13 +79,11 @@ const PulsePage = () => {
 
   const submit = async () => {
     const myId = currentUser?.id;
-    //TODO: The POST endpoint doesn't currently save the score values,
-    //      but story #2345 will fix that.
     const data = {
       externalFeelings: externalComment,
-      externalScore,
+      externalScore: externalScore + 1, // converts to 1-based
       internalFeelings: internalComment,
-      internalScore,
+      internalScore: internalScore + 1, // converts to 1-based
       submissionDate: today,
       updatedDate: today,
       teamMemberId: myId
@@ -102,6 +100,9 @@ const PulsePage = () => {
         data
       });
       if (res.error) throw new Error(res.error.message);
+
+      // Refresh browser to show that pulses where already submitted today.
+      location.reload();
     } catch (err) {
       console.error('PulsePage.jsx submit:', err);
     }

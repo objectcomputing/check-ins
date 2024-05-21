@@ -46,6 +46,7 @@ const ociDarkBlue = '#2c519e';
 // const ociOrange = '#f8b576'; // too light
 const orange = '#b26801';
 
+/*
 // Returns a random, integer score between 1 and 5.
 const randomScore = previousScore => {
   if (!previousScore) return Math.ceil(Math.random() * 5);
@@ -60,6 +61,7 @@ const randomScore = previousScore => {
       ? previousScore - delta
       : previousScore - 1 + delta;
 };
+*/
 
 let responseFrequencies = [];
 const PulseReportPage = () => {
@@ -74,9 +76,10 @@ const PulseReportPage = () => {
   const [barChartData, setBarChartData] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [lineChartData, setLineChartData] = useState([]);
-  const [pulses, setPulses] = useState(null);
+  const [pulses, setPulses] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
 
+  /*
   // This generates random data to use in the line chart
   // since we do not yet have data in the database.
   useEffect(() => {
@@ -106,6 +109,33 @@ const PulseReportPage = () => {
     }
     setBarChartData(frequencies);
   }, [dateFrom, dateTo]);
+  */
+
+  // This creates data in the format that recharts needs from pulse data.
+  useEffect(() => {
+    const data = [];
+    const frequencies = [];
+    for (let i = 1; i <= 5; i++) {
+      frequencies.push({ score: i, internal: 0, external: 0 });
+    }
+
+    for (const pulse of pulses) {
+      const { date, externalScore, internalScore, submissionDate } = pulse;
+      const [year, month, day] = submissionDate;
+      const monthPadded = month.toString().padStart(2, '0');
+      const dayPadded = day.toString().padStart(2, '0');
+      data.push({
+        date: `${year}-${monthPadded}-${dayPadded}`,
+        internal: internalScore,
+        external: externalScore
+      });
+      frequencies[internalScore - 1].internal++;
+      frequencies[externalScore - 1].external++;
+    }
+
+    setLineChartData(data);
+    setBarChartData(frequencies);
+  }, [pulses]);
 
   const loadPulses = async () => {
     if (!csrf) return;
@@ -130,8 +160,7 @@ const PulseReportPage = () => {
       });
       if (res.error) throw new Error(res.error.message);
       const pulses = res.payload.data;
-      //TODO: Currently these objects only contain the comment text value,
-      //      not scores, but story 2345 will add those.
+      console.log('PulseReportPage.jsx loadPulses: pulses =', pulses);
       setPulses(pulses);
     } catch (err) {
       console.error('PulsePage.jsx loadTodayPulse:', err);
@@ -147,14 +176,12 @@ const PulseReportPage = () => {
 
   const handleDateFromChange = dayJsDate => {
     const date = new Date(dayJsDate.valueOf());
-    console.log('PulseReportPage.jsx handleDateFromChange: date =', date);
     setDateFrom(date);
     if (date > dateTo) setDateTo(date);
   };
 
   const handleDateToChange = dayJsDate => {
     const date = new Date(dayJsDate.valueOf());
-    console.log('PulseReportPage.jsx handleDateToChange: date =', date);
     if (date < dateFrom) setDateFrom(date);
     setDateTo(date);
   };
