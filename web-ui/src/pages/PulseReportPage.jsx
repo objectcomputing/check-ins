@@ -160,6 +160,7 @@ const PulseReportPage = () => {
       });
       if (res.error) throw new Error(res.error.message);
       const pulses = res.payload.data;
+      // Sort the pulses on their submission date.
       pulses.sort((p1, p2) => {
         const [year1, month1, day1] = p1.submissionDate;
         const [year2, month2, day2] = p2.submissionDate;
@@ -171,7 +172,7 @@ const PulseReportPage = () => {
       console.log('PulseReportPage.jsx loadPulses: pulses =', pulses);
       setPulses(pulses);
     } catch (err) {
-      console.error('PulsePage.jsx loadTodayPulse:', err);
+      console.error('PulseReportPage.jsx loadPulses:', err);
     }
   };
 
@@ -198,6 +199,89 @@ const PulseReportPage = () => {
     setTeamMembers(members);
   };
 
+  const barChart = () => (
+    <Card>
+      <CardHeader
+        title="Distribution of pulse scores for selected team members"
+        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+      />
+      <CardContent>
+        <BarChart
+          width={500}
+          height={300}
+          data={barChartData}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="score" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="internal" fill={ociDarkBlue} />
+          <Bar dataKey="external" fill={orange} />
+        </BarChart>
+        <ExpandMore
+          expand={expanded}
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+          aria-label={expanded ? 'show less' : 'show more'}
+          size="large"
+        />
+        <Collapse
+          className="bottom-row"
+          in={expanded}
+          timeout="auto"
+          unmountOnExit
+        >
+          Member data goes here.
+        </Collapse>
+      </CardContent>
+    </Card>
+  );
+
+  const lineChart = () => (
+    <Card>
+      <CardHeader
+        title={'Average pulse scores for "At Work" and "Outside Work"'}
+        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+      />
+      <CardContent>
+        <ResponsiveContainer width="100%" aspect={3.0}>
+          <LineChart data={lineChartData} height={300}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              angle={-90}
+              dataKey="date"
+              height={100}
+              padding={{ left: 30, right: 30 }}
+              tickMargin={45}
+            />
+            <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="internal"
+              stroke={ociDarkBlue}
+              dot={false}
+            />
+            <Line
+              dataKey="external"
+              dot={false}
+              stroke={orange}
+              type="monotone"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="pulse-report-page">
       <div className="date-pickers">
@@ -217,90 +301,21 @@ const PulseReportPage = () => {
         </LocalizationProvider>
       </div>
 
-      {/* TODO: Permissions should affect which members can be selected. */}
-      <MemberSelector
-        onChange={handleTeamMembersChange}
-        selected={teamMembers}
-      />
-
-      <Card>
-        <CardHeader
-          title={'Average pulse scores for "At Work" and "Outside Work"'}
-          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
-        />
-        <CardContent>
-          <ResponsiveContainer width="100%" aspect={3.0}>
-            <LineChart data={lineChartData} height={300}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                angle={-90}
-                dataKey="date"
-                height={100}
-                padding={{ left: 30, right: 30 }}
-                tickMargin={45}
-              />
-              <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="internal"
-                stroke={ociDarkBlue}
-                dot={false}
-              />
-              <Line
-                dataKey="external"
-                dot={false}
-                stroke={orange}
-                type="monotone"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader
-          title="Distribution of pulse scores for selected team members"
-          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
-        />
-        <CardContent>
-          <BarChart
-            width={500}
-            height={300}
-            data={barChartData}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="score" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="internal" fill={ociDarkBlue} />
-            <Bar dataKey="external" fill={orange} />
-          </BarChart>
-          <ExpandMore
-            expand={expanded}
-            onClick={() => setExpanded(!expanded)}
-            aria-expanded={expanded}
-            aria-label={expanded ? 'show less' : 'show more'}
-            size="large"
+      {pulses.length === 0 ? (
+        <Typography variant="h5" component="h2">
+          No pulses were found in the specfied date range.
+        </Typography>
+      ) : (
+        <>
+          {/* TODO: Permissions should affect which members can be selected. */}
+          <MemberSelector
+            onChange={handleTeamMembersChange}
+            selected={teamMembers}
           />
-          <Collapse
-            className="bottom-row"
-            in={expanded}
-            timeout="auto"
-            unmountOnExit
-          >
-            Member data goes here.
-          </Collapse>
-        </CardContent>
-      </Card>
+          {lineChart()}
+          {barChart()}
+        </>
+      )}
     </div>
   );
 };
