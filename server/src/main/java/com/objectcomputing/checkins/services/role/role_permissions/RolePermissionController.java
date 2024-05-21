@@ -18,7 +18,6 @@ import java.util.List;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Role Permissions")
 @ExecuteOn(TaskExecutors.IO)
 @Controller("/services/roles/role-permissions")

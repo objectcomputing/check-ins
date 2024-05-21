@@ -23,7 +23,6 @@ import java.util.Set;
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "member anniversaries")
 public class AnniversaryReportController {
 

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Controller("/services/feedback/template_questions")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "template_questions")
 @Validated
