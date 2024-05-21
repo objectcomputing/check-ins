@@ -38,11 +38,7 @@ public class SettingsServicesImpl implements SettingsServices {
     }
 
     public List<SettingsResponseDTO> findByName(@Nullable String name) {
-        List<Setting> searchResult = settingsRepository.findAll();
-        if (name != null) {
-            searchResult = searchResult.stream().filter(setting -> name.equalsIgnoreCase(setting.getName()))
-                    .collect(Collectors.toList());
-        }
+        List<Setting> searchResult = name == null ? settingsRepository.findAll() : settingsRepository.findByName(name);
         return settingToSettingResponseDTO(searchResult);
     }
 
