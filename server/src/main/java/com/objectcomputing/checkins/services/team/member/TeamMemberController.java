@@ -37,7 +37,7 @@ public class TeamMemberController {
      * @param teamMember, {@link TeamMemberResponseDTO}
      * @return {@link HttpResponse <TeamMember>}
      */
-    @Post()
+    @Post
     public HttpResponse<TeamMember> createMembers(@Body @Valid TeamMemberCreateDTO teamMember,
                                                   HttpRequest<?> request) {
         TeamMember newTeamMember = teamMemberServices.save(new TeamMember(teamMember.getTeamId(),

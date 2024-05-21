@@ -38,7 +38,7 @@ public class TagController {
      * @param tag, {@link TagCreateDTO}
      * @return {@link HttpResponse<  Tag  >}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<?> request) {
         return Mono.fromCallable(() -> tagServices.save(new Tag(tag.getName())))
                 .map(createdTag -> HttpResponse.created(createdTag)

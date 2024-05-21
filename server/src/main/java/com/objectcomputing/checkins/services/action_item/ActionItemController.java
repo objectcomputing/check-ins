@@ -36,7 +36,7 @@ public class ActionItemController {
      * @param actionItem, {@link ActionItemCreateDTO}
      * @return {@link HttpResponse <ActionItem>}
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
                                                      HttpRequest<?> request) {

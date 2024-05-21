@@ -37,7 +37,7 @@ public class RoleController {
      * @param role, {@link RoleCreateDTO}
      * @return {@link HttpResponse <Role>}
      */
-    @Post()
+    @Post
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Mono<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role, HttpRequest<?> request) {
         return Mono.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription())))

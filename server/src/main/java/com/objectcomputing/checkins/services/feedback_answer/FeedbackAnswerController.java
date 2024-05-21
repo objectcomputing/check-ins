@@ -35,7 +35,7 @@ public class FeedbackAnswerController {
      * @param requestBody {@link FeedbackAnswerCreateDTO} New feedback answer to create
      * @return {@link FeedbackAnswerResponseDTO}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<FeedbackAnswerResponseDTO>> save(@Body @Valid @NotNull FeedbackAnswerCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackAnswerServices.save(fromDTO(requestBody)))
                 .map(savedAnswer -> HttpResponse.created(fromEntity(savedAnswer))

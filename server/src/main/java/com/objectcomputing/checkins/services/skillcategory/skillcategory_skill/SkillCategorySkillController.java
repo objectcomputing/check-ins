@@ -30,7 +30,7 @@ public class SkillCategorySkillController {
         this.skillCategorySkillServices = skillCategorySkillServices;
     }
 
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkillId dto, HttpRequest<?> request) {
         return Mono.fromCallable(() -> skillCategorySkillServices.save(dto))

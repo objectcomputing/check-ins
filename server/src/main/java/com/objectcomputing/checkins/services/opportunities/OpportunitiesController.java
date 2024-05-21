@@ -58,7 +58,7 @@ public class OpportunitiesController {
      * @return {@link HttpResponse<Opportunities>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
                                                      HttpRequest<?> request) {
         return Mono.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(),

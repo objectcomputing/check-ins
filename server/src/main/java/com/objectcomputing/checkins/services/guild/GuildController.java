@@ -38,7 +38,7 @@ public class GuildController {
      * @param guild, {@link GuildCreateDTO}
      * @return {@link HttpResponse<GuildResponseDTO>}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<GuildResponseDTO>> createAGuild(@Body @Valid GuildCreateDTO guild, HttpRequest<?> request) {
         return Mono.fromCallable(() -> guildService.save(guild))
                 .map(createdGuild -> HttpResponse.created(createdGuild)

@@ -40,7 +40,7 @@ public class QuestionController {
      * @return {@link HttpResponse<QuestionResponseDTO>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<QuestionResponseDTO>> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<?> request) {
         return Mono.fromCallable(() -> questionService.saveQuestion(toModel(question)))
                 .map(newQuestion -> HttpResponse.created(fromModel(newQuestion))

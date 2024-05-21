@@ -37,7 +37,7 @@ public class FeedbackTemplateController {
      * @param requestBody {@link FeedbackTemplateCreateDTO} New feedback template to create
      * @return {@link FeedbackTemplateResponseDTO}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<FeedbackTemplateResponseDTO>> save(@Body @Valid @NotNull FeedbackTemplateCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackTemplateServices.save(fromDTO(requestBody)))
                 .map(savedTemplate -> HttpResponse.created(fromEntity(savedTemplate))

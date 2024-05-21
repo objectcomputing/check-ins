@@ -38,7 +38,7 @@ public class QuestionCategoryController {
      * @return {@link HttpResponse<QuestionCategory>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<QuestionCategory>> createAQuestionCategory(@Body @Valid QuestionCategoryCreateDTO questionCategory,
                                                                         HttpRequest<?> request) {
 

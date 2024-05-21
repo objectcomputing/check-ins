@@ -52,7 +52,7 @@ public class SettingsController {
      * @param settingDTO, {@link SettingsCreateDTO}
      * @return {@link HttpResponse<SettingsResponseDTO>}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<SettingsResponseDTO>> save(@Body @Valid SettingsCreateDTO settingDTO, HttpRequest<?> request) {
         return Mono.fromCallable(() -> settingsServices.save(fromDTO(settingDTO)))
                 .map(savedSetting -> HttpResponse.created(fromEntity(savedSetting))

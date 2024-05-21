@@ -94,7 +94,7 @@ public class MemberProfileController {
      * @param memberProfile {@link MemberProfileCreateDTO} Information of the member profile being created
      * @return {@link MemberProfileResponseDTO} The created member profile
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_ORGANIZATION_MEMBERS)
     public Mono<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 

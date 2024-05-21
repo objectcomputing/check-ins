@@ -37,7 +37,7 @@ public class GuildMemberController {
      * @param guildMember, {@link GuildMemberResponseDTO}
      * @return {@link HttpResponse <GuildMember>}
      */
-    @Post()
+    @Post
     public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMemberCreateDTO guildMember,
                                                   HttpRequest<?> request) {
         GuildMember newGuildMember = guildMemberServices.save(new GuildMember(guildMember.getGuildId(),

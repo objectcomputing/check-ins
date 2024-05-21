@@ -39,7 +39,7 @@ public class ReviewPeriodController {
      * @param period  a {@link ReviewPeriodCreateDTO} representing the desired review period
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<?> request) {
         return Mono.fromCallable(() -> reviewPeriodServices.save(period.convertToEntity()))
                 .map(reviewPeriod -> HttpResponse.created(reviewPeriod)

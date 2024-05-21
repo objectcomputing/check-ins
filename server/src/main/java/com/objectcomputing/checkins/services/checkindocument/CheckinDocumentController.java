@@ -54,7 +54,7 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
 
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_CHECKIN_DOCUMENT)
     public Mono<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
                                                                     HttpRequest<?> request) {

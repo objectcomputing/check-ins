@@ -58,7 +58,7 @@ public class SurveyController {
      * @return {@link HttpResponse<Survey>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<Survey>> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse, HttpRequest<?> request) {
         return Mono.fromCallable(() -> surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(),
                         surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription())))

@@ -39,7 +39,7 @@ public class TeamController {
      * @param team, {@link TeamCreateDTO}
      * @return {@link HttpResponse<TeamResponseDTO>}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<?> request) {
         return Mono.fromCallable(() -> teamService.save(team))
                 .map(createdTeam -> HttpResponse.created(createdTeam)

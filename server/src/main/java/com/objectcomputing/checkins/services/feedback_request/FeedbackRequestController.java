@@ -46,7 +46,7 @@ public class FeedbackRequestController {
      * @return {@link FeedbackRequestResponseDTO}
      */
     @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
-    @Post()
+    @Post
     public Mono<HttpResponse<FeedbackRequestResponseDTO>> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackReqServices.save(fromDTO(requestBody)))
                 .map(savedFeedbackRequest -> HttpResponse.created(fromEntity(savedFeedbackRequest))

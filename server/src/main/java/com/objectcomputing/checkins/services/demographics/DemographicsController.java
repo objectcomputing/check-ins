@@ -80,7 +80,7 @@ public class DemographicsController {
      * @param demographics {@link DemographicsCreateDTO} Information of the demographics being created
      * @return {@link DemographicsResponseDTO} The created demographics
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<DemographicsResponseDTO>> save(@Body @Valid DemographicsCreateDTO demographics,
                                                             HttpRequest<?> request) {
 

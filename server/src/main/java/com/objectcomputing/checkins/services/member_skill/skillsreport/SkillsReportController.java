@@ -38,7 +38,7 @@ public class SkillsReportController {
      * @param requestBody {@link SkillsReportRequestDTO} Body of the request
      * @return {@link SkillsReportResponseDTO} Returned skills report
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_VIEW_SKILLS_REPORT)
     public Mono<HttpResponse<SkillsReportResponseDTO>> reportSkills(@Body @Valid @NotNull SkillsReportRequestDTO requestBody,
                                                                     HttpRequest<?> request) {
