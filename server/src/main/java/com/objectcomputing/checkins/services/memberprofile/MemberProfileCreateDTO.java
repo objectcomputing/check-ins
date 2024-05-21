@@ -81,6 +81,10 @@ public class MemberProfileCreateDTO {
     @Schema(description = "The employee is excluded from retention reports", nullable = true)
     private Boolean excluded;
 
+    @Nullable
+    @Schema(description = "Last date employee logged in")
+    private LocalDate lastSeen;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -101,7 +105,8 @@ public class MemberProfileCreateDTO {
                 Objects.equals(terminationDate, that.terminationDate) &&
                 Objects.equals(birthDay, that.birthDay) &&
                 Objects.equals(voluntary, that.voluntary) &&
-                Objects.equals(excluded, that.excluded);
+                Objects.equals(excluded, that.excluded) &&
+                Objects.equals(lastSeen, that.lastSeen);
 
     }
 
@@ -109,6 +114,6 @@ public class MemberProfileCreateDTO {
     public int hashCode() {
         return Objects.hash(firstName, middleName, lastName, suffix, title, pdlId, location,
                 workEmail, employeeId, startDate, bioText, supervisorid, terminationDate, birthDay,
-                voluntary, excluded);
+                voluntary, excluded, lastSeen);
     }
 }
