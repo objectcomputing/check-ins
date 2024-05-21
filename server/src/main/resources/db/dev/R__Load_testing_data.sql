@@ -648,11 +648,23 @@ values('dd694cf2-c0f9-4470-b897-00c564c1252b','06cd3202-a209-4ae1-a49a-10395fbe3
 INSERT INTO pulse_response
 (id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Holly Williams
 VALUES
-('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2024-05-20', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'), 4, 5);
+('802e125c-4db5-4ed9-a4a6-024cc23e4e41', '2024-05-17', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('internal #1','${aeskey}'), PGP_SYM_ENCRYPT('external #1','${aeskey}'), 4, 5);
 INSERT INTO pulse_response
 (id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Holly Williams
 VALUES
-('c75be148-1cb6-425f-9671-7fb68a33f2bf', '2024-05-21', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('internal feeling #1','${aeskey}'), PGP_SYM_ENCRYPT('external feeling #1','${aeskey}'), 3, 4);
+('23dfdb75-8ef7-4754-a82a-d39e165a9aab', '2024-05-18', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('internal #2','${aeskey}'), PGP_SYM_ENCRYPT('external #2','${aeskey}'), 3, 4);
+INSERT INTO pulse_response
+(id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Holly Williams
+VALUES
+('a11b7f6b-aaa4-4a3e-a0a3-48da0a31e695', '2024-05-19', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('internal #3','${aeskey}'), PGP_SYM_ENCRYPT('external #3','${aeskey}'), 2, 5);
+INSERT INTO pulse_response
+(id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Holly Williams
+VALUES
+('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2024-05-20', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('internal #4','${aeskey}'), PGP_SYM_ENCRYPT('external #4','${aeskey}'), 4, 1);
+INSERT INTO pulse_response
+(id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Holly Williams
+VALUES
+('c75be148-1cb6-425f-9671-7fb68a33f2bf', '2024-05-21', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('internal #5','${aeskey}'), PGP_SYM_ENCRYPT('external #5','${aeskey}'), 5, 2);
 
 
 -- Admin Permissions
