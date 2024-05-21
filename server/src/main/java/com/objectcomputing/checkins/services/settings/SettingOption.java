@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @JsonSerialize(using = SettingOptionSerializer.class)
 @JsonDeserialize(using = SettingOptionDeserializer.class)
 public enum SettingOption {
-    LOGO_URL("The logo url", Category.LOGO.name(), Type.FILE.name());
+    LOGO_URL("The logo url", Category.THEME.name(), Type.FILE.name());
 
     private final String description;
     private final String category;
@@ -48,7 +48,7 @@ public enum SettingOption {
     }
 
     public enum Category {
-        LOGO
+        THEME, INTEGRATIONS, CHECK_INS, REVIEWS
     }
 
     public enum Type {
