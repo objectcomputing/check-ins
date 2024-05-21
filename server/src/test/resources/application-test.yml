@@ -7,7 +7,8 @@ micronaut:
 ---
 datasources:
   default:
-    db-type: postgres
+    url:  jdbc:tc:postgresql:11.6:///
+    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
 ---
 mail-jet:
   from_address: "someEmail@test.com"
@@ -48,10 +49,3 @@ aes:
 ---
 github-credentials:
   github_token: "test github token"
----
-test-resources:
-  containers:
-    postgres:
-      image-name: postgres:11.6
-      username: postgres
-      password: postgres

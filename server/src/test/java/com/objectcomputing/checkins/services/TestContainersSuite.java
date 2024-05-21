@@ -5,14 +5,24 @@ import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @MicronautTest(environments = {Environment.TEST}, transactional = false)
-@Testcontainers
-public abstract class TestContainersSuite implements RepositoryFixture {
+public abstract class TestContainersSuite implements RepositoryFixture, TestPropertyProvider {
+
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:11.6");
 
     @Inject
     private EmbeddedServer embeddedServer;
@@ -70,6 +80,35 @@ public abstract class TestContainersSuite implements RepositoryFixture {
     public void setup() {
         deleteAllEntities();
         flyway.migrate();
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        if (!postgres.isRunning()) {
+            postgres.start();
+        }
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("datasources.default.url", getJdbcUrl());
+        properties.put("datasources.default.username", getUsername());
+        properties.put("datasources.default.password", getPassword());
+        properties.put("datasources.default.dialect", "POSTGRES");
+        properties.put("datasources.default.driverClassName", "org.postgresql.Driver");
+        properties.put("flyway.datasources.default.clean-schema", "true"); // Needed to run Flyway.clean()
+        properties.put("mail-jet.from_address", "someEmail@gmail.com");
+        properties.put("mail-jet.from_name", "John Doe");
+        return properties;
+    }
+
+    static String getJdbcUrl() {
+        return postgres.getJdbcUrl();
+    }
+
+    static String getUsername() {
+        return postgres.getUsername();
+    }
+
+    static String getPassword() {
+        return postgres.getPassword();
     }
 
     @Override
