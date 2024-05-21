@@ -61,12 +61,10 @@ public class PulseResponseController {
     @Post()
     public Mono<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                                     HttpRequest<?> request) {
-        return Mono.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),
-                        pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(),
-                        pulseResponse.getExternalFeelings())))
+        return Mono.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getInternalScore(), pulseResponse.getExternalScore(), pulseResponse.getSubmissionDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
                 .map(pulseresponse -> HttpResponse.created(pulseresponse)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),
-                            pulseresponse.getId())))));
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), pulseresponse.getId()))))
+                );
     }
 
      /**

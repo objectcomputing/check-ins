@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.annotation.sql.ColumnTransformer;
@@ -23,7 +24,6 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @Introspected
 @Table(name = "pulse_response")
 public class PulseResponse {
@@ -35,17 +35,21 @@ public class PulseResponse {
     @Schema(description = "the id of the pulse_response")
     private UUID id;
 
+    @Column(name="internal_score")
+    @NotNull
+    @Schema(description = "integer for internalScore", required = true)
+    private Integer internalScore;
+
+    @Column(name="external_score")
+    @Nullable
+    @Schema(description = "integer for externalScore", required = true)
+    private Integer externalScore;
+
     @Column(name="submissiondate")
     @NotNull
     @Schema(description = "date for submissionDate")
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate submissionDate;
-
-    @Column(name="updateddate")
-    @NotNull
-    @Schema(description = "date for updatedDate")
-    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
-    private LocalDate updatedDate;
 
     @Column(name="teammemberid")
     @TypeDef(type=DataType.STRING)
@@ -58,7 +62,7 @@ public class PulseResponse {
             read =  "pgp_sym_decrypt(internalFeelings::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
+    @Nullable
     @Schema(description = "description of internalfeelings")
     private String internalFeelings;
 
@@ -67,21 +71,81 @@ public class PulseResponse {
             read =  "pgp_sym_decrypt(externalFeelings::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
+    @Nullable
     @Schema(description = "description of externalfeelings")
     private String externalFeelings;
 
-    public PulseResponse(UUID id,LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+    protected PulseResponse() {
+    }
+
+    public PulseResponse(UUID id, Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this.id = id;
+        this.internalScore = internalScore;
+        this.externalScore = externalScore;
         this.submissionDate = submissionDate;
-        this.updatedDate = updatedDate;
         this.teamMemberId = teamMemberId;
         this.internalFeelings = internalFeelings;
         this.externalFeelings = externalFeelings;
     }
 
-    public PulseResponse(LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
-        this(null,submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
+    public PulseResponse(Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+        this(null,internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
+    }
+
+    public UUID getId() {
+        return this.id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getInternalScore() {
+        return internalScore;
+    }
+
+    public void setInternalScore(Integer internalScore) {
+        this.internalScore = internalScore;
+    }
+
+    public Integer getExternalScore() {
+        return externalScore;
+    }
+
+    public void setExternalScore(Integer externalScore) {
+        this.externalScore = externalScore;
+    }
+
+    public LocalDate getSubmissionDate() {
+        return submissionDate;
+    }
+
+    public void setSubmissionDate(LocalDate submissionDate) {
+        this.submissionDate = submissionDate;
+    }
+
+    public UUID getTeamMemberId() {
+        return this.teamMemberId;
+    }
+
+    public void setTeamMemberId(UUID teamMemberId) {
+        this.teamMemberId = teamMemberId;
+    }
+
+    public String getInternalFeelings() {
+        return internalFeelings;
+    }
+
+    public void setInternalFeelings(String internalFeelings) {
+        this.internalFeelings = internalFeelings;
+    }
+
+    public String getExternalFeelings() {
+        return externalFeelings;
+    }
+
+    public void setExternalFeelings(String externalFeelings) {
+        this.externalFeelings = externalFeelings;
     }
 
     @Override
@@ -90,6 +154,8 @@ public class PulseResponse {
         if (o == null || getClass() != o.getClass()) return false;
         PulseResponse that = (PulseResponse) o;
         return Objects.equals(id, that.id) &&
+                Objects.equals(internalScore, that.internalScore) &&
+                Objects.equals(externalScore, that.externalScore) &&
                 Objects.equals(submissionDate, that.submissionDate) &&
                 Objects.equals(teamMemberId, that.teamMemberId) &&
                 Objects.equals(internalFeelings, that.internalFeelings) &&
@@ -100,8 +166,9 @@ public class PulseResponse {
     public String toString() {
         return "PulseResponse{" +
                 "id=" + id +
+                ", internalScore" + internalScore +
+                ", externalScore" + externalScore +
                 ", submissionDate=" + submissionDate +
-                ", updatedDate=" + updatedDate +
                 ", teamMemberId=" + teamMemberId +
                 ", internalFeelings=" + internalFeelings +
                 ", externalFeelings=" + externalFeelings +
@@ -109,7 +176,7 @@ public class PulseResponse {
     }
     @Override
     public int hashCode() {
-        return Objects.hash(id, submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
+        return Objects.hash(id, internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
     }
 }
 
