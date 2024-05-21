@@ -83,7 +83,7 @@ public class RoleController {
      *
      * @return {@link Role}
      */
-    @Get()
+    @Get
     public Mono<HttpResponse<List<Role>>> findAll() {
         return Mono.fromCallable(roleServices::findAllRoles)
                 .map(HttpResponse::ok);

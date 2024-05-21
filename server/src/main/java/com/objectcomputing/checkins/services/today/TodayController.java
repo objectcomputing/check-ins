@@ -32,7 +32,7 @@ public class TodayController {
      *
      * @return {@link TodayResponseDTO today's events}
      */
-    @Get()
+    @Get
     public Mono<HttpResponse<TodayResponseDTO>> getTodaysEvents() {
         return Mono.fromCallable(todayServices::getTodaysEvents)
                 .map(HttpResponse::ok);
