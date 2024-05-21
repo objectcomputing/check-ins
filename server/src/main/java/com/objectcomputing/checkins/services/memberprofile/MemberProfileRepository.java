@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
@@ -59,6 +60,14 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
                                @Nullable String workEmail, @Nullable String supervisorId, @Nullable Boolean terminated);
 
     List<MemberProfile> findAll();
+    List<UUID> findSupervisoridByIdIn(Set<UUID> Ids);
+
+    @Query(value = "SELECT " +
+            "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail " +
+            "FROM \"member_profile\" mp " +
+            "WHERE  mp.id IN (:ids) ",
+            nativeQuery = true)
+    List<String> findWorkEmailByIdIn(Set<UUID> ids);
 
     @Query(value = "WITH RECURSIVE subordinate AS (SELECT " +
     "id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, 0 as level " +
