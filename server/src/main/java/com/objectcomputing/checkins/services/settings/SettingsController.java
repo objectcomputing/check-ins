@@ -60,8 +60,8 @@ public class SettingsController {
      * @param settingDTO, {@link SettingsCreateDTO}
      * @return {@link HttpResponse<SettingsResponseDTO>}
      */
-    @Post()
     @ExecuteOn(TaskExecutors.BLOCKING)
+    @Post
     @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public Mono<HttpResponse<SettingsResponseDTO>> save(@Body @Valid SettingsCreateDTO settingDTO, HttpRequest<?> request) {
         return Mono.fromCallable(() -> settingsServices.save(fromDTO(settingDTO)))
@@ -76,7 +76,7 @@ public class SettingsController {
      * @param settingDTO, {@link SettingsUpdateDTO}
      * @return {@link <SettingsReponseDTO>}
      */
-    @Put()
+    @Put
     @ExecuteOn(TaskExecutors.BLOCKING)
     @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public Mono<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO, HttpRequest<?> request) {
