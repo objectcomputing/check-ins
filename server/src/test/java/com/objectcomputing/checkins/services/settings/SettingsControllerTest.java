@@ -28,7 +28,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SettingsControllerTest extends TestContainersSuite implements RoleFixture, SettingsFixture, MemberProfileFixture {
+class SettingsControllerTest extends TestContainersSuite implements RoleFixture, SettingsFixture, MemberProfileFixture {
     @Inject
     @Client("/services/settings")
     private HttpClient client;
@@ -43,7 +43,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testGetAllSettingsUnauthorized() {
+    void testGetAllSettingsUnauthorized() {
 
         final HttpRequest<Object> request = HttpRequest.GET("/");
 
@@ -54,7 +54,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testPostUnauthorized() {
+    void testPostUnauthorized() {
         SettingsCreateDTO newSetting = new SettingsCreateDTO();
         newSetting.setName("Mode");
         newSetting.setValue("Light");
@@ -69,7 +69,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testGetAllSettings() {
+    void testGetAllSettings() {
 
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         Setting setting = createADefaultSetting();
@@ -86,7 +86,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testGetOptions() {
+    void testGetOptions() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
 
         final HttpRequest<Object> request = HttpRequest.
@@ -102,7 +102,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testGETFindByValidName() {
+    void testGETFindByValidName() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         Setting setting = createADefaultSetting();
 
@@ -118,7 +118,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testGETFindByWrongNameReturnsEmptyBody() {
+    void testGETFindByWrongNameReturnsEmptyBody() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         Setting setting = createADefaultSetting();
 
@@ -134,7 +134,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testPOSTCreateASetting() {
+    void testPOSTCreateASetting() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
 
         SettingsCreateDTO newSetting = new SettingsCreateDTO();
@@ -151,7 +151,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testPostNullName() {
+    void testPostNullName() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
 
         SettingsCreateDTO newSetting = new SettingsCreateDTO();
@@ -167,7 +167,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testPostNullValue() {
+    void testPostNullValue() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
 
         SettingsCreateDTO newSetting = new SettingsCreateDTO();
@@ -183,7 +183,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testPUTSuccessfulUpdate() {
+    void testPUTSuccessfulUpdate() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
 
         Setting settingToUpdate = createADefaultSetting();
@@ -202,7 +202,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testPUTBadName() {
+    void testPUTBadName() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
 
         Setting settingToUpdate = createADefaultSetting();
@@ -222,7 +222,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testPUTNoIdOrName() {
+    void testPUTNoIdOrName() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
 
         SettingsUpdateDTO updatedSetting = new SettingsUpdateDTO();
@@ -238,7 +238,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testDELETESetting() {
+    void testDELETESetting() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
 
         Setting setting = createADefaultSetting();
@@ -252,7 +252,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testDELETESettingWrongId() {
+    void testDELETESettingWrongId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
 
         Setting setting = createADefaultSetting();
@@ -268,7 +268,7 @@ public class SettingsControllerTest extends TestContainersSuite implements RoleF
     }
 
     @Test
-    public void testDELETESettingNoPermission() {
+    void testDELETESettingNoPermission() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
 
         Setting setting = createADefaultSetting();
