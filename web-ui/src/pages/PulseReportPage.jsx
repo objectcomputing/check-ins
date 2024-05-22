@@ -89,8 +89,7 @@ const PulseReportPage = () => {
   console.log('PulseReportPage.jsx : teamMembers =', teamMembers);
 
   /*
-  // This generates random data to use in the line chart
-  // since we do not yet have data in the database.
+  // This generates random data to use in the line chart.
   useEffect(() => {
     const data = [];
     let internal = null;
@@ -130,7 +129,7 @@ const PulseReportPage = () => {
     const teamMemberIds = teamMembers.map(member => member.id);
 
     for (const pulse of pulses) {
-      if (teamMemberIds.length && !teamMemberIds.includes(pulse.teamMemberId)) continue;
+      if (!teamMemberIds.includes(pulse.teamMemberId)) continue;
 
       const { date, externalScore, internalScore, submissionDate } = pulse;
       const [year, month, day] = submissionDate;
@@ -193,6 +192,7 @@ const PulseReportPage = () => {
     //      because this permission has not been implemented yet.
     // if (selectHasPulseReportPermission(state)) loadPulses();
     loadPulses();
+    setTeamMembers(state.memberProfiles);
   }, [csrf, dateFrom, dateTo]);
 
   const handleDateFromChange = dayJsDate => {
