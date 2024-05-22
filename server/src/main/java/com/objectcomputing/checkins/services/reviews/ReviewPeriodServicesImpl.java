@@ -10,19 +10,25 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Singleton
-public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
+class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReviewPeriodServicesImpl.class);
 
     private final ReviewPeriodRepository reviewPeriodRepository;
+    private final ReviewStatusTransitionValidator reviewStatusTransitionValidator;
 
-    public ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository) {
+    ReviewPeriodServicesImpl(
+            ReviewPeriodRepository reviewPeriodRepository,
+            ReviewStatusTransitionValidator reviewStatusTransitionValidator
+    ) {
         this.reviewPeriodRepository = reviewPeriodRepository;
+        this.reviewStatusTransitionValidator = reviewStatusTransitionValidator;
     }
 
     public ReviewPeriod save(ReviewPeriod reviewPeriod) {
@@ -72,10 +78,24 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
     public ReviewPeriod update(@NotNull ReviewPeriod reviewPeriod) {
         LOG.info("Updating entity {}", reviewPeriod);
-        if (reviewPeriod.getId() != null && reviewPeriodRepository.findById(reviewPeriod.getId()).isPresent()) {
-            return reviewPeriodRepository.update(reviewPeriod);
-        } else {
+
+        if (reviewPeriod.getId() == null) {
+            throw new BadArgException("ReviewPeriod id is required for update");
+        }
+
+        Optional<ReviewPeriod> maybeExistingPeriod = reviewPeriodRepository.findById(reviewPeriod.getId());
+
+        if (maybeExistingPeriod.isEmpty()) {
             throw new BadArgException(String.format("ReviewPeriod %s does not exist, cannot update", reviewPeriod.getId()));
         }
+
+        ReviewPeriod existingPeriod = maybeExistingPeriod.get();
+        ReviewStatus currentStatus = existingPeriod.getReviewStatus();
+        ReviewStatus newStatus = reviewPeriod.getReviewStatus();
+        if (!reviewStatusTransitionValidator.isValid(currentStatus, newStatus)) {
+            throw new BadArgException(String.format("Invalid status transition from %s to %s", currentStatus, newStatus));
+        }
+
+        return reviewPeriodRepository.update(reviewPeriod);
     }
 }
