@@ -13,12 +13,15 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
+import { Comment } from '@mui/icons-material';
 import {
+  Avatar,
   Button,
   Card,
   CardContent,
   CardHeader,
   Collapse,
+  IconButton,
   Typography
 } from '@mui/material';
 
@@ -26,14 +29,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
-import { resolve } from '../api/api.js';
+import { getAvatarURL, resolve } from '../api/api.js';
 import Pulse from '../components/pulse/Pulse.jsx';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { AppContext } from '../context/AppContext.jsx';
 import {
   selectCsrfToken,
   selectCurrentUser,
-  selectHasPulseReportPermission
+  selectHasPulseReportPermission,
+  selectProfileMap
 } from '../context/selectors.js';
 import ExpandMore from '../components/expand-more/ExpandMore';
 
@@ -67,6 +71,7 @@ let responseFrequencies = [];
 const PulseReportPage = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
+  const memberMap = selectProfileMap(state);
 
   const initialDateFrom = new Date();
   initialDateFrom.setMonth(initialDateFrom.getMonth() - 3);
@@ -203,6 +208,43 @@ const PulseReportPage = () => {
     setTeamMembers(members);
   };
 
+  const responseSummary = () => {
+    let filteredPulses = pulses;
+    const teamMemberIds = teamMembers.map(member => member.id);
+    if (teamMemberIds.length) {
+      filteredPulses = pulses.filter(pulse =>
+        teamMemberIds.includes(pulse.teamMemberId))
+    }
+
+    return (
+      <>
+        {filteredPulses.map(pulse => {
+          const { externalFeelings, externalScore, internalFeelings,internalScore, teamMemberId } = pulse;
+          const hasComment = externalFeelings || internalFeelings;
+          const member = memberMap[teamMemberId];
+          if (!member) return null;
+          console.log('PulseReportPage.jsx responseSummary: member =', member);
+          return (
+            <div>
+              <Avatar src={getAvatarURL(member.workEmail)} />
+              {member.name} {member.title} {internalScore}/{externalScore}
+              {hasComment && (
+                <IconButton aria-label="Comment" onClick={showComments} size="large">
+                  <Comment />
+                </IconButton>
+          )}
+            </div>
+          );
+        })}
+      </>
+    );
+  };
+
+  const showComments = () => {
+    console.log('PulseReportPage.jsx showComments: entered');
+    // setShowComments(!showComments);
+  };
+
   const barChart = () => (
     <Card>
       <CardHeader
@@ -242,7 +284,7 @@ const PulseReportPage = () => {
           timeout="auto"
           unmountOnExit
         >
-          Member data goes here.
+          {responseSummary()}
         </Collapse>
       </CardContent>
     </Card>
