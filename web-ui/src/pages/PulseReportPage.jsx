@@ -55,13 +55,13 @@ const orange = '#b26801';
 const ScoreOption = {
   INTERNAL: 'Internal',
   EXTERNAL: 'External',
-  BOTH: 'Both'
+  COMBINED: 'Combined'
 };
 
 const propertyMap = {
   [ScoreOption.INTERNAL]: 'internalAverage',
   [ScoreOption.EXTERNAL]: 'externalAverage',
-  [ScoreOption.BOTH]: 'combinedAverage'
+  [ScoreOption.COMBINED]: 'combinedAverage'
 };
 
 /*
@@ -98,7 +98,7 @@ const PulseReportPage = () => {
   const [lineChartData, setLineChartData] = useState([]);
   const [pulses, setPulses] = useState([]);
   const [scope, setScope] = useState('Individual');
-  const [scoreType, setScoreType] = useState(ScoreOption.BOTH);
+  const [scoreType, setScoreType] = useState(ScoreOption.COMBINED);
   const [selectedPulse, setSelectedPulse] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -150,7 +150,7 @@ const PulseReportPage = () => {
       const memberId = pulse.teamMemberId;
       if (!teamMemberIds.includes(memberId)) continue;
 
-      const { date, externalScore, internalScore, submissionDate } = pulse;
+      const { externalScore, internalScore, submissionDate } = pulse;
       const [year, month, day] = submissionDate;
       const monthPadded = month.toString().padStart(2, '0');
       const dayPadded = day.toString().padStart(2, '0');
@@ -248,6 +248,45 @@ const PulseReportPage = () => {
     );
   }
 
+  const averageScores = () => (
+    <>
+      <div className="average-header row">
+        <Typography variant="h5">Average Scores</Typography>
+        <FormControl style={{width: '8rem'}} value={scoreType}>
+          <TextField
+            select
+            size="small"
+            label="Score Type"
+            onChange={e => setScoreType(e.target.value)}
+            value={scoreType}
+            variant="outlined"
+          >
+            <MenuItem value={ScoreOption.INTERNAL}>{ScoreOption.INTERNAL}</MenuItem>
+            <MenuItem value={ScoreOption.EXTERNAL}>{ScoreOption.EXTERNAL}</MenuItem>
+            <MenuItem value={ScoreOption.COMBINED}>{ScoreOption.COMBINED}</MenuItem>
+          </TextField>
+        </FormControl>
+        <FormControl style={{width: '7.5rem'}} value={scoreType}>
+          <TextField
+            select
+            size="small"
+            label="Scope"
+            onChange={e => setScope(e.target.value)}
+            value={scope}
+            variant="outlined"
+          >
+            <MenuItem value="Individual">Individual</MenuItem>
+            <MenuItem value="Manager">Manager</MenuItem>
+          </TextField>
+        </FormControl>
+      </div>
+      <div className="row">
+        {scoreCard(true)}
+        {scoreCard(false)}
+      </div>
+    </>
+  );
+
   const barChart = () => (
     <Card>
       <CardHeader
@@ -322,54 +361,15 @@ const PulseReportPage = () => {
       const bValue = b[property];
       return highest ? bValue - aValue : aValue - bValue
     }).slice(0, 5);
-    const title = (highest ? 'Highest' : 'Lowest') + ' Avg. Scores'; 
+    const title = highest ? 'Highest' : 'Lowest'; 
 
     return (
-      <Card>
-        <CardHeader
-          component={() =>
-            <div className="average-header row">
-              <Typography variant="h5" component="h2">{title}</Typography>
-              <FormControl value={scoreType}>
-                <TextField
-                  select
-                  size="small"
-                  label="Score Type"
-                  fullWidth
-                  onChange={e => setScoreType(e.target.value)}
-                  sx={{width: '7rem'}}
-                  value={scoreType}
-                  variant="outlined"
-                >
-                  <MenuItem value={ScoreOption.INTERNAL}>{ScoreOption.INTERNAL}</MenuItem>
-                  <MenuItem value={ScoreOption.EXTERNAL}>{ScoreOption.EXTERNAL}</MenuItem>
-                  <MenuItem value={ScoreOption.BOTH}>{ScoreOption.BOTH}</MenuItem>
-                </TextField>
-              </FormControl>
-              <FormControl value={scoreType}>
-                <TextField
-                  select
-                  size="small"
-                  label="Scope"
-                  fullWidth
-                  onChange={e => setScope(e.target.value)}
-                  sx={{width: '7.5rem'}}
-                  value={scope}
-                  variant="outlined"
-                >
-                  <MenuItem value="Individual">Individual</MenuItem>
-                  <MenuItem value="Manager">Manager</MenuItem>
-                </TextField>
-              </FormControl>
-            </div>
-          }
-        />
-        <CardContent>
-          <table>
-            {scoresToShow.map(scores => averageRow(scores))}
-          </table>
-        </CardContent>
-      </Card>
+      <div>
+        <Typography variant="h6">{title}</Typography>
+        <table>
+          {scoresToShow.map(scores => averageRow(scores))}
+        </table>
+      </div>
     );
   };
 
@@ -488,10 +488,7 @@ const PulseReportPage = () => {
           />
           {lineChart()}
           {barChart()}
-          <div className="row">
-            {scoreCard(true)}
-            {scoreCard(false)}
-          </div>
+          {averageScores()}
           <Modal open={showComments} onClose={() => setShowComments(false)}>
             <Card className="feedback-request-enable-edits-modal">
               <CardHeader
