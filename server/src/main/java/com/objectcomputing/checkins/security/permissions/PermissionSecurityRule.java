@@ -2,8 +2,8 @@ package com.objectcomputing.checkins.security.permissions;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermission;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
-import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
@@ -18,7 +18,9 @@ import org.json.JSONArray;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -32,6 +34,7 @@ public class PermissionSecurityRule implements SecurityRule<HttpRequest<?>> {
         this.rolePermissionServices = rolePermissionServices;
     }
 
+    @Override
     public int getOrder() {
         return ORDER;
     }
@@ -39,39 +42,27 @@ public class PermissionSecurityRule implements SecurityRule<HttpRequest<?>> {
     @Override
     public Publisher<SecurityRuleResult> check(@Nullable HttpRequest request, @Nullable Authentication authentication) {
         RouteMatch routeMatch = request.getAttribute(HttpAttributes.ROUTE_MATCH, RouteMatch.class).orElse(null);
-        if (routeMatch instanceof MethodBasedRouteMatch) {
-            MethodBasedRouteMatch methodBasedRouteMatch = (MethodBasedRouteMatch) routeMatch;
-            if (methodBasedRouteMatch.hasAnnotation(RequiredPermission.class)) {
+        if (routeMatch instanceof MethodBasedRouteMatch methodBasedRouteMatch
+                && methodBasedRouteMatch.hasAnnotation(RequiredPermission.class)) {
+            Optional<String> optionalPermission = methodBasedRouteMatch.findAnnotation(RequiredPermission.class).flatMap(r -> r.stringValue("value"));
 
-                AnnotationValue<RequiredPermission> requiredPermissionAnnotation =
-                        methodBasedRouteMatch.getAnnotation(RequiredPermission.class);
+            Map<String, Object> claims = authentication != null ? authentication.getAttributes() : null;
+            if (optionalPermission.isPresent() && claims != null && claims.containsKey("roles")) {
+                final Permission requiredPermission = Permission.valueOf(optionalPermission.get());
 
-                Optional<String> optionalPermission = requiredPermissionAnnotation != null ?
-                        requiredPermissionAnnotation.stringValue("value") : Optional.empty();
+                JSONArray jsonArray = new JSONArray(claims.get("roles").toString());
 
-                Map<String, Object> claims = authentication != null ? authentication.getAttributes() : null;
+                final Set<Permission> userPermissions = jsonArray.toList().stream()
+                        .map(Object::toString)
+                        .flatMap(role -> rolePermissionServices.findByRole(role).stream())
+                        .map(RolePermission::getPermission)
+                        .collect(Collectors.toSet());
 
-                if (optionalPermission.isPresent() && claims != null && claims.containsKey("roles")) {
-
-                    final Permission requiredPermission = Permission.valueOf(optionalPermission.get());
-                    final Set<Permission> userPermissions = new HashSet<>();
-
-                    JSONArray jsonArray = new JSONArray(claims.get("roles").toString());
-                    final List<String> roles = jsonArray.toList().stream().map(Object::toString).collect(Collectors.toList());
-
-
-                    roles.forEach(role -> rolePermissionServices.findByRole(role)
-                            .forEach(rolePermission -> userPermissions.add(rolePermission.getPermission()))
-                    );
-
-
-                    return Mono.just(userPermissions.contains(requiredPermission)
-                            ? SecurityRuleResult.ALLOWED
-                            : SecurityRuleResult.REJECTED);
-                }
+                return Mono.just(userPermissions.contains(requiredPermission)
+                        ? SecurityRuleResult.ALLOWED
+                        : SecurityRuleResult.REJECTED);
             }
         }
-
         return Mono.just(SecurityRuleResult.UNKNOWN);
     }
 }
