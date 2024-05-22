@@ -23,11 +23,11 @@ import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EmployeeHoursControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, EmployeeHoursFixture {
+class EmployeeHoursControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, EmployeeHoursFixture {
 
     @Inject
     @Client("/services/employee/hours")
@@ -136,7 +136,7 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGetByIdNotFound() {
+    void testGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
