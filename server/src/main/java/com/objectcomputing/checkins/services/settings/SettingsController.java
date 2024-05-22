@@ -21,7 +21,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@Controller(PATH)
+@Controller(SettingsController.PATH)
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
