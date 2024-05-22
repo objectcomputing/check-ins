@@ -16,13 +16,15 @@ import {
 import { Comment } from '@mui/icons-material';
 import {
   Avatar,
-  Button,
   Card,
   CardContent,
   CardHeader,
   Collapse,
+  FormControl,
   IconButton,
+  MenuItem,
   Modal,
+  TextField,
   Typography
 } from '@mui/material';
 
@@ -31,7 +33,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { getAvatarURL, resolve } from '../api/api.js';
-import Pulse from '../components/pulse/Pulse.jsx';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { AppContext } from '../context/AppContext.jsx';
 import {
@@ -50,6 +51,18 @@ const ociDarkBlue = '#2c519e';
 //const ociLightBlue = '#76c8d4'; // not currently used
 // const ociOrange = '#f8b576'; // too light
 const orange = '#b26801';
+
+const ScoreOption = {
+  INTERNAL: 'Internal',
+  EXTERNAL: 'External',
+  BOTH: 'Both'
+};
+
+const propertyMap = {
+  [ScoreOption.INTERNAL]: 'internalAverage',
+  [ScoreOption.EXTERNAL]: 'externalAverage',
+  [ScoreOption.BOTH]: 'combinedAverage'
+};
 
 /*
 // Returns a random, integer score between 1 and 5.
@@ -80,11 +93,12 @@ const PulseReportPage = () => {
   const [dateTo, setDateTo] = useState(new Date());
 
   const [averageData, setAverageData] = useState({});
-  console.log('PulseReportPage.jsx : averageData =', averageData);
   const [barChartData, setBarChartData] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [lineChartData, setLineChartData] = useState([]);
   const [pulses, setPulses] = useState([]);
+  const [scope, setScope] = useState('Individual');
+  const [scoreType, setScoreType] = useState(ScoreOption.BOTH);
   const [selectedPulse, setSelectedPulse] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -166,6 +180,7 @@ const PulseReportPage = () => {
       const averages = averageData[memberId];
       averages.externalAverage = average(averages.externalScores);
       averages.internalAverage = average(averages.internalScores);
+      averages.combinedAverage = average([...averages.externalScores, ...averages.internalScores]);
     }
     setAverageData(averageData);
   }, [pulses, teamMembers]);
@@ -220,9 +235,10 @@ const PulseReportPage = () => {
     setTeamMembers(state.memberProfiles || []);
   }, [csrf, state]);
 
-  const averageRow = (scores, property) => {
-    const { memberId, externalAverage, internalAverage } = scores;
+  const averageRow = scores => {
+    const { memberId } = scores;
     const member = memberMap[memberId];
+    const property = propertyMap[scoreType];
     return (
       <tr key={memberId}>
         <td><Avatar src={getAvatarURL(member.workEmail)} /></td>
@@ -298,19 +314,59 @@ const PulseReportPage = () => {
     setTeamMembers(members);
   };
 
-  const highScores = () => {
-    let topScores = Object.values(averageData).sort(
-      (a, b) => b.externalAverage - a.externalAverage
-    ).slice(0, 5);
+  const scoreCard = (highest) => {
+    const property = propertyMap[scoreType];
+    const scoresToShow = Object.values(averageData).sort(
+    (a, b) => {
+      const aValue = a[property];
+      const bValue = b[property];
+      return highest ? bValue - aValue : aValue - bValue
+    }).slice(0, 5);
+    const title = (highest ? 'Highest' : 'Lowest') + ' Avg. Scores'; 
+
     return (
       <Card>
         <CardHeader
-          title="Highest Average Scores"
-          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+          component={() =>
+            <div className="average-header row">
+              <Typography variant="h5" component="h2">{title}</Typography>
+              <FormControl value={scoreType}>
+                <TextField
+                  select
+                  size="small"
+                  label="Score Type"
+                  fullWidth
+                  onChange={e => setScoreType(e.target.value)}
+                  sx={{width: '7rem'}}
+                  value={scoreType}
+                  variant="outlined"
+                >
+                  <MenuItem value={ScoreOption.INTERNAL}>{ScoreOption.INTERNAL}</MenuItem>
+                  <MenuItem value={ScoreOption.EXTERNAL}>{ScoreOption.EXTERNAL}</MenuItem>
+                  <MenuItem value={ScoreOption.BOTH}>{ScoreOption.BOTH}</MenuItem>
+                </TextField>
+              </FormControl>
+              <FormControl value={scoreType}>
+                <TextField
+                  select
+                  size="small"
+                  label="Scope"
+                  fullWidth
+                  onChange={e => setScope(e.target.value)}
+                  sx={{width: '7.5rem'}}
+                  value={scope}
+                  variant="outlined"
+                >
+                  <MenuItem value="Individual">Individual</MenuItem>
+                  <MenuItem value="Manager">Manager</MenuItem>
+                </TextField>
+              </FormControl>
+            </div>
+          }
         />
         <CardContent>
           <table>
-            {topScores.map(scores => averageRow(scores, 'externalAverage'))}
+            {scoresToShow.map(scores => averageRow(scores))}
           </table>
         </CardContent>
       </Card>
@@ -354,18 +410,6 @@ const PulseReportPage = () => {
       </CardContent>
     </Card>
   );
-
-  const lowScores = () => {
-    return (
-      <Card>
-        <CardHeader
-          title="Lowest Average Scores"
-          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
-        />
-        <CardContent></CardContent>
-      </Card>
-    );
-  };
 
   const responseSummary = () => {
     let filteredPulses = pulses;
@@ -444,26 +488,27 @@ const PulseReportPage = () => {
           />
           {lineChart()}
           {barChart()}
-          {highScores()}
-          {lowScores()}
+          <div className="row">
+            {scoreCard(true)}
+            {scoreCard(false)}
+          </div>
+          <Modal open={showComments} onClose={() => setShowComments(false)}>
+            <Card className="feedback-request-enable-edits-modal">
+              <CardHeader
+                title={
+                  <Typography variant="h5" fontWeight="bold">
+                    Pulse Comments
+                  </Typography>
+                }
+              />
+              <CardContent>
+                <div>Internal Feelings: {selectedPulse?.internalFeelings}</div>
+                <div>External Feelings: {selectedPulse?.externalFeelings}</div>
+              </CardContent>
+            </Card>
+          </Modal>
         </>
       )}
-
-      <Modal open={showComments} onClose={() => setShowComments(false)}>
-        <Card className="feedback-request-enable-edits-modal">
-          <CardHeader
-            title={
-              <Typography variant="h5" fontWeight="bold">
-                Pulse Comments
-              </Typography>
-            }
-          />
-          <CardContent>
-            <div>Internal Feelings: {selectedPulse?.internalFeelings}</div>
-            <div>External Feelings: {selectedPulse?.externalFeelings}</div>
-          </CardContent>
-        </Card>
-      </Modal>
     </div>
   );
 };
