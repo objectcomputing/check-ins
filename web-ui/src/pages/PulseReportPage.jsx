@@ -146,6 +146,8 @@ const PulseReportPage = () => {
     }
     const teamMemberIds = teamMembers.map(member => member.id);
 
+    const managerMode = scope === 'Manager';
+
     for (const pulse of pulses) {
       const memberId = pulse.teamMemberId;
       if (!teamMemberIds.includes(memberId)) continue;
@@ -164,13 +166,29 @@ const PulseReportPage = () => {
       frequencies[externalScore - 1].external++;
 
       const member = memberMap[memberId];
-      let averages = averageData[memberId];
-      if (!averages) {
-        averages = averageData[memberId] =
-        { memberId, externalScores: [], internalScores: [] };
+      const { supervisorid } = member;
+      const memberIdToUse = managerMode ? supervisorid : memberId;
+
+      /* For debugging ...
+      if (supervisorid) {
+        const supervisor = memberMap[supervisorid];
+        console.log(`The supervisor of ${member.name} is ${supervisor.name}`);
+      } else {
+        console.log(`${member.name} has no supervisor`);
       }
-      averages.externalScores.push(externalScore);
-      averages.internalScores.push(internalScore);
+      */
+
+      // When in manager mode, if the member
+      // doesn't have a supervisor then skip this data.
+      if (memberIdToUse) {
+        let averages = averageData[memberIdToUse];
+        if (!averages) {
+          averages = averageData[memberIdToUse] =
+            { memberId: memberIdToUse, externalScores: [], internalScores: [] };
+        }
+        averages.externalScores.push(externalScore);
+        averages.internalScores.push(internalScore);
+      }
     }
 
     setLineChartData(lineChartData);
@@ -183,7 +201,7 @@ const PulseReportPage = () => {
       averages.combinedAverage = average([...averages.externalScores, ...averages.internalScores]);
     }
     setAverageData(averageData);
-  }, [pulses, teamMembers]);
+  }, [pulses, scope, teamMembers]);
 
   const loadPulses = async () => {
     if (!csrf) return;
@@ -217,7 +235,6 @@ const PulseReportPage = () => {
         if (compare === 0) compare = day1 - day2;
         return compare;
       });
-      console.log('PulseReportPage.jsx loadPulses: pulses =', pulses);
       setPulses(pulses);
     } catch (err) {
       console.error('PulseReportPage.jsx loadPulses:', err);
@@ -252,12 +269,13 @@ const PulseReportPage = () => {
     <>
       <div className="average-header row">
         <Typography variant="h5">Average Scores</Typography>
-        <FormControl style={{width: '8rem'}} value={scoreType}>
+        <FormControl style={{width: '8rem'}}>
           <TextField
             select
             size="small"
             label="Score Type"
             onChange={e => setScoreType(e.target.value)}
+            sx={{width: '8rem'}}
             value={scoreType}
             variant="outlined"
           >
@@ -266,12 +284,13 @@ const PulseReportPage = () => {
             <MenuItem value={ScoreOption.COMBINED}>{ScoreOption.COMBINED}</MenuItem>
           </TextField>
         </FormControl>
-        <FormControl style={{width: '7.5rem'}} value={scoreType}>
+        <FormControl style={{width: '7.5rem'}}>
           <TextField
             select
             size="small"
             label="Scope"
             onChange={e => setScope(e.target.value)}
+            sx={{width: '7.5rem'}}
             value={scope}
             variant="outlined"
           >
@@ -367,7 +386,9 @@ const PulseReportPage = () => {
       <div>
         <Typography variant="h6">{title}</Typography>
         <table>
-          {scoresToShow.map(scores => averageRow(scores))}
+          <tbody>
+            {scoresToShow.map(scores => averageRow(scores))}
+          </tbody>
         </table>
       </div>
     );
