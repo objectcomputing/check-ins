@@ -79,6 +79,8 @@ const PulseReportPage = () => {
   const [dateFrom, setDateFrom] = useState(initialDateFrom);
   const [dateTo, setDateTo] = useState(new Date());
 
+  const [averageData, setAverageData] = useState({});
+  console.log('PulseReportPage.jsx : averageData =', averageData);
   const [barChartData, setBarChartData] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [lineChartData, setLineChartData] = useState([]);
@@ -86,7 +88,6 @@ const PulseReportPage = () => {
   const [selectedPulse, setSelectedPulse] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
-  console.log('PulseReportPage.jsx : teamMembers =', teamMembers);
 
   /*
   // This generates random data to use in the line chart.
@@ -119,9 +120,12 @@ const PulseReportPage = () => {
   }, [dateFrom, dateTo]);
   */
 
+  const average = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+
   // This creates data in the format that recharts needs from pulse data.
   useEffect(() => {
-    const data = [];
+    const averageData = {}; // key is member id
+    const lineChartData = [];
     const frequencies = [];
     for (let i = 1; i <= 5; i++) {
       frequencies.push({ score: i, internal: 0, external: 0 });
@@ -129,23 +133,41 @@ const PulseReportPage = () => {
     const teamMemberIds = teamMembers.map(member => member.id);
 
     for (const pulse of pulses) {
-      if (!teamMemberIds.includes(pulse.teamMemberId)) continue;
+      const memberId = pulse.teamMemberId;
+      if (!teamMemberIds.includes(memberId)) continue;
 
       const { date, externalScore, internalScore, submissionDate } = pulse;
       const [year, month, day] = submissionDate;
       const monthPadded = month.toString().padStart(2, '0');
       const dayPadded = day.toString().padStart(2, '0');
-      data.push({
+      lineChartData.push({
         date: `${year}-${monthPadded}-${dayPadded}`,
         internal: internalScore,
         external: externalScore
       });
+
       frequencies[internalScore - 1].internal++;
       frequencies[externalScore - 1].external++;
+
+      const member = memberMap[memberId];
+      let averages = averageData[memberId];
+      if (!averages) {
+        averages = averageData[memberId] =
+        { memberId, externalScores: [], internalScores: [] };
+      }
+      averages.externalScores.push(externalScore);
+      averages.internalScores.push(internalScore);
     }
 
-    setLineChartData(data);
+    setLineChartData(lineChartData);
     setBarChartData(frequencies);
+
+    for (const memberId of Object.keys(averageData)) {
+      const averages = averageData[memberId];
+      averages.externalAverage = average(averages.externalScores);
+      averages.internalAverage = average(averages.internalScores);
+    }
+    setAverageData(averageData);
   }, [pulses, teamMembers]);
 
   const loadPulses = async () => {
@@ -197,6 +219,18 @@ const PulseReportPage = () => {
   useEffect(() => {
     setTeamMembers(state.memberProfiles || []);
   }, [csrf, state]);
+
+  const averageRow = (scores, property) => {
+    const { memberId, externalAverage, internalAverage } = scores;
+    const member = memberMap[memberId];
+    return (
+      <div className="row" key={memberId}>
+        <Avatar src={getAvatarURL(member.workEmail)} />
+        {member.name}, {member.title},
+        {scores[property]}
+      </div>
+    );
+  }
 
   const barChart = () => (
     <Card>
@@ -265,7 +299,20 @@ const PulseReportPage = () => {
   };
 
   const highScores = () => {
-    return <div>High scores go here!</div>
+    let topScores = Object.values(averageData).sort(
+      (a, b) => b.externalAverage - a.externalAverage
+    ).slice(0, 5);
+    return (
+      <Card>
+        <CardHeader
+          title="Highest Average Scores"
+          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+        />
+        <CardContent>
+          {topScores.map(scores => averageRow(scores, 'externalAverage'))}
+        </CardContent>
+      </Card>
+    );
   };
 
   const lineChart = () => (
@@ -307,7 +354,15 @@ const PulseReportPage = () => {
   );
 
   const lowScores = () => {
-    return <div>High scores go here!</div>
+    return (
+      <Card>
+        <CardHeader
+          title="Lowest Average Scores"
+          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+        />
+        <CardContent></CardContent>
+      </Card>
+    );
   };
 
   const responseSummary = () => {
@@ -321,7 +376,8 @@ const PulseReportPage = () => {
     return (
       <>
         {filteredPulses.map(pulse => {
-          const member = memberMap[pulse.teamMemberId];
+          const memberId = pulse.teamMemberId;
+          const member = memberMap[memberId];
           if (!member) return null;
 
           const {
@@ -334,7 +390,7 @@ const PulseReportPage = () => {
           const [year, month, day] = submissionDate;
           const hasComment = externalFeelings || internalFeelings;
           return (
-            <div className="response-row">
+            <div className="row" key={memberId}>
               <Avatar src={getAvatarURL(member.workEmail)} />
               {year}-{month}-{day}, {member.name}, {member.title},
               internal: {internalScore}, external: {externalScore}

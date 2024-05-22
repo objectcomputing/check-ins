@@ -669,6 +669,22 @@ INSERT INTO pulse_response
 (id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Mark Volkmann
 VALUES
 ('8c4e215f-44c8-4b73-bdd1-b5cdc0048f32', '2024-05-21', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d',  PGP_SYM_ENCRYPT('working on Check-ins','${aeskey}'), PGP_SYM_ENCRYPT('writing htmx book','${aeskey}'), 3, 5);
+INSERT INTO pulse_response
+(id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Pramukh Bagur
+VALUES
+('01adf25c-84ee-4421-a9cc-513298d4cc25', '2024-05-21', '6884ab96-2275-4af9-89d8-ad84254d8759',  PGP_SYM_ENCRYPT('internal #6','${aeskey}'), PGP_SYM_ENCRYPT('extenal #6','${aeskey}'), 1, 2);
+INSERT INTO pulse_response
+(id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- John Meyerin
+VALUES
+('e7549dce-811c-41fa-be2c-188f6edefe06', '2024-05-21', '802cb1f5-a255-4236-8719-773fa53d79d9',  PGP_SYM_ENCRYPT('internal #7','${aeskey}'), PGP_SYM_ENCRYPT('extenal #7','${aeskey}'), 2, 3);
+INSERT INTO pulse_response
+(id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Mohit Bhatia
+VALUES
+('251a6c5d-a1fd-4967-aa8a-691f0e35569f', '2024-05-21', 'b2d35288-7f1e-4549-aa2b-68396b162490',  PGP_SYM_ENCRYPT('internal #8','${aeskey}'), PGP_SYM_ENCRYPT('extenal #8','${aeskey}'), 3, 4);
+INSERT INTO pulse_response
+(id, submissiondate, teammemberid, internalfeelings, externalfeelings, internal_score, external_score) -- Suman Maroju
+VALUES
+('fa2319a4-8db6-4b83-bba7-70a3e4d7670f', '2024-05-21', '1b4f99da-ef70-4a76-9b37-8bb783b749ad',  PGP_SYM_ENCRYPT('internal #9','${aeskey}'), PGP_SYM_ENCRYPT('extenal #9','${aeskey}'), 4, 5);
 
 -- Admin Permissions
 insert into role_permissions

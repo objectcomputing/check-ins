@@ -12,9 +12,10 @@
     display: inline-block;
   }
 
-  .response-row {
+  .row {
     display: flex;
     align-items: center;
     gap: 1rem;
+    height: 3rem;
   }
 }
