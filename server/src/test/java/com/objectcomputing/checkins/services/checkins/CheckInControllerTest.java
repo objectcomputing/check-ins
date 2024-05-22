@@ -24,12 +24,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CheckInControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, RoleFixture {
+class CheckInControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, RoleFixture {
 
     @Inject
     @Client("/services/check-ins")
@@ -39,8 +39,9 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     void createRolesAndPermissions() {
         createAndAssignRoles();
     }
+
     @Test
-    public void testCreateACheckInByAdmin() {
+    void testCreateACheckInByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         Role role = assignAdminRole(memberProfileOfUser);
@@ -64,7 +65,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testCreateACheckInByMember() {
+    void testCreateACheckInByMember() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         Role role = assignMemberRole(memberProfileOfUser);
@@ -88,7 +89,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testCreateACheckInByPDL() {
+    void testCreateACheckInByPDL() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         Role role = assignPdlRole(memberProfileOfPDL);
@@ -112,7 +113,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testCreateACheckInByUnrelatedUser() {
+    void testCreateACheckInByUnrelatedUser() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
