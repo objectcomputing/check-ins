@@ -1,37 +1,40 @@
 package com.objectcomputing.checkins.services.settings;
 
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@Controller("/services/settings")
+@Controller(PATH)
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "settings")
+@Validated
 public class SettingsController {
+    public static final String PATH = "/services/settings";
 
     private final SettingsServices settingsServices;
-    private final CurrentUserServices currentUserServices;
 
-    public SettingsController(SettingsServices settingsServices, CurrentUserServices currentUserServices) {
+    public SettingsController(SettingsServices settingsServices) {
         this.settingsServices = settingsServices;
-        this.currentUserServices = currentUserServices;
     }
 
     /**
@@ -40,24 +43,31 @@ public class SettingsController {
      * @param name {@link String} name of the setting
      * @return {@link <List<SettingResponseDTO>>} Returned setting
      */
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @Get("/{?name}")
-    public Mono<HttpResponse<List<SettingsResponseDTO>>> getByValue(@Nullable String name) {
-        return Mono.fromCallable(() -> settingsServices.findByName(name))
-                .map(HttpResponse::ok);
+    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
+    public List<SettingsResponseDTO> findByName(@Nullable String name) {
+        return settingsServices.findByName(name);
     }
 
+    @Get("/options")
+    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
+    public List<SettingOption> getOptions() {
+        return SettingOption.getOptions();
+    }
     /**
      * Create and save a new setting.
      *
      * @param settingDTO, {@link SettingsCreateDTO}
      * @return {@link HttpResponse<SettingsResponseDTO>}
      */
-    @Post()
-    public Mono<HttpResponse<SettingsResponseDTO>> save(@Body @Valid SettingsCreateDTO settingDTO, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> settingsServices.save(fromDTO(settingDTO)))
-                .map(savedSetting -> HttpResponse.created(fromEntity(savedSetting))
-                        .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), savedSetting.getId())))));
+    @ExecuteOn(TaskExecutors.BLOCKING)
+    @Post
+    @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
+    public HttpResponse<SettingsResponseDTO> save(@Body @Valid SettingsCreateDTO settingDTO) {
+        Setting savedSetting = settingsServices.save(fromDTO(settingDTO));
+        URI location = UriBuilder.of(PATH).path(savedSetting.getId().toString()).build();
+        return HttpResponse.created(fromEntity(savedSetting), location);
     }
   
     /**
@@ -66,14 +76,17 @@ public class SettingsController {
      * @param settingDTO, {@link SettingsUpdateDTO}
      * @return {@link <SettingsReponseDTO>}
      */
-    @Put()
-    public Mono<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> settingsServices.update(fromUpdateDTO(settingDTO)))
-                .map(savedSetting -> HttpResponse.ok(fromEntity(savedSetting))
-                        .headers(headers -> headers
-                                .location(URI.create(String.format("%s/%s", request.getPath(), savedSetting.getId())))));
+    @Put
+    @ExecuteOn(TaskExecutors.BLOCKING)
+    @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
+    public HttpResponse<SettingsResponseDTO> update(@Body @Valid SettingsUpdateDTO settingDTO) {
+        Setting savedSetting = settingsServices.update(fromUpdateDTO(settingDTO));
+        SettingsResponseDTO settingsResponseDTO = fromEntity(savedSetting);
+        URI location = UriBuilder.of(PATH).path(savedSetting.getId().toString()).build();
+        return HttpResponse.ok(settingsResponseDTO).headers(headers ->
+            headers.location(location)
+        );
     }
-       
     
      /**
      * Delete the setting.
@@ -81,18 +94,18 @@ public class SettingsController {
      * @param id, id of {@link Setting} to delete
      */
     @Delete("/{id}")
-    public Mono<HttpResponse<?>> delete(UUID id) {
-        return Mono.fromCallable(() -> settingsServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @ExecuteOn(TaskExecutors.BLOCKING)
+    @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
+    public HttpStatus delete(UUID id) {
+        return settingsServices.delete(id) ? HttpStatus.OK : HttpStatus.UNPROCESSABLE_ENTITY;
     }
                     
     private Setting fromDTO(SettingsCreateDTO settingsCreateDTO) {
-        return new Setting(settingsCreateDTO.getName(), currentUserServices.getCurrentUser().getId(), settingsCreateDTO.getValue());
+        return new Setting(settingsCreateDTO.getName(), settingsCreateDTO.getValue());
     }
 
     private Setting fromUpdateDTO(SettingsUpdateDTO settingsUpdateDTO) {
-        return new Setting(settingsUpdateDTO.getId(), settingsUpdateDTO.getName(), currentUserServices.getCurrentUser().getId(),
-                settingsUpdateDTO.getValue());
+        return new Setting(settingsUpdateDTO.getId(), settingsUpdateDTO.getName(), settingsUpdateDTO.getValue());
     }
       
     private SettingsResponseDTO fromEntity(Setting entity) {

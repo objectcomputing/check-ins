@@ -28,11 +28,11 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CombineSkillsControllerTest extends TestContainersSuite
+class CombineSkillsControllerTest extends TestContainersSuite
         implements MemberProfileFixture, RoleFixture, SkillFixture, MemberSkillFixture {
 
     @Inject
@@ -55,7 +55,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
 //    }
 
     @Test
-    public void testPOSTCombine2SkillsIntoOne() {
+    void testPOSTCombine2SkillsIntoOne() {
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();
 
@@ -98,7 +98,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombine2SkillsIntoOneNonAdmin() {
+    void testPOSTCombine2SkillsIntoOneNonAdmin() {
 
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();
@@ -160,7 +160,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombineBlankSkillNameAdmin() {
+    void testPOSTCombineBlankSkillNameAdmin() {
 
         UUID[] newSkillsArray = new UUID[2];
         newSkillsArray[0] = UUID.randomUUID();
@@ -181,7 +181,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombineNonExistingSkillsAdmin() {
+    void testPOSTCombineNonExistingSkillsAdmin() {
 
         CombineSkillsDTO combineSkillsDTO =
              new CombineSkillsDTO("New Skill", "New Skill Desc", null);
@@ -199,7 +199,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombine2SkillsIntoOneCheckSkillsDeleted() {
+    void testPOSTCombine2SkillsIntoOneCheckSkillsDeleted() {
 
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();
@@ -252,7 +252,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombine2SkillsIntoOneCheckMemberSkills() {
+    void testPOSTCombine2SkillsIntoOneCheckMemberSkills() {
 
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();

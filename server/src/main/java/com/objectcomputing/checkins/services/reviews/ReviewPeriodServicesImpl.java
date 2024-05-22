@@ -2,14 +2,16 @@ package com.objectcomputing.checkins.services.reviews;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -18,12 +20,9 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     private static final Logger LOG = LoggerFactory.getLogger(ReviewPeriodServicesImpl.class);
 
     private final ReviewPeriodRepository reviewPeriodRepository;
-    private final CurrentUserServices currentUserServices;
 
-    public ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository,
-                                    CurrentUserServices currentUserServices) {
+    public ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository) {
         this.reviewPeriodRepository = reviewPeriodRepository;
-        this.currentUserServices = currentUserServices;
     }
 
     public ReviewPeriod save(ReviewPeriod reviewPeriod) {
@@ -39,7 +38,6 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
             newPeriod = reviewPeriodRepository.save(reviewPeriod);
         }
-
         return newPeriod;
     }
 
@@ -57,16 +55,13 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         } else if (reviewStatus != null) {
             reviewPeriods.addAll(reviewPeriodRepository.findByReviewStatus(reviewStatus));
         } else {
-            reviewPeriodRepository.findAll().forEach(reviewPeriods::add);
+            reviewPeriods.addAll(reviewPeriodRepository.findAll());
         }
 
         return reviewPeriods;
     }
 
     public void delete(@NotNull UUID id) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
-        }
         reviewPeriodRepository.deleteById(id);
     }
 
@@ -76,15 +71,11 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     }
 
     public ReviewPeriod update(@NotNull ReviewPeriod reviewPeriod) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
-        }
-        LOG.info(String.format("Updating entity %s", reviewPeriod));
+        LOG.info("Updating entity {}", reviewPeriod);
         if (reviewPeriod.getId() != null && reviewPeriodRepository.findById(reviewPeriod.getId()).isPresent()) {
             return reviewPeriodRepository.update(reviewPeriod);
         } else {
             throw new BadArgException(String.format("ReviewPeriod %s does not exist, cannot update", reviewPeriod.getId()));
         }
     }
-
 }
