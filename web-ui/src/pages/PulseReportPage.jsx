@@ -441,7 +441,7 @@ const PulseReportPage = () => {
     }
 
     return (
-      <>
+      <div className="response-summary">
         {filteredPulses.map(pulse => {
           const memberId = pulse.teamMemberId;
           const member = memberMap[memberId];
@@ -473,7 +473,7 @@ const PulseReportPage = () => {
             </div>
           );
         })}
-      </>
+      </div>
     );
   };
 
