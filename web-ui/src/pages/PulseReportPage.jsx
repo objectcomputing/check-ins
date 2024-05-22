@@ -195,6 +195,56 @@ const PulseReportPage = () => {
     setTeamMembers(state.memberProfiles);
   }, [csrf, dateFrom, dateTo]);
 
+  const barChart = () => (
+    <Card>
+      <CardHeader
+        title="Distribution of pulse scores for selected team members"
+        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+      />
+      <CardContent>
+        <BarChart
+          width={500}
+          height={300}
+          data={barChartData}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="score" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="internal" fill={ociDarkBlue} />
+          <Bar dataKey="external" fill={orange} />
+        </BarChart>
+        <ExpandMore
+          expand={expanded}
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+          aria-label={expanded ? 'show less' : 'show more'}
+          size="large"
+        />
+        <Collapse
+          className="bottom-row"
+          in={expanded}
+          timeout="auto"
+          unmountOnExit
+        >
+          {responseSummary()}
+        </Collapse>
+      </CardContent>
+    </Card>
+  );
+
+  const handleCommentClick = (pulse) => {
+    setSelectedPulse(pulse);
+    setShowComments(true);
+  };
+
   const handleDateFromChange = dayJsDate => {
     const date = new Date(dayJsDate.valueOf());
     setDateFrom(date);
@@ -209,6 +259,52 @@ const PulseReportPage = () => {
 
   const handleTeamMembersChange = members => {
     setTeamMembers(members);
+  };
+
+  const highScores = () => {
+    return <div>High scores go here!</div>
+  };
+
+  const lineChart = () => (
+    <Card>
+      <CardHeader
+        title={'Average pulse scores for "At Work" and "Outside Work"'}
+        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+      />
+      <CardContent>
+        <ResponsiveContainer width="100%" aspect={3.0}>
+          <LineChart data={lineChartData} height={300}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              angle={-90}
+              dataKey="date"
+              height={100}
+              padding={{ left: 30, right: 30 }}
+              tickMargin={45}
+            />
+            <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="internal"
+              stroke={ociDarkBlue}
+              dot={false}
+            />
+            <Line
+              dataKey="external"
+              dot={false}
+              stroke={orange}
+              type="monotone"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  );
+
+  const lowScores = () => {
+    return <div>High scores go here!</div>
   };
 
   const responseSummary = () => {
@@ -255,94 +351,6 @@ const PulseReportPage = () => {
     );
   };
 
-  const handleCommentClick = (pulse) => {
-    setSelectedPulse(pulse);
-    setShowComments(true);
-  };
-
-  const barChart = () => (
-    <Card>
-      <CardHeader
-        title="Distribution of pulse scores for selected team members"
-        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
-      />
-      <CardContent>
-        <BarChart
-          width={500}
-          height={300}
-          data={barChartData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="score" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="internal" fill={ociDarkBlue} />
-          <Bar dataKey="external" fill={orange} />
-        </BarChart>
-        <ExpandMore
-          expand={expanded}
-          onClick={() => setExpanded(!expanded)}
-          aria-expanded={expanded}
-          aria-label={expanded ? 'show less' : 'show more'}
-          size="large"
-        />
-        <Collapse
-          className="bottom-row"
-          in={expanded}
-          timeout="auto"
-          unmountOnExit
-        >
-          {responseSummary()}
-        </Collapse>
-      </CardContent>
-    </Card>
-  );
-
-  const lineChart = () => (
-    <Card>
-      <CardHeader
-        title={'Average pulse scores for "At Work" and "Outside Work"'}
-        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
-      />
-      <CardContent>
-        <ResponsiveContainer width="100%" aspect={3.0}>
-          <LineChart data={lineChartData} height={300}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              angle={-90}
-              dataKey="date"
-              height={100}
-              padding={{ left: 30, right: 30 }}
-              tickMargin={45}
-            />
-            <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="internal"
-              stroke={ociDarkBlue}
-              dot={false}
-            />
-            <Line
-              dataKey="external"
-              dot={false}
-              stroke={orange}
-              type="monotone"
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
-  );
-
   return (
     <div className="pulse-report-page">
       <div className="date-pickers">
@@ -375,6 +383,8 @@ const PulseReportPage = () => {
           />
           {lineChart()}
           {barChart()}
+          {highScores()}
+          {lowScores()}
         </>
       )}
 
