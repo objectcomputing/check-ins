@@ -77,14 +77,16 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_UPDATE_REVIEW_ASSIGNMENTS,
         Permission.CAN_DELETE_REVIEW_ASSIGNMENTS,
         Permission.CAN_ADMINISTER_SETTINGS,
-        Permission.CAN_VIEW_SETTINGS
+        Permission.CAN_VIEW_SETTINGS,
+        Permission.CAN_CREATE_REVIEW_PERIOD,
+        Permission.CAN_UPDATE_REVIEW_PERIOD,
+        Permission.CAN_LAUNCH_REVIEW_PERIOD,
+        Permission.CAN_CLOSE_REVIEW_PERIOD,
+        Permission.CAN_DELETE_REVIEW_PERIOD
     );
-
-
 
     default void setPermissionsForAdmin(UUID roleID) {
         adminPermissions.forEach(permission -> setRolePermission(roleID, permission));
-
     }
 
     default void setPermissionsForPdl(UUID roleID) {
