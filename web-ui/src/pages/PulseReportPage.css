@@ -16,11 +16,6 @@
     display: inline-block;
   }
 
-  .response-summary {
-    max-height: 12rem;
-    overflow-y: auto;
-  }
-
   .row {
     display: flex;
     align-items: center;

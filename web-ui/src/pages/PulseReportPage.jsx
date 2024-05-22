@@ -266,44 +266,46 @@ const PulseReportPage = () => {
   }
 
   const averageScores = () => (
-    <>
-      <div className="average-header row">
-        <Typography variant="h5">Average Scores</Typography>
-        <FormControl style={{width: '8rem'}}>
-          <TextField
-            select
-            size="small"
-            label="Score Type"
-            onChange={e => setScoreType(e.target.value)}
-            sx={{width: '8rem'}}
-            value={scoreType}
-            variant="outlined"
-          >
-            <MenuItem value={ScoreOption.INTERNAL}>{ScoreOption.INTERNAL}</MenuItem>
-            <MenuItem value={ScoreOption.EXTERNAL}>{ScoreOption.EXTERNAL}</MenuItem>
-            <MenuItem value={ScoreOption.COMBINED}>{ScoreOption.COMBINED}</MenuItem>
-          </TextField>
-        </FormControl>
-        <FormControl style={{width: '7.5rem'}}>
-          <TextField
-            select
-            size="small"
-            label="Scope"
-            onChange={e => setScope(e.target.value)}
-            sx={{width: '7.5rem'}}
-            value={scope}
-            variant="outlined"
-          >
-            <MenuItem value="Individual">Individual</MenuItem>
-            <MenuItem value="Manager">Manager</MenuItem>
-          </TextField>
-        </FormControl>
-      </div>
-      <div className="row">
-        {scoreCard(true)}
-        {scoreCard(false)}
-      </div>
-    </>
+    <Card>
+      <CardContent>
+        <div className="average-header row">
+          <Typography variant="h5">Average Scores</Typography>
+          <FormControl style={{width: '8rem'}}>
+            <TextField
+              select
+              size="small"
+              label="Score Type"
+              onChange={e => setScoreType(e.target.value)}
+              sx={{width: '8rem'}}
+              value={scoreType}
+              variant="outlined"
+            >
+              <MenuItem value={ScoreOption.INTERNAL}>{ScoreOption.INTERNAL}</MenuItem>
+              <MenuItem value={ScoreOption.EXTERNAL}>{ScoreOption.EXTERNAL}</MenuItem>
+              <MenuItem value={ScoreOption.COMBINED}>{ScoreOption.COMBINED}</MenuItem>
+            </TextField>
+          </FormControl>
+          <FormControl style={{width: '7.5rem'}}>
+            <TextField
+              select
+              size="small"
+              label="Scope"
+              onChange={e => setScope(e.target.value)}
+              sx={{width: '7.5rem'}}
+              value={scope}
+              variant="outlined"
+            >
+              <MenuItem value="Individual">Individual</MenuItem>
+              <MenuItem value="Manager">Manager</MenuItem>
+            </TextField>
+          </FormControl>
+        </div>
+        <div className="row">
+          {scoreCard(true)}
+          {scoreCard(false)}
+        </div>
+      </CardContent>
+    </Card>
   );
 
   const barChart = () => (
@@ -373,6 +375,7 @@ const PulseReportPage = () => {
   };
 
   const scoreCard = (highest) => {
+    const label = scope === 'Manager' ? 'Team' : 'Individual';
     const property = propertyMap[scoreType];
     const scoresToShow = Object.values(averageData).sort(
     (a, b) => {
@@ -380,7 +383,7 @@ const PulseReportPage = () => {
       const bValue = b[property];
       return highest ? bValue - aValue : aValue - bValue
     }).slice(0, 5);
-    const title = highest ? 'Highest' : 'Lowest'; 
+    const title = `${highest ? 'Highest' : 'Lowest'} ${label} Scores`;
 
     return (
       <div>
@@ -441,7 +444,7 @@ const PulseReportPage = () => {
     }
 
     return (
-      <div className="response-summary">
+      <>
         {filteredPulses.map(pulse => {
           const memberId = pulse.teamMemberId;
           const member = memberMap[memberId];
@@ -474,7 +477,7 @@ const PulseReportPage = () => {
             </div>
           );
         })}
-      </div>
+      </>
     );
   };
 
@@ -509,8 +512,8 @@ const PulseReportPage = () => {
             selected={teamMembers}
           />
           {lineChart()}
-          {barChart()}
           {averageScores()}
+          {barChart()}
           <Modal open={showComments} onClose={() => setShowComments(false)}>
             <Card className="feedback-request-enable-edits-modal">
               <CardHeader
