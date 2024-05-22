@@ -22,6 +22,7 @@ import {
   CardHeader,
   Collapse,
   IconButton,
+  Modal,
   Typography
 } from '@mui/material';
 
@@ -82,6 +83,8 @@ const PulseReportPage = () => {
   const [expanded, setExpanded] = useState(false);
   const [lineChartData, setLineChartData] = useState([]);
   const [pulses, setPulses] = useState([]);
+  const [selectedPulse, setSelectedPulse] = useState(null);
+  const [showComments, setShowComments] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   console.log('PulseReportPage.jsx : teamMembers =', teamMembers);
 
@@ -219,20 +222,29 @@ const PulseReportPage = () => {
     return (
       <>
         {filteredPulses.map(pulse => {
-          const { externalFeelings, externalScore, internalFeelings,internalScore, teamMemberId } = pulse;
-          const hasComment = externalFeelings || internalFeelings;
-          const member = memberMap[teamMemberId];
+          const member = memberMap[pulse.teamMemberId];
           if (!member) return null;
-          console.log('PulseReportPage.jsx responseSummary: member =', member);
+
+          const {
+            externalFeelings,
+            externalScore,
+            internalFeelings,
+            internalScore,
+          } = pulse;
+          const hasComment = externalFeelings || internalFeelings;
           return (
-            <div>
+            <div className="response-row">
               <Avatar src={getAvatarURL(member.workEmail)} />
-              {member.name} {member.title} {internalScore}/{externalScore}
+              {member.name}, {member.title}, scores: {internalScore}/{externalScore}
               {hasComment && (
-                <IconButton aria-label="Comment" onClick={showComments} size="large">
+                <IconButton
+                  aria-label="Comment"
+                  onClick={() => handleCommentClick(pulse)}
+                  size="large"
+                >
                   <Comment />
                 </IconButton>
-          )}
+              )}
             </div>
           );
         })}
@@ -240,9 +252,9 @@ const PulseReportPage = () => {
     );
   };
 
-  const showComments = () => {
-    console.log('PulseReportPage.jsx showComments: entered');
-    // setShowComments(!showComments);
+  const handleCommentClick = (pulse) => {
+    setSelectedPulse(pulse);
+    setShowComments(true);
   };
 
   const barChart = () => (
@@ -362,6 +374,22 @@ const PulseReportPage = () => {
           {barChart()}
         </>
       )}
+
+      <Modal open={showComments} onClose={() => setShowComments(false)}>
+        <Card className="feedback-request-enable-edits-modal">
+          <CardHeader
+            title={
+              <Typography variant="h5" fontWeight="bold">
+                Pulse Comments
+              </Typography>
+            }
+          />
+          <CardContent>
+            <div>Internal Feelings: {selectedPulse?.internalFeelings}</div>
+            <div>External Feelings: {selectedPulse?.externalFeelings}</div>
+          </CardContent>
+        </Card>
+      </Modal>
     </div>
   );
 };

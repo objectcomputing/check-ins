@@ -11,4 +11,10 @@
   .recharts-wrapper {
     display: inline-block;
   }
+
+  .response-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 }
