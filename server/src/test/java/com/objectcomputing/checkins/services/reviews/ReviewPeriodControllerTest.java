@@ -372,10 +372,15 @@ class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewPe
 
     private static Stream<Arguments> validStatusTransitions() {
         return Stream.of(
+                Arguments.of(ReviewStatus.PLANNING, ReviewStatus.PLANNING),
                 Arguments.of(ReviewStatus.PLANNING, ReviewStatus.AWAITING_APPROVAL),
+                Arguments.of(ReviewStatus.AWAITING_APPROVAL, ReviewStatus.AWAITING_APPROVAL),
                 Arguments.of(ReviewStatus.AWAITING_APPROVAL, ReviewStatus.OPEN),
+                Arguments.of(ReviewStatus.OPEN, ReviewStatus.OPEN),
                 Arguments.of(ReviewStatus.OPEN, ReviewStatus.CLOSED),
+                Arguments.of(ReviewStatus.CLOSED, ReviewStatus.CLOSED),
                 Arguments.of(ReviewStatus.CLOSED, ReviewStatus.OPEN),
+                Arguments.of(ReviewStatus.UNKNOWN, ReviewStatus.UNKNOWN),
                 Arguments.of(ReviewStatus.UNKNOWN, ReviewStatus.PLANNING)
         );
     }
@@ -399,12 +404,11 @@ class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewPe
     }
 
     private static Stream<Arguments> invalidStatusTransitions() {
-        // The invalid status transitions are all the possible transitions that are not in the valid status transitions.
         var validTransitions = validStatusTransitions().toList();
         var allPermutations = new ArrayList<Arguments>();
         for (ReviewStatus from : ReviewStatus.values()) {
             for (ReviewStatus to : ReviewStatus.values()) {
-                if (from != to && validTransitions.stream().noneMatch(a -> a.get()[0] == from && a.get()[1] == to)) {
+                if (validTransitions.stream().noneMatch(a -> a.get()[0] == from && a.get()[1] == to)) {
                     allPermutations.add(Arguments.of(from, to));
                 }
             }
