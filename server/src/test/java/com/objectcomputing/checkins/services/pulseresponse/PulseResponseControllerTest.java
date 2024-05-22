@@ -16,6 +16,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -28,14 +29,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PulseResponseFixture {
+class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PulseResponseFixture {
 
     @Inject
     @Client("/services/pulse-responses")
     protected HttpClient client;
 
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
+
     @Test
-    public void testCreateAPulseResponse(){
+    void testCreateAPulseResponse() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
@@ -46,14 +52,14 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
 
-        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("",pulseResponseCreateDTO).basicAuth(memberProfile.getWorkEmail(),MEMBER_ROLE);
-        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request,PulseResponse.class);
+        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
 
         PulseResponse pulseResponseResponse = response.body();
 
         Assertions.assertNotNull(pulseResponseResponse);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(pulseResponseCreateDTO.getTeamMemberId(),pulseResponseResponse.getTeamMemberId());
+        assertEquals(pulseResponseCreateDTO.getTeamMemberId(), pulseResponseResponse.getTeamMemberId());
         assertEquals(String.format("%s/%s", request.getPath(), pulseResponseResponse.getId()), response.getHeaders().get("location"));
     }
 
@@ -61,7 +67,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     void testCreateAnInvalidPulseResponse() {
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
 
-        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("",pulseResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -69,13 +75,13 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = Stream.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText(), errors.get(2).get("message").asText()).sorted().collect(Collectors.toList());
-        assertEquals(3,errorList.size());
-        assertEquals(request.getPath(),href.asText());
+        assertEquals(3, errorList.size());
+        assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
-    void testCreatePulseResponseForNonExistingMember(){
+    void testCreatePulseResponseForNonExistingMember() {
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setInternalScore(1);
         pulseResponseCreateDTO.setExternalScore(2);
@@ -84,7 +90,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
 
-        HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("",pulseResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -92,22 +98,22 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(),href);
-        assertEquals(String.format("Member %s doesn't exists",pulseResponseCreateDTO.getTeamMemberId()),error);
+        assertEquals(request.getPath(), href);
+        assertEquals(String.format("Member %s doesn't exists", pulseResponseCreateDTO.getTeamMemberId()), error);
     }
 
     @Test
     void testCreateANullPulseResponse() {
-        final HttpRequest<String> request = HttpRequest.POST("","").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals("Required Body [pulseResponse] not specified",error.asText());
-        assertEquals(request.getPath(),href.asText());
-        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+        assertEquals("Required Body [pulseResponse] not specified", error.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
     }
 
@@ -117,112 +123,108 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setInternalScore(1);
         pulseResponseCreateDTO.setExternalScore(2);
-        pulseResponseCreateDTO.setSubmissionDate(LocalDate.of(1965,11,12));
+        pulseResponseCreateDTO.setSubmissionDate(LocalDate.of(1965, 11, 12));
         pulseResponseCreateDTO.setTeamMemberId(memberProfile.getId());
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
 
-        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("",pulseResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(),href);
-        assertEquals(String.format("Invalid date for pulseresponse submission date %s",pulseResponseCreateDTO.getTeamMemberId()),error);
+        assertEquals(request.getPath(), href);
+        assertEquals(String.format("Invalid date for pulseresponse submission date %s", pulseResponseCreateDTO.getTeamMemberId()), error);
 
     }
 
     @Test
-    public void testGetFindByTeamMemberId() {
-
+    void testGetFindByTeamMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
         assertEquals(Set.of(pulseResponse), response.body());
-        assertEquals(HttpStatus.OK,response.getStatus());
-
+        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
-// Find By findBySubmissionDateBetween returns empty array - when no data exists
-@Test
-public void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
+    // Find By findBySubmissionDateBetween returns empty array - when no data exists
+    @Test
+    void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
 
-    MemberProfile memberProfile = createADefaultMemberProfile();
-    createADefaultPulseResponse(memberProfile);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        createADefaultPulseResponse(memberProfile);
 
-    LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
-    LocalDate testDateTo = LocalDate.of(2019, 2, 1);
+        LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
+        LocalDate testDateTo = LocalDate.of(2019, 2, 1);
 
-    final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-    final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
-    assertEquals(HttpStatus.OK, response.getStatus());
-    assertEquals(2, response.getContentLength());
-}
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(2, response.getContentLength());
+    }
 
-// Find By findBySubmissionDateBetween
-@Test
-public void testGetFindByfindBySubmissionDateBetween() {
-    MemberProfile memberProfile = createADefaultMemberProfile();
+    // Find By findBySubmissionDateBetween
+    @Test
+    void testGetFindByfindBySubmissionDateBetween() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
-    createADefaultPulseResponse(memberProfile);
+        createADefaultPulseResponse(memberProfile);
 
-    LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
-    LocalDate testDateTo = Util.MAX.toLocalDate();
+        LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
+        LocalDate testDateTo = Util.MAX.toLocalDate();
 
-    final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-    final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
-    
-    assertEquals(HttpStatus.OK, response.getStatus());
-    assertNotEquals(2, response.getContentLength());
-}
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotEquals(2, response.getContentLength());
+    }
 
     @Test
-    public void testGetFindById() {
+    void testGetFindById() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", pulseResponse.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", pulseResponse.getId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
         assertEquals(Set.of(pulseResponse), response.body());
-        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(HttpStatus.OK, response.getStatus());
 
     }
 
     @Test
-    void testFindPulseResponseAllParams(){
+    void testFindPulseResponseAllParams() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
 
         assertEquals(Set.of(pulseResponse), response.body());
-        assertEquals(HttpStatus.OK,response.getStatus());
-
+        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
     void testPulseResponseDoesNotExist() {
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s",UUID.randomUUID())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
 
         assertEquals(Set.of(), response.body());
-        assertEquals(HttpStatus.OK,response.getStatus());
-
+        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
-    void testUpdatePulseResponse(){
+    void testUpdatePulseResponse() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -234,10 +236,10 @@ public void testGetFindByfindBySubmissionDateBetween() {
     }
 
     @Test
-    void testUpdateNonExistingPulseResponse(){
+    void testUpdateNonExistingPulseResponse() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
         pulseResponse.setId(UUID.randomUUID());
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
@@ -251,14 +253,13 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
         assertEquals(String.format("Unable to find pulseresponse record with id %s", pulseResponse.getId()), error);
         assertEquals(request.getPath(), href);
-
     }
 
     @Test
-    void testUpdateNotExistingMemberPulseResponse(){
+    void testUpdateNotExistingMemberPulseResponse() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
         pulseResponse.setTeamMemberId(UUID.randomUUID());
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
@@ -276,10 +277,10 @@ public void testGetFindByfindBySubmissionDateBetween() {
     }
 
     @Test
-    void testUpdateNotMemberPulseResponseWithoutId(){
+    void testUpdateNotMemberPulseResponseWithoutId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
         pulseResponse.setId(null);
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
@@ -298,7 +299,7 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testUpdateUnAuthorized() {
-        PulseResponse pulseResponse = new PulseResponse(1, 2, LocalDate.now(),UUID.randomUUID(),"internalfeeling","externalfeeling");
+        PulseResponse pulseResponse = new PulseResponse(1, 2, LocalDate.now(), UUID.randomUUID(), "internalfeeling", "externalfeeling");
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
@@ -311,27 +312,26 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testUpdateANullPulseResponse() {
-        final HttpRequest<String> request = HttpRequest.PUT("","").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals("Required Body [pulseResponse] not specified",error.asText());
-        assertEquals(request.getPath(),href.asText());
-        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
-
+        assertEquals("Required Body [pulseResponse] not specified", error.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
-    void testUpdateInvalidDatePulseResponse(){
+    void testUpdateInvalidDatePulseResponse() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
         pulseResponse.setInternalScore(1);
         pulseResponse.setExternalScore(2);
-        pulseResponse.setSubmissionDate(LocalDate.of(1965,12,11));
+        pulseResponse.setSubmissionDate(LocalDate.of(1965, 12, 11));
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -344,6 +344,5 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
         assertEquals(String.format("Invalid date for pulseresponse submission date %s", pulseResponse.getTeamMemberId()), error);
         assertEquals(request.getPath(), href);
-
     }
 }

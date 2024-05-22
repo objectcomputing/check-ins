@@ -3,6 +3,8 @@ package com.objectcomputing.checkins.services.pulseresponse;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,25 +15,36 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Optional;
-
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-import java.time.LocalDate;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class PulseResponseServiceImplTest {
+class PulseResponseServiceImplTest {
 
     @Mock
     private MemberProfileRepository memberprofileRepository;
 
     @Mock
     private PulseResponseRepository pulseResponseRepository;
+
+    @Mock
+    CurrentUserServices currentUserServices;
+
+    @Mock
+    RolePermissionServices rolePermissionServices;
 
     @InjectMocks
     private PulseResponseServicesImpl services;
@@ -45,12 +58,17 @@ public class PulseResponseServiceImplTest {
     void resetMocks() {
         Mockito.reset(memberprofileRepository);
         Mockito.reset(pulseResponseRepository);
-
     }
 
     @Test
     void testRead() {
-        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1),UUID.randomUUID(),"examplePRId" , "examplePRId2");
+        var memberProfile = new MemberProfile();
+        memberProfile.setId(UUID.randomUUID());
+
+        when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
+        when(rolePermissionServices.findUserPermissions(any(UUID.class))).thenReturn(Collections.emptyList());
+
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1), memberProfile.getId(),"examplePRId" , "examplePRId2");
 
         when(pulseResponseRepository.findById(cd.getId())).thenReturn(Optional.of(cd));
 
@@ -61,6 +79,8 @@ public class PulseResponseServiceImplTest {
 
     @Test
     void testReadNullId() {
+        when(currentUserServices.getCurrentUser()).thenReturn(new MemberProfile());
+        when(rolePermissionServices.findUserPermissions(any(UUID.class))).thenReturn(Collections.emptyList());
         assertNull(services.read(null));
         verify(pulseResponseRepository, never()).findByTeamMemberId(any(UUID.class));
     }
