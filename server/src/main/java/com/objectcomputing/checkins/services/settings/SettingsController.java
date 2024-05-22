@@ -21,9 +21,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.settings.SettingsController.PATH;
-
-@Controller(PATH)
+@Controller(SettingsController.PATH)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
