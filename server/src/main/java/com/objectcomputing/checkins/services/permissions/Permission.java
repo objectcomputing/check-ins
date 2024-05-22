@@ -39,7 +39,12 @@ public enum Permission {
   CAN_CREATE_REVIEW_ASSIGNMENTS("Create review assignments", "Reviews"),
   CAN_VIEW_REVIEW_ASSIGNMENTS("View review assignments", "Reviews"),
   CAN_UPDATE_REVIEW_ASSIGNMENTS("Update review assignments", "Reviews"),
-  CAN_DELETE_REVIEW_ASSIGNMENTS("Delete review assignments", "Reviews");
+  CAN_DELETE_REVIEW_ASSIGNMENTS("Delete review assignments", "Reviews"),
+  CAN_CREATE_REVIEW_PERIOD("Create review period", "Review Period"),
+  CAN_UPDATE_REVIEW_PERIOD("Update review period", "Review Period"),
+  CAN_LAUNCH_REVIEW_PERIOD("Launch review period", "Review Period"),
+  CAN_CLOSE_REVIEW_PERIOD("Close review period", "Review Period"),
+  CAN_DELETE_REVIEW_PERIOD("Delete review period", "Review Period");
 
   private final String description;
   private final String category;
