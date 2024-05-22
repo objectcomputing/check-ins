@@ -61,7 +61,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     List<MemberProfile> findAll();
 
     @Query(value = "WITH RECURSIVE subordinate AS (SELECT " +
-    "id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, last_seen 0 as level " +
+    "id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, last_seen, 0 as level " +
     "FROM member_profile " +
     "WHERE id = :id and terminationdate is NULL " +
     "   UNION ALL " +
@@ -85,7 +85,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     "PGP_SYM_DECRYPT(cast(s.workemail as bytea), '${aes.key}') as workemail, " +
     "s.employeeid, s.startdate, " +
     "PGP_SYM_DECRYPT(cast(s.biotext as bytea), '${aes.key}') as biotext, " +
-    "s.supervisorid, s.terminationdate, s.birthdate, s.voluntary, s.excluded, s.last_seen " +
+    "s.supervisorid, s.terminationdate, s.birthdate, s.voluntary, s.excluded, s.last_seen, " +
     "s.level " +
     "FROM subordinate s " +
     "WHERE s.id <> :id " +
