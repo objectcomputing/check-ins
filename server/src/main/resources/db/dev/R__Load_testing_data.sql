@@ -820,6 +820,21 @@ values
 insert into role_permissions
 (roleid, permission)
 values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_SETTINGS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_SETTINGS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_SETTINGS');
+
+insert into role_permissions
+(roleid, permission)
+values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_CREATE_REVIEW_PERIOD');
 
 insert into role_permissions

@@ -18,15 +18,20 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MemberSkillControllerTest extends TestContainersSuite implements MemberProfileFixture, SkillFixture, MemberSkillFixture {
+class MemberSkillControllerTest extends TestContainersSuite implements MemberProfileFixture, SkillFixture, MemberSkillFixture {
 
     @Inject
     @Client("/services/member-skills")
@@ -81,8 +86,8 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
         assertEquals(memberSkill, response.body());
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), memberSkill.getId()), response.getHeaders().get("location"));
-        assertEquals(memberSkill.getSkilllevel(), null);
-        assertEquals(memberSkill.getLastuseddate(), null);
+        assertNull(memberSkill.getSkilllevel());
+        assertNull(memberSkill.getLastuseddate());
     }
 
     @Test
@@ -316,7 +321,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
-    public void testPUTUpdateMemberSkill() {
+    void testPUTUpdateMemberSkill() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
@@ -335,7 +340,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
-    public void testPUTUpdateNullMemberSkill() {
+    void testPUTUpdateNullMemberSkill() {
 
         final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -352,7 +357,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
-    public void testPUTUpdateNonexistentMemberSkill() {
+    void testPUTUpdateNonexistentMemberSkill() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
