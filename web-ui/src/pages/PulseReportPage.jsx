@@ -192,8 +192,11 @@ const PulseReportPage = () => {
     //      because this permission has not been implemented yet.
     // if (selectHasPulseReportPermission(state)) loadPulses();
     loadPulses();
-    setTeamMembers(state.memberProfiles);
   }, [csrf, dateFrom, dateTo]);
+
+  useEffect(() => {
+    setTeamMembers(state.memberProfiles || []);
+  }, [csrf, state]);
 
   const barChart = () => (
     <Card>
