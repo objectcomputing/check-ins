@@ -456,8 +456,9 @@ const PulseReportPage = () => {
           } = pulse;
           const [year, month, day] = submissionDate;
           const hasComment = externalFeelings || internalFeelings;
+          const key = `${memberId}-${year}-${month}-${day}`;
           return (
-            <div className="row" key={memberId}>
+            <div className="row" key={key}>
               <Avatar src={getAvatarURL(member.workEmail)} />
               {year}-{month}-{day}, {member.name}, {member.title},
               internal: {internalScore}, external: {externalScore}
