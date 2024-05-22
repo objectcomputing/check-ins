@@ -224,11 +224,11 @@ const PulseReportPage = () => {
     const { memberId, externalAverage, internalAverage } = scores;
     const member = memberMap[memberId];
     return (
-      <div className="row" key={memberId}>
-        <Avatar src={getAvatarURL(member.workEmail)} />
-        {member.name}, {member.title},
-        {scores[property]}
-      </div>
+      <tr key={memberId}>
+        <td><Avatar src={getAvatarURL(member.workEmail)} /></td>
+        <td>{member.name}<br />{member.title}</td>
+        <td className="score">{scores[property].toFixed(1)}</td>
+      </tr>
     );
   }
 
@@ -309,7 +309,9 @@ const PulseReportPage = () => {
           titleTypographyProps={{ variant: 'h5', component: 'h2' }}
         />
         <CardContent>
-          {topScores.map(scores => averageRow(scores, 'externalAverage'))}
+          <table>
+            {topScores.map(scores => averageRow(scores, 'externalAverage'))}
+          </table>
         </CardContent>
       </Card>
     );
