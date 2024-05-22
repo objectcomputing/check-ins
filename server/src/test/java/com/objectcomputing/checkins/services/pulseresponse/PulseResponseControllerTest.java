@@ -44,13 +44,7 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     void testCreateAPulseResponse() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
-        pulseResponseCreateDTO.setInternalScore(1);
-        pulseResponseCreateDTO.setExternalScore(2);
-        pulseResponseCreateDTO.setSubmissionDate(LocalDate.now());
-        pulseResponseCreateDTO.setTeamMemberId(memberProfile.getId());
-        pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
-        pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
+        PulseResponseCreateDTO pulseResponseCreateDTO = createPulseResponseCreateDTO(memberProfile.getId());
 
         final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
@@ -82,13 +76,7 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testCreatePulseResponseForNonExistingMember() {
-        PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
-        pulseResponseCreateDTO.setInternalScore(1);
-        pulseResponseCreateDTO.setExternalScore(2);
-        pulseResponseCreateDTO.setSubmissionDate(LocalDate.now());
-        pulseResponseCreateDTO.setTeamMemberId(UUID.randomUUID());
-        pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
-        pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
+        PulseResponseCreateDTO pulseResponseCreateDTO = createPulseResponseCreateDTO();
 
         HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -120,13 +108,7 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testCreateAPulseResponseForInvalidDate() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
-        pulseResponseCreateDTO.setInternalScore(1);
-        pulseResponseCreateDTO.setExternalScore(2);
-        pulseResponseCreateDTO.setSubmissionDate(LocalDate.of(1965, 11, 12));
-        pulseResponseCreateDTO.setTeamMemberId(memberProfile.getId());
-        pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
-        pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
+        PulseResponseCreateDTO pulseResponseCreateDTO = createPulseResponseCreateDTO(memberProfile.getId(), LocalDate.of(1965, 11, 12));
 
         final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -344,5 +326,24 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         assertEquals(String.format("Invalid date for pulseresponse submission date %s", pulseResponse.getTeamMemberId()), error);
         assertEquals(request.getPath(), href);
+    }
+
+    private static PulseResponseCreateDTO createPulseResponseCreateDTO() {
+        return createPulseResponseCreateDTO(UUID.randomUUID());
+    }
+
+    private static PulseResponseCreateDTO createPulseResponseCreateDTO(UUID memberId) {
+        return createPulseResponseCreateDTO(memberId, LocalDate.now());
+    }
+
+    private static PulseResponseCreateDTO createPulseResponseCreateDTO(UUID memberId, LocalDate submissionDate) {
+        PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
+        pulseResponseCreateDTO.setInternalScore(1);
+        pulseResponseCreateDTO.setExternalScore(2);
+        pulseResponseCreateDTO.setSubmissionDate(submissionDate);
+        pulseResponseCreateDTO.setTeamMemberId(memberId);
+        pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
+        pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
+        return pulseResponseCreateDTO;
     }
 }

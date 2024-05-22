@@ -91,4 +91,36 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     "WHERE s.id <> :id " +
     "ORDER BY level", nativeQuery = true)
     List<MemberProfile> findSupervisorsForId(UUID id);
+
+    @Query(
+            value = """
+                    WITH RECURSIVE subordinate AS (
+                        SELECT id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, 0 as level
+                            FROM member_profile
+                            WHERE id = :id and terminationdate is NULL
+                        UNION ALL
+                            SELECT e.id, e.firstname, e.middlename, e.lastname, e.suffix, e.title, e.pdlid, e.location, e.workemail, e.employeeid, e.startdate, e.biotext, e.supervisorid, e.terminationdate, e.birthdate, e.voluntary, e.excluded, level + 1
+                                FROM member_profile AS e JOIN subordinate AS s ON s.id = e.supervisorid
+                                WHERE e.terminationdate is NULL
+                    )
+                    SELECT DISTINCT
+                        s.id AS id,
+                        PGP_SYM_DECRYPT(cast(s.firstname as bytea),'${aes.key}') as firstname,
+                        PGP_SYM_DECRYPT(cast(s.middlename as bytea),'${aes.key}') as middlename,
+                        PGP_SYM_DECRYPT(cast(s.lastname as bytea),'${aes.key}') as lastname,
+                        PGP_SYM_DECRYPT(cast(s.suffix as bytea),'${aes.key}') as suffix,
+                        PGP_SYM_DECRYPT(cast(s.title as bytea),'${aes.key}') as title,
+                        s.pdlid,
+                        PGP_SYM_DECRYPT(cast(s.location as bytea), '${aes.key}') as location,
+                        PGP_SYM_DECRYPT(cast(s.workemail as bytea), '${aes.key}') as workemail,
+                        s.employeeid, s.startdate,
+                        PGP_SYM_DECRYPT(cast(s.biotext as bytea), '${aes.key}') as biotext,
+                        s.supervisorid, s.terminationdate, s.birthdate, s.voluntary, s.excluded,
+                        s.level
+                    FROM subordinate s
+                    WHERE s.id <> :id
+                    ORDER BY level""",
+            nativeQuery = true
+    )
+    List<MemberProfile> findSubordinatesForId(UUID id);
 }
