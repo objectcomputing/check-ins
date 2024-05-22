@@ -20,8 +20,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Singleton
 public class PermissionSecurityRule implements SecurityRule<HttpRequest<?>> {
@@ -52,15 +50,13 @@ public class PermissionSecurityRule implements SecurityRule<HttpRequest<?>> {
 
                 JSONArray jsonArray = new JSONArray(claims.get("roles").toString());
 
-                final Set<Permission> userPermissions = jsonArray.toList().stream()
+                boolean requiredPermissionFoundInRoles = jsonArray.toList().stream()
                         .map(Object::toString)
                         .flatMap(role -> rolePermissionServices.findByRole(role).stream())
                         .map(RolePermission::getPermission)
-                        .collect(Collectors.toSet());
+                        .anyMatch(p -> p == requiredPermission);
 
-                return Mono.just(userPermissions.contains(requiredPermission)
-                        ? SecurityRuleResult.ALLOWED
-                        : SecurityRuleResult.REJECTED);
+                return Mono.just(requiredPermissionFoundInRoles ? SecurityRuleResult.ALLOWED : SecurityRuleResult.REJECTED);
             }
         }
         return Mono.just(SecurityRuleResult.UNKNOWN);
