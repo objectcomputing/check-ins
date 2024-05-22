@@ -230,12 +230,15 @@ const PulseReportPage = () => {
             externalScore,
             internalFeelings,
             internalScore,
+            submissionDate
           } = pulse;
+          const [year, month, day] = submissionDate;
           const hasComment = externalFeelings || internalFeelings;
           return (
             <div className="response-row">
               <Avatar src={getAvatarURL(member.workEmail)} />
-              {member.name}, {member.title}, scores: {internalScore}/{externalScore}
+              {year}-{month}-{day}, {member.name}, {member.title},
+              internal: {internalScore}, external: {externalScore}
               {hasComment && (
                 <IconButton
                   aria-label="Comment"
