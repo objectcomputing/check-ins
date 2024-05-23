@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.pulseresponse;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -46,6 +47,9 @@ class PulseResponseServiceImplTest {
     @Mock
     RolePermissionServices rolePermissionServices;
 
+    @Mock
+    MemberProfileServices memberProfileServices;
+
     @InjectMocks
     private PulseResponseServicesImpl services;
 
@@ -67,6 +71,7 @@ class PulseResponseServiceImplTest {
 
         when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
         when(rolePermissionServices.findUserPermissions(any(UUID.class))).thenReturn(Collections.emptyList());
+        when(memberProfileServices.getSubordinatesForId(any(UUID.class))).thenReturn(Collections.emptyList());
 
         PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1), memberProfile.getId(),"examplePRId" , "examplePRId2");
 
@@ -79,18 +84,25 @@ class PulseResponseServiceImplTest {
 
     @Test
     void testReadNullId() {
-        when(currentUserServices.getCurrentUser()).thenReturn(new MemberProfile());
+        var memberProfile = new MemberProfile();
+        memberProfile.setId(UUID.randomUUID());
+        when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
         when(rolePermissionServices.findUserPermissions(any(UUID.class))).thenReturn(Collections.emptyList());
+        when(memberProfileServices.getSubordinatesForId(any(UUID.class))).thenReturn(Collections.emptyList());
         assertNull(services.read(null));
         verify(pulseResponseRepository, never()).findByTeamMemberId(any(UUID.class));
     }
 
     @Test
     void testSave() {
-        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1),UUID.randomUUID(), "PRId", "PRId2");
-        MemberProfile memberprofile = new MemberProfile();
+        var memberProfile = new MemberProfile();
+        memberProfile.setId(UUID.randomUUID());
+        PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1), memberProfile.getId(), "PRId", "PRId2");
 
-        when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberprofile));
+        when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
+        when(rolePermissionServices.findUserPermissions(any(UUID.class))).thenReturn(Collections.emptyList());
+        when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberProfile));
+        when(memberProfileServices.getSubordinatesForId(any(UUID.class))).thenReturn(Collections.emptyList());
         when(pulseResponseRepository.save(eq(cd))).thenReturn(cd);
 
         assertEquals(cd, services.save(cd));
@@ -157,10 +169,14 @@ class PulseResponseServiceImplTest {
 
     @Test
     void testUpdate() {
-        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1), UUID.randomUUID(), "PRId", "PRId2");
-        MemberProfile memberprofile = new MemberProfile();
+        MemberProfile memberProfile = new MemberProfile();
+        memberProfile.setId(UUID.randomUUID());
 
-        when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberprofile));
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1), memberProfile.getId(), "PRId", "PRId2");
+
+        when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
+        when(rolePermissionServices.findUserPermissions(any(UUID.class))).thenReturn(Collections.emptyList());
+        when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberProfile));
         when(pulseResponseRepository.findById(cd.getId())).thenReturn(Optional.of(cd));
         when(pulseResponseRepository.update(eq(cd))).thenReturn(cd);
 
