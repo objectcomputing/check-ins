@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import React, { useContext, useEffect, useState } from 'react';
+import {useHistory} from 'react-router-dom';
 import { Button, Typography } from '@mui/material';
 
 import { resolve } from '../api/api.js';
@@ -102,7 +103,7 @@ const PulsePage = () => {
       if (res.error) throw new Error(res.error.message);
 
       // Refresh browser to show that pulses where already submitted today.
-      location.reload();
+      history.push(location.pathname);
     } catch (err) {
       console.error('PulsePage.jsx submit:', err);
     }

@@ -37,12 +37,6 @@ public class Setting {
     private String name;
 
     @NotNull
-    @Column(name="userid")
-    @TypeDef(type= DataType.STRING)
-    @Schema(description = "the userId of the setting")
-    private UUID userId;
-
-    @NotNull
     @Column(name="value")
     @TypeDef(type= DataType.STRING)
     @Schema(description = "the value of the setting")
@@ -51,16 +45,14 @@ public class Setting {
     public Setting() {
     }
 
-    public Setting(UUID id, String name, UUID userId, String value) {
+    public Setting(UUID id, String name, String value) {
         this.id = id;
         this.name = name;
-        this.userId = userId;
         this.value = value;
     }
     
-    public Setting(String name, UUID userId, String value) {
+    public Setting(String name, String value) {
         this.name = name;
-        this.userId = userId;
         this.value = value;
     }
 
@@ -72,12 +64,12 @@ public class Setting {
             return false;
         }
         Setting setting = (Setting) o;
-        return Objects.equals(id, setting.id) && Objects.equals(name, setting.name) && Objects.equals(userId, setting.userId) && Objects.equals(value, setting.value);
+        return Objects.equals(id, setting.id) && Objects.equals(name, setting.name) && Objects.equals(value, setting.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, userId, value);
+        return Objects.hash(id, name, value);
     }
 
     @Override
@@ -85,7 +77,6 @@ public class Setting {
         return "{" +
             " id='" + getId() + "'" +
             ", name='" + getName() + "'" +
-            ", userId='" + getUserId() + "'" +
             ", value='" + getValue() + "'" +
             "}";
     }
