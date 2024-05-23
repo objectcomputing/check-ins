@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -128,10 +129,90 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     void testGetFindByTeamMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
+
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(Set.of(pulseResponse), response.body());
+    }
+
+    @Test
+    void testAdminWithPermissionCanReadAnyResponse() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
         assertEquals(Set.of(pulseResponse), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testCannotReadResponseForUnrelatedUsers() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.body().isEmpty(), "Expected empty set of responses");
+    }
+
+    @Test
+    void testCanReadResponsesForReportingHierarchy() {
+        MemberProfile ceo = profile(HIERARCHY_CEO);
+        MemberProfile supervisor = profile(HIERARCHY_LEAD1);
+        MemberProfile member = profile(HIERARCHY_LEAD1_SUB2);
+
+        // when we make a response for the member
+        PulseResponse pulseResponse = createADefaultPulseResponse(member);
+
+        // then the supervisor can read the response
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(supervisor.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(Set.of(pulseResponse), response.body());
+
+        // and the CEO can read the response
+        HttpRequest<?> ceoRequest = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(ceo.getWorkEmail(), MEMBER_ROLE);
+        HttpResponse<Set<PulseResponse>> ceoResponse = client.toBlocking().exchange(ceoRequest, Argument.setOf(PulseResponse.class));
+        assertEquals(HttpStatus.OK, ceoResponse.getStatus());
+        assertEquals(Set.of(pulseResponse), ceoResponse.body());
+    }
+
+    @Test
+    void testCannotReadResponsesForLowerInTheReportingHierarchy() {
+        MemberProfile ceo = profile(HIERARCHY_CEO);
+        MemberProfile supervisor = profile(HIERARCHY_LEAD1);
+        MemberProfile member = profile(HIERARCHY_LEAD1_SUB2);
+
+        // when we make a response for the supervisor
+        PulseResponse pulseResponse = createADefaultPulseResponse(supervisor);
+
+        // then the member cannot read the response
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.body().isEmpty(), "Expected empty set of responses");
+
+        // but the CEO can read the response
+        HttpRequest<?> ceoRequest = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(ceo.getWorkEmail(), MEMBER_ROLE);
+        HttpResponse<Set<PulseResponse>> ceoResponse = client.toBlocking().exchange(ceoRequest, Argument.setOf(PulseResponse.class));
+        assertEquals(HttpStatus.OK, ceoResponse.getStatus());
+        assertEquals(Set.of(pulseResponse), ceoResponse.body());
+    }
+
+    @Test
+    void testCannotReadResponsesForOutsideOfReportingHierarchy() {
+        PulseResponse pulseResponse = createADefaultPulseResponse(profile(HIERARCHY_LEAD1_SUB2));
+        var supervisor = profile(HIERARCHY_LEAD2);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(supervisor.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.body().isEmpty(), "Expected empty set of responses");
     }
 
     // Find By findBySubmissionDateBetween returns empty array - when no data exists
@@ -175,8 +256,9 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", pulseResponse.getId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
-        assertEquals(Set.of(pulseResponse), response.body());
+
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(Set.of(pulseResponse), response.body());
     }
 
     @Test
@@ -188,13 +270,12 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
 
-        assertEquals(Set.of(pulseResponse), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(Set.of(pulseResponse), response.body());
     }
 
     @Test
     void testPulseResponseDoesNotExist() {
-
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
 
