@@ -69,7 +69,6 @@ import {
   selectCurrentUser,
   selectCurrentUserSubordinates,
   selectIsAdmin,
-  selectMyTeam,
   selectReviewPeriod,
   selectSupervisors,
   selectTeamMembersBySupervisorId

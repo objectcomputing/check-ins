@@ -8,7 +8,9 @@ exports[`renders correctly 1`] = `
     >
       <h6
         class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
-      />
+      >
+        How are you feeling about work today? (*)
+      </h6>
       <div
         class="icon-row"
       >
