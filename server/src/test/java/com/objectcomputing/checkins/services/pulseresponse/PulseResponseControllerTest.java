@@ -28,6 +28,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PulseResponseFixture {
 
@@ -35,9 +36,12 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     @Client("/services/pulse-responses")
     protected HttpClient client;
 
+    private Map<String, MemberProfile> hierarchy;
+
     @BeforeEach
     void createRolesAndPermissions() {
         createAndAssignRoles();
+        hierarchy = createHierarchy();
     }
 
     @Test
@@ -102,7 +106,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         assertEquals("Required Body [pulseResponse] not specified", error.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-
     }
 
     @Test
@@ -143,7 +146,7 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
+        assertTrue(response.body().isEmpty(), "Expected empty set of responses");
     }
 
     // Find By findBySubmissionDateBetween
@@ -151,7 +154,7 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     void testGetFindByfindBySubmissionDateBetween() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
 
         LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
         LocalDate testDateTo = Util.MAX.toLocalDate();
@@ -160,7 +163,7 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotEquals(2, response.getContentLength());
+        assertEquals(Set.of(pulseResponse), response.body());
     }
 
     @Test
@@ -174,7 +177,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
         assertEquals(Set.of(pulseResponse), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
@@ -196,8 +198,8 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
 
-        assertEquals(Set.of(), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.body().isEmpty(), "Expected empty set of responses");
     }
 
     @Test
@@ -253,7 +255,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         assertEquals(String.format("Member %s doesn't exist", pulseResponse.getTeamMemberId()), error);
         assertEquals(request.getPath(), href);
-
     }
 
     @Test
@@ -274,7 +275,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         assertEquals("Unable to find pulseresponse record with id null", error);
         assertEquals(request.getPath(), href);
-
     }
 
     @Test
@@ -287,7 +287,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
         assertEquals("Unauthorized", responseException.getMessage());
-
     }
 
     @Test
@@ -343,5 +342,14 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
         return pulseResponseCreateDTO;
+    }
+
+
+    private MemberProfile profile(String key) {
+        return hierarchy.get(key);
+    }
+
+    private UUID id(String key) {
+        return profile(key).getId();
     }
 }
