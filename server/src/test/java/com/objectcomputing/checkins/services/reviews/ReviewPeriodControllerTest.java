@@ -456,7 +456,7 @@ class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewAs
 
     @Test
     void testPUTReviewPeriodAwaitingApproval() {
-        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod(ReviewStatus.PLANNING);
         MemberProfile supervisor = createADefaultSupervisor();
         MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
 

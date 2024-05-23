@@ -3,12 +3,9 @@ package com.objectcomputing.checkins.services.reviews;
 import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetConfig;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
@@ -46,7 +43,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     public ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository,
                                     ReviewAssignmentRepository reviewAssignmentRepository,
                                     MemberProfileRepository memberProfileRepository,
-                                    CurrentUserServices currentUserServices,
+                                    ReviewStatusTransitionValidator reviewStatusTransitionValidator,
                                     @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                     Environment environment, @Property(name = WEB_ADDRESS) String webAddress) {
         this.reviewPeriodRepository = reviewPeriodRepository;
@@ -127,11 +124,9 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             throw new BadArgException(String.format("Invalid status transition from %s to %s", currentStatus, newStatus));
         }
 
-        if (currentStatus != ReviewStatus.AWAITING_APPROVAL &&
-                newStatus == ReviewStatus.AWAITING_APPROVAL) {
+        if (newStatus == ReviewStatus.AWAITING_APPROVAL) {
             notifyRevieweeSupervisorsByReviewPeriod(reviewPeriod.getId(), reviewPeriod.getName());
         }
-
 
         return reviewPeriodRepository.update(reviewPeriod);
     }
