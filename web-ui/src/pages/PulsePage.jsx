@@ -102,7 +102,7 @@ const PulsePage = () => {
       if (res.error) throw new Error(res.error.message);
 
       // Refresh browser to show that pulses where already submitted today.
-      location.reload();
+      history.push(location.pathname);
     } catch (err) {
       console.error('PulsePage.jsx submit:', err);
     }
