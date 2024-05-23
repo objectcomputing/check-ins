@@ -46,7 +46,7 @@ import ExpandMore from '../components/expand-more/ExpandMore';
 import './PulseReportPage.css';
 
 // Recharts doesn't support using CSS variables, so we can't
-// easily used color variables defined in variables.css.
+// easily use color variables defined in variables.css.
 const ociDarkBlue = '#2c519e';
 //const ociLightBlue = '#76c8d4'; // not currently used
 // const ociOrange = '#f8b576'; // too light
@@ -66,6 +66,7 @@ const propertyMap = {
 
 /*
 // Returns a random, integer score between 1 and 5.
+// We may want to uncomment this later for testing.
 const randomScore = previousScore => {
   if (!previousScore) return Math.ceil(Math.random() * 5);
 
@@ -105,6 +106,7 @@ const PulseReportPage = () => {
 
   /*
   // This generates random data to use in the line chart.
+  // We may want to uncomment this later for testing.
   useEffect(() => {
     const data = [];
     let internal = null;
