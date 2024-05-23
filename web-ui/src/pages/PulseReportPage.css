@@ -1,4 +1,8 @@
 .pulse-report-page {
+  .average-header {
+    height: 3.5rem;
+  }
+
   .date-pickers {
     display: flex;
     gap: 1rem;
@@ -12,9 +16,17 @@
     display: inline-block;
   }
 
-  .response-row {
+  .row {
     display: flex;
     align-items: center;
     gap: 1rem;
+  }
+
+  .score {
+    font-size: 1.5rem;
+  }
+
+  td {
+    padding: 0.5rem;
   }
 }

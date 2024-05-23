@@ -16,13 +16,15 @@ import {
 import { Comment } from '@mui/icons-material';
 import {
   Avatar,
-  Button,
   Card,
   CardContent,
   CardHeader,
   Collapse,
+  FormControl,
   IconButton,
+  MenuItem,
   Modal,
+  TextField,
   Typography
 } from '@mui/material';
 
@@ -31,7 +33,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { getAvatarURL, resolve } from '../api/api.js';
-import Pulse from '../components/pulse/Pulse.jsx';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { AppContext } from '../context/AppContext.jsx';
 import {
@@ -50,6 +51,18 @@ const ociDarkBlue = '#2c519e';
 //const ociLightBlue = '#76c8d4'; // not currently used
 // const ociOrange = '#f8b576'; // too light
 const orange = '#b26801';
+
+const ScoreOption = {
+  INTERNAL: 'Internal',
+  EXTERNAL: 'External',
+  COMBINED: 'Combined'
+};
+
+const propertyMap = {
+  [ScoreOption.INTERNAL]: 'internalAverage',
+  [ScoreOption.EXTERNAL]: 'externalAverage',
+  [ScoreOption.COMBINED]: 'combinedAverage'
+};
 
 /*
 // Returns a random, integer score between 1 and 5.
@@ -80,14 +93,16 @@ const PulseReportPage = () => {
   const [dateFrom, setDateFrom] = useState(initialDateFrom);
   const [dateTo, setDateTo] = useState(new Date());
 
+  const [averageData, setAverageData] = useState({});
   const [barChartData, setBarChartData] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [lineChartData, setLineChartData] = useState([]);
   const [pulses, setPulses] = useState([]);
+  const [scope, setScope] = useState('Individual');
+  const [scoreType, setScoreType] = useState(ScoreOption.COMBINED);
   const [selectedPulse, setSelectedPulse] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
-  console.log('PulseReportPage.jsx : teamMembers =', teamMembers);
 
   /*
   // This generates random data to use in the line chart.
@@ -121,34 +136,74 @@ const PulseReportPage = () => {
   }, [dateFrom, dateTo]);
   */
 
+  const average = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+
   // This creates data in the format that recharts needs from pulse data.
   useEffect(() => {
-    const data = [];
+    const averageData = {}; // key is member id
+    const lineChartData = [];
     const frequencies = [];
     for (let i = 1; i <= 5; i++) {
       frequencies.push({ score: i, internal: 0, external: 0 });
     }
     const teamMemberIds = teamMembers.map(member => member.id);
 
-    for (const pulse of pulses) {
-      if (!teamMemberIds.includes(pulse.teamMemberId)) continue;
+    const managerMode = scope === 'Manager';
 
-      const { date, externalScore, internalScore, submissionDate } = pulse;
+    for (const pulse of pulses) {
+      const memberId = pulse.teamMemberId;
+      if (!teamMemberIds.includes(memberId)) continue;
+
+      const { externalScore, internalScore, submissionDate } = pulse;
       const [year, month, day] = submissionDate;
       const monthPadded = month.toString().padStart(2, '0');
       const dayPadded = day.toString().padStart(2, '0');
-      data.push({
+      lineChartData.push({
         date: `${year}-${monthPadded}-${dayPadded}`,
         internal: internalScore,
         external: externalScore
       });
+
       frequencies[internalScore - 1].internal++;
       frequencies[externalScore - 1].external++;
+
+      const member = memberMap[memberId];
+      const { supervisorid } = member;
+      const memberIdToUse = managerMode ? supervisorid : memberId;
+
+      /* For debugging ...
+      if (supervisorid) {
+        const supervisor = memberMap[supervisorid];
+        console.log(`The supervisor of ${member.name} is ${supervisor.name}`);
+      } else {
+        console.log(`${member.name} has no supervisor`);
+      }
+      */
+
+      // When in manager mode, if the member
+      // doesn't have a supervisor then skip this data.
+      if (memberIdToUse) {
+        let averages = averageData[memberIdToUse];
+        if (!averages) {
+          averages = averageData[memberIdToUse] =
+            { memberId: memberIdToUse, externalScores: [], internalScores: [] };
+        }
+        averages.externalScores.push(externalScore);
+        averages.internalScores.push(internalScore);
+      }
     }
 
-    setLineChartData(data);
+    setLineChartData(lineChartData);
     setBarChartData(frequencies);
-  }, [pulses, teamMembers]);
+
+    for (const memberId of Object.keys(averageData)) {
+      const averages = averageData[memberId];
+      averages.externalAverage = average(averages.externalScores);
+      averages.internalAverage = average(averages.internalScores);
+      averages.combinedAverage = average([...averages.externalScores, ...averages.internalScores]);
+    }
+    setAverageData(averageData);
+  }, [pulses, scope, teamMembers]);
 
   const loadPulses = async () => {
     if (!csrf) return;
@@ -182,7 +237,6 @@ const PulseReportPage = () => {
         if (compare === 0) compare = day1 - day2;
         return compare;
       });
-      console.log('PulseReportPage.jsx loadPulses: pulses =', pulses);
       setPulses(pulses);
     } catch (err) {
       console.error('PulseReportPage.jsx loadPulses:', err);
@@ -194,73 +248,67 @@ const PulseReportPage = () => {
     //      because this permission has not been implemented yet.
     // if (selectHasPulseReportPermission(state)) loadPulses();
     loadPulses();
-    setTeamMembers(state.memberProfiles);
   }, [csrf, dateFrom, dateTo]);
 
-  const handleDateFromChange = dayJsDate => {
-    const date = new Date(dayJsDate.valueOf());
-    setDateFrom(date);
-    if (date > dateTo) setDateTo(date);
-  };
+  useEffect(() => {
+    setTeamMembers(state.memberProfiles || []);
+  }, [csrf, state]);
 
-  const handleDateToChange = dayJsDate => {
-    const date = new Date(dayJsDate.valueOf());
-    if (date < dateFrom) setDateFrom(date);
-    setDateTo(date);
-  };
-
-  const handleTeamMembersChange = members => {
-    setTeamMembers(members);
-  };
-
-  const responseSummary = () => {
-    let filteredPulses = pulses;
-    const teamMemberIds = teamMembers.map(member => member.id);
-    if (teamMemberIds.length) {
-      filteredPulses = pulses.filter(pulse =>
-        teamMemberIds.includes(pulse.teamMemberId))
-    }
-
+  const averageRow = scores => {
+    const { memberId } = scores;
+    const member = memberMap[memberId];
+    const property = propertyMap[scoreType];
     return (
-      <>
-        {filteredPulses.map(pulse => {
-          const member = memberMap[pulse.teamMemberId];
-          if (!member) return null;
-
-          const {
-            externalFeelings,
-            externalScore,
-            internalFeelings,
-            internalScore,
-            submissionDate
-          } = pulse;
-          const [year, month, day] = submissionDate;
-          const hasComment = externalFeelings || internalFeelings;
-          return (
-            <div className="response-row">
-              <Avatar src={getAvatarURL(member.workEmail)} />
-              {year}-{month}-{day}, {member.name}, {member.title},
-              internal: {internalScore}, external: {externalScore}
-              {hasComment && (
-                <IconButton
-                  aria-label="Comment"
-                  onClick={() => handleCommentClick(pulse)}
-                  size="large"
-                >
-                  <Comment />
-                </IconButton>
-              )}
-            </div>
-          );
-        })}
-      </>
+      <tr key={memberId}>
+        <td><Avatar src={getAvatarURL(member.workEmail)} /></td>
+        <td>{member.name}<br />{member.title}</td>
+        <td className="score">{scores[property].toFixed(1)}</td>
+      </tr>
     );
-  };
+  }
 
-  const handleCommentClick = (pulse) => {
-    setSelectedPulse(pulse);
-    setShowComments(true);
-  };
+  const averageScores = () => (
+    <Card>
+      <CardContent>
+        <div className="average-header row">
+          <Typography variant="h5">Average Scores</Typography>
+          <FormControl style={{width: '8rem'}}>
+            <TextField
+              select
+              size="small"
+              label="Score Type"
+              onChange={e => setScoreType(e.target.value)}
+              sx={{width: '8rem'}}
+              value={scoreType}
+              variant="outlined"
+            >
+              <MenuItem value={ScoreOption.INTERNAL}>{ScoreOption.INTERNAL}</MenuItem>
+              <MenuItem value={ScoreOption.EXTERNAL}>{ScoreOption.EXTERNAL}</MenuItem>
+              <MenuItem value={ScoreOption.COMBINED}>{ScoreOption.COMBINED}</MenuItem>
+            </TextField>
+          </FormControl>
+          <FormControl style={{width: '7.5rem'}}>
+            <TextField
+              select
+              size="small"
+              label="Scope"
+              onChange={e => setScope(e.target.value)}
+              sx={{width: '7.5rem'}}
+              value={scope}
+              variant="outlined"
+            >
+              <MenuItem value="Individual">Individual</MenuItem>
+              <MenuItem value="Manager">Manager</MenuItem>
+            </TextField>
+          </FormControl>
+        </div>
+        <div className="row">
+          {scoreCard(true)}
+          {scoreCard(false)}
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   const barChart = () => (
     <Card>
@@ -307,6 +355,50 @@ const PulseReportPage = () => {
     </Card>
   );
 
+  const handleCommentClick = (pulse) => {
+    setSelectedPulse(pulse);
+    setShowComments(true);
+  };
+
+  const handleDateFromChange = dayJsDate => {
+    const date = new Date(dayJsDate.valueOf());
+    setDateFrom(date);
+    if (date > dateTo) setDateTo(date);
+  };
+
+  const handleDateToChange = dayJsDate => {
+    const date = new Date(dayJsDate.valueOf());
+    if (date < dateFrom) setDateFrom(date);
+    setDateTo(date);
+  };
+
+  const handleTeamMembersChange = members => {
+    setTeamMembers(members);
+  };
+
+  const scoreCard = (highest) => {
+    const label = scope === 'Manager' ? 'Team' : 'Individual';
+    const property = propertyMap[scoreType];
+    const scoresToShow = Object.values(averageData).sort(
+    (a, b) => {
+      const aValue = a[property];
+      const bValue = b[property];
+      return highest ? bValue - aValue : aValue - bValue
+    }).slice(0, 5);
+    const title = `${highest ? 'Highest' : 'Lowest'} ${label} Scores`;
+
+    return (
+      <div>
+        <Typography variant="h6">{title}</Typography>
+        <table>
+          <tbody>
+            {scoresToShow.map(scores => averageRow(scores))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
   const lineChart = () => (
     <Card>
       <CardHeader
@@ -345,6 +437,52 @@ const PulseReportPage = () => {
     </Card>
   );
 
+  const responseSummary = () => {
+    let filteredPulses = pulses;
+    const teamMemberIds = teamMembers.map(member => member.id);
+    if (teamMemberIds.length) {
+      filteredPulses = pulses.filter(pulse =>
+        teamMemberIds.includes(pulse.teamMemberId))
+    }
+
+    return (
+      <>
+        {filteredPulses.map(pulse => {
+          const memberId = pulse.teamMemberId;
+          const member = memberMap[memberId];
+          if (!member) return null;
+
+          const {
+            externalFeelings,
+            externalScore,
+            internalFeelings,
+            internalScore,
+            submissionDate
+          } = pulse;
+          const [year, month, day] = submissionDate;
+          const hasComment = externalFeelings || internalFeelings;
+          const key = `${memberId}-${year}-${month}-${day}`;
+          return (
+            <div className="row" key={key}>
+              <Avatar src={getAvatarURL(member.workEmail)} />
+              {year}-{month}-{day}, {member.name}, {member.title},
+              internal: {internalScore}, external: {externalScore}
+              {hasComment && (
+                <IconButton
+                  aria-label="Comment"
+                  onClick={() => handleCommentClick(pulse)}
+                  size="large"
+                >
+                  <Comment />
+                </IconButton>
+              )}
+            </div>
+          );
+        })}
+      </>
+    );
+  };
+
   return (
     <div className="pulse-report-page">
       <div className="date-pickers">
@@ -376,25 +514,25 @@ const PulseReportPage = () => {
             selected={teamMembers}
           />
           {lineChart()}
+          {averageScores()}
           {barChart()}
+          <Modal open={showComments} onClose={() => setShowComments(false)}>
+            <Card className="feedback-request-enable-edits-modal">
+              <CardHeader
+                title={
+                  <Typography variant="h5" fontWeight="bold">
+                    Pulse Comments
+                  </Typography>
+                }
+              />
+              <CardContent>
+                <div>Internal Feelings: {selectedPulse?.internalFeelings}</div>
+                <div>External Feelings: {selectedPulse?.externalFeelings}</div>
+              </CardContent>
+            </Card>
+          </Modal>
         </>
       )}
-
-      <Modal open={showComments} onClose={() => setShowComments(false)}>
-        <Card className="feedback-request-enable-edits-modal">
-          <CardHeader
-            title={
-              <Typography variant="h5" fontWeight="bold">
-                Pulse Comments
-              </Typography>
-            }
-          />
-          <CardContent>
-            <div>Internal Feelings: {selectedPulse?.internalFeelings}</div>
-            <div>External Feelings: {selectedPulse?.externalFeelings}</div>
-          </CardContent>
-        </Card>
-      </Modal>
     </div>
   );
 };
