@@ -211,18 +211,17 @@ const TeamReviews = ({ onBack, periodId }) => {
   const loadTeamMembers = () => {
     let members = [];
 
-    if (approvalMode) {
+    if (!approvalMode || (isAdmin && showAll)) {
+      const memberIds = assignments.map(a => a.revieweeId);
+      members = currentMembers.filter(m => memberIds.includes(m.id));
+    } else {
       // Get the direct reports of the current user who is a manager.
       const myId = currentUser?.id;
       members = showAll
         ? selectCurrentUserSubordinates(state)
         : selectTeamMembersBySupervisorId(state, myId);
-    } else {
-      const memberIds = assignments.map(a => a.revieweeId);
-      members = currentMembers.filter(m => memberIds.includes(m.id));
     }
 
-    console.log('TeamReviews.jsx loadTeamMembers: members.length =', members.length);
     setTeamMembers(members);
   };
 
