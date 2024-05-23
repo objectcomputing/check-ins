@@ -47,7 +47,9 @@ public enum Permission {
   CAN_DELETE_REVIEW_PERIOD("Delete review period", "Review Period"),
   CAN_ADMINISTER_SETTINGS("Add or edit settings", "Settings"),
   CAN_VIEW_SETTINGS("View settings", "Settings"),
-  CAN_VIEW_ALL_PULSE_RESPONSES("View all pulse responses", "Pulse");
+  CAN_VIEW_ALL_PULSE_RESPONSES("View all pulse responses", "Pulse"),
+  CAN_CREATE_ALL_PULSE_RESPONSES("Create pulse responses for anyone", "Pulse"),
+  CAN_UPDATE_ALL_PULSE_RESPONSES("Update pulse responses for anyone", "Pulse");
 
   private final String description;
   private final String category;

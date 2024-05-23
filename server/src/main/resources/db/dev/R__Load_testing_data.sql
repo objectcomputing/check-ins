@@ -862,6 +862,16 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_ALL_PULSE_RESPONSES');
 
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_CREATE_ALL_PULSE_RESPONSES');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_UPDATE_ALL_PULSE_RESPONSES');
+
 -- PDL Permissions
 insert into role_permissions
     (roleid, permission)

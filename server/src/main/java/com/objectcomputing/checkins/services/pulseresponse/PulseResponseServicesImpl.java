@@ -39,6 +39,9 @@ public class PulseResponseServicesImpl implements PulseResponseService {
 
     @Override
     public PulseResponse save(PulseResponse pulseResponse) {
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_CREATE_ALL_PULSE_RESPONSES);
+
         PulseResponse pulseResponseRet = null;
         if (pulseResponse != null) {
             final UUID memberId = pulseResponse.getTeamMemberId();
@@ -49,12 +52,13 @@ public class PulseResponseServicesImpl implements PulseResponseService {
                 throw new BadArgException(String.format("Member %s doesn't exists", memberId));
             } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
                 throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
+            } else if (!hasPermission && !currentUserId.equals(memberId) && !isSubordinateTo(pulseResponse.getTeamMemberId(), currentUserId)) {
+                throw new BadArgException(String.format("User %s does not have permission to create pulse response for user %s", currentUserId, memberId));
             }
             pulseResponseRet = pulseResponseRepo.save(pulseResponse);
         }
         return pulseResponseRet;
     }
-
 
     @Override
     public PulseResponse read(@NotNull UUID id) {
@@ -68,6 +72,9 @@ public class PulseResponseServicesImpl implements PulseResponseService {
 
     @Override
     public PulseResponse update(PulseResponse pulseResponse) {
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_UPDATE_ALL_PULSE_RESPONSES);
+
         PulseResponse pulseResponseRet = null;
         if (pulseResponse != null) {
             final UUID id = pulseResponse.getId();
@@ -81,6 +88,8 @@ public class PulseResponseServicesImpl implements PulseResponseService {
                 throw new BadArgException(String.format("Invalid pulseresponse %s", pulseResponse));
             } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
                 throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
+            } else if (!hasPermission && !currentUserId.equals(memberId) && !isSubordinateTo(pulseResponse.getTeamMemberId(), currentUserId)) {
+                throw new BadArgException(String.format("User %s does not have permission to update pulse response for user %s", currentUserId, memberId));
             }
             pulseResponseRet = pulseResponseRepo.update(pulseResponse);
         }
@@ -109,7 +118,11 @@ public class PulseResponseServicesImpl implements PulseResponseService {
     // or if they are the supervisor of the team member who submitted the pulse response
     private boolean canViewDueToReportingHierarchy(PulseResponse pulse, UUID currentUserId) {
         return pulse.getTeamMemberId().equals(currentUserId) ||
-                memberProfileServices.getSubordinatesForId(currentUserId)
-                        .stream().anyMatch(member -> member.getId().equals(pulse.getTeamMemberId()));
+                isSubordinateTo(pulse.getTeamMemberId(), currentUserId);
+    }
+
+    private boolean isSubordinateTo(UUID reportMember, UUID currentUserId) {
+        return memberProfileServices.getSubordinatesForId(currentUserId)
+                .stream().anyMatch(member -> member.getId().equals(reportMember));
     }
 }

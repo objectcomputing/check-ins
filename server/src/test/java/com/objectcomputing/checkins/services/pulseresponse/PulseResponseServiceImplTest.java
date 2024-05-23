@@ -114,6 +114,9 @@ class PulseResponseServiceImplTest {
     void testSavePulseResponseNullTeamMemberId() {
         PulseResponse cd = new PulseResponse(1, 2, LocalDate.of(2019, 1, 1),null, "PRId", "PRId2");
 
+        when(currentUserServices.getCurrentUser()).thenReturn(new MemberProfile());
+        when(rolePermissionServices.findUserPermissions(any(UUID.class))).thenReturn(Collections.emptyList());
+
         BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals("Member null doesn't exists", exception.getMessage());
 
@@ -220,6 +223,8 @@ class PulseResponseServiceImplTest {
     @Test
     void testUpdateMemberProfileDoesNotExist() {
         PulseResponse cd = new PulseResponse(UUID.randomUUID(),1, 2, LocalDate.of(2019, 1, 1), UUID.randomUUID(), "PRId", "PRId2");
+        when(currentUserServices.getCurrentUser()).thenReturn(new MemberProfile());
+        when(rolePermissionServices.findUserPermissions(any(UUID.class))).thenReturn(Collections.emptyList());
         when(pulseResponseRepository.findById(eq(cd.getId()))).thenReturn(Optional.of(cd));
         when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.empty());
 

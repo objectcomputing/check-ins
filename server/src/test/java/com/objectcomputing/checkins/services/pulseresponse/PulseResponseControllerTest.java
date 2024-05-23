@@ -20,7 +20,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,7 +32,6 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PulseResponseFixture {
@@ -93,6 +96,54 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         assertEquals(request.getPath(), href);
         assertEquals(String.format("Member %s doesn't exists", pulseResponseCreateDTO.getTeamMemberId()), error);
+    }
+
+    @Test
+    void testCreatePulseResponseForSomeoneUnrelated() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        PulseResponseCreateDTO pulseResponseCreateDTO = createPulseResponseCreateDTO(id(HIERARCHY_LEAD2));
+
+        HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User %s does not have permission to create pulse response for user %s".formatted(memberProfile.getId(),  pulseResponseCreateDTO.getTeamMemberId()), error);
+    }
+
+    @Test
+    void testCreatePulseResponseForSomeoneInHierarchy() {
+        PulseResponseCreateDTO pulseResponseCreateDTO = createPulseResponseCreateDTO(id(HIERARCHY_LEAD2_SUB1_SUB1));
+
+        HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(profile(HIERARCHY_LEAD2).getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
+
+        PulseResponse pulseResponseResponse = response.body();
+
+        Assertions.assertNotNull(pulseResponseResponse);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(pulseResponseCreateDTO.getTeamMemberId(), pulseResponseResponse.getTeamMemberId());
+        assertEquals(String.format("%s/%s", request.getPath(), pulseResponseResponse.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testCreatePulseResponseForSomeoneUnrelatedWithRole() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        PulseResponseCreateDTO pulseResponseCreateDTO = createPulseResponseCreateDTO(id(HIERARCHY_LEAD2));
+
+        HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
+
+        PulseResponse pulseResponseResponse = response.body();
+
+        Assertions.assertNotNull(pulseResponseResponse);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(pulseResponseCreateDTO.getTeamMemberId(), pulseResponseResponse.getTeamMemberId());
+        assertEquals(String.format("%s/%s", request.getPath(), pulseResponseResponse.getId()), response.getHeaders().get("location"));
     }
 
     @Test
@@ -289,13 +340,64 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
 
-        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
 
         assertEquals(pulseResponse, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), pulseResponse.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testUpdatePulseResponseForUnrelatedMemberWithRole() {
+        PulseResponse pulseResponse = createADefaultPulseResponse(profile(HIERARCHY_LEAD2));
+
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
+
+        assertEquals(pulseResponse, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), pulseResponse.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testUpdatePulseResponseForSubordinateMember() {
+        PulseResponse pulseResponse = createADefaultPulseResponse(profile(HIERARCHY_LEAD2_SUB1_SUB1));
+
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse).basicAuth(profile(HIERARCHY_LEAD2).getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
+
+        assertEquals(pulseResponse, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), pulseResponse.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testUpdatePulseResponseForSameMember() {
+        PulseResponse pulseResponse = createADefaultPulseResponse(profile(HIERARCHY_LEAD2_SUB1_SUB1));
+
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse).basicAuth(profile(HIERARCHY_LEAD2_SUB1_SUB1).getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
+
+        assertEquals(pulseResponse, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), pulseResponse.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testUpdatePulseResponseForSupervisoryMember() {
+        PulseResponse pulseResponse = createADefaultPulseResponse(profile(HIERARCHY_LEAD2));
+
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse).basicAuth(profile(HIERARCHY_LEAD2_SUB1_SUB1).getWorkEmail(), MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals("User %s does not have permission to update pulse response for user %s".formatted(id(HIERARCHY_LEAD2_SUB1_SUB1), id(HIERARCHY_LEAD2)), error);
+        assertEquals(request.getPath(), href);
     }
 
     @Test
@@ -315,6 +417,22 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(String.format("Unable to find pulseresponse record with id %s", pulseResponse.getId()), error);
+        assertEquals(request.getPath(), href);
+    }
+
+    @Test
+    void testUpdatePulseResponseForUnrelatedMember() {
+        PulseResponse pulseResponse = createADefaultPulseResponse(profile(HIERARCHY_LEAD2));
+
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse).basicAuth(profile(HIERARCHY_LEAD1).getWorkEmail(), MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals("User %s does not have permission to update pulse response for user %s".formatted(id(HIERARCHY_LEAD1), id(HIERARCHY_LEAD2)), error);
         assertEquals(request.getPath(), href);
     }
 
