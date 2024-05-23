@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 
 
 @Controller("/services/github-issue")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "github")
