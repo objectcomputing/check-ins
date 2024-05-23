@@ -18,18 +18,23 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Singleton
-public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
+class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReviewPeriodServicesImpl.class);
 
     private final ReviewPeriodRepository reviewPeriodRepository;
     private final ReviewAssignmentRepository reviewAssignmentRepository;
     private final MemberProfileRepository memberProfileRepository;
-    private final CurrentUserServices currentUserServices;
+    private final ReviewStatusTransitionValidator reviewStatusTransitionValidator;
     private EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
@@ -47,7 +52,7 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         this.reviewPeriodRepository = reviewPeriodRepository;
         this.reviewAssignmentRepository = reviewAssignmentRepository;
         this.memberProfileRepository = memberProfileRepository;
-        this.currentUserServices = currentUserServices;
+        this.reviewStatusTransitionValidator = reviewStatusTransitionValidator;
         this.emailSender = emailSender;
         this.environment = environment;
         this.webAddress = webAddress;
@@ -70,7 +75,6 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
             newPeriod = reviewPeriodRepository.save(reviewPeriod);
         }
-
         return newPeriod;
     }
 
@@ -88,16 +92,13 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         } else if (reviewStatus != null) {
             reviewPeriods.addAll(reviewPeriodRepository.findByReviewStatus(reviewStatus));
         } else {
-            reviewPeriodRepository.findAll().forEach(reviewPeriods::add);
+            reviewPeriods.addAll(reviewPeriodRepository.findAll());
         }
 
         return reviewPeriods;
     }
 
     public void delete(@NotNull UUID id) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
-        }
         reviewPeriodRepository.deleteById(id);
     }
 
@@ -107,24 +108,32 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     }
 
     public ReviewPeriod update(@NotNull ReviewPeriod reviewPeriod) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
-        }
-        LOG.info(String.format("Updating entity %s", reviewPeriod));
-        if (reviewPeriod.getId() != null && reviewPeriodRepository.existsById(reviewPeriod.getId())) {
-            ReviewPeriod savedReviewPeriod = reviewPeriodRepository.findById(reviewPeriod.getId()).get();
-            ReviewPeriod updatedReviewPeriod = reviewPeriodRepository.update(reviewPeriod);
+        LOG.info("Updating entity {}", reviewPeriod);
 
-            if (savedReviewPeriod.getReviewStatus() != ReviewStatus.AWAITING_APPROVAL &&
-                    updatedReviewPeriod.getReviewStatus() == ReviewStatus.AWAITING_APPROVAL) {
-                notifyRevieweeSupervisorsByReviewPeriod(reviewPeriod.getId(), reviewPeriod.getName());
-            }
-
-            return updatedReviewPeriod;
-        } else {
-            throw new BadArgException(String.format("ReviewPeriod %s does not exist, cannot update",
-                    reviewPeriod.getId()));
+        if (reviewPeriod.getId() == null) {
+            throw new BadArgException("ReviewPeriod id is required for update");
         }
+
+        Optional<ReviewPeriod> maybeExistingPeriod = reviewPeriodRepository.findById(reviewPeriod.getId());
+
+        if (maybeExistingPeriod.isEmpty()) {
+            throw new BadArgException(String.format("ReviewPeriod %s does not exist, cannot update", reviewPeriod.getId()));
+        }
+
+        ReviewPeriod existingPeriod = maybeExistingPeriod.get();
+        ReviewStatus currentStatus = existingPeriod.getReviewStatus();
+        ReviewStatus newStatus = reviewPeriod.getReviewStatus();
+        if (!reviewStatusTransitionValidator.isValid(currentStatus, newStatus)) {
+            throw new BadArgException(String.format("Invalid status transition from %s to %s", currentStatus, newStatus));
+        }
+
+        if (currentStatus != ReviewStatus.AWAITING_APPROVAL &&
+                newStatus == ReviewStatus.AWAITING_APPROVAL) {
+            notifyRevieweeSupervisorsByReviewPeriod(reviewPeriod.getId(), reviewPeriod.getName());
+        }
+
+
+        return reviewPeriodRepository.update(reviewPeriod);
     }
 
     private void notifyRevieweeSupervisorsByReviewPeriod(UUID reviewPeriodId, String reviewPeriodName) {

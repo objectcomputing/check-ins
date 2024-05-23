@@ -24,11 +24,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class QuestionCategoryControllerTest extends TestContainersSuite implements QuestionCategoryFixture, MemberProfileFixture, RoleFixture {
+class QuestionCategoryControllerTest extends TestContainersSuite implements QuestionCategoryFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/question-categories")
@@ -43,7 +43,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testGETNonExistingEndpointReturns404() {
+    void testGETNonExistingEndpointReturns404() {
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.GET(String.format("/?id=%s", UUID.randomUUID().toString()))
@@ -55,7 +55,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testGETFindByNameReturnsNotFound() {
+    void testGETFindByNameReturnsNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?name=%s", encodeValue("silly"))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -68,7 +68,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testGetAllCategories() {
+    void testGetAllCategories() {
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         final HttpRequest<Object> request = HttpRequest.
                 GET("/").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -82,7 +82,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testGETGetByIdHappyPath() {
+    void testGETGetByIdHappyPath() {
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
 
@@ -97,7 +97,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testGETGetByIdNotFound() {
+    void testGETGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?id=%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -111,7 +111,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPUTSuccessfulUpdate() {
+    void testPUTSuccessfulUpdate() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         createAndAssignAdminRole(memberProfileOfAdmin);
 
@@ -127,7 +127,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPUTUpdateNoPermission() {
+    void testPUTUpdateNoPermission() {
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
 
@@ -142,7 +142,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPUTNoIDSupplied() {
+    void testPUTNoIDSupplied() {
 
         QuestionCategoryCreateDTO requestBody = new QuestionCategoryCreateDTO();
         requestBody.setName("Fake Category");
@@ -159,7 +159,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPUTQuestionCategoryNotFound() {
+    void testPUTQuestionCategoryNotFound() {
 
         QuestionCategory requestBody = new QuestionCategory();
         requestBody.setId(UUID.randomUUID());
@@ -177,7 +177,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPOSTCreateAQuestionCategory() {
+    void testPOSTCreateAQuestionCategory() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         createAndAssignAdminRole(memberProfileOfAdmin);
@@ -195,7 +195,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPOSTCreateAQuestionCategoryNoPermission() {
+    void testPOSTCreateAQuestionCategoryNoPermission() {
 
         QuestionCategoryCreateDTO newQuestionCategory = new QuestionCategoryCreateDTO();
         newQuestionCategory.setName("Inquisitive");
@@ -211,7 +211,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPOSTCreateAQuestionCategoryAlreadyExists() {
+    void testPOSTCreateAQuestionCategoryAlreadyExists() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         createAndAssignAdminRole(memberProfileOfAdmin);
 
@@ -230,7 +230,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPOSTCreateAQuestionNullQuestion() {
+    void testPOSTCreateAQuestionNullQuestion() {
 
         QuestionCategoryCreateDTO newQuestionCategory = new QuestionCategoryCreateDTO();
 
@@ -245,7 +245,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testDELETEQuestionCategory() {
+    void testDELETEQuestionCategory() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         createAndAssignAdminRole(memberProfileOfAdmin);
 
@@ -261,7 +261,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testDELETEQuestionCategoryNoPermission() {
+    void testDELETEQuestionCategoryNoPermission() {
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
 

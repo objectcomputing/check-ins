@@ -1,0 +1,233 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<body>
+  <div>
+    <div
+      class="pulse"
+    >
+      <h6
+        class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+      />
+      <div
+        class="icon-row"
+      >
+        <button
+          aria-label="sentiment"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1n6yaer-MuiButtonBase-root-MuiIconButton-root"
+          data-mui-internal-clone-element="true"
+          data-testid="score-button-0"
+          tabindex="0"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="SentimentVeryDissatisfiedIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="15.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <circle
+              cx="8.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <path
+              d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8m0-6c-2.33 0-4.32 1.45-5.12 3.5h1.67c.69-1.19 1.97-2 3.45-2s2.75.81 3.45 2h1.67c-.8-2.05-2.79-3.5-5.12-3.5"
+            />
+          </svg>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          aria-label="sentiment"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3yajy8-MuiButtonBase-root-MuiIconButton-root"
+          data-mui-internal-clone-element="true"
+          data-testid="score-button-1"
+          tabindex="0"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="SentimentDissatisfiedIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="15.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <circle
+              cx="8.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <path
+              d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8m0-3.5c.73 0 1.39.19 1.97.53.12-.14.86-.98 1.01-1.14-.85-.56-1.87-.89-2.98-.89-1.11 0-2.13.33-2.99.88.97 1.09.01.02 1.01 1.14.59-.33 1.25-.52 1.98-.52"
+            />
+          </svg>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          aria-label="sentiment"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium selected css-1ux1z47-MuiButtonBase-root-MuiIconButton-root"
+          data-mui-internal-clone-element="true"
+          data-testid="score-button-2"
+          tabindex="0"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="SentimentNeutralIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 15.5h6v1H9z"
+            />
+            <circle
+              cx="15.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <circle
+              cx="8.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <path
+              d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8"
+            />
+          </svg>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          aria-label="sentiment"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-e8i9rs-MuiButtonBase-root-MuiIconButton-root"
+          data-mui-internal-clone-element="true"
+          data-testid="score-button-3"
+          tabindex="0"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="SentimentSatisfiedIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="15.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <circle
+              cx="8.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <path
+              d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8m0-4c-.73 0-1.38-.18-1.96-.52-.12.14-.86.98-1.01 1.15.86.55 1.87.87 2.97.87 1.11 0 2.12-.33 2.98-.88-.97-1.09-.01-.02-1.01-1.15-.59.35-1.24.53-1.97.53"
+            />
+          </svg>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          aria-label="sentiment"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1071bba-MuiButtonBase-root-MuiIconButton-root"
+          data-mui-internal-clone-element="true"
+          data-testid="score-button-4"
+          tabindex="0"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="SentimentVerySatisfiedIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="15.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <circle
+              cx="8.5"
+              cy="9.5"
+              r="1.5"
+            />
+            <path
+              d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8m-5-6c.78 2.34 2.72 4 5 4s4.22-1.66 5-4z"
+            />
+          </svg>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+      <div
+        class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
+        data-testid="comment-input"
+      >
+        <label
+          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
+          data-shrink="true"
+          for=":r5:"
+          id=":r5:-label"
+        >
+          Comment
+        </label>
+        <div
+          class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-multiline css-8ewcdo-MuiInputBase-root-MuiOutlinedInput-root"
+        >
+          <textarea
+            aria-invalid="false"
+            class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
+            id=":r5:"
+            placeholder="Comment"
+            rows="4"
+            style="height: 0px; overflow: hidden;"
+          >
+            Just testing
+          </textarea>
+          <textarea
+            aria-hidden="true"
+            class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
+            readonly=""
+            style="visibility: hidden; position: absolute; overflow: hidden; height: 0px; top: 0px; left: 0px; transform: translateZ(0); padding-top: 0px; padding-bottom: 0px; width: 100%;"
+            tabindex="-1"
+          />
+          <fieldset
+            aria-hidden="true"
+            class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+          >
+            <legend
+              class="css-14lo706"
+            >
+              <span>
+                Comment
+              </span>
+            </legend>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

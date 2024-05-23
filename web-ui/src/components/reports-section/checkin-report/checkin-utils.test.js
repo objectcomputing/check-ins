@@ -65,57 +65,92 @@ describe('getLastCheckinDate', () => {
 });
 
 describe('getCheckinDateForPeriod', () => {
-  const mockReportDate = new Date(2024, 3, 15); // April 15, 2024 (example report date)
+  const mockReportDateQ1 = new Date(2024, 2, 31); // March 31, 2024 (end of Q1)
+  const mockReportDateQ2 = new Date(2024, 5, 30); // June 30, 2024 (end of Q2)
 
-  test('returns correct date when check-in is within the reporting period', () => {
+  test('returns correct date when check-in is within Q1 reporting period', () => {
     const checkins = [
-      { checkInDate: [2024, 3, 1, 10, 0] }, // March 1, 2024
-      { checkInDate: [2024, 4, 1, 9, 0] }, // April 1, 2024
-      { checkInDate: [2024, 4, 15, 14, 30] } // April 15, 2024
+      { checkInDate: [2024, 1, 10, 10, 0] }, // January 10, 2024
+      { checkInDate: [2024, 2, 20, 9, 0] }, // February 20, 2024
+      { checkInDate: [2024, 3, 31, 14, 30] } // March 31, 2024
     ];
 
-    const result = getCheckinDateForPeriod(checkins, mockReportDate);
+    const result = getCheckinDateForPeriod(checkins, mockReportDateQ1);
 
     expect(result).toBeInstanceOf(Date);
     expect(result.getFullYear()).toBe(2024);
-    expect(result.getMonth()).toBe(3); // April is 3 (zero-indexed)
-    expect(result.getDate()).toBe(15); // Latest date in the array
+    expect(result.getMonth()).toBe(2); // March is 2 (zero-indexed)
+    expect(result.getDate()).toBe(31); // Latest date in the array
     expect(result.getHours()).toBe(14);
     expect(result.getMinutes()).toBe(30);
   });
 
-  test('returns correct date when check-in is within the reporting period and grace period', () => {
+  test('returns correct date when check-in is within Q2 reporting period and grace period', () => {
     const checkins = [
-      { checkInDate: [2024, 3, 1, 10, 0] }, // March 1, 2024
-      { checkInDate: [2024, 4, 1, 9, 0] }, // April 1, 2024
-      { checkInDate: [2024, 5, 1, 14, 30] } // May 1, 2024
+      { checkInDate: [2024, 4, 10, 10, 0] }, // April 10, 2024
+      { checkInDate: [2024, 5, 20, 9, 0] }, // May 20, 2024
+      { checkInDate: [2024, 6, 30, 14, 30] } // June 30, 2024
     ];
 
-    const result = getCheckinDateForPeriod(checkins, mockReportDate);
+    const result = getCheckinDateForPeriod(checkins, mockReportDateQ2);
 
     expect(result).toBeInstanceOf(Date);
     expect(result.getFullYear()).toBe(2024);
-    expect(result.getMonth()).toBe(4); // May is 4 (zero-indexed)
-    expect(result.getDate()).toBe(1); // Latest date in the array
+    expect(result.getMonth()).toBe(5); // June is 5 (zero-indexed)
+    expect(result.getDate()).toBe(30); // Latest date in the array
     expect(result.getHours()).toBe(14);
     expect(result.getMinutes()).toBe(30);
   });
 
-  test('returns correct date regardless of checkin status (completed or not)', () => {
+  test('returns correct date regardless of checkin status (completed or not) for Q1', () => {
     const checkins = [
-      { checkInDate: [2024, 3, 1, 10, 0], completed: true }, // March 1, 2024 (completed)
-      { checkInDate: [2024, 4, 1, 9, 0], completed: false }, // April 1, 2024 (not completed)
-      { checkInDate: [2024, 4, 15, 14, 30], completed: false } // April 15, 2024 (not completed)
+      { checkInDate: [2024, 1, 10, 10, 0], completed: true }, // January 10, 2024 (completed)
+      { checkInDate: [2024, 2, 20, 9, 0], completed: false }, // February 20, 2024 (not completed)
+      { checkInDate: [2024, 3, 31, 14, 30], completed: false } // March 31, 2024 (not completed)
     ];
 
+    const result = getCheckinDateForPeriod(checkins, mockReportDateQ1);
+
+    expect(result).toBeInstanceOf(Date);
+    expect(result.getFullYear()).toBe(2024);
+    expect(result.getMonth()).toBe(2); // March is 2 (zero-indexed)
+    expect(result.getDate()).toBe(31); // Latest date in the array
+    expect(result.getHours()).toBe(14);
+    expect(result.getMinutes()).toBe(30);
+  });
+
+  test('returns correct date regardless of checkin status (completed or not) for Q2', () => {
+    const checkins = [
+      { checkInDate: [2024, 4, 10, 10, 0], completed: true }, // April 10, 2024 (completed)
+      { checkInDate: [2024, 5, 20, 9, 0], completed: false }, // May 20, 2024 (not completed)
+      { checkInDate: [2024, 6, 30, 14, 30], completed: false } // June 30, 2024 (not completed)
+    ];
+
+    const result = getCheckinDateForPeriod(checkins, mockReportDateQ2);
+
+    expect(result).toBeInstanceOf(Date);
+    expect(result.getFullYear()).toBe(2024);
+    expect(result.getMonth()).toBe(5); // June is 5 (zero-indexed)
+    expect(result.getDate()).toBe(30); // Latest date in the array
+    expect(result.getHours()).toBe(14);
+    expect(result.getMinutes()).toBe(30);
+  });
+
+  test('returns correct date when check-ins are on Feb 12 and May 1 with a report date in Q1', () => {
+    const checkins = [
+      { checkInDate: [2024, 2, 12, 10, 0] }, // February 12, 2024
+      { checkInDate: [2024, 5, 1, 9, 0] } // May 1, 2024
+    ];
+
+    const mockReportDate = new Date(2024, 2, 15); // March 15, 2024 (within Q1)
     const result = getCheckinDateForPeriod(checkins, mockReportDate);
 
     expect(result).toBeInstanceOf(Date);
     expect(result.getFullYear()).toBe(2024);
-    expect(result.getMonth()).toBe(3); // April is 3 (zero-indexed)
-    expect(result.getDate()).toBe(15); // Latest date in the array
-    expect(result.getHours()).toBe(14);
-    expect(result.getMinutes()).toBe(30);
+    expect(result.getMonth()).toBe(1); // February is 2 (zero-indexed)
+    expect(result.getDate()).toBe(12); // Latest date in the array within Q1
+    expect(result.getHours()).toBe(10);
+    expect(result.getMinutes()).toBe(0);
   });
 });
 

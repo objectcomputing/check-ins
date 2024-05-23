@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/pulse-responses")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -61,12 +61,10 @@ public class PulseResponseController {
     @Post()
     public Mono<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                                     HttpRequest<?> request) {
-        return Mono.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),
-                        pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(),
-                        pulseResponse.getExternalFeelings())))
+        return Mono.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getInternalScore(), pulseResponse.getExternalScore(), pulseResponse.getSubmissionDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
                 .map(pulseresponse -> HttpResponse.created(pulseresponse)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),
-                            pulseresponse.getId())))));
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), pulseresponse.getId()))))
+                );
     }
 
      /**

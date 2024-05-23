@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Secured(SecurityRule.IS_ANONYMOUS)
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Controller("/services/roles/members")
 public class MemberRoleController {
 

@@ -16,7 +16,9 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_VIEW_PERMISSIONS,
         Permission.CAN_VIEW_CHECKINS,
         Permission.CAN_CREATE_CHECKINS,
-        Permission.CAN_UPDATE_CHECKINS
+        Permission.CAN_UPDATE_CHECKINS,
+        Permission.CAN_ADMINISTER_SETTINGS,
+        Permission.CAN_VIEW_SETTINGS
     );
 
     // Add PDL Permissions here
@@ -34,7 +36,10 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_UPDATE_PRIVATE_NOTE,
         Permission.CAN_CREATE_CHECKIN_DOCUMENT,
         Permission.CAN_VIEW_CHECKIN_DOCUMENT,
-        Permission.CAN_UPDATE_CHECKIN_DOCUMENT
+        Permission.CAN_UPDATE_CHECKIN_DOCUMENT,
+        Permission.CAN_ADMINISTER_SETTINGS,
+        Permission.CAN_VIEW_SETTINGS
+
     );
 
     // Add ADMIN Permissions here
@@ -70,14 +75,18 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_CREATE_REVIEW_ASSIGNMENTS,
         Permission.CAN_VIEW_REVIEW_ASSIGNMENTS,
         Permission.CAN_UPDATE_REVIEW_ASSIGNMENTS,
-        Permission.CAN_DELETE_REVIEW_ASSIGNMENTS
+        Permission.CAN_DELETE_REVIEW_ASSIGNMENTS,
+        Permission.CAN_ADMINISTER_SETTINGS,
+        Permission.CAN_VIEW_SETTINGS,
+        Permission.CAN_CREATE_REVIEW_PERIOD,
+        Permission.CAN_UPDATE_REVIEW_PERIOD,
+        Permission.CAN_LAUNCH_REVIEW_PERIOD,
+        Permission.CAN_CLOSE_REVIEW_PERIOD,
+        Permission.CAN_DELETE_REVIEW_PERIOD
     );
-
-
 
     default void setPermissionsForAdmin(UUID roleID) {
         adminPermissions.forEach(permission -> setRolePermission(roleID, permission));
-
     }
 
     default void setPermissionsForPdl(UUID roleID) {
