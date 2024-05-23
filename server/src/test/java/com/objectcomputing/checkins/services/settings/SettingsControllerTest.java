@@ -16,9 +16,6 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,10 +29,6 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
     @Inject
     @Client("/services/settings")
     private HttpClient client;
-    
-    private String encodeValue(String value) {
-        return URLEncoder.encode(value, StandardCharsets.UTF_8);
-    }
 
     @BeforeEach
     void createRolesAndPermissions() {
@@ -55,11 +48,11 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
 
     @Test
     void testPostUnauthorized() {
-        SettingsCreateDTO newSetting = new SettingsCreateDTO();
+        SettingsDTO newSetting = new SettingsDTO();
         newSetting.setName("Mode");
         newSetting.setValue("Light");
 
-        final HttpRequest<SettingsCreateDTO> request = HttpRequest.
+        final HttpRequest<SettingsDTO> request = HttpRequest.
                 POST("/", newSetting);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -106,42 +99,42 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         Setting setting = createADefaultSetting();
 
-        final HttpRequest<Object> request = HttpRequest.GET(String.format("/?name=%s", setting.getName()))
+        final HttpRequest<Object> request = HttpRequest.GET("/" + setting.getName())
                 .basicAuth(alice.getWorkEmail(), MEMBER_ROLE);
 
-        HttpResponse<List<SettingsResponseDTO>> response =  client.toBlocking()
-                .exchange(request, Argument.listOf(SettingsResponseDTO.class));
+        HttpResponse<SettingsResponseDTO> response =  client.toBlocking()
+                .exchange(request, SettingsResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.body().get(0).getId(), setting.getId());
-        assertEquals(response.body().size(), 1);
+        assertEquals(response.body().getId(), setting.getId());
+        assertEquals(response.body().getName(), setting.getName());
+        assertEquals(response.body().getValue(), setting.getValue());
     }
 
     @Test
-    void testGETFindByWrongNameReturnsEmptyBody() {
+    void testGETFindByWrongNameThrowsException() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         Setting setting = createADefaultSetting();
 
-        final HttpRequest<Object> request = HttpRequest.GET(String.format("/?name=%s", encodeValue("random")))
+        final HttpRequest<Object> request = HttpRequest.GET("/random")
                 .basicAuth(alice.getWorkEmail(), MEMBER_ROLE);
 
-        HttpResponse<List<SettingsResponseDTO>> response =  client.toBlocking()
-                .exchange(request, Argument.listOf(SettingsResponseDTO.class));
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.body());
-        assertEquals(response.body(), new ArrayList<>());
+        assertNotNull(responseException);
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
 
     @Test
     void testPOSTCreateASetting() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
 
-        SettingsCreateDTO newSetting = new SettingsCreateDTO();
+        SettingsDTO newSetting = new SettingsDTO();
         newSetting.setName(SettingOption.LOGO_URL.name());
         newSetting.setValue("Light");
 
-        final HttpRequest<SettingsCreateDTO> request = HttpRequest.
+        final HttpRequest<SettingsDTO> request = HttpRequest.
                 POST("/", newSetting).basicAuth(alice.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<SettingsResponseDTO> response = client.toBlocking().exchange(request,SettingsResponseDTO.class);
 
@@ -155,9 +148,9 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
     void testPostNullName() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
 
-        SettingsCreateDTO newSetting = new SettingsCreateDTO();
+        SettingsDTO newSetting = new SettingsDTO();
         newSetting.setValue("value");
-        final HttpRequest<SettingsCreateDTO> request = HttpRequest.
+        final HttpRequest<SettingsDTO> request = HttpRequest.
                 POST("/", newSetting).basicAuth(alice.getWorkEmail(), ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -171,9 +164,9 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
     void testPostNullValue() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
 
-        SettingsCreateDTO newSetting = new SettingsCreateDTO();
+        SettingsDTO newSetting = new SettingsDTO();
         newSetting.setName(SettingOption.LOGO_URL.name());
-        final HttpRequest<SettingsCreateDTO> request = HttpRequest.
+        final HttpRequest<SettingsDTO> request = HttpRequest.
                 POST("/", newSetting).basicAuth(alice.getWorkEmail(), ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -188,18 +181,17 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
 
         Setting settingToUpdate = createADefaultSetting();
-        SettingsUpdateDTO updatedSetting = new SettingsUpdateDTO();
+        SettingsDTO updatedSetting = new SettingsDTO();
         updatedSetting.setValue("off");
-        updatedSetting.setId(settingToUpdate.getId());
         updatedSetting.setName(settingToUpdate.getName());
 
-        final HttpRequest<SettingsUpdateDTO> request = HttpRequest.
+        final HttpRequest<SettingsDTO> request = HttpRequest.
                 PUT("/", updatedSetting).basicAuth(lucy.getWorkEmail(),ADMIN_ROLE);
         final HttpResponse<SettingsResponseDTO> response = client.toBlocking().exchange(request, SettingsResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(updatedSetting.getValue(), response.body().getValue());
-        assertEquals(String.format("%s/%s", request.getPath(), updatedSetting.getId()),
+        assertEquals(String.format("%s/%s", request.getPath(), settingToUpdate.getId()),
                 response.getHeaders().get("location"));
     }
 
@@ -208,12 +200,11 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
 
         Setting settingToUpdate = createADefaultSetting();
-        SettingsUpdateDTO updatedSetting = new SettingsUpdateDTO();
+        SettingsDTO updatedSetting = new SettingsDTO();
         updatedSetting.setValue("off");
-        updatedSetting.setId(UUID.randomUUID());
         updatedSetting.setName("wrong");
 
-        final HttpRequest<SettingsUpdateDTO> request = HttpRequest.
+        final HttpRequest<SettingsDTO> request = HttpRequest.
                 PUT("/", updatedSetting).basicAuth(lucy.getWorkEmail(),ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -227,9 +218,9 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
     void testPUTNoIdOrName() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
 
-        SettingsUpdateDTO updatedSetting = new SettingsUpdateDTO();
+        SettingsDTO updatedSetting = new SettingsDTO();
 
-        final HttpRequest<SettingsUpdateDTO> request = HttpRequest.
+        final HttpRequest<SettingsDTO> request = HttpRequest.
                 PUT("/", updatedSetting).basicAuth(lucy.getWorkEmail(),ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -285,4 +276,15 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
         assertEquals(HttpStatus.UNAUTHORIZED,responseException.getStatus());
 
     }
+
+    @Test
+    void testUniqueConstraint() {
+        Setting setting1 = getSettingsRepository().save(new Setting(SettingOption.LOGO_URL.toString(), "url.com"));
+        try{
+            Setting setting2 = getSettingsRepository().save(new Setting(SettingOption.LOGO_URL.toString(), "url2.com"));
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("duplicate key value violates unique constraint"));
+        }
+    }
+
 }
