@@ -1,20 +1,22 @@
 package com.objectcomputing.checkins.services.settings;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
-import io.micronaut.data.repository.CrudRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.repository.CrudRepository;
+
+import java.util.List;
+import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface SettingsRepository extends CrudRepository<Setting, UUID> {
 
-    Optional<Setting> findById(UUID id);
+    boolean existsByName(String name);
 
-    List<Setting> findByUserId(UUID userId);
+    boolean existsByIdAndName(@NonNull UUID id, @NonNull String name);
 
+    @NonNull
     List<Setting> findAll();
 
+    @NonNull List<Setting> findByName(@NonNull String name);
 }
