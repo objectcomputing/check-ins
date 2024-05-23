@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 @Controller("/services/member-profiles/current")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -63,9 +64,9 @@ public class CurrentUserController {
         String lastName = name != null ? name.substring(name.indexOf(' ') + 1).trim() : "";
 
         MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
+
         user.setLastSeen(LocalDate.now());
-        System.out.println(user.getLastSeen());
-        memberProfileServices.saveProfile(user);
+        memberProfileServices.updateProfile(user);
         List<Permission> permissions = rolePermissionServices.findUserPermissions(user.getId());
 
         Set<Role> roles = roleServices.findUserRoles(user.getId());
