@@ -201,7 +201,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       });
       if (res.error) throw new Error(res.error.message);
       const assignments = res.payload.data;
-      logAssignments(assignments);
+      // logAssignments(assignments); // for debugging
       setAssignments(assignments);
     } catch (err) {
       console.error('TeamReviews.jsx loadAssignments:', err);
@@ -622,6 +622,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   };
 
+  // This is only used for debugging.
   const logAssignments = assignments => {
     if (currentMembers.length === 0) return;
     for (const assignment of assignments) {
@@ -645,9 +646,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       const unapproved = assignments.filter(
         a => !a.approved && visibleIds.has(a.revieweeId)
       );
-      /* For debugging ...
-      logAssignments(unapproved);
-      */
+      // logAssignments(unapproved); // for debugging
       setUnapproved(unapproved);
       setConfirmationText(
         unapproved.length === 0
