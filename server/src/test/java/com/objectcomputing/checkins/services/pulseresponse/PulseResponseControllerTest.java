@@ -119,7 +119,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         assertEquals(request.getPath(), href);
         assertEquals(String.format("Invalid date for pulseresponse submission date %s", pulseResponseCreateDTO.getTeamMemberId()), error);
-
     }
 
     @Test
@@ -135,7 +134,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     // Find By findBySubmissionDateBetween returns empty array - when no data exists
     @Test
     void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
-
         MemberProfile memberProfile = createADefaultMemberProfile();
         createADefaultPulseResponse(memberProfile);
 

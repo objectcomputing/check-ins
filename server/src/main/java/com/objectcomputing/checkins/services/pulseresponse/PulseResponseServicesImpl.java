@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
@@ -17,17 +18,20 @@ import java.util.stream.Collectors;
 public class PulseResponseServicesImpl implements PulseResponseService {
 
     private final PulseResponseRepository pulseResponseRepo;
+    private final MemberProfileServices memberProfileServices;
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
     private final RolePermissionServices rolePermissionServices;
 
     public PulseResponseServicesImpl(
             PulseResponseRepository pulseResponseRepo,
+            MemberProfileServices memberProfileServices,
             MemberProfileRepository memberRepo,
             CurrentUserServices currentUserServices,
             RolePermissionServices rolePermissionServices
     ) {
         this.pulseResponseRepo = pulseResponseRepo;
+        this.memberProfileServices = memberProfileServices;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
         this.rolePermissionServices = rolePermissionServices;
@@ -58,7 +62,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_VIEW_ALL_PULSE_RESPONSES);
 
         return pulseResponseRepo.findById(id)
-                .filter(pulse -> hasPermission || pulse.getTeamMemberId().equals(currentUserId))
+                .filter(pulse -> hasPermission || canViewDueToReportingHierarchy(pulse, currentUserId))
                 .orElse(null);
     }
 
@@ -90,7 +94,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
 
         Set<PulseResponse> pulseResponse = pulseResponseRepo.findAll()
                 .stream()
-                .filter(pulse -> hasPermission || pulse.getTeamMemberId().equals(currentUserId))
+                .filter(pulse -> hasPermission || canViewDueToReportingHierarchy(pulse, currentUserId))
                 .collect(Collectors.toSet());
 
         if (teamMemberId != null) {
@@ -99,5 +103,13 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             pulseResponse.retainAll(pulseResponseRepo.findBySubmissionDateBetween(dateFrom, dateTo));
         }
         return pulseResponse;
+    }
+
+    // The current user can view the pulse response if they are the team member who submitted the pulse response
+    // or if they are the supervisor of the team member who submitted the pulse response
+    private boolean canViewDueToReportingHierarchy(PulseResponse pulse, UUID currentUserId) {
+        return pulse.getTeamMemberId().equals(currentUserId) ||
+                memberProfileServices.getSubordinatesForId(currentUserId)
+                        .stream().anyMatch(member -> member.getId().equals(pulse.getTeamMemberId()));
     }
 }
