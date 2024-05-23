@@ -14,23 +14,24 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-import static org.junit.Assert.assertNotNull;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class PrivateNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, CheckInFixture, PrivateNoteFixture {
+class PrivateNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, CheckInFixture, PrivateNoteFixture {
 
     @Inject
     @Client("/services/private-notes")
@@ -41,6 +42,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     void createRolesAndPermissions() {
         createAndAssignRoles();
     }
+
     @Test
     void testReadPrivateNoteNotFound() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();

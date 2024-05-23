@@ -43,7 +43,7 @@ public class MailJetSenderTest extends TestContainersSuite {
         List<String> firstEmailGroup = recipients.subList(0, MailJetSender.MAILJET_RECIPIENT_LIMIT);
         for (int i = 0; i < MailJetSender.MAILJET_RECIPIENT_LIMIT; i++) {
             Object email = firstBatch.getJSONObject(i).get("Email");
-            assertTrue(email instanceof String);
+            assertInstanceOf(String.class, email);
             assertTrue(firstEmailGroup.contains(email));
         }
 
@@ -53,7 +53,7 @@ public class MailJetSenderTest extends TestContainersSuite {
         List<String> secondEmailGroup = recipients.subList(MailJetSender.MAILJET_RECIPIENT_LIMIT, numRecipients);
         for (int i = 0; i < 10; i++) {
             Object email = secondBatch.getJSONObject(i).get("Email");
-            assertTrue(email instanceof String);
+            assertInstanceOf(String.class, email);
             assertTrue(secondEmailGroup.contains(email));
         }
     }

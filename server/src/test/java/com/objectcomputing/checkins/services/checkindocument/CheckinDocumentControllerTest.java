@@ -3,7 +3,11 @@ package com.objectcomputing.checkins.services.checkindocument;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
-import com.objectcomputing.checkins.services.fixture.*;
+import com.objectcomputing.checkins.services.fixture.CheckInDocumentFixture;
+import com.objectcomputing.checkins.services.fixture.CheckInFixture;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.Role;
 import io.micronaut.core.type.Argument;
@@ -14,20 +18,22 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
-import jakarta.inject.Inject;
-import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
-public class CheckinDocumentControllerTest extends TestContainersSuite implements RepositoryFixture, MemberProfileFixture,
+class CheckinDocumentControllerTest extends TestContainersSuite implements RepositoryFixture, MemberProfileFixture,
         RoleFixture, CheckInFixture, CheckInDocumentFixture {
 
     @Inject
@@ -38,6 +44,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     void createRolesAndPermissions() {
         createAndAssignRoles();
     }
+
     @Test
     void testCreateACheckinDocument() {
         MemberProfile memberProfile = createADefaultMemberProfile();

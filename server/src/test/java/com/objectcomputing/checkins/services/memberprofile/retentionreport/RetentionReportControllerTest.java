@@ -1,11 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
@@ -17,15 +11,23 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class RetentionReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+
     @Inject
     @Client("/reports/retention")
     private HttpClient client;
@@ -40,7 +42,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    public void testPOSTEmptyRequestReturns400() {
+    void testPOSTEmptyRequestReturns400() {
         MemberProfile adminMember = createAnUnrelatedUser();
         assignAdminRole(adminMember);
 
@@ -56,7 +58,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    public void testPOSTNullStartDateReturns400() {
+    void testPOSTNullStartDateReturns400() {
         MemberProfile adminMember = createAnUnrelatedUser();
         assignAdminRole(adminMember);
 
@@ -75,7 +77,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    public void testPOSTNullEndDateReturns400() {
+    void testPOSTNullEndDateReturns400() {
         MemberProfile adminMember = createAnUnrelatedUser();
         assignAdminRole(adminMember);
 
@@ -94,7 +96,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    public void testPOSTEndDateBeforeStartDateReturns400() {
+    void testPOSTEndDateBeforeStartDateReturns400() {
         MemberProfile adminMember = createAnUnrelatedUser();
         assignAdminRole(adminMember);
 
@@ -128,7 +130,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
                 .exchange(request, RetentionReportResponseDTO.class);
 
         final RetentionReportResponseDTO responseDTO = response.body();
-        Assertions.assertNotNull(responseDTO);
+        assertNotNull(responseDTO);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s", request.getPath()), response.getHeaders().get("Location"));
@@ -150,7 +152,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
                 .exchange(request, RetentionReportResponseDTO.class);
 
         final RetentionReportResponseDTO responseDTO = response.body();
-        Assertions.assertNotNull(responseDTO);
+        assertNotNull(responseDTO);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s", request.getPath()), response.getHeaders().get("Location"));
@@ -172,7 +174,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
                 .exchange(request, RetentionReportResponseDTO.class);
 
         final RetentionReportResponseDTO responseDTO = response.body();
-        Assertions.assertNotNull(responseDTO);
+        assertNotNull(responseDTO);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s", request.getPath()), response.getHeaders().get("Location"));
@@ -199,7 +201,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
                 .exchange(request, RetentionReportResponseDTO.class);
 
         final RetentionReportResponseDTO responseDTO = response.body();
-        Assertions.assertNotNull(responseDTO);
+        assertNotNull(responseDTO);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s", request.getPath()), response.getHeaders().get("Location"));

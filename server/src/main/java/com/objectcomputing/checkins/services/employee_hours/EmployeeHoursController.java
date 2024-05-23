@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/employee/hours")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name="employee hours")
 public class EmployeeHoursController {
