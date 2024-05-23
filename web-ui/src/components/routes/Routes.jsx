@@ -8,12 +8,14 @@ import BirthdayReportPage from '../../pages/BirthdayReportPage';
 import CheckinsPage from '../../pages/CheckinsPage';
 import CheckinsReportPage from '../../pages/CheckinsReportPage';
 import EditSkillsPage from '../../pages/EditSkillsPage';
+import SettingsPage from '../../pages/SettingsPage';
 import EditPermissionsPage from '../../pages/PermissionsPage';
 import GroupIcon from '@mui/icons-material/Group';
 import GuildsPage from '../../pages/GuildsPage';
 import Header from '../header/Header';
 import HomePage from '../../pages/HomePage';
 import PeoplePage from '../../pages/PeoplePage';
+import PulsePage from '../../pages/PulsePage';
 import MemberProfilePage from '../../pages/MemberProfilePage';
 import Roles from '../admin/roles/Roles';
 import SkillReportPage from '../../pages/SkillReportPage';
@@ -63,6 +65,10 @@ export default function Routes() {
         <Header title="People" />
         <PeoplePage />
       </Route>
+      <Route path="/pulse">
+        <Header title="Pulse" />
+        <PulsePage />
+      </Route>
       <Route path="/checkins/:memberId?/:checkinId?">
         <Header title="Check-ins" />
         <CheckinsPage />
@@ -107,6 +113,10 @@ export default function Routes() {
           <Route path="/admin/edit-skills">
             <Header title="Skills" />
             <EditSkillsPage />
+          </Route>
+          <Route path="/admin/settings">
+            <Header title="Settings" />
+            <SettingsPage />
           </Route>
           <Route path="/admin/permissions">
             <Header title="Permissions" />

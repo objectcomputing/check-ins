@@ -3,6 +3,8 @@ package com.objectcomputing.checkins.security;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import io.micronaut.context.annotation.Primary;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.scheduling.TaskExecutors;
@@ -30,7 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+@Primary
 @Named("google")
+@Requires(env="google")
 @Singleton
 public class CheckinsOpenIdAuthenticationMapper implements OpenIdAuthenticationMapper {
 

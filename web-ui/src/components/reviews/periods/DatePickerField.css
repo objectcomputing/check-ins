@@ -1,7 +1,7 @@
 .date-picker-field {
   display: flex;
   margin: 0.7rem;
-  
+
   .MuiFormControl-root {
     width: auto;
   }
@@ -16,17 +16,4 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-}
-
-.reviewPeriodSection {
-  border: 1px solid var(--primary-link-dark);
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  background-color: var(--checkins-palette-gray-light);
-  cursor: pointer;
-  
-  &:hover {
-    background-color: transparent;
-    transition: all 0.4s ease-out;
-  }
 }

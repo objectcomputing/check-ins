@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 import static io.micronaut.http.HttpHeaders.CACHE_CONTROL;
 
 @Controller("/services/member-profiles/member-photos")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.IMAGE_PNG)
 @Tag(name = "member photo")

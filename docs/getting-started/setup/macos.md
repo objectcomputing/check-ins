@@ -95,10 +95,10 @@ If you haven't already, you will want to [configure git to use ssh for connectin
 
 JDK is required to build and run the Check-Ins project. You can install JDK in a number of ways, including via Homebrew, SDKMAN, or by downloading the JDK from the [AdoptOpenJDK](https://adoptopenjdk.net/) website.
 
-To install JDK 14 with Homebrew (intel Macs only), run the following command on the command line:
+Intel Macs can install the latest OpenJDK using Homebrew:
 
 ```shell
-brew install --cask AdoptOpenJDK/openjdk/adoptopenjdk14
+brew install --cask adoptopenjdk
 ```
 
 If you are using an M1 Mac, you can install a specific version of the JDK using SDKMAN. First, install SDKMAN by running the following command:
@@ -112,11 +112,12 @@ Before running the above command, it's recommended you review the script content
 Then, install the JDK with:
 
 ```shell
-sdk install java 21.0.2-tem
-sdk use java 21.0.2-tem
+sdk install java 17.0.10-tem
+sdk use java 17.0.10-tem
+sdk default java 17.0.10-tem
 ```
 
-Please note that the version number `21.0.2-tem` is the latest version at the time of writing. You can find the latest version on the [AdoptOpenJDK website](https://adoptopenjdk.net/). Other versions of the JDK can be installed using the same method. See the `.java-version` file in the project root for the version of the JDK required for this project.
+Please note JDK `21` is the latest version at the time of writing. See the `.java-version` file in the project root for the version of the JDK required for this project. You will also find versions in `server/Dockerfile`.
 
 # Install jEnv
 
@@ -233,6 +234,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 ```
+
 ## Install Correct Node Version
 
 Install and use the correct node version for the project.

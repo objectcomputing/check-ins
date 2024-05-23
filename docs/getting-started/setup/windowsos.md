@@ -8,10 +8,10 @@ grand_parent: Getting Started
 
 - [Install Chocolatey](#install-chocolatey)
 - [Install Git](#install-git)
-    - [Install Hub](#install-hub)
-    - [SSH Keys](#ssh-keys)
+  - [Install Hub](#install-hub)
+  - [SSH Keys](#ssh-keys)
 - [Install jEnv](#install-jenv)
-    - [Plugins](#plugins)
+  - [Plugins](#plugins)
 - [Install OpenJDK](#install-openjdk)
 - [Install NVM](#install-nvm)
 - [Install Yarn](#install-yarn)
@@ -31,7 +31,7 @@ project using WindowsOS.
 Note: If you prefer to use Windows installers for installing required software, then you can skip installing Chocolatey.
 
 Chocolatey is a package manager for Windows that automates the process of installing, updating, and configuring software.
-It is similar to package managers like apt-get on Ubuntu or Homebrew on macOS. 
+It is similar to package managers like apt-get on Ubuntu or Homebrew on macOS.
 For complete information on using Chocolatey, visit https://docs.chocolatey.org/en-us/getting-started
 
 Installation guide: https://chocolatey.org/install
@@ -75,13 +75,13 @@ If you haven't already, you will want to [configure git to use ssh for connectin
 
 # Install OpenJDK
 
-Install OpenJDK 14 with Chocolatey:
+Install OpenJDK 17 with Chocolatey:
 
 ```shell
-choco install openjdk --version=14.0.0
+choco install openjdk --version=17.0.0
 ```
 
-or download the laster installer: https://www.oracle.com/java/technologies/javase/jdk14-archive-downloads.html
+or download the laster installer: https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
 
 # Install NVM
 
@@ -116,12 +116,8 @@ Install Podman Desktop: https://podman-desktop.io/
 The setup process will ask if you want to install Podman and Podman Compose for the cli.
 Be sure to do this.
 
-
 # Install Jekyll
 
 This project uses Jekyll for working with documentation:
 
 https://jekyllrb.com/docs/installation/windows/
-
-
-
