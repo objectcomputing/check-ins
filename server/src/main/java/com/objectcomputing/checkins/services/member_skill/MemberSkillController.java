@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/member-skills")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "member-skills")
 public class MemberSkillController {

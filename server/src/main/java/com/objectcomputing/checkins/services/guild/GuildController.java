@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/guilds")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "guilds")
 public class GuildController {

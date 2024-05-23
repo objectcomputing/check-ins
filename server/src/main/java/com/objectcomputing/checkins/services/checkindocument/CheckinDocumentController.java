@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/checkin-documents")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
 @Tag(name = "checkin documents")
 public class CheckinDocumentController {

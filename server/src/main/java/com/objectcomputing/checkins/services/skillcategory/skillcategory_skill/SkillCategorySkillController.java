@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 
 @Controller("/services/skills/category-skills")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skillcategory_skills")

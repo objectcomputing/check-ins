@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller("/services/reports/anniversaries")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "member anniversaries")

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Validated
 @Controller("/services/feedback/requests")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "feedback request")
 public class FeedbackRequestController {

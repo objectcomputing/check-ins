@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/agenda-items")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "agenda-items")
 public class AgendaItemController {

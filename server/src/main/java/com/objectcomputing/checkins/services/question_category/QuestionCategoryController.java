@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/question-categories")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "question-categories")
 public class QuestionCategoryController {

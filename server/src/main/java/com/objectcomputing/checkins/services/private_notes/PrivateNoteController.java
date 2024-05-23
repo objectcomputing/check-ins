@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/private-notes")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "private-notes")
 public class PrivateNoteController {

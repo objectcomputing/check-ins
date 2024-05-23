@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/checkin-notes")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "checkin-notes")
 public class CheckinNoteController {

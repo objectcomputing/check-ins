@@ -22,7 +22,7 @@ import java.util.UUID;
 
 
 @Controller("/services/opportunities")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="opportunities")

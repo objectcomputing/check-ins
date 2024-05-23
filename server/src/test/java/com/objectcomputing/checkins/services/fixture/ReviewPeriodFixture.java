@@ -14,6 +14,12 @@ public interface ReviewPeriodFixture extends RepositoryFixture {
                 LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS)));
     }
 
+    default ReviewPeriod createADefaultReviewPeriod(ReviewStatus reviewStatus) {
+        return getReviewPeriodRepository().save(new ReviewPeriod("Period of Time", reviewStatus, null, null,
+                LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS), LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS),
+                LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS)));
+    }
+
     default ReviewPeriod createASecondaryReviewPeriod() {
         return getReviewPeriodRepository().save(new ReviewPeriod("Period of Play", ReviewStatus.OPEN, null, null,
                 LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS), LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS),

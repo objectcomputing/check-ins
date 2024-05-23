@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/skills")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skill")

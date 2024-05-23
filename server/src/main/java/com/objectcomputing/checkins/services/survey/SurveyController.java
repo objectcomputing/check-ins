@@ -20,7 +20,7 @@ import java.util.UUID;
 
 
 @Controller("/services/surveys")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="survey")

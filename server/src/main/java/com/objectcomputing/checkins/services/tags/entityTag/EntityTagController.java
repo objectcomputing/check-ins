@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/entity-tags")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "entity-tags")
 

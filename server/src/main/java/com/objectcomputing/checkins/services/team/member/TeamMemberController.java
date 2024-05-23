@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/teams/members")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "team-member")
 public class TeamMemberController {

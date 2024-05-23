@@ -20,7 +20,7 @@ import java.util.UUID;
 
 
 @Controller("/services/tags")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @io.swagger.v3.oas.annotations.tags.Tag(name = "tags")
 public class TagController {
