@@ -18,14 +18,12 @@ public class SettingsUpdateDTO{
     @Schema(description = "id of the setting")
     private UUID id;
 
-    @NotNull
     @NotBlank
     @Schema(description = "name of the setting")
     private String name;
-    
-    @NotNull
+
     @NotBlank
-    @Schema(description = "value of the setting")
+    @Schema(description = "value of the setting to update")
     private String value;
 
 }

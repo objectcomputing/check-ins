@@ -148,6 +148,7 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED,response.getStatus());
         assertEquals(newSetting.getName(), response.body().getName());
+        assertEquals(newSetting.getValue(), response.body().getValue());
     }
 
     @Test
@@ -197,6 +198,7 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
         final HttpResponse<SettingsResponseDTO> response = client.toBlocking().exchange(request, SettingsResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(updatedSetting.getValue(), response.body().getValue());
         assertEquals(String.format("%s/%s", request.getPath(), updatedSetting.getId()),
                 response.getHeaders().get("location"));
     }

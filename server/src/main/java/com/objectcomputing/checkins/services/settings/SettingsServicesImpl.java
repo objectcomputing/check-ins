@@ -6,10 +6,8 @@ import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Singleton
 public class SettingsServicesImpl implements SettingsServices {
@@ -37,21 +35,9 @@ public class SettingsServicesImpl implements SettingsServices {
         }
     }
 
-    public List<SettingsResponseDTO> findByName(@Nullable String name) {
+    public List<Setting> findByName(@Nullable String name) {
         List<Setting> searchResult = name == null ? settingsRepository.findAll() : settingsRepository.findByName(name);
-        return settingToSettingResponseDTO(searchResult);
-    }
-
-    public List<SettingsResponseDTO> settingToSettingResponseDTO(List<Setting> settings) {
-        List<SettingsResponseDTO> settingResponseDTOs = new ArrayList<>();
-        for(Setting setting: settings) {
-            SettingsResponseDTO dto = new SettingsResponseDTO();
-            dto.setId(setting.getId());
-            dto.setName(setting.getName());
-            dto.setValue(setting.getValue());
-            settingResponseDTOs.add(dto);
-        }
-        return settingResponseDTOs;
+        return searchResult;
     }
 
     public Boolean delete(@NotNull UUID id) {

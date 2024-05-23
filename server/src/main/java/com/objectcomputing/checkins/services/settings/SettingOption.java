@@ -15,13 +15,13 @@ import java.util.stream.Stream;
 @JsonSerialize(using = SettingOptionSerializer.class)
 @JsonDeserialize(using = SettingOptionDeserializer.class)
 public enum SettingOption {
-    LOGO_URL("The logo url", Category.THEME.name(), Type.FILE.name());
+    LOGO_URL("The logo url", Category.THEME, Type.FILE);
 
     private final String description;
-    private final String category;
-    private final String type;
+    private final Category category;
+    private final Type type;
 
-    SettingOption(String description, String category, String type) {
+    SettingOption(String description, Category category, Type type) {
         this.description = description;
         this.category = category;
         this.type = type;

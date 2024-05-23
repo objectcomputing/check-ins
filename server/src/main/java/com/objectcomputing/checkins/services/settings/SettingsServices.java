@@ -11,7 +11,7 @@ public interface SettingsServices {
 
     Setting update(Setting setting);
 
-    List<SettingsResponseDTO> findByName(@Nullable String name);
+    List<Setting> findByName(@Nullable String name);
 
     Boolean delete(UUID id);
 }

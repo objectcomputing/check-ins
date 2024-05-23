@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.settings;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -47,7 +46,8 @@ public class SettingsController {
     @Get("/{?name}")
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<SettingsResponseDTO> findByName(@Nullable String name) {
-        return settingsServices.findByName(name);
+        return settingsServices.findByName(name).stream()
+                .map(this::fromEntity).toList();
     }
 
     @Get("/options")
@@ -109,9 +109,13 @@ public class SettingsController {
     }
       
     private SettingsResponseDTO fromEntity(Setting entity) {
+        SettingOption option = SettingOption.fromName(entity.getName());
         SettingsResponseDTO dto = new SettingsResponseDTO();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
+        dto.setDescription(option.getDescription());
+        dto.setCategory(option.getCategory());
+        dto.setType(option.getType());
         dto.setValue(entity.getValue());
         return dto;
     }
