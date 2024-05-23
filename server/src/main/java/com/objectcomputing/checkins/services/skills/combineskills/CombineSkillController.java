@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 
 @Controller("/services/skills/combine")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "combineskill")

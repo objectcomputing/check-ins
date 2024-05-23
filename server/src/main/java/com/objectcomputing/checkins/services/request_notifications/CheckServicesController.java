@@ -11,7 +11,7 @@ import jakarta.annotation.security.PermitAll;
 import reactor.core.publisher.Mono;
 
 @Controller("/services/feedback/daily-request-check")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @PermitAll
 public class CheckServicesController {
 

@@ -13,20 +13,23 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.hateoas.JsonError;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class QuestionControllerTest extends TestContainersSuite implements QuestionFixture, QuestionCategoryFixture {
+class QuestionControllerTest extends TestContainersSuite implements QuestionFixture, QuestionCategoryFixture {
 
     @Inject
     @Client("/services/questions")
@@ -41,7 +44,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testGETNonExistingEndpointReturns404() {
+    void testGETNonExistingEndpointReturns404() {
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.GET((String.format("/%s", UUID.randomUUID().toString())))
@@ -51,7 +54,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testGETreadAllQuestions() {
+    void testGETreadAllQuestions() {
 
         Question question = createADefaultQuestion();
         final HttpRequest<Object> request = HttpRequest.
@@ -66,7 +69,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testGETFindQuestionsSimilar() {
+    void testGETFindQuestionsSimilar() {
 
         Question question = createADefaultQuestion();
         String partOfQuestion = question.getText().substring(0,3);
@@ -82,7 +85,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testGETGetByIdHappyPath() {
+    void testGETGetByIdHappyPath() {
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         Question question = createADefaultQuestionWithCategory(questionCategory.getId());
@@ -99,7 +102,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testGETGetByIdNotFound() {
+    void testGETGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -113,7 +116,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testPUTSuccessfulUpdate() {
+    void testPUTSuccessfulUpdate() {
 
         Question question = createADefaultQuestion();
 
@@ -127,7 +130,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testPUTNoIDSupplied() {
+    void testPUTNoIDSupplied() {
 
         QuestionCreateDTO requestBody = new QuestionCreateDTO();
         requestBody.setText("Fake Question");
@@ -144,7 +147,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testPUTQuestionNotFound() {
+    void testPUTQuestionNotFound() {
 
         QuestionUpdateDTO requestBody = new QuestionUpdateDTO();
         requestBody.setId(UUID.randomUUID());
@@ -162,7 +165,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testPOSTCreateAQuestion() {
+    void testPOSTCreateAQuestion() {
 
         Question question = createADefaultQuestion();
         QuestionCreateDTO newQuestion = new QuestionCreateDTO();
@@ -178,7 +181,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testPOSTCreateAQuestionAlreadyExists() {
+    void testPOSTCreateAQuestionAlreadyExists() {
 
         Question question = createADefaultQuestion();
         QuestionCreateDTO newQuestion = new QuestionCreateDTO();
@@ -195,7 +198,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testPOSTCreateAQuestionNullQuestion() {
+    void testPOSTCreateAQuestionNullQuestion() {
 
         QuestionCreateDTO newQuestion = new QuestionCreateDTO();
 
@@ -210,7 +213,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testGETFindQuestionWithCategory() {
+    void testGETFindQuestionWithCategory() {
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         Question question = createADefaultQuestionWithCategory(questionCategory.getId());
@@ -228,7 +231,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testGETFindQuestionWithCategoryNotFound() {
+    void testGETFindQuestionWithCategoryNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?categoryId=%s", encodeValue(String.valueOf(UUID.randomUUID())))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);

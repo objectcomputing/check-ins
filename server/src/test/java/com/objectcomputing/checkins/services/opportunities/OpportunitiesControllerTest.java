@@ -17,23 +17,27 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class OpportunitiesControllerTest extends TestContainersSuite implements MemberProfileFixture, OpportunitiesFixture, RoleFixture {
+class OpportunitiesControllerTest extends TestContainersSuite implements MemberProfileFixture, OpportunitiesFixture, RoleFixture {
 
     @Inject
     @Client("/services/opportunities")
     private HttpClient client;
 
     @Test
-    public void testCreateAOpportunities(){
+    void testCreateAOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
@@ -54,7 +58,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testMemberCreateAnOpportunities(){
+    void testMemberCreateAnOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
@@ -73,6 +77,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), opportunitiesResponseResponse.getId()), response.getHeaders().get("location"));
     }
+
     @Test
     void testCreateAnInvalidOpportunities() {
         OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
@@ -109,7 +114,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGETFindByValueName() {
+    void testGETFindByValueName() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -123,7 +128,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGetFindBySubmittedBy() {
+    void testGetFindBySubmittedBy() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -138,7 +143,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGetFindByDescription() {
+    void testGetFindByDescription() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -154,7 +159,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
 
 
     @Test
-    public void testGetFindByPending() {
+    void testGetFindByPending() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -169,7 +174,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGetFindAll() {
+    void testGetFindAll() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
