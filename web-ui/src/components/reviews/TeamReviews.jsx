@@ -823,7 +823,7 @@ const TeamReviews = ({ onBack, periodId }) => {
           approved
         }
       });
-      if (res.error) throw new Error(res.error?.message ?? 'no message');
+      if (res.error) throw new Error(res.error.message);
     } catch (err) {
       console.error('TeamReviews.jsx approveReviewAssignment:', err);
     }
