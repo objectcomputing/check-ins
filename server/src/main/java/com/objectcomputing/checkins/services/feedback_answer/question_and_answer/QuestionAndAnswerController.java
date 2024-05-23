@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller("/services/feedback/questions-and-answers")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class QuestionAndAnswerController {
 
