@@ -58,7 +58,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         this.webAddress = webAddress;
     }
 
-    public void setEmailSender(EmailSender emailSender) {
+   void setEmailSender(EmailSender emailSender) {
         this.emailSender = emailSender;
     }
 
@@ -155,9 +155,9 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     }
 
     private String constructEmailContent (UUID reviewPeriodId, String reviewPeriodName){
-        String emailHtml = "<h3>Review Assignments for Review Period '" + reviewPeriodName + "' are ready for your approval.</h3>";
-        emailHtml += "<a href=\"" + webAddress + "/feedback/reviews?period=" + reviewPeriodId + "\">Click here</a> to review and approve reviewer assignments in the Check-Ins app.";
-        return emailHtml;
+        return """
+                <h3>Review Assignments for Review Period '%s' are ready for your approval.</h3>\
+                <a href="%s/feedback/reviews?period=%s">Click here</a> to review and approve reviewer assignments in the Check-Ins app.""".formatted(reviewPeriodName, webAddress, reviewPeriodId);
     }
 
 }

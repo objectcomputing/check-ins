@@ -62,10 +62,10 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     List<MemberProfile> findAll();
     List<UUID> findSupervisoridByIdIn(Set<UUID> Ids);
 
-    @Query(value = "SELECT " +
-            "PGP_SYM_DECRYPT(cast(workEmail as bytea), :aesKey) as workEmail " +
-            "FROM \"member_profile\" mp " +
-            "WHERE  mp.id IN (:ids) ",
+    @Query(value = """
+            SELECT PGP_SYM_DECRYPT(cast(workEmail as bytea), :aesKey) as workEmail
+                    FROM member_profile mp
+                    WHERE  mp.id IN (:ids)""",
             nativeQuery = true)
     List<String> findWorkEmailByIdIn(String aesKey, Set<String> ids);
 
