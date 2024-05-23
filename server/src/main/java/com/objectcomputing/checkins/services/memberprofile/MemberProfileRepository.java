@@ -63,11 +63,11 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     List<UUID> findSupervisoridByIdIn(Set<UUID> Ids);
 
     @Query(value = "SELECT " +
-            "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail " +
+            "PGP_SYM_DECRYPT(cast(workEmail as bytea), :aesKey) as workEmail " +
             "FROM \"member_profile\" mp " +
             "WHERE  mp.id IN (:ids) ",
             nativeQuery = true)
-    List<String> findWorkEmailByIdIn(Set<UUID> ids);
+    List<String> findWorkEmailByIdIn(String aesKey, Set<String> ids);
 
     @Query(value = "WITH RECURSIVE subordinate AS (SELECT " +
     "id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, 0 as level " +

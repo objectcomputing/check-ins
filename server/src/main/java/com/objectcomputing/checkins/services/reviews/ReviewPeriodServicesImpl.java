@@ -10,6 +10,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -34,6 +35,9 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     private final String webAddress;
     public static final String WEB_ADDRESS = "check-ins.web-address";
 
+    @Value("${aes.key}")
+    private String aesKey;
+
     public ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository,
                                     ReviewAssignmentRepository reviewAssignmentRepository,
                                     MemberProfileRepository memberProfileRepository,
@@ -47,6 +51,10 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         this.emailSender = emailSender;
         this.environment = environment;
         this.webAddress = webAddress;
+    }
+
+    public void setEmailSender(EmailSender emailSender) {
+        this.emailSender = emailSender;
     }
 
     public ReviewPeriod save(ReviewPeriod reviewPeriod) {
@@ -128,7 +136,9 @@ public class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             LOG.info(String.format("Supervisors not found for Reviewees %s", revieweeIds));
             return;
         }
-        List<String> supervisorEmails = memberProfileRepository.findWorkEmailByIdIn(supervisorIds);
+
+        Set<String> supervisorIdsToString = supervisorIds.stream().map(UUID::toString).collect(Collectors.toSet());
+        List<String> supervisorEmails = memberProfileRepository.findWorkEmailByIdIn(aesKey, supervisorIdsToString);
 
         // send notification to supervisors
         String emailContent = constructEmailContent(reviewPeriodId, reviewPeriodName);
