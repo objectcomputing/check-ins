@@ -130,7 +130,6 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const [approvalMode, setApprovalMode] = useState(false);
   const [assignments, setAssignments] = useState([]);
-  const [canLaunch, setCanLaunch] = useState(false);
   const [canUpdate, setCanUpdate] = useState(false);
   const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
@@ -179,7 +178,6 @@ const TeamReviews = ({ onBack, periodId }) => {
         isManager && period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
       );
     }
-    setCanLaunch(selectHasLaunchReviewPeriodPermission(state));
     setCanUpdate(selectHasUpdateReviewPeriodPermission(state));
   }, [state]);
 
@@ -760,7 +758,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       case ReviewStatus.PLANNING:
         return <Button onClick={requestApproval}>Request Approval</Button>;
       case ReviewStatus.AWAITING_APPROVAL:
-        return canLaunch ?
+        return selectHasLaunchReviewPeriodPermission(state) ?
           <Button onClick={requestApproval}>Launch Review</Button> : null;
       default:
         return null;
@@ -900,7 +898,6 @@ const TeamReviews = ({ onBack, periodId }) => {
                 sx={{ marginLeft: '0.5rem' }}
               />
             )}
-
           </div>
         )}
       </div>
