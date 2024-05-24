@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import { UPDATE_TOAST } from "../context/actions";
 import { AppContext } from "../context/AppContext";
@@ -47,13 +47,11 @@ const KudosHomePage = () => {
   let lastMonth = new Date();
   lastMonth.setMonth(lastMonth.getMonth() - 1);
 
-  useEffect(async () => {
+  const loadKudos = useCallback(async () => {
     setKudosLoading(true);
-    const res = await getAllKudos(csrf, false);
-    if (res?.payload?.data && !res.error) {
-      setKudos(sortKudos(res.payload.data));
-      setKudosLoading(false);
-    } else {
+    const res = await getAllKudos(csrf, true);
+    console.log('KudosHomePage.jsx loadKudos: res =', res);
+    if (res.error) {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -61,7 +59,17 @@ const KudosHomePage = () => {
           toast: "Failed to retrieve kudos",
         },
       });
+      return;
     }
+
+    const kudos = res.payload.data;
+    console.log('KudosHomePage.jsx loadKudos: kudos =', kudos);
+    setKudos(sortKudos(kudos));
+    setKudosLoading(false);
+  }, [csrf, dispatch]);
+
+  useEffect(() => {
+    loadKudos();
   }, [csrf, dispatch]);
 
   return (
