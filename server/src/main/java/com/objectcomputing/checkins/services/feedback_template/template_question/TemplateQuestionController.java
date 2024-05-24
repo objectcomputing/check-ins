@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "template_questions")
 @Validated
 public class TemplateQuestionController {

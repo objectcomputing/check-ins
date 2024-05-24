@@ -161,4 +161,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         }
         return subordinatesForId;
     }
+
+    @Override
+    public MemberProfile updateProfile(MemberProfile memberProfile) {
+        return memberProfileRepository.update(memberProfile);
+    }
 }

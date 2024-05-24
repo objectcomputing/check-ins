@@ -72,7 +72,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
                 null, "Parks Director", null, "Pawnee, Indiana",
                 "ron@objectcomputing.com", "mr-ron-swanson",
                 LocalDate.now(), "enjoys woodworking, breakfast meats, and saxophone jazz",
-                null, null, null, false, false));
+                null, null, null, false, false, null));
     }
 
     default MemberProfile createASecondDefaultRecipient() {
@@ -80,7 +80,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
                 null, "Parks Deputy Director", null, "Pawnee, Indiana",
                 "leslie@objectcomputing.com", "ms-leslie-knope",
                 LocalDate.now(), "proud member of numerous action committees",
-                null, null, null, false, false));
+                null, null, null, false, false, null));
     }
 
 }

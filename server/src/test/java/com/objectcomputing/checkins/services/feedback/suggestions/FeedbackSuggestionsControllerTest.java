@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import jakarta.inject.Inject;
 import java.util.*;
 
-import org.mortbay.util.ajax.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,7 +58,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealOne = createFeedbackSuggestion(supervisorReason, supervisor.getId());
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(response.getBody().get().size(), 2 );
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
@@ -87,7 +86,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealOne = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(response.getBody().get().size(), 2 );
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
@@ -117,7 +116,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealOne = createFeedbackSuggestion(supervisorReason, supervisor.getId());
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(response.getBody().get().size(), 2 );
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
@@ -149,7 +148,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
         FeedbackSuggestionDTO idealThree = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals( 3, response.getBody().get().size() );
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
@@ -184,7 +183,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
         FeedbackSuggestionDTO idealThree = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals( 3, response.getBody().get().size() );
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));

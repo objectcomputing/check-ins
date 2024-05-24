@@ -23,7 +23,6 @@ import java.util.UUID;
 @Controller("/services/member-skills")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "member-skills")
 public class MemberSkillController {
 

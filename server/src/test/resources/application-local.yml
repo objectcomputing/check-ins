@@ -38,11 +38,6 @@ micronaut:
       unauthorized-target-url: '/unauthorized'
       forbidden-target-url: '/forbidden'
 ---
-datasources:
-  default:
-    url:  jdbc:tc:postgresql:11.6:///
-    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
----
 credentials:
   roles:
     SUPER:

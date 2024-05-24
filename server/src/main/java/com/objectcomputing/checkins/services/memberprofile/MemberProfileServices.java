@@ -23,4 +23,6 @@ public interface MemberProfileServices {
     List<MemberProfile> getSupervisorsForId(UUID id);
 
     List<MemberProfile> getSubordinatesForId(UUID id);
+
+    MemberProfile updateProfile(MemberProfile memberProfile);
 }

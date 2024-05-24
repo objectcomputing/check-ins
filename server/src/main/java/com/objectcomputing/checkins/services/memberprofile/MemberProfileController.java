@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Controller("/services/member-profiles")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "member profiles")
 public class MemberProfileController {
@@ -155,6 +154,7 @@ public class MemberProfileController {
         dto.setSupervisorid(entity.getSupervisorid());
         dto.setTerminationDate(entity.getTerminationDate());
         dto.setBirthDay(entity.getBirthDate());
+        dto.setLastSeen(entity.getLastSeen());
         return dto;
     }
 
@@ -162,13 +162,13 @@ public class MemberProfileController {
         return new MemberProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSuffix(), dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(),
                 dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
-                dto.getTerminationDate(),dto.getBirthDay(), dto.getVoluntary(), dto.getExcluded());
+                dto.getTerminationDate(),dto.getBirthDay(), dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
         return new MemberProfile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSuffix(),
                 dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getEmployeeId(),
                 dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate(), dto.getBirthDay(),
-                dto.getVoluntary(), dto.getExcluded());
+                dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen());
     }
 }

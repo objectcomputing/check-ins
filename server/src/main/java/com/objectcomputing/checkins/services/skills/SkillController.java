@@ -22,7 +22,6 @@ import java.util.UUID;
 @Controller("/services/skills")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skill")
 public class SkillController {
