@@ -11,7 +11,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "billm@objectcomputing.com", "mr-bill-employee", LocalDate.now().minusDays(3).minusYears(5),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null,null,null,null, LocalDate.now()));
+                null, null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createADefaultMemberProfileWithBirthDayToday() {
@@ -20,7 +20,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "billm@objectcomputing.com", "mr-billy-employee-today", LocalDate.now().minusDays(3).minusMonths(1).minusYears(5),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null,today.minusYears(30),null,null, LocalDate.now()));
+                null, null,today.minusYears(30), null, null, LocalDate.now()));
     }
 
     default MemberProfile createADefaultMemberProfileWithBirthDayNotToday() {
@@ -29,7 +29,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "billm@objectcomputing.com", "mr-billy-employee-not-today", LocalDate.now().minusDays(3).minusYears(5),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null,today.minusYears(30).minusDays(3),null,null, LocalDate.now()));
+                null, null, today.minusYears(30).minusDays(3), null, null, LocalDate.now()));
     }
 
     default MemberProfile createADefaultMemberProfileWithAnniversaryToday() {
@@ -38,7 +38,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "billm@objectcomputing.com", "mr-billish-employee", today.minusYears(10),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null, null,null,null, LocalDate.now()));
+                null, null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createASecondDefaultMemberProfile() {
@@ -46,7 +46,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Office Opossum", null, "New York, New York",
                 "slimjim@objectcomputing.com", "slim-jim-employee", LocalDate.now().minusDays(3).minusYears(5),
                 "A Virginia opossum, one of North America's only marsupials",
-                null, null,null,null,null, LocalDate.now()));
+                null, null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createAThirdDefaultMemberProfile() {
@@ -54,7 +54,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "magic factory owner", null, "Chocolate Factory",
                 "wonkaw@objectcomputing.com", "willy-wonka-employee", LocalDate.now().minusDays(3).minusYears(5),
                 "questionable employer, but gives free golden tickets",
-                null, null,null,null,null, LocalDate.now()));
+                null, null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createADefaultMemberProfileForPdl(MemberProfile memberProfile) {
@@ -62,7 +62,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief PDL", memberProfile.getId(), "New York, New York",
                 "billmpdl@objectcomputing.com", "mr-bill-employee-pdl",
                 LocalDate.now().minusDays(3).minusYears(5), "is a clay figurine clown star of a parody of children's clay animation shows",
-                memberProfile.getId(), null,null,null,null, LocalDate.now()));
+                memberProfile.getId(), null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createASecondDefaultMemberProfileForPdl(MemberProfile memberProfile) {
@@ -70,7 +70,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Bully Relief PDL", memberProfile.getId(), "New York, New York",
                 "sluggopdl@objectcomputing.com", "sluggo-employee-pdl",
                 LocalDate.now(), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
-                memberProfile.getId(), null,null,null,null, LocalDate.now()));
+                memberProfile.getId(), null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createAThirdDefaultMemberProfileForPdl(MemberProfile memberProfile) {
@@ -78,7 +78,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "local kaiju", memberProfile.getId(), "Tokyo, Japan",
                 "godzilla@objectcomputing.com", "godzilla", LocalDate.now(),
                 "is a destroyer of words",
-                null, null, null,null,null, LocalDate.now()));
+                null, null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createADefaultSupervisor() {
@@ -86,7 +86,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Supervisor Man", null, "New York, New York",
                 "dubebro@objectcomputing.com", "dude-bro-supervisor",
                 LocalDate.now().minusDays(3).minusYears(5), "is such like a bro dude, you know?",
-                null, null,null,null,null, LocalDate.now()));
+                null, null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createAnotherSupervisor() {
@@ -94,7 +94,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Supervisor Lady", null, "New York, New York",
                 "dudettegal@objectcomputing.com", "dudette-gal-supervisor",
                 LocalDate.now().minusDays(5).minusYears(7), "is such like a gal dudette, you know?",
-                null, null,null,null,null, LocalDate.now()));
+                null, null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createAProfileWithSupervisorAndPDL(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
@@ -102,21 +102,21 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Local fire hazard", pdlProfile.getId(), "New York, New York",
                 "charizard@objectcomputing.com", "local-kaiju",
                 LocalDate.now().minusDays(3).minusYears(5), "Needs a lot of supervision due to building being ultra flammable",
-                supervisorProfile.getId(), null,null,null,null, LocalDate.now()));
+                supervisorProfile.getId(), null, null, null, null, LocalDate.now()));
     }
     default MemberProfile createAnotherProfileWithSupervisorAndPDL(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Pikachu", null, "Pika",
                 null, "Local lightning hazard", pdlProfile.getId(), "New York, New York",
                 "pikachu@objectcomputing.com", "local-lightning-kaiju",
                 LocalDate.now().minusDays(5).minusYears(3), "Pretty sparky",
-                supervisorProfile.getId(), null,null,null,null, LocalDate.now()));
+                supervisorProfile.getId(), null, null, null, null, LocalDate.now()));
     }
     default MemberProfile createYetAnotherProfileWithSupervisorAndPDL(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Squirtle", null, "Squirt",
                 null, "Local water hazard", pdlProfile.getId(), "New York, New York",
                 "squirtle@objectcomputing.com", "local-water-kaiju",
                 LocalDate.now().minusDays(4).minusYears(6), "Rather moist",
-                supervisorProfile.getId(), null,null,null,null, LocalDate.now()));
+                supervisorProfile.getId(), null, null, null, null, LocalDate.now()));
     }
     // this user is not connected to other users in the system
     default MemberProfile createAnUnrelatedUser() {
@@ -124,7 +124,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "nobody@objectcomputing.com", "mr-bill-employee-unrelated",
                 LocalDate.now().minusDays(3).minusMonths(1).minusYears(5), "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null,null,null,null, LocalDate.now()));
+                null, null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createAPastTerminatedMemberProfile() {
@@ -132,7 +132,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Bully Relief PDL", null, "New York, New York",
                 "sluggopdl@objectcomputing.com", "sluggo-employee-pdl-past-terminated",
                 LocalDate.now().minusDays(3).minusYears(5), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
-                null, LocalDate.now().minusMonths(1),null,null,null, LocalDate.now().minusMonths(1)));
+                null, LocalDate.now().minusMonths(1), null, null, null, LocalDate.now().minusMonths(1)));
     }
 
     default MemberProfile createAFutureTerminatedMemberProfile() {
@@ -140,7 +140,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Bully Relief PDL", null, "New York, New York",
                 "sluggopdl@objectcomputing.com", "sluggo-employee-pdl-future terminated",
                 LocalDate.now().minusDays(3).minusYears(5), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
-                null, LocalDate.now().plusDays(7),null,null,null, LocalDate.now().plusDays(7)));
+                null, LocalDate.now().plusDays(7), null, null, null, LocalDate.now().plusDays(7)));
 
     }
 
@@ -149,7 +149,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "billm@objectcomputing.com", "mr-bill-employee-birthday", LocalDate.now().minusDays(3).minusYears(5),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null, LocalDate.now(),null,null, LocalDate.now()));
+                null, null, LocalDate.now(), null, null, LocalDate.now()));
     }
 
     default MemberProfile createAPastMemberProfile() {
@@ -157,7 +157,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "billm@objectcomputing.com", "mr-bill-employee-past", LocalDate.now().minusYears(2),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null,null,null,null, LocalDate.now().minusYears(2)));
+                null, null, null, null, null, LocalDate.now().minusYears(2)));
     }
 
     default MemberProfile createANewHireProfile() {
@@ -165,7 +165,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "billm@objectcomputing.com", "mr-bill-employee-new", LocalDate.now().minusMonths(2),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null,null,null,null, LocalDate.now()));
+                null, null, null, null, null, LocalDate.now()));
     }
 
     default MemberProfile createATerminatedNewHireProfile() {
@@ -173,7 +173,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "billm@objectcomputing.com", "mr-bill-employee-term-new", LocalDate.now().minusMonths(2),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, LocalDate.now().minusMonths(1),null,true,null, LocalDate.now().minusMonths(1)));
+                null, LocalDate.now().minusMonths(1), null, true, null, LocalDate.now().minusMonths(1)));
     }
 
 }
