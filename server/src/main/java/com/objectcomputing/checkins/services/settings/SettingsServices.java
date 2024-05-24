@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.settings;
 
-import io.micrometer.context.Nullable;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,9 +9,11 @@ public interface SettingsServices {
     
     Setting save(Setting setting);
 
-    Setting update(Setting setting);
+    Setting update(String name, String value);
 
-    List<SettingsResponseDTO> findByName(@Nullable String name);
+    Setting findByName(@NotNull String name);
+
+    List<Setting> findAllSettings();
 
     Boolean delete(UUID id);
 }

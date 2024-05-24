@@ -6,6 +6,7 @@ import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
@@ -18,5 +19,5 @@ public interface SettingsRepository extends CrudRepository<Setting, UUID> {
     @NonNull
     List<Setting> findAll();
 
-    @NonNull List<Setting> findByName(@NonNull String name);
+    Optional<Setting> findByName(@NonNull String name);
 }
