@@ -22,7 +22,6 @@ import java.util.UUID;
 @Controller("/services/checkin-documents")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin documents")
 public class CheckinDocumentController {
         

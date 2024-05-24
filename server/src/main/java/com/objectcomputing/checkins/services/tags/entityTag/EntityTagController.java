@@ -24,7 +24,6 @@ import java.util.UUID;
 @Controller("/services/entity-tags")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "entity-tags")
 
 public class EntityTagController {

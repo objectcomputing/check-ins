@@ -21,7 +21,6 @@ import java.net.URI;
 @Controller("/reports/retention")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "retention-report")
 public class RetentionReportController {

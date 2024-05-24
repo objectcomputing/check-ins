@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "feedback_templates")
 public class FeedbackTemplateController {
     private final FeedbackTemplateServices feedbackTemplateServices;
