@@ -104,16 +104,17 @@ dependencies {
 }
 
 test {
-    OperatingSystem os = DefaultNativePlatform.currentOperatingSystem
-    if (os.isLinux()) {
-        def uid = ["id", "-u"].execute().text.trim()
-        environment "DOCKER_HOST", "unix:///run/user/$uid/podman/podman.sock"
-    } else if (os.isMacOsX()) {
-        environment "DOCKER_HOST", "unix:///tmp/podman.sock"
+    if (!System.env['USE_DOCKER_DESKTOP']) {
+        OperatingSystem os = DefaultNativePlatform.currentOperatingSystem
+        if (os.isLinux()) {
+            def uid = ["id", "-u"].execute().text.trim()
+            environment "DOCKER_HOST", "unix:///run/user/$uid/podman/podman.sock"
+        } else if (os.isMacOsX()) {
+            environment "DOCKER_HOST", "unix:///tmp/podman.sock"
+        }
+        environment "TESTCONTAINERS_RYUK_DISABLED", "true"
     }
-    environment "TESTCONTAINERS_RYUK_DISABLED", "true"
 }
-
 
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
