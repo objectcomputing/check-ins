@@ -20,9 +20,8 @@ import java.util.UUID;
 
 
 @Controller("/services/tags")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @io.swagger.v3.oas.annotations.tags.Tag(name = "tags")
 public class TagController {
 
@@ -38,7 +37,7 @@ public class TagController {
      * @param tag, {@link TagCreateDTO}
      * @return {@link HttpResponse<  Tag  >}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<?> request) {
         return Mono.fromCallable(() -> tagServices.save(new Tag(tag.getName())))
                 .map(createdTag -> HttpResponse.created(createdTag)
@@ -92,7 +91,7 @@ public class TagController {
      * @param tag, {@link Tag}
      * @return {@link Tag}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<Tag>> update(@Body @Valid Tag tag, HttpRequest<?> request) {
         return Mono.fromCallable(() -> tagServices.update(tag))
                 .map(tag1 -> HttpResponse.ok(tag1)

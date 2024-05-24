@@ -24,7 +24,7 @@ import java.util.UUID;
 
 @Validated
 @Controller("/services/files")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Tag(name = "files")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class FileController {

@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Controller("/services/member-profiles")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "member profiles")
 public class MemberProfileController {
@@ -94,7 +93,7 @@ public class MemberProfileController {
      * @param memberProfile {@link MemberProfileCreateDTO} Information of the member profile being created
      * @return {@link MemberProfileResponseDTO} The created member profile
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_ORGANIZATION_MEMBERS)
     public Mono<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 
@@ -109,7 +108,7 @@ public class MemberProfileController {
      * @param memberProfile {@link MemberProfileUpdateDTO} Information of the member profile being updated
      * @return {@link MemberProfileResponseDTO} The updated member profile
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<MemberProfileResponseDTO>> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
 
         return Mono.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))

@@ -9,6 +9,7 @@ import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
@@ -17,19 +18,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.HashMap;
 import java.util.Map;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @MicronautTest(environments = {Environment.TEST}, transactional = false)
-@Testcontainers
 public abstract class TestContainersSuite implements RepositoryFixture, TestPropertyProvider {
 
-    @Container
-    private static final PostgreSQLContainer<?> postgres;
-
-    static {
-        postgres = new PostgreSQLContainer<>("postgres:11.6");
-        postgres.waitingFor(Wait.forLogMessage(".*database system is ready to accept connections\\n", 1));
-        postgres.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(postgres::stop));
-    }
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:11.6");
 
     @Inject
     private EmbeddedServer embeddedServer;
@@ -91,12 +84,15 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
 
     @Override
     public Map<String, String> getProperties() {
+        if (!postgres.isRunning()) {
+            postgres.start();
+        }
         HashMap<String, String> properties = new HashMap<>();
         properties.put("datasources.default.url", getJdbcUrl());
         properties.put("datasources.default.username", getUsername());
         properties.put("datasources.default.password", getPassword());
         properties.put("datasources.default.dialect", "POSTGRES");
-        properties.put("datasources.default.driverClassName", "org.testcontainers.jdbc.ContainerDatabaseDriver");
+        properties.put("datasources.default.driverClassName", "org.postgresql.Driver");
         properties.put("flyway.datasources.default.clean-schema", "true"); // Needed to run Flyway.clean()
         properties.put("mail-jet.from_address", "someEmail@gmail.com");
         properties.put("mail-jet.from_name", "John Doe");

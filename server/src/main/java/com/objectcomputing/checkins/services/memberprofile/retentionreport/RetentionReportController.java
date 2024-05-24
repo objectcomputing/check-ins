@@ -19,9 +19,8 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 
 @Controller("/reports/retention")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "retention-report")
 public class RetentionReportController {
@@ -38,7 +37,7 @@ public class RetentionReportController {
      * @param requestBody {@link RetentionReportRequestDTO} Body of the request
      * @return {@link RetentionReportResponseDTO} Returned retention report
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_VIEW_RETENTION_REPORT)
     public Mono<HttpResponse<RetentionReportResponseDTO>> reportRetention(@Body @Valid @NotNull RetentionReportRequestDTO requestBody,
                                                                           HttpRequest<?> request) {

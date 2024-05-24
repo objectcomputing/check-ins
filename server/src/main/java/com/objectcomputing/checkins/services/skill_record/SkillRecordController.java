@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 import java.io.File;
 
 @Controller("/services/skills/records")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class SkillRecordController {
 

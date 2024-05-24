@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Validated
 @Controller("/services/feedback/requests")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "feedback request")
 public class FeedbackRequestController {
@@ -46,7 +46,7 @@ public class FeedbackRequestController {
      * @return {@link FeedbackRequestResponseDTO}
      */
     @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
-    @Post()
+    @Post
     public Mono<HttpResponse<FeedbackRequestResponseDTO>> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackReqServices.save(fromDTO(requestBody)))
                 .map(savedFeedbackRequest -> HttpResponse.created(fromEntity(savedFeedbackRequest))
@@ -59,7 +59,7 @@ public class FeedbackRequestController {
      * @param requestBody {@link FeedbackRequestUpdateDTO} The updated feedback request
      * @return {@link FeedbackRequestResponseDTO}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<FeedbackRequestResponseDTO>> update(@Body @Valid @NotNull FeedbackRequestUpdateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackReqServices.update(requestBody))
                 .map(savedFeedback -> HttpResponse.ok(fromEntity(savedFeedback))

@@ -21,9 +21,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/private-notes")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "private-notes")
 public class PrivateNoteController {
 
@@ -40,7 +39,7 @@ public class PrivateNoteController {
      * @param request
      * @return
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_PRIVATE_NOTE)
     public Mono<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<?> request) {
         return Mono.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
@@ -58,7 +57,7 @@ public class PrivateNoteController {
      * @param request
      * @return
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_PRIVATE_NOTE)
     public Mono<HttpResponse<PrivateNote>> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<?> request) {
         if (privateNote == null) {

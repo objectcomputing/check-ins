@@ -2,8 +2,10 @@ package com.objectcomputing.checkins.services.reviews;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -17,26 +19,47 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewPeriodFixture, MemberProfileFixture, RoleFixture {
+class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/review-periods")
     private HttpClient client;
+
+    @Mock
+    private EmailSender emailSender = mock(EmailSender.class);
+
+    @Inject
+    private ReviewPeriodServicesImpl reviewPeriodServices;
+
+    @BeforeEach
+    void resetMocks() {
+        Mockito.reset(emailSender);
+        reviewPeriodServices.setEmailSender(emailSender);
+    }
 
     private String encodeValue(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
@@ -363,6 +386,98 @@ class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewPe
 
         assertEquals(reviewPeriod, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    private static Stream<Arguments> validStatusTransitions() {
+        return Stream.of(
+                Arguments.of(ReviewStatus.PLANNING, ReviewStatus.PLANNING),
+                Arguments.of(ReviewStatus.PLANNING, ReviewStatus.AWAITING_APPROVAL),
+                Arguments.of(ReviewStatus.AWAITING_APPROVAL, ReviewStatus.AWAITING_APPROVAL),
+                Arguments.of(ReviewStatus.AWAITING_APPROVAL, ReviewStatus.OPEN),
+                Arguments.of(ReviewStatus.OPEN, ReviewStatus.OPEN),
+                Arguments.of(ReviewStatus.OPEN, ReviewStatus.CLOSED),
+                Arguments.of(ReviewStatus.CLOSED, ReviewStatus.CLOSED),
+                Arguments.of(ReviewStatus.CLOSED, ReviewStatus.OPEN),
+                Arguments.of(ReviewStatus.UNKNOWN, ReviewStatus.UNKNOWN),
+                Arguments.of(ReviewStatus.UNKNOWN, ReviewStatus.PLANNING)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("validStatusTransitions")
+    void testUpdateReviewPeriodAsAdminWithValidStatusTransitions(ReviewStatus oldStatus, ReviewStatus newStatus) {
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        assignAdminRole(memberProfileOfAdmin);
+
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod(oldStatus);
+        reviewPeriod.setReviewStatus(newStatus);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+                PUT("/", reviewPeriod).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+
+        final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
+
+        assertEquals(reviewPeriod, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    private static Stream<Arguments> invalidStatusTransitions() {
+        var validTransitions = validStatusTransitions().toList();
+        var allPermutations = new ArrayList<Arguments>();
+        for (ReviewStatus from : ReviewStatus.values()) {
+            for (ReviewStatus to : ReviewStatus.values()) {
+                if (validTransitions.stream().noneMatch(a -> a.get()[0] == from && a.get()[1] == to)) {
+                    allPermutations.add(Arguments.of(from, to));
+                }
+            }
+        }
+        return allPermutations.stream();
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidStatusTransitions")
+    void testUpdateReviewPeriodAsAdminWithInvalidStatusTransitions(ReviewStatus oldStatus, ReviewStatus newStatus) {
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        assignAdminRole(memberProfileOfAdmin);
+
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod(oldStatus);
+        reviewPeriod.setReviewStatus(newStatus);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+                PUT("/", reviewPeriod).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, ReviewPeriod.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Invalid status transition from %s to %s".formatted(oldStatus, newStatus), responseException.getMessage());
+    }
+
+    @Test
+    void testPUTReviewPeriodAwaitingApproval() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod(ReviewStatus.PLANNING);
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
+
+        createAReviewAssignmentBetweenMembers(member, supervisor, reviewPeriod, false);
+
+        reviewPeriod.setReviewStatus(ReviewStatus.AWAITING_APPROVAL);
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+                PUT("/", reviewPeriod).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+
+        final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
+
+        assertEquals(reviewPeriod, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        // expect email has been sent
+        verify(emailSender).sendEmail(null, null,
+                "Review Assignments Awaiting Approval",
+                "<h3>Review Assignments for Review Period '" + reviewPeriod.getName() + "' are ready for your approval.</h3>" +
+                "<a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">Click here</a> to review and approve reviewer assignments in the Check-Ins app.",
+                supervisor.getWorkEmail()
+        );
     }
 
     @Test

@@ -21,9 +21,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/member-skills")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "member-skills")
 public class MemberSkillController {
 
@@ -39,7 +38,7 @@ public class MemberSkillController {
      * @param memberSkill, {@link MemberSkillCreateDTO}
      * @return {@link HttpResponse< MemberSkill >}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<?> request) {
         return Mono.fromCallable(() -> memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(),
                 memberSkill.getSkillid(), memberSkill.getSkilllevel(), memberSkill.getLastuseddate())))
@@ -96,7 +95,7 @@ public class MemberSkillController {
      * @param memberSkill, {@link MemberSkill}
      * @return {@link MemberSkill}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<MemberSkill>> update(@Body @Valid MemberSkill memberSkill, HttpRequest<?> request) {
         return Mono.fromCallable(() -> memberSkillsService.update(memberSkill))
                 .map(updatedMemberSkill -> HttpResponse.ok(updatedMemberSkill)
