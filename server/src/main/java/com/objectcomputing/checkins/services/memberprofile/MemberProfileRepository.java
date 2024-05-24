@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.annotation.ParameterExpression;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
@@ -59,6 +61,15 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
                                @Nullable String workEmail, @Nullable String supervisorId, @Nullable Boolean terminated);
 
     List<MemberProfile> findAll();
+    List<UUID> findSupervisoridByIdIn(Set<UUID> Ids);
+
+    @Query(value = """
+            SELECT PGP_SYM_DECRYPT(cast(workEmail as bytea), :aesKey) as workEmail
+                    FROM member_profile mp
+                    WHERE  mp.id IN (:ids)""",
+            nativeQuery = true)
+    @ParameterExpression(name = "aesKey", expression = "#{ env['aes.key'] }")
+    List<String> findWorkEmailByIdIn(Set<String> ids);
 
     @Query(value = "WITH RECURSIVE subordinate AS (SELECT " +
     "id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, 0 as level " +
