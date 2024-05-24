@@ -4,11 +4,10 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.admin.directory.Directory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.directory.Directory;
 import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
-import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
@@ -24,7 +23,7 @@ import java.util.List;
 @Singleton
 public class GoogleAccessor {
 
-    private final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     private final String applicationName;
     private final GoogleAuthenticator authenticator;
