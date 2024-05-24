@@ -267,6 +267,9 @@ You should be using Yarn 1.22.19 or later.
 
 # Install Podman
 
+> If you are using Docker Desktop, you can skip this section, and set an environment variable via `export USE_DOCKER_DESKTOP=1` in your shell profile.
+> This will enable Ryuk for cleaning up old containers under testing.
+
 This project uses [Podman](https://podman.io/) for containerization. Podman is a daemonless container engine for developing, managing, and running Open Container Initiative containers. It is an alternative to Docker and is available without fee for macOS via Homebrew.
 
 To install Podman, run:

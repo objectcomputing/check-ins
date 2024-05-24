@@ -111,6 +111,9 @@ choco install yarn
 
 This project uses [Podman](https://podman.io/) for containerization.
 
+> If you are using Docker Desktop, you can skip this section, and set an environment variable via `USE_DOCKER_DESKTOP=1` in your Windows environment variables.
+> This will enable Ryuk for cleaning up old containers under testing.
+
 Install Podman Desktop: https://podman-desktop.io/
 
 The setup process will ask if you want to install Podman and Podman Compose for the cli.
