@@ -23,7 +23,7 @@ const SettingsColor = ({ name, description, value, handleChange }) => {
           {name}
         </Typography>
       </label>
-      {description ?? <p>{description}</p>}
+      {description && <p>{description}</p>}
       <input
         id={labelId}
         className="settings-control"

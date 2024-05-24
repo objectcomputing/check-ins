@@ -23,7 +23,7 @@ const SettingsNumber = ({ name, description, value, handleChange }) => {
           {name}
         </Typography>
       </label>
-      {description ?? <p>{description}</p>}
+      {description && <p>{description}</p>}
       <Input
         id={labelId}
         className="settings-control"

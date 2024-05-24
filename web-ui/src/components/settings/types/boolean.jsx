@@ -23,7 +23,7 @@ const SettingsBoolean = ({ name, description, value, handleChange }) => {
           {name}
         </Typography>
       </label>
-      {description ?? <p>{description}</p>}
+      {description && <p>{description}</p>}
       <Switch
         id={labelId}
         className="settings-control"
