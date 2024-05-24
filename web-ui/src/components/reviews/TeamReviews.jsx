@@ -65,7 +65,6 @@ import {
   selectCurrentMembers,
   selectCurrentUser,
   selectCurrentUserSubordinates,
-  selectHasCloseReviewPeriodPermission,
   selectHasDeleteReviewPeriodPermission,
   selectHasLaunchReviewPeriodPermission,
   selectHasUpdateReviewPeriodPermission,
