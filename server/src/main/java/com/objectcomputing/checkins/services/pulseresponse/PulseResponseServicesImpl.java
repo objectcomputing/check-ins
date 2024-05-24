@@ -40,8 +40,6 @@ public class PulseResponseServicesImpl implements PulseResponseService {
     @Override
     public PulseResponse save(PulseResponse pulseResponse) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_CREATE_ALL_PULSE_RESPONSES);
-
         PulseResponse pulseResponseRet = null;
         if (pulseResponse != null) {
             final UUID memberId = pulseResponse.getTeamMemberId();
@@ -52,7 +50,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
                 throw new BadArgException(String.format("Member %s doesn't exists", memberId));
             } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
                 throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
-            } else if (!hasPermission && !currentUserId.equals(memberId) && !isSubordinateTo(pulseResponse.getTeamMemberId(), currentUserId)) {
+            } else if (!currentUserId.equals(memberId) && !isSubordinateTo(memberId, currentUserId)) {
                 throw new BadArgException(String.format("User %s does not have permission to create pulse response for user %s", currentUserId, memberId));
             }
             pulseResponseRet = pulseResponseRepo.save(pulseResponse);
@@ -73,8 +71,6 @@ public class PulseResponseServicesImpl implements PulseResponseService {
     @Override
     public PulseResponse update(PulseResponse pulseResponse) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_UPDATE_ALL_PULSE_RESPONSES);
-
         PulseResponse pulseResponseRet = null;
         if (pulseResponse != null) {
             final UUID id = pulseResponse.getId();
@@ -88,7 +84,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
                 throw new BadArgException(String.format("Invalid pulseresponse %s", pulseResponse));
             } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
                 throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
-            } else if (!hasPermission && !currentUserId.equals(memberId) && !isSubordinateTo(pulseResponse.getTeamMemberId(), currentUserId)) {
+            } else if (!currentUserId.equals(memberId) && !isSubordinateTo(memberId, currentUserId)) {
                 throw new BadArgException(String.format("User %s does not have permission to update pulse response for user %s", currentUserId, memberId));
             }
             pulseResponseRet = pulseResponseRepo.update(pulseResponse);

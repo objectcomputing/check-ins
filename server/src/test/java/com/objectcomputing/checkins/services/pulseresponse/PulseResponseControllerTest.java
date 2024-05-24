@@ -131,22 +131,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     }
 
     @Test
-    void testCreatePulseResponseForSomeoneUnrelatedWithRole() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        PulseResponseCreateDTO pulseResponseCreateDTO = createPulseResponseCreateDTO(id(HIERARCHY_LEAD2));
-
-        HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
-        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
-
-        PulseResponse pulseResponseResponse = response.body();
-
-        Assertions.assertNotNull(pulseResponseResponse);
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(pulseResponseCreateDTO.getTeamMemberId(), pulseResponseResponse.getTeamMemberId());
-        assertEquals(String.format("%s/%s", request.getPath(), pulseResponseResponse.getId()), response.getHeaders().get("location"));
-    }
-
-    @Test
     void testCreateANullPulseResponse() {
         final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -341,18 +325,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         PulseResponse pulseResponse = createADefaultPulseResponse(memberProfile);
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
-        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
-
-        assertEquals(pulseResponse, response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), pulseResponse.getId()), response.getHeaders().get("location"));
-    }
-
-    @Test
-    void testUpdatePulseResponseForUnrelatedMemberWithRole() {
-        PulseResponse pulseResponse = createADefaultPulseResponse(profile(HIERARCHY_LEAD2));
-
-        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
 
         assertEquals(pulseResponse, response.body());
