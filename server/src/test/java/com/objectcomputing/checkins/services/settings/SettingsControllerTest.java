@@ -112,6 +112,20 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
     }
 
     @Test
+    void testPUTValidDTOButSettingNotFound() {
+        final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
+        SettingsDTO updatedSetting = new SettingsDTO();
+        updatedSetting.setName(SettingOption.LOGO_URL.toString());
+        updatedSetting.setValue("Missing");
+        final HttpRequest<SettingsDTO> request = HttpRequest.
+                PUT("/", updatedSetting).basicAuth(lucy.getWorkEmail(),ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+        assertEquals("Setting with name %s not found.".formatted(SettingOption.LOGO_URL.toString()), responseException.getMessage());
+    }
+
+    @Test
     void testGETFindByWrongNameThrowsException() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         Setting setting = createADefaultSetting();
