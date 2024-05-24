@@ -40,7 +40,7 @@ public class TemplateQuestionController {
      * @param requestBody {@link TemplateQuestionCreateDTO} The feedback question to create
      * @return {@link TemplateQuestionResponseDTO}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<TemplateQuestionResponseDTO>> save(@Body @Valid @NotNull TemplateQuestionCreateDTO requestBody) {
         return Mono.fromCallable(() -> templateQuestionServices.save(fromDTO(requestBody)))
                 .map(savedFeedbackQuestion -> HttpResponse.created(fromEntity(savedFeedbackQuestion))
@@ -53,7 +53,7 @@ public class TemplateQuestionController {
      * @param requestBody {@link TemplateQuestionUpdateDTO} The updated template question
      * @return {@link TemplateQuestionResponseDTO}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<TemplateQuestionResponseDTO>> update(@Body @Valid @NotNull TemplateQuestionUpdateDTO requestBody) {
         return Mono.fromCallable(() -> templateQuestionServices.update(fromDTO(requestBody)))
                 .map(savedFeedbackTemplateQ -> HttpResponse.ok(fromEntity(savedFeedbackTemplateQ))

@@ -40,7 +40,7 @@ public class SkillController {
      * @return {@link HttpResponse< Skill >}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<Skill>> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<?> request) {
         return Mono.fromCallable(() -> skillServices.save(new Skill(skill.getName(), skill.isPending(),
                         skill.getDescription(), skill.isExtraneous())))
@@ -88,7 +88,7 @@ public class SkillController {
      * @param skill, {@link Skill}
      * @return {@link HttpResponse<Skill>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<Skill>> update(@Body @Valid Skill skill, HttpRequest<?> request) {
         return Mono.fromCallable(() -> skillServices.update(skill))
                 .map(updatedSkill -> HttpResponse.ok(updatedSkill)

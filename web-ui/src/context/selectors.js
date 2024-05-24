@@ -94,6 +94,16 @@ export const selectHasProfileReportPermission = createSelector(
     )
 );
 
+export const selectHasPulseReportPermission = createSelector(
+  selectUserProfile,
+  userProfile =>
+    userProfile &&
+    userProfile.role &&
+    userProfile.permissions.some(p =>
+      p?.permission?.includes('CAN_VIEW_ALL_PULSE_RESPONSES')
+    )
+);
+
 export const selectHasSkillsReportPermission = createSelector(
   selectUserProfile,
   userProfile =>

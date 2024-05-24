@@ -34,7 +34,7 @@ public class SkillCategoryController {
         this.skillCategoryServices = skillCategoryServices;
     }
 
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategory>> create(@Body @Valid SkillCategoryCreateDTO dto, HttpRequest<?> request) {
         return Mono.fromCallable(() -> {
@@ -45,7 +45,7 @@ public class SkillCategoryController {
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdSkillCategory.getId())))));
     }
 
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategory>> update(@Body @Valid SkillCategoryUpdateDTO dto, HttpRequest<?> request) {
         return Mono.fromCallable(() -> {

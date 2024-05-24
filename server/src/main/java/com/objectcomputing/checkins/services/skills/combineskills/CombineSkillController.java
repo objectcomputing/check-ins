@@ -38,7 +38,7 @@ public class CombineSkillController {
      * @return {@link HttpResponse<Skill>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<?> request) {
         return Mono.fromCallable(() -> combineSkillServices.combine(skill))
                 .map(createdSkill -> HttpResponse.created(createdSkill)

@@ -41,7 +41,7 @@ public class EntityTagController {
      * @param entityTag, {@link EntityTagCreateDTO}
      * @return {@link HttpResponse<  EntityTag  >}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<EntityTag>> createAEntityTag(@Body @Valid @NotNull EntityTagCreateDTO entityTag, HttpRequest<?> request) {
         return Mono.fromCallable(() -> entityTagServices.save(new EntityTag(entityTag.getEntityId(),
                 entityTag.getTagId(), entityTag.getType())))
