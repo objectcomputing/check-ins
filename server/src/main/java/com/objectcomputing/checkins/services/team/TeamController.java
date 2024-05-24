@@ -39,7 +39,7 @@ public class TeamController {
      * @param team, {@link TeamCreateDTO}
      * @return {@link HttpResponse<TeamResponseDTO>}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<?> request) {
         return Mono.fromCallable(() -> teamService.save(team))
                 .map(createdTeam -> HttpResponse.created(createdTeam)
@@ -79,7 +79,7 @@ public class TeamController {
      * @param team, {@link TeamUpdateDTO}
      * @return {@link HttpResponse<TeamResponseDTO>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<?> request) {
         return Mono.fromCallable(() -> teamService.update(team))
                 .map(updated -> HttpResponse.ok(updated)

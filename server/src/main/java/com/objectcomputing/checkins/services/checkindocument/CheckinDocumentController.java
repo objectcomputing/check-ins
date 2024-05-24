@@ -54,7 +54,7 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
 
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_CHECKIN_DOCUMENT)
     public Mono<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
                                                                     HttpRequest<?> request) {
@@ -69,7 +69,7 @@ public class CheckinDocumentController {
      * @param checkinDocument, {@link CheckinDocument}
      * @return {@link HttpResponse<CheckinDocument>}
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKIN_DOCUMENT)
     public Mono<HttpResponse<CheckinDocument>> update(@Body @Valid CheckinDocument checkinDocument, HttpRequest<?> request) {
         if (checkinDocument == null) {

@@ -56,7 +56,7 @@ public class CheckInController {
      * @return {@link HttpResponse<CheckIn>}
      */
 
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public Mono<HttpResponse<CheckIn>> createCheckIn(@Body @Valid CheckInCreateDTO checkIn, HttpRequest<?> request) {
         return Mono.fromCallable(() -> checkInServices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted())))
@@ -70,7 +70,7 @@ public class CheckInController {
      * @param checkIn, {@link CheckIn}
      * @return {@link HttpResponse<CheckIn>}
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public Mono<HttpResponse<CheckIn>> update(@Body @Valid @NotNull CheckIn checkIn, HttpRequest<?> request) {
         return Mono.fromCallable(() -> checkInServices.update(checkIn))

@@ -58,7 +58,7 @@ public class PulseResponseController {
      * @return {@link HttpResponse<PulseResponse>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                                     HttpRequest<?> request) {
         return Mono.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getInternalScore(), pulseResponse.getExternalScore(), pulseResponse.getSubmissionDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
@@ -73,7 +73,7 @@ public class PulseResponseController {
      * @param pulseResponse, {@link PulseResponse}
      * @return {@link HttpResponse<PulseResponse>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<PulseResponse>> update(@Body @Valid @NotNull PulseResponse pulseResponse,
                                                       HttpRequest<?> request) {
         return Mono.fromCallable(() -> pulseResponseServices.update(pulseResponse))
