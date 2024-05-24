@@ -7,7 +7,7 @@ import { createLabelId } from '../../../helpers/strings.js';
  *
  * @component
  * @param {Object} props
- * @param {string} props.label - The label for the input field.
+ * @param {string} props.name - The name for the input field.
  * @param {string} [props.description] - The description for the input field (optional).
  * @param {string} props.value - The current value of the input field.
  * @param {string} [props.placeholder] - The placeholder text for the input field (optional).
@@ -15,19 +15,19 @@ import { createLabelId } from '../../../helpers/strings.js';
  * @returns {JSX.Element} - The rendered component.
  */
 const SettingsString = ({
-  label,
+  name,
   description,
   value,
   placeholder,
   handleChange
 }) => {
-  const labelId = createLabelId(label);
+  const labelId = createLabelId(name);
 
   return (
     <div className="settings-type">
       <label htmlFor={labelId}>
         <Typography variant="h5" gutterBottom>
-          {label}
+          {name}
         </Typography>
       </label>
       {description ?? <p>{description}</p>}
@@ -36,7 +36,7 @@ const SettingsString = ({
         className="settings-control"
         type="text"
         value={value}
-        placeholder={placeholder ?? `Enter ${label}`}
+        placeholder={placeholder ?? `Enter ${name}`}
         onChange={handleChange}
       />
     </div>
