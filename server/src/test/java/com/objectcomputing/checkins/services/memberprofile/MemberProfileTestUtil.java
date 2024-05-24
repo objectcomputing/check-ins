@@ -17,6 +17,7 @@ public class MemberProfileTestUtil {
         dto.setEmployeeId("TestEmployeeId");
         dto.setStartDate(LocalDate.of(2019, 1, 01));
         dto.setBioText("TestBio");
+        dto.setLastSeen(LocalDate.now());
         return dto;
     }
 
@@ -31,6 +32,7 @@ public class MemberProfileTestUtil {
         dto.setEmployeeId("TestEmployeeId");
         dto.setStartDate(LocalDate.of(2019, 1, 01));
         dto.setBioText("TestBio");
+        dto.setLastSeen(LocalDate.now());
         return dto;
     }
 
@@ -47,7 +49,7 @@ public class MemberProfileTestUtil {
                 LocalDate.of(2019, 1, 1),
                 "TestBio" + seed,
                 null,
-                null,null, null, null);
+                null,null, null, null, LocalDate.now());
     }
 
     public static MemberProfile mkMemberProfile() {
@@ -68,6 +70,7 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getBioText(), dto.getBioText());
         assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
         assertEquals(entity.getTerminationDate(), dto.getTerminationDate());
+        assertEquals(entity.getLastSeen(), dto.getLastSeen());
     }
 
     public static void assertProfilesEqual(MemberProfileUpdateDTO entity, MemberProfileResponseDTO dto) {
