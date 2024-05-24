@@ -37,15 +37,13 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     private final String webAddress;
     public static final String WEB_ADDRESS = "check-ins.web-address";
 
-    @Value("${aes.key}")
-    private String aesKey;
-
     public ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository,
                                     ReviewAssignmentRepository reviewAssignmentRepository,
                                     MemberProfileRepository memberProfileRepository,
                                     ReviewStatusTransitionValidator reviewStatusTransitionValidator,
                                     @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
-                                    Environment environment, @Property(name = WEB_ADDRESS) String webAddress) {
+                                    Environment environment,
+                                    @Property(name = WEB_ADDRESS) String webAddress) {
         this.reviewPeriodRepository = reviewPeriodRepository;
         this.reviewAssignmentRepository = reviewAssignmentRepository;
         this.memberProfileRepository = memberProfileRepository;
@@ -142,7 +140,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         }
 
         Set<String> supervisorIdsToString = supervisorIds.stream().map(UUID::toString).collect(Collectors.toSet());
-        List<String> supervisorEmails = memberProfileRepository.findWorkEmailByIdIn(aesKey, supervisorIdsToString);
+        List<String> supervisorEmails = memberProfileRepository.findWorkEmailByIdIn(supervisorIdsToString);
 
         // send notification to supervisors
         String emailContent = constructEmailContent(reviewPeriodId, reviewPeriodName);

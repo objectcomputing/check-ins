@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.annotation.ParameterExpression;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
@@ -67,7 +68,8 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
                     FROM member_profile mp
                     WHERE  mp.id IN (:ids)""",
             nativeQuery = true)
-    List<String> findWorkEmailByIdIn(String aesKey, Set<String> ids);
+    @ParameterExpression(name = "aesKey", expression = "#{ env['aes.key'] }")
+    List<String> findWorkEmailByIdIn(Set<String> ids);
 
     @Query(value = "WITH RECURSIVE subordinate AS (SELECT " +
     "id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, 0 as level " +
