@@ -26,7 +26,7 @@ public class MailJetNotificationController {
         this.emailSender = emailSender;
     }
 
-    @Post()
+    @Post
     public Mono<HttpResponse<?>> sendEmailReceivesStatus(String subject, String content, String... recipients) {
         return Mono.fromCallable(currentUserServices::getCurrentUser)
                 .map(currentUser -> {

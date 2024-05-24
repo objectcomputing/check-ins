@@ -38,7 +38,7 @@ public class QuestionCategoryController {
      * @return {@link HttpResponse<QuestionCategory>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<QuestionCategory>> createAQuestionCategory(@Body @Valid QuestionCategoryCreateDTO questionCategory,
                                                                         HttpRequest<?> request) {
 
@@ -69,7 +69,7 @@ public class QuestionCategoryController {
      * @param questionCategory, {@link QuestionCategory}
      * @return {@link HttpResponse<QuestionCategory>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<QuestionCategory>> update(@Body @Valid QuestionCategory questionCategory, HttpRequest<?> request) {
         return Mono.fromCallable(() -> questionCategoryService.update(questionCategory))
                 .map(updatedQuestionCategory -> HttpResponse.ok(updatedQuestionCategory)
