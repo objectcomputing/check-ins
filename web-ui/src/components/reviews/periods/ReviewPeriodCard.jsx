@@ -13,7 +13,6 @@ import {
   Avatar,
   Card,
   CardActions,
-  CardContent,
   Collapse,
   ListItemAvatar,
   ListItemText

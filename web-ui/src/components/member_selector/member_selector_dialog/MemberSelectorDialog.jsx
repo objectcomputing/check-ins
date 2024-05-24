@@ -458,7 +458,6 @@ const MemberSelectorDialog = ({
           </div>
           <Button
             color="inherit"
-            disabled={checked.size === 0}
             onClick={handleSubmit}
           >
             Save
