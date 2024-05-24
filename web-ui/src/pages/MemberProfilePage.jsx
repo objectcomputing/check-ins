@@ -42,6 +42,7 @@ const MemberProfilePage = () => {
   const { csrf, skills, userProfile } = state;
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
+  const [lastSeen, setLastSeen] = useState('');
   const sortedPdls = selectOrderedPdls(state);
   const sortedMembers = selectOrderedMemberFirstName(state);
   const isAdmin = selectIsAdmin(state);
@@ -67,6 +68,8 @@ const MemberProfilePage = () => {
     );
     if (member) {
       setSelectedMember(member);
+      const { lastSeen } = member;
+      setLastSeen(`${lastSeen[1]}/${lastSeen[2]}/${lastSeen[0]}`);
     } else if (terminatedMember) {
       setSelectedMember(terminatedMember[0]);
     }
@@ -170,6 +173,7 @@ const MemberProfilePage = () => {
                       color="textSecondary"
                       component="div"
                     >
+                      <h4>Last Seen: {lastSeen}</h4>
                       <h4>Email: {selectedMember.workEmail || ''}</h4>
                       <h4>Location: {selectedMember.location || ''}</h4>
                       <h4>Bio: {selectedMember.bioText || ''}</h4>
