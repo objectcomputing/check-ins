@@ -25,7 +25,9 @@ public class SettingOptionSerializer extends StdSerializer<SettingOption> {
         generator.writeFieldName("description");
         generator.writeString(settingOption.getDescription());
         generator.writeFieldName("category");
-        generator.writeString(settingOption.getCategory());
+        generator.writeString(settingOption.getCategory().name());
+        generator.writeFieldName("type");
+        generator.writeString(settingOption.getType().name());
         generator.writeEndObject();
     }
 }

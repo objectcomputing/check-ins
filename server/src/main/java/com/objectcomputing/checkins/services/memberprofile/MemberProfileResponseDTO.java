@@ -88,6 +88,10 @@ public class MemberProfileResponseDTO {
     @Schema(description = "The employee is excluded from retention reports", nullable = true)
     private Boolean excluded;
 
+    @NotNull
+    @Schema(description = "Last date employee logged in")
+    private LocalDate lastSeen;
+
     @Override
     public String toString() {
         return "MemberProfileResponseDTO{" +
@@ -109,6 +113,7 @@ public class MemberProfileResponseDTO {
                 ", birthDay=" + birthDay +
                 ", voluntary=" + voluntary +
                 ", excluded=" + excluded +
+                ", lastSeen=" + lastSeen +
                 '}';
     }
 }

@@ -84,4 +84,7 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "The employee is excluded from retention reports", nullable = true)
     private Boolean excluded;
 
+    @Nullable
+    @Schema(description = "Last date employee logged in", nullable = true)
+    private LocalDate lastSeen;
 }
