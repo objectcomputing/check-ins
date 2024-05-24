@@ -16,6 +16,16 @@ export const selectLoading = state => state.loading;
 export const selectReviewPeriods = state => state.reviewPeriods;
 export const selectPermissions = state => state.permissions;
 
+// This function takes the name of a permission
+// and returns a new function that takes a user profile.
+// That function determines whether the user has that permission.
+const hasPermission = permissionName => userProfile =>
+  userProfile &&
+  userProfile.role &&
+  userProfile.permissions.some(p =>
+    p?.permission?.includes(permissionName)
+  );
+
 export const selectTeamsLoading = createSelector(selectLoading, loading => {
   return loading.teams;
 });
@@ -38,101 +48,75 @@ export const selectIsAdmin = createSelector(
 
 export const selectHasPermissionAssignmentPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p =>
-      p?.permission?.includes('CAN_ASSIGN_ROLE_PERMISSIONS')
-    )
-);
+  hasPermission('CAN_ASSIGN_ROLE_PERMISSIONS'));
 
 export const selectHasReportPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p => p?.permission?.includes('REPORT'))
-);
+  hasPermission('REPORT'));
 
 export const selectHasAnniversaryReportPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p =>
-      p?.permission?.includes('CAN_VIEW_ANNIVERSARY_REPORT')
-    )
-);
+  hasPermission('CAN_VIEW_ANNIVERSARY_REPORT'));
 
 export const selectHasBirthdayReportPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p =>
-      p?.permission?.includes('CAN_VIEW_BIRTHDAY_REPORT')
-    )
-);
+  hasPermission('CAN_VIEW_BIRTHDAY_REPORT'));
 
 export const selectHasCheckinsReportPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p =>
-      p?.permission?.includes('CAN_VIEW_CHECKINS_REPORT')
-    )
-);
+  hasPermission('CAN_VIEW_CHECKINS_REPORT'));
 
 export const selectHasProfileReportPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p =>
-      p?.permission?.includes('CAN_VIEW_PROFILE_REPORT')
-    )
-);
+  hasPermission('CAN_VIEW_PROFILE_REPORT'));
 
-export const selectHasPulseReportPermission = createSelector(
+export const selectHasViewPulseReportPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p =>
-      p?.permission?.includes('CAN_VIEW_ALL_PULSE_RESPONSES')
-    )
-);
+  hasPermission('CAN_VIEW_ALL_PULSE_RESPONSES'));
 
 export const selectHasSkillsReportPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p =>
-      p?.permission?.includes('CAN_VIEW_SKILLS_REPORT')
-    )
-);
+  hasPermission('CAN_VIEW_SKILLS_REPORT'));
 
 export const selectHasTeamSkillsReportPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p =>
-      p?.permission?.includes('CAN_VIEW_SKILLS_REPORT')
-    )
-);
+  hasPermission('CAN_VIEW_SKILLS_REPORT'));
+
+export const selectHasCreateReviewAssignmentsPermission = createSelector(
+  selectUserProfile,
+  hasPermission('CAN_CREATE_REVIEW_ASSIGNMENTS'));
+
+export const selectHasDeleteReviewAssignmentsPermission = createSelector(
+  selectUserProfile,
+  hasPermission('CAN_DELETE_REVIEW_ASSIGNMENTS'));
 
 export const selectHasUpdateReviewAssignmentsPermission = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile &&
-    userProfile.role &&
-    userProfile.permissions.some(p =>
-      p?.permission?.includes('CAN_UPDATE_REVIEW_ASSIGNMENTS')
-    )
-);
+  hasPermission('CAN_UPDATE_REVIEW_ASSIGNMENTS'));
+
+export const selectHasViewReviewAssignmentsPermission = createSelector(
+  selectUserProfile,
+  hasPermission('CAN_VIEW_REVIEW_ASSIGNMENTS'));
+
+export const selectHasCloseReviewPeriodPermission = createSelector(
+  selectUserProfile,
+  hasPermission('CAN_CLOSE_REVIEW_PERIOD'));
+
+export const selectHasCreateReviewPeriodPermission = createSelector(
+  selectUserProfile,
+  hasPermission('CAN_CREATE_REVIEW_PERIOD'));
+
+export const selectHasDeleteReviewPeriodPermission = createSelector(
+  selectUserProfile,
+  hasPermission('CAN_DELETE_REVIEW_PERIOD'));
+
+export const selectHasLaunchReviewPeriodPermission = createSelector(
+  selectUserProfile,
+  hasPermission('CAN_LAUNCH_REVIEW_PERIOD'));
+
+export const selectHasUpdateReviewPeriodPermission = createSelector(
+  selectUserProfile,
+  hasPermission('CAN_UPDATE_REVIEW_PERIOD'));
 
 export const selectIsPDL = createSelector(
   selectUserProfile,
