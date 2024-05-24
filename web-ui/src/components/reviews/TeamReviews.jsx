@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import React, {
-  useEffect,
-  useContext,
   useCallback,
+  useContext,
+  useEffect,
+  useRef,
   useState,
-  useRef
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -65,6 +65,11 @@ import {
   selectCurrentMembers,
   selectCurrentUser,
   selectCurrentUserSubordinates,
+  selectHasCloseReviewPeriodPermission,
+  selectHasCreateReviewPeriodPermission,
+  selectHasDeleteReviewPeriodPermission,
+  selectHasLaunchReviewPeriodPermission,
+  selectHasUpdateReviewPeriodPermission,
   selectIsAdmin,
   selectReviewPeriod,
   selectSupervisors,
@@ -865,15 +870,17 @@ const TeamReviews = ({ onBack, periodId }) => {
                 )}
               </IconButton>
             </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton
-                onClick={confirmDelete}
-                edge="end"
-                aria-label="Delete"
-              >
-                <Delete />
-              </IconButton>
-            </Tooltip>
+            {selectHasDeleteReviewPeriodPermission(state) && (
+              <Tooltip title="Delete">
+                <IconButton
+                  onClick={confirmDelete}
+                  edge="end"
+                  aria-label="Delete"
+                >
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            )}
             {approvalMode && (
               <FormControlLabel
                 control={
@@ -1020,9 +1027,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleConfirmDeleteClose}>No</Button>
-          <Button onClick={deleteReviewPeriod} autoFocus>
-            Yes
-          </Button>
+          <Button onClick={deleteReviewPeriod} autoFocus>Yes</Button>
         </DialogActions>
       </Dialog>
       <Dialog
