@@ -244,7 +244,10 @@ const PulseReportPage = () => {
   };
 
   useEffect(() => {
-    if (selectHasViewPulseReportPermission(state)) loadPulses();
+    // TODO: Uncomment this check after PR #2429 is merged.
+    // if (selectHasViewPulseReportPermission(state)) {
+    loadPulses();
+    // }
   }, [csrf, dateFrom, dateTo]);
 
   useEffect(() => {
