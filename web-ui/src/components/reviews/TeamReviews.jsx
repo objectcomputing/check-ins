@@ -364,11 +364,15 @@ const TeamReviews = ({ onBack, periodId }) => {
       if (!reviewee) return [];
       const { id } = reviewee;
       const as = assignments.filter(a => a.revieweeId === id) ?? [];
+      const reviewerIdSet = new Set();
       const reviewers = [];
       for (const as of assignments) {
         if (as.revieweeId === id) {
           const member = { ...memberMap[as.reviewerId], approved: as.approved };
-          reviewers.push(member);
+          if (!reviewerIdSet.has(member.id)) {
+            reviewerIdSet.add(member.id);
+            reviewers.push(member);
+          }
         }
       }
       return sortMembers(reviewers);
