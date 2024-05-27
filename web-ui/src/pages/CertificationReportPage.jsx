@@ -1,9 +1,12 @@
 import { format } from 'date-fns';
-import React, { useContext, useEffect, useState } from 'react';
-import { Box, Modal, Typography } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
+import { Delete, Edit } from '@mui/icons-material';
+import { Box, IconButton, Modal, Tooltip, Typography } from '@mui/material';
 
 import { AppContext } from '../context/AppContext';
 import { selectProfileMap } from '../context/selectors';
+import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
 import './CertificationReportPage.css';
 
 const modalWidth = 600;
@@ -24,22 +27,19 @@ const modalStyle = {
   ...center
 };
 
+const endpointBaseUrl = 'http://localhost:3000/certification';
+
 const CertificationReportPage = () => {
   const { state } = useContext(AppContext);
   const [certifications, setCertifications] = useState([]);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
-  console.log('CertificationReportPage.jsx : certifications =', certifications);
   const [modalOpen, setModalOpen] = useState(false);
 
   const loadCertifications = async () => {
-    const url = 'http://localhost:3000/certification';
     try {
-      const res = await fetch(url);
+      const res = await fetch(endpointBaseUrl);
       const data = await res.json();
-      console.log(
-        'CertificationReportPage.jsx loadCertifications: data =',
-        data
-      );
       setCertifications(data);
     } catch (err) {
       console.error(err);
@@ -49,6 +49,11 @@ const CertificationReportPage = () => {
   useEffect(() => {
     loadCertifications();
   }, []);
+
+  const confirmDelete = cert => {
+    setSelectedCertificate(cert);
+    setConfirmDeleteOpen(true);
+  };
 
   const certificationRow = cert => {
     const profile = selectProfileMap(state)[cert.memberId];
@@ -61,9 +66,38 @@ const CertificationReportPage = () => {
         <td onClick={() => selectCertificate(cert)}>
           <img src={cert.imageUrl} />
         </td>
+        <td>
+          <Tooltip title="Edit">
+            <IconButton
+              aria-label="Edit"
+              onClick={() => editCertification(cert)}
+            >
+              <Edit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton aria-label="Delete" onClick={() => confirmDelete(cert)}>
+              <Delete />
+            </IconButton>
+          </Tooltip>
+        </td>
       </tr>
     );
   };
+
+  const deleteCertification = async cert => {
+    const url = endpointBaseUrl + '/' + cert.id;
+    try {
+      const res = await fetch(url, { method: 'DELETE' });
+      setCertifications(certifications =>
+        certifications.filter(c => c.id !== cert.id)
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const editCertification = cert => {};
 
   const selectCertificate = cert => {
     setSelectedCertificate(cert);
@@ -80,6 +114,7 @@ const CertificationReportPage = () => {
             <th>Description</th>
             <th>Date</th>
             <th>Image</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>{certifications.map(certificationRow)}</tbody>
@@ -95,6 +130,14 @@ const CertificationReportPage = () => {
           )}
         </Box>
       </Modal>
+
+      <ConfirmationDialog
+        open={confirmDeleteOpen}
+        onYes={() => deleteCertification(selectedCertificate)}
+        question="Are you sure you want to delete this certification?"
+        setOpen={setConfirmDeleteOpen}
+        title="Delete Certification"
+      />
     </div>
   );
 };

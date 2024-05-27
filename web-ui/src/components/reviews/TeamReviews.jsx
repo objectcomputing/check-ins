@@ -24,18 +24,12 @@ import {
   CardContent,
   CardHeader,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   FormControlLabel,
   IconButton,
   InputAdornment,
   List,
   ListItem,
   ListItemText,
-  Modal,
   Switch,
   TextField,
   Tooltip,
@@ -43,6 +37,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { resolve } from '../../api/api.js';
 import {
   findReviewRequestsByPeriodAndTeamMembers,
@@ -599,7 +594,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     return null; // no validtation errors
   };
 
-  const updateReviewPeriodStatus = async (reviewStatus) => {
+  const updateReviewPeriodStatus = async reviewStatus => {
     try {
       const res = await resolve({
         method: 'PUT',
@@ -631,7 +626,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         console.log(reviewee.name, 'is reviewed by', reviewer.name);
       }
     }
-  }
+  };
 
   const requestApproval = async () => {
     const msg = validateReviewPeriod(period);
@@ -652,9 +647,9 @@ const TeamReviews = ({ onBack, periodId }) => {
           ? 'Are you sure you want to launch the review period?'
           : unapproved.length === 1
             ? 'There is one visible, unapproved review assignment. ' +
-            'Would you like to approve it and launch this review period?'
+              'Would you like to approve it and launch this review period?'
             : `There are ${unapproved.length} visible, unapproved review assignments. ` +
-            'Would you like to approve all of them and launch this review period?'
+              'Would you like to approve all of them and launch this review period?'
       );
       setConfirmationDialogOpen(true);
     }
@@ -1003,78 +998,27 @@ const TeamReviews = ({ onBack, periodId }) => {
           closeReviewerDialog();
         }}
       />
-      <Dialog
+      <ConfirmationDialog
         open={confirmDeleteOpen}
-        onClose={handleConfirmDeleteClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {'Delete this review period?'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure that you would like to delete period{' '}
-            {selectReviewPeriod(state, toDelete)?.name}?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirmDeleteClose}>No</Button>
-          <Button onClick={deleteReviewPeriod} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
+        onYes={deleteReviewPeriod}
+        question={`Are you sure you want to delete the review period ${selectReviewPeriod(state, toDelete)?.name}?`}
+        setOpen={setConfirmDeleteOpen}
+        title="Delete this review period?"
+      />
+      <ConfirmationDialog
         open={confirmApproveAllOpen}
-        onClose={handleConfirmApproveAllClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {'Approve Visible Review Assignments'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure that you want to approve all the visible review
-            assignments?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirmApproveAllClose}>No</Button>
-          <Button onClick={approveAll} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Modal
-        onClose={() => setConfirmationDialogOpen(false)}
+        onYes={approveAll}
+        question={`Are you sure you want to approve all the visible review assignments?`}
+        setOpen={setConfirmApproveAllOpen}
+        title="Approve Visible Review Assignments"
+      />
+      <ConfirmationDialog
         open={confirmationDialogOpen}
-      >
-        <Card>
-          <CardHeader
-            title={
-              <Typography variant="h5" fontWeight="bold">
-                Approve and Launch
-              </Typography>
-            }
-          />
-          <CardContent>
-            <Typography variant="body1">{confirmationText}</Typography>
-          </CardContent>
-          <CardActions>
-            <Button
-              color="primary"
-              onClick={() => setConfirmationDialogOpen(false)}
-            >
-              No
-            </Button>
-            <Button color="primary" onClick={approveAllAndLaunch}>
-              Yes
-            </Button>
-          </CardActions>
-        </Card>
-      </Modal>
+        onYes={approveAllAndLaunch}
+        question={confirmationText}
+        setOpen={setConfirmationDialogOpen}
+        title="Approve and Launch"
+      />
     </Root>
   );
 };
