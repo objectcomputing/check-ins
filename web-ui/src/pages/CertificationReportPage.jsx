@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Delete, Edit } from '@mui/icons-material';
+import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
 import {
   Button,
   Dialog,
@@ -29,16 +29,9 @@ const center = {
   transform: 'translate(-50%, -50%)'
 };
 
-const modalStyle = {
-  bgcolor: 'background.paper',
-  border: '2px solid black',
-  boxShadow: 24,
-  padding: '1rem',
-  width: modalWidth,
-  ...center
-};
-
 const endpointBaseUrl = 'http://localhost:3000/certification';
+
+const newCertification = { date: format(new Date(), 'yyyy-MM-dd') };
 
 const CertificationReportPage = () => {
   const { state } = useContext(AppContext);
@@ -46,7 +39,8 @@ const CertificationReportPage = () => {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
-  const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const [selectedCertification, setSelectedCertification] =
+    useState(newCertification);
 
   const loadCertifications = async () => {
     try {
@@ -62,8 +56,13 @@ const CertificationReportPage = () => {
     loadCertifications();
   }, []);
 
+  const addCertification = () => {
+    setSelectedCertification(newCertification);
+    setDialogOpen(true);
+  };
+
   const confirmDelete = cert => {
-    setSelectedCertificate(cert);
+    setSelectedCertification(cert);
     setConfirmDeleteOpen(true);
   };
 
@@ -111,27 +110,31 @@ const CertificationReportPage = () => {
   };
 
   const editCertification = cert => {
-    setSelectedCertificate(cert);
+    setSelectedCertification(cert);
     setDialogOpen(true);
   };
 
   const selectImage = cert => {
-    setSelectedCertificate(cert);
+    setSelectedCertification(cert);
     setImageDialogOpen(true);
   };
 
-  const updateCertification = async () => {
-    const url = endpointBaseUrl + '/' + selectedCertificate.id;
+  const saveCertification = async () => {
+    const { id } = selectedCertification;
+    const url = id ? `${endpointBaseUrl}/${id}` : endpointBaseUrl;
     try {
       const res = await fetch(url, {
-        method: 'PUT',
-        body: JSON.stringify(selectedCertificate)
+        method: id ? 'PUT' : 'POST',
+        body: JSON.stringify(selectedCertification)
       });
+      const newCertification = await res.json();
       setCertifications(certifications => {
-        const index = certifications.findIndex(
-          c => c.id === selectedCertificate.id
-        );
-        certifications[index] = selectedCertificate;
+        if (id) {
+          const index = certifications.findIndex(c => c.id === id);
+          certifications[index] = newCertification;
+        } else {
+          certifications.push(newCertification);
+        }
         return [...certifications];
       });
     } catch (err) {
@@ -142,32 +145,44 @@ const CertificationReportPage = () => {
 
   return (
     <div id="certification-report-page">
-      <table>
-        <thead>
-          <tr>
-            <th>Member</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Date Earned</th>
-            <th>Image</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>{certifications.map(certificationRow)}</tbody>
-      </table>
+      <div className="column">
+        <IconButton
+          aria-label="Add"
+          classes={{ root: 'add-button' }}
+          onClick={addCertification}
+        >
+          <AddCircleOutline />
+        </IconButton>
+        <table>
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Date Earned</th>
+              <th>Image</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>{certifications.map(certificationRow)}</tbody>
+        </table>
+      </div>
 
       <Dialog open={imageDialogOpen} onClose={() => setImageDialogOpen(false)}>
         <DialogTitle>Certification Image</DialogTitle>
         <DialogContent>
-          {selectedCertificate?.imageUrl && (
-            <img src={selectedCertificate.imageUrl} style={{ width: '100%' }} />
+          {selectedCertification?.imageUrl && (
+            <img
+              src={selectedCertification.imageUrl}
+              style={{ width: '100%' }}
+            />
           )}
         </DialogContent>
       </Dialog>
 
       <ConfirmationDialog
         open={confirmDeleteOpen}
-        onYes={() => deleteCertification(selectedCertificate)}
+        onYes={() => deleteCertification(selectedCertification)}
         question="Are you sure you want to delete this certification?"
         setOpen={setConfirmDeleteOpen}
         title="Delete Certification"
@@ -182,16 +197,16 @@ const CertificationReportPage = () => {
         <DialogContent>
           <TextField
             className="fullWidth"
-            label="Name*"
-            placeholder="Certificate Name"
+            label="Name"
+            placeholder="Certification Name"
             required
             onChange={e =>
-              setSelectedCertificate({
-                ...selectedCertificate,
+              setSelectedCertification({
+                ...selectedCertification,
                 name: e.target.value
               })
             }
-            value={selectedCertificate?.name ?? ''}
+            value={selectedCertification?.name ?? ''}
           />
           <TextField
             className="fullWidth"
@@ -199,19 +214,19 @@ const CertificationReportPage = () => {
             placeholder="Description"
             required
             onChange={e =>
-              setSelectedCertificate({
-                ...selectedCertificate,
+              setSelectedCertification({
+                ...selectedCertification,
                 description: e.target.value
               })
             }
-            value={selectedCertificate?.description ?? ''}
+            value={selectedCertification?.description ?? ''}
           />
           <DatePickerField
-            date={new Date(selectedCertificate?.date ?? null)}
+            date={new Date(selectedCertification?.date ?? null)}
             label="Date Earned"
             setDate={date =>
-              setSelectedCertificate({
-                ...selectedCertificate,
+              setSelectedCertification({
+                ...selectedCertification,
                 date
               })
             }
@@ -221,17 +236,17 @@ const CertificationReportPage = () => {
             label="Image URL"
             placeholder="Image URL"
             onChange={e =>
-              setSelectedCertificate({
-                ...selectedCertificate,
+              setSelectedCertification({
+                ...selectedCertification,
                 imageUrl: e.target.value
               })
             }
-            value={selectedCertificate?.imageUrl ?? ''}
+            value={selectedCertification?.imageUrl ?? ''}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button onClick={updateCertification}>Save</Button>
+          <Button onClick={saveCertification}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>
