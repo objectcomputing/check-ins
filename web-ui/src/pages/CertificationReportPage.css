@@ -1,0 +1,22 @@
+#certification-report-page {
+  padding: 1rem;
+
+  table {
+    border-collapse: collapse;
+    margin: 0 auto;
+
+    img {
+      max-height: 100px;
+    }
+  }
+
+  td,
+  th {
+    border: 1px solid gray;
+    padding: 0.5rem;
+  }
+
+  th {
+    background-color: var(--oci-orange);
+  }
+}
