@@ -68,7 +68,8 @@ const CertificationReportPage = () => {
   };
 
   const certificationRow = cert => {
-    const profile = selectProfileMap(state)[cert.memberId];
+    const profileMap = selectProfileMap(state);
+    const profile = profileMap[cert.memberId];
     return (
       <tr key={cert.id}>
         <td>{profile?.name ?? 'unknown'}</td>
@@ -119,11 +120,23 @@ const CertificationReportPage = () => {
     setImageDialogOpen(true);
   };
 
-  const updateCertification = cert => {
-    console.log(
-      'CertificationReportPage.jsx updateCertification: cert =',
-      cert
-    );
+  const updateCertification = async () => {
+    const url = endpointBaseUrl + '/' + selectedCertificate.id;
+    try {
+      const res = await fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify(selectedCertificate)
+      });
+      setCertifications(certifications => {
+        const index = certifications.findIndex(
+          c => c.id === selectedCertificate.id
+        );
+        certifications[index] = selectedCertificate;
+        return [...certifications];
+      });
+    } catch (err) {
+      console.error(err);
+    }
     setDialogOpen(false);
   };
 
@@ -172,7 +185,12 @@ const CertificationReportPage = () => {
             label="Name*"
             placeholder="Certificate Name"
             required
-            onChange={e => (selectedCertificate.name = e.target.value)}
+            onChange={e =>
+              setSelectedCertificate({
+                ...selectedCertificate,
+                name: e.target.value
+              })
+            }
             value={selectedCertificate?.name ?? ''}
           />
           <TextField
@@ -180,13 +198,35 @@ const CertificationReportPage = () => {
             label="Description"
             placeholder="Description"
             required
-            onChange={e => (selectedCertificate.description = e.target.value)}
+            onChange={e =>
+              setSelectedCertificate({
+                ...selectedCertificate,
+                description: e.target.value
+              })
+            }
             value={selectedCertificate?.description ?? ''}
           />
           <DatePickerField
             date={new Date(selectedCertificate?.date ?? null)}
-            setDate={date => (certification.date = date)}
             label="Date Earned"
+            setDate={date =>
+              setSelectedCertificate({
+                ...selectedCertificate,
+                date
+              })
+            }
+          />
+          <TextField
+            className="fullWidth"
+            label="Image URL"
+            placeholder="Image URL"
+            onChange={e =>
+              setSelectedCertificate({
+                ...selectedCertificate,
+                imageUrl: e.target.value
+              })
+            }
+            value={selectedCertificate?.imageUrl ?? ''}
           />
         </DialogContent>
         <DialogActions>
