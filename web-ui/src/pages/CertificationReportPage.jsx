@@ -33,9 +33,12 @@ const center = {
 
 const endpointBaseUrl = 'http://localhost:3000/certification';
 
-const formatDate = date => format(date, 'yyyy-MM-dd');
-const newCertification = { date: formatDate(new Date()) };
+const formatDate = date =>
+  date instanceof Date
+    ? format(date, 'yyyy-MM-dd')
+    : `${date.$y}-${date.$M + 1}-${date.$D}`;
 
+const newCertification = { date: formatDate(new Date()) };
 const tableColumns = ['Member', 'Name', 'Description', 'Date Earned', 'Image'];
 
 const CertificationReportPage = () => {
@@ -187,10 +190,10 @@ const CertificationReportPage = () => {
       const compare = sortAscending
         ? v1.localeCompare(v2)
         : v2.localeCompare(v1);
-      console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
+      // console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
       return compare;
     });
-    console.log('sortCertifications: certifications =', certifications);
+    // console.log('sortCertifications: certifications =', certifications);
   };
 
   const sortIndicator = column => {
@@ -262,7 +265,9 @@ const CertificationReportPage = () => {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
       >
-        <DialogTitle>Edit Certification</DialogTitle>
+        <DialogTitle>
+          {selectedCertification.id ? 'Edit' : 'Add'} Certification
+        </DialogTitle>
         <DialogContent>
           <Autocomplete
             getOptionLabel={profile => profile.name || ''}
@@ -307,12 +312,12 @@ const CertificationReportPage = () => {
             value={selectedCertification?.description ?? ''}
           />
           <DatePickerField
-            date={new Date(selectedCertification?.date ?? null)}
+            date={new Date(selectedCertification.date)}
             label="Date Earned"
             setDate={date =>
               setSelectedCertification({
                 ...selectedCertification,
-                date
+                date: formatDate(date)
               })
             }
           />
