@@ -3,6 +3,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
 import {
+  Autocomplete,
   Button,
   Dialog,
   DialogActions,
@@ -14,9 +15,10 @@ import {
   Typography
 } from '@mui/material';
 
+import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
+import MemberSelector from '../components/member_selector/MemberSelector';
 import { AppContext } from '../context/AppContext';
 import { selectProfileMap } from '../context/selectors';
-import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
 import DatePickerField from '../components/date-picker-field/DatePickerField';
 import './CertificationReportPage.css';
 
@@ -41,6 +43,11 @@ const CertificationReportPage = () => {
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedCertification, setSelectedCertification] =
     useState(newCertification);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+
+  const profileMap = selectProfileMap(state);
+  const profiles = Object.values(profileMap);
+  profiles.sort((a, b) => a.name.localeCompare(b.name));
 
   const loadCertifications = async () => {
     try {
@@ -67,7 +74,6 @@ const CertificationReportPage = () => {
   };
 
   const certificationRow = cert => {
-    const profileMap = selectProfileMap(state);
     const profile = profileMap[cert.memberId];
     return (
       <tr key={cert.id}>
@@ -111,10 +117,12 @@ const CertificationReportPage = () => {
 
   const editCertification = cert => {
     setSelectedCertification(cert);
+    setSelectedProfile(profileMap[cert.memberId]);
     setDialogOpen(true);
   };
 
   const selectImage = cert => {
+    if (!cert.imageUrl) return;
     setSelectedCertification(cert);
     setImageDialogOpen(true);
   };
@@ -122,6 +130,7 @@ const CertificationReportPage = () => {
   const saveCertification = async () => {
     const { id } = selectedCertification;
     const url = id ? `${endpointBaseUrl}/${id}` : endpointBaseUrl;
+    selectedCertification.memberId = selectedProfile.id;
     try {
       const res = await fetch(url, {
         method: id ? 'PUT' : 'POST',
@@ -195,6 +204,22 @@ const CertificationReportPage = () => {
       >
         <DialogTitle>Edit Certification</DialogTitle>
         <DialogContent>
+          <Autocomplete
+            getOptionLabel={profile => profile.name || ''}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            onChange={(event, profile) => {
+              setSelectedProfile({ ...profile });
+            }}
+            options={profiles}
+            renderInput={params => (
+              <TextField
+                {...params}
+                className="fullWidth"
+                label="Team Member"
+              />
+            )}
+            value={selectedProfile}
+          />
           <TextField
             className="fullWidth"
             label="Name"
