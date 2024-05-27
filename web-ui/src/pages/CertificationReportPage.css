@@ -20,3 +20,9 @@
     background-color: var(--oci-orange);
   }
 }
+
+.certification-report-dialog {
+  .MuiFormControl-root {
+    margin-top: 2rem;
+  }
+}

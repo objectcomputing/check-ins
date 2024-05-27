@@ -160,15 +160,13 @@ const CertificationReportPage = () => {
         title="Delete Certification"
       />
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+      <Dialog
+        classes={{ root: 'certification-report-dialog' }}
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+      >
         <DialogTitle>Edit Certification</DialogTitle>
-        <DialogContent
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem'
-          }}
-        >
+        <DialogContent>
           <TextField
             className="fullWidth"
             label="Name*"
