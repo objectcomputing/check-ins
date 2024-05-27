@@ -69,8 +69,8 @@ import {
 import MemberSelector from '../member_selector/MemberSelector';
 import MemberSelectorDialog from '../member_selector/member_selector_dialog/MemberSelectorDialog';
 
-import DatePickerField from './periods/DatePickerField.jsx';
-import './periods/DatePickerField.css';
+import DatePickerField from '../date-picker-field/DatePickerField.jsx';
+import '../date-picker-field/DatePickerField.css';
 import './TeamReviews.css';
 
 const propTypes = {

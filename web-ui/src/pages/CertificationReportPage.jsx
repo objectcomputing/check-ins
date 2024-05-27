@@ -2,11 +2,22 @@ import { format } from 'date-fns';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Delete, Edit } from '@mui/icons-material';
-import { Box, IconButton, Modal, Tooltip, Typography } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material';
 
 import { AppContext } from '../context/AppContext';
 import { selectProfileMap } from '../context/selectors';
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
+import DatePickerField from '../components/date-picker-field/DatePickerField';
 import './CertificationReportPage.css';
 
 const modalWidth = 600;
@@ -33,8 +44,9 @@ const CertificationReportPage = () => {
   const { state } = useContext(AppContext);
   const [certifications, setCertifications] = useState([]);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
 
   const loadCertifications = async () => {
     try {
@@ -63,7 +75,7 @@ const CertificationReportPage = () => {
         <td>{cert.name}</td>
         <td>{cert.description}</td>
         <td>{format(new Date(cert.date), 'yyyy-MM-dd')}</td>
-        <td onClick={() => selectCertificate(cert)}>
+        <td onClick={() => selectImage(cert)}>
           <img src={cert.imageUrl} />
         </td>
         <td>
@@ -97,11 +109,22 @@ const CertificationReportPage = () => {
     }
   };
 
-  const editCertification = cert => {};
-
-  const selectCertificate = cert => {
+  const editCertification = cert => {
     setSelectedCertificate(cert);
-    setModalOpen(true);
+    setDialogOpen(true);
+  };
+
+  const selectImage = cert => {
+    setSelectedCertificate(cert);
+    setImageDialogOpen(true);
+  };
+
+  const updateCertification = cert => {
+    console.log(
+      'CertificationReportPage.jsx updateCertification: cert =',
+      cert
+    );
+    setDialogOpen(false);
   };
 
   return (
@@ -112,7 +135,7 @@ const CertificationReportPage = () => {
             <th>Member</th>
             <th>Name</th>
             <th>Description</th>
-            <th>Date</th>
+            <th>Date Earned</th>
             <th>Image</th>
             <th>Actions</th>
           </tr>
@@ -120,16 +143,14 @@ const CertificationReportPage = () => {
         <tbody>{certifications.map(certificationRow)}</tbody>
       </table>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <Box sx={modalStyle}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Certificate Image
-          </Typography>
+      <Dialog open={imageDialogOpen} onClose={() => setImageDialogOpen(false)}>
+        <DialogTitle>Certification Image</DialogTitle>
+        <DialogContent>
           {selectedCertificate?.imageUrl && (
             <img src={selectedCertificate.imageUrl} style={{ width: '100%' }} />
           )}
-        </Box>
-      </Modal>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmationDialog
         open={confirmDeleteOpen}
@@ -138,6 +159,43 @@ const CertificationReportPage = () => {
         setOpen={setConfirmDeleteOpen}
         title="Delete Certification"
       />
+
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Edit Certification</DialogTitle>
+        <DialogContent
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem'
+          }}
+        >
+          <TextField
+            className="fullWidth"
+            label="Name*"
+            placeholder="Certificate Name"
+            required
+            onChange={e => (selectedCertificate.name = e.target.value)}
+            value={selectedCertificate?.name ?? ''}
+          />
+          <TextField
+            className="fullWidth"
+            label="Description"
+            placeholder="Description"
+            required
+            onChange={e => (selectedCertificate.description = e.target.value)}
+            value={selectedCertificate?.description ?? ''}
+          />
+          <DatePickerField
+            date={new Date(selectedCertificate?.date ?? null)}
+            setDate={date => (certification.date = date)}
+            label="Date Earned"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button onClick={updateCertification}>Save</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
