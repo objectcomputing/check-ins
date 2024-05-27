@@ -33,7 +33,10 @@ const center = {
 
 const endpointBaseUrl = 'http://localhost:3000/certification';
 
-const newCertification = { date: format(new Date(), 'yyyy-MM-dd') };
+const formatDate = date => format(date, 'yyyy-MM-dd');
+const newCertification = { date: formatDate(new Date()) };
+
+const tableColumns = ['Member', 'Name', 'Description', 'Date Earned', 'Image'];
 
 const CertificationReportPage = () => {
   const { state } = useContext(AppContext);
@@ -44,6 +47,8 @@ const CertificationReportPage = () => {
   const [selectedCertification, setSelectedCertification] =
     useState(newCertification);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [sortColumn, setSortColumn] = useState('Member');
+  const [sortAscending, setSortAscending] = useState(true);
 
   const profileMap = selectProfileMap(state);
   const profiles = Object.values(profileMap);
@@ -52,20 +57,43 @@ const CertificationReportPage = () => {
   const loadCertifications = async () => {
     try {
       const res = await fetch(endpointBaseUrl);
-      const data = await res.json();
-      setCertifications(data);
+      const certifications = await res.json();
+      sortCertifications(certifications);
+      setCertifications(certifications);
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
-    loadCertifications();
-  }, []);
+    if (profileMap) loadCertifications();
+  }, [profileMap]);
+
+  useEffect(() => {
+    if (!profileMap) return;
+    sortCertifications(certifications);
+    setCertifications([...certifications]);
+  }, [profileMap, sortAscending, sortColumn]);
 
   const addCertification = () => {
     setSelectedCertification(newCertification);
     setDialogOpen(true);
+  };
+
+  const certValue = cert => {
+    switch (sortColumn) {
+      case 'Date Earned':
+        return cert.date;
+      case 'Description':
+        return cert.description;
+      case 'Image':
+        return cert.imageUrl || '';
+      case 'Member':
+        const profile = profileMap[cert.memberId];
+        return profile?.name ?? '';
+      case 'Name':
+        return cert.name;
+    }
   };
 
   const confirmDelete = cert => {
@@ -80,7 +108,7 @@ const CertificationReportPage = () => {
         <td>{profile?.name ?? 'unknown'}</td>
         <td>{cert.name}</td>
         <td>{cert.description}</td>
-        <td>{format(new Date(cert.date), 'yyyy-MM-dd')}</td>
+        <td>{formatDate(new Date(cert.date))}</td>
         <td onClick={() => selectImage(cert)}>
           <img src={cert.imageUrl} />
         </td>
@@ -152,6 +180,33 @@ const CertificationReportPage = () => {
     setDialogOpen(false);
   };
 
+  const sortCertifications = certifications => {
+    certifications.sort((c1, c2) => {
+      const v1 = certValue(c1);
+      const v2 = certValue(c2);
+      const compare = sortAscending
+        ? v1.localeCompare(v2)
+        : v2.localeCompare(v1);
+      console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
+      return compare;
+    });
+    console.log('sortCertifications: certifications =', certifications);
+  };
+
+  const sortIndicator = column => {
+    if (column !== sortColumn) return '';
+    return ' ' + (sortAscending ? '🔼' : '🔽');
+  };
+
+  const sortTable = column => {
+    if (column === sortColumn) {
+      setSortAscending(ascending => !ascending);
+    } else {
+      setSortColumn(column);
+      setSortAscending(true);
+    }
+  };
+
   return (
     <div id="certification-report-page">
       <div className="column">
@@ -165,12 +220,17 @@ const CertificationReportPage = () => {
         <table>
           <thead>
             <tr>
-              <th>Member</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Date Earned</th>
-              <th>Image</th>
-              <th>Actions</th>
+              {tableColumns.map(column => (
+                <th
+                  key={column}
+                  onClick={() => sortTable(column)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {column}
+                  {sortIndicator(column)}
+                </th>
+              ))}
+              <th key="Actions">Actions</th>
             </tr>
           </thead>
           <tbody>{certifications.map(certificationRow)}</tbody>
