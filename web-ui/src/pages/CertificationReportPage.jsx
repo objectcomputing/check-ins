@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+//TODO: Use useCallback to prevent recreating functions?
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
@@ -11,44 +12,36 @@ import {
   DialogTitle,
   IconButton,
   TextField,
-  Tooltip,
-  Typography
+  Tooltip
 } from '@mui/material';
 
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
-import MemberSelector from '../components/member_selector/MemberSelector';
 import { AppContext } from '../context/AppContext';
 import { selectProfileMap } from '../context/selectors';
 import DatePickerField from '../components/date-picker-field/DatePickerField';
 import './CertificationReportPage.css';
 
-const modalWidth = 600;
-
-const center = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)'
-};
-
-const endpointBaseUrl = 'http://localhost:3000/certification';
+const certificationBaseUrl = 'http://localhost:3000/certification';
+const earnedCertificationBaseUrl = 'http://localhost:3000/earned-certification';
 
 const formatDate = date =>
   date instanceof Date
     ? format(date, 'yyyy-MM-dd')
     : `${date.$y}-${date.$M + 1}-${date.$D}`;
 
-const newCertification = { date: formatDate(new Date()) };
+const newEarned = { date: formatDate(new Date()) };
 const tableColumns = ['Member', 'Name', 'Description', 'Date Earned', 'Image'];
 
 const CertificationReportPage = () => {
   const { state } = useContext(AppContext);
   const [certifications, setCertifications] = useState([]);
+  const [certificationMap, setCertificationMap] = useState({});
+  const [earnedCertifications, setEarnedCertifications] = useState([]);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
-  const [selectedCertification, setSelectedCertification] =
-    useState(newCertification);
+  const [selectedCertification, setSelectedCertification] = useState(null);
+  const [selectedEarned, setSelectedEarned] = useState(newEarned);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [sortColumn, setSortColumn] = useState('Member');
   const [sortAscending, setSortAscending] = useState(true);
@@ -59,10 +52,20 @@ const CertificationReportPage = () => {
 
   const loadCertifications = async () => {
     try {
-      const res = await fetch(endpointBaseUrl);
-      const certifications = await res.json();
-      sortCertifications(certifications);
-      setCertifications(certifications);
+      let res = await fetch(certificationBaseUrl);
+      const certs = await res.json();
+      setCertifications(certs.sort((c1, c2) => c1.name.localeCompare(c2.name)));
+
+      const certMap = certs.reduce((map, cert) => {
+        map[cert.id] = cert;
+        return map;
+      }, {});
+      setCertificationMap(certMap);
+
+      res = await fetch(earnedCertificationBaseUrl);
+      const earned = await res.json();
+      sortEarnedCertifications(earned);
+      setEarnedCertifications(earned);
     } catch (err) {
       console.error(err);
     }
@@ -74,12 +77,12 @@ const CertificationReportPage = () => {
 
   useEffect(() => {
     if (!profileMap) return;
-    sortCertifications(certifications);
-    setCertifications([...certifications]);
+    sortEarnedCertifications(earnedCertifications);
+    setEarnedCertifications([...earnedCertifications]);
   }, [profileMap, sortAscending, sortColumn]);
 
-  const addCertification = () => {
-    setSelectedCertification(newCertification);
+  const addEarnedCertification = () => {
+    setSelectedEarned(newEarned);
     setDialogOpen(true);
   };
 
@@ -99,33 +102,36 @@ const CertificationReportPage = () => {
     }
   };
 
-  const confirmDelete = cert => {
-    setSelectedCertification(cert);
+  const confirmDelete = earned => {
+    setSelectedEarned(earned);
     setConfirmDeleteOpen(true);
   };
 
-  const certificationRow = cert => {
-    const profile = profileMap[cert.memberId];
+  const earnedCertificationRow = earned => {
+    const profile = profileMap[earned.memberId];
     return (
-      <tr key={cert.id}>
+      <tr key={earned.id}>
         <td>{profile?.name ?? 'unknown'}</td>
-        <td>{cert.name}</td>
-        <td>{cert.description}</td>
-        <td>{formatDate(new Date(cert.date))}</td>
-        <td onClick={() => selectImage(cert)}>
-          <img src={cert.imageUrl} />
+        <td>{certificationMap[earned.certificationId]?.name ?? 'unknown'}</td>
+        <td>{earned.description}</td>
+        <td>{formatDate(new Date(earned.date))}</td>
+        <td onClick={() => selectImage(earned)}>
+          <img src={earned.imageUrl} />
         </td>
         <td>
           <Tooltip title="Edit">
             <IconButton
               aria-label="Edit"
-              onClick={() => editCertification(cert)}
+              onClick={() => editEarnedCertification(earned)}
             >
               <Edit />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete">
-            <IconButton aria-label="Delete" onClick={() => confirmDelete(cert)}>
+            <IconButton
+              aria-label="Delete"
+              onClick={() => confirmDelete(earned)}
+            >
               <Delete />
             </IconButton>
           </Tooltip>
@@ -134,48 +140,49 @@ const CertificationReportPage = () => {
     );
   };
 
-  const deleteCertification = async cert => {
-    const url = endpointBaseUrl + '/' + cert.id;
+  const deleteEarnedCertification = async cert => {
+    const url = earnedCertificationBaseUrl + '/' + cert.id;
     try {
       const res = await fetch(url, { method: 'DELETE' });
-      setCertifications(certifications =>
-        certifications.filter(c => c.id !== cert.id)
-      );
+      setEarnedCertifications(earned => earned.filter(c => c.id !== cert.id));
     } catch (err) {
       console.error(err);
     }
   };
 
-  const editCertification = cert => {
-    setSelectedCertification(cert);
-    setSelectedProfile(profileMap[cert.memberId]);
+  const editEarnedCertification = earned => {
+    setSelectedEarned(earned);
+    setSelectedProfile(profileMap[earned.memberId]);
     setDialogOpen(true);
   };
 
-  const selectImage = cert => {
-    if (!cert.imageUrl) return;
-    setSelectedCertification(cert);
+  const selectImage = earned => {
+    if (!earned.imageUrl) return;
+    setSelectedEarned(earned);
     setImageDialogOpen(true);
   };
 
-  const saveCertification = async () => {
-    const { id } = selectedCertification;
-    const url = id ? `${endpointBaseUrl}/${id}` : endpointBaseUrl;
-    selectedCertification.memberId = selectedProfile.id;
+  const saveEarnedCertification = async () => {
+    const { id } = selectedEarned;
+    const url = id
+      ? `${earnedCertificationBaseUrl}/${id}`
+      : earnedCertificationBaseUrl;
+    selectedEarned.memberId = selectedProfile.id;
+    selectedEarned.certificationId = selectedCertification.id;
     try {
       const res = await fetch(url, {
         method: id ? 'PUT' : 'POST',
-        body: JSON.stringify(selectedCertification)
+        body: JSON.stringify(selectedEarned)
       });
-      const newCertification = await res.json();
-      setCertifications(certifications => {
+      const newEarned = await res.json();
+      setEarnedCertifications(earned => {
         if (id) {
-          const index = certifications.findIndex(c => c.id === id);
-          certifications[index] = newCertification;
+          const index = earned.findIndex(c => c.id === id);
+          earned[index] = newEarned;
         } else {
-          certifications.push(newCertification);
+          earned.push(newEarned);
         }
-        return [...certifications];
+        return [...earned];
       });
     } catch (err) {
       console.error(err);
@@ -183,17 +190,16 @@ const CertificationReportPage = () => {
     setDialogOpen(false);
   };
 
-  const sortCertifications = certifications => {
-    certifications.sort((c1, c2) => {
-      const v1 = certValue(c1);
-      const v2 = certValue(c2);
+  const sortEarnedCertifications = earned => {
+    earned.sort((e1, e2) => {
+      const v1 = certValue(e1);
+      const v2 = certValue(e2);
       const compare = sortAscending
         ? v1.localeCompare(v2)
         : v2.localeCompare(v1);
       // console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
       return compare;
     });
-    // console.log('sortCertifications: certifications =', certifications);
   };
 
   const sortIndicator = column => {
@@ -216,7 +222,7 @@ const CertificationReportPage = () => {
         <IconButton
           aria-label="Add"
           classes={{ root: 'add-button' }}
-          onClick={addCertification}
+          onClick={addEarnedCertification}
         >
           <AddCircleOutline />
         </IconButton>
@@ -236,25 +242,22 @@ const CertificationReportPage = () => {
               <th key="Actions">Actions</th>
             </tr>
           </thead>
-          <tbody>{certifications.map(certificationRow)}</tbody>
+          <tbody>{earnedCertifications.map(earnedCertificationRow)}</tbody>
         </table>
       </div>
 
       <Dialog open={imageDialogOpen} onClose={() => setImageDialogOpen(false)}>
         <DialogTitle>Certification Image</DialogTitle>
         <DialogContent>
-          {selectedCertification?.imageUrl && (
-            <img
-              src={selectedCertification.imageUrl}
-              style={{ width: '100%' }}
-            />
+          {selectedEarned?.imageUrl && (
+            <img src={selectedEarned.imageUrl} style={{ width: '100%' }} />
           )}
         </DialogContent>
       </Dialog>
 
       <ConfirmationDialog
         open={confirmDeleteOpen}
-        onYes={() => deleteCertification(selectedCertification)}
+        onYes={() => deleteEarnedCertification(selectedEarned)}
         question="Are you sure you want to delete this certification?"
         setOpen={setConfirmDeleteOpen}
         title="Delete Certification"
@@ -266,7 +269,7 @@ const CertificationReportPage = () => {
         onClose={() => setDialogOpen(false)}
       >
         <DialogTitle>
-          {selectedCertification.id ? 'Edit' : 'Add'} Certification
+          {selectedEarned.id ? 'Edit' : 'Add'} Certification
         </DialogTitle>
         <DialogContent>
           <Autocomplete
@@ -285,18 +288,21 @@ const CertificationReportPage = () => {
             )}
             value={selectedProfile}
           />
-          <TextField
-            className="fullWidth"
-            label="Name"
-            placeholder="Certification Name"
-            required
-            onChange={e =>
-              setSelectedCertification({
-                ...selectedCertification,
-                name: e.target.value
-              })
-            }
-            value={selectedCertification?.name ?? ''}
+          <Autocomplete
+            getOptionLabel={cert => cert?.name || 'unknown'}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            onChange={(event, cert) => {
+              setSelectedCertification({ ...cert });
+            }}
+            options={certifications}
+            renderInput={params => (
+              <TextField
+                {...params}
+                className="fullWidth"
+                label="Certification Name"
+              />
+            )}
+            value={selectedCertification}
           />
           <TextField
             className="fullWidth"
@@ -304,19 +310,19 @@ const CertificationReportPage = () => {
             placeholder="Description"
             required
             onChange={e =>
-              setSelectedCertification({
-                ...selectedCertification,
+              setSelectedEarned({
+                ...selectedEarned,
                 description: e.target.value
               })
             }
-            value={selectedCertification?.description ?? ''}
+            value={selectedEarned?.description ?? ''}
           />
           <DatePickerField
-            date={new Date(selectedCertification.date)}
+            date={new Date(selectedEarned.date)}
             label="Date Earned"
             setDate={date =>
-              setSelectedCertification({
-                ...selectedCertification,
+              setSelectedEarned({
+                ...selectedEarned,
                 date: formatDate(date)
               })
             }
@@ -326,17 +332,17 @@ const CertificationReportPage = () => {
             label="Image URL"
             placeholder="Image URL"
             onChange={e =>
-              setSelectedCertification({
-                ...selectedCertification,
+              setSelectedEarned({
+                ...selectedEarned,
                 imageUrl: e.target.value
               })
             }
-            value={selectedCertification?.imageUrl ?? ''}
+            value={selectedEarned?.imageUrl ?? ''}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button onClick={saveCertification}>Save</Button>
+          <Button onClick={saveEarnedCertification}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>
