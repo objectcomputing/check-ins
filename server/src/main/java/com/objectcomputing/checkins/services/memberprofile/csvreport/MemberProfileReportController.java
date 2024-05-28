@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.memberprofile.csvreport;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
@@ -23,19 +24,16 @@ import reactor.core.scheduler.Schedulers;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
-@Controller("/services/reports/member")
+@Controller(MemberProfileReportController.PATH)
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-public class MemberProfileReportController {
-
+class MemberProfileReportController {
+    public static final String PATH = "/services/reports/member";
     private static final Logger LOG = LoggerFactory.getLogger(com.objectcomputing.checkins.services.memberprofile.MemberProfileController.class);
     private final MemberProfileReportServices memberProfileReportServices;
-    private final Scheduler ioScheduler;
 
-    public MemberProfileReportController(MemberProfileReportServices memberProfileReportServices,
-                                         @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    MemberProfileReportController(MemberProfileReportServices memberProfileReportServices) {
         this.memberProfileReportServices = memberProfileReportServices;
-        this.ioScheduler = Schedulers.fromExecutorService(ioExecutorService);
     }
 
     /**
@@ -45,17 +43,16 @@ public class MemberProfileReportController {
      */
     @Post(produces = MediaType.TEXT_CSV)
     @RequiredPermission(Permission.CAN_VIEW_PROFILE_REPORT)
-    public Mono<MutableHttpResponse<File>> getCsvFile(@Nullable @Body MemberProfileReportQueryDTO dto) {
-        return Mono.defer(() -> Mono.just(memberProfileReportServices.generateFile(dto)))
-                .subscribeOn(ioScheduler)
-                .map(file -> HttpResponse
-                        .ok(file)
-                        .header("Content-Disposition", String.format("attachment; filename=%s", file.getName())))
-                .onErrorResume(error -> {
-                    LOG.error("Something went terribly wrong during export... ", error);
-                    return Mono.just(HttpResponse.serverError());
-                });
+    HttpResponse<File> getCsvFile(@Nullable @Body MemberProfileReportQueryDTO dto) {
+        try {
+            File file = memberProfileReportServices.generateFile(dto);
+            return HttpResponse
+                    .ok(file)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
+        } catch (Exception error) {
+            LOG.error("Something went terribly wrong during export... ", error);
+            return HttpResponse.serverError();
+        }
     }
-
 }
 
