@@ -138,25 +138,6 @@ const EarnedCertificationsTable = () => {
     [certificationDialogOpen, certificationName]
   );
 
-  const certValue = useCallback(
-    earned => {
-      switch (sortColumn) {
-        case 'Date Earned':
-          return earned.date;
-        case 'Description':
-          return earned.description;
-        case 'Image':
-          return earned.imageUrl || '';
-        case 'Member':
-          const profile = profileMap[earned.memberId];
-          return profile?.name ?? '';
-        case 'Name':
-          return certificationMap[earned.certificationId]?.name ?? '';
-      }
-    },
-    [certificationMap, profileMap]
-  );
-
   const confirmDelete = useCallback(earned => {
     setSelectedEarned(earned);
     setConfirmDeleteOpen(true);
@@ -330,6 +311,25 @@ const EarnedCertificationsTable = () => {
     [earnedCertifications, sortAscending, sortColumn]
   );
 
+  const earnedValue = useCallback(
+    earned => {
+      switch (sortColumn) {
+        case 'Date Earned':
+          return earned.date;
+        case 'Description':
+          return earned.description;
+        case 'Image':
+          return earned.imageUrl || '';
+        case 'Member':
+          const profile = profileMap[earned.memberId];
+          return profile?.name ?? '';
+        case 'Name':
+          return certificationMap[earned.certificationId]?.name ?? '';
+      }
+    },
+    [certificationMap, profileMap, sortColumn]
+  );
+
   const editEarnedCertification = useCallback(
     earned => {
       setSelectedEarned(earned);
@@ -413,8 +413,8 @@ const EarnedCertificationsTable = () => {
   const sortEarnedCertifications = useCallback(
     earned => {
       earned.sort((e1, e2) => {
-        const v1 = certValue(e1);
-        const v2 = certValue(e2);
+        const v1 = earnedValue(e1);
+        const v2 = earnedValue(e2);
         const compare = sortAscending
           ? v1.localeCompare(v2)
           : v2.localeCompare(v1);
