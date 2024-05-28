@@ -92,19 +92,19 @@ const CertificationReportPage = () => {
     setEarnedDialogOpen(true);
   };
 
-  const certValue = cert => {
+  const certValue = earned => {
     switch (sortColumn) {
       case 'Date Earned':
-        return cert.date;
+        return earned.date;
       case 'Description':
-        return cert.description;
+        return earned.description;
       case 'Image':
-        return cert.imageUrl || '';
+        return earned.imageUrl || '';
       case 'Member':
-        const profile = profileMap[cert.memberId];
+        const profile = profileMap[earned.memberId];
         return profile?.name ?? '';
       case 'Name':
-        return cert.name;
+        return certificationMap[earned.certificationId]?.name ?? '';
     }
   };
 
