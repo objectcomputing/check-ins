@@ -34,11 +34,13 @@ const tableColumns = ['Member', 'Name', 'Description', 'Date Earned', 'Image'];
 
 const CertificationReportPage = () => {
   const { state } = useContext(AppContext);
+  const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
+  const [certificationName, setCertificationName] = useState('');
   const [certifications, setCertifications] = useState([]);
   const [certificationMap, setCertificationMap] = useState({});
   const [earnedCertifications, setEarnedCertifications] = useState([]);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [earnedDialogOpen, setEarnedDialogOpen] = useState(false);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedCertification, setSelectedCertification] = useState(null);
   const [selectedEarned, setSelectedEarned] = useState(newEarned);
@@ -81,9 +83,13 @@ const CertificationReportPage = () => {
     setEarnedCertifications([...earnedCertifications]);
   }, [profileMap, sortAscending, sortColumn]);
 
+  const addCertification = () => {
+    setCertificationDialogOpen(true);
+  };
+
   const addEarnedCertification = () => {
     setSelectedEarned(newEarned);
-    setDialogOpen(true);
+    setEarnedDialogOpen(true);
   };
 
   const certValue = cert => {
@@ -153,13 +159,27 @@ const CertificationReportPage = () => {
   const editEarnedCertification = earned => {
     setSelectedEarned(earned);
     setSelectedProfile(profileMap[earned.memberId]);
-    setDialogOpen(true);
+    setEarnedDialogOpen(true);
   };
 
-  const selectImage = earned => {
-    if (!earned.imageUrl) return;
-    setSelectedEarned(earned);
-    setImageDialogOpen(true);
+  const saveCertification = async () => {
+    try {
+      const res = await fetch(certificationBaseUrl, {
+        method: 'POST',
+        body: JSON.stringify({ name: certificationName })
+      });
+      const newCertification = await res.json();
+      setCertifications(certifications => {
+        return [...certifications, newCertification];
+      });
+      setCertificationMap(map => {
+        map[newCertification.id] = newCertification;
+        return map;
+      });
+    } catch (err) {
+      console.error(err);
+    }
+    setCertificationDialogOpen(false);
   };
 
   const saveEarnedCertification = async () => {
@@ -187,7 +207,13 @@ const CertificationReportPage = () => {
     } catch (err) {
       console.error(err);
     }
-    setDialogOpen(false);
+    setEarnedDialogOpen(false);
+  };
+
+  const selectImage = earned => {
+    if (!earned.imageUrl) return;
+    setSelectedEarned(earned);
+    setImageDialogOpen(true);
   };
 
   const sortEarnedCertifications = earned => {
@@ -220,7 +246,7 @@ const CertificationReportPage = () => {
     <div id="certification-report-page">
       <div className="column">
         <IconButton
-          aria-label="Add"
+          aria-label="Add Earned Certification"
           classes={{ root: 'add-button' }}
           onClick={addEarnedCertification}
         >
@@ -265,11 +291,11 @@ const CertificationReportPage = () => {
 
       <Dialog
         classes={{ root: 'certification-report-dialog' }}
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        open={earnedDialogOpen}
+        onClose={() => setEarnedDialogOpen(false)}
       >
         <DialogTitle>
-          {selectedEarned.id ? 'Edit' : 'Add'} Certification
+          {selectedEarned.id ? 'Edit' : 'Add'} Earned Certification
         </DialogTitle>
         <DialogContent>
           <Autocomplete
@@ -304,6 +330,14 @@ const CertificationReportPage = () => {
             )}
             value={selectedCertification}
           />
+
+          <IconButton
+            aria-label="Add Certification"
+            classes={{ root: 'add-button' }}
+            onClick={addCertification}
+          >
+            <AddCircleOutline />
+          </IconButton>
           <TextField
             className="fullWidth"
             label="Description"
@@ -341,8 +375,32 @@ const CertificationReportPage = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button onClick={() => setEarnedDialogOpen(false)}>Cancel</Button>
           <Button onClick={saveEarnedCertification}>Save</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        classes={{ root: 'certification-report-dialog' }}
+        open={certificationDialogOpen}
+        onClose={() => setCertificationDialogOpen(false)}
+      >
+        <DialogTitle>Add Certification</DialogTitle>
+        <DialogContent>
+          <TextField
+            className="fullWidth"
+            label="Certification Name"
+            placeholder="Certification Name"
+            required
+            onChange={e => setCertificationName(e.target.value)}
+            value={certificationName}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCertificationDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={saveCertification}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>
