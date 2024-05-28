@@ -82,10 +82,6 @@ const EarnedCertificationsTable = () => {
     setEarnedCertifications([...earnedCertifications]);
   }, [profileMap, sortAscending, sortColumn]);
 
-  const addCertification = useCallback(() => {
-    setCertificationDialogOpen(true);
-  }, []);
-
   const addEarnedCertification = useCallback(() => {
     setSelectedEarned(newEarned);
     setEarnedDialogOpen(true);
@@ -93,7 +89,6 @@ const EarnedCertificationsTable = () => {
 
   const cancelCertification = useCallback(() => {
     setCertificationName('');
-    setSelectedCertification(null);
     setCertificationDialogOpen(false);
   }, []);
 
@@ -192,7 +187,7 @@ const EarnedCertificationsTable = () => {
   const earnedDialog = useCallback(
     () => (
       <Dialog
-        classes={{ root: 'certification-report-dialog' }}
+        classes={{ root: 'earned-certifications-dialog' }}
         open={earnedDialogOpen}
         onClose={cancelEarnedCertification}
       >
@@ -217,31 +212,34 @@ const EarnedCertificationsTable = () => {
             )}
             value={selectedProfile}
           />
-          <Autocomplete
-            disableClearable
-            getOptionLabel={cert => cert?.name || 'unknown'}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            onChange={(event, cert) => {
-              setSelectedCertification({ ...cert });
-            }}
-            options={certifications}
-            renderInput={params => (
-              <TextField
-                {...params}
-                className="fullWidth"
-                label="Certification Name"
-              />
-            )}
-            value={selectedCertification}
-          />
+          <div>
+            <Autocomplete
+              disableClearable
+              getOptionLabel={cert => cert?.name || 'unknown'}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(event, cert) => {
+                setSelectedCertification({ ...cert });
+              }}
+              options={certifications}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  className="fullWidth"
+                  label="Certification Name"
+                />
+              )}
+              value={selectedCertification}
+            />
 
-          <IconButton
-            aria-label="Add Certification"
-            classes={{ root: 'add-button' }}
-            onClick={addCertification}
-          >
-            <AddCircleOutline />
-          </IconButton>
+            <IconButton
+              aria-label="Add Certification"
+              classes={{ root: 'add-button' }}
+              onClick={() => setCertificationDialogOpen(true)}
+            >
+              <AddCircleOutline />
+            </IconButton>
+          </div>
+
           <TextField
             className="fullWidth"
             label="Description"
@@ -451,7 +449,7 @@ const EarnedCertificationsTable = () => {
         <IconButton
           aria-label="Add Earned Certification"
           classes={{ root: 'add-button' }}
-          onClick={addEarnedCertification}
+          onClick={() => setCertificationDialogOpen(true)}
         >
           <AddCircleOutline />
         </IconButton>

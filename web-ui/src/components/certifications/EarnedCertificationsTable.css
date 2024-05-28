@@ -32,7 +32,11 @@
 }
 
 .earned-certifications-dialog {
-  .MuiFormControl-root {
-    margin-top: 2rem;
+  .MuiDialogContent-root {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    padding-top: 1rem !important;
   }
 }
