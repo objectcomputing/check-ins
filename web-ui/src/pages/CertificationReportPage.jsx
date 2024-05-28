@@ -92,6 +92,19 @@ const CertificationReportPage = () => {
     setEarnedDialogOpen(true);
   };
 
+  const cancelCertification = () => {
+    setCertificationName('');
+    setSelectedCertification(null);
+    setCertificationDialogOpen(false);
+  };
+
+  const cancelEarnedCertification = () => {
+    setCertificationName('');
+    setSelectedCertification(null);
+    setSelectedEarned(null);
+    setEarnedDialogOpen(false);
+  };
+
   const certValue = earned => {
     switch (sortColumn) {
       case 'Date Earned':
@@ -111,6 +124,16 @@ const CertificationReportPage = () => {
   const confirmDelete = earned => {
     setSelectedEarned(earned);
     setConfirmDeleteOpen(true);
+  };
+
+  const deleteEarnedCertification = async cert => {
+    const url = earnedCertificationBaseUrl + '/' + cert.id;
+    try {
+      const res = await fetch(url, { method: 'DELETE' });
+      setEarnedCertifications(earned => earned.filter(c => c.id !== cert.id));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const earnedCertificationRow = earned => {
@@ -146,19 +169,10 @@ const CertificationReportPage = () => {
     );
   };
 
-  const deleteEarnedCertification = async cert => {
-    const url = earnedCertificationBaseUrl + '/' + cert.id;
-    try {
-      const res = await fetch(url, { method: 'DELETE' });
-      setEarnedCertifications(earned => earned.filter(c => c.id !== cert.id));
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const editEarnedCertification = earned => {
     setSelectedEarned(earned);
     setSelectedProfile(profileMap[earned.memberId]);
+    setSelectedCertification(certificationMap[earned.certificationId]);
     setEarnedDialogOpen(true);
   };
 
@@ -176,6 +190,9 @@ const CertificationReportPage = () => {
         map[newCertification.id] = newCertification;
         return map;
       });
+      setSelectedCertification(newCertification);
+      setCertificationName('');
+      setSelectedCertification(null);
     } catch (err) {
       console.error(err);
     }
@@ -292,10 +309,10 @@ const CertificationReportPage = () => {
       <Dialog
         classes={{ root: 'certification-report-dialog' }}
         open={earnedDialogOpen}
-        onClose={() => setEarnedDialogOpen(false)}
+        onClose={cancelEarnedCertification}
       >
         <DialogTitle>
-          {selectedEarned.id ? 'Edit' : 'Add'} Earned Certification
+          {selectedEarned?.id ? 'Edit' : 'Add'} Earned Certification
         </DialogTitle>
         <DialogContent>
           <Autocomplete
@@ -352,7 +369,7 @@ const CertificationReportPage = () => {
             value={selectedEarned?.description ?? ''}
           />
           <DatePickerField
-            date={new Date(selectedEarned.date)}
+            date={new Date(selectedEarned?.date)}
             label="Date Earned"
             setDate={date =>
               setSelectedEarned({
@@ -375,7 +392,7 @@ const CertificationReportPage = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEarnedDialogOpen(false)}>Cancel</Button>
+          <Button onClick={cancelEarnedCertification}>Cancel</Button>
           <Button onClick={saveEarnedCertification}>Save</Button>
         </DialogActions>
       </Dialog>
@@ -383,7 +400,7 @@ const CertificationReportPage = () => {
       <Dialog
         classes={{ root: 'certification-report-dialog' }}
         open={certificationDialogOpen}
-        onClose={() => setCertificationDialogOpen(false)}
+        onClose={cancelCertification}
       >
         <DialogTitle>Add Certification</DialogTitle>
         <DialogContent>
@@ -397,10 +414,15 @@ const CertificationReportPage = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCertificationDialogOpen(false)}>
-            Cancel
+          <Button onClick={cancelCertification}>Cancel</Button>
+          <Button
+            disabled={certifications.some(
+              cert => cert.name === certificationName
+            )}
+            onClick={saveCertification}
+          >
+            Save
           </Button>
-          <Button onClick={saveCertification}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>
