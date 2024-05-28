@@ -183,6 +183,7 @@ const Certifications = () => {
         `Successfully merged ${selectedCertification.name} certification to ${selectedTarget.name}.`
       );
       setSelectedCertification(null);
+      // TODO: Find a way to refresh the earned certifications table to display the results.
     } catch (err) {
       console.error(err);
     }

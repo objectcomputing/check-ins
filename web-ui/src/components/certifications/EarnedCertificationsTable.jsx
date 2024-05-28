@@ -396,6 +396,8 @@ const EarnedCertificationsTable = () => {
         }
         return [...earned];
       });
+      setSelectedProfile(null);
+      setSelectedCertification(null);
     } catch (err) {
       console.error(err);
     }
@@ -449,7 +451,7 @@ const EarnedCertificationsTable = () => {
         <IconButton
           aria-label="Add Earned Certification"
           classes={{ root: 'add-button' }}
-          onClick={() => setCertificationDialogOpen(true)}
+          onClick={addEarnedCertification}
         >
           <AddCircleOutline />
         </IconButton>
