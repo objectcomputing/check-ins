@@ -14,9 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Mono;
 
 @Controller("/services/today")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Today")
 public class TodayController {
@@ -32,7 +31,7 @@ public class TodayController {
      *
      * @return {@link TodayResponseDTO today's events}
      */
-    @Get()
+    @Get
     public Mono<HttpResponse<TodayResponseDTO>> getTodaysEvents() {
         return Mono.fromCallable(todayServices::getTodaysEvents)
                 .map(HttpResponse::ok);

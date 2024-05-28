@@ -22,9 +22,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller(PrivateNoteController.PATH)
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "private-notes")
 class PrivateNoteController {
     public static final String PATH = "/services/private-notes";
@@ -42,7 +41,7 @@ class PrivateNoteController {
      * @param request
      * @return
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_PRIVATE_NOTE)
     HttpResponse<PrivateNote> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<?> request) {
         PrivateNote createPrivateNote = privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(), privateNote.getCreatedbyid(), privateNote.getDescription()));
@@ -58,7 +57,7 @@ class PrivateNoteController {
      * @param request
      * @return
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_PRIVATE_NOTE)
     HttpResponse<PrivateNote> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<?> request) {
         if (privateNote == null) {

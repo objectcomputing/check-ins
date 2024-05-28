@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.role.Role;
@@ -18,26 +19,29 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 @Controller("/services/member-profiles/current")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "current user")
 public class CurrentUserController {
 
     private final CurrentUserServices currentUserServices;
     private final RoleServices roleServices;
-
     private final RolePermissionServices rolePermissionServices;
+    private final MemberProfileServices memberProfileServices;
 
-    public CurrentUserController(CurrentUserServices currentUserServices, RoleServices roleServices, RolePermissionServices rolePermissionServices) {
+    public CurrentUserController(CurrentUserServices currentUserServices, RoleServices roleServices, RolePermissionServices rolePermissionServices, MemberProfileServices memberProfileServices) {
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
         this.rolePermissionServices = rolePermissionServices;
+        this.memberProfileServices = memberProfileServices;
     }
 
     /**
@@ -60,6 +64,9 @@ public class CurrentUserController {
         String lastName = name != null ? name.substring(name.indexOf(' ') + 1).trim() : "";
 
         MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
+
+        user.setLastSeen(LocalDate.now());
+        memberProfileServices.updateProfile(user);
         List<Permission> permissions = rolePermissionServices.findUserPermissions(user.getId());
 
         Set<Role> roles = roleServices.findUserRoles(user.getId());

@@ -24,9 +24,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller(AgendaItemController.PATH)
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "agenda-items")
 class AgendaItemController {
     public static final String PATH = "/services/agenda-items";

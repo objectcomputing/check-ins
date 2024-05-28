@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 
 @Controller(MemberProfileReportController.PATH)
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 class MemberProfileReportController {
     public static final String PATH = "/services/reports/member";

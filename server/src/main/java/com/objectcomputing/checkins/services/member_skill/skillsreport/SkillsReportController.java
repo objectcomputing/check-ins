@@ -17,12 +17,9 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 
-;
-
 @Controller("/reports/skills")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skills-report")
 public class SkillsReportController {
@@ -38,7 +35,7 @@ public class SkillsReportController {
      * @param requestBody {@link SkillsReportRequestDTO} Body of the request
      * @return {@link SkillsReportResponseDTO} Returned skills report
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_VIEW_SKILLS_REPORT)
     public Mono<HttpResponse<SkillsReportResponseDTO>> reportSkills(@Body @Valid @NotNull SkillsReportRequestDTO requestBody,
                                                                     HttpRequest<?> request) {

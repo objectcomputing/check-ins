@@ -22,9 +22,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller(QuestionController.PATH)
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "questions")
 class QuestionController {
 
@@ -42,7 +41,7 @@ class QuestionController {
      * @return {@link HttpResponse<QuestionResponseDTO>}
      */
 
-    @Post()
+    @Post
     HttpResponse<QuestionResponseDTO> createAQuestion(@Body @Valid QuestionCreateDTO question) {
         Question newQuestion = questionService.saveQuestion(toModel(question));
         URI location = UriBuilder.of(PATH).path(newQuestion.getId().toString()).build();
@@ -93,7 +92,7 @@ class QuestionController {
      * @param question, {@link QuestionUpdateDTO}
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
-    @Put()
+    @Put
     HttpResponse<QuestionResponseDTO> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<?> request) {
         if (question == null) {
             return HttpResponse.ok();

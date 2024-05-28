@@ -35,6 +35,7 @@ import java.util.Map;
 
 @Requires(env = Environments.LOCAL)
 @Controller("/oauth/login/google")
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_ANONYMOUS)
 public class LocalLoginController {
 

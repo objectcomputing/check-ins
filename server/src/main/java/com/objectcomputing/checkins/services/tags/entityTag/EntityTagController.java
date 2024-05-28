@@ -22,9 +22,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/entity-tags")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "entity-tags")
 
 public class EntityTagController {
@@ -41,7 +40,7 @@ public class EntityTagController {
      * @param entityTag, {@link EntityTagCreateDTO}
      * @return {@link HttpResponse<  EntityTag  >}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<EntityTag>> createAEntityTag(@Body @Valid @NotNull EntityTagCreateDTO entityTag, HttpRequest<?> request) {
         return Mono.fromCallable(() -> entityTagServices.save(new EntityTag(entityTag.getEntityId(),
                 entityTag.getTagId(), entityTag.getType())))

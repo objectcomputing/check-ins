@@ -2,8 +2,8 @@ package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpStatusCodes;
-import com.google.api.services.admin.directory.Directory;
-import com.google.api.services.admin.directory.model.UserPhoto;
+import com.google.api.services.directory.Directory;
+import com.google.api.services.directory.model.UserPhoto;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;

@@ -19,9 +19,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller("/services/roles")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "roles")
 public class RoleController {
 
@@ -37,7 +36,7 @@ public class RoleController {
      * @param role, {@link RoleCreateDTO}
      * @return {@link HttpResponse <Role>}
      */
-    @Post()
+    @Post
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Mono<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role, HttpRequest<?> request) {
         return Mono.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription())))
@@ -51,7 +50,7 @@ public class RoleController {
      * @param role, {@link Role}
      * @return {@link HttpResponse<Role>}
      */
-    @Put()
+    @Put
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Mono<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<?> request) {
         return Mono.fromCallable(() -> roleServices.update(role))
@@ -83,7 +82,7 @@ public class RoleController {
      *
      * @return {@link Role}
      */
-    @Get()
+    @Get
     public Mono<HttpResponse<List<Role>>> findAll() {
         return Mono.fromCallable(roleServices::findAllRoles)
                 .map(HttpResponse::ok);

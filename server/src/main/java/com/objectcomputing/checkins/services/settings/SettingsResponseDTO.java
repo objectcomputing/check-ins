@@ -18,12 +18,22 @@ public class SettingsResponseDTO {
     @Schema(description = "id of the setting")
     private UUID id;
 
-    @NotNull
     @NotBlank
     @Schema(description = "name of the setting")
     private String name;
-    
+
+    @NotBlank
+    @Schema(description = "description for the setting")
+    private String description;
+
     @NotNull
+    @Schema(description = "category of the setting")
+    private SettingOption.Category category;
+
+    @NotNull
+    @Schema(description = "type of the setting")
+    private SettingOption.Type type;
+
     @NotBlank
     @Schema(description = "value of the setting")
     private String value;

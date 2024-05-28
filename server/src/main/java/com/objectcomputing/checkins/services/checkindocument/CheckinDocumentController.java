@@ -21,12 +21,9 @@ import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.checkindocument.CheckinDocumentController.PATH;
-
-@Controller(PATH)
-@ExecuteOn(TaskExecutors.IO)
+@Controller(CheckinDocumentController.PATH)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin documents")
 class CheckinDocumentController {
     public static final String PATH = "/services/checkin-documents";
@@ -56,7 +53,7 @@ class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
 
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_CHECKIN_DOCUMENT)
     HttpResponse<CheckinDocument> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument) {
         CheckinDocument createdCheckinDocument = checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(), checkinDocument.getUploadDocId()));
@@ -70,7 +67,7 @@ class CheckinDocumentController {
      * @param checkinDocument, {@link CheckinDocument}
      * @return {@link HttpResponse<CheckinDocument>}
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKIN_DOCUMENT)
     HttpResponse<?> update(@Body @Valid CheckinDocument checkinDocument) {
         if (checkinDocument == null) {

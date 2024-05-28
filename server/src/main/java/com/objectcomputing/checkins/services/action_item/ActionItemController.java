@@ -20,9 +20,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/action-items")
-@ExecuteOn(TaskExecutors.IO)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "action-items")
 public class ActionItemController {
 
@@ -36,7 +35,7 @@ public class ActionItemController {
      * @param actionItem, {@link ActionItemCreateDTO}
      * @return {@link HttpResponse <ActionItem>}
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
                                                      HttpRequest<?> request) {
@@ -54,7 +53,7 @@ public class ActionItemController {
      * @param actionItem, {@link ActionItem}
      * @return {@link HttpResponse< ActionItem >}
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<?> request) {
         ActionItem updatedActionItem = actionItemServices.update(actionItem);

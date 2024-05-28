@@ -18,7 +18,7 @@ exports[`renders correctly 1`] = `
       >
         <button
           aria-label="sentiment"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium selected css-1n6yaer-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1n6yaer-MuiButtonBase-root-MuiIconButton-root"
           data-mui-internal-clone-element="true"
           data-testid="score-button-0"
           tabindex="0"
@@ -84,7 +84,7 @@ exports[`renders correctly 1`] = `
         </button>
         <button
           aria-label="sentiment"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1ux1z47-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium selected css-1ux1z47-MuiButtonBase-root-MuiIconButton-root"
           data-mui-internal-clone-element="true"
           data-testid="score-button-2"
           tabindex="0"
@@ -243,7 +243,7 @@ exports[`renders correctly 1`] = `
       >
         <button
           aria-label="sentiment"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium selected css-1n6yaer-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1n6yaer-MuiButtonBase-root-MuiIconButton-root"
           data-mui-internal-clone-element="true"
           data-testid="score-button-0"
           tabindex="0"
@@ -309,7 +309,7 @@ exports[`renders correctly 1`] = `
         </button>
         <button
           aria-label="sentiment"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1ux1z47-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium selected css-1ux1z47-MuiButtonBase-root-MuiIconButton-root"
           data-mui-internal-clone-element="true"
           data-testid="score-button-2"
           tabindex="0"
@@ -456,12 +456,14 @@ exports[`renders correctly 1`] = `
       </div>
     </div>
     <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
-      disabled=""
-      tabindex="-1"
+      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
       type="button"
     >
       Submit
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
     </button>
   </div>
 </div>
