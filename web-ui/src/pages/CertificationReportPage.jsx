@@ -1,5 +1,4 @@
 import { format } from 'date-fns';
-//TODO: Use useCallback to prevent recreating functions?
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
@@ -35,24 +34,24 @@ const tableColumns = ['Member', 'Name', 'Description', 'Date Earned', 'Image'];
 const CertificationReportPage = () => {
   const { state } = useContext(AppContext);
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
+  const [certificationMap, setCertificationMap] = useState({});
   const [certificationName, setCertificationName] = useState('');
   const [certifications, setCertifications] = useState([]);
-  const [certificationMap, setCertificationMap] = useState({});
-  const [earnedCertifications, setEarnedCertifications] = useState([]);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [earnedCertifications, setEarnedCertifications] = useState([]);
   const [earnedDialogOpen, setEarnedDialogOpen] = useState(false);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedCertification, setSelectedCertification] = useState(null);
   const [selectedEarned, setSelectedEarned] = useState(newEarned);
   const [selectedProfile, setSelectedProfile] = useState(null);
-  const [sortColumn, setSortColumn] = useState('Member');
   const [sortAscending, setSortAscending] = useState(true);
+  const [sortColumn, setSortColumn] = useState('Member');
 
   const profileMap = selectProfileMap(state);
   const profiles = Object.values(profileMap);
   profiles.sort((a, b) => a.name.localeCompare(b.name));
 
-  const loadCertifications = async () => {
+  const loadCertifications = useCallback(async () => {
     try {
       let res = await fetch(certificationBaseUrl);
       const certs = await res.json();
@@ -71,7 +70,8 @@ const CertificationReportPage = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, []);
+  // }, [certifications, certificationMap, earnedCertifications]);
 
   useEffect(() => {
     if (profileMap) loadCertifications();
@@ -83,50 +83,53 @@ const CertificationReportPage = () => {
     setEarnedCertifications([...earnedCertifications]);
   }, [profileMap, sortAscending, sortColumn]);
 
-  const addCertification = () => {
+  const addCertification = useCallback(() => {
     setCertificationDialogOpen(true);
-  };
+  }, []);
 
-  const addEarnedCertification = () => {
+  const addEarnedCertification = useCallback(() => {
     setSelectedEarned(newEarned);
     setEarnedDialogOpen(true);
-  };
+  }, []);
 
-  const cancelCertification = () => {
+  const cancelCertification = useCallback(() => {
     setCertificationName('');
     setSelectedCertification(null);
     setCertificationDialogOpen(false);
-  };
+  }, []);
 
-  const cancelEarnedCertification = () => {
+  const cancelEarnedCertification = useCallback(() => {
     setCertificationName('');
     setSelectedCertification(null);
     setSelectedEarned(null);
     setEarnedDialogOpen(false);
-  };
+  }, []);
 
-  const certValue = earned => {
-    switch (sortColumn) {
-      case 'Date Earned':
-        return earned.date;
-      case 'Description':
-        return earned.description;
-      case 'Image':
-        return earned.imageUrl || '';
-      case 'Member':
-        const profile = profileMap[earned.memberId];
-        return profile?.name ?? '';
-      case 'Name':
-        return certificationMap[earned.certificationId]?.name ?? '';
-    }
-  };
+  const certValue = useCallback(
+    earned => {
+      switch (sortColumn) {
+        case 'Date Earned':
+          return earned.date;
+        case 'Description':
+          return earned.description;
+        case 'Image':
+          return earned.imageUrl || '';
+        case 'Member':
+          const profile = profileMap[earned.memberId];
+          return profile?.name ?? '';
+        case 'Name':
+          return certificationMap[earned.certificationId]?.name ?? '';
+      }
+    },
+    [certificationMap, profileMap]
+  );
 
-  const confirmDelete = earned => {
+  const confirmDelete = useCallback(earned => {
     setSelectedEarned(earned);
     setConfirmDeleteOpen(true);
-  };
+  }, []);
 
-  const deleteEarnedCertification = async cert => {
+  const deleteEarnedCertification = useCallback(async cert => {
     const url = earnedCertificationBaseUrl + '/' + cert.id;
     try {
       const res = await fetch(url, { method: 'DELETE' });
@@ -134,49 +137,55 @@ const CertificationReportPage = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, []);
 
-  const earnedCertificationRow = earned => {
-    const profile = profileMap[earned.memberId];
-    return (
-      <tr key={earned.id}>
-        <td>{profile?.name ?? 'unknown'}</td>
-        <td>{certificationMap[earned.certificationId]?.name ?? 'unknown'}</td>
-        <td>{earned.description}</td>
-        <td>{formatDate(new Date(earned.date))}</td>
-        <td onClick={() => selectImage(earned)}>
-          <img src={earned.imageUrl} />
-        </td>
-        <td>
-          <Tooltip title="Edit">
-            <IconButton
-              aria-label="Edit"
-              onClick={() => editEarnedCertification(earned)}
-            >
-              <Edit />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete">
-            <IconButton
-              aria-label="Delete"
-              onClick={() => confirmDelete(earned)}
-            >
-              <Delete />
-            </IconButton>
-          </Tooltip>
-        </td>
-      </tr>
-    );
-  };
+  const earnedCertificationRow = useCallback(
+    earned => {
+      const profile = profileMap[earned.memberId];
+      return (
+        <tr key={earned.id}>
+          <td>{profile?.name ?? 'unknown'}</td>
+          <td>{certificationMap[earned.certificationId]?.name ?? 'unknown'}</td>
+          <td>{earned.description}</td>
+          <td>{formatDate(new Date(earned.date))}</td>
+          <td onClick={() => selectImage(earned)}>
+            <img src={earned.imageUrl} />
+          </td>
+          <td>
+            <Tooltip title="Edit">
+              <IconButton
+                aria-label="Edit"
+                onClick={() => editEarnedCertification(earned)}
+              >
+                <Edit />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                aria-label="Delete"
+                onClick={() => confirmDelete(earned)}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </td>
+        </tr>
+      );
+    },
+    [certificationMap, profileMap]
+  );
 
-  const editEarnedCertification = earned => {
-    setSelectedEarned(earned);
-    setSelectedProfile(profileMap[earned.memberId]);
-    setSelectedCertification(certificationMap[earned.certificationId]);
-    setEarnedDialogOpen(true);
-  };
+  const editEarnedCertification = useCallback(
+    earned => {
+      setSelectedEarned(earned);
+      setSelectedProfile(profileMap[earned.memberId]);
+      setSelectedCertification(certificationMap[earned.certificationId]);
+      setEarnedDialogOpen(true);
+    },
+    [certificationMap, profileMap]
+  );
 
-  const saveCertification = async () => {
+  const saveCertification = useCallback(async () => {
     try {
       const res = await fetch(certificationBaseUrl, {
         method: 'POST',
@@ -196,9 +205,9 @@ const CertificationReportPage = () => {
       console.error(err);
     }
     setCertificationDialogOpen(false);
-  };
+  }, [certificationName, certifications, selectedCertification]);
 
-  const saveEarnedCertification = async () => {
+  const saveEarnedCertification = useCallback(async () => {
     const { id } = selectedEarned;
     const url = id
       ? `${earnedCertificationBaseUrl}/${id}`
@@ -224,15 +233,15 @@ const CertificationReportPage = () => {
       console.error(err);
     }
     setEarnedDialogOpen(false);
-  };
+  }, [selectedCertification, selectedEarned, selectedProfile]);
 
-  const selectImage = earned => {
+  const selectImage = useCallback(earned => {
     if (!earned.imageUrl) return;
     setSelectedEarned(earned);
     setImageDialogOpen(true);
-  };
+  }, []);
 
-  const sortEarnedCertifications = earned => {
+  const sortEarnedCertifications = useCallback(earned => {
     earned.sort((e1, e2) => {
       const v1 = certValue(e1);
       const v2 = certValue(e2);
@@ -242,21 +251,21 @@ const CertificationReportPage = () => {
       // console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
       return compare;
     });
-  };
+  }, []);
 
-  const sortIndicator = column => {
+  const sortIndicator = useCallback(column => {
     if (column !== sortColumn) return '';
     return ' ' + (sortAscending ? '🔼' : '🔽');
-  };
+  }, []);
 
-  const sortTable = column => {
+  const sortTable = useCallback(column => {
     if (column === sortColumn) {
       setSortAscending(ascending => !ascending);
     } else {
       setSortColumn(column);
       setSortAscending(true);
     }
-  };
+  }, []);
 
   return (
     <div id="certification-report-page">
