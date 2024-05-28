@@ -425,10 +425,13 @@ const CertificationsTable = () => {
     [sortAscending, sortColumn]
   );
 
-  const sortIndicator = useCallback(column => {
-    if (column !== sortColumn) return '';
-    return ' ' + (sortAscending ? '🔼' : '🔽');
-  }, []);
+  const sortIndicator = useCallback(
+    column => {
+      if (column !== sortColumn) return '';
+      return ' ' + (sortAscending ? '🔼' : '🔽');
+    },
+    [sortAscending, sortColumn]
+  );
 
   const sortTable = useCallback(
     column => {
