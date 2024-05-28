@@ -17,7 +17,6 @@ import java.util.List;
 
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "permission")
 @Controller("/services/permissions")
 public class PermissionController {

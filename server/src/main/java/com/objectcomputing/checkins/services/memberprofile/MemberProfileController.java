@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Controller("/services/member-profiles")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "member profiles")
 public class MemberProfileController {
 
