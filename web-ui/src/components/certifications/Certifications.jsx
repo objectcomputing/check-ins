@@ -26,6 +26,7 @@ const Certifications = () => {
   const [certifications, setCertifications] = useState([]);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedCertification, setSelectedCertification] = useState(null);
+  const [selectedTarget, setSelectedTarget] = useState(null);
 
   const loadCertifications = useCallback(async () => {
     try {
@@ -86,6 +87,36 @@ const Certifications = () => {
     [certificationDialogOpen, certificationName]
   );
 
+  const certificationSelect = useCallback(
+    (label, selected, setSelected) => (
+      <Autocomplete
+        disableClearable
+        getOptionLabel={cert => cert?.name || 'unknown'}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        onChange={(event, cert) => {
+          setSelected({ ...cert });
+        }}
+        options={certifications}
+        sx={{ width: 400 }}
+        renderInput={params => (
+          <TextField {...params} className="fullWidth" label={label} />
+        )}
+        renderOption={(props, option) => {
+          // React won't allow a key to be present in spread props.
+          const { key } = props;
+          delete props.key;
+          return (
+            <span {...props} key={key} style={{ backgroundColor: 'lightgray' }}>
+              {option.name}
+            </span>
+          );
+        }}
+        value={selected}
+      />
+    ),
+    [certifications]
+  );
+
   const createCertification = useCallback(
     async cert => {
       try {
@@ -134,6 +165,30 @@ const Certifications = () => {
     setCertificationDialogOpen(true);
   }, []);
 
+  const mergeCertification = useCallback(async () => {
+    const url = certificationBaseUrl + '/merge';
+    const sourceId = selectedCertification.id;
+    const targetId = selectedTarget.id;
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({ sourceId, targetId })
+      });
+      setCertifications(certs => certs.filter(cert => cert.id !== sourceId));
+      setCertificationMap(map => {
+        delete map[sourceId];
+        return map;
+      });
+      alert(
+        `Successfully merged ${selectedCertification.name} certification to ${selectedTarget.name}.`
+      );
+      setSelectedCertification(null);
+    } catch (err) {
+      console.error(err);
+    }
+    setCertificationDialogOpen(false);
+  }, [selectedCertification, selectedTarget]);
+
   const saveCertification = useCallback(async () => {
     try {
       const res = await fetch(certificationBaseUrl, {
@@ -158,34 +213,12 @@ const Certifications = () => {
 
   return (
     <div>
-      <Autocomplete
-        disableClearable
-        getOptionLabel={cert => cert?.name || 'unknown'}
-        isOptionEqualToValue={(option, value) => option.id === value.id}
-        onChange={(event, cert) => {
-          setSelectedCertification({ ...cert });
-        }}
-        options={certifications}
-        sx={{ width: 400 }}
-        renderInput={params => (
-          <TextField
-            {...params}
-            className="fullWidth"
-            label="Certification Name"
-          />
-        )}
-        renderOption={(props, option) => {
-          // React won't allow a key to present in spread props.
-          const { key } = props;
-          delete props.key;
-          return (
-            <span {...props} key={key} style={{ backgroundColor: 'lightgray' }}>
-              {option.name}
-            </span>
-          );
-        }}
-        value={selectedCertification}
-      />
+      {certificationSelect(
+        'Source Certification',
+        selectedCertification,
+        setSelectedCertification
+      )}
+
       <IconButton
         aria-label="Add Certification"
         classes={{ root: 'add-button' }}
@@ -193,6 +226,7 @@ const Certifications = () => {
       >
         <AddCircleOutline />
       </IconButton>
+
       {selectedCertification && (
         <>
           <Tooltip title="Edit">
@@ -210,6 +244,18 @@ const Certifications = () => {
           </Tooltip>
         </>
       )}
+
+      {certificationSelect(
+        'Target Certification',
+        selectedTarget,
+        setSelectedTarget
+      )}
+      <Button
+        disabled={!selectedCertification || !selectedTarget}
+        onClick={mergeCertification}
+      >
+        Merge Source to Target
+      </Button>
 
       {certificationDialog()}
 
