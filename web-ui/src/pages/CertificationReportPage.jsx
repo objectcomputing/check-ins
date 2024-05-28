@@ -182,17 +182,16 @@ const CertificationReportPage = () => {
         method: 'POST',
         body: JSON.stringify({ name: certificationName })
       });
-      const newCertification = await res.json();
-      setCertifications(certifications => {
-        return [...certifications, newCertification];
-      });
+      const newCert = await res.json();
+      setCertifications(certs =>
+        [...certs, newCert].sort((c1, c2) => c1.name.localeCompare(c2.name))
+      );
       setCertificationMap(map => {
-        map[newCertification.id] = newCertification;
+        map[newCert.id] = newCert;
         return map;
       });
-      setSelectedCertification(newCertification);
+      setSelectedCertification(newCert);
       setCertificationName('');
-      setSelectedCertification(null);
     } catch (err) {
       console.error(err);
     }
@@ -316,6 +315,7 @@ const CertificationReportPage = () => {
         </DialogTitle>
         <DialogContent>
           <Autocomplete
+            disableClearable
             getOptionLabel={profile => profile.name || ''}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(event, profile) => {
@@ -332,6 +332,7 @@ const CertificationReportPage = () => {
             value={selectedProfile}
           />
           <Autocomplete
+            disableClearable
             getOptionLabel={cert => cert?.name || 'unknown'}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(event, cert) => {
