@@ -78,7 +78,6 @@ const CertificationsTable = () => {
 
   useEffect(() => {
     if (!profileMap) return;
-    console.log('CertificationsTable.jsx: sorting', sortColumn, sortAscending);
     sortEarnedCertifications(earnedCertifications);
     setEarnedCertifications([...earnedCertifications]);
   }, [profileMap, sortAscending, sortColumn]);
@@ -328,7 +327,7 @@ const CertificationsTable = () => {
         <tbody>{earnedCertifications.map(earnedCertificationRow)}</tbody>
       </table>
     ),
-    [earnedCertifications]
+    [earnedCertifications, sortAscending, sortColumn]
   );
 
   const editEarnedCertification = useCallback(
@@ -411,17 +410,20 @@ const CertificationsTable = () => {
     setImageDialogOpen(true);
   }, []);
 
-  const sortEarnedCertifications = useCallback(earned => {
-    earned.sort((e1, e2) => {
-      const v1 = certValue(e1);
-      const v2 = certValue(e2);
-      const compare = sortAscending
-        ? v1.localeCompare(v2)
-        : v2.localeCompare(v1);
-      // console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
-      return compare;
-    });
-  }, []);
+  const sortEarnedCertifications = useCallback(
+    earned => {
+      earned.sort((e1, e2) => {
+        const v1 = certValue(e1);
+        const v2 = certValue(e2);
+        const compare = sortAscending
+          ? v1.localeCompare(v2)
+          : v2.localeCompare(v1);
+        // console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
+        return compare;
+      });
+    },
+    [sortAscending, sortColumn]
+  );
 
   const sortIndicator = useCallback(column => {
     if (column !== sortColumn) return '';
