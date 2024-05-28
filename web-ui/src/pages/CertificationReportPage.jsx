@@ -1,10 +1,8 @@
-import { format } from 'date-fns';
 import React from 'react';
-
-import CertificationsTable from '../components/certifications/CertificationsTable';
+import EarnedCertificationsTable from '../components/certifications/EarnedCertificationsTable';
 
 const CertificationReportPage = () => {
-  return <CertificationsTable />;
+  return <EarnedCertificationsTable />;
 };
 
 export default CertificationReportPage;

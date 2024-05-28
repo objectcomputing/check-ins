@@ -18,7 +18,7 @@ import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
 import { selectProfileMap } from '../../context/selectors';
-import './CertificationsTable.css';
+import './EarnedCertificationsTable.css';
 
 const certificationBaseUrl = 'http://localhost:3000/certification';
 const earnedCertificationBaseUrl = 'http://localhost:3000/earned-certification';
@@ -31,7 +31,7 @@ const formatDate = date =>
 const newEarned = { date: formatDate(new Date()) };
 const tableColumns = ['Member', 'Name', 'Description', 'Date Earned', 'Image'];
 
-const CertificationsTable = () => {
+const EarnedCertificationsTable = () => {
   const { state } = useContext(AppContext);
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});
@@ -107,7 +107,7 @@ const CertificationsTable = () => {
   const certificationDialog = useCallback(
     () => (
       <Dialog
-        classes={{ root: 'certification-report-dialog' }}
+        classes={{ root: 'earned-certification-dialog' }}
         open={certificationDialogOpen}
         onClose={cancelCertification}
       >
@@ -446,7 +446,7 @@ const CertificationsTable = () => {
   );
 
   return (
-    <div id="certification-report-page">
+    <div id="earned-certifications-table">
       <div className="column">
         <IconButton
           aria-label="Add Earned Certification"
@@ -473,4 +473,4 @@ const CertificationsTable = () => {
   );
 };
 
-export default CertificationsTable;
+export default EarnedCertificationsTable;

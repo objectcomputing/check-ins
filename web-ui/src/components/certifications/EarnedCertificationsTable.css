@@ -1,4 +1,4 @@
-#certification-report-page {
+#earned-certifications-table {
   margin: 0 auto;
   padding: 1rem;
 
@@ -31,7 +31,7 @@
   }
 }
 
-.certification-report-dialog {
+.earned-certifications-dialog {
   .MuiFormControl-root {
     margin-top: 2rem;
   }
