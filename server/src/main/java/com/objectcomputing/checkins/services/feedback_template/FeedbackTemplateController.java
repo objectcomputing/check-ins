@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Controller("/services/feedback/templates")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "feedback_templates")
 public class FeedbackTemplateController {
     private final FeedbackTemplateServices feedbackTemplateServices;
@@ -36,7 +35,7 @@ public class FeedbackTemplateController {
      * @param requestBody {@link FeedbackTemplateCreateDTO} New feedback template to create
      * @return {@link FeedbackTemplateResponseDTO}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<FeedbackTemplateResponseDTO>> save(@Body @Valid @NotNull FeedbackTemplateCreateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackTemplateServices.save(fromDTO(requestBody)))
                 .map(savedTemplate -> HttpResponse.created(fromEntity(savedTemplate))
@@ -49,7 +48,7 @@ public class FeedbackTemplateController {
      * @param requestBody {@link FeedbackTemplateUpdateDTO} The updated feedback template
      * @return {@link FeedbackTemplateResponseDTO}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<FeedbackTemplateResponseDTO>> update(@Body @Valid @NotNull FeedbackTemplateUpdateDTO requestBody) {
         return Mono.fromCallable(() -> feedbackTemplateServices.update(fromDTO(requestBody)))
                 .map(savedTemplate -> HttpResponse.ok(fromEntity(savedTemplate))

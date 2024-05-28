@@ -17,7 +17,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "Role Permissions")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Controller("/services/roles/role-permissions")
@@ -42,7 +41,7 @@ public class RolePermissionController {
     }
 
     @RequiredPermission(Permission.CAN_ASSIGN_ROLE_PERMISSIONS)
-    @Post()
+    @Post
     public Mono<HttpResponse<RolePermissionResponseDTO>> save(@Body @Valid RolePermissionDTO rolePermission) {
         return Mono.fromCallable(() -> rolePermissionServices.save(rolePermission.getRoleId(), Permission.fromName(rolePermission.getPermission())))
                 .map(savedRolePermission -> HttpResponse.created(fromEntity(savedRolePermission)));

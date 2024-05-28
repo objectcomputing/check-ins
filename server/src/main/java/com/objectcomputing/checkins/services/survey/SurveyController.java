@@ -22,7 +22,6 @@ import java.util.UUID;
 @Controller("/services/surveys")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name="survey")
 public class SurveyController {
 
@@ -57,7 +56,7 @@ public class SurveyController {
      * @return {@link HttpResponse<Survey>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<Survey>> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse, HttpRequest<?> request) {
         return Mono.fromCallable(() -> surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(),
                         surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription())))
@@ -71,7 +70,7 @@ public class SurveyController {
      * @param surveyResponse, {@link Survey}
      * @return {@link HttpResponse<Survey>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<Survey>> update(@Body @Valid @NotNull Survey surveyResponse, HttpRequest<?> request) {
         return Mono.fromCallable(() -> surveyResponseServices.update(surveyResponse))
                 .map(updatedSurvey -> HttpResponse.ok(updatedSurvey)

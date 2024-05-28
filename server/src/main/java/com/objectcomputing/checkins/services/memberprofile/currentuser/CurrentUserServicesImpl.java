@@ -13,6 +13,7 @@ import io.micronaut.security.utils.SecurityService;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Singleton
@@ -69,9 +70,9 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         if (emailProfile != null) {
             throw new AlreadyExistsException(String.format("Email %s already exists in database", workEmail));
         }
-
+        LocalDate lastSeen = LocalDate.now();
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
-                "", workEmail, "", null, "", null, null, null, null, null));
+                "", workEmail, "", null, "", null, null, null, null, null, lastSeen));
 
         Optional<Role> role = roleServices.findByRole("MEMBER");
         if(role.isPresent()){

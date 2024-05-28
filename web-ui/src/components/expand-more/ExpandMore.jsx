@@ -5,7 +5,7 @@ import { IconButton } from '@mui/material';
 const ExpandMore = styled(props => {
   const { expand, ...other } = props;
   return (
-    <IconButton {...other}>
+    <IconButton classes={{ root: 'expand-more' }} {...other}>
       {props.children ? props.children : <ExpandMoreIcon />}
     </IconButton>
   );

@@ -22,4 +22,5 @@ public interface MemberProfileServices {
 
     List<MemberProfile> getSupervisorsForId(UUID id);
 
+    MemberProfile updateProfile(MemberProfile memberProfile);
 }

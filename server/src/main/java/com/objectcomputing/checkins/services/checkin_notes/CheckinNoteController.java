@@ -22,7 +22,6 @@ import java.util.UUID;
 @Controller("/services/checkin-notes")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin-notes")
 public class CheckinNoteController {
 
@@ -39,7 +38,7 @@ public class CheckinNoteController {
      * @param request
      * @return
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public HttpResponse<CheckinNote> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote, HttpRequest<?> request) {
         CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(), checkinNote.getCreatedbyid()
@@ -56,7 +55,7 @@ public class CheckinNoteController {
      * @param request
      * @return
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<CheckinNote> updateCheckinNote(@Body @Valid CheckinNote checkinNote, HttpRequest<?> request) {
         CheckinNote updateCheckinNote = checkinNoteServices.update(checkinNote);

@@ -16,6 +16,7 @@ import Header from '../header/Header';
 import HomePage from '../../pages/HomePage';
 import PeoplePage from '../../pages/PeoplePage';
 import PulsePage from '../../pages/PulsePage';
+import PulseReportPage from '../../pages/PulseReportPage';
 import MemberProfilePage from '../../pages/MemberProfilePage';
 import Roles from '../admin/roles/Roles';
 import SkillReportPage from '../../pages/SkillReportPage';
@@ -146,6 +147,10 @@ export default function Routes() {
           <Route path="/annual-review-reports">
             <Header title="Annual Review Report" />
             <AnnualReviewReportPage />
+          </Route>
+          <Route path="/pulse-reports">
+            <Header title="Pulse Report" />
+            <PulseReportPage />
           </Route>
           <Route path="/admin/roles">
             <Header title="Roles"></Header>

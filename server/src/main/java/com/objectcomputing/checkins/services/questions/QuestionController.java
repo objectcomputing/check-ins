@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @Controller("/services/questions")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "questions")
 public class QuestionController {
 
@@ -40,7 +39,7 @@ public class QuestionController {
      * @return {@link HttpResponse<QuestionResponseDTO>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<QuestionResponseDTO>> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<?> request) {
         return Mono.fromCallable(() -> questionService.saveQuestion(toModel(question)))
                 .map(newQuestion -> HttpResponse.created(fromModel(newQuestion))
@@ -98,7 +97,7 @@ public class QuestionController {
      * @param question, {@link QuestionUpdateDTO}
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<QuestionResponseDTO>> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<?> request) {
         if (question == null) {
             return Mono.just(HttpResponse.ok());

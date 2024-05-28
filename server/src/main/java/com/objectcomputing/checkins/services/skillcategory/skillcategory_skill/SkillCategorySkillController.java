@@ -19,7 +19,6 @@ import java.net.URI;
 @Controller("/services/skills/category-skills")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "skillcategory_skills")
 public class SkillCategorySkillController {
 
@@ -29,7 +28,7 @@ public class SkillCategorySkillController {
         this.skillCategorySkillServices = skillCategorySkillServices;
     }
 
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkillId dto, HttpRequest<?> request) {
         return Mono.fromCallable(() -> skillCategorySkillServices.save(dto))
@@ -37,7 +36,7 @@ public class SkillCategorySkillController {
                         .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))));
     }
 
-    @Delete()
+    @Delete
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<?>> delete(@Body @Valid SkillCategorySkillId dto) {
         return Mono.fromRunnable(() -> skillCategorySkillServices.delete(dto))

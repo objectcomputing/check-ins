@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @Controller("/services/review-assignments")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "reviews")
 public class ReviewAssignmentController {
 

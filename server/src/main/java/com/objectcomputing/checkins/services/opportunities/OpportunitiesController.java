@@ -24,9 +24,7 @@ import java.util.UUID;
 @Controller("/services/opportunities")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name="opportunities")
-
 public class OpportunitiesController {
 
     private final OpportunitiesService opportunitiesResponseServices;
@@ -57,7 +55,7 @@ public class OpportunitiesController {
      * @return {@link HttpResponse<Opportunities>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
                                                      HttpRequest<?> request) {
         return Mono.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(),
@@ -73,7 +71,7 @@ public class OpportunitiesController {
      * @param opportunitiesResponse, {@link Opportunities}
      * @return {@link HttpResponse<Opportunities>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<Opportunities>> update(@Body @Valid @NotNull Opportunities opportunitiesResponse,
                                                HttpRequest<?> request) {
         return Mono.fromCallable(() -> opportunitiesResponseServices.update(opportunitiesResponse))

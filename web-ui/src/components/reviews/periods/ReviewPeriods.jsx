@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import {
-  Avatar,
   Box,
   Button,
   FormControl,

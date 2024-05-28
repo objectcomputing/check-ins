@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import React, { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Button, Typography } from '@mui/material';
 
 import { resolve } from '../api/api.js';
@@ -13,11 +14,12 @@ const PulsePage = () => {
   const { state } = useContext(AppContext);
   const currentUser = selectCurrentUser(state);
   const csrf = selectCsrfToken(state);
+  const history = useHistory();
 
   const [externalComment, setExternalComment] = useState('');
-  const [externalScore, setExternalScore] = useState(0);
+  const [externalScore, setExternalScore] = useState(2); // zero-based
   const [internalComment, setInternalComment] = useState('');
-  const [internalScore, setInternalScore] = useState(0);
+  const [internalScore, setInternalScore] = useState(2); // zero-based
   const [pulse, setPulse] = useState(null);
   const [submittedToday, setSubmittedToday] = useState(false);
   const today = format(new Date(), 'yyyy-MM-dd');
@@ -65,8 +67,6 @@ const PulsePage = () => {
       });
       if (res.error) throw new Error(res.error.message);
       const pulses = res.payload.data;
-      //TODO: Currently these objects only contain the comment text value,
-      //      not scores, but story 2345 will add those.
       setPulse(pulses.at(-1)); // last element is most recent
     } catch (err) {
       console.error('PulsePage.jsx loadTodayPulse:', err);
@@ -79,13 +79,11 @@ const PulsePage = () => {
 
   const submit = async () => {
     const myId = currentUser?.id;
-    //TODO: The POST endpoint doesn't currently save the score values,
-    //      but story #2345 will fix that.
     const data = {
       externalFeelings: externalComment,
-      externalScore,
+      externalScore: externalScore + 1, // converts to 1-based
       internalFeelings: internalComment,
-      internalScore,
+      internalScore: internalScore + 1, // converts to 1-based
       submissionDate: today,
       updatedDate: today,
       teamMemberId: myId
@@ -102,6 +100,9 @@ const PulsePage = () => {
         data
       });
       if (res.error) throw new Error(res.error.message);
+
+      // Refresh browser to show that pulses where already submitted today.
+      history.go(0);
     } catch (err) {
       console.error('PulsePage.jsx submit:', err);
     }
@@ -133,11 +134,7 @@ const PulsePage = () => {
             setScore={setExternalScore}
             title="How you feeling about life outside of work?"
           />
-          <Button
-            disabled={!internalComment}
-            onClick={submit}
-            variant="contained"
-          >
+          <Button onClick={submit} variant="contained">
             Submit
           </Button>
         </>

@@ -9,6 +9,7 @@ it('renders correctly', () => {
       score={2}
       setComment={() => {}}
       setScore={() => {}}
+      title="How are you feeling about work today? (*)"
     />
   );
   expect(component.baseElement).toMatchSnapshot();

@@ -21,7 +21,6 @@ import java.util.UUID;
 @Controller("/services/question-categories")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "question-categories")
 public class QuestionCategoryController {
 
@@ -38,7 +37,7 @@ public class QuestionCategoryController {
      * @return {@link HttpResponse<QuestionCategory>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<QuestionCategory>> createAQuestionCategory(@Body @Valid QuestionCategoryCreateDTO questionCategory,
                                                                         HttpRequest<?> request) {
 
@@ -69,7 +68,7 @@ public class QuestionCategoryController {
      * @param questionCategory, {@link QuestionCategory}
      * @return {@link HttpResponse<QuestionCategory>}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<QuestionCategory>> update(@Body @Valid QuestionCategory questionCategory, HttpRequest<?> request) {
         return Mono.fromCallable(() -> questionCategoryService.update(questionCategory))
                 .map(updatedQuestionCategory -> HttpResponse.ok(updatedQuestionCategory)
