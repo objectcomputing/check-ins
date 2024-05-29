@@ -20,6 +20,6 @@ const Template = args => {
 
 export const String = Template.bind({});
 String.args = {
-  label: 'String Control',
+  name: 'SETTINGS_NAME',
   description: 'A control to hold a string value'
 };
