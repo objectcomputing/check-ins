@@ -20,7 +20,7 @@ const Template = args => {
 
 export const Boolean = Template.bind({});
 Boolean.args = {
-  label: 'Boolean Control',
+  name: 'Boolean Control',
   description: 'A control to hold a boolean value',
   handleChange: event => console.log(`BOOLEAN ${event.target.checked}`)
 };
