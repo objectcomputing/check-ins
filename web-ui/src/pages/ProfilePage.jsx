@@ -204,7 +204,7 @@ const ProfilePage = () => {
                 onChange={(event, newVal) => {
                   addOrDeleteGuildMember(newVal);
                 }}
-                options={guilds}
+                options={guilds || []}
                 required
                 value={myGuilds}
                 renderInput={params => (
@@ -243,7 +243,7 @@ const ProfilePage = () => {
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
-      <EarnedCertificationsTable />
+      <EarnedCertificationsTable onlyMe />
     </div>
   );
 };

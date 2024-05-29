@@ -111,11 +111,11 @@ const MemberProfilePage = () => {
   useEffect(() => {
     async function getMemberSkills() {
       if (!memberId) return;
-      let res = await getSelectedMemberSkills(memberId, csrf);
-      let data =
+      const res = await getSelectedMemberSkills(memberId, csrf);
+      const data =
         res.payload && res.payload.data && !res.error ? res.payload.data : [];
-      let memberSkills = skills.filter(skill => {
-        //filter out memberSkills and set level
+      const memberSkills = (skills || []).filter(skill => {
+        // Filter out memberSkills and set level.
         return data.some(mSkill => {
           if (mSkill.skillid === skill.id) {
             skill.skilllevel = levelList[mSkill.skilllevel || 3];

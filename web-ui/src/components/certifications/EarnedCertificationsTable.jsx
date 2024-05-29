@@ -18,7 +18,7 @@ import {
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
-import { selectProfileMap } from '../../context/selectors';
+import { selectCurrentUser, selectProfileMap } from '../../context/selectors';
 import './EarnedCertificationsTable.css';
 
 const certificationBaseUrl = 'http://localhost:3000/certification';
@@ -33,10 +33,14 @@ const newEarned = { date: formatDate(new Date()) };
 const tableColumns = ['Member', 'Name', 'Description', 'Date Earned', 'Image'];
 
 const propTypes = {
-  forceUpdate: PropTypes.func
+  forceUpdate: PropTypes.func,
+  onlyMe: PropTypes.bool
 };
 
-const EarnedCertificationsTable = ({ forceUpdate = () => {} }) => {
+const EarnedCertificationsTable = ({
+  forceUpdate = () => {},
+  onlyMe = false
+}) => {
   const { state } = useContext(AppContext);
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});
@@ -52,6 +56,7 @@ const EarnedCertificationsTable = ({ forceUpdate = () => {} }) => {
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Member');
 
+  const currentUser = selectCurrentUser(state);
   const profileMap = selectProfileMap(state);
   const profiles = Object.values(profileMap);
   profiles.sort((a, b) => a.name.localeCompare(b.name));
@@ -69,7 +74,10 @@ const EarnedCertificationsTable = ({ forceUpdate = () => {} }) => {
       setCertificationMap(certMap);
 
       res = await fetch(earnedCertificationBaseUrl);
-      const earned = await res.json();
+      let earned = await res.json();
+      if (onlyMe) {
+        earned = earned.filter(cert => cert.memberId === currentUser.id);
+      }
       sortEarnedCertifications(earned);
       setEarnedCertifications(earned);
     } catch (err) {
@@ -158,7 +166,7 @@ const EarnedCertificationsTable = ({ forceUpdate = () => {} }) => {
       const profile = profileMap[earned.memberId];
       return (
         <tr key={earned.id}>
-          <td>{profile?.name ?? 'unknown'}</td>
+          {!onlyMe && <td>{profile?.name ?? 'unknown'}</td>}
           <td>{certificationMap[earned.certificationId]?.name ?? 'unknown'}</td>
           <td>{earned.description}</td>
           <td>{formatDate(new Date(earned.date))}</td>
@@ -290,12 +298,14 @@ const EarnedCertificationsTable = ({ forceUpdate = () => {} }) => {
     [earnedDialogOpen, selectedCertification, selectedEarned, selectedProfile]
   );
 
+  const tableColumnsToUse = onlyMe ? tableColumns.slice(1) : tableColumns;
+
   const earnedTable = useCallback(
     () => (
       <table>
         <thead>
           <tr>
-            {tableColumns.map(column => (
+            {tableColumnsToUse.map(column => (
               <th
                 key={column}
                 onClick={() => sortTable(column)}
