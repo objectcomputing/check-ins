@@ -42,9 +42,7 @@ const SettingsPage = () => {
   */
   const handleLogoUrl = file => {
     if (csrf) {
-      // setFiles([...files, file]);
-      // addFile(file);
-      console.log(file);
+      // TODO: need to have a storage bucket to upload the file to
     }
   };
 
