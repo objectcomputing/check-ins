@@ -22,7 +22,7 @@ const Template = args => {
 
 export const File = Template.bind({});
 File.args = {
-  label: 'File Control',
+  name: 'File Control',
   description: 'A control to upload a File',
   fileRef,
   handleFile: event => console.log(`File: ${event.target.value}`)
