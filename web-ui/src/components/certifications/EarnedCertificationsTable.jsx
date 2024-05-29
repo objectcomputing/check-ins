@@ -2,17 +2,26 @@ import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
+import {
+  AddCircleOutline,
+  Delete,
+  Edit,
+  EmojiEvents
+} from '@mui/icons-material';
 import {
   Autocomplete,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
   TextField,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material';
 
 import DatePickerField from '../date-picker-field/DatePickerField';
@@ -302,24 +311,42 @@ const EarnedCertificationsTable = ({
 
   const earnedTable = useCallback(
     () => (
-      <table>
-        <thead>
-          <tr>
-            {tableColumnsToUse.map(column => (
-              <th
-                key={column}
-                onClick={() => sortTable(column)}
-                style={{ cursor: 'pointer' }}
-              >
-                {column}
-                {sortIndicator(column)}
-              </th>
-            ))}
-            <th key="Actions">Actions</th>
-          </tr>
-        </thead>
-        <tbody>{earnedCertifications.map(earnedCertificationRow)}</tbody>
-      </table>
+      <Card>
+        <CardHeader
+          avatar={<EmojiEvents />}
+          title="Earned Certifications"
+          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+        />
+        <CardContent>
+          <div className="row">
+            <table>
+              <thead>
+                <tr>
+                  {tableColumnsToUse.map(column => (
+                    <th
+                      key={column}
+                      onClick={() => sortTable(column)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {column}
+                      {sortIndicator(column)}
+                    </th>
+                  ))}
+                  <th key="Actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody>{earnedCertifications.map(earnedCertificationRow)}</tbody>
+            </table>
+            <IconButton
+              aria-label="Add Earned Certification"
+              classes={{ root: 'add-button' }}
+              onClick={addEarnedCertification}
+            >
+              <AddCircleOutline />
+            </IconButton>
+          </div>
+        </CardContent>
+      </Card>
     ),
     [earnedCertifications, sortAscending, sortColumn]
   );
@@ -463,16 +490,7 @@ const EarnedCertificationsTable = ({
 
   return (
     <div id="earned-certifications-table">
-      <div className="column">
-        <IconButton
-          aria-label="Add Earned Certification"
-          classes={{ root: 'add-button' }}
-          onClick={addEarnedCertification}
-        >
-          <AddCircleOutline />
-        </IconButton>
-        {earnedTable()}
-      </div>
+      {earnedTable()}
 
       {imageDialog()}
       {earnedDialog()}

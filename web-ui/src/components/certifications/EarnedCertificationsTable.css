@@ -6,10 +6,13 @@
     border: 1px solid red;
   } */
 
-  .column {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-end;
+  .MuiCardHeader-root {
+    padding-bottom: 0;
+  }
+
+  .row {
+    display: flex;
+    align-items: start;
   }
 
   table {
