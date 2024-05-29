@@ -7,23 +7,23 @@ import { createLabelId } from '../../../helpers/strings.js';
  *
  * @component
  * @param {Object} props
- * @param {string} props.label - The label for the setting.
+ * @param {string} props.name - The name for the setting.
  * @param {string} [props.description] - The description for the setting (optional).
  * @param {string} props.value - The current value of the setting.
  * @param {function} props.handleChange - The function to handle changes to the setting value (optional).
  * @returns {JSX.Element} The rendered component.
  */
-const SettingsColor = ({ label, description, value, handleChange }) => {
-  const labelId = createLabelId(label);
+const SettingsColor = ({ name, description, value, handleChange }) => {
+  const labelId = createLabelId(name);
 
   return (
     <div className="settings-type">
       <label htmlFor={labelId}>
         <Typography variant="h5" gutterBottom>
-          {label}
+          {name}
         </Typography>
       </label>
-      {description ?? <p>{description}</p>}
+      {description && <p>{description}</p>}
       <input
         id={labelId}
         className="settings-control"

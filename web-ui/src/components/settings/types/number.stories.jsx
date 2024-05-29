@@ -20,6 +20,6 @@ const Template = args => {
 
 export const Number = Template.bind({});
 Number.args = {
-  label: 'Number Control',
+  name: 'Number Control',
   description: 'A control to hold a numerical value'
 };
