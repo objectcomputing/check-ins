@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -12,8 +12,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-public class PulseResponseCreateDTOTest {
+public class PulseResponseCreateDTOTest extends TestContainersSuite {
 
     @Inject
     protected Validator validator;

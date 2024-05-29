@@ -1,14 +1,13 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@MicronautTest
-public class CheckinNoteCreateDTOTest {
+public class CheckinNoteCreateDTOTest extends TestContainersSuite {
 
     @Test
     public void testPopulateDTO() {

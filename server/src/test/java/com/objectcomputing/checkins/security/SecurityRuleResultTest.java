@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.security.permissions.PermissionSecurityRule;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.Role;
@@ -12,13 +13,11 @@ import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRuleResult;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.web.router.MethodBasedRouteMatch;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.reactivestreams.Publisher;
 import reactor.test.StepVerifier;
@@ -33,9 +32,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class SecurityRuleResultTest {
+class SecurityRuleResultTest extends TestContainersSuite {
 
     List<String> userPermissions = List.of(
             "CAN_VIEW_FEEDBACK_REQUEST",
@@ -60,17 +57,15 @@ class SecurityRuleResultTest {
     @Mock
     private AnnotationValue<RequiredPermission> mockRequiredPermissionAnnotation;
 
-    @BeforeAll
-    void initMocksAndInitializeFile() {
-
+    @BeforeEach
+    void resetMocks() {
         Role role = roleServices.save(new Role(RoleType.ADMIN.name(), "Admin Role"));
         rolePermissionServices.save(role.getId(), Permission.CAN_VIEW_FEEDBACK_REQUEST);
-
         openMocks(this);
     }
 
-    @BeforeEach
-    void resetMocks() {
+    @AfterEach
+    void afterEach() {
         reset(mockMethodBasedRouteMatch);
         reset(mockRequiredPermissionAnnotation);
     }

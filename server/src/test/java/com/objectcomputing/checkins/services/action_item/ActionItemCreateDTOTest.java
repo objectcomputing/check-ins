@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -11,8 +11,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-class ActionItemCreateDTOTest {
+class ActionItemCreateDTOTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -10,11 +11,9 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.security.authentication.Authentication;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -27,9 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixture {
+class CurrentUserControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     private static final Map<String, Object> userAttributes = new HashMap<>();
     private static final String firstName = "some.first.name";
@@ -48,7 +45,7 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
     EmbeddedServer embeddedServer;
 
     @BeforeAll
-    void setup() throws Exception {
+    void setupMocks() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
 
