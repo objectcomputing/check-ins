@@ -25,6 +25,7 @@ const propTypes = {
 };
 
 const Certifications = ({ forceUpdate = () => {} }) => {
+  const [adding, setAdding] = useState(false); // true to add, false to edit
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});
   const [certificationName, setCertificationName] = useState('');
@@ -53,6 +54,12 @@ const Certifications = ({ forceUpdate = () => {} }) => {
     loadCertifications();
   }, []);
 
+  const addCertification = useCallback(() => {
+    setAdding(true);
+    setCertificationName('');
+    setCertificationDialogOpen(true);
+  }, []);
+
   const cancelCertification = useCallback(() => {
     setCertificationName('');
     setCertificationDialogOpen(false);
@@ -61,11 +68,11 @@ const Certifications = ({ forceUpdate = () => {} }) => {
   const certificationDialog = useCallback(
     () => (
       <Dialog
-        classes={{ root: 'earned-certification-dialog' }}
+        classes={{ root: 'certification-dialog' }}
         open={certificationDialogOpen}
         onClose={cancelCertification}
       >
-        <DialogTitle>Add Certification</DialogTitle>
+        <DialogTitle>{adding ? 'Add' : 'Edit'} Certification</DialogTitle>
         <DialogContent>
           <TextField
             className="fullWidth"
@@ -82,7 +89,7 @@ const Certifications = ({ forceUpdate = () => {} }) => {
             disabled={certifications.some(
               cert => cert.name === certificationName
             )}
-            onClick={createCertification}
+            onClick={saveCertification}
           >
             Save
           </Button>
@@ -122,36 +129,9 @@ const Certifications = ({ forceUpdate = () => {} }) => {
     [certifications]
   );
 
-  const createCertification = useCallback(async () => {
-    try {
-      const res = await fetch(certificationBaseUrl, {
-        method: 'POST',
-        body: JSON.stringify({ name: certificationName })
-      });
-      const newCert = await res.json();
-      setCertifications(certs =>
-        [...certs, newCert].sort((c1, c2) => c1.name.localeCompare(c2.name))
-      );
-      setCertificationMap(map => {
-        map[newCert.id] = newCert;
-        return map;
-      });
-      setSelectedCertification(newCert);
-      setCertificationName('');
-      forceUpdate();
-    } catch (err) {
-      console.error(err);
-    }
-    setCertificationDialogOpen(false);
-  }, [
-    certificationMap,
-    certificationName,
-    certifications,
-    selectedCertification
-  ]);
-
   const deleteCertification = useCallback(async () => {
     const { id, name } = selectedCertification;
+    //TODO: What should we do if the certification has some earned certifications?
     const url = certificationBaseUrl + '/' + id;
     try {
       const res = await fetch(url, { method: 'DELETE' });
@@ -171,8 +151,10 @@ const Certifications = ({ forceUpdate = () => {} }) => {
   }, [certificationMap, certifications, selectedCertification]);
 
   const editCertification = useCallback(() => {
+    setAdding(false);
+    setCertificationName(selectedCertification.name);
     setCertificationDialogOpen(true);
-  }, []);
+  }, [selectedCertification]);
 
   const mergeCertification = useCallback(async () => {
     const url = certificationBaseUrl + '/merge';
@@ -199,6 +181,35 @@ const Certifications = ({ forceUpdate = () => {} }) => {
     setCertificationDialogOpen(false);
   }, [selectedCertification, selectedTarget]);
 
+  const saveCertification = useCallback(
+    async create => {
+      const url = adding
+        ? certificationBaseUrl
+        : certificationBaseUrl + '/' + selectedCertification.id;
+      try {
+        const res = await fetch(url, {
+          method: adding ? 'POST' : 'PUT',
+          body: JSON.stringify({ name: certificationName })
+        });
+        const newCert = await res.json();
+        setCertifications(certs =>
+          [...certs, newCert].sort((c1, c2) => c1.name.localeCompare(c2.name))
+        );
+        setCertificationMap(map => {
+          map[newCert.id] = newCert;
+          return map;
+        });
+        setSelectedCertification(newCert);
+        setCertificationName('');
+        forceUpdate();
+      } catch (err) {
+        console.error(err);
+      }
+      setCertificationDialogOpen(false);
+    },
+    [certificationMap, certificationName, certifications, selectedCertification]
+  );
+
   return (
     <div>
       {certificationSelect(
@@ -210,7 +221,7 @@ const Certifications = ({ forceUpdate = () => {} }) => {
       <IconButton
         aria-label="Add Certification"
         classes={{ root: 'add-button' }}
-        onClick={() => setCertificationDialogOpen(true)}
+        onClick={addCertification}
       >
         <AddCircleOutline />
       </IconButton>

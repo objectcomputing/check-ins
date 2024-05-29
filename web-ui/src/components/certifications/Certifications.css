@@ -1,3 +1,9 @@
 .certifications {
   padding: 1rem;
 }
+
+.certification-dialog {
+  .MuiDialogContent-root {
+    padding-top: 1rem !important;
+  }
+}
