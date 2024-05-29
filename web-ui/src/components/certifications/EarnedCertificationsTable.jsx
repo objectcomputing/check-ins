@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
@@ -31,7 +32,11 @@ const formatDate = date =>
 const newEarned = { date: formatDate(new Date()) };
 const tableColumns = ['Member', 'Name', 'Description', 'Date Earned', 'Image'];
 
-const EarnedCertificationsTable = () => {
+const propTypes = {
+  forceUpdate: PropTypes.func
+};
+
+const EarnedCertificationsTable = ({ forceUpdate }) => {
   const { state } = useContext(AppContext);
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});
@@ -368,6 +373,7 @@ const EarnedCertificationsTable = () => {
       });
       setSelectedCertification(newCert);
       setCertificationName('');
+      forceUpdate();
     } catch (err) {
       console.error(err);
     }
@@ -472,5 +478,7 @@ const EarnedCertificationsTable = () => {
     </div>
   );
 };
+
+EarnedCertificationsTable.propTypes = propTypes;
 
 export default EarnedCertificationsTable;

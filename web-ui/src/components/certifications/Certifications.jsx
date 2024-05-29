@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
@@ -19,7 +20,11 @@ import './Certifications.css';
 
 const certificationBaseUrl = 'http://localhost:3000/certification';
 
-const Certifications = () => {
+const propTypes = {
+  forceUpdate: PropTypes.func
+};
+
+const Certifications = ({ forceUpdate }) => {
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});
   const [certificationName, setCertificationName] = useState('');
@@ -77,7 +82,7 @@ const Certifications = () => {
             disabled={certifications.some(
               cert => cert.name === certificationName
             )}
-            onClick={saveCertification}
+            onClick={createCertification}
           >
             Save
           </Button>
@@ -117,30 +122,33 @@ const Certifications = () => {
     [certifications]
   );
 
-  const createCertification = useCallback(
-    async cert => {
-      try {
-        const res = await fetch(certificationBaseUrl, {
-          method: 'POST',
-          body: JSON.stringify({ name: certificationName })
-        });
-        const newCert = await res.json();
-        setCertifications(certs =>
-          [...certs, newCert].sort((c1, c2) => c1.name.localeCompare(c2.name))
-        );
-        setCertificationMap(map => {
-          map[newCert.id] = newCert;
-          return map;
-        });
-        setSelectedCertification(newCert);
-        setCertificationName('');
-      } catch (err) {
-        console.error(err);
-      }
-      setCertificationDialogOpen(false);
-    },
-    [certificationMap, certificationName, certifications, selectedCertification]
-  );
+  const createCertification = useCallback(async () => {
+    try {
+      const res = await fetch(certificationBaseUrl, {
+        method: 'POST',
+        body: JSON.stringify({ name: certificationName })
+      });
+      const newCert = await res.json();
+      setCertifications(certs =>
+        [...certs, newCert].sort((c1, c2) => c1.name.localeCompare(c2.name))
+      );
+      setCertificationMap(map => {
+        map[newCert.id] = newCert;
+        return map;
+      });
+      setSelectedCertification(newCert);
+      setCertificationName('');
+      forceUpdate();
+    } catch (err) {
+      console.error(err);
+    }
+    setCertificationDialogOpen(false);
+  }, [
+    certificationMap,
+    certificationName,
+    certifications,
+    selectedCertification
+  ]);
 
   const deleteCertification = useCallback(async () => {
     const { id, name } = selectedCertification;
@@ -156,6 +164,7 @@ const Certifications = () => {
       });
       setCertifications(certs => certs.filter(c => c.id !== id));
       setSelectedCertification(null);
+      forceUpdate();
     } catch (err) {
       console.error(err);
     }
@@ -183,34 +192,12 @@ const Certifications = () => {
         `Successfully merged ${selectedCertification.name} certification to ${selectedTarget.name}.`
       );
       setSelectedCertification(null);
-      // TODO: Find a way to refresh the earned certifications table to display the results.
+      forceUpdate();
     } catch (err) {
       console.error(err);
     }
     setCertificationDialogOpen(false);
   }, [selectedCertification, selectedTarget]);
-
-  const saveCertification = useCallback(async () => {
-    try {
-      const res = await fetch(certificationBaseUrl, {
-        method: 'POST',
-        body: JSON.stringify({ name: certificationName })
-      });
-      const newCert = await res.json();
-      setCertifications(certs =>
-        [...certs, newCert].sort((c1, c2) => c1.name.localeCompare(c2.name))
-      );
-      setCertificationMap(map => {
-        map[newCert.id] = newCert;
-        return map;
-      });
-      setSelectedCertification(newCert);
-      setCertificationName('');
-    } catch (err) {
-      console.error(err);
-    }
-    setCertificationDialogOpen(false);
-  }, [certificationName, certifications, selectedCertification]);
 
   return (
     <div>
@@ -270,5 +257,7 @@ const Certifications = () => {
     </div>
   );
 };
+
+Certifications.propTypes = propTypes;
 
 export default Certifications;
