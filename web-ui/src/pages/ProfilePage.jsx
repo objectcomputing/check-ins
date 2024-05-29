@@ -12,6 +12,7 @@ import { UPDATE_GUILD, UPDATE_USER_BIO } from '../context/actions';
 import { addGuildMember, deleteGuildMember } from '../api/guild';
 import { updateMember } from '../api/member';
 import { getEmployeeHours } from '../api/hours';
+import EarnedCertificationsTable from '../components/certifications/EarnedCertificationsTable';
 import Profile from '../components/profile/Profile';
 import SkillSection from '../components/skills/SkillSection';
 import ProgressBar from '../components/contribution_hours/ProgressBar';
@@ -242,6 +243,7 @@ const ProfilePage = () => {
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
+      <EarnedCertificationsTable />
     </div>
   );
 };

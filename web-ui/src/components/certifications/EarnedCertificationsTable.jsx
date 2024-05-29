@@ -36,7 +36,7 @@ const propTypes = {
   forceUpdate: PropTypes.func
 };
 
-const EarnedCertificationsTable = ({ forceUpdate }) => {
+const EarnedCertificationsTable = ({ forceUpdate = () => {} }) => {
   const { state } = useContext(AppContext);
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});

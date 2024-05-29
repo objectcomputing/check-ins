@@ -24,7 +24,7 @@ const propTypes = {
   forceUpdate: PropTypes.func
 };
 
-const Certifications = ({ forceUpdate }) => {
+const Certifications = ({ forceUpdate = () => {} }) => {
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});
   const [certificationName, setCertificationName] = useState('');
