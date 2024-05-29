@@ -217,23 +217,25 @@ const EarnedCertificationsTable = ({
           {selectedEarned?.id ? 'Edit' : 'Add'} Earned Certification
         </DialogTitle>
         <DialogContent>
-          <Autocomplete
-            disableClearable
-            getOptionLabel={profile => profile.name || ''}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            onChange={(event, profile) => {
-              setSelectedProfile({ ...profile });
-            }}
-            options={profiles}
-            renderInput={params => (
-              <TextField
-                {...params}
-                className="fullWidth"
-                label="Team Member"
-              />
-            )}
-            value={selectedProfile}
-          />
+          {!onlyMe && (
+            <Autocomplete
+              disableClearable
+              getOptionLabel={profile => profile.name || ''}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(event, profile) => {
+                setSelectedProfile({ ...profile });
+              }}
+              options={profiles}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  className="fullWidth"
+                  label="Team Member"
+                />
+              )}
+              value={selectedProfile}
+            />
+          )}
           <div>
             <Autocomplete
               disableClearable
@@ -422,7 +424,7 @@ const EarnedCertificationsTable = ({
     const url = id
       ? `${earnedCertificationBaseUrl}/${id}`
       : earnedCertificationBaseUrl;
-    selectedEarned.memberId = selectedProfile.id;
+    selectedEarned.memberId = selectedProfile?.id || currentUser.id;
     selectedEarned.certificationId = selectedCertification.id;
     try {
       const res = await fetch(url, {
