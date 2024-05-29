@@ -112,9 +112,9 @@ Before running the above command, it's recommended you review the script content
 Then, install the JDK with:
 
 ```shell
-sdk install java 17.0.10-tem
-sdk use java 17.0.10-tem
-sdk default java 17.0.10-tem
+sdk install java 21.0.03-tem
+sdk use java 21.0.03-tem
+sdk default java 21.0.03-tem
 ```
 
 Please note JDK `21` is the latest version at the time of writing. See the `.java-version` file in the project root for the version of the JDK required for this project. You will also find versions in `server/Dockerfile`.
@@ -190,19 +190,19 @@ jenv versions
 Set the system-wide Java version by doing:
 
 ```shell
-jenv global 14.0
+jenv global 21.0
 ```
 
 Set a project-wide Java version by doing:
 
 ```shell
-jenv local 14.0
+jenv local 21.0
 ```
 
 Set a shell instance Java version by doing:
 
 ```shell
-jenv shell 14.0
+jenv shell 21.0
 ```
 
 # Install NVM
