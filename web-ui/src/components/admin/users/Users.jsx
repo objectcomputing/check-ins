@@ -8,7 +8,11 @@ import { styled } from '@mui/material/styles';
 
 import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
-import { createMember, reportAllMembersCsv } from '../../../api/member';
+import {
+  createMember,
+  getMember,
+  reportAllMembersCsv
+} from '../../../api/member';
 import { AppContext } from '../../../context/AppContext';
 import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
 import {
@@ -19,6 +23,7 @@ import {
 import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import './Users.css';
+import { emailPDLAssignment, emailSupervisorAssignment } from "../../../api/notifications.js";
 
 const PREFIX = 'Users';
 const classes = {
@@ -170,6 +175,11 @@ const Users = () => {
                       member.workEmail &&
                       csrf
                     ) {
+                      let resGetMember = await getMember(member.id, csrf);
+                      let oldMember =
+                          resGetMember.payload && resGetMember.payload.data && !resGetMember.error
+                              ? resGetMember.payload.data
+                              : null;
                       let res = await createMember(member, csrf);
                       let data =
                         res.payload && res.payload.data && !res.error
@@ -180,6 +190,12 @@ const Users = () => {
                           type: UPDATE_MEMBER_PROFILES,
                           payload: [...memberProfiles, data]
                         });
+                        if (oldMember && oldMember.pdlId !== member.pdlId) {
+                          await emailPDLAssignment(member, csrf)
+                        }
+                        if (oldMember && oldMember.supervisorid !== member.supervisorid) {
+                          await emailSupervisorAssignment(member, csrf)
+                        }
                       }
                       handleClose();
                     }
