@@ -176,10 +176,9 @@ const Users = () => {
                       csrf
                     ) {
                       let resGetMember = await getMember(member.id, csrf);
-                      let oldMember =
-                          resGetMember.payload && resGetMember.payload.data && !resGetMember.error
-                              ? resGetMember.payload.data
-                              : null;
+                      let oldMember = resGetMember.payload?.data && !resGetMember.error
+                          ? resGetMember.payload.data
+                          : null;
                       let res = await createMember(member, csrf);
                       let data =
                         res.payload && res.payload.data && !res.error

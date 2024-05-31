@@ -216,10 +216,9 @@ const AdminMemberCard = ({ member, index }) => {
               onClose={handleClose}
               onSave={async member => {
                 let resGetMember = await getMember(member.id, csrf);
-                let oldMember =
-                    resGetMember.payload && resGetMember.payload.data && !resGetMember.error
-                        ? resGetMember.payload.data
-                        : null;
+                let oldMember = resGetMember.payload?.data && !resGetMember.error
+                    ? resGetMember.payload.data
+                    : null;
                 let res = await updateMember(member, csrf);
                 let data =
                   res.payload && res.payload.data && !res.error
