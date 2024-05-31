@@ -264,12 +264,12 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
         open={open}
         onClose={handleClose}
         onSave={async editedGuild => {
-          let resGetOldGuildLeader = await getGuildLeaders(editedGuild.id, csrf);
-          let oldGuildLeaders = resGetOldGuildLeader.payload?.data && !resGetOldGuildLeader.error
+          const resGetOldGuildLeader = await getGuildLeaders(editedGuild.id, csrf);
+          const oldGuildLeaders = resGetOldGuildLeader.payload?.data && !resGetOldGuildLeader.error
               ? resGetOldGuildLeader.payload.data
               : null;
-          let res = await updateGuild(editedGuild, csrf);
-          let data = res.payload?.data && !res.error
+          const res = await updateGuild(editedGuild, csrf);
+          const data = res.payload?.data && !res.error
               ? res.payload.data
               : null;
           if (data) {
@@ -279,17 +279,15 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
               type: UPDATE_GUILDS,
               payload: copy
             });
-            let resGetGuildLeaders = await getGuildLeaders(editedGuild.id, csrf);
-            let guildLeaders = resGetGuildLeaders.payload?.data && !resGetGuildLeaders.error
+            const resGetGuildLeaders = await getGuildLeaders(editedGuild.id, csrf);
+            const guildLeaders = resGetGuildLeaders.payload?.data && !resGetGuildLeaders.error
                 ? resGetGuildLeaders.payload.data
                 : null;
             if (guildLeaders && oldGuildLeaders) {
               // Filter out the new leaders that were not in the old leaders
-              let newLeaders = guildLeaders.filter(
+              const newLeaders = guildLeaders.filter(
                   newLeader => !oldGuildLeaders.some(oldLeader => oldLeader.id === newLeader.id)
               );
-
-              console.log(newLeaders);
 
               newLeaders.length > 0 && emailGuildLeaders(newLeaders, guild, csrf).then();
             }

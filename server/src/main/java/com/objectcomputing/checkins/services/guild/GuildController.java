@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.guild;
 
 import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -27,9 +30,11 @@ import java.util.UUID;
 public class GuildController {
 
     private final GuildServices guildService;
+    private final MemberProfileServices profileServices;
 
-    public GuildController(GuildServices guildService) {
+    public GuildController(GuildServices guildService, MemberProfileServices profileServices) {
         this.guildService = guildService;
+        this.profileServices = profileServices;
     }
 
     /**
@@ -66,14 +71,17 @@ public class GuildController {
      */
 
     @Get("/leaders/{id}")
-    public Mono<HttpResponse<Set<GuildMemberResponseDTO>>> getGuildLeaders(@NotNull UUID id) {
+    public Mono<HttpResponse<Set<MemberProfile>>> getGuildLeaders(@NotNull UUID id) {
         return Mono.fromCallable(() -> {
                     GuildResponseDTO guild = guildService.read(id);
                     List<GuildMemberResponseDTO> members = guild.getGuildMembers();
-                    Set<GuildMemberResponseDTO> newLeaders = new HashSet<>();
+                    Set<MemberProfile> newLeaders = new HashSet<>();
                     for (GuildMemberResponseDTO member : members) {
                         if (member.isLead()) {
-                            newLeaders.add(member);
+                            MemberProfile memberProfile = profileServices.getById(member.getMemberId());
+                            if (memberProfile != null) {
+                                newLeaders.add(memberProfile);
+                            }
                         }
                     }
                     return newLeaders;

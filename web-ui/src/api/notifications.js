@@ -89,7 +89,7 @@ export const emailGuildLeaders = async (members, guild, cookie) => {
     for (const member of members) {
       if (member.workEmail && guild?.name) {
         await sendEmail("You have been assigned as a guild leader of " + guild.name,
-            "Congratulations you have been assigned as the guild leader of " + guild.name,
+            "Congratulations you have been assigned as a guild leader of " + guild.name,
             false, [member.workEmail], cookie)
       } else {
         console.warn("Unable to send guild leader email regarding as member was not valid and missing required fields", member)

@@ -94,18 +94,18 @@ const GuildResults = () => {
                 onClose={handleClose}
                 onSave={async guild => {
                   if (csrf) {
-                    let res = await createGuild(guild, csrf);
-                    let data = res.payload?.data && !res.error
+                    const res = await createGuild(guild, csrf);
+                    const data = res.payload?.data && !res.error
                         ? res.payload.data
                         : null;
                     if (data) {
                       dispatch({ type: ADD_GUILD, payload: data });
-                    }
-                    let resGuildLeader = await getGuildLeaders(guild.id, csrf);
-                    let guildLeaders = resGuildLeader.payload?.data && !resGuildLeader.error
+                    const resGuildLeader = await getGuildLeaders(data.id, csrf);
+                    const guildLeaders = resGuildLeader.payload?.data && !resGuildLeader.error
                         ? resGuildLeader.payload.data
                         : null;
-                    guildLeaders && emailGuildLeaders(guildLeaders, guild, csrf).then();
+                    guildLeaders && emailGuildLeaders(guildLeaders, data, csrf).then();
+                    }
                     handleClose();
                   }
                 }}
