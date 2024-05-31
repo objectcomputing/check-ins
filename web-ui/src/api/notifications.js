@@ -84,7 +84,7 @@ export const emailSupervisorAssignment = async (member, cookie) => {
     console.warn("Unable to send email regarding as member was not valid and missing required fields", member)
   }
 }
-export const emailGuildLeader = async (members, guild, cookie) => {
+export const emailGuildLeaders = async (members, guild, cookie) => {
   if (members) {
     for (const member of members) {
       if (member.workEmail && guild?.name) {

@@ -1,11 +1,9 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -17,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -66,16 +65,20 @@ public class GuildController {
      * @return {@link GuildResponseDTO guild leader matching id}
      */
 
-    @Get("/leader/{id}")
-    public Mono<HttpResponse<UUID>> getGuildLeader(@NotNull UUID id) {
-        GuildResponseDTO guild = guildService.read(id);
-        List<GuildMemberResponseDTO> members = guild.getGuildMembers();
-        for (GuildMemberResponseDTO member : members) {
-            if (member.isLead()) {
-                return Mono.fromCallable(member::getId).map(HttpResponse::ok);
-            }
-        }
-        return null;
+    @Get("/leaders/{id}")
+    public Mono<HttpResponse<Set<GuildMemberResponseDTO>>> getGuildLeaders(@NotNull UUID id) {
+        return Mono.fromCallable(() -> {
+                    GuildResponseDTO guild = guildService.read(id);
+                    List<GuildMemberResponseDTO> members = guild.getGuildMembers();
+                    Set<GuildMemberResponseDTO> newLeaders = new HashSet<>();
+                    for (GuildMemberResponseDTO member : members) {
+                        if (member.isLead()) {
+                            newLeaders.add(member);
+                        }
+                    }
+                    return newLeaders;
+                })
+                .map(HttpResponse::ok);
     }
 
     /**

@@ -23,9 +23,9 @@ import {
   Tooltip
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import {deleteGuild, getGuildLeader, updateGuild} from '../../api/guild.js';
+import {deleteGuild, getGuildLeaders, updateGuild} from '../../api/guild.js';
 import SplitButton from '../split-button/SplitButton';
-import {emailGuildLeader} from "../../api/notifications.js";
+import { emailGuildLeaders } from "../../api/notifications.js";
 
 const PREFIX = 'GuildSummaryCard';
 const classes = {
@@ -264,13 +264,12 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
         open={open}
         onClose={handleClose}
         onSave={async editedGuild => {
-          let resGetOldGuildLeader = await getGuildLeader(guild, csrf);
-            let oldGuildLeader = resOldGuildLeader.payload?.data && !resOldGuildLeader.error
-                ? resOldGuildLeader.payload.data
-                : null;
+          let resGetOldGuildLeader = await getGuildLeaders(editedGuild.id, csrf);
+          let oldGuildLeaders = resGetOldGuildLeader.payload?.data && !resGetOldGuildLeader.error
+              ? resGetOldGuildLeader.payload.data
+              : null;
           let res = await updateGuild(editedGuild, csrf);
-          let data =
-            res.payload && res.payload.data && !res.error
+          let data = res.payload?.data && !res.error
               ? res.payload.data
               : null;
           if (data) {
@@ -280,12 +279,19 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
               type: UPDATE_GUILDS,
               payload: copy
             });
-            let resGetGuildLeader = await getGuildLeader(guild, csrf);
-            let guildLeader = resGetGuildLeader.payload?.data && !resGetGuildLeader.error
-                ? resGuildLeader.payload.data
+            let resGetGuildLeaders = await getGuildLeaders(editedGuild.id, csrf);
+            let guildLeaders = resGetGuildLeaders.payload?.data && !resGetGuildLeaders.error
+                ? resGetGuildLeaders.payload.data
                 : null;
-            if(guildLeader) {
-              emailGuildLeader(guildLeader, guild, csrf).then();
+            if (guildLeaders && oldGuildLeaders) {
+              // Filter out the new leaders that were not in the old leaders
+              let newLeaders = guildLeaders.filter(
+                  newLeader => !oldGuildLeaders.some(oldLeader => oldLeader.id === newLeader.id)
+              );
+
+              console.log(newLeaders);
+
+              newLeaders.length > 0 && emailGuildLeaders(newLeaders, guild, csrf).then();
             }
           }
         }}

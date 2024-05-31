@@ -1,8 +1,8 @@
 import { resolve } from './api.js';
 
 const guildUrl = `/services/guilds`;
-const guildMemberUrl = `/services/guilds/members`;
-const guildLeaderUrl = `/services/guilds/leader`;
+const guildMemberUrl = guildUrl + `/members`;
+const guildLeadersUrl = guildUrl + `/leaders`;
 
 export const getAllGuildMembers = async cookie => {
   return resolve({
@@ -21,9 +21,9 @@ export const getMembersByGuild = async (id, cookie) => {
   });
 };
 
-export const getGuildLeader = async (id, cookie) => {
+export const getGuildLeaders = async (id, cookie) => {
   return resolve({
-    url: guildMemberUrl,
+    url: guildLeadersUrl,
     params: {
       guildid: id
     },

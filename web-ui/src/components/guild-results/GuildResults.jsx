@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import GroupIcon from '@mui/icons-material/Group';
 import { Button, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import {createGuild, getGuildLeader} from '../../api/guild';
+import {createGuild, getGuildLeaders} from '../../api/guild';
 import { ADD_GUILD } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import AddGuildModal from './EditGuildModal';
@@ -12,7 +12,7 @@ import GuildSummaryCard from './GuildSummaryCard';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 import { useQueryParameters } from '../../helpers/query-parameters';
 import './GuildResults.css';
-import {emailGuildLeader} from "../../api/notifications.js";
+import { emailGuildLeaders } from "../../api/notifications.js";
 
 const PREFIX = 'GuildResults';
 const classes = {
@@ -95,20 +95,17 @@ const GuildResults = () => {
                 onSave={async guild => {
                   if (csrf) {
                     let res = await createGuild(guild, csrf);
-                    let data =
-                      res.payload && res.payload.data && !res.error
+                    let data = res.payload?.data && !res.error
                         ? res.payload.data
                         : null;
                     if (data) {
                       dispatch({ type: ADD_GUILD, payload: data });
                     }
-                    let resGuildLeader = await getGuildLeader(guild, csrf);
-                    let guildLeader = resGuildLeader.payload?.data && !resGuildLeader.error
+                    let resGuildLeader = await getGuildLeaders(guild.id, csrf);
+                    let guildLeaders = resGuildLeader.payload?.data && !resGuildLeader.error
                         ? resGuildLeader.payload.data
                         : null;
-                    if(guildLeader) {
-                      await emailGuildLeader(guildLeader, guild, csrf);
-                    }
+                    guildLeaders && emailGuildLeaders(guildLeaders, guild, csrf).then();
                     handleClose();
                   }
                 }}
