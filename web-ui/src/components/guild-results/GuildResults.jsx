@@ -4,7 +4,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import { Button, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { createGuild } from '../../api/guild';
+import {createGuild, getGuildLeader} from '../../api/guild';
 import { ADD_GUILD } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import AddGuildModal from './EditGuildModal';
@@ -12,6 +12,7 @@ import GuildSummaryCard from './GuildSummaryCard';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 import { useQueryParameters } from '../../helpers/query-parameters';
 import './GuildResults.css';
+import {emailGuildLeader} from "../../api/notifications.js";
 
 const PREFIX = 'GuildResults';
 const classes = {
@@ -100,6 +101,13 @@ const GuildResults = () => {
                         : null;
                     if (data) {
                       dispatch({ type: ADD_GUILD, payload: data });
+                    }
+                    let resGuildLeader = await getGuildLeader(guild, csrf);
+                    let guildLeader = resGuildLeader.payload?.data && !resGuildLeader.error
+                        ? resGuildLeader.payload.data
+                        : null;
+                    if(guildLeader) {
+                      await emailGuildLeader(guildLeader, guild, csrf);
                     }
                     handleClose();
                   }

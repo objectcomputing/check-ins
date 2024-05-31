@@ -1,7 +1,7 @@
 import { resolve } from './api.js';
 
 const emailNotificationURL = '/services/email-notifications';
-const emailNewsletterURL = '/services/email';
+const emailURL = '/services/email';
 const testEmailURL = import.meta.env.VITE_APP_API_URL
   ? import.meta.env.VITE_APP_URL + '/feedback/submit?request='
   : 'http://localhost:8080/feedback/submit?request=';
@@ -32,7 +32,7 @@ export const sendReminderNotification = async (
 export const sendEmail = async (subject, content, html, recipients, cookie) => {
   return resolve({
     method: 'POST',
-    url: emailNewsletterURL,
+    url: emailURL,
     data: {
       subject: subject,
       content: content,
@@ -46,3 +46,13 @@ export const sendEmail = async (subject, content, html, recipients, cookie) => {
     }
   });
 };
+
+export const emailGuildLeader = async (member, guild, cookie) => {
+  if (member.supervisorid && member.lastName && member.firstName && member.workEmail && guild?.name) {
+      await sendEmail("You have been assigned as a guild leader of " + guild.name,
+          "Congratulations you have been assigned as the guild leader of " + guild.name,
+          false, [member.workEmail], cookie)
+  } else {
+    console.warn("Unable to send guild leader email regarding as member was not valid and missing required fields", member)
+  }
+}

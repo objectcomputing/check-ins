@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.services.guild.member.GuildMember;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -55,6 +57,25 @@ public class GuildController {
     public Mono<HttpResponse<GuildResponseDTO>> readGuild(@NotNull UUID id) {
         return Mono.fromCallable(() -> guildService.read(id))
                 .map(HttpResponse::ok);
+    }
+
+    /**
+     * Get guild leader based on guild id
+     *
+     * @param id of guild
+     * @return {@link GuildResponseDTO guild leader matching id}
+     */
+
+    @Get("/leader/{id}")
+    public Mono<HttpResponse<UUID>> getGuildLeader(@NotNull UUID id) {
+        GuildResponseDTO guild = guildService.read(id);
+        List<GuildMemberResponseDTO> members = guild.getGuildMembers();
+        for (GuildMemberResponseDTO member : members) {
+            if (member.isLead()) {
+                return Mono.fromCallable(member::getId).map(HttpResponse::ok);
+            }
+        }
+        return null;
     }
 
     /**

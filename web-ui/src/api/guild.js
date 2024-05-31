@@ -2,6 +2,7 @@ import { resolve } from './api.js';
 
 const guildUrl = `/services/guilds`;
 const guildMemberUrl = `/services/guilds/members`;
+const guildLeaderUrl = `/services/guilds/leader`;
 
 export const getAllGuildMembers = async cookie => {
   return resolve({
@@ -19,6 +20,16 @@ export const getMembersByGuild = async (id, cookie) => {
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
+
+export const getGuildLeader = async (id, cookie) => {
+  return resolve({
+    url: guildMemberUrl,
+    params: {
+      guildid: id
+    },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+}
 
 export const updateGuild = async (guild, cookie) => {
   return resolve({
