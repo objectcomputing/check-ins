@@ -75,7 +75,7 @@ class MemberProfileReportServicesImplTest {
         List<MemberProfileRecord> allRecords = createSampleRecords();
         MemberProfileRecord expectedRecord = allRecords.get(1);
         when(memberProfileReportRepository
-                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString())), any()))
+                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString()))))
                 .thenReturn(List.of(expectedRecord));
         File tmpFile = File.createTempFile("member",".csv");
         tmpFile.deleteOnExit();
@@ -98,7 +98,7 @@ class MemberProfileReportServicesImplTest {
         List<MemberProfileRecord> allRecords = createSampleRecords();
         MemberProfileRecord expectedRecord = allRecords.get(1);
         when(memberProfileReportRepository
-                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString())), any()))
+                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString()))))
                 .thenReturn(List.of(expectedRecord));
 
         when(memberProfileFileProvider.provideFile()).thenThrow(new RuntimeException());

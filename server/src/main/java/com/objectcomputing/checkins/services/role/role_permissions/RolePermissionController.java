@@ -17,7 +17,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Role Permissions")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Controller("/services/roles/role-permissions")
