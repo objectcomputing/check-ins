@@ -225,6 +225,8 @@ const AdminMemberCard = ({ member, index }) => {
                     type: UPDATE_MEMBER_PROFILES,
                     payload: copy
                   });
+                  oldMember.pdlId !== member.pdlId && emailPDLAssignment(member, csrf).then();
+                  oldMember.supervisorid !== member.supervisorid && emailSupervisorAssignment(member, csrf).then();
                   handleClose();
                 }
               }}

@@ -180,6 +180,8 @@ const Users = () => {
                           type: UPDATE_MEMBER_PROFILES,
                           payload: [...memberProfiles, data]
                         });
+                        member.pdlId && emailPDLAssignment(member, csrf).then()
+                        member.supervisorid && emailSupervisorAssignment(member, csrf).then()
                       }
                       handleClose();
                     }
