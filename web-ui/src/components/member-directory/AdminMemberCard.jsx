@@ -215,13 +215,13 @@ const AdminMemberCard = ({ member, index }) => {
               open={open}
               onClose={handleClose}
               onSave={async member => {
-                let resGetMember = await getMember(member.id, csrf);
-                let oldMember = resGetMember.payload?.data && !resGetMember.error
+                const resGetMember = await getMember(member.id, csrf);
+                const oldMember = resGetMember.payload?.data && !resGetMember.error
                     ? resGetMember.payload.data
                     : null;
-                let res = await updateMember(member, csrf);
-                let data =
-                  res.payload && res.payload.data && !res.error
+                const res = await updateMember(member, csrf);
+                const data =
+                  res.payload?.data && !res.error
                     ? res.payload.data
                     : null;
                 if (data) {
@@ -235,10 +235,10 @@ const AdminMemberCard = ({ member, index }) => {
                     payload: copy
                   });
                   if (oldMember && oldMember.pdlId !== member.pdlId) {
-                    await emailPDLAssignment(member, csrf)
+                    emailPDLAssignment(member, csrf).then()
                   }
                   if (oldMember && oldMember.supervisorid !== member.supervisorid) {
-                    await emailSupervisorAssignment(member, csrf)
+                    emailSupervisorAssignment(member, csrf).then()
                   }
                   handleClose();
                 }

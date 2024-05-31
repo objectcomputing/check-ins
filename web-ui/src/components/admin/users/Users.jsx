@@ -175,13 +175,9 @@ const Users = () => {
                       member.workEmail &&
                       csrf
                     ) {
-                      let resGetMember = await getMember(member.id, csrf);
-                      let oldMember = resGetMember.payload?.data && !resGetMember.error
-                          ? resGetMember.payload.data
-                          : null;
-                      let res = await createMember(member, csrf);
-                      let data =
-                        res.payload && res.payload.data && !res.error
+                      const res = await createMember(member, csrf);
+                      const data =
+                        res.payload?.data && !res.error
                           ? res.payload.data
                           : null;
                       if (data) {
@@ -189,11 +185,11 @@ const Users = () => {
                           type: UPDATE_MEMBER_PROFILES,
                           payload: [...memberProfiles, data]
                         });
-                        if (oldMember && oldMember.pdlId !== member.pdlId) {
-                          await emailPDLAssignment(member, csrf)
+                        if (member.pdlId) {
+                          emailPDLAssignment(member, csrf).then()
                         }
-                        if (oldMember && oldMember.supervisorid !== member.supervisorid) {
-                          await emailSupervisorAssignment(member, csrf)
+                        if (member.supervisorid) {
+                          emailSupervisorAssignment(member, csrf).then()
                         }
                       }
                       handleClose();
