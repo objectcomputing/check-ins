@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Controller("/services/demographics")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "demographics")
 public class DemographicsController {
 

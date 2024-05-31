@@ -30,9 +30,6 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
     @Inject
     private Flyway flyway;
 
-    @Value("${aes.key}")
-    protected String key;
-
     public TestContainersSuite() {}
 
     private void deleteAllEntities() {

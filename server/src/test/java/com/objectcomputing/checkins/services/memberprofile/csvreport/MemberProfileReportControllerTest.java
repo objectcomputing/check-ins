@@ -105,7 +105,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
         List<String> selectedMemberIds = new ArrayList<>();
         selectedMemberIds.add(member2.getId().toString());
         selectedMemberIds.add(member4.getId().toString());
-        List<MemberProfileRecord> records = getMemberProfileReportRepository().findAllByMemberIds(selectedMemberIds, key);
+        List<MemberProfileRecord> records = getMemberProfileReportRepository().findAllByMemberIds(selectedMemberIds);
 
         assertEquals(2, records.size());
         assertMemberProfileMatchesRecord(member4, records.get(0));

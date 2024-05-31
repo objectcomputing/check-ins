@@ -23,7 +23,6 @@ import java.util.UUID;
 @Controller(SettingsController.PATH)
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "settings")
 @Validated
 public class SettingsController {

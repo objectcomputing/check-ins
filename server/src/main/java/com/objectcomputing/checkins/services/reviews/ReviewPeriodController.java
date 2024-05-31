@@ -31,7 +31,6 @@ import java.util.UUID;
 @Controller("/services/review-periods")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "reviews")
 public class ReviewPeriodController {
 

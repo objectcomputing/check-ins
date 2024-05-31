@@ -456,10 +456,7 @@ const MemberSelectorDialog = ({
               {checked.size} selected
             </Typography>
           </div>
-          <Button
-            color="inherit"
-            onClick={handleSubmit}
-          >
+          <Button color="inherit" onClick={handleSubmit}>
             Save
           </Button>
         </Toolbar>

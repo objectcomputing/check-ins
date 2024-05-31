@@ -24,7 +24,6 @@ import java.util.UUID;
 @Controller("/services/check-ins")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "check-ins")
 public class CheckInController {
 
