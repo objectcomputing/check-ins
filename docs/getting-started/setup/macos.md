@@ -112,9 +112,9 @@ Before running the above command, it's recommended you review the script content
 Then, install the JDK with:
 
 ```shell
-sdk install java 21.0.03-tem
-sdk use java 21.0.03-tem
-sdk default java 21.0.03-tem
+sdk install java 21.0.3-tem
+sdk use java 21.0.3-tem
+sdk default java 21.0.3-tem
 ```
 
 Please note JDK `21` is the latest version at the time of writing. See the `.java-version` file in the project root for the version of the JDK required for this project. You will also find versions in `server/Dockerfile`.
