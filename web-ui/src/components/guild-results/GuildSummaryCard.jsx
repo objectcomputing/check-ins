@@ -291,7 +291,7 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
               try {
                 newLeaders.length > 0 && await emailGuildLeaders(newLeaders, guild, csrf).then();
               } catch (e) {
-                console.error("Unabl to email guild leader assignment(s)", e)
+                console.error("Unable to email guild leader assignment(s)", e)
               }
             }
           }
