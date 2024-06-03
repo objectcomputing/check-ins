@@ -1,6 +1,7 @@
 import {
   selectMemberProfiles,
   selectProfileMap,
+  selectProfileMapForTerminatedMembers,
   selectPdlRoles,
   selectMappedPdls,
   selectOrderedPdls,
@@ -132,6 +133,68 @@ describe('Selectors', () => {
     };
 
     expect(selectProfileMap(testState)).toEqual(matchingProfiles);
+  });
+
+  it('should return an object mapping terminated member profiles by id', () => {
+    /** @type MemberProfile[] */
+    const terminatedMembers = [
+      {
+        id: '1',
+        bioText: 'foo',
+        employeeId: '11',
+        name: 'A Person',
+        firstName: 'A',
+        lastName: 'PersonA',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: '9',
+        startDate: [2012, 9, 29],
+        terminationDate: [2023, 5, 10]
+      },
+      {
+        id: '2',
+        bioText: 'foo',
+        employeeId: '12',
+        name: 'B Person',
+        firstName: 'B',
+        lastName: 'PersonB',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: '9',
+        startDate: [2012, 9, 29],
+        terminationDate: [2023, 5, 10]
+      },
+      {
+        id: '3',
+        bioText: 'foo',
+        employeeId: '13',
+        name: 'C Person',
+        firstName: 'C',
+        lastName: 'PersonC',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: '9',
+        startDate: [2012, 9, 29],
+        terminationDate: [2023, 5, 10]
+      }
+    ];
+
+    const expectedProfileMap = {
+      [terminatedMembers[0].id]: terminatedMembers[0],
+      [terminatedMembers[1].id]: terminatedMembers[1],
+      [terminatedMembers[2].id]: terminatedMembers[2]
+    };
+
+    const testState = {
+      terminatedMembers: terminatedMembers
+    };
+
+    const result = selectProfileMapForTerminatedMembers(testState);
+
+    expect(result).toEqual(expectedProfileMap);
   });
 
   it('selectPdlRoles should return an array of all member PDL roles', () => {
