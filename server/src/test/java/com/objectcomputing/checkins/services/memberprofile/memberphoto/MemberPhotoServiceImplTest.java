@@ -118,18 +118,4 @@ class MemberPhotoServiceImplTest extends TestContainersSuite {
         verify(mockGoogleApiAccess, times(1)).getDirectory();
         verify(mockGet, times(1)).execute();
     }
-
-    private URL setupUrl() throws IOException {
-        //URL is a final class and cannot be mocked directly
-        final URLConnection mockConnection = Mockito.mock(URLConnection.class);
-        final URLStreamHandler handler = new URLStreamHandler() {
-
-            @Override
-            protected URLConnection openConnection(final URL arg0) {
-                return mockConnection;
-            }
-        };
-
-        return new URL("http://foo.bar", "foo.bar", 80, "", handler);
-    }
 }
