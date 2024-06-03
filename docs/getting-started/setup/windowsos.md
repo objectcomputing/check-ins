@@ -75,13 +75,13 @@ If you haven't already, you will want to [configure git to use ssh for connectin
 
 # Install OpenJDK
 
-Install OpenJDK 17 with Chocolatey:
+Install OpenJDK 21 with Chocolatey:
 
 ```shell
-choco install openjdk --version=17.0.0
+choco install openjdk --version=21.0.2
 ```
 
-or download the laster installer: https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+or download the latest installer: https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html
 
 # Install NVM
 

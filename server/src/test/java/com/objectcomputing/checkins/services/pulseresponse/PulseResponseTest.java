@@ -23,10 +23,10 @@ class PulseResponseTest extends TestContainersSuite {
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings = "exampleId";
         final String externalFeelings = "exampleId2";
-        PulseResponse pulseResponse = new PulseResponse(1, 2, submissionDate,teamMemberId, internalFeelings, externalFeelings);
+        PulseResponse pulseResponse = new PulseResponse(1, 2, submissionDate, teamMemberId, internalFeelings, externalFeelings);
         assertEquals(teamMemberId, pulseResponse.getTeamMemberId());
-        assertEquals(internalFeelings , pulseResponse.getInternalFeelings ());
-        assertEquals(externalFeelings , pulseResponse.getExternalFeelings ());
+        assertEquals(internalFeelings, pulseResponse.getInternalFeelings());
+        assertEquals(externalFeelings, pulseResponse.getExternalFeelings());
     }
 
     @Test
@@ -54,13 +54,13 @@ class PulseResponseTest extends TestContainersSuite {
         final UUID id = UUID.randomUUID();
         final Integer internalScore = 1;
         final Integer externalScore = 2;
-        LocalDate submissionDate= LocalDate.of(2019, 1, 1);
+        LocalDate submissionDate = LocalDate.of(2019, 1, 1);
         final UUID teamMemberId = UUID.randomUUID();
         final String internalFeelings = "exampleId";
         final String externalFeelings = "exampleId2";
 
-        PulseResponse pulseResponse1 = new PulseResponse(id,internalScore,externalScore,submissionDate,teamMemberId, internalFeelings, externalFeelings );
-        PulseResponse pulseResponse2 = new PulseResponse(id,internalScore,externalScore,submissionDate,teamMemberId, internalFeelings, externalFeelings );
+        PulseResponse pulseResponse1 = new PulseResponse(id, internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
+        PulseResponse pulseResponse2 = new PulseResponse(id, internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
         assertEquals(pulseResponse1, pulseResponse2);
 
         pulseResponse2.setId(null);
@@ -75,8 +75,8 @@ class PulseResponseTest extends TestContainersSuite {
         pulseResponse2.setExternalScore(pulseResponse1.getExternalScore());
         assertEquals(pulseResponse1, pulseResponse2);
 
-        pulseResponse2.setInternalFeelings ("exampleId2");
-        pulseResponse2.setExternalFeelings ("exampleId3");
+        pulseResponse2.setInternalFeelings("exampleId2");
+        pulseResponse2.setExternalFeelings("exampleId3");
         assertNotEquals(pulseResponse1, pulseResponse2);
 
         pulseResponse2.setInternalScore(3);
@@ -93,12 +93,12 @@ class PulseResponseTest extends TestContainersSuite {
         final Integer externalScore = 2;
         final String internalFeelings = "exampleId";
         final String externalFeelings = "exampleId2";
-        PulseResponse pulseResponse = new PulseResponse(id,internalScore,externalScore,submissionDate, teamMemberId, internalFeelings, externalFeelings );
+        PulseResponse pulseResponse = new PulseResponse(id, internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
 
         String toString = pulseResponse.toString();
         assertTrue(toString.contains(teamMemberId.toString()));
         assertTrue(toString.contains(id.toString()));
-        assertTrue(toString.contains(internalFeelings ));
-        assertTrue(toString.contains(externalFeelings ));
+        assertTrue(toString.contains(internalFeelings));
+        assertTrue(toString.contains(externalFeelings));
     }
 }
