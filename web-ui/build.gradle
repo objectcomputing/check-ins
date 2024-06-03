@@ -69,10 +69,11 @@ sourceSets {
 
 sonarqube {
     properties {
+        property "sonar.sourceEncoding", "UTF-8"
         property "sonar.sources", "src/"
         property "sonar.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
         property "sonar.coverage.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
-        property "sonar.javascript.lcov.reportPaths", "coverage/lcov.info"
+        property "sonar.javascript.lcov.reportPaths", layout.projectDirectory.file("coverage/coverage-final.json").getAsFile()
     }
 }
 
