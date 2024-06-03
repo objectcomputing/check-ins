@@ -5,7 +5,6 @@ import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -65,7 +64,8 @@ public class CheckinNoteController {
     }
 
     /**
-     * Get notes by checkind or createbyid
+     * Get notes by checkind or createbyid. If no parameters are provided, and user has permission to view all checkins,
+     * then return all checkin notes.
      *
      * @param checkinid
      * @param createdbyid
@@ -73,8 +73,7 @@ public class CheckinNoteController {
      */
     @Get("/{?checkinid,createdbyid}")
     @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
-    public Set<CheckinNote> findCheckinNote(@Nullable UUID checkinid,
-                                            @Nullable UUID createdbyid) {
+    public Set<CheckinNote> findCheckinNote(@Nullable UUID checkinid, @Nullable UUID createdbyid) {
         return checkinNoteServices.findByFields(checkinid, createdbyid);
     }
 

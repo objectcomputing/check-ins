@@ -6,7 +6,6 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -133,22 +132,12 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     }
 
     @Override
-    public Set<PrivateNote> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
+    public Set<PrivateNote> findByFields(@Nullable UUID checkinId, @Nullable UUID createById) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        boolean canViewAllCheckins = checkinServices.canViewAllCheckins(currentUserId);
-
-        if (checkinid != null) {
-            if (!checkinServices.accessGranted(checkinid, currentUserId))
-                throw new PermissionException("User is unauthorized to do this operation");
-        } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
-            if (!currentUserId.equals(memberRecord.getId()) && !canViewAllCheckins)
-                throw new PermissionException("User is unauthorized to do this operation");
-        } else if (!canViewAllCheckins) {
+        if(!checkinServices.doesUserHaveViewAccess(currentUserId, checkinId, createById)){
             throw new PermissionException("User is unauthorized to do this operation");
         }
-
-        return privateNoteRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
+        return privateNoteRepository.search(nullSafeUUIDToString(checkinId), nullSafeUUIDToString(createById));
     }
 
     private void validate(boolean isError, String message, Object... args) {
