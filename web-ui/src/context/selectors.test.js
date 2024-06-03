@@ -1,11 +1,16 @@
 import {
   selectMemberProfiles,
   selectProfileMap,
+  selectProfileMapForTerminatedMembers,
   selectPdlRoles,
   selectMappedPdls,
   selectOrderedPdls,
   selectCheckinPDLS,
   selectTeamMembersWithCheckinPDL,
+  selectTerminatedUserRoles,
+  selectTerminatedMembersAsOfDate,
+  selectTerminatedMembersWithPDLRole,
+  selectTerminatedMembersAsOfDateWithPDLRole,
   selectCheckinsForTeamMemberAndPDL,
   selectCurrentMembers,
   selectNormalizedMembers,
@@ -20,6 +25,7 @@ import {
 
 describe('Selectors', () => {
   it('selectMemberProfiles should return an array of all member profiles', () => {
+    /** @type MemberProfile[] */
     const testMemberProfiles = [
       {
         id: 1,
@@ -69,6 +75,7 @@ describe('Selectors', () => {
   });
 
   it('selectProfileMap should return an array of all member profiles mapped by id', () => {
+    /** @type MemberProfile[] */
     const testMemberProfiles = [
       {
         id: 1,
@@ -128,6 +135,68 @@ describe('Selectors', () => {
     expect(selectProfileMap(testState)).toEqual(matchingProfiles);
   });
 
+  it('selectProfileMapForTerminatedMembers should return an object mapping terminated member profiles by id', () => {
+    /** @type MemberProfile[] */
+    const terminatedMembers = [
+      {
+        id: '1',
+        bioText: 'foo',
+        employeeId: '11',
+        name: 'A Person',
+        firstName: 'A',
+        lastName: 'PersonA',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: '9',
+        startDate: [2012, 9, 29],
+        terminationDate: [2023, 5, 10]
+      },
+      {
+        id: '2',
+        bioText: 'foo',
+        employeeId: '12',
+        name: 'B Person',
+        firstName: 'B',
+        lastName: 'PersonB',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: '9',
+        startDate: [2012, 9, 29],
+        terminationDate: [2023, 5, 10]
+      },
+      {
+        id: '3',
+        bioText: 'foo',
+        employeeId: '13',
+        name: 'C Person',
+        firstName: 'C',
+        lastName: 'PersonC',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: '9',
+        startDate: [2012, 9, 29],
+        terminationDate: [2023, 5, 10]
+      }
+    ];
+
+    const expectedProfileMap = {
+      [terminatedMembers[0].id]: terminatedMembers[0],
+      [terminatedMembers[1].id]: terminatedMembers[1],
+      [terminatedMembers[2].id]: terminatedMembers[2]
+    };
+
+    const testState = {
+      terminatedMembers: terminatedMembers
+    };
+
+    const result = selectProfileMapForTerminatedMembers(testState);
+
+    expect(result).toEqual(expectedProfileMap);
+  });
+
   it('selectPdlRoles should return an array of all member PDL roles', () => {
     const matchingRoles = [
       {
@@ -165,6 +234,7 @@ describe('Selectors', () => {
   });
 
   it('selectMappedPdls should return an array of all member PDL profiles', () => {
+    /** @type MemberProfile[] */
     const matchingMembers = [
       {
         id: '2',
@@ -232,6 +302,7 @@ describe('Selectors', () => {
     ];
 
     const testState = {
+      /** @type MemberProfile[] */
       memberProfiles: [
         {
           id: '1',
@@ -280,6 +351,7 @@ describe('Selectors', () => {
   });
 
   it('selectOrderedPdls should return an array of all member PDL profiles ordered by last name', () => {
+    /** @type MemberProfile[] */
     const matchingMembers = [
       {
         id: '3',
@@ -347,6 +419,7 @@ describe('Selectors', () => {
     ];
 
     const testState = {
+      /** @type MemberProfile[] */
       memberProfiles: [
         {
           id: '1',
@@ -395,6 +468,7 @@ describe('Selectors', () => {
   });
 
   it('selectCheckinPdls should return an array of all member PDL profiles that have an associated checkin', () => {
+    /** @type MemberProfile[] */
     const matchingMembers = [
       {
         id: 12,
@@ -426,6 +500,7 @@ describe('Selectors', () => {
         { pdlId: 12, completed: false, checkInDate: [2021, 9, 12] },
         { pdlId: 12, completed: true, checkInDate: [2020, 9, 11] }
       ],
+      /** @type MemberProfile[] */
       memberProfiles: [
         {
           id: 11,
@@ -466,6 +541,7 @@ describe('Selectors', () => {
   });
 
   it('selectTeamMembersWithCheckinPDL should return an array of all members associated with a pdl that have a checkin', () => {
+    /** @type MemberProfile[] */
     const matchingMembers = [
       {
         id: 12,
@@ -514,6 +590,7 @@ describe('Selectors', () => {
           checkInDate: [2020, 9, 10]
         }
       ],
+      /** @type MemberProfile[] */
       memberProfiles: [
         {
           id: 11,
@@ -556,6 +633,142 @@ describe('Selectors', () => {
     expect(selectTeamMembersWithCheckinPDL(testState, 1)).toEqual(
       matchingMembers
     );
+  });
+
+  describe('selectTerminatedUserRoles', () => {
+    const mockSelectUserRoles = vi.fn();
+    const mockSelectTerminatedMemberIds = vi.fn();
+    it('should filter user roles by terminated member ids', () => {
+      const userRoles = [
+        {
+          memberRoleId: {
+            memberId: '6207b3fd-042d-49aa-9e28-dcc04f537c2d',
+            roleId: 'e8a4fff8-e984-4e59-be84-a713c9fa8d23'
+          }
+        },
+        {
+          memberRoleId: {
+            memberId: '2559a257-ae84-4076-9ed4-3820c427beeb',
+            roleId: 'e8a4fff8-e984-4e59-be84-a713c9fa8d23'
+          }
+        }
+      ];
+      const memberIds = ['6207b3fd-042d-49aa-9e28-dcc04f537c2d'];
+      mockSelectUserRoles.mockReturnValue(userRoles);
+      mockSelectTerminatedMemberIds.mockReturnValue(memberIds);
+
+      const result = selectTerminatedUserRoles.resultFunc(userRoles, memberIds);
+      expect(result).toEqual([
+        {
+          memberRoleId: {
+            memberId: '6207b3fd-042d-49aa-9e28-dcc04f537c2d',
+            roleId: 'e8a4fff8-e984-4e59-be84-a713c9fa8d23'
+          }
+        }
+      ]);
+    });
+  });
+
+  describe('selectTerminatedMembersAsOfDate', () => {
+    const mockSelectTerminatedMembers = vi.fn();
+    it('should filter terminated members by date', () => {
+      const terminatedMembers = [
+        { terminationDate: '2023-01-01' },
+        { terminationDate: '2024-01-01' }
+      ];
+      const date = '2023-06-01';
+      mockSelectTerminatedMembers.mockReturnValue(terminatedMembers);
+
+      const result = selectTerminatedMembersAsOfDate.resultFunc(
+        terminatedMembers,
+        date
+      );
+      expect(result).toEqual([{ terminationDate: '2024-01-01' }]);
+    });
+  });
+
+  describe('selectTerminatedMembersWithPDLRole', () => {
+    const mockSelectUserRoles = vi.fn();
+    const mockSelectPdlRoles = vi.fn();
+    const mockSelectProfileMapForTerminatedMembers = vi.fn();
+    it('should filter terminated members with PDL role', () => {
+      const userRoles = [
+        {
+          memberRoleId: {
+            memberId: '6207b3fd-042d-49aa-9e28-dcc04f537c2d',
+            roleId: 'e8a4fff8-e984-4e59-be84-a713c9fa8d23'
+          }
+        },
+        {
+          memberRoleId: {
+            memberId: '2559a257-ae84-4076-9ed4-3820c427beeb',
+            roleId: 'd03f5f0b-e29c-4cf4-9ea4-6baa09405c56'
+          }
+        }
+      ];
+      const pdlRoles = [{ id: 'e8a4fff8-e984-4e59-be84-a713c9fa8d23' }];
+      const terminatedMembersProfileMap = {
+        '6207b3fd-042d-49aa-9e28-dcc04f537c2d': {
+          id: '6207b3fd-042d-49aa-9e28-dcc04f537c2d',
+          name: 'John Doe'
+        },
+        '2559a257-ae84-4076-9ed4-3820c427beeb': {
+          id: '2559a257-ae84-4076-9ed4-3820c427beeb',
+          name: 'Jane Doe'
+        }
+      };
+      mockSelectUserRoles.mockReturnValue(userRoles);
+      mockSelectPdlRoles.mockReturnValue(pdlRoles);
+      mockSelectProfileMapForTerminatedMembers.mockReturnValue(
+        terminatedMembersProfileMap
+      );
+
+      const result = selectTerminatedMembersWithPDLRole.resultFunc(
+        userRoles,
+        pdlRoles,
+        terminatedMembersProfileMap
+      );
+      expect(result).toEqual([
+        { id: '6207b3fd-042d-49aa-9e28-dcc04f537c2d', name: 'John Doe' }
+      ]);
+    });
+  });
+
+  describe('selectTerminatedMembersAsOfDateWithPDLRole', () => {
+    const mockSelectTerminatedMembersAsOfDate = vi.fn();
+    const mockSelectTerminatedMembersWithPDLRole = vi.fn();
+    it('should filter terminated members by date and PDL role', () => {
+      const terminatedMembers = [
+        {
+          id: '6207b3fd-042d-49aa-9e28-dcc04f537c2d',
+          terminationDate: '2023-01-01'
+        },
+        {
+          id: '2559a257-ae84-4076-9ed4-3820c427beeb',
+          terminationDate: '2024-01-01'
+        }
+      ];
+      const terminatedPDLs = [
+        { id: '2559a257-ae84-4076-9ed4-3820c427beeb', name: 'Jane Doe' }
+      ];
+      const date = '2023-06-01';
+      const filteredMembers = terminatedMembers.filter(
+        member => new Date(member.terminationDate) >= new Date(date)
+      );
+      mockSelectTerminatedMembersAsOfDate.mockReturnValue(filteredMembers);
+      mockSelectTerminatedMembersWithPDLRole.mockReturnValue(terminatedPDLs);
+
+      const result = selectTerminatedMembersAsOfDateWithPDLRole.resultFunc(
+        filteredMembers,
+        terminatedPDLs
+      );
+      expect(result).toEqual([
+        {
+          id: '2559a257-ae84-4076-9ed4-3820c427beeb',
+          terminationDate: '2024-01-01'
+        }
+      ]);
+    });
   });
 
   it('selectCheckinsForTeamMemberAndPDL should return an array of all members associated with a pdl that have a checkin', () => {
@@ -607,6 +820,7 @@ describe('Selectors', () => {
           checkInDate: [2020, 9, 10]
         }
       ],
+      /** @type MemberProfile[] */
       memberProfiles: [
         {
           id: 11,
@@ -652,6 +866,7 @@ describe('Selectors', () => {
   });
 
   it('selectCurrentMembers should return an array of non-terminated profiles', () => {
+    /** @type MemberProfile[] */
     const testMemberProfiles = [
       {
         id: 1,
@@ -710,6 +925,7 @@ describe('Selectors', () => {
   });
 
   it('selectNormalizedMembers should return an array of appropriate member profiles despite accents', () => {
+    /** @type MemberProfile[] */
     const testMemberProfiles = [
       {
         id: 1,
@@ -825,11 +1041,11 @@ describe('Selectors', () => {
       teamMemberId: '1'
     };
 
-    console.log(selectMostRecentCheckin(state, memberId));
     expect(selectMostRecentCheckin(state, memberId)).toEqual(expectedResult);
   });
 
   it('selectSupervisors should return only members who are supervisors', () => {
+    /** @type MemberProfile[] */
     const testMemberProfiles = [
       {
         id: 1,
@@ -886,6 +1102,7 @@ describe('Selectors', () => {
   });
 
   it('selectSupervisorHierarchyIds should return a list of ids of everyone who is above the selected member', () => {
+    /** @type MemberProfile[] */
     const testMemberProfiles = [
       {
         id: 1,
@@ -952,6 +1169,7 @@ describe('Selectors', () => {
   });
 
   it('selectSubordinates should return entire subordinate heirarchy', () => {
+    /** @type MemberProfile[] */
     const testMemberProfiles = [
       {
         id: 1,
@@ -1035,6 +1253,7 @@ describe('Selectors', () => {
   });
 
   it("selectIsSubordinateOfCurrentUser should return true when user is in the current users' heirarchy", () => {
+    /** @type MemberProfile[] */
     const testMemberProfiles = [
       {
         id: 1,
@@ -1114,6 +1333,7 @@ describe('Selectors', () => {
   });
 
   it("selectIsSubordinateOfCurrentUser should return false when user is not in the current users' heirarchy", () => {
+    /** @type MemberProfile[] */
     const testMemberProfiles = [
       {
         id: 1,

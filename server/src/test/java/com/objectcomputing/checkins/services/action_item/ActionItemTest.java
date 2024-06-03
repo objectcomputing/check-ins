@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -12,8 +12,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-class ActionItemTest {
+class ActionItemTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
@@ -61,7 +60,7 @@ class ActionItemTest {
         Set<ConstraintViolation<ActionItem>> violations = validator.validate(actionItem);
         assertEquals(2, violations.size());
         for (ConstraintViolation<ActionItem> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 
