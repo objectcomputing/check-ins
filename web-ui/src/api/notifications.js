@@ -85,7 +85,7 @@ export const emailSupervisorAssignment = async (member, cookie) => {
   }
 }
 export const emailGuildLeaders = async (members, guild, cookie) => {
-  members.forEach(async member => {
+  members.forEach(member => {
     if (!member.workEmail || !guild?.name) {
       console.warn("Unable to send guild leader email as member is missing required fields", member);
       return;
@@ -93,6 +93,6 @@ export const emailGuildLeaders = async (members, guild, cookie) => {
 
     const subject = `You have been assigned as a guild leader of ${guild.name}`;
     const body = `Congratulations, you have been assigned as a guild leader of ${guild.name}`;
-    await sendEmail(subject, body, false, [member.workEmail], cookie);
+    sendEmail(subject, body, false, [member.workEmail], cookie);
   });
 }
