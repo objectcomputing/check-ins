@@ -604,7 +604,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     return null; // no validtation errors
   };
 
-  const updateReviewPeriodStatus = async (reviewStatus) => {
+  const updateReviewPeriodStatus = async reviewStatus => {
     try {
       const res = await resolve({
         method: 'PUT',
@@ -636,7 +636,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         console.log(reviewee.name, 'is reviewed by', reviewer.name);
       }
     }
-  }
+  };
 
   const requestApproval = async () => {
     const msg = validateReviewPeriod(period);
@@ -657,9 +657,9 @@ const TeamReviews = ({ onBack, periodId }) => {
           ? 'Are you sure you want to launch the review period?'
           : unapproved.length === 1
             ? 'There is one visible, unapproved review assignment. ' +
-            'Would you like to approve it and launch this review period?'
+              'Would you like to approve it and launch this review period?'
             : `There are ${unapproved.length} visible, unapproved review assignments. ` +
-            'Would you like to approve all of them and launch this review period?'
+              'Would you like to approve all of them and launch this review period?'
       );
       setConfirmationDialogOpen(true);
     }

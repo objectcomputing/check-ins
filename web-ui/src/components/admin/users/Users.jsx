@@ -8,7 +8,11 @@ import { styled } from '@mui/material/styles';
 
 import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
-import { createMember, reportAllMembersCsv } from '../../../api/member';
+import {
+  createMember,
+  getMember,
+  reportAllMembersCsv
+} from '../../../api/member';
 import { AppContext } from '../../../context/AppContext';
 import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
 import {
@@ -19,6 +23,7 @@ import {
 import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import './Users.css';
+import { emailPDLAssignment, emailSupervisorAssignment } from "../../../api/notifications.js";
 
 const PREFIX = 'Users';
 const classes = {
@@ -170,9 +175,9 @@ const Users = () => {
                       member.workEmail &&
                       csrf
                     ) {
-                      let res = await createMember(member, csrf);
-                      let data =
-                        res.payload && res.payload.data && !res.error
+                      const res = await createMember(member, csrf);
+                      const data =
+                        res.payload?.data && !res.error
                           ? res.payload.data
                           : null;
                       if (data) {
@@ -180,6 +185,12 @@ const Users = () => {
                           type: UPDATE_MEMBER_PROFILES,
                           payload: [...memberProfiles, data]
                         });
+                        if (member.pdlId) {
+                          emailPDLAssignment(member, csrf).then()
+                        }
+                        if (member.supervisorid) {
+                          emailSupervisorAssignment(member, csrf).then()
+                        }
                       }
                       handleClose();
                     }

@@ -25,6 +25,7 @@ import {
   selectCsrfToken,
   selectCurrentMembers,
   selectHasUpdateReviewAssignmentsPermission,
+  selectReviewPeriod,
   selectReviewPeriods
 } from '../../../context/selectors';
 import { titleCase } from '../../../helpers/strings.js';
