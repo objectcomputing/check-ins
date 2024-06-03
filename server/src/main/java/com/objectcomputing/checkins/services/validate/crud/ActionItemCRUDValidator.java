@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.validate.crud;
 
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.action_item.ActionItem;
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -154,20 +155,10 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     }
 
     @Override
-    public void validatePermissionsFindByFields(UUID checkinid, UUID createdbyid) {
+    public void validatePermissionsFindByFields(UUID checkinId, UUID createdById) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        boolean canViewAllCheckins = checkInServices.canViewAllCheckins(currentUserId);
-
-        if (checkinid != null) { // find by checkinId validation
-            boolean allowedToView = checkInServices.accessGranted(checkinid, currentUserId);
-            permissionsValidation.validatePermissions(!allowedToView, "User is unauthorized to do this operation");
-        } else if (createdbyid != null) { // find by createById validation
-            final UUID memberRecordId = memberServices.getById(createdbyid).getId();
-            boolean currentUserIsCheckinSubject = currentUserId.equals(memberRecordId);
-            permissionsValidation.validatePermissions(!currentUserIsCheckinSubject && !canViewAllCheckins,
-                "User is unauthorized to do this operation");
-        } else { // find all validation
-            permissionsValidation.validatePermissions(!canViewAllCheckins, "User is unauthorized to do this operation");
+        if(!checkInServices.doesUserHaveViewAccess(currentUserId, checkinId, createdById)){
+            throw new PermissionException("User is unauthorized to do this operation");
         }
     }
 

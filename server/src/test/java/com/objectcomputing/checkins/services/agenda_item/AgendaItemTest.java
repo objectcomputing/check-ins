@@ -1,11 +1,10 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -13,9 +12,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AgendaItemTest {
+class AgendaItemTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
@@ -63,7 +60,7 @@ class AgendaItemTest {
         Set<ConstraintViolation<AgendaItem>> violations = validator.validate(agendaItem);
         assertEquals(2, violations.size());
         for (ConstraintViolation<AgendaItem> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@MicronautTest
-class PulseResponseCreateDTOTest {
+class PulseResponseCreateDTOTest extends TestContainersSuite {
 
     @Inject
     protected Validator validator;
@@ -38,7 +37,7 @@ class PulseResponseCreateDTOTest {
         Set<ConstraintViolation<PulseResponseCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 3);
         for (ConstraintViolation<PulseResponseCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

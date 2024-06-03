@@ -7,7 +7,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.role.RoleServices;
-import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import com.objectcomputing.checkins.util.Util;
 import jakarta.inject.Singleton;
@@ -56,21 +55,10 @@ public class CheckInServicesImpl implements CheckInServices {
     public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
         memberRepo.findById(memberId).orElseThrow(() -> new NotFoundException(String.format("Member %s not found", memberId)));
 
-        boolean canViewAllCheckins = canViewAllCheckins(memberId);
-        
-        // TODO: the check for Admin as a role should be removed when permissions are fully implemented
-        boolean isAdmin = false;
-        if (roleServices.findByRole(RoleType.ADMIN.name()).isPresent()){
-            isAdmin = roleServices.findUserRoles(memberId)
-                .contains(roleServices.findByRole(RoleType.ADMIN.name()).get());
-            LOG.debug("Member is Admin: {}", isAdmin);
-        }
+        if(!canViewAllCheckins(memberId)) {
+            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() ->
+                    new NotFoundException(String.format("Checkin not found by Id: %s.", checkinId)));
 
-        Boolean grantAccess = false;
-        if(canViewAllCheckins || isAdmin){
-            grantAccess = true;
-        } else {
-            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> new NotFoundException(String.format("Checkin %s not found", checkinId)));
             MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() ->
                 new NotFoundException(String.format("Team member not found %s not found", checkinRecord.getTeamMemberId())));
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
@@ -80,13 +68,22 @@ public class CheckInServicesImpl implements CheckInServices {
             LOG.debug("PDL on Checkin: {}", checkinRecord.getPdlId());
             LOG.debug("Current PDL: {}", currentPdlId);
 
-            if (memberId.equals(checkinRecord.getTeamMemberId())
+            return memberId.equals(checkinRecord.getTeamMemberId())
                     || memberId.equals(checkinRecord.getPdlId())
-                    || memberId.equals(currentPdlId)) {
-                grantAccess = true;
-            }
+                    || memberId.equals(currentPdlId);
         }
-        return grantAccess;
+        return true;
+    }
+
+    @Override
+    public Boolean doesUserHaveViewAccess(UUID currentUserId, UUID checkinId, UUID createdById) {
+        if (canViewAllCheckins(currentUserId)) {
+            return true;
+        } else if (checkinId != null) {
+            return accessGranted(checkinId, currentUserId);
+        } else {
+            return createdById != null && createdById.equals(currentUserId);
+        }
     }
 
     @Override

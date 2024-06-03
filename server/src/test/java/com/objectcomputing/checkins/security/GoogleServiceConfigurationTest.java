@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.security;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -10,8 +10,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-public class GoogleServiceConfigurationTest {
+public class GoogleServiceConfigurationTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
@@ -41,7 +40,7 @@ public class GoogleServiceConfigurationTest {
         Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
         assertEquals(13, violations.size());
         for (ConstraintViolation<GoogleServiceConfiguration> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 
