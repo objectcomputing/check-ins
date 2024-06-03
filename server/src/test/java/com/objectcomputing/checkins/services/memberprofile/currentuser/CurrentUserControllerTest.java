@@ -41,8 +41,6 @@ class CurrentUserControllerTest extends TestContainersSuite implements MemberPro
     @Inject
     CurrentUserController currentUserController;
 
-    @Inject
-    EmbeddedServer embeddedServer;
     private AutoCloseable mockFinalizer;
 
     @BeforeAll
@@ -169,11 +167,5 @@ class CurrentUserControllerTest extends TestContainersSuite implements MemberPro
         assertEquals(List.of("ADMIN"), currentUserDTO.getRole());
         assertEquals(adminPermissions, currentUserDTO.getPermissions());
         assertNotNull(actual.getHeaders().get("location"));
-    }
-
-
-    @Override
-    public EmbeddedServer getEmbeddedServer() {
-        return embeddedServer;
     }
 }
