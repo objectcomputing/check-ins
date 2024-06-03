@@ -1,31 +1,7 @@
-///// ################ SONARCLOUD PLUGIN #############################
-///////// MANUAL SONAR ////// triggered with ./gradlew sonar
-// plugins {
-//     id 'java-library'
-//     id 'maven-publish'
-//     id "org.sonarqube" version "3.0"
-// }
-// apply plugin: "org.sonarqube"
-
-///////// update below keys and project name based on OCI
-// sonarqube {
-//   properties {
-//     property "sonar.projectKey", "oci-labs_check-ins"
-//     property "sonar.organization", "oci-labs"
-//     property "sonar.host.url", "https://sonarcloud.io"
-//     property "sonar.login", "76d54e72c4fbab6a5d7928cc95e2e9248986b1c5"
-//   }
-// }
-
-/////// AUTOMATIC SONAR ///////// commit or pull requests trigger analysis
 plugins {
-    id 'java-library'
-    id 'maven-publish'
     id "jacoco"
-    id "java"
     id "org.sonarqube" version "3.5.0.2730"
 }
-
 
 sonarqube {
     properties {
@@ -33,69 +9,8 @@ sonarqube {
     }
 }
 
-project(":server") {
-    assemble {
-        dependsOn ":web-ui:assemble"
-    }
+tasks {
     sonarqube {
-        properties {
-            property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
-            property "sonar.cpd.exclusions", "**/*DTO.java"
-        }
+        dependsOn ":web-ui:yarn_run_coverage", ":server:jacocoTestReport"
     }
 }
-
-project(":web-ui") {
-    sonarqube {
-        properties {
-            property "sonar.sources", "src/"
-            property "sonar.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
-            property "sonar.coverage.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
-            property "sonar.javascript.lcov.reportPaths", "coverage/lcov.info"
-        }
-    }
-}
-
-project.tasks["sonarqube"].dependsOn ":web-ui:yarn_run_coverage", ":server:jacocoTestReport"
-////// ################### SONARCLOUD PLUGIN END#########################
-
-
-//plugins {
-//    id 'java-library'
-//    id 'maven-publish'
-//}
-
-// task test {
-
-// }
-
-
-// task check {
-
-// }
-
-publishing {
-     publications {
-        checkInsProject(MavenPublication) {
-            version "0.7.0"
-            group "com.objectcomputing.checkins"         
-            from components.java
-            
-        }
-    }
-
-    repositories {
-        maven {
-            name = "CheckInsProject"
-            url = "https://maven.pkg.github.com/objectcomputing/check-ins"
-            credentials {
-            username = System.getenv("GITHUB_ACTOR")!=null?System.getenv("GITHUB_ACTOR"):"OCI-LABS"
-            password = System.getenv("GITHUB_TOKEN")!=null?System.getenv("GITHUB_TOKEN"):"OCI-LABS"
-            }
-        }
-    }
-}
-
-
-
-
