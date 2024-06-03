@@ -8,19 +8,19 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class UtilTest extends TestContainersSuite {
+class UtilTest extends TestContainersSuite {
 
     private static final String sampleUUIDString = "c0df7236-f200-11ea-adc1-0242ac120002";
     private static final UUID sampleUUID = UUID.fromString(sampleUUIDString);
 
     @Test
-    public void testNullSafeUUIDTranslationNotNull() {
+    void testNullSafeUUIDTranslationNotNull() {
         String result = Util.nullSafeUUIDToString(sampleUUID);
         assertEquals(sampleUUIDString, result);
     }
 
     @Test
-    public void testNullSafeUUIDTranslationNull() {
+    void testNullSafeUUIDTranslationNull() {
         String result = Util.nullSafeUUIDToString(null);
         assertNull(result);
     }

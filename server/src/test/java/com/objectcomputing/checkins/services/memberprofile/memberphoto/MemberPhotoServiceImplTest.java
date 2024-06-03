@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class MemberPhotoServiceImplTest extends TestContainersSuite {
+class MemberPhotoServiceImplTest extends TestContainersSuite {
 
     @Mock
     private MemberProfileServices mockMemberProfileServices;
@@ -74,7 +74,7 @@ public class MemberPhotoServiceImplTest extends TestContainersSuite {
 
     // happy path
     @Test
-    public void testGetImageByEmailAddress() throws IOException {
+    void testGetImageByEmailAddress() throws IOException {
         String testEmail = "test@test.com";
         String testPhotoData = "test.photo.data";
         byte[] testData = Base64.getUrlEncoder().encode(testPhotoData.getBytes());
@@ -102,7 +102,7 @@ public class MemberPhotoServiceImplTest extends TestContainersSuite {
     }
 
     @Test
-    public void testDirectoryServiceThrowsGoogleJsonResponseException() throws IOException {
+    void testDirectoryServiceThrowsGoogleJsonResponseException() throws IOException {
         String testEmail = "test@test.com";
 
         when(mockGoogleApiAccess.getDirectory()).thenReturn(mockDirectory);

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PulseResponseTest extends TestContainersSuite {
+class PulseResponseTest extends TestContainersSuite {
 
     @Inject
     protected Validator validator;

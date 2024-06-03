@@ -16,13 +16,14 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class GithubControllerTest extends TestContainersSuite {
+class GithubControllerTest extends TestContainersSuite {
+
     @Inject
     @Client("/services/github-issue")
     HttpClient client;
 
     @Test
-    public void testBadRequestExceptionThrownWithBlankTitle() {
+    void testBadRequestExceptionThrownWithBlankTitle() {
         IssueCreateDTO issue = new IssueCreateDTO();
         issue.setTitle("");
         issue.setBody("body");
@@ -34,7 +35,7 @@ public class GithubControllerTest extends TestContainersSuite {
     }
 
     @Test
-    public void testBadRequestExceptionThrownWithBlankBody() {
+    void testBadRequestExceptionThrownWithBlankBody() {
         IssueCreateDTO issue = new IssueCreateDTO();
         issue.setTitle("title");
         issue.setBody("");

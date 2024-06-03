@@ -56,13 +56,13 @@ class CurrentUserControllerTest extends TestContainersSuite implements MemberPro
     }
 
     @Test
-    public void testCurrentUserReturnsUnauthorizedWhenAuthenticationFails() {
+    void testCurrentUserReturnsUnauthorizedWhenAuthenticationFails() {
         HttpResponse<CurrentUserDTO> response = currentUserController.currentUser(null);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatus());
     }
 
     @Test
-    public void testCurrentUserReturnsValidDTO() {
+    void testCurrentUserReturnsValidDTO() {
         Authentication auth = new Authentication() {
             @NonNull
             @Override
@@ -100,9 +100,7 @@ class CurrentUserControllerTest extends TestContainersSuite implements MemberPro
 
 
     @Test
-    public void testCurrentUserReturnsCorrectPermissions() {
-
-
+    void testCurrentUserReturnsCorrectPermissions() {
         Role memberRole = createRole(new Role(RoleType.MEMBER.name(), "Member Role"));
         setPermissionsForMember(memberRole.getId());
         MemberProfile member = createADefaultMemberProfile();
@@ -138,9 +136,7 @@ class CurrentUserControllerTest extends TestContainersSuite implements MemberPro
 
 
     @Test
-    public void testCurrentUserReturnsCorrectPermissionsAdmin() {
-
-
+    void testCurrentUserReturnsCorrectPermissionsAdmin() {
         Role adminRole = createRole(new Role(RoleType.ADMIN.name(), "Member Role"));
         setPermissionsForAdmin(adminRole.getId());
         MemberProfile admin = createADefaultMemberProfile();

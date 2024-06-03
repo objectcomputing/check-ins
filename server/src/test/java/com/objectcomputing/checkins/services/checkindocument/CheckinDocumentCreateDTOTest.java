@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CheckinDocumentCreateDTOTest extends TestContainersSuite {
+class CheckinDocumentCreateDTOTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;

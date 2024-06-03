@@ -11,7 +11,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CurrentUserDtoTest extends TestContainersSuite {
+class CurrentUserDtoTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;

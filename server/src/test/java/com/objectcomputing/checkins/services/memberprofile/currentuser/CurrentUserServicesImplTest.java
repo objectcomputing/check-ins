@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class CurrentUserServicesImplTest extends TestContainersSuite {
+class CurrentUserServicesImplTest extends TestContainersSuite {
 
     @Mock
     MemberProfileRepository memberProfileRepo;
@@ -48,7 +48,7 @@ public class CurrentUserServicesImplTest extends TestContainersSuite {
     }
 
     @Test
-    public void testFindOrSaveUserForNewUser() {
+    void testFindOrSaveUserForNewUser() {
         MemberProfile expected = mkMemberProfile();
         expected.setWorkEmail("test.email");
 
@@ -60,7 +60,7 @@ public class CurrentUserServicesImplTest extends TestContainersSuite {
     }
 
     @Test
-    public void testFindOrSaveUserForExistingUser() {
+    void testFindOrSaveUserForExistingUser() {
         MemberProfile expected = mkMemberProfile();
         expected.setId(UUID.randomUUID());
         expected.setWorkEmail("test.email");

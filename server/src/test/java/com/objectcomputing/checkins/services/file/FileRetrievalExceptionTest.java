@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FileRetrievalExceptionTest extends TestContainersSuite {
+class FileRetrievalExceptionTest extends TestContainersSuite {
 
     @Test
     void testExceptionMessage() {

@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FileInfoDTOTest extends TestContainersSuite {
+class FileInfoDTOTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;

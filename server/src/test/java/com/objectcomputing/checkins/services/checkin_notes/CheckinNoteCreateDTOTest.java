@@ -7,10 +7,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CheckinNoteCreateDTOTest extends TestContainersSuite {
+class CheckinNoteCreateDTOTest extends TestContainersSuite {
 
     @Test
-    public void testPopulateDTO() {
+    void testPopulateDTO() {
         CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
         UUID checkinid = UUID.randomUUID();
         UUID createdById = UUID.randomUUID();

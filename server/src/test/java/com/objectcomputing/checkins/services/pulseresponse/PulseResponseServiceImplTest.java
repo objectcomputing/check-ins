@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class PulseResponseServiceImplTest extends TestContainersSuite {
+class PulseResponseServiceImplTest extends TestContainersSuite {
 
     @Mock
     private MemberProfileRepository memberprofileRepository;

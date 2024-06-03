@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MemberPhotoControllerTest extends TestContainersSuite {
+class MemberPhotoControllerTest extends TestContainersSuite {
 
     @Inject
     @Client("/services/member-profiles/member-photos")
@@ -29,7 +29,7 @@ public class MemberPhotoControllerTest extends TestContainersSuite {
 
     //Happy path
     @Test
-    public void testGetForValidInput() throws IOException {
+    void testGetForValidInput() throws IOException {
 
         String testEmail = "test@test.com";
         String testPhotoData = "test.photo.data";
@@ -51,5 +51,4 @@ public class MemberPhotoControllerTest extends TestContainersSuite {
     public MemberPhotoService memberPhotoService() {
         return mock(MemberPhotoService.class);
     }
-
 }

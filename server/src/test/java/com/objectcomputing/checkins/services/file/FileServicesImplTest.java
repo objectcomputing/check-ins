@@ -59,7 +59,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
-public class FileServicesImplTest extends TestContainersSuite {
+class FileServicesImplTest extends TestContainersSuite {
 
     private static File testFile;
     private final static String filePath = "testFile.txt";

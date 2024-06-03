@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class FileControllerTest extends TestContainersSuite {
+class FileControllerTest extends TestContainersSuite {
 
     @Inject
     @Client("/services/files")
@@ -56,7 +56,7 @@ public class FileControllerTest extends TestContainersSuite {
     }
 
     @Test
-    public void testFindAll() {
+    void testFindAll() {
 
         UUID testCheckinId = UUID.randomUUID();
 
@@ -85,7 +85,7 @@ public class FileControllerTest extends TestContainersSuite {
     }
 
     @Test
-    public void testFindByCheckinId() {
+    void testFindByCheckinId() {
 
         UUID testCheckinId = UUID.randomUUID();
 
@@ -114,7 +114,7 @@ public class FileControllerTest extends TestContainersSuite {
     }
 
     @Test
-    public void testDownloadDocument() {
+    void testDownloadDocument() {
         String uploadDocId = "some.upload.id";
 
         when(fileServices.downloadFiles(uploadDocId)).thenReturn(testFile);
@@ -129,7 +129,7 @@ public class FileControllerTest extends TestContainersSuite {
     }
 
     @Test
-    public void testUploadEndpoint() {
+    void testUploadEndpoint() {
 
         UUID testCheckinId = UUID.randomUUID();
 
@@ -158,7 +158,7 @@ public class FileControllerTest extends TestContainersSuite {
     }
 
     @Test
-    public void testUploadEndpointFailsForInvalidFile() {
+    void testUploadEndpointFailsForInvalidFile() {
         UUID testCheckinId = UUID.randomUUID();
         File badFile = new File("");
 
@@ -176,7 +176,7 @@ public class FileControllerTest extends TestContainersSuite {
     }
 
     @Test
-    public void testDeleteEndpoint() {
+    void testDeleteEndpoint() {
 
         String uploadDocId = "some.upload.id";
         when(fileServices.deleteFile(uploadDocId)).thenReturn(true);
@@ -191,7 +191,7 @@ public class FileControllerTest extends TestContainersSuite {
     }
 
     @Test
-    public void testHandleBadArgs() {
+    void testHandleBadArgs() {
 
         String uploadDocId = "some.upload.id";
         doThrow(FileRetrievalException.class).when(fileServices).deleteFile(uploadDocId);
