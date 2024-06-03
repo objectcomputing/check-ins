@@ -19,7 +19,6 @@ import java.net.URI;
 @Controller("/services/skills/category-skills")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skillcategory_skills")
 public class SkillCategorySkillController {
 

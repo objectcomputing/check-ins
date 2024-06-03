@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.data.annotation.ParameterExpression;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
@@ -31,6 +32,6 @@ public interface MemberProfileReportRepository extends CrudRepository<MemberProf
                     "PGP_SYM_DECRYPT(cast(supervisoremail as bytea), :aesKey) as supervisorEmail " +
             "FROM member_profile_record " +
             "WHERE id IN (:memberIds)")
-    List<MemberProfileRecord> findAllByMemberIds(List<String> memberIds, String aesKey);
-
+    @ParameterExpression(name = "aesKey", expression = "#{ env['aes.key'] }")
+    List<MemberProfileRecord> findAllByMemberIds(List<String> memberIds);
 }
