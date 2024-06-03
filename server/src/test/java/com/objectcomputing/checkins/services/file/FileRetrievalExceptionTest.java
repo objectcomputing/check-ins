@@ -1,11 +1,11 @@
 package com.objectcomputing.checkins.services.file;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@MicronautTest
-public class FileRetrievalExceptionTest {
+class FileRetrievalExceptionTest extends TestContainersSuite {
 
     @Test
     void testExceptionMessage() {

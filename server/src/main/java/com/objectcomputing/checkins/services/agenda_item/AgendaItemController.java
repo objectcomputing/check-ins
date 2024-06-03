@@ -4,10 +4,8 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
@@ -16,7 +14,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
@@ -70,7 +67,8 @@ class AgendaItemController {
     }
 
     /**
-     * Find agenda items that match all filled in parameters, return all results when given no params
+     * Find agenda items that match all filled in parameters, or return all results when provided no parameters, and
+     * the user has permission to view all checkin items
      *
      * @param checkinid   {@link UUID} of checkin
      * @param createdbyid {@link UUID} of member	
