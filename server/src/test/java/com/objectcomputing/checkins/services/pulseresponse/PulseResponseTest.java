@@ -1,11 +1,10 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -13,9 +12,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PulseResponseTest {
+class PulseResponseTest extends TestContainersSuite {
 
     @Inject
     protected Validator validator;
@@ -48,7 +45,7 @@ class PulseResponseTest {
         Set<ConstraintViolation<PulseResponse>> violations = validator.validate(pulseResponse);
         assertEquals(1, violations.size());
         for (ConstraintViolation<PulseResponse> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

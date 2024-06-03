@@ -1,11 +1,10 @@
 package com.objectcomputing.checkins.services.guild.member;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -13,13 +12,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class GuildMemberTest {
+class GuildMemberTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
-
 
     @Test
     void testGuildMemberInstantiation() {
@@ -63,7 +59,7 @@ class GuildMemberTest {
         Set<ConstraintViolation<GuildMember>> violations = validator.validate(guildMember);
         assertEquals(2, violations.size());
         for (ConstraintViolation<GuildMember> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 
