@@ -151,6 +151,18 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
+    @Cacheable
+    public List<MemberProfile> getSubordinatesForId(UUID id) {
+        List<MemberProfile> subordinatesForId = memberProfileRepository.findSubordinatesForId(id);
+        if (!currentUserServices.isAdmin()) {
+            for (MemberProfile memberProfile : subordinatesForId) {
+                memberProfile.clearBirthYear();
+            }
+        }
+        return subordinatesForId;
+    }
+
+    @Override
     public MemberProfile updateProfile(MemberProfile memberProfile) {
         return memberProfileRepository.update(memberProfile);
     }
