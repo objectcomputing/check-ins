@@ -17,7 +17,6 @@ class TeamMemberTest extends TestContainersSuite {
     @Inject
     private Validator validator;
 
-
     @Test
     void testTeamMemberInstantiation() {
         final UUID teamId = UUID.randomUUID();
@@ -45,7 +44,6 @@ class TeamMemberTest extends TestContainersSuite {
         assertTrue(violations.isEmpty());
     }
 
-
     @Test
     void testConstraintViolation() {
         final UUID id = UUID.randomUUID();
@@ -60,7 +58,7 @@ class TeamMemberTest extends TestContainersSuite {
         Set<ConstraintViolation<TeamMember>> violations = validator.validate(teamMember);
         assertEquals(2, violations.size());
         for (ConstraintViolation<TeamMember> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

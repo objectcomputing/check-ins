@@ -45,7 +45,7 @@ public class PulseResponseTest extends TestContainersSuite {
         Set<ConstraintViolation<PulseResponse>> violations = validator.validate(pulseResponse);
         assertEquals(1, violations.size());
         for (ConstraintViolation<PulseResponse> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

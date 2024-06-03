@@ -30,7 +30,7 @@ public class CheckinDocumentCreateDTOTest extends TestContainersSuite {
         Set<ConstraintViolation<CheckinDocumentCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 2);
         for (ConstraintViolation<CheckinDocumentCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

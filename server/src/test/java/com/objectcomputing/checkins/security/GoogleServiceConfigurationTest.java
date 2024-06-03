@@ -40,7 +40,7 @@ public class GoogleServiceConfigurationTest extends TestContainersSuite {
         Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
         assertEquals(13, violations.size());
         for (ConstraintViolation<GoogleServiceConfiguration> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

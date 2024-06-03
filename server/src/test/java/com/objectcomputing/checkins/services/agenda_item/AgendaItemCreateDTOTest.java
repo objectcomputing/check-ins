@@ -31,7 +31,7 @@ class AgendaItemCreateDTOTest extends TestContainersSuite {
         Set<ConstraintViolation<AgendaItemCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 2);
         for (ConstraintViolation<AgendaItemCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

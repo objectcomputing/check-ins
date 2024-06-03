@@ -31,7 +31,7 @@ class TeamCreateDTOTest extends TestContainersSuite {
         Set<ConstraintViolation<TeamCreateDTO>> violations = validator.validate(dto);
         assertEquals(1, violations.size());
         for (ConstraintViolation<TeamCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be blank");
+            assertEquals("must not be blank", violation.getMessage());
         }
     }
 

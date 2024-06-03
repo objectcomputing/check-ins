@@ -28,7 +28,7 @@ class RoleCreateDTOTest extends TestContainersSuite {
         Set<ConstraintViolation<RoleCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 1);
         for (ConstraintViolation<RoleCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

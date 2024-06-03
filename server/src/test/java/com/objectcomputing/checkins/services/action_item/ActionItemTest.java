@@ -60,7 +60,7 @@ class ActionItemTest extends TestContainersSuite {
         Set<ConstraintViolation<ActionItem>> violations = validator.validate(actionItem);
         assertEquals(2, violations.size());
         for (ConstraintViolation<ActionItem> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

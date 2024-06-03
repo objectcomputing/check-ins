@@ -32,7 +32,7 @@ public class MemberSkillsCreateDTOTest extends TestContainersSuite {
         Set<ConstraintViolation<MemberSkillCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 2);
         for (ConstraintViolation<MemberSkillCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 
@@ -52,5 +52,4 @@ public class MemberSkillsCreateDTOTest extends TestContainersSuite {
         Set<ConstraintViolation<MemberSkillCreateDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
     }
-
 }

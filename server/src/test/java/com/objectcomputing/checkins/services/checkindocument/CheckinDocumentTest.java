@@ -36,7 +36,7 @@ public class CheckinDocumentTest extends TestContainersSuite {
         Set<ConstraintViolation<CheckinDocument>> violations = validator.validate(checkinDocument);
         assertEquals(1, violations.size());
         for (ConstraintViolation<CheckinDocument> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

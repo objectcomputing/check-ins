@@ -20,8 +20,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class CheckServicesImplTest extends TestContainersSuite {
+
     @Mock
     private FeedbackRequestServicesImpl feedbackRequestServices;
+
     @Mock
     private FeedbackRequestRepository feedbackRequestRepository;
 
@@ -34,11 +36,11 @@ class CheckServicesImplTest extends TestContainersSuite {
     void initMocks() {
         openMocks = MockitoAnnotations.openMocks(this);
     }
+
     @AfterEach
     void resetMocks() throws Exception {
         openMocks.close();
     }
-
 
     @Test
     void sendScheduledEmails() {

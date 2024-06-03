@@ -17,7 +17,6 @@ class RoleTest extends TestContainersSuite {
     @Inject
     private Validator validator;
 
-
     @Test
     void testRoleInstantiation() {
         final RoleType roleType = RoleType.ADMIN;
@@ -43,7 +42,6 @@ class RoleTest extends TestContainersSuite {
     void testConstraintViolation() {
         final UUID id = UUID.randomUUID();
         final RoleType roleType = RoleType.ADMIN;
-        final UUID memberId = UUID.randomUUID();
         Role role = new Role(id, roleType.toString(), "role description");
 
         role.setRole(null);
@@ -52,7 +50,7 @@ class RoleTest extends TestContainersSuite {
         Set<ConstraintViolation<Role>> violations = validator.validate(role);
         assertEquals(1, violations.size());
         for (ConstraintViolation<Role> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

@@ -17,7 +17,6 @@ class GuildMemberTest extends TestContainersSuite {
     @Inject
     private Validator validator;
 
-
     @Test
     void testGuildMemberInstantiation() {
         final UUID guildId = UUID.randomUUID();
@@ -60,7 +59,7 @@ class GuildMemberTest extends TestContainersSuite {
         Set<ConstraintViolation<GuildMember>> violations = validator.validate(guildMember);
         assertEquals(2, violations.size());
         for (ConstraintViolation<GuildMember> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

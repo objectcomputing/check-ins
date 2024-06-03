@@ -31,7 +31,7 @@ class ActionItemCreateDTOTest extends TestContainersSuite {
         Set<ConstraintViolation<ActionItemCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 2);
         for (ConstraintViolation<ActionItemCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

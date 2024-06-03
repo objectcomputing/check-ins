@@ -17,7 +17,6 @@ class GuildTest extends TestContainersSuite {
     @Inject
     private Validator validator;
 
-
     @Test
     void testGuildInstantiation() {
         final String name = "name";
@@ -42,7 +41,6 @@ class GuildTest extends TestContainersSuite {
         assertTrue(violations.isEmpty());
     }
 
-
     @Test
     void testConstraintViolation() {
         final UUID id = UUID.randomUUID();
@@ -55,7 +53,7 @@ class GuildTest extends TestContainersSuite {
         Set<ConstraintViolation<Guild>> violations = validator.validate(guild);
         assertEquals(violations.size(), 1);
         for (ConstraintViolation<Guild> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be blank");
+            assertEquals("must not be blank", violation.getMessage());
         }
     }
 

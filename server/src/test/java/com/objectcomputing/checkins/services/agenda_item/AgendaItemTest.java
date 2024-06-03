@@ -60,7 +60,7 @@ class AgendaItemTest extends TestContainersSuite {
         Set<ConstraintViolation<AgendaItem>> violations = validator.validate(agendaItem);
         assertEquals(2, violations.size());
         for (ConstraintViolation<AgendaItem> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 
