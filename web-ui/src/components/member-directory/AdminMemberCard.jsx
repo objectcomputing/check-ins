@@ -217,8 +217,8 @@ const AdminMemberCard = ({ member, index }) => {
               onSave={async member => {
                 const resGetMember = await getMember(member.id, csrf);
                 const oldMember = resGetMember.payload?.data && !resGetMember.error
-                    ? resGetMember.payload.data
-                    : null;
+                  ? resGetMember.payload.data
+                  : null;
                 const res = await updateMember(member, csrf);
                 const data =
                   res.payload?.data && !res.error
@@ -234,8 +234,17 @@ const AdminMemberCard = ({ member, index }) => {
                     type: UPDATE_MEMBER_PROFILES,
                     payload: copy
                   });
-                  oldMember.pdlId !== member.pdlId && emailPDLAssignment(member, csrf).then();
-                  oldMember.supervisorid !== member.supervisorid && emailSupervisorAssignment(member, csrf).then();
+                  try {
+                    oldMember.pdlId !== member.pdlId && await emailPDLAssignment(member, csrf);
+                  } catch (e) {
+                    log.error("Unable to email PDL assignment", e)
+                  }
+                  try {
+                    oldMember.supervisorid !== member.supervisorid && await emailSupervisorAssignment(member, csrf);
+                  } catch {
+                    log.error("Unable to email supervisor assignment", e)
+
+                  }
                   handleClose();
                 }
               }}

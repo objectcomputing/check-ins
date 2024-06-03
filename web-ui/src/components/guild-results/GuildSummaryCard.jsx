@@ -23,7 +23,7 @@ import {
   Tooltip
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import {deleteGuild, getGuildLeaders, updateGuild} from '../../api/guild.js';
+import { deleteGuild, getGuildLeaders, updateGuild } from '../../api/guild.js';
 import SplitButton from '../split-button/SplitButton';
 import { emailGuildLeaders } from "../../api/notifications.js";
 
@@ -266,12 +266,12 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
         onSave={async editedGuild => {
           const resGetOldGuildLeader = await getGuildLeaders(editedGuild.id, csrf);
           const oldGuildLeaders = resGetOldGuildLeader.payload?.data && !resGetOldGuildLeader.error
-              ? resGetOldGuildLeader.payload.data
-              : null;
+            ? resGetOldGuildLeader.payload.data
+            : null;
           const res = await updateGuild(editedGuild, csrf);
           const data = res.payload?.data && !res.error
-              ? res.payload.data
-              : null;
+            ? res.payload.data
+            : null;
           if (data) {
             const copy = [...guilds];
             copy[index] = data;
@@ -281,15 +281,18 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
             });
             const resGetGuildLeaders = await getGuildLeaders(editedGuild.id, csrf);
             const guildLeaders = resGetGuildLeaders.payload?.data && !resGetGuildLeaders.error
-                ? resGetGuildLeaders.payload.data
-                : null;
+              ? resGetGuildLeaders.payload.data
+              : null;
             if (guildLeaders && oldGuildLeaders) {
               // Filter out the new leaders that were not in the old leaders
               const newLeaders = guildLeaders.filter(
-                  newLeader => !oldGuildLeaders.some(oldLeader => oldLeader.id === newLeader.id)
+                newLeader => !oldGuildLeaders.some(oldLeader => oldLeader.id === newLeader.id)
               );
-
-              newLeaders.length > 0 && emailGuildLeaders(newLeaders, guild, csrf).then();
+              try {
+                newLeaders.length > 0 && await emailGuildLeaders(newLeaders, guild, csrf).then();
+              } catch (e) {
+                log.error("Unabl to email guild leader assignment(s)", e)
+              }
             }
           }
         }}
