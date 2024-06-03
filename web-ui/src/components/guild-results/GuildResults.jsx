@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import GroupIcon from '@mui/icons-material/Group';
 import { Button, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { createGuild } from '../../api/guild';
+import { createGuild, getGuildLeaders } from '../../api/guild';
 import { ADD_GUILD } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import AddGuildModal from './EditGuildModal';
@@ -12,6 +12,7 @@ import GuildSummaryCard from './GuildSummaryCard';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 import { useQueryParameters } from '../../helpers/query-parameters';
 import './GuildResults.css';
+import { emailGuildLeaders } from "../../api/notifications.js";
 
 const PREFIX = 'GuildResults';
 const classes = {
@@ -93,13 +94,21 @@ const GuildResults = () => {
                 onClose={handleClose}
                 onSave={async guild => {
                   if (csrf) {
-                    let res = await createGuild(guild, csrf);
-                    let data =
-                      res.payload && res.payload.data && !res.error
-                        ? res.payload.data
-                        : null;
+                    const res = await createGuild(guild, csrf);
+                    const data = res.payload?.data && !res.error
+                      ? res.payload.data
+                      : null;
                     if (data) {
                       dispatch({ type: ADD_GUILD, payload: data });
+                      const resGuildLeader = await getGuildLeaders(data.id, csrf);
+                      const guildLeaders = resGuildLeader.payload?.data && !resGuildLeader.error
+                        ? resGuildLeader.payload.data
+                        : null;
+                      try {
+                        guildLeaders && await emailGuildLeaders(guildLeaders, data, csrf).then();
+                      } catch (e) {
+                        console.error("Unable to email guild leader assignment(s)", e)
+                      }
                     }
                     handleClose();
                   }
@@ -113,19 +122,19 @@ const GuildResults = () => {
       <div className="guilds">
         {guilds?.length
           ? guilds?.map((guild, index) =>
-              guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
-                <GuildSummaryCard
-                  key={`guild-summary-${guild.id}`}
-                  index={index}
-                  guild={guild}
-                  isOpen={guild.id === openedGuildId}
-                  onGuildSelect={setOpenedGuildId}
-                />
-              ) : null
-            )
+            guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
+              <GuildSummaryCard
+                key={`guild-summary-${guild.id}`}
+                index={index}
+                guild={guild}
+                isOpen={guild.id === openedGuildId}
+                onGuildSelect={setOpenedGuildId}
+              />
+            ) : null
+          )
           : Array.from({ length: 20 }).map((_, index) => (
-              <SkeletonLoader key={index} type="guild" />
-            ))}
+            <SkeletonLoader key={index} type="guild" />
+          ))}
       </div>
     </Root>
   );

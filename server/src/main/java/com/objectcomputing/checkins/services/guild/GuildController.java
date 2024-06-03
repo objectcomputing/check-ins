@@ -1,9 +1,12 @@
 package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -15,6 +18,7 @@ import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -26,9 +30,11 @@ import java.util.UUID;
 public class GuildController {
 
     private final GuildServices guildService;
+    private final MemberProfileServices profileServices;
 
-    public GuildController(GuildServices guildService) {
+    public GuildController(GuildServices guildService, MemberProfileServices profileServices) {
         this.guildService = guildService;
+        this.profileServices = profileServices;
     }
 
     /**
@@ -54,6 +60,32 @@ public class GuildController {
     @Get("/{id}")
     public Mono<HttpResponse<GuildResponseDTO>> readGuild(@NotNull UUID id) {
         return Mono.fromCallable(() -> guildService.read(id))
+                .map(HttpResponse::ok);
+    }
+
+    /**
+     * Get guild leader based on guild id
+     *
+     * @param id of guild
+     * @return {@link GuildResponseDTO guild leader matching id}
+     */
+
+    @Get("/leaders/{id}")
+    public Mono<HttpResponse<Set<MemberProfile>>> getGuildLeaders(@NotNull UUID id) {
+        return Mono.fromCallable(() -> {
+                    GuildResponseDTO guild = guildService.read(id);
+                    List<GuildMemberResponseDTO> members = guild.getGuildMembers();
+                    Set<MemberProfile> newLeaders = new HashSet<>();
+                    for (GuildMemberResponseDTO member : members) {
+                        if (member.isLead()) {
+                            MemberProfile memberProfile = profileServices.getById(member.getMemberId());
+                            if (memberProfile != null) {
+                                newLeaders.add(memberProfile);
+                            }
+                        }
+                    }
+                    return newLeaders;
+                })
                 .map(HttpResponse::ok);
     }
 
