@@ -71,11 +71,11 @@ const directoryLinks = [
   ['/teams', 'Teams']
 ];
 
-const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => {
+const getFeedbackLinks = (isAdmin, isPDL, isSupervisor, hasReportPermission) => {
   const links = [];
   if (isAdmin || isPDL) links.push(['/feedback/view', 'View Feedback']);
   links.push(['/feedback/received-requests', 'Received Requests']);
-  if (isSupervisor || isAdmin) links.push(['/feedback/reviews', 'Reviews']);
+  if (isSupervisor || hasReportPermission) links.push(['/feedback/reviews', 'Reviews']);
   links.push(['/feedback/self-reviews', 'Self-Reviews']);
   return links;
 };
