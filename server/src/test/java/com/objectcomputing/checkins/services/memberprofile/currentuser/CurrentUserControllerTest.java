@@ -12,6 +12,7 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.security.authentication.Authentication;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -37,16 +38,21 @@ class CurrentUserControllerTest extends TestContainersSuite implements MemberPro
     @Mock
     CurrentUserServices currentUserServices;
 
-
     @Inject
     CurrentUserController currentUserController;
 
     @Inject
     EmbeddedServer embeddedServer;
+    private AutoCloseable mockFinalizer;
 
     @BeforeAll
-    void setupMocks() throws Exception {
-        MockitoAnnotations.openMocks(this).close();
+    void setupMocks() {
+        mockFinalizer = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterAll
+    void close() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test

@@ -8,19 +8,32 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class SkillsReportServicesImplTest extends TestContainersSuite {
 
@@ -39,14 +52,21 @@ public class SkillsReportServicesImplTest extends TestContainersSuite {
     @InjectMocks
     private SkillsReportServicesImpl skillsReportServices;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        mockFinalizer = MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(memberSkillRepository, memberProfileRepository, skillRepository);
+        reset(memberSkillRepository, memberProfileRepository, skillRepository);
+    }
+
+    @AfterAll
+    void finalizeMocks() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test

@@ -7,19 +7,31 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class MemberSkillServiceImplTest extends TestContainersSuite {
 
@@ -35,14 +47,21 @@ class MemberSkillServiceImplTest extends TestContainersSuite {
     @InjectMocks
     private MemberSkillServiceImpl memberSkillsServices;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        mockFinalizer = MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(memberSkillRepository, skillRepository, memberProfileRepository);
+        reset(memberSkillRepository, skillRepository, memberProfileRepository);
+    }
+
+    @AfterAll
+    void closeMocks() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test

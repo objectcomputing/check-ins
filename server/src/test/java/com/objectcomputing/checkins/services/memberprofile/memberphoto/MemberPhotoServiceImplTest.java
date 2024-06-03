@@ -7,18 +7,15 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.context.env.Environment;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -52,20 +49,27 @@ public class MemberPhotoServiceImplTest extends TestContainersSuite {
     @InjectMocks
     private MemberPhotoServiceImpl services;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
-    void initMocks() throws IOException {
-        MockitoAnnotations.openMocks(this);
+    void initMocks() {
+        mockFinalizer = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterAll
+    void close() throws Exception {
+        mockFinalizer.close();
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(mockMemberProfileServices);
-        Mockito.reset(mockGoogleApiAccess);
-        Mockito.reset(mockDirectory);
-        Mockito.reset(mockUsers);
-        Mockito.reset(mockPhotos);
-        Mockito.reset(mockGet);
-        Mockito.reset(mockEnvironment);
+        reset(mockMemberProfileServices);
+        reset(mockGoogleApiAccess);
+        reset(mockDirectory);
+        reset(mockUsers);
+        reset(mockPhotos);
+        reset(mockGet);
+        reset(mockEnvironment);
     }
 
     // happy path

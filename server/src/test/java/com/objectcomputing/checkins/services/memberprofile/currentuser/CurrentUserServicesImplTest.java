@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,9 +35,16 @@ public class CurrentUserServicesImplTest extends TestContainersSuite {
     @InjectMocks
     CurrentUserServicesImpl testObject;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     public void before() {
-        MockitoAnnotations.initMocks(this);
+        mockFinalizer = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterAll
+    public void after() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test

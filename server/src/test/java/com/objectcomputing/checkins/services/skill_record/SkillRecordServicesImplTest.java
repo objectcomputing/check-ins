@@ -7,7 +7,6 @@ import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
@@ -18,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -32,14 +32,21 @@ class SkillRecordServicesImplTest extends TestContainersSuite {
     @InjectMocks
     private SkillRecordServicesImpl skillRecordServices;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.openMocks(this);
+        mockFinalizer = MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(skillRecordRepository);
+        reset(skillRecordRepository);
+    }
+
+    @AfterAll
+    void close() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test

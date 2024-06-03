@@ -27,18 +27,37 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class FileServicesImplTest extends TestContainersSuite {
 
@@ -112,10 +131,11 @@ public class FileServicesImplTest extends TestContainersSuite {
     @InjectMocks
     private FileServicesImpl services;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocksAndInitializeFile() throws IOException {
-        MockitoAnnotations.initMocks(this);
-
+        mockFinalizer = openMocks(this);
         testFile = new File(filePath);
         FileWriter myWriter = new FileWriter(testFile);
         myWriter.write("This.Is.A.Test.File");
@@ -123,33 +143,34 @@ public class FileServicesImplTest extends TestContainersSuite {
     }
 
     @AfterAll
-    void deleteTestFile() {
+    void deleteTestFile() throws Exception {
         testFile.deleteOnExit();
+        mockFinalizer.close();
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(authentication);
-        Mockito.reset(mockAttributes);
-        Mockito.reset(drive);
-        Mockito.reset(files);
-        Mockito.reset(list);
-        Mockito.reset(get);
-        Mockito.reset(delete);
-        Mockito.reset(create);
-        Mockito.reset(update);
-        Mockito.reset(fileToUpload);
-        Mockito.reset(testMemberProfile);
-        Mockito.reset(testCheckIn);
-        Mockito.reset(testCd);
-        Mockito.reset(mockInputStream);
-        Mockito.reset(checkInServices);
-        Mockito.reset(checkinDocumentServices);
-        Mockito.reset(mockGoogleApiAccess);
-        Mockito.reset(currentUserServices);
-        Mockito.reset(memberProfileServices);
-        Mockito.reset(completedFileUpload);
-        Mockito.reset(googleServiceConfiguration);
+        reset(authentication);
+        reset(mockAttributes);
+        reset(drive);
+        reset(files);
+        reset(list);
+        reset(get);
+        reset(delete);
+        reset(create);
+        reset(update);
+        reset(fileToUpload);
+        reset(testMemberProfile);
+        reset(testCheckIn);
+        reset(testCd);
+        reset(mockInputStream);
+        reset(checkInServices);
+        reset(checkinDocumentServices);
+        reset(mockGoogleApiAccess);
+        reset(currentUserServices);
+        reset(memberProfileServices);
+        reset(completedFileUpload);
+        reset(googleServiceConfiguration);
 
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);

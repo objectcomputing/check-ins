@@ -4,12 +4,12 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
@@ -31,16 +31,22 @@ public class PulseResponseServiceImplTest extends TestContainersSuite {
     @InjectMocks
     private PulseResponseServicesImpl services;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.openMocks(this);
+        mockFinalizer = MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(memberprofileRepository);
-        Mockito.reset(pulseResponseRepository);
+        reset(pulseResponseRepository);
+        reset(memberprofileRepository);
+    }
 
+    @AfterAll
+    void close() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test

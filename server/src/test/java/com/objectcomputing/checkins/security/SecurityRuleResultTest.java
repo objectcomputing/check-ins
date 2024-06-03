@@ -57,17 +57,20 @@ class SecurityRuleResultTest extends TestContainersSuite {
     @Mock
     private AnnotationValue<RequiredPermission> mockRequiredPermissionAnnotation;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeEach
     void resetMocks() {
         Role role = roleServices.save(new Role(RoleType.ADMIN.name(), "Admin Role"));
         rolePermissionServices.save(role.getId(), Permission.CAN_VIEW_FEEDBACK_REQUEST);
-        openMocks(this);
+        mockFinalizer = openMocks(this);
     }
 
     @AfterEach
-    void afterEach() {
+    void afterEach() throws Exception {
         reset(mockMethodBasedRouteMatch);
         reset(mockRequiredPermissionAnnotation);
+        mockFinalizer.close();
     }
 
     @Test
@@ -81,7 +84,6 @@ class SecurityRuleResultTest extends TestContainersSuite {
         attributes.put("permissions", userPermissions);
         attributes.put("roles", userRoles);
         attributes.put("email", "test.email.address");
-
 
         when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
         when(mockMethodBasedRouteMatch.findAnnotation(RequiredPermission.class)).thenReturn(Optional.of(mockRequiredPermissionAnnotation));
