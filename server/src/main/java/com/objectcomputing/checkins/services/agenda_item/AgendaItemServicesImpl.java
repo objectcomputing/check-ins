@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
@@ -135,23 +136,13 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     }
 
     @Override
-    public Set<AgendaItem> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
-
-
+    public Set<AgendaItem> findByFields(@Nullable UUID checkinId, @Nullable UUID createdById) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        final UUID currentUserId = currentUser.getId();
-        boolean canViewAllCheckins = checkInServices.canViewAllCheckins(currentUserId);
-
-        if (checkinid != null) {
-            validate(!checkInServices.accessGranted(checkinid, currentUserId), "User is unauthorized to do this operation");
-        } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
-            validate(!currentUserId.equals(memberRecord.getId()) && !canViewAllCheckins, "User is unauthorized to do this operation");
-        } else {
-            validate(!canViewAllCheckins, "User is unauthorized to do this operation");
+        if(!checkInServices.doesUserHaveViewAccess(currentUser.getId(), checkinId, createdById)){
+            throw new PermissionException("User is unauthorized to do this operation");
         }
-        LOG.info("Finding AgendaItem by checkinId: {}, and createById: {}", checkinid, createbyid);
-        return agendaItemRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
+        LOG.info("Finding AgendaItem by checkinId: {}, and createById: {}", checkinId, createdById);
+        return agendaItemRepository.search(nullSafeUUIDToString(checkinId), nullSafeUUIDToString(createdById));
     }
 
     @Override

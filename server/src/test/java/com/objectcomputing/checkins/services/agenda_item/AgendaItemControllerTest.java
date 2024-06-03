@@ -19,19 +19,11 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AgendaItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, AgendaItemFixture, RoleFixture {
 
@@ -346,7 +338,7 @@ class AgendaItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertTrue(error.contains("User is unauthorized to do this operation"));
 
     }
 

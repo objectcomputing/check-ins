@@ -20,19 +20,11 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ActionItemControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, CheckInFixture, ActionItemFixture {
 
@@ -174,7 +166,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Checkin %s not found", actionItemCreateDTO.getCheckinid()), error);
+        assertEquals(String.format("Checkin not found by Id: %s.", actionItemCreateDTO.getCheckinid()), error);
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
 
     }
@@ -730,7 +722,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Checkin %s not found", actionItem.getCheckinid()), error);
+        assertEquals(String.format("Checkin not found by Id: %s.", actionItem.getCheckinid()), error);
 
     }
 
