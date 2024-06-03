@@ -237,12 +237,12 @@ const AdminMemberCard = ({ member, index }) => {
                   try {
                     oldMember.pdlId !== member.pdlId && await emailPDLAssignment(member, csrf);
                   } catch (e) {
-                    log.error("Unable to email PDL assignment", e)
+                    console.error("Unable to email PDL assignment", e)
                   }
                   try {
                     oldMember.supervisorid !== member.supervisorid && await emailSupervisorAssignment(member, csrf);
                   } catch {
-                    log.error("Unable to email supervisor assignment", e)
+                    console.error("Unable to email supervisor assignment", e)
 
                   }
                   handleClose();

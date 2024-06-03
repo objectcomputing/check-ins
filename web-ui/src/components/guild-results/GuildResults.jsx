@@ -107,7 +107,7 @@ const GuildResults = () => {
                       try {
                         guildLeaders && await emailGuildLeaders(guildLeaders, data, csrf).then();
                       } catch (e) {
-                        log.error("Unable to email guild leader assignment(s)", e)
+                        console.error("Unable to email guild leader assignment(s)", e)
                       }
                     }
                     handleClose();
