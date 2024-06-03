@@ -21,6 +21,8 @@ yarn_run_coverage {
 
 def yarn = tasks.named("yarn")
 
+def distDir = layout.projectDirectory.dir("dist")
+
 def yarnBuildTask = tasks.register("yarnBuild", YarnTask) {
     group 'build'
     inputs.files(fileTree('node_modules'))
@@ -32,10 +34,26 @@ def yarnBuildTask = tasks.register("yarnBuild", YarnTask) {
     inputs.file('vite.config.ts')
     inputs.file('yarn.lock')
 
-    outputs.dir('dist')
+    outputs.dir(distDir)
 
     dependsOn yarn
     args = ['run', 'build']
+}
+
+configurations {
+    yarnBuildElements {
+        canBeResolved = false
+        canBeConsumed = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "yarnBuild-elements"))
+        }
+    }
+}
+
+artifacts {
+    yarnBuildElements(distDir) {
+        builtBy(yarnBuildTask)
+    }
 }
 
 sourceSets {

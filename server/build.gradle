@@ -29,9 +29,13 @@ micronaut {
 }
 
 configurations {
-    // for dependencies that are needed for development only
-    developmentOnly
-    publicResources
+    yarnBuildElements {
+        canBeResolved = true
+        canBeConsumed = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "yarnBuild-elements"))
+        }
+    }
 }
 
 dependencies {
@@ -50,6 +54,8 @@ dependencies {
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+
+    yarnBuildElements(project(":web-ui"))
 
     implementation("io.micronaut:micronaut-jackson-databind")
     implementation("io.micronaut:micronaut-http-client")
@@ -139,10 +145,9 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "false") {
-    evaluationDependsOn(":web-ui")
     processResources {
         into('public') {
-            from tasks.getByPath(':web-ui:yarnBuild').outputs
+            from configurations.named('yarnBuildElements')
         }
     }
 }
@@ -150,10 +155,10 @@ if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "fals
 application {
     mainClass.set("com.objectcomputing.checkins.Application")
 }
+
 java {
     sourceCompatibility = JavaVersion.toVersion("21")
     targetCompatibility = JavaVersion.toVersion("21")
 }
 
-run.classpath += configurations.developmentOnly
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Xdebug',"-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n")
