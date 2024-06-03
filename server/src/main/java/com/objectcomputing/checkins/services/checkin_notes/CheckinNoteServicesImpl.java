@@ -6,7 +6,6 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
@@ -124,20 +123,13 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     }
 
     @Override
-    public Set<CheckinNote> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
+    public Set<CheckinNote> findByFields(@Nullable UUID checkinId, @Nullable UUID createById) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        boolean canViewAllCheckins = checkinServices.canViewAllCheckins(currentUserId);
-
-        if (checkinid != null) {
-            validate(!checkinServices.accessGranted(checkinid, currentUserId), "User is unauthorized to do this operation");
-        } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
-            validate(!currentUserId.equals(memberRecord.getId()) && !canViewAllCheckins, "User is unauthorized to do this operation");
-        } else {
-            validate(!canViewAllCheckins, "User is unauthorized to do this operation");
+        if(!checkinServices.doesUserHaveViewAccess(currentUserId, checkinId, createById)){
+            throw new PermissionException("User is unauthorized to do this operation");
         }
-        LOG.info("Finding AgendaItem by checkinId: {}, and createById: {}", checkinid, createbyid);
-        return checkinNoteRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
+        LOG.info("Finding AgendaItem by checkinId: {}, and createById: {}", checkinId, createById);
+        return checkinNoteRepository.search(nullSafeUUIDToString(checkinId), nullSafeUUIDToString(createById));
     }
 
     private void validate(boolean isError, String message, Object... args) {

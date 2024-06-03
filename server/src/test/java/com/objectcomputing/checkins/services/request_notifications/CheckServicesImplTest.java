@@ -1,10 +1,12 @@
 package com.objectcomputing.checkins.services.request_notifications;
 
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServicesImpl;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -16,11 +18,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CheckServicesImplTest {
+
+class CheckServicesImplTest extends TestContainersSuite {
+
     @Mock
     private FeedbackRequestServicesImpl feedbackRequestServices;
+
     @Mock
     private FeedbackRequestRepository feedbackRequestRepository;
 
@@ -33,11 +36,11 @@ class CheckServicesImplTest {
     void initMocks() {
         openMocks = MockitoAnnotations.openMocks(this);
     }
+
     @AfterEach
     void resetMocks() throws Exception {
         openMocks.close();
     }
-
 
     @Test
     void sendScheduledEmails() {
