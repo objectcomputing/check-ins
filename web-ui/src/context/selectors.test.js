@@ -135,7 +135,7 @@ describe('Selectors', () => {
     expect(selectProfileMap(testState)).toEqual(matchingProfiles);
   });
 
-  it('should return an object mapping terminated member profiles by id', () => {
+  it('selectProfileMapForTerminatedMembers should return an object mapping terminated member profiles by id', () => {
     /** @type MemberProfile[] */
     const terminatedMembers = [
       {
