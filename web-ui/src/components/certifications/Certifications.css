@@ -4,15 +4,12 @@
 
 .certification-dialog {
   .MuiDialogContent-root {
-    width: 30rem;
-
-    > div {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 
     padding-top: 1rem !important;
+    width: 30rem;
   }
 
   .MuiTextField-root {

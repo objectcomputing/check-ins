@@ -1,7 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Button, TextField } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  TextField
+} from '@mui/material';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
@@ -11,10 +17,12 @@ import './Certifications.css';
 const certificationBaseUrl = 'http://localhost:3000/certification';
 
 const propTypes = {
-  forceUpdate: PropTypes.func
+  forceUpdate: PropTypes.func,
+  open: PropTypes.bool,
+  onClose: PropTypes.func
 };
 
-const Certifications = ({ forceUpdate = () => {} }) => {
+const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   const [adding, setAdding] = useState(true); // true to add, false to edit
   const [badgeUrl, setBadgeUrl] = useState('');
   const [certificationMap, setCertificationMap] = useState({});
@@ -23,6 +31,19 @@ const Certifications = ({ forceUpdate = () => {} }) => {
   const [name, setName] = useState('');
   const [selectedCertification, setSelectedCertification] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
+
+  const close = () => {
+    reset();
+    onClose();
+  };
+
+  const reset = () => {
+    setAdding(true);
+    setBadgeUrl('');
+    setName('');
+    setSelectedCertification(null);
+    setSelectedTarget(null);
+  };
 
   const loadCertifications = useCallback(async () => {
     try {
@@ -58,7 +79,7 @@ const Certifications = ({ forceUpdate = () => {} }) => {
             cert => cert.name.toUpperCase() === value.toUpperCase()
           );
           if (!foundCert) {
-            foundCert = { letter: '?', name: value };
+            foundCert = { badgeUrl: '', name: value };
             setCertifications(certs => [...certs, foundCert]);
           }
           setAdding(!Boolean(foundCert));
@@ -97,8 +118,8 @@ const Certifications = ({ forceUpdate = () => {} }) => {
         return map;
       });
       setCertifications(certs => certs.filter(c => c.id !== id));
-      setSelectedCertification(null);
       forceUpdate();
+      close();
     } catch (err) {
       console.error(err);
     }
@@ -118,12 +139,8 @@ const Certifications = ({ forceUpdate = () => {} }) => {
         delete map[sourceId];
         return map;
       });
-      alert(
-        `Successfully merged ${selectedCertification.name} certification to ${selectedTarget.name}.`
-      );
-      setSelectedCertification(null);
-      setSelectedTarget(null);
       forceUpdate();
+      close();
     } catch (err) {
       console.error(err);
     }
@@ -146,11 +163,7 @@ const Certifications = ({ forceUpdate = () => {} }) => {
           c1.name.localeCompare(c2.name)
         )
       );
-
-      setAdding(true);
-      setName('');
-      setBadgeUrl('');
-
+      close();
       forceUpdate();
     } catch (err) {
       console.error(err);
@@ -158,57 +171,64 @@ const Certifications = ({ forceUpdate = () => {} }) => {
   }, [badgeUrl, certificationMap, name, selectedCertification]);
 
   return (
-    <div>
-      {certificationSelect(
-        'Source Certification',
-        selectedCertification,
-        setSelectedCertification
-      )}
-      <TextField
-        label="Certification Name"
-        required
-        onChange={e => setName(e.target.value)}
-        value={name}
-      />
-      <TextField
-        label="Badge URL"
-        required
-        onChange={e => setBadgeUrl(e.target.value)}
-        value={badgeUrl}
-      />
+    <Dialog
+      classes={{ root: 'certification-dialog' }}
+      open={open}
+      onClose={close}
+    >
+      <DialogTitle>Manage Certifications</DialogTitle>
+      <DialogContent>
+        {certificationSelect(
+          'Source Certification',
+          selectedCertification,
+          setSelectedCertification
+        )}
+        <TextField
+          label="Certification Name"
+          required
+          onChange={e => setName(e.target.value)}
+          value={name}
+        />
+        <TextField
+          label="Badge URL"
+          required
+          onChange={e => setBadgeUrl(e.target.value)}
+          value={badgeUrl}
+        />
 
-      <div className="row">
-        <Button disabled={!name || !badgeUrl} onClick={saveCertification}>
-          Save
-        </Button>
+        <div className="row">
+          <Button disabled={!name || !badgeUrl} onClick={saveCertification}>
+            Save
+          </Button>
+          <Button
+            disabled={!selectedCertification}
+            onClick={() => setConfirmDeleteOpen(true)}
+          >
+            Delete
+          </Button>
+        </div>
+
+        {certificationSelect(
+          'Target Certification',
+          selectedTarget,
+          setSelectedTarget
+        )}
         <Button
-          disabled={!selectedCertification}
-          onClick={() => setConfirmDeleteOpen(true)}
+          disabled={!selectedCertification || !selectedTarget}
+          onClick={mergeCertification}
         >
-          Delete
+          Merge Source to Target
         </Button>
-      </div>
 
-      {certificationSelect(
-        'Target Certification',
-        selectedTarget,
-        setSelectedTarget
-      )}
-      <Button
-        disabled={!selectedCertification || !selectedTarget}
-        onClick={mergeCertification}
-      >
-        Merge Source to Target
-      </Button>
-
-      <ConfirmationDialog
-        open={confirmDeleteOpen}
-        onYes={deleteCertification}
-        question={`Are you sure you want to delete the ${selectedCertification?.name} certification?`}
-        setOpen={setConfirmDeleteOpen}
-        title="Delete Certification"
-      />
-    </div>
+        <ConfirmationDialog
+          open={confirmDeleteOpen}
+          onYes={deleteCertification}
+          question={`Are you sure you want to delete the ${selectedCertification?.name} certification?`}
+          setOpen={setConfirmDeleteOpen}
+          title="Delete Certification"
+        />
+      </DialogContent>
+    </Dialog>
   );
 };
 

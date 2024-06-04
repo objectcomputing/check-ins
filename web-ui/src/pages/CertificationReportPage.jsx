@@ -1,5 +1,5 @@
 import React, { useReducer, useState } from 'react';
-import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { Button } from '@mui/material';
 
 import Certifications from '../components/certifications/Certifications';
 import EarnedCertificationsTable from '../components/certifications/EarnedCertificationsTable';
@@ -13,17 +13,12 @@ const CertificationReportPage = () => {
     <div className="certification-report-page">
       <EarnedCertificationsTable forceUpdate={forceUpdate} key={n} />
       <Button onClick={() => setDialogOpen(true)}>Manage Certifications</Button>
-
-      <Dialog
-        classes={{ root: 'certification-dialog' }}
+      <Certifications
+        forceUpdate={forceUpdate}
+        key={n + 1}
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-      >
-        <DialogTitle>Manage Certifications</DialogTitle>
-        <DialogContent>
-          <Certifications forceUpdate={forceUpdate} key={n + 1} />
-        </DialogContent>
-      </Dialog>
+      />
     </div>
   );
 };
