@@ -2,8 +2,6 @@ package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionCreateDTO;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionUpdateDTO;
 
 public interface TemplateQuestionFixture extends RepositoryFixture {
 

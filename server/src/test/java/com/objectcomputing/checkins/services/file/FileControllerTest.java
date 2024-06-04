@@ -27,7 +27,6 @@ import java.util.UUID;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static io.micronaut.http.MediaType.MULTIPART_FORM_DATA;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class FileControllerTest extends TestContainersSuite {
