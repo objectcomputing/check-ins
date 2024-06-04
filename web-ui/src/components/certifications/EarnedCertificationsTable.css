@@ -18,12 +18,22 @@
 
   td,
   th {
-    border: 1px solid gray;
     padding: 0.5rem;
   }
 
   th {
     background-color: var(--oci-orange);
+    border-right: 1px solid var(--oci-light-blue);
+  }
+  th:last-child {
+    border-right: none;
+  }
+
+  tr:nth-child(even) {
+    background-color: #eee;
+  }
+  tr:nth-child(odd) {
+    background-color: #ffffff;
   }
 }
 
