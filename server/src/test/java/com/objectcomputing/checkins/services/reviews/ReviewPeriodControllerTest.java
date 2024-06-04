@@ -2,8 +2,10 @@ package com.objectcomputing.checkins.services.reviews;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -20,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -36,12 +40,26 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewPeriodFixture, MemberProfileFixture, RoleFixture {
+class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/review-periods")
     private HttpClient client;
+
+    @Mock
+    private EmailSender emailSender = mock(EmailSender.class);
+
+    @Inject
+    private ReviewPeriodServicesImpl reviewPeriodServices;
+
+    @BeforeEach
+    void resetMocks() {
+        Mockito.reset(emailSender);
+        reviewPeriodServices.setEmailSender(emailSender);
+    }
 
     private String encodeValue(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
@@ -434,6 +452,32 @@ class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewPe
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals("Invalid status transition from %s to %s".formatted(oldStatus, newStatus), responseException.getMessage());
+    }
+
+    @Test
+    void testPUTReviewPeriodAwaitingApproval() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod(ReviewStatus.PLANNING);
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
+
+        createAReviewAssignmentBetweenMembers(member, supervisor, reviewPeriod, false);
+
+        reviewPeriod.setReviewStatus(ReviewStatus.AWAITING_APPROVAL);
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+                PUT("/", reviewPeriod).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+
+        final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
+
+        assertEquals(reviewPeriod, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        // expect email has been sent
+        verify(emailSender).sendEmail(null, null,
+                "Review Assignments Awaiting Approval",
+                "<h3>Review Assignments for Review Period '" + reviewPeriod.getName() + "' are ready for your approval.</h3>" +
+                "<a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">Click here</a> to review and approve reviewer assignments in the Check-Ins app.",
+                supervisor.getWorkEmail()
+        );
     }
 
     @Test

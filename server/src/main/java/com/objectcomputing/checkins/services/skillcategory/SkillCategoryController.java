@@ -23,8 +23,6 @@ import java.util.UUID;
 @Controller("/services/skills/categories")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "skillcategory")
 public class SkillCategoryController {
 
@@ -34,7 +32,7 @@ public class SkillCategoryController {
         this.skillCategoryServices = skillCategoryServices;
     }
 
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategory>> create(@Body @Valid SkillCategoryCreateDTO dto, HttpRequest<?> request) {
         return Mono.fromCallable(() -> {
@@ -45,7 +43,7 @@ public class SkillCategoryController {
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdSkillCategory.getId())))));
     }
 
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public Mono<HttpResponse<SkillCategory>> update(@Body @Valid SkillCategoryUpdateDTO dto, HttpRequest<?> request) {
         return Mono.fromCallable(() -> {

@@ -149,6 +149,12 @@ public class MemberProfile {
     @Nullable
     private Boolean excluded;
 
+    @Column(name="last_seen")
+    @Schema(description = "employee's last login")
+    @Nullable
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
+    private LocalDate lastSeen;
+
     public MemberProfile(@NotBlank String firstName,
                          @Nullable String middleName,
                          @NotBlank String lastName,
@@ -164,9 +170,10 @@ public class MemberProfile {
                          @Nullable LocalDate terminationDate,
                          @Nullable LocalDate birthDate,
                          @Nullable Boolean voluntary,
-                         @Nullable Boolean excluded) {
+                         @Nullable Boolean excluded,
+                         @Nullable LocalDate lastSeen) {
         this(null, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
-                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate, voluntary, excluded);
+                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate, voluntary, excluded, lastSeen);
     }
 
     public MemberProfile(UUID id,
@@ -185,7 +192,8 @@ public class MemberProfile {
                          @Nullable LocalDate terminationDate,
                          @Nullable LocalDate birthDate,
                          @Nullable Boolean voluntary,
-                         @Nullable Boolean excluded) {
+                         @Nullable Boolean excluded,
+                         @Nullable LocalDate lastSeen) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -203,6 +211,7 @@ public class MemberProfile {
         this.birthDate = birthDate;
         this.voluntary = voluntary;
         this.excluded = excluded;
+        this.lastSeen = lastSeen;
     }
 
     public MemberProfile() {
@@ -236,14 +245,15 @@ public class MemberProfile {
                 Objects.equals(terminationDate, that.terminationDate) &&
                 Objects.equals(birthDate, that.birthDate) &&
                 Objects.equals(voluntary, that.voluntary) &&
-                Objects.equals(excluded, that.excluded);
+                Objects.equals(excluded, that.excluded) &&
+                Objects.equals(lastSeen, that.lastSeen);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, middleName, lastName, suffix, title, pdlId, location,
                 workEmail, employeeId, startDate, bioText, supervisorid, terminationDate,birthDate,
-                voluntary, excluded);
+                voluntary, excluded, lastSeen);
     }
 
     @Override
@@ -263,6 +273,7 @@ public class MemberProfile {
                 ", birthDate=" + birthDate +
                 ", voluntary=" + voluntary +
                 ", excluded=" + excluded +
+                ", lastSeen=" + lastSeen +
                 '}';
     }
 }

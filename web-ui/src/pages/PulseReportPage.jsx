@@ -136,7 +136,7 @@ const PulseReportPage = () => {
   }, [dateFrom, dateTo]);
   */
 
-  const average = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+  const average = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
 
   // This creates data in the format that recharts needs from pulse data.
   useEffect(() => {
@@ -185,8 +185,11 @@ const PulseReportPage = () => {
       if (memberIdToUse) {
         let averages = averageData[memberIdToUse];
         if (!averages) {
-          averages = averageData[memberIdToUse] =
-            { memberId: memberIdToUse, externalScores: [], internalScores: [] };
+          averages = averageData[memberIdToUse] = {
+            memberId: memberIdToUse,
+            externalScores: [],
+            internalScores: []
+          };
         }
         averages.externalScores.push(externalScore);
         averages.internalScores.push(internalScore);
@@ -200,7 +203,10 @@ const PulseReportPage = () => {
       const averages = averageData[memberId];
       averages.externalAverage = average(averages.externalScores);
       averages.internalAverage = average(averages.internalScores);
-      averages.combinedAverage = average([...averages.externalScores, ...averages.internalScores]);
+      averages.combinedAverage = average([
+        ...averages.externalScores,
+        ...averages.internalScores
+      ]);
     }
     setAverageData(averageData);
   }, [pulses, scope, teamMembers]);
@@ -260,40 +266,52 @@ const PulseReportPage = () => {
     const property = propertyMap[scoreType];
     return (
       <tr key={memberId}>
-        <td><Avatar src={getAvatarURL(member.workEmail)} /></td>
-        <td>{member.name}<br />{member.title}</td>
+        <td>
+          <Avatar src={getAvatarURL(member.workEmail)} />
+        </td>
+        <td>
+          {member.name}
+          <br />
+          {member.title}
+        </td>
         <td className="score">{scores[property].toFixed(1)}</td>
       </tr>
     );
-  }
+  };
 
   const averageScores = () => (
     <Card>
       <CardContent>
         <div className="average-header row">
           <Typography variant="h5">Average Scores</Typography>
-          <FormControl style={{width: '8rem'}}>
+          <FormControl style={{ width: '8rem' }}>
             <TextField
               select
               size="small"
               label="Score Type"
               onChange={e => setScoreType(e.target.value)}
-              sx={{width: '8rem'}}
+              sx={{ width: '8rem' }}
               value={scoreType}
               variant="outlined"
             >
-              <MenuItem value={ScoreOption.INTERNAL}>{ScoreOption.INTERNAL}</MenuItem>
-              <MenuItem value={ScoreOption.EXTERNAL}>{ScoreOption.EXTERNAL}</MenuItem>
-              <MenuItem value={ScoreOption.COMBINED}>{ScoreOption.COMBINED}</MenuItem>
+              <MenuItem value={ScoreOption.INTERNAL}>
+                {ScoreOption.INTERNAL}
+              </MenuItem>
+              <MenuItem value={ScoreOption.EXTERNAL}>
+                {ScoreOption.EXTERNAL}
+              </MenuItem>
+              <MenuItem value={ScoreOption.COMBINED}>
+                {ScoreOption.COMBINED}
+              </MenuItem>
             </TextField>
           </FormControl>
-          <FormControl style={{width: '7.5rem'}}>
+          <FormControl style={{ width: '7.5rem' }}>
             <TextField
               select
               size="small"
               label="Scope"
               onChange={e => setScope(e.target.value)}
-              sx={{width: '7.5rem'}}
+              sx={{ width: '7.5rem' }}
               value={scope}
               variant="outlined"
             >
@@ -355,7 +373,7 @@ const PulseReportPage = () => {
     </Card>
   );
 
-  const handleCommentClick = (pulse) => {
+  const handleCommentClick = pulse => {
     setSelectedPulse(pulse);
     setShowComments(true);
   };
@@ -376,24 +394,23 @@ const PulseReportPage = () => {
     setTeamMembers(members);
   };
 
-  const scoreCard = (highest) => {
+  const scoreCard = highest => {
     const label = scope === 'Manager' ? 'Team' : 'Individual';
     const property = propertyMap[scoreType];
-    const scoresToShow = Object.values(averageData).sort(
-    (a, b) => {
-      const aValue = a[property];
-      const bValue = b[property];
-      return highest ? bValue - aValue : aValue - bValue
-    }).slice(0, 5);
+    const scoresToShow = Object.values(averageData)
+      .sort((a, b) => {
+        const aValue = a[property];
+        const bValue = b[property];
+        return highest ? bValue - aValue : aValue - bValue;
+      })
+      .slice(0, 5);
     const title = `${highest ? 'Highest' : 'Lowest'} ${label} Scores`;
 
     return (
       <div>
         <Typography variant="h6">{title}</Typography>
         <table>
-          <tbody>
-            {scoresToShow.map(scores => averageRow(scores))}
-          </tbody>
+          <tbody>{scoresToShow.map(scores => averageRow(scores))}</tbody>
         </table>
       </div>
     );
@@ -442,7 +459,8 @@ const PulseReportPage = () => {
     const teamMemberIds = teamMembers.map(member => member.id);
     if (teamMemberIds.length) {
       filteredPulses = pulses.filter(pulse =>
-        teamMemberIds.includes(pulse.teamMemberId))
+        teamMemberIds.includes(pulse.teamMemberId)
+      );
     }
 
     return (
@@ -465,8 +483,8 @@ const PulseReportPage = () => {
           return (
             <div className="row" key={key}>
               <Avatar src={getAvatarURL(member.workEmail)} />
-              {year}-{month}-{day}, {member.name}, {member.title},
-              internal: {internalScore}, external: {externalScore}
+              {year}-{month}-{day}, {member.name}, {member.title}, internal:{' '}
+              {internalScore}, external: {externalScore}
               {hasComment && (
                 <IconButton
                   aria-label="Comment"

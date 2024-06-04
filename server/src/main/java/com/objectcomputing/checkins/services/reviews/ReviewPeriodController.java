@@ -31,8 +31,6 @@ import java.util.UUID;
 @Controller("/services/review-periods")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "reviews")
 public class ReviewPeriodController {
 
@@ -48,7 +46,7 @@ public class ReviewPeriodController {
      * @param period  a {@link ReviewPeriodCreateDTO} representing the desired review period
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_REVIEW_PERIOD)
     public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<?> request) {
         return Mono.fromCallable(() -> reviewPeriodServices.save(period.convertToEntity()))
@@ -96,7 +94,7 @@ public class ReviewPeriodController {
      * @param reviewPeriod  the updated {@link ReviewPeriod}
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_REVIEW_PERIOD)
     public Mono<HttpResponse<ReviewPeriod>> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<?> request) {
 

@@ -1,6 +1,3 @@
-import DateFnsUtils from '@date-io/date-fns';
-const dateUtils = new DateFnsUtils();
-
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import React, {
@@ -204,6 +201,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       });
       if (res.error) throw new Error(res.error.message);
       const assignments = res.payload.data;
+      // logAssignments(assignments); // for debugging
       setAssignments(assignments);
     } catch (err) {
       console.error('TeamReviews.jsx loadAssignments:', err);
@@ -213,15 +211,15 @@ const TeamReviews = ({ onBack, periodId }) => {
   const loadTeamMembers = () => {
     let members = [];
 
-    if (approvalMode) {
+    if (!approvalMode || (isAdmin && showAll)) {
+      const memberIds = assignments.map(a => a.revieweeId);
+      members = currentMembers.filter(m => memberIds.includes(m.id));
+    } else {
       // Get the direct reports of the current user who is a manager.
       const myId = currentUser?.id;
       members = showAll
         ? selectCurrentUserSubordinates(state)
         : selectTeamMembersBySupervisorId(state, myId);
-    } else {
-      const memberIds = assignments.map(a => a.revieweeId);
-      members = currentMembers.filter(m => memberIds.includes(m.id));
     }
 
     setTeamMembers(members);
@@ -601,7 +599,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     return null; // no validtation errors
   };
 
-  const launchReviewPeriod = async () => {
+  const updateReviewPeriodStatus = async reviewStatus => {
     try {
       const res = await resolve({
         method: 'PUT',
@@ -613,13 +611,25 @@ const TeamReviews = ({ onBack, periodId }) => {
         },
         data: {
           ...period,
-          reviewStatus: ReviewStatus.OPEN
+          reviewStatus
         }
       });
       if (res.error) throw new Error(res.error.message);
       onBack();
     } catch (err) {
-      console.error('TeamReviews.jsx deleteReviewer:', err);
+      console.error('TeamReviews.jsx updateReviewPeriodStatus:', err);
+    }
+  };
+
+  // This is only used for debugging.
+  const logAssignments = assignments => {
+    if (currentMembers.length === 0) return;
+    for (const assignment of assignments) {
+      const reviewee = currentMembers.find(m => m.id === assignment.revieweeId);
+      const reviewer = currentMembers.find(m => m.id === assignment.reviewerId);
+      if (reviewee && reviewer) {
+        console.log(reviewee.name, 'is reviewed by', reviewer.name);
+      }
     }
   };
 
@@ -628,28 +638,26 @@ const TeamReviews = ({ onBack, periodId }) => {
     setValidationMessage(msg);
     if (msg) return;
 
-    const visibleIds = new Set(visibleTeamMembers().map(m => m.id));
-    const unapproved = assignments.filter(
-      a => !a.approved && visibleIds.has(a.revieweeId)
-    );
-    /* For debugging ...
-    for (const assignment of unapproved) {
-      const reviewee = currentMembers.find(m => m.id === assignment.revieweeId);
-      const reviewer = currentMembers.find(m => m.id === assignment.reviewerId);
-      console.log(reviewer.name, 'reviewing', reviewee.name, 'is unapproved.');
+    if (period.reviewStatus === ReviewStatus.PLANNING) {
+      updateReviewPeriodStatus(ReviewStatus.AWAITING_APPROVAL);
+    } else if (period.reviewStatus === ReviewStatus.AWAITING_APPROVAL) {
+      const visibleIds = new Set(visibleTeamMembers().map(m => m.id));
+      const unapproved = assignments.filter(
+        a => !a.approved && visibleIds.has(a.revieweeId)
+      );
+      // logAssignments(unapproved); // for debugging
+      setUnapproved(unapproved);
+      setConfirmationText(
+        unapproved.length === 0
+          ? 'Are you sure you want to launch the review period?'
+          : unapproved.length === 1
+            ? 'There is one visible, unapproved review assignment. ' +
+              'Would you like to approve it and launch this review period?'
+            : `There are ${unapproved.length} visible, unapproved review assignments. ` +
+              'Would you like to approve all of them and launch this review period?'
+      );
+      setConfirmationDialogOpen(true);
     }
-    */
-    setUnapproved(unapproved);
-    setConfirmationText(
-      unapproved.length === 0
-        ? 'Are you sure you want to launch the review period?'
-        : unapproved.length === 1
-          ? 'There is one visible, unapproved review assignment. ' +
-            'Would you like to approve it and launch this review period?'
-          : `There are ${unapproved.length} visible, unapproved review assignments. ` +
-            'Would you like to approve all of them and launch this review period?'
-    );
-    setConfirmationDialogOpen(true);
   };
 
   const compareStrings = (s1, s2) => (s1 || '').localeCompare(s2 || '');
@@ -758,7 +766,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const approveAllAndLaunch = () => {
     if (unapproved.length) approveAll();
-    launchReviewPeriod();
+    updateReviewPeriodStatus(ReviewStatus.OPEN);
     setConfirmationDialogOpen(false);
     onBack();
   };
@@ -802,7 +810,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const approveReviewAssignment = async (assignment, approved) => {
     try {
       const res = await resolve({
-        method: 'PUT',
+        method: assignment.id === null ? 'POST' : 'PUT',
         url: '/services/review-assignments',
         headers: {
           Accept: 'application/json',
@@ -821,9 +829,9 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const visibleTeamMembers = () => {
-    if (!approvalMode) return teamMembers;
-
     const query = nameQuery.trim().toLowerCase();
+    if (!approvalMode || query.length === 0) return teamMembers;
+
     return teamMembers.filter(member =>
       member.name.toLowerCase().includes(query)
     );
@@ -947,7 +955,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         selected={teamMembers}
       />
 
-      <List dense role="list" sx={{ height: '50%', overflowY: 'scroll' }}>
+      <List dense role="list">
         {visibleTeamMembers().map(member => (
           <ListItem key={member.id} role="listitem" disablePadding>
             <ListItemText

@@ -2,7 +2,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.3.6"
+    id("io.micronaut.application") version "4.3.8"
     id "idea"
     id "jacoco"
     id("org.openrewrite.rewrite") version "latest.release"
@@ -35,7 +35,7 @@ configurations {
 }
 
 dependencies {
-    rewrite('org.openrewrite.recipe:rewrite-micronaut:2.1.1')
+    rewrite('org.openrewrite.recipe:rewrite-micronaut:2.5.0')
 
     runtimeOnly("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("org.yaml:snakeyaml")
@@ -76,13 +76,13 @@ dependencies {
     implementation "jakarta.annotation:jakarta.annotation-api"
     implementation "jakarta.persistence:jakarta.persistence-api"
 
-    implementation "com.google.api-client:google-api-client:1.30.9"
-    implementation "com.google.oauth-client:google-oauth-client-jetty:1.28.0"
-    implementation "com.google.apis:google-api-services-drive:v3-rev20200326-1.30.9"
-    implementation "com.google.apis:google-api-services-gmail:v1-rev20200203-1.30.9"
-    implementation "com.google.apis:google-api-services-admin-directory:directory_v1-rev118-1.25.0"
+    implementation "com.google.api-client:google-api-client:2.5.1"
+    implementation "com.google.oauth-client:google-oauth-client-jetty:1.36.0"
+    implementation "com.google.apis:google-api-services-drive:v3-rev20240509-2.0.0"
+    implementation "com.google.apis:google-api-services-gmail:v1-rev20240422-2.0.0"
+    implementation "com.google.apis:google-api-services-admin-directory:directory_v1-rev20240509-2.0.0"
 
-    implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
+    implementation 'com.google.cloud.sql:postgres-socket-factory:1.18.1'
 
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micrometer:context-propagation")
@@ -91,7 +91,7 @@ dependencies {
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
 
     testImplementation('io.projectreactor:reactor-test')
-    testImplementation 'io.github.bonigarcia:webdrivermanager:4.1.0'
+    testImplementation 'io.github.bonigarcia:webdrivermanager:5.8.0'
     testImplementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
@@ -104,16 +104,17 @@ dependencies {
 }
 
 test {
-    OperatingSystem os = DefaultNativePlatform.currentOperatingSystem
-    if (os.isLinux()) {
-        def uid = ["id", "-u"].execute().text.trim()
-        environment "DOCKER_HOST", "unix:///run/user/$uid/podman/podman.sock"
-    } else if (os.isMacOsX()) {
-        environment "DOCKER_HOST", "unix:///tmp/podman.sock"
+    if (!System.env['USE_DOCKER_DESKTOP']) {
+        OperatingSystem os = DefaultNativePlatform.currentOperatingSystem
+        if (os.isLinux()) {
+            def uid = ["id", "-u"].execute().text.trim()
+            environment "DOCKER_HOST", "unix:///run/user/$uid/podman/podman.sock"
+        } else if (os.isMacOsX()) {
+            environment "DOCKER_HOST", "unix:///tmp/podman.sock"
+        }
+        environment "TESTCONTAINERS_RYUK_DISABLED", "true"
     }
-    environment "TESTCONTAINERS_RYUK_DISABLED", "true"
 }
-
 
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
@@ -150,8 +151,8 @@ application {
     mainClass.set("com.objectcomputing.checkins.Application")
 }
 java {
-    sourceCompatibility = JavaVersion.toVersion("17")
-    targetCompatibility = JavaVersion.toVersion("17")
+    sourceCompatibility = JavaVersion.toVersion("21")
+    targetCompatibility = JavaVersion.toVersion("21")
 }
 
 run.classpath += configurations.developmentOnly

@@ -182,6 +182,11 @@ export const selectCurrentMemberIds = createSelector(
   members => members.map(member => member.id)
 );
 
+export const selectTerminatedMemberIds = createSelector(
+  selectTerminatedMembers,
+  members => members.map(member => member.id)
+);
+
 export const selectProfileMap = createSelector(
   selectCurrentMembers,
   currentMembers => {
@@ -192,6 +197,19 @@ export const selectProfileMap = createSelector(
       }, {});
     }
     return currentMembers;
+  }
+);
+
+export const selectProfileMapForTerminatedMembers = createSelector(
+  selectTerminatedMembers,
+  terminatedMembers => {
+    if (terminatedMembers && terminatedMembers.length) {
+      terminatedMembers = terminatedMembers.reduce((mappedById, member) => {
+        mappedById[member.id] = member;
+        return mappedById;
+      }, {});
+    }
+    return terminatedMembers;
   }
 );
 
@@ -219,6 +237,53 @@ export const selectPendingSkills = createSelector(selectSkills, skills =>
 
 export const selectPdlRoles = createSelector(selectRoles, roles =>
   roles?.filter(role => role.role?.includes('PDL'))
+);
+
+export const selectTerminatedUserRoles = createSelector(
+  selectUserRoles,
+  selectTerminatedMemberIds,
+  (userRoles, memberIds) => {
+    return userRoles?.filter(userRole =>
+      memberIds.includes(userRole.memberRoleId.memberId)
+    );
+  }
+);
+
+export const selectTerminatedMembersAsOfDate = createSelector(
+  selectTerminatedMembers,
+  (_, date) => date,
+  (terminatedMembers, date) =>
+    terminatedMembers.filter(
+      member => new Date(member.terminationDate) >= new Date(date)
+    )
+);
+
+export const selectTerminatedMembersWithPDLRole = createSelector(
+  selectTerminatedUserRoles,
+  selectPdlRoles,
+  selectProfileMapForTerminatedMembers,
+  (userRoles, pdlRoles, terminatedMembersProfileMap) => {
+    const terminatedPDLs = userRoles?.filter(userRole =>
+      pdlRoles.find(role => role.id === userRole?.memberRoleId?.roleId)
+    );
+    /** @type {MemberProfile[]} */
+    const terminatedMembersWithPDLRole = terminatedPDLs?.map(
+      userRole => terminatedMembersProfileMap[userRole?.memberRoleId?.memberId]
+    );
+    return terminatedMembersWithPDLRole;
+  }
+);
+
+export const selectTerminatedMembersAsOfDateWithPDLRole = createSelector(
+  selectTerminatedMembersAsOfDate,
+  selectTerminatedMembersWithPDLRole,
+  (terminatedMembers, terminatedPDLs) => {
+    /** @type {MemberProfile[]} */
+    const terminatedMembersWithPDLRole = terminatedMembers.filter(
+      member => terminatedPDLs.find(pdl => pdl.id === member.id) !== undefined
+    );
+    return terminatedMembersWithPDLRole;
+  }
 );
 
 export const selectCurrentUserRoles = createSelector(

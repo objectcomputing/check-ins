@@ -5,7 +5,6 @@ import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -22,7 +21,6 @@ import java.util.UUID;
 @Controller("/services/checkin-notes")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin-notes")
 public class CheckinNoteController {
 
@@ -39,7 +37,7 @@ public class CheckinNoteController {
      * @param request
      * @return
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public HttpResponse<CheckinNote> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote, HttpRequest<?> request) {
         CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(), checkinNote.getCreatedbyid()
@@ -56,7 +54,7 @@ public class CheckinNoteController {
      * @param request
      * @return
      */
-    @Put()
+    @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<CheckinNote> updateCheckinNote(@Body @Valid CheckinNote checkinNote, HttpRequest<?> request) {
         CheckinNote updateCheckinNote = checkinNoteServices.update(checkinNote);
@@ -66,7 +64,8 @@ public class CheckinNoteController {
     }
 
     /**
-     * Get notes by checkind or createbyid
+     * Get notes by checkind or createbyid. If no parameters are provided, and user has permission to view all checkins,
+     * then return all checkin notes.
      *
      * @param checkinid
      * @param createdbyid
@@ -74,8 +73,7 @@ public class CheckinNoteController {
      */
     @Get("/{?checkinid,createdbyid}")
     @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
-    public Set<CheckinNote> findCheckinNote(@Nullable UUID checkinid,
-                                            @Nullable UUID createdbyid) {
+    public Set<CheckinNote> findCheckinNote(@Nullable UUID checkinid, @Nullable UUID createdbyid) {
         return checkinNoteServices.findByFields(checkinid, createdbyid);
     }
 

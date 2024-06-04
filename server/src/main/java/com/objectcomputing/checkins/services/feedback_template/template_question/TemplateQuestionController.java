@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 @Controller("/services/feedback/template_questions")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "template_questions")
 @Validated
 public class TemplateQuestionController {
@@ -40,7 +38,7 @@ public class TemplateQuestionController {
      * @param requestBody {@link TemplateQuestionCreateDTO} The feedback question to create
      * @return {@link TemplateQuestionResponseDTO}
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<TemplateQuestionResponseDTO>> save(@Body @Valid @NotNull TemplateQuestionCreateDTO requestBody) {
         return Mono.fromCallable(() -> templateQuestionServices.save(fromDTO(requestBody)))
                 .map(savedFeedbackQuestion -> HttpResponse.created(fromEntity(savedFeedbackQuestion))
@@ -53,7 +51,7 @@ public class TemplateQuestionController {
      * @param requestBody {@link TemplateQuestionUpdateDTO} The updated template question
      * @return {@link TemplateQuestionResponseDTO}
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<TemplateQuestionResponseDTO>> update(@Body @Valid @NotNull TemplateQuestionUpdateDTO requestBody) {
         return Mono.fromCallable(() -> templateQuestionServices.update(fromDTO(requestBody)))
                 .map(savedFeedbackTemplateQ -> HttpResponse.ok(fromEntity(savedFeedbackTemplateQ))

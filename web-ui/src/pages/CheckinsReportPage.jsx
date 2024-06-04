@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 
 import { AppContext } from '../context/AppContext';
 import {
+  selectTerminatedMembersAsOfDateWithPDLRole,
   selectCheckinPDLS,
   selectMappedPdls,
   selectNormalizedMembers
@@ -55,6 +56,20 @@ function sortByMembers(a, b) {
   const membersA = a.members ? a.members.length : 0;
   const membersB = b.members ? b.members.length : 0;
   return membersB - membersA;
+}
+
+/**
+ * Sort PDLs by whether they have terminated members,
+ * with PDLs having terminated members sorted last.
+ * PDLs without a 'terminationDate' property are treated as not terminated.
+ * @param {PDLProfile} a - First PDL object
+ * @param {PDLProfile} b - Second PDL object
+ * @returns {number} - Comparison result for sorting
+ */
+function sortByTerminated(a, b) {
+  const terminatedA = a.terminationDate ? 1 : 0;
+  const terminatedB = b.terminationDate ? 1 : 0;
+  return terminatedA - terminatedB;
 }
 
 const CheckinsReportPage = () => {
@@ -135,6 +150,25 @@ const CheckinsReportPage = () => {
     pdls.filter(pdl => pdl.members.length > 0);
   }, [pdls, state]);
 
+  // Include PDLs who have terminated within the quarter
+  useEffect(() => {
+    const pdlsTerminatedInQuarter = selectTerminatedMembersAsOfDateWithPDLRole(
+      state,
+      startOfQuarter
+    );
+    pdlsTerminatedInQuarter.forEach(pdl => {
+      const allMembers = selectNormalizedMembers(state, searchText).filter(
+        member => member.pdlId === pdl.id
+      );
+      pdl.members = allMembers;
+    });
+    pdlsTerminatedInQuarter.forEach(pdl => {
+      if (!pdls.find(p => p.id === pdl.id)) {
+        pdls.push(pdl);
+      }
+    });
+  }, [state, startOfQuarter]);
+
   // Keyboard navigation for changing quarters.
   useEffect(() => {
     const handleKeyDown = evt => {
@@ -207,10 +241,12 @@ const CheckinsReportPage = () => {
         </Grid>
       </Box>
       <div className="checkins-report-page-reports">
-        {selectedPdls.length > 0 ? (
-          selectedPdls
+        {pdls.length > 0 ? (
+          pdls
+            .concat(selectedPdls.filter(pdl => !pdls.includes(pdl)))
             .sort(sortByLastName)
             .sort(sortByMembers)
+            .sort(sortByTerminated)
             .map(pdl => {
               return (
                 <CheckinReport

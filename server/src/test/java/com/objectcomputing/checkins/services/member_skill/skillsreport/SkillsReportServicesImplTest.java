@@ -1,31 +1,41 @@
 package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SkillsReportServicesImplTest {
+class SkillsReportServicesImplTest extends TestContainersSuite {
 
     @Mock
     private MemberSkillRepository memberSkillRepository;
@@ -42,14 +52,21 @@ public class SkillsReportServicesImplTest {
     @InjectMocks
     private SkillsReportServicesImpl skillsReportServices;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        mockFinalizer = MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(memberSkillRepository, memberProfileRepository, skillRepository);
+        reset(memberSkillRepository, memberProfileRepository, skillRepository);
+    }
+
+    @AfterAll
+    void finalizeMocks() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test
@@ -145,13 +162,13 @@ public class SkillsReportServicesImplTest {
         when(memberSkillRepository.findBySkillid(skillId4)).thenReturn(skillList4);
         MemberProfile joey = new MemberProfile("Joey", null, "Tribbiani", null,
                 null, null, null, null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, null);
         MemberProfile chandler = new MemberProfile("Chandler", null, "Bing", null,
                 null, null, null, null, null, null, null,
-                null, null,null, null, null);
+                null, null,null, null, null, null);
         MemberProfile ross = new MemberProfile("Ross", null, "Geller", null,
                 null, null, null, null, null, null, null,
-                null, null,null, null, null);
+                null, null,null, null, null, null);
         when(memberProfileServices.getById(memberId1)).thenReturn(joey);
         when(memberProfileServices.getById(memberId2)).thenReturn(chandler);
         when(memberProfileServices.getById(memberId3)).thenReturn(null);

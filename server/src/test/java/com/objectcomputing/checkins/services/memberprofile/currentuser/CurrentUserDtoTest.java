@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -11,8 +11,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-public class CurrentUserDtoTest {
+class CurrentUserDtoTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;

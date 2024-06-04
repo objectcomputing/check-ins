@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 @Controller("/services/member-profiles")
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "member profiles")
 public class MemberProfileController {
 
@@ -94,7 +92,7 @@ public class MemberProfileController {
      * @param memberProfile {@link MemberProfileCreateDTO} Information of the member profile being created
      * @return {@link MemberProfileResponseDTO} The created member profile
      */
-    @Post()
+    @Post
     @RequiredPermission(Permission.CAN_CREATE_ORGANIZATION_MEMBERS)
     public Mono<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 
@@ -109,7 +107,7 @@ public class MemberProfileController {
      * @param memberProfile {@link MemberProfileUpdateDTO} Information of the member profile being updated
      * @return {@link MemberProfileResponseDTO} The updated member profile
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<MemberProfileResponseDTO>> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
 
         return Mono.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
@@ -155,6 +153,7 @@ public class MemberProfileController {
         dto.setSupervisorid(entity.getSupervisorid());
         dto.setTerminationDate(entity.getTerminationDate());
         dto.setBirthDay(entity.getBirthDate());
+        dto.setLastSeen(entity.getLastSeen());
         return dto;
     }
 
@@ -162,13 +161,13 @@ public class MemberProfileController {
         return new MemberProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSuffix(), dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(),
                 dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
-                dto.getTerminationDate(),dto.getBirthDay(), dto.getVoluntary(), dto.getExcluded());
+                dto.getTerminationDate(),dto.getBirthDay(), dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
         return new MemberProfile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSuffix(),
                 dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getEmployeeId(),
                 dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate(), dto.getBirthDay(),
-                dto.getVoluntary(), dto.getExcluded());
+                dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen());
     }
 }

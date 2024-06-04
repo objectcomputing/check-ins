@@ -45,6 +45,7 @@ const MemberProfilePage = () => {
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
   const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
+  const [lastSeen, setLastSeen] = useState('');
   const sortedPdls = selectOrderedPdls(state);
   const sortedMembers = selectOrderedMemberFirstName(state);
   const isAdmin = selectIsAdmin(state);
@@ -70,6 +71,8 @@ const MemberProfilePage = () => {
     );
     if (member) {
       setSelectedMember(member);
+      const { lastSeen } = member;
+      setLastSeen(`${lastSeen[1]}/${lastSeen[2]}/${lastSeen[0]}`);
     } else if (terminatedMember) {
       setSelectedMember(terminatedMember[0]);
     }
@@ -170,47 +173,48 @@ const MemberProfilePage = () => {
                   <CardContent>
                     <Container fixed className="info-container">
                       <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="div"
+                        variant="body2"
+                        color="textSecondary"
+                        component="div"
                       >
+                        <h4>Last Seen: {lastSeen}</h4>
                         <h4>Email: {selectedMember.workEmail || ''}</h4>
                         <h4>Location: {selectedMember.location || ''}</h4>
                         <h4>Bio: {selectedMember.bioText || ''}</h4>
                         <h4>
                           {(supervisorInfo &&
-                                  'Supervisor: ' +
-                                  supervisorInfo.firstName +
-                                  ' ' +
-                                  supervisorInfo.lastName) ||
-                              ''}
+                            'Supervisor: ' +
+                              supervisorInfo.firstName +
+                              ' ' +
+                              supervisorInfo.lastName) ||
+                            ''}
                         </h4>
                         <h4>
                           {(pdlInfo &&
-                                  'PDL: ' +
-                                  pdlInfo.firstName +
-                                  ' ' +
-                                  pdlInfo.lastName) ||
-                              ''}
+                            'PDL: ' +
+                              pdlInfo.firstName +
+                              ' ' +
+                              pdlInfo.lastName) ||
+                            ''}
                         </h4>
                       </Typography>
                     </Container>
                     {canRequestFeedback && (
-                        <Container
-                            fixed
-                            sx={{ display: 'flex', justifyContent: 'center' }}
+                      <Container
+                        fixed
+                        sx={{ display: 'flex', justifyContent: 'center' }}
+                      >
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={e => {
+                            e.stopPropagation();
+                            history.push(`/feedback/request?for=${memberId}`);
+                          }}
                         >
-                          <Button
-                              variant="outlined"
-                              color="primary"
-                              onClick={e => {
-                                e.stopPropagation();
-                                history.push(`/feedback/request?for=${memberId}`);
-                              }}
-                          >
-                            Request Feedback
-                          </Button>
-                        </Container>
+                          Request Feedback
+                        </Button>
+                      </Container>
                     )}
                   </CardContent>
                 </Card>

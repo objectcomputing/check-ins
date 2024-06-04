@@ -19,8 +19,6 @@ import java.util.UUID;
 @Controller("/services/feedback/suggestions")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "feedback")
 public class FeedbackSuggestionsController {
 

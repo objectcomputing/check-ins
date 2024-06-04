@@ -20,7 +20,7 @@ const Template = args => {
 
 export const Color = Template.bind({});
 Color.args = {
-  label: 'Color Control',
+  name: 'Color Control',
   description: 'A control to hold a color value',
   value: '#2c519e',
   handleChange: event => console.log(`COLOR: ${event.target.value}`)

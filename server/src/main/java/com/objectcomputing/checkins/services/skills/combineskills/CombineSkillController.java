@@ -21,7 +21,6 @@ import java.net.URI;
 @Controller("/services/skills/combine")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "combineskill")
 public class CombineSkillController {
 
@@ -38,7 +37,7 @@ public class CombineSkillController {
      * @return {@link HttpResponse<Skill>}
      */
 
-    @Post()
+    @Post
     public Mono<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<?> request) {
         return Mono.fromCallable(() -> combineSkillServices.combine(skill))
                 .map(createdSkill -> HttpResponse.created(createdSkill)

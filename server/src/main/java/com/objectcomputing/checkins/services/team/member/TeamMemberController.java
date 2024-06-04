@@ -21,7 +21,6 @@ import java.util.UUID;
 @Controller("/services/teams/members")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "team-member")
 public class TeamMemberController {
 
@@ -37,7 +36,7 @@ public class TeamMemberController {
      * @param teamMember, {@link TeamMemberResponseDTO}
      * @return {@link HttpResponse <TeamMember>}
      */
-    @Post()
+    @Post
     public HttpResponse<TeamMember> createMembers(@Body @Valid TeamMemberCreateDTO teamMember,
                                                   HttpRequest<?> request) {
         TeamMember newTeamMember = teamMemberServices.save(new TeamMember(teamMember.getTeamId(),
@@ -54,7 +53,7 @@ public class TeamMemberController {
      * @param teamMember, {@link TeamMember}
      * @return {@link HttpResponse<TeamMember>}
      */
-    @Put()
+    @Put
     public HttpResponse<?> updateMembers(@Body @Valid TeamMemberUpdateDTO teamMember, HttpRequest<?> request) {
         TeamMember updatedTeamMember = teamMemberServices.update(new TeamMember(teamMember.getId(), teamMember.getTeamId(), teamMember.getMemberId(), teamMember.getLead()));
         return HttpResponse

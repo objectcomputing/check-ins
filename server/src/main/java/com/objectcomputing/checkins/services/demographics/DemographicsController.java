@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 @Controller("/services/demographics")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "demographics")
 public class DemographicsController {
 
@@ -80,7 +78,7 @@ public class DemographicsController {
      * @param demographics {@link DemographicsCreateDTO} Information of the demographics being created
      * @return {@link DemographicsResponseDTO} The created demographics
      */
-    @Post()
+    @Post
     public Mono<HttpResponse<DemographicsResponseDTO>> save(@Body @Valid DemographicsCreateDTO demographics,
                                                             HttpRequest<?> request) {
 
@@ -98,7 +96,7 @@ public class DemographicsController {
      * @param demographics {@link DemographicsUpdateDTO} Information of the demographics being updated
      * @return {@link DemographicsResponseDTO} The updated demographics
      */
-    @Put()
+    @Put
     public Mono<HttpResponse<DemographicsResponseDTO>> update(@Body @Valid DemographicsUpdateDTO demographics,
                                                                 HttpRequest<?> request) {
 

@@ -22,8 +22,6 @@ import java.util.Set;
 @Controller("/services/reports/birthdays")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Member Birthday")
 public class BirthDayController {
 
