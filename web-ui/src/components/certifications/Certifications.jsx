@@ -69,7 +69,7 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   const certificationSelect = useCallback(
     (label, setSelected) => (
       <Autocomplete
-        // blurOnSelect
+        blurOnSelect
         clearOnBlur
         freeSolo
         handleHomeEndKeys
