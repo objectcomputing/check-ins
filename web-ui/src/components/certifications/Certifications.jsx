@@ -67,7 +67,7 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   }, []);
 
   const certificationSelect = useCallback(
-    (label, selected, setSelected) => (
+    (label, setSelected) => (
       <Autocomplete
         // blurOnSelect
         clearOnBlur
@@ -180,11 +180,7 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
       >
         <DialogTitle>Manage Certifications</DialogTitle>
         <DialogContent>
-          {certificationSelect(
-            'Certification',
-            selectedCertification,
-            setSelectedCertification
-          )}
+          {certificationSelect('Certification', setSelectedCertification)}
           <TextField
             label="Certification Name"
             required
@@ -235,11 +231,7 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
           Merge {selectedCertification?.name} Certification Into
         </DialogTitle>
         <DialogContent>
-          {certificationSelect(
-            'Target Certification',
-            selectedTarget,
-            setSelectedTarget
-          )}
+          {certificationSelect('Target Certification', setSelectedTarget)}
           <div className="row">
             <Button disabled={!selectedTarget} onClick={mergeCertification}>
               Merge

@@ -333,10 +333,10 @@ const EarnedCertificationsTable = ({
             onChange={e =>
               setSelectedEarned({
                 ...selectedEarned,
-                imageUrl: e.target.value
+                certificateImageUrl: e.target.value
               })
             }
-            value={selectedEarned?.imageUrl ?? ''}
+            value={selectedEarned?.certificateImageUrl ?? ''}
           />
         </DialogContent>
         <DialogActions>
@@ -436,8 +436,11 @@ const EarnedCertificationsTable = ({
       <Dialog open={imageDialogOpen} onClose={() => setImageDialogOpen(false)}>
         <DialogTitle>Certification Image</DialogTitle>
         <DialogContent>
-          {selectedEarned?.imageUrl && (
-            <img src={selectedEarned.imageUrl} style={{ width: '100%' }} />
+          {selectedEarned?.certificateImageUrl && (
+            <img
+              src={selectedEarned.certificateImageUrl}
+              style={{ width: '100%' }}
+            />
           )}
         </DialogContent>
       </Dialog>
@@ -499,7 +502,7 @@ const EarnedCertificationsTable = ({
   }, [selectedCertification, selectedEarned, selectedProfile]);
 
   const selectImage = useCallback(earned => {
-    if (!earned.imageUrl) return;
+    if (!earned.certificateImageUrl) return;
     setSelectedEarned(earned);
     setImageDialogOpen(true);
   }, []);
