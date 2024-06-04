@@ -11,8 +11,13 @@ const CertificationReportPage = () => {
 
   return (
     <div className="certification-report-page">
+      <Button
+        classes={{ root: 'manage-btn' }}
+        onClick={() => setDialogOpen(true)}
+      >
+        Manage Certifications
+      </Button>
       <EarnedCertificationsTable forceUpdate={forceUpdate} key={n} />
-      <Button onClick={() => setDialogOpen(true)}>Manage Certifications</Button>
       <Certifications
         forceUpdate={forceUpdate}
         key={n + 1}
