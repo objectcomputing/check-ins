@@ -17,7 +17,6 @@ const propTypes = {
 const Certifications = ({ forceUpdate = () => {} }) => {
   const [adding, setAdding] = useState(true); // true to add, false to edit
   const [badgeUrl, setBadgeUrl] = useState('');
-  console.log('Certifications.jsx : badgeUrl =', badgeUrl);
   const [certificationMap, setCertificationMap] = useState({});
   const [certifications, setCertifications] = useState([]);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -123,6 +122,7 @@ const Certifications = ({ forceUpdate = () => {} }) => {
         `Successfully merged ${selectedCertification.name} certification to ${selectedTarget.name}.`
       );
       setSelectedCertification(null);
+      setSelectedTarget(null);
       forceUpdate();
     } catch (err) {
       console.error(err);
@@ -130,7 +130,6 @@ const Certifications = ({ forceUpdate = () => {} }) => {
   }, [selectedCertification, selectedTarget]);
 
   const saveCertification = useCallback(async () => {
-    console.log('Certifications.jsx saveCertification: badgeUrl =', badgeUrl);
     const url = adding
       ? certificationBaseUrl
       : certificationBaseUrl + '/' + selectedCertification.id;
