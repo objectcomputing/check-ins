@@ -25,11 +25,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'adopt' # See 'Supported distributions' for available options
-          java-version: 17
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: 21
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -106,6 +106,7 @@ jobs:
             --set-env-vars "WEB_ADDRESS=https://checkins.objectcomputing.com" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins" \
+            --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=cloud,google,gcp" \
             --platform "managed" \
             --max-instances 5 \
             --allow-unauthenticated

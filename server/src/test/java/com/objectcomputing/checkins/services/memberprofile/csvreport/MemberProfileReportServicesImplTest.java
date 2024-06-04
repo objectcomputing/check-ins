@@ -1,13 +1,13 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,11 +22,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.when;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MemberProfileReportServicesImplTest {
+class MemberProfileReportServicesImplTest extends TestContainersSuite {
 
     @Mock
     private MemberProfileReportRepository memberProfileReportRepository;
@@ -37,14 +36,21 @@ class MemberProfileReportServicesImplTest {
     @InjectMocks
     private MemberProfileReportServicesImpl memberProfileReportServices;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.openMocks(this);
+        mockFinalizer = MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
     void resetMocks() {
         Mockito.reset(memberProfileReportRepository);
+    }
+
+    @AfterAll
+    void close() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test
@@ -75,7 +81,7 @@ class MemberProfileReportServicesImplTest {
         List<MemberProfileRecord> allRecords = createSampleRecords();
         MemberProfileRecord expectedRecord = allRecords.get(1);
         when(memberProfileReportRepository
-                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString())), any()))
+                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString()))))
                 .thenReturn(List.of(expectedRecord));
         File tmpFile = File.createTempFile("member",".csv");
         tmpFile.deleteOnExit();
@@ -98,7 +104,7 @@ class MemberProfileReportServicesImplTest {
         List<MemberProfileRecord> allRecords = createSampleRecords();
         MemberProfileRecord expectedRecord = allRecords.get(1);
         when(memberProfileReportRepository
-                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString())), any()))
+                .findAllByMemberIds(eq(List.of(expectedRecord.getId().toString()))))
                 .thenReturn(List.of(expectedRecord));
 
         when(memberProfileFileProvider.provideFile()).thenThrow(new RuntimeException());

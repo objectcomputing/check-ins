@@ -6,8 +6,10 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -19,18 +21,17 @@ import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 
-@Controller("/services/checkin-documents")
+@Controller(CheckinDocumentController.PATH)
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
 @Tag(name = "checkin documents")
-public class CheckinDocumentController {
-        
+class CheckinDocumentController {
+    public static final String PATH = "/services/checkin-documents";
     private final CheckinDocumentServices checkinDocumentService;
 
-    public CheckinDocumentController(CheckinDocumentServices checkinDocumentService){
+    CheckinDocumentController(CheckinDocumentServices checkinDocumentService){
         this.checkinDocumentService = checkinDocumentService;
     }
-
 
     /**
      * Find CheckinDocument(s) based on checkinsId
@@ -41,9 +42,8 @@ public class CheckinDocumentController {
 
     @Get("/{?checkinsId}")
     @RequiredPermission(Permission.CAN_VIEW_CHECKIN_DOCUMENT)
-    public Mono<HttpResponse<Set<CheckinDocument>>> findCheckinDocument(@Nullable UUID checkinsId) {
-        return Mono.fromCallable(() -> checkinDocumentService.read(checkinsId))
-                .map(HttpResponse::ok);
+    Set<CheckinDocument> findCheckinDocument(@Nullable UUID checkinsId) {
+        return checkinDocumentService.read(checkinsId);
     }
 
     /**
@@ -55,11 +55,10 @@ public class CheckinDocumentController {
 
     @Post
     @RequiredPermission(Permission.CAN_CREATE_CHECKIN_DOCUMENT)
-    public Mono<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
-                                                                    HttpRequest<?> request) {
-        return Mono.fromCallable(() -> checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(),checkinDocument.getUploadDocId())))
-                .map(createdCheckinDocument -> HttpResponse.created(createdCheckinDocument)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdCheckinDocument.getId())))));
+    HttpResponse<CheckinDocument> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument) {
+        CheckinDocument createdCheckinDocument = checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(), checkinDocument.getUploadDocId()));
+        URI location = UriBuilder.of(PATH).path(createdCheckinDocument.getId().toString()).build();
+        return HttpResponse.created(createdCheckinDocument, location);
     }
 
     /**
@@ -70,13 +69,14 @@ public class CheckinDocumentController {
      */
     @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKIN_DOCUMENT)
-    public Mono<HttpResponse<CheckinDocument>> update(@Body @Valid CheckinDocument checkinDocument, HttpRequest<?> request) {
+    HttpResponse<?> update(@Body @Valid CheckinDocument checkinDocument) {
         if (checkinDocument == null) {
-            return Mono.just(HttpResponse.ok());
+            return HttpResponse.ok();
         }
-        return Mono.fromCallable(() -> checkinDocumentService.update(checkinDocument))
-            .map(updatedCheckinDocument -> HttpResponse.ok(updatedCheckinDocument)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedCheckinDocument.getId())))));
+        CheckinDocument updatedCheckinDocument = checkinDocumentService.update(checkinDocument);
+        URI location = UriBuilder.of(PATH).path(updatedCheckinDocument.getId().toString()).build();
+        return HttpResponse.ok(updatedCheckinDocument)
+                .headers(headers -> headers.location(location));
 
     }
 
@@ -84,13 +84,11 @@ public class CheckinDocumentController {
      * Delete a CheckinDocument
      *
      * @param checkinsId, id of the checkins record you wish to delete
-     * @return {@link HttpResponse<>}
      */
     @Delete("/{checkinsId}")
     @RequiredPermission(Permission.CAN_DELETE_CHECKIN_DOCUMENT)
-    public Mono<HttpResponse<?>> delete(UUID checkinsId) {
-        return Mono.fromRunnable(() -> checkinDocumentService.deleteByCheckinId(checkinsId))
-                .thenReturn(HttpResponse.noContent());
-
+    @Status(HttpStatus.NO_CONTENT)
+    void delete(UUID checkinsId) {
+        checkinDocumentService.deleteByCheckinId(checkinsId);
     }
 }

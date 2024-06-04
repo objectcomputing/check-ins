@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.fixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 public interface MemberProfileFixture extends RepositoryFixture {
 
@@ -176,4 +177,83 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, LocalDate.now().minusMonths(1), null, true, null, LocalDate.now().minusMonths(1)));
     }
 
+    default MemberProfile memberWithoutBoss(String name) {
+        return memberWithSupervisor(name, null, null);
+    }
+
+    default MemberProfile memberWithSupervisor(String name, MemberProfile supervisor) {
+        return memberWithSupervisor(name, supervisor, null);
+    }
+
+    default MemberProfile memberWithSupervisor(String name, MemberProfile supervisor, LocalDate terminationDate) {
+        return getMemberProfileRepository().save(
+                new MemberProfile(
+                        name,
+                        null,
+                        name,
+                        null,
+                        null,
+                        null,
+                        null,
+                        name + "@work.com",
+                        null,
+                        null,
+                        null,
+                        supervisor != null ? supervisor.getId() : null,
+                        terminationDate,
+                        null,
+                        null,
+                        null,
+                        LocalDate.now()
+                )
+        );
+    }
+
+    //                         ┌─────────┐
+    //                ┌────────┤   CEO   ├────┐
+    //                │        └─────────┘    │
+    //                │                       │                ┌──────────┐
+    //            ┌───▼───┐               ┌───▼───┐            │ Wildcard │
+    //      ┌─────┤ Lead1 ├────┐          │ Lead2 │            └──────────┘
+    //      │     └───────┘    │          └───┬───┘
+    //      │                  │              │
+    // ┌────▼──────┐    ┌──────▼────┐   ┌─────▼─────┐
+    // │ Lead1Sub1 │    │ Lead1Sub2 │ ┌─┤ Lead2Sub1 ├───┐
+    // └───────────┘    └───────────┘ │ └───────────┘   │
+    //                                │                 │
+    //                       ┌────────▼──────┐   ┌──────▼─────────────┐
+    //                       │ Lead2Sub1Sub1 │   │ Lead2Sub1Sub2Fired │
+    //                       └───────────────┘   └────────────────────┘
+    String HIERARCHY_CEO = "ceo";
+    String HIERARCHY_LEAD1 = "lead1";
+    String HIERARCHY_LEAD1_SUB1 = "lead1sub1";
+    String HIERARCHY_LEAD1_SUB2 = "lead1sub2";
+    String HIERARCHY_LEAD2 = "lead2";
+    String HIERARCHY_LEAD2_SUB1 = "lead2sub1";
+    String HIERARCHY_LEAD2_SUB1_SUB1 = "lead2sub1sub1";
+    String HIERARCHY_LEAD2_SUB1_SUB2_FIRED = "lead2sub1sub2fired";
+    String HIERARCHY_WILDCARD = "wildcard";
+
+    default Map<String, MemberProfile> createHierarchy() {
+        var ceo = memberWithoutBoss(HIERARCHY_CEO);
+        var lead1 = memberWithSupervisor(HIERARCHY_LEAD1, ceo);
+        var lead1sub1 = memberWithSupervisor(HIERARCHY_LEAD1_SUB1, lead1);
+        var lead1sub2 = memberWithSupervisor(HIERARCHY_LEAD1_SUB2, lead1);
+        var lead2 = memberWithSupervisor(HIERARCHY_LEAD2, ceo);
+        var lead2sub1 = memberWithSupervisor(HIERARCHY_LEAD2_SUB1, lead2);
+        var lead2sub1sub1 = memberWithSupervisor(HIERARCHY_LEAD2_SUB1_SUB1, lead2sub1);
+        var lead2sub1sub2fired = memberWithSupervisor(HIERARCHY_LEAD2_SUB1_SUB2_FIRED, lead2sub1, LocalDate.now());
+        var wildcard = memberWithoutBoss(HIERARCHY_WILDCARD);
+        return Map.of(
+                HIERARCHY_CEO, ceo,
+                HIERARCHY_LEAD1, lead1,
+                HIERARCHY_LEAD1_SUB1, lead1sub1,
+                HIERARCHY_LEAD1_SUB2, lead1sub2,
+                HIERARCHY_LEAD2, lead2,
+                HIERARCHY_LEAD2_SUB1, lead2sub1,
+                HIERARCHY_LEAD2_SUB1_SUB1, lead2sub1sub1,
+                HIERARCHY_LEAD2_SUB1_SUB2_FIRED, lead2sub1sub2fired,
+                HIERARCHY_WILDCARD, wildcard
+        );
+    }
 }

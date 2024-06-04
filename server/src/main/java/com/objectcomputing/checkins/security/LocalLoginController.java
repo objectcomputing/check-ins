@@ -62,10 +62,11 @@ public class LocalLoginController {
 
     @View("login")
     @Get
-    public Mono<Map<String, String>> login() {
-        return Mono.just(Collections.emptyMap());
+    public Map<String, String> login() {
+        return Collections.emptyMap();
     }
 
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
     @Post
     public Mono<Object> auth(HttpRequest<?> request, String email, String role) {

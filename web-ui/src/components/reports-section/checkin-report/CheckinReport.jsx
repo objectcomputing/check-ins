@@ -8,12 +8,7 @@ import { selectFilteredCheckinsForTeamMemberAndPDL } from '../../../context/sele
 import ExpandMore from '../../expand-more/ExpandMore.jsx';
 import HorizontalLinearStepper from './HorizontalLinearStepper.jsx';
 import TeamMemberMap from './TeamMemberMap.jsx';
-import {
-  getCheckinDate,
-  statusForPeriodByMemberScheduling
-} from './checkin-utils.js';
-
-import { getQuarterBeginEnd } from '../../../helpers/index.js';
+import { statusForPeriodByMemberScheduling } from './checkin-utils.js';
 
 import {
   Avatar,
@@ -30,6 +25,7 @@ import {
 } from '@mui/material';
 
 import './CheckinReport.css';
+import dayjs from 'dayjs';
 
 const CheckinsReport = ({ closed, pdl, planned, reportDate }) => {
   const { state } = useContext(AppContext);
@@ -38,7 +34,7 @@ const CheckinsReport = ({ closed, pdl, planned, reportDate }) => {
     /** @type CheckinStatus */ ('Not Started')
   );
 
-  const { name, id, members, workEmail, title } = pdl;
+  const { name, id, members, workEmail, title, terminationDate } = pdl;
   const handleExpandClick = () => setExpanded(!expanded);
 
   /**
@@ -118,9 +114,11 @@ const CheckinsReport = ({ closed, pdl, planned, reportDate }) => {
     }
   };
 
-  // Set status for the period based on members
+  // Set status for the period based on members and termination date
   useEffect(() => {
-    setStatusForPeriod(statusForPeriodByMembers(members));
+    terminationDate
+      ? setStatusForPeriod('Terminated')
+      : setStatusForPeriod(statusForPeriodByMembers(members));
   }, [members, reportDate]);
 
   // Set expanded state based on status and number of members
@@ -158,7 +156,14 @@ const CheckinsReport = ({ closed, pdl, planned, reportDate }) => {
                 badgeContent={members ? members.length : undefined}
                 color="secondary"
               >
-                <Chip label={statusForPeriodByMembers(members)} />
+                {statusForPeriod === 'Terminated' ? (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    Effective {dayjs(terminationDate).format('MMM D, YYYY')}
+                    <Chip label={statusForPeriod} color="error" />
+                  </Box>
+                ) : (
+                  <Chip label={statusForPeriod} />
+                )}
               </Badge>
               <ExpandMore
                 expand={expanded}
@@ -203,7 +208,8 @@ const propTypes = {
     id: PropTypes.string,
     members: PropTypes.array,
     workEmail: PropTypes.string,
-    title: PropTypes.string
+    title: PropTypes.string,
+    terminationDate: PropTypes.instanceOf(Date)
   }),
   planned: PropTypes.bool,
   reportDate: PropTypes.instanceOf(Date)

@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
-import io.micronaut.context.annotation.Value;
 import jakarta.inject.Singleton;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -20,9 +19,6 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
     private final MemberProfileReportRepository memberProfileReportRepository;
     private final MemberProfileFileProvider memberProfileFileProvider;
 
-    @Value("${aes.key}")
-    private String key;
-
     public MemberProfileReportServicesImpl(MemberProfileReportRepository memberProfileReportRepository,
                                            MemberProfileFileProvider memberProfileFileProvider) {
         this.memberProfileReportRepository = memberProfileReportRepository;
@@ -37,7 +33,7 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
             memberRecords.addAll(allRecords);
         } else {
             List<String> memberIds = queryDTO.getMemberIds().stream().map(UUID::toString).collect(Collectors.toList());
-            List<MemberProfileRecord> filteredRecords = memberProfileReportRepository.findAllByMemberIds(memberIds, key);
+            List<MemberProfileRecord> filteredRecords = memberProfileReportRepository.findAllByMemberIds(memberIds);
             memberRecords.addAll(filteredRecords);
         }
         return createCsv(memberRecords);

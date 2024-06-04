@@ -1,11 +1,10 @@
 package com.objectcomputing.checkins.services.role;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -13,13 +12,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class RoleTest {
+class RoleTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
-
 
     @Test
     void testRoleInstantiation() {
@@ -46,7 +42,6 @@ class RoleTest {
     void testConstraintViolation() {
         final UUID id = UUID.randomUUID();
         final RoleType roleType = RoleType.ADMIN;
-        final UUID memberId = UUID.randomUUID();
         Role role = new Role(id, roleType.toString(), "role description");
 
         role.setRole(null);
@@ -55,7 +50,7 @@ class RoleTest {
         Set<ConstraintViolation<Role>> violations = validator.validate(role);
         assertEquals(1, violations.size());
         for (ConstraintViolation<Role> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

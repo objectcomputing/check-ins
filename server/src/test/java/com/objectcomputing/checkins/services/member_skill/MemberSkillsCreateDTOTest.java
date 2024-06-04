@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.member_skill;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -11,8 +11,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-public class MemberSkillsCreateDTOTest {
+class MemberSkillsCreateDTOTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
@@ -33,7 +32,7 @@ public class MemberSkillsCreateDTOTest {
         Set<ConstraintViolation<MemberSkillCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 2);
         for (ConstraintViolation<MemberSkillCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 
@@ -53,5 +52,4 @@ public class MemberSkillsCreateDTOTest {
         Set<ConstraintViolation<MemberSkillCreateDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
     }
-
 }
