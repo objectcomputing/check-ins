@@ -61,6 +61,7 @@ const EarnedCertificationsTable = ({
   onlyMe = false
 }) => {
   const { state } = useContext(AppContext);
+  const [badgeUrl, setBadgeUrl] = useState('');
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});
   const [certificationName, setCertificationName] = useState('');
@@ -134,27 +135,34 @@ const EarnedCertificationsTable = ({
   const certificationDialog = useCallback(
     () => (
       <Dialog
-        classes={{ root: 'earned-certification-dialog' }}
+        classes={{ root: 'earned-certifications-dialog' }}
         open={certificationDialogOpen}
         onClose={cancelCertification}
       >
         <DialogTitle>Add Certification</DialogTitle>
         <DialogContent>
           <TextField
-            className="fullWidth"
             label="Certification Name"
-            placeholder="Certification Name"
             required
             onChange={e => setCertificationName(e.target.value)}
             value={certificationName}
+          />
+          <TextField
+            label="Badge URL"
+            required
+            onChange={e => setBadgeUrl(e.target.value)}
+            sx={{ border: '1px solid red' }}
+            value={badgeUrl}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelCertification}>Cancel</Button>
           <Button
-            disabled={certifications.some(
-              cert => cert.name === certificationName
-            )}
+            disabled={
+              !certificationName ||
+              !badgeUrl ||
+              certifications.some(cert => cert.name === certificationName)
+            }
             onClick={saveCertification}
           >
             Save
@@ -255,6 +263,7 @@ const EarnedCertificationsTable = ({
               value={selectedProfile}
             />
           )}
+
           <div>
             <Autocomplete
               disableClearable
@@ -273,7 +282,6 @@ const EarnedCertificationsTable = ({
               )}
               value={selectedCertification}
             />
-
             <IconButton
               aria-label="Add Certification"
               classes={{ root: 'add-button' }}
@@ -331,7 +339,12 @@ const EarnedCertificationsTable = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelEarnedCertification}>Cancel</Button>
-          <Button onClick={saveEarnedCertification}>Save</Button>
+          <Button
+            disabled={!selectedProfile || !selectedCertification}
+            onClick={saveEarnedCertification}
+          >
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
     ),
@@ -434,7 +447,7 @@ const EarnedCertificationsTable = ({
     try {
       const res = await fetch(certificationBaseUrl, {
         method: 'POST',
-        body: JSON.stringify({ name: certificationName })
+        body: JSON.stringify({ badgeUrl, name: certificationName })
       });
       const newCert = await res.json();
       setCertifications(certs =>

@@ -28,11 +28,19 @@
 }
 
 .earned-certifications-dialog {
+  [role='dialog'] {
+    width: 30rem;
+  }
+
   .MuiDialogContent-root {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 
     padding-top: 1rem !important;
+
+    .MuiTextField-root {
+      width: 100%;
+    }
   }
 }
