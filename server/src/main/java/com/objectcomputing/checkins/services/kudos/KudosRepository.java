@@ -34,7 +34,7 @@ public interface KudosRepository extends CrudRepository<Kudos, UUID> {
         @Query(value = "SELECT " +
                         "id, " +
                         "PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message, " +
-                        "senderid, teamid, datecreated, dateapproved, public " +
+                        "senderid, teamid, datecreated, dateapproved, publiclyVisible " +
                         "FROM kudos " +
                         "WHERE (:senderId IS NULL OR senderid = :senderId) " +
                         "AND (:includePending OR dateapproved IS NOT NULL)")

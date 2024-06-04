@@ -235,11 +235,9 @@ export const selectMappedUserRoles = createSelector(
   selectRoles,
   (userRoles, roles) => {
     const mappedUserRoles = {};
-    userRoles.forEach((userRole) => {
+    userRoles.forEach(userRole => {
       const memberId = userRole.memberRoleId.memberId;
-      const role = roles.find(
-        (role) => role.id === userRole.memberRoleId.roleId
-      );
+      const role = roles.find(role => role.id === userRole.memberRoleId.roleId);
       if (!(memberId in mappedUserRoles)) {
         mappedUserRoles[memberId] = new Set();
       }

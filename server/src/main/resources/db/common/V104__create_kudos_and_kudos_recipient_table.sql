@@ -3,7 +3,6 @@ CREATE TABLE kudos(
     id varchar PRIMARY KEY,
     message varchar,
     senderid varchar REFERENCES member_profile(id),
-    recipientid varchar REFERENCES member_profile(id),
     teamid varchar REFERENCES team(id),
     datecreated date,
     dateapproved date,

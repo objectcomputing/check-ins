@@ -49,7 +49,7 @@ const classes = {
   listItem: `${PREFIX}-listItem`,
   listStyle: `${PREFIX}-listStyle`,
   nested: `${PREFIX}-nested`,
-  subListItem: `${PREFIX}-subListItem`,
+  subListItem: `${PREFIX}-subListItem`
 };
 
 const adminLinks = [

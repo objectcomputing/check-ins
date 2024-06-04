@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Raleway:200");
+@import url('https://fonts.googleapis.com/css?family=Raleway:200');
 
 body {
   font-family: 'Raleway', sans-serif;
@@ -37,7 +37,7 @@ body.open {
 .anniversary-gift {
   position: absolute;
   top: -2rem;
-  left: 14rem;
+  left: 15rem;
   width: 100px;
   height: 100px;
   transform-origin: 0% 0%;
