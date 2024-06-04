@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
@@ -44,7 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture {
+class ReviewPeriodControllerTest
+        extends TestContainersSuite
+        implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture {
 
     @Inject
     @Client("/services/review-periods")
@@ -588,5 +591,29 @@ class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewAs
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
         assertEquals(1, getReviewPeriodRepository().findAll().size());
     }
+
+    @Test
+    void deleteReviewPeriodWithFeedbackRequests() {
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignAdminRole(pdlMemberProfile);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+        saveFeedbackRequest(pdlMemberProfile, requestee, recipient, reviewPeriod);
+
+        assertEquals(1, getReviewPeriodRepository().findAll().size());
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", reviewPeriod.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(1, getReviewPeriodRepository().findAll().size());
+        assertEquals(
+                "Review Period %s has associated feedback requests and cannot be deleted".formatted(reviewPeriod.getId()),
+                responseException.getMessage()
+        );
     }
 }
