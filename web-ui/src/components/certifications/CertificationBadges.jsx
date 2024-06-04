@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Card, CardContent, CardHeader } from '@mui/material';
+import { Card, CardContent, CardHeader, Tooltip } from '@mui/material';
 
 import './CertificationBadges.css';
 
@@ -36,9 +36,11 @@ const CertificationBadges = ({ memberId }) => {
         titleTypographyProps={{ variant: 'h5', component: 'h1' }}
       />
       <CardContent>
-        {certifications.map(cert => {
-          return <img alt={cert.name} key={cert.id} src={cert.badgeUrl} />;
-        })}
+        {certifications.map(cert => (
+          <Tooltip title={cert.name}>
+            <img alt={cert.name} key={cert.id} src={cert.badgeUrl} />
+          </Tooltip>
+        ))}
       </CardContent>
     </Card>
   );
