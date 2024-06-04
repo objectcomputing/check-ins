@@ -185,11 +185,15 @@ const Users = () => {
                           type: UPDATE_MEMBER_PROFILES,
                           payload: [...memberProfiles, data]
                         });
-                        if (member.pdlId) {
-                          emailPDLAssignment(member, csrf).then()
+                        try {
+                          member.pdlId && await emailPDLAssignment(member, csrf)
+                        } catch (e) {
+                          console.error("Unable to send PDL assignment email", e)
                         }
-                        if (member.supervisorid) {
-                          emailSupervisorAssignment(member, csrf).then()
+                        try {
+                          member.supervisorid && await emailSupervisorAssignment(member, csrf)
+                        } catch (e) {
+                          console.error("Unable to send supervisor assignment email", e)
                         }
                       }
                       handleClose();
