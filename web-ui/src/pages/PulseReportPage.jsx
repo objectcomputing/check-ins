@@ -38,7 +38,7 @@ import { AppContext } from '../context/AppContext.jsx';
 import {
   selectCsrfToken,
   selectCurrentUser,
-  selectHasPulseReportPermission,
+  selectHasViewPulseReportPermission,
   selectProfileMap
 } from '../context/selectors.js';
 import ExpandMore from '../components/expand-more/ExpandMore';
@@ -250,10 +250,10 @@ const PulseReportPage = () => {
   };
 
   useEffect(() => {
-    //TODO: Skipping the permission check during testing
-    //      because this permission has not been implemented yet.
-    // if (selectHasPulseReportPermission(state)) loadPulses();
+    // TODO: Uncomment this check after PR #2429 is merged.
+    // if (selectHasViewPulseReportPermission(state)) {
     loadPulses();
+    // }
   }, [csrf, dateFrom, dateTo]);
 
   useEffect(() => {
