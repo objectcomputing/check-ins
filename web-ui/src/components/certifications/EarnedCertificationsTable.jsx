@@ -106,7 +106,10 @@ const EarnedCertificationsTable = ({
   }, []);
 
   useEffect(() => {
-    if (profileMap) loadCertifications();
+    if (profileMap) {
+      loadCertifications();
+      if (onlyMe) setSelectedProfile(currentUser);
+    }
   }, [profileMap]);
 
   useEffect(() => {
@@ -151,7 +154,6 @@ const EarnedCertificationsTable = ({
             label="Badge URL"
             required
             onChange={e => setBadgeUrl(e.target.value)}
-            sx={{ border: '1px solid red' }}
             value={badgeUrl}
           />
         </DialogContent>
@@ -170,7 +172,7 @@ const EarnedCertificationsTable = ({
         </DialogActions>
       </Dialog>
     ),
-    [certificationDialogOpen, certificationName]
+    [badgeUrl, certificationDialogOpen, certificationName]
   );
 
   const confirmDelete = useCallback(earned => {
