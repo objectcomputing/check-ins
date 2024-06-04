@@ -40,6 +40,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -560,17 +561,23 @@ class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewAs
 
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
 
+        assertEquals(1, getReviewPeriodRepository().findAll().size());
+
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", reviewPeriod.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
+
+        assertTrue(getReviewPeriodRepository().findAll().isEmpty(), "Review period should be deleted");
     }
 
     @Test
     void deleteReviewPeriodNotAsAdmin() {
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
+
+        assertEquals(1, getReviewPeriodRepository().findAll().size());
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", reviewPeriod.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -579,5 +586,7 @@ class ReviewPeriodControllerTest extends TestContainersSuite implements ReviewAs
 
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals(1, getReviewPeriodRepository().findAll().size());
+    }
     }
 }
