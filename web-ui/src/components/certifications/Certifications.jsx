@@ -28,6 +28,7 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   const [certificationMap, setCertificationMap] = useState({});
   const [certifications, setCertifications] = useState([]);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [mergeDialogOpen, setMergeDialogOpen] = useState(false);
   const [name, setName] = useState('');
   const [selectedCertification, setSelectedCertification] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
@@ -171,64 +172,88 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   }, [badgeUrl, certificationMap, name, selectedCertification]);
 
   return (
-    <Dialog
-      classes={{ root: 'certification-dialog' }}
-      open={open}
-      onClose={close}
-    >
-      <DialogTitle>Manage Certifications</DialogTitle>
-      <DialogContent>
-        {certificationSelect(
-          'Source Certification',
-          selectedCertification,
-          setSelectedCertification
-        )}
-        <TextField
-          label="Certification Name"
-          required
-          onChange={e => setName(e.target.value)}
-          value={name}
-        />
-        <TextField
-          label="Badge URL"
-          required
-          onChange={e => setBadgeUrl(e.target.value)}
-          value={badgeUrl}
-        />
+    <>
+      <Dialog
+        classes={{ root: 'certification-dialog' }}
+        open={open}
+        onClose={close}
+      >
+        <DialogTitle>Manage Certifications</DialogTitle>
+        <DialogContent>
+          {certificationSelect(
+            'Certification',
+            selectedCertification,
+            setSelectedCertification
+          )}
+          <TextField
+            label="Certification Name"
+            required
+            onChange={e => setName(e.target.value)}
+            value={name}
+          />
+          <TextField
+            label="Badge URL"
+            required
+            onChange={e => setBadgeUrl(e.target.value)}
+            value={badgeUrl}
+          />
 
-        <div className="row">
-          <Button disabled={!name || !badgeUrl} onClick={saveCertification}>
-            Save
-          </Button>
-          <Button
-            disabled={!selectedCertification}
-            onClick={() => setConfirmDeleteOpen(true)}
-          >
-            Delete
-          </Button>
-        </div>
+          <div className="row">
+            <Button disabled={!name || !badgeUrl} onClick={saveCertification}>
+              Save
+            </Button>
+            <Button
+              disabled={!selectedCertification}
+              onClick={() => setConfirmDeleteOpen(true)}
+            >
+              Delete
+            </Button>
+            <Button
+              disabled={!selectedCertification}
+              onClick={() => setMergeDialogOpen(true)}
+            >
+              Merge
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-        {certificationSelect(
-          'Target Certification',
-          selectedTarget,
-          setSelectedTarget
-        )}
-        <Button
-          disabled={!selectedCertification || !selectedTarget}
-          onClick={mergeCertification}
-        >
-          Merge Source to Target
-        </Button>
+      <ConfirmationDialog
+        open={confirmDeleteOpen}
+        onYes={deleteCertification}
+        question={`Are you sure you want to delete the ${selectedCertification?.name} certification?`}
+        setOpen={setConfirmDeleteOpen}
+        title="Delete Certification"
+      />
 
-        <ConfirmationDialog
-          open={confirmDeleteOpen}
-          onYes={deleteCertification}
-          question={`Are you sure you want to delete the ${selectedCertification?.name} certification?`}
-          setOpen={setConfirmDeleteOpen}
-          title="Delete Certification"
-        />
-      </DialogContent>
-    </Dialog>
+      <Dialog
+        classes={{ root: 'certification-dialog' }}
+        open={mergeDialogOpen}
+        onClose={() => setMergeDialogOpen(false)}
+      >
+        <DialogTitle>
+          Merge {selectedCertification?.name} Certification Into
+        </DialogTitle>
+        <DialogContent>
+          {certificationSelect(
+            'Target Certification',
+            selectedTarget,
+            setSelectedTarget
+          )}
+          <div className="row">
+            <Button disabled={!selectedTarget} onClick={mergeCertification}>
+              Merge
+            </Button>
+            <Button
+              disabled={!selectedCertification}
+              onClick={() => setMergeDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
