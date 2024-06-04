@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
 import {
-  Autocomplete,
   Button,
   Dialog,
   DialogActions,
@@ -13,6 +12,7 @@ import {
   TextField,
   Tooltip
 } from '@mui/material';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 
@@ -26,19 +26,40 @@ const propTypes = {
 
 const Certifications = ({ forceUpdate = () => {} }) => {
   const [adding, setAdding] = useState(false); // true to add, false to edit
-  const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
+  const [badgeUrl, setBadgeUrl] = useState('');
+  // const [color, setColor] = useState({ letter: '', name: '' });
+  const [color, setColor] = useState('');
+  const [colors, setColors] = useState([
+    'blue',
+    'green',
+    'red'
+    // { letter: 'b', label: 'blue' },
+    // { letter: 'g', label: 'green' },
+    // { letter: 'r', label: 'red' }
+  ]);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});
-  const [certificationName, setCertificationName] = useState('');
   const [certifications, setCertifications] = useState([]);
+  console.log('Certifications.jsx : certifications =', certifications);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [name, setName] = useState('');
   const [selectedCertification, setSelectedCertification] = useState(null);
+  console.log(
+    'Certifications.jsx : selectedCertification =',
+    selectedCertification
+  );
   const [selectedTarget, setSelectedTarget] = useState(null);
+
+  const filter = createFilterOptions();
 
   const loadCertifications = useCallback(async () => {
     try {
       let res = await fetch(certificationBaseUrl);
       const certs = await res.json();
       setCertifications(certs.sort((c1, c2) => c1.name.localeCompare(c2.name)));
+
+      //TODO: Just for debugging.
+      setSelectedCertification(certs[0]);
 
       const certMap = certs.reduce((map, cert) => {
         map[cert.id] = cert;
@@ -54,22 +75,22 @@ const Certifications = ({ forceUpdate = () => {} }) => {
     loadCertifications();
   }, []);
 
-  const addCertification = useCallback(() => {
+  const addCertification = useCallback(name => {
     setAdding(true);
-    setCertificationName('');
-    setCertificationDialogOpen(true);
+    setName(name);
+    setDialogOpen(true);
   }, []);
 
   const cancelCertification = useCallback(() => {
-    setCertificationName('');
-    setCertificationDialogOpen(false);
+    setName('');
+    setDialogOpen(false);
   }, []);
 
   const certificationDialog = useCallback(
     () => (
       <Dialog
         classes={{ root: 'certification-dialog' }}
-        open={certificationDialogOpen}
+        open={dialogOpen}
         onClose={cancelCertification}
       >
         <DialogTitle>{adding ? 'Add' : 'Edit'} Certification</DialogTitle>
@@ -79,16 +100,22 @@ const Certifications = ({ forceUpdate = () => {} }) => {
             label="Certification Name"
             placeholder="Certification Name"
             required
-            onChange={e => setCertificationName(e.target.value)}
-            value={certificationName}
+            onChange={e => setName(e.target.value)}
+            value={name}
+          />
+          <TextField
+            className="fullWidth"
+            label="Certification Badge URL"
+            placeholder="Certification Badge URL"
+            required
+            onChange={e => setBadgeUrl(e.target.value)}
+            value={badgeUrl}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelCertification}>Cancel</Button>
           <Button
-            disabled={certifications.some(
-              cert => cert.name === certificationName
-            )}
+            disabled={certifications.some(cert => cert.name === name)}
             onClick={saveCertification}
           >
             Save
@@ -96,33 +123,85 @@ const Certifications = ({ forceUpdate = () => {} }) => {
         </DialogActions>
       </Dialog>
     ),
-    [certificationDialogOpen, certificationName]
+    [dialogOpen, name]
   );
 
   const certificationSelect = useCallback(
     (label, selected, setSelected) => (
       <Autocomplete
-        disableClearable
-        getOptionLabel={cert => cert?.name || 'unknown'}
-        isOptionEqualToValue={(option, value) => option.id === value.id}
+        blurOnSelect
+        clearOnBlur
+        filterOptions={(options, params) => {
+          console.log('Certifications.jsx filterOptions: options =', options);
+          console.log('Certifications.jsx filterOptions: params =', params);
+          const filtered = filter(options, params);
+          console.log('Certifications.jsx filterOptions: filtered =', filtered);
+          // const name = params.inputValue;
+          // if (name !== '') {
+          //   filtered.push({ name, displayLabel: `Add "${name}"` });
+          // }
+          return filtered;
+        }}
+        getOptionLabel={option => {
+          console.log('Certifications.jsx getOptionLabel: option =', option);
+          return option.displayLabel || '';
+        }}
+        handleHomeEndKeys
+        isOptionEqualToValue={(option, value) => {
+          const equal = option.id === value?.id;
+          if (equal) {
+            console.log(
+              'Certifications.jsx isOptionEqualToValue: matched on',
+              option.name
+            );
+          }
+          return equal;
+        }}
+        key={label}
         onChange={(event, cert) => {
-          setSelected({ ...cert });
+          if (cert === null) return;
+          const nameUp = cert.name.toUpperCase();
+          const inCertList = certifications.some(
+            cert => cert.name.toUpperCase() === nameUp
+          );
+          console.log('Certifications.jsx onChange: inCertList =', inCertList);
+          if (inCertList) {
+            setSelected(cert);
+          } else {
+            setSelected({ name: cert.name, badgeImageUrl: '' });
+            setName(cert.name);
+            setDialogOpen(true);
+          }
         }}
         options={certifications}
         sx={{ width: 400 }}
-        renderInput={params => (
-          <TextField {...params} className="fullWidth" label={label} />
-        )}
-        renderOption={(props, option) => {
-          // React won't allow a key to be present in spread props.
-          const { key } = props;
-          delete props.key;
+        renderInput={params => {
+          console.log('Certifications.jsx renderInput: params =', params);
           return (
-            <span {...props} key={key} style={{ backgroundColor: 'lightgray' }}>
-              {option.name}
-            </span>
+            <TextField
+              {...params}
+              className="fullWidth"
+              label={label}
+              placeholder="Enter a certification name"
+              value={selected?.name ?? ''}
+              variant="standard"
+            />
           );
         }}
+        renderOption={(props, option) => {
+          // React keys must be passed directly to JSX without using spread.
+          delete props.key;
+          return (
+            <li
+              key={option.id}
+              style={{ backgroundColor: 'lightgray' }}
+              {...props}
+            >
+              {option.name}
+            </li>
+          );
+        }}
+        selectOnFocus
         value={selected}
       />
     ),
@@ -152,8 +231,8 @@ const Certifications = ({ forceUpdate = () => {} }) => {
 
   const editCertification = useCallback(() => {
     setAdding(false);
-    setCertificationName(selectedCertification.name);
-    setCertificationDialogOpen(true);
+    setName(selectedCertification.name);
+    setDialogOpen(true);
   }, [selectedCertification]);
 
   const mergeCertification = useCallback(async () => {
@@ -178,7 +257,25 @@ const Certifications = ({ forceUpdate = () => {} }) => {
     } catch (err) {
       console.error(err);
     }
-    setCertificationDialogOpen(false);
+    setDialogOpen(false);
+  }, [selectedCertification, selectedTarget]);
+
+  const renameCertification = useCallback(async () => {
+    const url = certificationBaseUrl + '/' + selectedCertification.id;
+    selectedCertification.name = selectedTarget.name;
+    try {
+      const res = await fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify(selectedCertification)
+      });
+      alert(
+        `Successfully renamed ${selectedCertification.name} certification to ${selectedTarget.name}.`
+      );
+      forceUpdate();
+    } catch (err) {
+      console.error(err);
+    }
+    setDialogOpen(false);
   }, [selectedCertification, selectedTarget]);
 
   const saveCertification = useCallback(
@@ -189,7 +286,7 @@ const Certifications = ({ forceUpdate = () => {} }) => {
       try {
         const res = await fetch(url, {
           method: adding ? 'POST' : 'PUT',
-          body: JSON.stringify({ name: certificationName })
+          body: JSON.stringify({ name })
         });
         const newCert = await res.json();
         setCertifications(certs =>
@@ -200,18 +297,42 @@ const Certifications = ({ forceUpdate = () => {} }) => {
           return map;
         });
         setSelectedCertification(newCert);
-        setCertificationName('');
+        setName('');
         forceUpdate();
       } catch (err) {
         console.error(err);
       }
-      setCertificationDialogOpen(false);
+      setDialogOpen(false);
     },
-    [certificationMap, certificationName, certifications, selectedCertification]
+    [certificationMap, certifications, name, selectedCertification]
   );
 
   return (
     <div>
+      <Autocomplete
+        clearOnBlur
+        freeSolo
+        // getOptionLabel={option => option.name || ''}
+        handleHomeEndKeys
+        // isOptionEqualToValue={(option, value) =>
+        //   value ? value.name === option.name : false
+        // }
+        onChange={(event, value) => {
+          setColor(value);
+          if (value && !colors.includes(value)) {
+            // colors.push({ letter: value[0], name: value });
+            colors.push(value);
+            setColors(colors.sort());
+          }
+        }}
+        options={colors}
+        // Why is the renderInput prop required?
+        renderInput={params => <TextField {...params} label="Color" />}
+        selectOnFocus
+      />
+      <div>You selected {color || 'nothing'}.</div>
+
+      {/*
       {certificationSelect(
         'Source Certification',
         selectedCertification,
@@ -221,7 +342,7 @@ const Certifications = ({ forceUpdate = () => {} }) => {
       <IconButton
         aria-label="Add Certification"
         classes={{ root: 'add-button' }}
-        onClick={addCertification}
+        onClick={() => addCertification('')}
       >
         <AddCircleOutline />
       </IconButton>
@@ -251,6 +372,12 @@ const Certifications = ({ forceUpdate = () => {} }) => {
       )}
       <Button
         disabled={!selectedCertification || !selectedTarget}
+        onClick={renameCertification}
+      >
+        Rename Source to Target
+      </Button>
+      <Button
+        disabled={!selectedCertification || !selectedTarget}
         onClick={mergeCertification}
       >
         Merge Source to Target
@@ -265,6 +392,7 @@ const Certifications = ({ forceUpdate = () => {} }) => {
         setOpen={setConfirmDeleteOpen}
         title="Delete Certification"
       />
+      */}
     </div>
   );
 };

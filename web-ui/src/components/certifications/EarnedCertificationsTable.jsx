@@ -20,8 +20,7 @@ import {
   DialogTitle,
   IconButton,
   TextField,
-  Tooltip,
-  Typography
+  Tooltip
 } from '@mui/material';
 
 import DatePickerField from '../date-picker-field/DatePickerField';
@@ -33,13 +32,24 @@ import './EarnedCertificationsTable.css';
 const certificationBaseUrl = 'http://localhost:3000/certification';
 const earnedCertificationBaseUrl = 'http://localhost:3000/earned-certification';
 
-const formatDate = date =>
-  date instanceof Date
-    ? format(date, 'yyyy-MM-dd')
-    : `${date.$y}-${date.$M + 1}-${date.$D}`;
+const formatDate = date => {
+  return !date
+    ? ''
+    : date instanceof Date
+      ? format(date, 'yyyy-MM-dd')
+      : `${date.$y}-${date.$M + 1}-${date.$D}`;
+};
 
-const newEarned = { date: formatDate(new Date()) };
-const tableColumns = ['Member', 'Name', 'Description', 'Date Earned', 'Image'];
+const newEarned = { earnedDate: formatDate(new Date()) };
+const tableColumns = [
+  'Member',
+  'Name',
+  'Description',
+  'Earned On',
+  'Expiration',
+  'Certificate Image',
+  'Badge'
+];
 
 const propTypes = {
   forceUpdate: PropTypes.func,
@@ -173,15 +183,24 @@ const EarnedCertificationsTable = ({
   const earnedCertificationRow = useCallback(
     earned => {
       const profile = profileMap[earned.memberId];
+      const { certificateImageUrl, certificationId } = earned;
+      const certification = certificationMap[certificationId];
+      const { badgeImageUrl } = certification;
       return (
         <tr key={earned.id}>
           {!onlyMe && <td>{profile?.name ?? 'unknown'}</td>}
           <td>{certificationMap[earned.certificationId]?.name ?? 'unknown'}</td>
           <td>{earned.description}</td>
-          <td>{formatDate(new Date(earned.date))}</td>
-          <td onClick={() => selectImage(earned)} style={{ cursor: 'pointer' }}>
-            <img src={earned.imageUrl} />
+          <td>{formatDate(new Date(earned.earnedDate))}</td>
+          <td>
+            {earned.expirationDate
+              ? formatDate(new Date(earned.expirationDate))
+              : ''}
           </td>
+          <td onClick={() => selectImage(earned)} style={{ cursor: 'pointer' }}>
+            {certificateImageUrl && <img src={certificateImageUrl} />}
+          </td>
+          <td>{badgeImageUrl && <img src={badgeImageUrl} />}</td>
           <td>
             <Tooltip title="Edit">
               <IconButton
@@ -278,14 +297,24 @@ const EarnedCertificationsTable = ({
             value={selectedEarned?.description ?? ''}
           />
           <DatePickerField
-            date={new Date(selectedEarned?.date)}
-            label="Date Earned"
-            setDate={date =>
+            date={new Date(selectedEarned?.earnedDate)}
+            label="Earned On"
+            setDate={date => {
               setSelectedEarned({
                 ...selectedEarned,
-                date: formatDate(date)
-              })
-            }
+                earnedDate: formatDate(date)
+              });
+            }}
+          />
+          <DatePickerField
+            date={new Date(selectedEarned?.earnedDate)}
+            label="Expiration"
+            setDate={date => {
+              setSelectedEarned({
+                ...selectedEarned,
+                expirationDate: formatDate(date)
+              });
+            }}
           />
           <TextField
             className="fullWidth"
@@ -355,13 +384,18 @@ const EarnedCertificationsTable = ({
 
   const earnedValue = useCallback(
     earned => {
+      const certification = certificationMap[earned.certificationId];
       switch (sortColumn) {
-        case 'Date Earned':
-          return earned.date;
+        case 'Earned On':
+          return earned.earnedDate;
+        case 'Expiration':
+          return earned.expirationDate || '';
         case 'Description':
           return earned.description;
-        case 'Image':
-          return earned.imageUrl || '';
+        case 'Certificate Image':
+          return earned.certificateImageUrl || '';
+        case 'Badge':
+          return certification.badgeImageUrl || '';
         case 'Member':
           const profile = profileMap[earned.memberId];
           return profile?.name ?? '';

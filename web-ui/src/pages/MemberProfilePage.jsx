@@ -14,7 +14,7 @@ import { getTeamByMember } from '../api/team';
 import { getGuildsForMember } from '../api/guild';
 import { getAvatarURL } from '../api/api.js';
 import ProfilePage from './ProfilePage';
-import EarnedCertificationsTable from '../components/certifications/EarnedCertificationsTable';
+import CertificationBadges from '../components/certifications/CertificationBadges';
 import { levelList } from '../context/util';
 import {
   selectOrderedPdls,
@@ -311,8 +311,8 @@ const MemberProfilePage = () => {
                 </div>
               </CardContent>
             </Card>
+            <CertificationBadges memberId={memberId} />
           </Grid>
-          <EarnedCertificationsTable />
         </Grid>
       )}
     </>
