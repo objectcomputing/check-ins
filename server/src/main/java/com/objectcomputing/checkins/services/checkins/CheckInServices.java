@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.checkins;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+
 import java.util.Set;
 import java.util.UUID;
-
-import com.objectcomputing.checkins.services.permissions.Permission;
 
 
 public interface CheckInServices {
@@ -19,6 +19,8 @@ public interface CheckInServices {
     Boolean hasPermission(UUID memberId, Permission permission);
 
     Boolean accessGranted(UUID checkinId, UUID memberId);
+
+    Boolean doesUserHaveViewAccess(UUID currentUserId, UUID checkinId, UUID createdById);
 
     Boolean canViewAllCheckins(UUID memberId);
 

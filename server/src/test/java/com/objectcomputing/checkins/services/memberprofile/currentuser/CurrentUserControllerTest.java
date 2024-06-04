@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -10,11 +11,10 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.security.authentication.Authentication;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -27,9 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixture {
+class CurrentUserControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     private static final Map<String, Object> userAttributes = new HashMap<>();
     private static final String firstName = "some.first.name";
@@ -40,26 +38,29 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
     @Mock
     CurrentUserServices currentUserServices;
 
-
     @Inject
     CurrentUserController currentUserController;
 
-    @Inject
-    EmbeddedServer embeddedServer;
+    private AutoCloseable mockFinalizer;
 
     @BeforeAll
-    void setup() throws Exception {
-        MockitoAnnotations.openMocks(this).close();
+    void setupMocks() {
+        mockFinalizer = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterAll
+    void close() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test
-    public void testCurrentUserReturnsUnauthorizedWhenAuthenticationFails() {
+    void testCurrentUserReturnsUnauthorizedWhenAuthenticationFails() {
         HttpResponse<CurrentUserDTO> response = currentUserController.currentUser(null);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatus());
     }
 
     @Test
-    public void testCurrentUserReturnsValidDTO() {
+    void testCurrentUserReturnsValidDTO() {
         Authentication auth = new Authentication() {
             @NonNull
             @Override
@@ -97,9 +98,7 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
 
 
     @Test
-    public void testCurrentUserReturnsCorrectPermissions() {
-
-
+    void testCurrentUserReturnsCorrectPermissions() {
         Role memberRole = createRole(new Role(RoleType.MEMBER.name(), "Member Role"));
         setPermissionsForMember(memberRole.getId());
         MemberProfile member = createADefaultMemberProfile();
@@ -135,9 +134,7 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
 
 
     @Test
-    public void testCurrentUserReturnsCorrectPermissionsAdmin() {
-
-
+    void testCurrentUserReturnsCorrectPermissionsAdmin() {
         Role adminRole = createRole(new Role(RoleType.ADMIN.name(), "Member Role"));
         setPermissionsForAdmin(adminRole.getId());
         MemberProfile admin = createADefaultMemberProfile();
@@ -170,11 +167,5 @@ public class CurrentUserControllerTest implements MemberProfileFixture, RoleFixt
         assertEquals(List.of("ADMIN"), currentUserDTO.getRole());
         assertEquals(adminPermissions, currentUserDTO.getPermissions());
         assertNotNull(actual.getHeaders().get("location"));
-    }
-
-
-    @Override
-    public EmbeddedServer getEmbeddedServer() {
-        return embeddedServer;
     }
 }
