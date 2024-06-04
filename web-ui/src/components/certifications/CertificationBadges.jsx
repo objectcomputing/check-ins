@@ -30,14 +30,14 @@ const CertificationBadges = ({ memberId }) => {
   if (certifications.length === 0) return null;
 
   return (
-    <Card id="certification-badges">
+    <Card className="certification-badges">
       <CardHeader
         title="Certifications"
         titleTypographyProps={{ variant: 'h5', component: 'h1' }}
       />
       <CardContent>
         {certifications.map(cert => {
-          return <img alt={cert.name} key={cert.id} src={cert.badgeImageUrl} />;
+          return <img alt={cert.name} key={cert.id} src={cert.badgeUrl} />;
         })}
       </CardContent>
     </Card>

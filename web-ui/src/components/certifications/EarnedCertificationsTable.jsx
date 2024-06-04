@@ -195,7 +195,7 @@ const EarnedCertificationsTable = ({
       const profile = profileMap[earned.memberId];
       const { certificateImageUrl, certificationId } = earned;
       const certification = certificationMap[certificationId];
-      const { badgeImageUrl } = certification;
+      const { badgeUrl } = certification;
       return (
         <tr key={earned.id}>
           {!onlyMe && <td>{profile?.name ?? 'unknown'}</td>}
@@ -210,7 +210,7 @@ const EarnedCertificationsTable = ({
           <td onClick={() => selectImage(earned)} style={{ cursor: 'pointer' }}>
             {certificateImageUrl && <img src={certificateImageUrl} />}
           </td>
-          <td>{badgeImageUrl && <img src={badgeImageUrl} />}</td>
+          <td>{badgeUrl && <img src={badgeUrl} />}</td>
           <td>
             <Tooltip title="Edit">
               <IconButton
@@ -410,7 +410,7 @@ const EarnedCertificationsTable = ({
         case 'Certificate Image':
           return earned.certificateImageUrl || '';
         case 'Badge':
-          return certification.badgeImageUrl || '';
+          return certification.badgeUrl || '';
         case 'Member':
           const profile = profileMap[earned.memberId];
           return profile?.name ?? '';
