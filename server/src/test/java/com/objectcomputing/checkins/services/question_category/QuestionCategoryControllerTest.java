@@ -16,7 +16,7 @@ import io.micronaut.http.hateoas.JsonError;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
-import java.io.UnsupportedEncodingException;
+
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -27,6 +27,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class QuestionCategoryControllerTest extends TestContainersSuite implements QuestionCategoryFixture, MemberProfileFixture, RoleFixture {
 
@@ -35,79 +36,68 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
     private HttpClient client;
 
     private String encodeValue(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            return "";
-        }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     @Test
     void testGETNonExistingEndpointReturns404() {
-
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET(String.format("/?id=%s", UUID.randomUUID().toString()))
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-        });
-
+        HttpRequest<Object> request = HttpRequest.GET(String.format("/?id=%s", UUID.randomUUID()))
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request)
+        );
         assertNotNull(thrown.getResponse());
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
     @Test
     void testGETFindByNameReturnsNotFound() {
-
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?name=%s", encodeValue("silly"))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-                    final HttpResponse<Set<QuestionCategory>> response = client.toBlocking().exchange(request, Argument.setOf(QuestionCategory.class));
-                });
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Argument.setOf(QuestionCategory.class))
+        );
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-
     }
 
     @Test
     void testGetAllCategories() {
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         final HttpRequest<Object> request = HttpRequest.
-                GET("/").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
         final HttpResponse<Set<QuestionCategory>> response = client.toBlocking().exchange(request, Argument.setOf(QuestionCategory.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        response.equals(questionCategory);
-        assertNotNull(response.getContentLength());
-
+        assertEquals(Set.of(questionCategory), response.body());
+        assertTrue(response.getContentLength() > 0, "response.getContentLength() > 0");
     }
 
     @Test
     void testGETGetByIdHappyPath() {
-
         QuestionCategory questionCategory = createADefaultQuestionCategory();
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?id=%s", questionCategory.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                GET(String.format("/?id=%s", questionCategory.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
         final HttpResponse<QuestionCategory> response = client.toBlocking().exchange(request, QuestionCategory.class);
 
         assertEquals(questionCategory.getName(), response.body().getName());
-        assertEquals(HttpStatus.OK,response.getStatus());
-
+        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
     void testGETGetByIdNotFound() {
-
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?id=%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                GET(String.format("/?id=%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class)
+        );
 
         assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
-
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
 
     @Test
@@ -118,7 +108,7 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
         QuestionCategory questionCategory = createADefaultQuestionCategory();
 
         final HttpRequest<QuestionCategory> request = HttpRequest.
-                PUT("/", questionCategory).basicAuth(memberProfileOfAdmin.getWorkEmail(),ADMIN_ROLE);
+                PUT("/", questionCategory).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<QuestionCategory> response = client.toBlocking().exchange(request, QuestionCategory.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -128,11 +118,10 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
 
     @Test
     void testPUTUpdateNoPermission() {
-
         QuestionCategory questionCategory = createADefaultQuestionCategory();
 
         final HttpRequest<QuestionCategory> request = HttpRequest.
-                PUT("/", questionCategory).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                PUT("/", questionCategory).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -143,13 +132,12 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
 
     @Test
     void testPUTNoIDSupplied() {
-
         QuestionCategoryCreateDTO requestBody = new QuestionCategoryCreateDTO();
         requestBody.setName("Fake Category");
-
+        HttpRequest<QuestionCategoryCreateDTO> request = HttpRequest.PUT("/", requestBody)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody)
-                    .basicAuth(ADMIN_ROLE, ADMIN_ROLE));
+            client.toBlocking().exchange(request);
         });
 
         JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
@@ -160,15 +148,15 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
 
     @Test
     void testPUTQuestionCategoryNotFound() {
-
         QuestionCategory requestBody = new QuestionCategory();
         requestBody.setId(UUID.randomUUID());
         requestBody.setName("Fake Category");
+        HttpRequest<QuestionCategory> request = HttpRequest.PUT("/", requestBody)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-        });
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request)
+        );
 
         JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
 
@@ -178,7 +166,6 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
 
     @Test
     void testPOSTCreateAQuestionCategory() {
-
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         createAndAssignAdminRole(memberProfileOfAdmin);
 
@@ -186,11 +173,10 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
         newQuestionCategory.setName("Inquisitive");
 
         final HttpRequest<QuestionCategoryCreateDTO> request = HttpRequest.
-                POST("/", newQuestionCategory).basicAuth(memberProfileOfAdmin.getWorkEmail(),ADMIN_ROLE);
-        final HttpResponse<QuestionCategory> response = client.toBlocking().exchange(request,QuestionCategory.class);
+                POST("/", newQuestionCategory).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<QuestionCategory> response = client.toBlocking().exchange(request, QuestionCategory.class);
 
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED,response.getStatus());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(newQuestionCategory.getName(), response.body().getName());
     }
 
@@ -201,7 +187,7 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
         newQuestionCategory.setName("Inquisitive");
 
         final HttpRequest<QuestionCategoryCreateDTO> request = HttpRequest.
-                POST("/", newQuestionCategory).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                POST("/", newQuestionCategory).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -225,8 +211,7 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.CONFLICT,responseException.getStatus());
-
+        assertEquals(HttpStatus.CONFLICT, responseException.getStatus());
     }
 
     @Test
@@ -240,8 +225,7 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
-
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
@@ -250,30 +234,28 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
         createAndAssignAdminRole(memberProfileOfAdmin);
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
-        QuestionCategoryCreateDTO newQuestionCategory = new QuestionCategoryCreateDTO();
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", questionCategory.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(),ADMIN_ROLE);
+                DELETE(String.format("/%s", questionCategory.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<Boolean> response = client.toBlocking().exchange(request, Boolean.class);
 
-        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
     void testDELETEQuestionCategoryNoPermission() {
-
         QuestionCategory questionCategory = createADefaultQuestionCategory();
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", questionCategory.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                DELETE(String.format("/%s", questionCategory.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
+                () -> client.toBlocking().exchange(request, Map.class)
+        );
 
         assertEquals("You do not have permission to access this resource", responseException.getMessage());
-        assertEquals(HttpStatus.FORBIDDEN,responseException.getStatus());
-
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
 }
