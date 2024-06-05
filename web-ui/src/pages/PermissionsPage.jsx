@@ -69,6 +69,9 @@ const EditPermissionsPage = () => {
   const hasPermission = selectHasPermissionAssignmentPermission(state);
   const [selectedRole, setSelectedRole] = useState(roles[0]);
   const [categoriesList, setCategoriesList] = useState([]);
+  //TODO: This is not yet getting the "Pulse" category of permissions,
+  //      so they don't appear on this page.
+  console.log('PermissionsPage.jsx : categoriesList =', categoriesList);
   const [rolePermissionsList, setRolePermissionsList] = useState([]);
   const [rolePermissions, setRolePermissions] = useState([]);
   const [refresh, setRefresh] = useState(true);
