@@ -37,6 +37,7 @@ import {
 import {
   selectCsrfToken,
   selectCurrentUserId,
+  selectHasCreateReviewPeriodPermission,
   selectReviewPeriod,
   selectReviewPeriods,
   selectUserProfile
@@ -340,7 +341,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     <Root>
       <div className={classes.headerContainer}>
         <Typography variant="h4">Review Periods</Typography>
-        {isAdmin ? (
+        {selectHasCreateReviewPeriodPermission(state) && (
           <Button
             onClick={handleOpen}
             className={classes.actionButtons}
@@ -349,7 +350,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           >
             Add Review Period
           </Button>
-        ) : null}
+        )}
       </div>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {loading ? (
