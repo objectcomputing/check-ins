@@ -103,7 +103,6 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             pulseResponseRet = pulseResponseRepo.update(pulseResponse);
         }
 
-        System.out.printf("%s%n", pulseResponseRet);
         // Send low pulse survey score if appropriate
         sendPulseLowScoreEmail(pulseResponseRet);
 
