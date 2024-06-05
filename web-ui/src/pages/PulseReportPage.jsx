@@ -88,10 +88,12 @@ const PulseReportPage = () => {
   const csrf = selectCsrfToken(state);
   const memberMap = selectProfileMap(state);
 
-  const initialDateFrom = new Date();
+  // Mock the date if under test so the snapshot stays consistent
+  const today = process?.env?.VITEST_WORKER_ID ? new Date(2024, 5, 4) : new Date();
+  const initialDateFrom = new Date(today);
   initialDateFrom.setMonth(initialDateFrom.getMonth() - 3);
   const [dateFrom, setDateFrom] = useState(initialDateFrom);
-  const [dateTo, setDateTo] = useState(new Date());
+  const [dateTo, setDateTo] = useState(today);
 
   const [averageData, setAverageData] = useState({});
   const [barChartData, setBarChartData] = useState([]);
