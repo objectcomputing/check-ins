@@ -151,16 +151,16 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         if (!(hasLowInternalScore || hasLowExternalScore)) return;
 
         UUID teamMemberId = pulseResponse.getTeamMemberId();
-        MemberProfile profileTakerMemberProfile;
+        MemberProfile surveyTakerMemberProfile;
         if (teamMemberId != null && memberRepo.existsById(teamMemberId)) {
-            profileTakerMemberProfile = memberProfileServices.getById(teamMemberId);
+            surveyTakerMemberProfile = memberProfileServices.getById(teamMemberId);
         } else {
             log.warn("profileTaker does not exist");
             return;
         }
 
-        String firstName = profileTakerMemberProfile.getFirstName();
-        String lastName = profileTakerMemberProfile.getLastName();
+        String firstName = surveyTakerMemberProfile.getFirstName();
+        String lastName = surveyTakerMemberProfile.getLastName();
 
         String subject = String.format("%s pulse scores are low for team member %s %s",
                 hasLowInternalScore && hasLowExternalScore ? "Internal and external" :
@@ -170,7 +170,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
                 .append(String.format("Team member %s %s has left low %s pulse scores. Please consider reaching out to this employee at %s<br>", firstName, lastName,
                         hasLowInternalScore && hasLowExternalScore ? "internal and external" :
                                 hasLowInternalScore ? "internal" : "external",
-                        profileTakerMemberProfile.getWorkEmail()));
+                        surveyTakerMemberProfile.getWorkEmail()));
 
         if (hasLowInternalScore) {
             bodyBuilder.append(String.format("Internal Feelings: %s<br>", pulseResponse.getInternalFeelings()));
@@ -180,19 +180,19 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         }
 
         List<String> recipients = new ArrayList<>();
-        UUID pdlId = profileTakerMemberProfile.getPdlId();
+        UUID pdlId = surveyTakerMemberProfile.getPdlId();
         if (pdlId != null && memberRepo.existsById(pdlId)) {
             recipients.add(memberProfileServices.getById(pdlId).getWorkEmail());
         }
 
-        UUID supervisorId = profileTakerMemberProfile.getSupervisorid();
+        UUID supervisorId = surveyTakerMemberProfile.getSupervisorid();
         if (supervisorId != null && memberRepo.existsById(supervisorId)) {
             recipients.add(memberProfileServices.getById(supervisorId).getWorkEmail());
         }
 
         if (!recipients.isEmpty()) {
             System.out.println(subject);
-            emailSender.sendEmail("hr", "mckiernanc@objectcomputing.com", subject, bodyBuilder.toString(), recipients.toArray(new String[0]));
+            emailSender.sendEmail(null, null, subject, bodyBuilder.toString(), recipients.toArray(new String[0]));
         }
     }
 }
