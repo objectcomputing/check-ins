@@ -123,8 +123,6 @@ function Menu({ children }) {
       links.push(['/checkins-reports', 'Check-ins']);
     }
 
-    const hasPermission = selectHasViewPulseReportPermission(state);
-    console.log('Menu.jsx getReportLinks: hasPermission =', hasPermission);
     if (selectHasViewPulseReportPermission(state)) {
       links.push(['/pulse-reports', 'Pulses']);
     }
