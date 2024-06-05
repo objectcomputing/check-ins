@@ -12,6 +12,7 @@ import {
   selectHasReportPermission,
   selectHasSkillsReportPermission,
   selectHasTeamSkillsReportPermission,
+  selectHasViewPulseReportPermission,
   selectIsAdmin
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
