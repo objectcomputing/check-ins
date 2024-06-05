@@ -1,15 +1,59 @@
-import React, { useReducer } from 'react';
-import { Button } from '@mui/material';
+import PropTypes from 'prop-types';
+import React, { useReducer, useState } from 'react';
+import { Box, Button, Tab, Tabs } from '@mui/material';
 
 import Organizations from '../components/volunteer/Organizations';
 import './VolunteerReportPage.css';
 
+const a11yProps = index => ({
+  id: `full-width-tab-${index}`,
+  'aria-controls': `full-width-tabpanel-${index}`
+});
+
+const TabPanel = ({ children, value, index, ...other }) => (
+  <div
+    role="tabpanel"
+    hidden={value !== index}
+    id={`full-width-tabpanel-${index}`}
+    aria-labelledby={`full-width-tab-${index}`}
+    {...other}
+  >
+    {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+  </div>
+);
+TabPanel.propTypes = {
+  children: PropTypes.any,
+  index: PropTypes.number,
+  value: PropTypes.number
+};
+TabPanel.displayName = 'TabPanel';
+
 const VolunteerReportPage = () => {
   const [n, forceUpdate] = useReducer(n => n + 1, 0);
+  const [tabIndex, setTabIndex] = useState(0);
 
   return (
     <div className="volunteer-report-page">
-      <Organizations forceUpdate={forceUpdate} key={n + 1} />
+      <Tabs
+        indicatorColor="secondary"
+        onChange={(event, index) => setTabIndex(index)}
+        textColor="inherit"
+        value={tabIndex}
+        variant="fullWidth"
+      >
+        <Tab label="Organizations" {...a11yProps(0)} />
+        <Tab label="Members" {...a11yProps(1)} />
+        <Tab label="Hours" {...a11yProps(2)} />
+      </Tabs>
+      <TabPanel index={0} value={tabIndex}>
+        <Organizations forceUpdate={forceUpdate} key={n + 1} />
+      </TabPanel>
+      <TabPanel index={1} value={tabIndex}>
+        <div>Members are coming soon!</div>
+      </TabPanel>
+      <TabPanel index={2} value={tabIndex}>
+        <div>Hours are coming soon!</div>
+      </TabPanel>
     </div>
   );
 };

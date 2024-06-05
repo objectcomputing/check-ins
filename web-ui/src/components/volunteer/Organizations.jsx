@@ -212,7 +212,9 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
                       {sortIndicator(column)}
                     </th>
                   ))}
-                  <th key="Actions">Actions</th>
+                  <th className="actions-th" key="actions">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>{organizations.map(organizationRow)}</tbody>

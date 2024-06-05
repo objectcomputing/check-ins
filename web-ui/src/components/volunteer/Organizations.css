@@ -28,6 +28,9 @@
   th:last-child {
     border-right: none;
   }
+  .actions-th {
+    width: 6rem;
+  }
 
   tr:nth-child(even) {
     background-color: #eee;
