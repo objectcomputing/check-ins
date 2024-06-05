@@ -123,10 +123,11 @@ function Menu({ children }) {
       links.push(['/checkins-reports', 'Check-ins']);
     }
 
-    // TODO: Uncomment this check after PR #2429 is merged.
-    //if (selectHasViewPulseReportPermission(state)) {
+    const hasPermission = selectHasViewPulseReportPermission(state);
+    console.log('Menu.jsx getReportLinks: hasPermission =', hasPermission);
+    if (selectHasViewPulseReportPermission(state)) {
       links.push(['/pulse-reports', 'Pulses']);
-    //}
+    }
 
     if (selectHasSkillsReportPermission(state)) {
       links.push(['/skills-reports', 'Skills']);
