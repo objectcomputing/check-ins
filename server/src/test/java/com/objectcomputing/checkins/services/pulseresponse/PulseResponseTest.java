@@ -166,15 +166,15 @@ class PulseResponseTest extends TestContainersSuite {
 
         PulseResponse pulseResponse = new PulseResponse(1, 3, LocalDate.now(), teamMemberId, "Sad", "Neutral");
 
-        MemberProfile profileTaker = mock(MemberProfile.class);
+        MemberProfile surveyTakerProfile = mock(MemberProfile.class);
         MemberProfile pdlProfile = mock(MemberProfile.class);
 
         when(memberRepo.existsById(teamMemberId)).thenReturn(true);
-        when(memberProfileServices.getById(teamMemberId)).thenReturn(profileTaker);
-        when(profileTaker.getFirstName()).thenReturn("John");
-        when(profileTaker.getLastName()).thenReturn("Doe");
+        when(memberProfileServices.getById(teamMemberId)).thenReturn(surveyTakerProfile);
+        when(surveyTakerProfile.getFirstName()).thenReturn("John");
+        when(surveyTakerProfile.getLastName()).thenReturn("Doe");
 
-        when(profileTaker.getPdlId()).thenReturn(pdlId);
+        when(surveyTakerProfile.getPdlId()).thenReturn(pdlId);
         when(memberRepo.existsById(pdlId)).thenReturn(true);
         when(memberProfileServices.getById(pdlId)).thenReturn(pdlProfile);
         when(pdlProfile.getWorkEmail()).thenReturn("pdl@example.com");
@@ -192,15 +192,15 @@ class PulseResponseTest extends TestContainersSuite {
 
         PulseResponse pulseResponse = new PulseResponse(3, 1, LocalDate.now(), teamMemberId, "Neutral", "Sad");
 
-        MemberProfile profileTaker = mock(MemberProfile.class);
+        MemberProfile surveyTakerProfile = mock(MemberProfile.class);
         MemberProfile pdlProfile = mock(MemberProfile.class);
 
         when(memberRepo.existsById(teamMemberId)).thenReturn(true);
-        when(memberProfileServices.getById(teamMemberId)).thenReturn(profileTaker);
-        when(profileTaker.getFirstName()).thenReturn("John");
-        when(profileTaker.getLastName()).thenReturn("Doe");
+        when(memberProfileServices.getById(teamMemberId)).thenReturn(surveyTakerProfile);
+        when(surveyTakerProfile.getFirstName()).thenReturn("John");
+        when(surveyTakerProfile.getLastName()).thenReturn("Doe");
 
-        when(profileTaker.getPdlId()).thenReturn(pdlId);
+        when(surveyTakerProfile.getPdlId()).thenReturn(pdlId);
         when(memberRepo.existsById(pdlId)).thenReturn(true);
         when(memberProfileServices.getById(pdlId)).thenReturn(pdlProfile);
         when(pdlProfile.getWorkEmail()).thenReturn("pdl@example.com");
@@ -217,15 +217,15 @@ class PulseResponseTest extends TestContainersSuite {
         UUID pdlId = UUID.randomUUID();
         PulseResponse pulseResponse = new PulseResponse(1, 1, LocalDate.now(), teamMemberId, "Very Sad", "Very Sad");
 
-        MemberProfile profileTaker = mock(MemberProfile.class);
+        MemberProfile surveyTakerProfile = mock(MemberProfile.class);
         MemberProfile pdlProfile = mock(MemberProfile.class);
 
         when(memberRepo.existsById(teamMemberId)).thenReturn(true);
-        when(memberProfileServices.getById(teamMemberId)).thenReturn(profileTaker);
-        when(profileTaker.getFirstName()).thenReturn("John");
-        when(profileTaker.getLastName()).thenReturn("Doe");
+        when(memberProfileServices.getById(teamMemberId)).thenReturn(surveyTakerProfile);
+        when(surveyTakerProfile.getFirstName()).thenReturn("John");
+        when(surveyTakerProfile.getLastName()).thenReturn("Doe");
 
-        when(profileTaker.getPdlId()).thenReturn(pdlId);
+        when(surveyTakerProfile.getPdlId()).thenReturn(pdlId);
         when(memberRepo.existsById(pdlId)).thenReturn(true);
         when(memberProfileServices.getById(pdlId)).thenReturn(pdlProfile);
         when(pdlProfile.getWorkEmail()).thenReturn("pdl@example.com");
@@ -265,15 +265,15 @@ class PulseResponseTest extends TestContainersSuite {
         UUID pdlId = UUID.randomUUID();
         PulseResponse pulseResponse = new PulseResponse(1, 1, LocalDate.now(), teamMemberId, "Very Sad", "Very Sad");
 
-        MemberProfile profileTaker = mock(MemberProfile.class);
+        MemberProfile surveyTakerProfile = mock(MemberProfile.class);
         MemberProfile pdlProfile = mock(MemberProfile.class);
 
         when(memberRepo.existsById(teamMemberId)).thenReturn(true);
-        when(memberProfileServices.getById(teamMemberId)).thenReturn(profileTaker);
-        when(profileTaker.getFirstName()).thenReturn("John");
-        when(profileTaker.getLastName()).thenReturn("Doe");
+        when(memberProfileServices.getById(teamMemberId)).thenReturn(surveyTakerProfile);
+        when(surveyTakerProfile.getFirstName()).thenReturn("John");
+        when(surveyTakerProfile.getLastName()).thenReturn("Doe");
 
-        when(profileTaker.getPdlId()).thenReturn(pdlId);
+        when(surveyTakerProfile.getPdlId()).thenReturn(pdlId);
         when(memberRepo.existsById(pdlId)).thenReturn(true);
         when(memberProfileServices.getById(pdlId)).thenReturn(pdlProfile);
         when(pdlProfile.getWorkEmail()).thenReturn("pdl@example.com");
@@ -294,15 +294,15 @@ class PulseResponseTest extends TestContainersSuite {
         UUID supervisorId = UUID.randomUUID();
         PulseResponse pulseResponse = new PulseResponse(1, 1, LocalDate.now(), teamMemberId, "Very Sad", "Very Sad");
 
-        MemberProfile profileTaker = mock(MemberProfile.class);
+        MemberProfile surveyTakerProfile = mock(MemberProfile.class);
         MemberProfile supervisorProfile = mock(MemberProfile.class);
 
         when(memberRepo.existsById(teamMemberId)).thenReturn(true);
-        when(memberProfileServices.getById(teamMemberId)).thenReturn(profileTaker);
-        when(profileTaker.getFirstName()).thenReturn("John");
-        when(profileTaker.getLastName()).thenReturn("Doe");
+        when(memberProfileServices.getById(teamMemberId)).thenReturn(surveyTakerProfile);
+        when(surveyTakerProfile.getFirstName()).thenReturn("John");
+        when(surveyTakerProfile.getLastName()).thenReturn("Doe");
 
-        when(profileTaker.getSupervisorid()).thenReturn(supervisorId);
+        when(surveyTakerProfile.getSupervisorid()).thenReturn(supervisorId);
         when(memberRepo.existsById(supervisorId)).thenReturn(true);
         when(memberProfileServices.getById(supervisorId)).thenReturn(supervisorProfile);
         when(supervisorProfile.getWorkEmail()).thenReturn("supervisor@example.com");
