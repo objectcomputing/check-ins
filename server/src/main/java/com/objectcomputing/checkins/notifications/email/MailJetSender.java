@@ -87,7 +87,7 @@ public class MailJetSender implements EmailSender {
         if(fromName == null) fromName = this.fromName;
         if(fromAddress == null) fromAddress = this.fromAddress;
 
-        if(System.getenv("MJ_APIKEY_PUBLIC").isEmpty() || System.getenv("MJ_APIKEY_PRIVATE").isEmpty()) {
+        if(System.getenv("MJ_APIKEY_PUBLIC") == null || System.getenv("MJ_APIKEY_PRIVATE") == null) {
             LOG.error("API key(s) are missing for MailJetSender");
             return;
         }
