@@ -240,7 +240,7 @@ const EditPermissionsPage = () => {
     }
   };
 
-  const deleteRolePermission = async (roleId, permissionId) => {
+  const handleDeleteRolePermission = async (roleId, permissionId) => {
     let newSchema = { roleId: roleId, permissionId: permissionId };
     let res = await deleteRolePermission(newSchema, csrf);
     let data = !res.error ? 'Success' : null;
@@ -268,7 +268,7 @@ const EditPermissionsPage = () => {
     if (!createFeedbackRequestPermissionsAdmin) {
       changeRolePermission(adminId, createFeedbackRequestPermissionsId);
     } else {
-      deleteRolePermission(adminId, createFeedbackRequestPermissionsId);
+      handleDeleteRolePermission(adminId, createFeedbackRequestPermissionsId);
     }
     setCreateFeedbackRequestPermissionsAdmin(
       !createFeedbackRequestPermissionsAdmin
@@ -278,7 +278,7 @@ const EditPermissionsPage = () => {
     if (!createFeedbackRequestPermissionsPDL) {
       changeRolePermission(pdlId, createFeedbackRequestPermissionsId);
     } else {
-      deleteRolePermission(pdlId, createFeedbackRequestPermissionsId);
+      handleDeleteRolePermission(pdlId, createFeedbackRequestPermissionsId);
     }
     setCreateFeedbackRequestPermissionsPDL(
       !createFeedbackRequestPermissionsPDL
@@ -289,7 +289,7 @@ const EditPermissionsPage = () => {
     if (!createFeedbackRequestPermissionsMember) {
       changeRolePermission(memberId, createFeedbackRequestPermissionsId);
     } else {
-      deleteRolePermission(memberId, createFeedbackRequestPermissionsId);
+      handleDeleteRolePermission(memberId, createFeedbackRequestPermissionsId);
     }
     setCreateFeedbackRequestPermissionsMember(
       !createFeedbackRequestPermissionsMember
@@ -300,7 +300,7 @@ const EditPermissionsPage = () => {
     if (!deleteFeedbackRequestPermissionsAdmin) {
       changeRolePermission(adminId, deleteFeedbackRequestPermissionsId);
     } else {
-      deleteRolePermission(adminId, deleteFeedbackRequestPermissionsId);
+      handleDeleteRolePermission(adminId, deleteFeedbackRequestPermissionsId);
     }
     setDeleteFeedbackRequestPermissionsAdmin(
       !deleteFeedbackRequestPermissionsAdmin
@@ -310,7 +310,7 @@ const EditPermissionsPage = () => {
     if (!deleteFeedbackRequestPermissionsPDL) {
       changeRolePermission(pdlId, deleteFeedbackRequestPermissionsId);
     } else {
-      deleteRolePermission(pdlId, deleteFeedbackRequestPermissionsId);
+      handleDeleteRolePermission(pdlId, deleteFeedbackRequestPermissionsId);
     }
     setDeleteFeedbackRequestPermissionsPDL(
       !deleteFeedbackRequestPermissionsPDL
@@ -320,7 +320,7 @@ const EditPermissionsPage = () => {
     if (!deleteFeedbackRequestPermissionsMember) {
       changeRolePermission(memberId, deleteFeedbackRequestPermissionsId);
     } else {
-      deleteRolePermission(memberId, deleteFeedbackRequestPermissionsId);
+      handleDeleteRolePermission(memberId, deleteFeedbackRequestPermissionsId);
     }
     setDeleteFeedbackRequestPermissionsMember(
       !deleteFeedbackRequestPermissionsMember
@@ -331,7 +331,7 @@ const EditPermissionsPage = () => {
     if (!viewFeedbackRequestPermissionsAdmin) {
       changeRolePermission(adminId, viewFeedbackRequestPermissionsId);
     } else {
-      deleteRolePermission(adminId, viewFeedbackRequestPermissionsId);
+      handleDeleteRolePermission(adminId, viewFeedbackRequestPermissionsId);
     }
     setViewFeedbackRequestPermissionsAdmin(
       !viewFeedbackRequestPermissionsAdmin
@@ -341,7 +341,7 @@ const EditPermissionsPage = () => {
     if (!viewFeedbackRequestPermissionsPDL) {
       changeRolePermission(pdlId, viewFeedbackRequestPermissionsId);
     } else {
-      deleteRolePermission(pdlId, viewFeedbackRequestPermissionsId);
+      handleDeleteRolePermission(pdlId, viewFeedbackRequestPermissionsId);
     }
     setViewFeedbackRequestPermissionsPDL(!viewFeedbackRequestPermissionsPDL);
   };
@@ -350,7 +350,7 @@ const EditPermissionsPage = () => {
     if (!viewFeedbackRequestPermissionsMember) {
       changeRolePermission(memberId, viewFeedbackRequestPermissionsId);
     } else {
-      deleteRolePermission(memberId, viewFeedbackRequestPermissionsId);
+      handleDeleteRolePermission(memberId, viewFeedbackRequestPermissionsId);
     }
     setViewFeedbackRequestPermissionsMember(
       !viewFeedbackRequestPermissionsMember
@@ -361,7 +361,7 @@ const EditPermissionsPage = () => {
     if (!viewFeedbackAnswerPermissionsAdmin) {
       changeRolePermission(adminId, viewFeedbackAnswerPermissionsId);
     } else {
-      deleteRolePermission(adminId, viewFeedbackAnswerPermissionsId);
+      handleDeleteRolePermission(adminId, viewFeedbackAnswerPermissionsId);
     }
     setViewFeedbackAnswerPermissionsAdmin(!viewFeedbackAnswerPermissionsAdmin);
   };
@@ -369,7 +369,7 @@ const EditPermissionsPage = () => {
     if (!viewFeedbackAnswerPermissionsPDL) {
       changeRolePermission(pdlId, viewFeedbackAnswerPermissionsId);
     } else {
-      deleteRolePermission(pdlId, viewFeedbackAnswerPermissionsId);
+      handleDeleteRolePermission(pdlId, viewFeedbackAnswerPermissionsId);
     }
     setViewFeedbackAnswerPermissionsPDL(!viewFeedbackAnswerPermissionsPDL);
   };
@@ -377,7 +377,7 @@ const EditPermissionsPage = () => {
     if (!viewFeedbackAnswerPermissionsMember) {
       changeRolePermission(memberId, viewFeedbackAnswerPermissionsId);
     } else {
-      deleteRolePermission(memberId, viewFeedbackAnswerPermissionsId);
+      handleDeleteRolePermission(memberId, viewFeedbackAnswerPermissionsId);
     }
     setViewFeedbackAnswerPermissionsMember(
       !viewFeedbackAnswerPermissionsMember
@@ -388,7 +388,7 @@ const EditPermissionsPage = () => {
     if (!createOrgMembersPermissionsAdmin) {
       changeRolePermission(adminId, createOrgMembersPermissionsId);
     } else {
-      deleteRolePermission(adminId, createOrgMembersPermissionsId);
+      handleDeleteRolePermission(adminId, createOrgMembersPermissionsId);
     }
     setCreateOrgMembersPermissionsAdmin(!createOrgMembersPermissionsAdmin);
   };
@@ -396,7 +396,7 @@ const EditPermissionsPage = () => {
     if (!createOrgMembersPermissionsPDL) {
       changeRolePermission(pdlId, createOrgMembersPermissionsId);
     } else {
-      deleteRolePermission(pdlId, createOrgMembersPermissionsId);
+      handleDeleteRolePermission(pdlId, createOrgMembersPermissionsId);
     }
     setCreateOrgMembersPermissionsPDL(!createOrgMembersPermissionsPDL);
   };
@@ -404,7 +404,7 @@ const EditPermissionsPage = () => {
     if (!createOrgMembersPermissionsMember) {
       changeRolePermission(memberId, createOrgMembersPermissionsId);
     } else {
-      deleteRolePermission(memberId, createOrgMembersPermissionsId);
+      handleDeleteRolePermission(memberId, createOrgMembersPermissionsId);
     }
     setCreateOrgMembersPermissionsMember(!createOrgMembersPermissionsMember);
   };
@@ -413,7 +413,7 @@ const EditPermissionsPage = () => {
     if (!deleteOrgMembersPermissionsAdmin) {
       changeRolePermission(adminId, deleteOrgMembersPermissionsId);
     } else {
-      deleteRolePermission(adminId, deleteOrgMembersPermissionsId);
+      handleDeleteRolePermission(adminId, deleteOrgMembersPermissionsId);
     }
     setDeleteOrgMembersPermissionsAdmin(!deleteOrgMembersPermissionsAdmin);
   };
@@ -421,7 +421,7 @@ const EditPermissionsPage = () => {
     if (!deleteOrgMembersPermissionsPDL) {
       changeRolePermission(pdlId, deleteOrgMembersPermissionsId);
     } else {
-      deleteRolePermission(pdlId, deleteOrgMembersPermissionsId);
+      handleDeleteRolePermission(pdlId, deleteOrgMembersPermissionsId);
     }
     setDeleteOrgMembersPermissionsPDL(!deleteOrgMembersPermissionsPDL);
   };
@@ -429,7 +429,7 @@ const EditPermissionsPage = () => {
     if (!deleteOrgMembersPermissionsMember) {
       changeRolePermission(memberId, deleteOrgMembersPermissionsId);
     } else {
-      deleteRolePermission(memberId, deleteOrgMembersPermissionsId);
+      handleDeleteRolePermission(memberId, deleteOrgMembersPermissionsId);
     }
     setDeleteOrgMembersPermissionsMember(!deleteOrgMembersPermissionsMember);
   };
@@ -438,7 +438,7 @@ const EditPermissionsPage = () => {
     if (!viewRolePermissionsAdmin) {
       changeRolePermission(adminId, viewRolePermissionsId);
     } else {
-      deleteRolePermission(adminId, viewRolePermissionsId);
+      handleDeleteRolePermission(adminId, viewRolePermissionsId);
     }
     setViewRolePermissionsAdmin(!viewRolePermissionsAdmin);
   };
@@ -446,7 +446,7 @@ const EditPermissionsPage = () => {
     if (!viewRolePermissionsPDL) {
       changeRolePermission(pdlId, viewRolePermissionsId);
     } else {
-      deleteRolePermission(pdlId, viewRolePermissionsId);
+      handleDeleteRolePermission(pdlId, viewRolePermissionsId);
     }
     setViewRolePermissionsPDL(!viewRolePermissionsPDL);
   };
@@ -454,7 +454,7 @@ const EditPermissionsPage = () => {
     if (!viewRolePermissionsMember) {
       changeRolePermission(memberId, viewRolePermissionsId);
     } else {
-      deleteRolePermission(memberId, viewRolePermissionsId);
+      handleDeleteRolePermission(memberId, viewRolePermissionsId);
     }
     setViewRolePermissionsMember(!viewRolePermissionsMember);
   };
@@ -463,7 +463,7 @@ const EditPermissionsPage = () => {
     if (!assignRolePermissionsAdmin) {
       changeRolePermission(adminId, assignRolePermissionsId);
     } else {
-      deleteRolePermission(adminId, assignRolePermissionsId);
+      handleDeleteRolePermission(adminId, assignRolePermissionsId);
     }
     setAssignRolePermissionsAdmin(!assignRolePermissionsAdmin);
   };
@@ -471,7 +471,7 @@ const EditPermissionsPage = () => {
     if (!assignRolePermissionsPDL) {
       changeRolePermission(pdlId, assignRolePermissionsId);
     } else {
-      deleteRolePermission(pdlId, assignRolePermissionsId);
+      handleDeleteRolePermission(pdlId, assignRolePermissionsId);
     }
     setAssignRolePermissionsPDL(!assignRolePermissionsPDL);
   };
@@ -479,7 +479,7 @@ const EditPermissionsPage = () => {
     if (!assignRolePermissionsMember) {
       changeRolePermission(memberId, assignRolePermissionsId);
     } else {
-      deleteRolePermission(memberId, assignRolePermissionsId);
+      handleDeleteRolePermission(memberId, assignRolePermissionsId);
     }
     setAssignRolePermissionsMember(!assignRolePermissionsMember);
   };
@@ -488,7 +488,7 @@ const EditPermissionsPage = () => {
     if (!viewPermissionsAdmin) {
       changeRolePermission(adminId, viewPermissionsId);
     } else {
-      deleteRolePermission(adminId, viewPermissionsId);
+      handleDeleteRolePermission(adminId, viewPermissionsId);
     }
     setViewPermissionsAdmin(!viewPermissionsAdmin);
   };
@@ -496,7 +496,7 @@ const EditPermissionsPage = () => {
     if (!viewPermissionsPDL) {
       changeRolePermission(pdlId, viewPermissionsId);
     } else {
-      deleteRolePermission(pdlId, viewPermissionsId);
+      handleDeleteRolePermission(pdlId, viewPermissionsId);
     }
     setViewPermissionsPDL(!viewPermissionsPDL);
   };
@@ -504,7 +504,7 @@ const EditPermissionsPage = () => {
     if (!viewPermissionsMember) {
       changeRolePermission(memberId, viewPermissionsId);
     } else {
-      deleteRolePermission(memberId, viewPermissionsId);
+      handleDeleteRolePermission(memberId, viewPermissionsId);
     }
     setViewPermissionsMember(!viewPermissionsMember);
   };
@@ -513,7 +513,7 @@ const EditPermissionsPage = () => {
     if (!viewSkillsReportsAdmin) {
       changeRolePermission(adminId, viewSkillsReportsId);
     } else {
-      deleteRolePermission(adminId, viewSkillsReportsId);
+      handleDeleteRolePermission(adminId, viewSkillsReportsId);
     }
     setViewSkillsReportsAdmin(!viewSkillsReportsAdmin);
   };
@@ -521,7 +521,7 @@ const EditPermissionsPage = () => {
     if (!viewSkillsReportsPDL) {
       changeRolePermission(pdlId, viewSkillsReportsId);
     } else {
-      deleteRolePermission(pdlId, viewSkillsReportsId);
+      handleDeleteRolePermission(pdlId, viewSkillsReportsId);
     }
     setViewSkillsReportsPDL(!viewSkillsReportsPDL);
   };
@@ -529,7 +529,7 @@ const EditPermissionsPage = () => {
     if (!viewSkillsReportsMember) {
       changeRolePermission(memberId, viewSkillsReportsId);
     } else {
-      deleteRolePermission(memberId, viewSkillsReportsId);
+      handleDeleteRolePermission(memberId, viewSkillsReportsId);
     }
     setViewSkillsReportsMember(!viewSkillsReportsMember);
   };
@@ -538,7 +538,7 @@ const EditPermissionsPage = () => {
     if (!viewRetentionReportsAdmin) {
       changeRolePermission(adminId, viewRetentionReportsId);
     } else {
-      deleteRolePermission(adminId, viewRetentionReportsId);
+      handleDeleteRolePermission(adminId, viewRetentionReportsId);
     }
     setViewRetentionReportsAdmin(!viewRetentionReportsAdmin);
   };
@@ -546,7 +546,7 @@ const EditPermissionsPage = () => {
     if (!viewRetentionReportsPDL) {
       changeRolePermission(pdlId, viewRetentionReportsId);
     } else {
-      deleteRolePermission(pdlId, viewRetentionReportsId);
+      handleDeleteRolePermission(pdlId, viewRetentionReportsId);
     }
     setViewRetentionReportsPDL(!viewRetentionReportsPDL);
   };
@@ -554,7 +554,7 @@ const EditPermissionsPage = () => {
     if (!viewRetentionReportsMember) {
       changeRolePermission(memberId, viewRetentionReportsId);
     } else {
-      deleteRolePermission(memberId, viewRetentionReportsId);
+      handleDeleteRolePermission(memberId, viewRetentionReportsId);
     }
     setViewRetentionReportsMember(!viewRetentionReportsMember);
   };
@@ -563,7 +563,7 @@ const EditPermissionsPage = () => {
     if (!viewAnniversaryReportsAdmin) {
       changeRolePermission(adminId, viewAnniversaryReportsId);
     } else {
-      deleteRolePermission(adminId, viewAnniversaryReportsId);
+      handleDeleteRolePermission(adminId, viewAnniversaryReportsId);
     }
     setViewAnniversaryReportsAdmin(!viewAnniversaryReportsAdmin);
   };
@@ -571,7 +571,7 @@ const EditPermissionsPage = () => {
     if (!viewAnniversaryReportsPDL) {
       changeRolePermission(pdlId, viewAnniversaryReportsId);
     } else {
-      deleteRolePermission(pdlId, viewAnniversaryReportsId);
+      handleDeleteRolePermission(pdlId, viewAnniversaryReportsId);
     }
     setViewAnniversaryReportsPDL(!viewAnniversaryReportsPDL);
   };
@@ -579,7 +579,7 @@ const EditPermissionsPage = () => {
     if (!viewAnniversaryReportsMember) {
       changeRolePermission(memberId, viewAnniversaryReportsId);
     } else {
-      deleteRolePermission(memberId, viewAnniversaryReportsId);
+      handleDeleteRolePermission(memberId, viewAnniversaryReportsId);
     }
     setViewAnniversaryReportsMember(!viewAnniversaryReportsMember);
   };
@@ -588,7 +588,7 @@ const EditPermissionsPage = () => {
     if (!viewBirthdayReportsAdmin) {
       changeRolePermission(adminId, viewBirthdayReportsId);
     } else {
-      deleteRolePermission(adminId, viewBirthdayReportsId);
+      handleDeleteRolePermission(adminId, viewBirthdayReportsId);
     }
     setViewBirthdayReportsAdmin(!viewBirthdayReportsAdmin);
   };
@@ -596,7 +596,7 @@ const EditPermissionsPage = () => {
     if (!viewBirthdayReportsPDL) {
       changeRolePermission(pdlId, viewBirthdayReportsId);
     } else {
-      deleteRolePermission(pdlId, viewBirthdayReportsId);
+      handleDeleteRolePermission(pdlId, viewBirthdayReportsId);
     }
     setViewBirthdayReportsPDL(!viewBirthdayReportsPDL);
   };
@@ -604,7 +604,7 @@ const EditPermissionsPage = () => {
     if (!viewBirthdayReportsMember) {
       changeRolePermission(memberId, viewBirthdayReportsId);
     } else {
-      deleteRolePermission(memberId, viewBirthdayReportsId);
+      handleDeleteRolePermission(memberId, viewBirthdayReportsId);
     }
     setViewBirthdayReportsMember(!viewBirthdayReportsMember);
   };
@@ -613,7 +613,7 @@ const EditPermissionsPage = () => {
     if (!viewProfileReportsAdmin) {
       changeRolePermission(adminId, viewProfileReportsId);
     } else {
-      deleteRolePermission(adminId, viewProfileReportsId);
+      handleDeleteRolePermission(adminId, viewProfileReportsId);
     }
     setViewProfileReportsAdmin(!viewProfileReportsAdmin);
   };
@@ -621,7 +621,7 @@ const EditPermissionsPage = () => {
     if (!viewProfileReportsPDL) {
       changeRolePermission(pdlId, viewProfileReportsId);
     } else {
-      deleteRolePermission(pdlId, viewProfileReportsId);
+      handleDeleteRolePermission(pdlId, viewProfileReportsId);
     }
     setViewProfileReportsPDL(!viewProfileReportsPDL);
   };
@@ -629,7 +629,7 @@ const EditPermissionsPage = () => {
     if (!viewProfileReportsMember) {
       changeRolePermission(memberId, viewProfileReportsId);
     } else {
-      deleteRolePermission(memberId, viewProfileReportsId);
+      handleDeleteRolePermission(memberId, viewProfileReportsId);
     }
     setViewProfileReportsMember(!viewProfileReportsMember);
   };
@@ -638,7 +638,7 @@ const EditPermissionsPage = () => {
     if (!updateCheckinsAdmin) {
       changeRolePermission(adminId, updateCheckinsId);
     } else {
-      deleteRolePermission(adminId, updateCheckinsId);
+      handleDeleteRolePermission(adminId, updateCheckinsId);
     }
     setUpdateCheckinsAdmin(!updateCheckinsAdmin);
   };
@@ -646,7 +646,7 @@ const EditPermissionsPage = () => {
     if (!updateCheckinsPDL) {
       changeRolePermission(pdlId, updateCheckinsId);
     } else {
-      deleteRolePermission(pdlId, updateCheckinsId);
+      handleDeleteRolePermission(pdlId, updateCheckinsId);
     }
     setUpdateCheckinsPDL(!updateCheckinsPDL);
   };
@@ -654,7 +654,7 @@ const EditPermissionsPage = () => {
     if (!updateCheckinsMember) {
       changeRolePermission(memberId, updateCheckinsId);
     } else {
-      deleteRolePermission(memberId, updateCheckinsId);
+      handleDeleteRolePermission(memberId, updateCheckinsId);
     }
     setUpdateCheckinsMember(!updateCheckinsMember);
   };
@@ -663,7 +663,7 @@ const EditPermissionsPage = () => {
     if (!createCheckinsAdmin) {
       changeRolePermission(adminId, createCheckinsId);
     } else {
-      deleteRolePermission(adminId, createCheckinsId);
+      handleDeleteRolePermission(adminId, createCheckinsId);
     }
     setCreateCheckinsAdmin(!createCheckinsAdmin);
   };
@@ -671,7 +671,7 @@ const EditPermissionsPage = () => {
     if (!createCheckinsPDL) {
       changeRolePermission(pdlId, createCheckinsId);
     } else {
-      deleteRolePermission(pdlId, createCheckinsId);
+      handleDeleteRolePermission(pdlId, createCheckinsId);
     }
     setCreateCheckinsPDL(!createCheckinsPDL);
   };
@@ -679,7 +679,7 @@ const EditPermissionsPage = () => {
     if (!createCheckinsMember) {
       changeRolePermission(memberId, createCheckinsId);
     } else {
-      deleteRolePermission(memberId, createCheckinsId);
+      handleDeleteRolePermission(memberId, createCheckinsId);
     }
     setCreateCheckinsMember(!createCheckinsMember);
   };
@@ -688,7 +688,7 @@ const EditPermissionsPage = () => {
     if (!viewCheckinsAdmin) {
       changeRolePermission(adminId, viewCheckinsId);
     } else {
-      deleteRolePermission(adminId, viewCheckinsId);
+      handleDeleteRolePermission(adminId, viewCheckinsId);
     }
     setViewCheckinsAdmin(!viewCheckinsAdmin);
   };
@@ -696,7 +696,7 @@ const EditPermissionsPage = () => {
     if (!viewCheckinsPDL) {
       changeRolePermission(pdlId, viewCheckinsId);
     } else {
-      deleteRolePermission(pdlId, viewCheckinsId);
+      handleDeleteRolePermission(pdlId, viewCheckinsId);
     }
     setViewCheckinsPDL(!viewCheckinsPDL);
   };
@@ -704,7 +704,7 @@ const EditPermissionsPage = () => {
     if (!viewCheckinsMember) {
       changeRolePermission(memberId, viewCheckinsId);
     } else {
-      deleteRolePermission(memberId, viewCheckinsId);
+      handleDeleteRolePermission(memberId, viewCheckinsId);
     }
     setViewCheckinsMember(!viewCheckinsMember);
   };

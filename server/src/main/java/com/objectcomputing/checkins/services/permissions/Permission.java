@@ -47,7 +47,7 @@ public enum Permission {
   CAN_DELETE_REVIEW_PERIOD("Delete review period", "Review Period"),
   CAN_ADMINISTER_SETTINGS("Add or edit settings", "Settings"),
   CAN_VIEW_SETTINGS("View settings", "Settings"),
-  CAN_VIEW_ALL_PULSE_RESPONSES("View all pulse responses", "Pulse");
+  CAN_VIEW_ALL_PULSE_RESPONSES("View pulse responses", "Reporting");
 
   private final String description;
   private final String category;
@@ -76,4 +76,3 @@ public enum Permission {
     throw new UnsupportedOperationException(String.format("Unknown permission: '%s'", name));
   }
 }
-
