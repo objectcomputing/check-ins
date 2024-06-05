@@ -61,6 +61,7 @@ public class ReviewPeriodController {
      */
 
     @Get("/{id}")
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
     public Mono<HttpResponse<ReviewPeriod>> getById(@NotNull UUID id) {
         return Mono.fromCallable(() -> {
             ReviewPeriod result = reviewPeriodServices.findById(id);
@@ -80,6 +81,7 @@ public class ReviewPeriodController {
      */
 
     @Get("/{?name,reviewStatus}")
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
     public Mono<HttpResponse<Set<ReviewPeriod>>> findByValue(@Nullable String name, @Nullable ReviewStatus reviewStatus) {
         return Mono.fromCallable(() -> reviewPeriodServices.findByValue(name, reviewStatus))
                 .map(HttpResponse::ok);
