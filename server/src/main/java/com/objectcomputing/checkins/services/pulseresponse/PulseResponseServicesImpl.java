@@ -145,7 +145,6 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         boolean hasLowInternalScore = pulseResponse.getInternalScore() != null && pulseResponse.getInternalScore() <= 2;
         boolean hasLowExternalScore = pulseResponse.getExternalScore() != null && pulseResponse.getExternalScore() <= 2;
 
-        System.out.printf("%b %b\n%n", hasLowExternalScore, hasLowInternalScore);
         if (!(hasLowInternalScore || hasLowExternalScore)) return;
 
         UUID teamMemberId = pulseResponse.getTeamMemberId();
