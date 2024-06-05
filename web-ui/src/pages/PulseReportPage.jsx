@@ -89,7 +89,7 @@ const PulseReportPage = () => {
   const memberMap = selectProfileMap(state);
 
   // Mock the date if under test so the snapshot stays consistent
-  const today = window.process?.env?.VITEST_WORKER_ID
+  const today = import.meta.env.VITEST_WORKER_ID
     ? new Date(2024, 5, 4)
     : new Date();
   const initialDateFrom = new Date(today);
