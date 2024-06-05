@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class PulseResponseServicesImpl implements PulseResponseService {
 
-    private static final Logger log = LoggerFactory.getLogger(PulseResponseServicesImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PulseResponseServicesImpl.class);
     private final PulseResponseRepository pulseResponseRepo;
     private final MemberProfileServices memberProfileServices;
     private final MemberProfileRepository memberRepo;
