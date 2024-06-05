@@ -5,7 +5,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -758,8 +758,9 @@ const TeamReviews = ({ onBack, periodId }) => {
       case ReviewStatus.PLANNING:
         return <Button onClick={requestApproval}>Request Approval</Button>;
       case ReviewStatus.AWAITING_APPROVAL:
-        return selectHasLaunchReviewPeriodPermission(state) ?
-          <Button onClick={requestApproval}>Launch Review</Button> : null;
+        return selectHasLaunchReviewPeriodPermission(state) ? (
+          <Button onClick={requestApproval}>Launch Review</Button>
+        ) : null;
       default:
         return null;
     }
@@ -1039,7 +1040,9 @@ const TeamReviews = ({ onBack, periodId }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleConfirmDeleteClose}>No</Button>
-          <Button onClick={deleteReviewPeriod} autoFocus>Yes</Button>
+          <Button onClick={deleteReviewPeriod} autoFocus>
+            Yes
+          </Button>
         </DialogActions>
       </Dialog>
       <Dialog
