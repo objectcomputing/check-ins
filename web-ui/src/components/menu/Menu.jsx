@@ -2,16 +2,17 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { postEmployeeHours } from '../../api/hours';
 import {
+  selectCanViewFeedbackAnswerPermission,
+  selectCanViewFeedbackRequestPermission,
+  selectCanViewReviewPeriodPermission,
   selectCsrfToken,
-  selectHasReportPermission,
-  selectIsAdmin,
-  selectIsSupervisor,
   selectHasAnniversaryReportPermission,
   selectHasBirthdayReportPermission,
   selectHasCheckinsReportPermission,
+  selectHasReportPermission,
   selectHasSkillsReportPermission,
   selectHasTeamSkillsReportPermission,
-  selectHasViewPulseReportPermission
+  selectIsAdmin
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 
@@ -71,12 +72,20 @@ const directoryLinks = [
   ['/teams', 'Teams']
 ];
 
-const getFeedbackLinks = (isAdmin, isPDL, isSupervisor, hasReportPermission) => {
+const getFeedbackLinks = (
+  canViewFeedbackAnswer,
+  canViewFeedbackRequest,
+  canViewReviewPeriod
+) => {
   const links = [];
-  if (isAdmin || isPDL) links.push(['/feedback/view', 'View Feedback']);
-  links.push(['/feedback/received-requests', 'Received Requests']);
-  if (isSupervisor || hasReportPermission) links.push(['/feedback/reviews', 'Reviews']);
-  links.push(['/feedback/self-reviews', 'Self-Reviews']);
+  if (canViewFeedbackAnswer) links.push(['/feedback/view', 'View Feedback']);
+  if (canViewFeedbackRequest)
+    links.push(['/feedback/received-requests', 'Received Requests']);
+  if (canViewReviewPeriod)
+    links.push(
+      ['/feedback/reviews', 'Reviews'],
+      ['/feedback/self-reviews', 'Self-Reviews']
+    );
   return links;
 };
 
@@ -95,9 +104,9 @@ function Menu({ children }) {
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin = selectIsAdmin(state);
   const hasReportPermission = selectHasReportPermission(state);
-  const isPDL =
-    userProfile && userProfile.role && userProfile.role.includes('PDL');
-  const isSupervisor = selectIsSupervisor(state);
+  const canViewFeedbackAnswer = selectCanViewFeedbackAnswerPermission(state);
+  const canViewFeedbackRequest = selectCanViewFeedbackRequestPermission(state);
+  const canViewReviewPeriod = selectCanViewReviewPeriodPermission(state);
 
   const theme = useTheme();
   const location = useLocation();
@@ -106,7 +115,11 @@ function Menu({ children }) {
   const [open, setOpen] = useState(false);
   const [showHoursUpload, setShowHoursUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
+  const feedbackLinks = getFeedbackLinks(
+    canViewFeedbackAnswer,
+    canViewFeedbackRequest,
+    canViewReviewPeriod
+  );
 
   const getReportLinks = () => {
     const links = [];
@@ -123,10 +136,9 @@ function Menu({ children }) {
       links.push(['/checkins-reports', 'Check-ins']);
     }
 
-    // TODO: Uncomment this check after PR #2429 is merged.
-    //if (selectHasViewPulseReportPermission(state)) {
+    if (selectHasViewPulseReportPermission(state)) {
       links.push(['/pulse-reports', 'Pulses']);
-    //}
+    }
 
     if (selectHasSkillsReportPermission(state)) {
       links.push(['/skills-reports', 'Skills']);
