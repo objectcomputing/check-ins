@@ -151,6 +151,8 @@ function Menu({ children }) {
       links.push(['/team-skills-reports', 'Team Skills']);
     }
 
+    links.push(['/volunteer-reports', 'Volunteering']);
+
     return links;
   };
 
