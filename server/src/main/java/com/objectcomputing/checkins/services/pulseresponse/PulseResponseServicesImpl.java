@@ -154,7 +154,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         if (teamMemberId != null && memberRepo.existsById(teamMemberId)) {
             surveyTakerMemberProfile = memberProfileServices.getById(teamMemberId);
         } else {
-            log.warn("profileTaker does not exist");
+            LOG.warn("profileTaker does not exist");
             return;
         }
 
