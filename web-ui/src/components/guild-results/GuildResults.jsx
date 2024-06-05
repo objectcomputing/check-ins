@@ -12,7 +12,7 @@ import GuildSummaryCard from './GuildSummaryCard';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 import { useQueryParameters } from '../../helpers/query-parameters';
 import './GuildResults.css';
-import { emailGuildLeaders } from "../../api/notifications.js";
+import { emailGuildLeaders } from '../../api/notifications.js';
 
 const PREFIX = 'GuildResults';
 const classes = {
@@ -95,19 +95,30 @@ const GuildResults = () => {
                 onSave={async guild => {
                   if (csrf) {
                     const res = await createGuild(guild, csrf);
-                    const data = res.payload?.data && !res.error
-                      ? res.payload.data
-                      : null;
+                    const data =
+                      res.payload?.data && !res.error ? res.payload.data : null;
                     if (data) {
                       dispatch({ type: ADD_GUILD, payload: data });
-                      const resGuildLeader = await getGuildLeaders(data.id, csrf);
-                      const guildLeaders = resGuildLeader.payload?.data && !resGuildLeader.error
-                        ? resGuildLeader.payload.data
-                        : null;
+                      const resGuildLeader = await getGuildLeaders(
+                        data.id,
+                        csrf
+                      );
+                      const guildLeaders =
+                        resGuildLeader.payload?.data && !resGuildLeader.error
+                          ? resGuildLeader.payload.data
+                          : null;
                       try {
-                        guildLeaders && await emailGuildLeaders(guildLeaders, data, csrf).then();
+                        guildLeaders &&
+                          (await emailGuildLeaders(
+                            guildLeaders,
+                            data,
+                            csrf
+                          ).then());
                       } catch (e) {
-                        console.error("Unable to email guild leader assignment(s)", e)
+                        console.error(
+                          'Unable to email guild leader assignment(s)',
+                          e
+                        );
                       }
                     }
                     handleClose();
@@ -122,19 +133,19 @@ const GuildResults = () => {
       <div className="guilds">
         {guilds?.length
           ? guilds?.map((guild, index) =>
-            guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
-              <GuildSummaryCard
-                key={`guild-summary-${guild.id}`}
-                index={index}
-                guild={guild}
-                isOpen={guild.id === openedGuildId}
-                onGuildSelect={setOpenedGuildId}
-              />
-            ) : null
-          )
+              guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
+                <GuildSummaryCard
+                  key={`guild-summary-${guild.id}`}
+                  index={index}
+                  guild={guild}
+                  isOpen={guild.id === openedGuildId}
+                  onGuildSelect={setOpenedGuildId}
+                />
+              ) : null
+            )
           : Array.from({ length: 20 }).map((_, index) => (
-            <SkeletonLoader key={index} type="guild" />
-          ))}
+              <SkeletonLoader key={index} type="guild" />
+            ))}
       </div>
     </Root>
   );

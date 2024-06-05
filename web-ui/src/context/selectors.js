@@ -52,6 +52,18 @@ export const selectHasPermissionAssignmentPermission = hasPermission(
 
 export const selectHasReportPermission = hasPermission('REPORT');
 
+export const selectCanViewFeedbackAnswerPermission = hasPermission(
+  'CAN_VIEW_FEEDBACK_ANSWER'
+);
+
+export const selectCanViewFeedbackRequestPermission = hasPermission(
+  'CAN_VIEW_FEEDBACK_REQUEST'
+);
+
+export const selectCanViewReviewPeriodPermission = hasPermission(
+  'CAN_VIEW_REVIEW_PERIOD'
+);
+
 export const selectHasAnniversaryReportPermission = hasPermission(
   'CAN_VIEW_ANNIVERSARY_REPORT'
 );

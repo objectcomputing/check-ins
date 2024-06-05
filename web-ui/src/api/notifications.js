@@ -1,5 +1,5 @@
 import { resolve } from './api.js';
-import { getMember } from "./member.js";
+import { getMember } from './member.js';
 
 const emailNotificationURL = '/services/email-notifications';
 const emailURL = '/services/email';
@@ -50,44 +50,86 @@ export const sendEmail = async (subject, content, html, recipients, cookie) => {
 
 export const emailPDLAssignment = async (member, cookie) => {
   if (member.pdlId && member.lastName && member.firstName && member.workEmail) {
-    let res = await getMember(member.pdlId)
-    let pdl = res.payload?.data && !res.error
-      ? res.payload.data
-      : null;
+    let res = await getMember(member.pdlId);
+    let pdl = res.payload?.data && !res.error ? res.payload.data : null;
     if (pdl?.workEmail) {
-      await sendEmail("You have been assigned as the PDL of " + member.firstName + " " + member.lastName,
-        member.firstName + " " + member.lastName +
-        " will now report to you as their PDL. Please engage with them: " + member.workEmail,
-        false, [pdl.workEmail], cookie)
+      await sendEmail(
+        'You have been assigned as the PDL of ' +
+          member.firstName +
+          ' ' +
+          member.lastName,
+        member.firstName +
+          ' ' +
+          member.lastName +
+          ' will now report to you as their PDL. Please engage with them: ' +
+          member.workEmail,
+        false,
+        [pdl.workEmail],
+        cookie
+      );
     } else {
-      console.warn("Unable to send email regarding " + member.firstName + " " + member.lastName + "'s PDL update as the PDL was unable to be pulled up correctly")
+      console.warn(
+        'Unable to send email regarding ' +
+          member.firstName +
+          ' ' +
+          member.lastName +
+          "'s PDL update as the PDL was unable to be pulled up correctly"
+      );
     }
   } else {
-    console.warn("Unable to send email regarding as member was not valid and missing required fields", member)
+    console.warn(
+      'Unable to send email regarding as member was not valid and missing required fields',
+      member
+    );
   }
-}
+};
 export const emailSupervisorAssignment = async (member, cookie) => {
-  if (member.supervisorid && member.lastName && member.firstName && member.workEmail) {
-    let res = await getMember(member.supervisorid)
-    let supervisor = res.payload?.data && !res.error
-      ? res.payload.data
-      : null;
+  if (
+    member.supervisorid &&
+    member.lastName &&
+    member.firstName &&
+    member.workEmail
+  ) {
+    let res = await getMember(member.supervisorid);
+    let supervisor = res.payload?.data && !res.error ? res.payload.data : null;
     if (supervisor?.workEmail) {
-      await sendEmail("You have been assigned as the supervisor of " + member.firstName + " " + member.lastName,
-        member.firstName + " " + member.lastName +
-        " will now report to you as their supervisor. Please engage with them: " + member.workEmail,
-        false, [supervisor.workEmail], cookie)
+      await sendEmail(
+        'You have been assigned as the supervisor of ' +
+          member.firstName +
+          ' ' +
+          member.lastName,
+        member.firstName +
+          ' ' +
+          member.lastName +
+          ' will now report to you as their supervisor. Please engage with them: ' +
+          member.workEmail,
+        false,
+        [supervisor.workEmail],
+        cookie
+      );
     } else {
-      console.warn("Unable to send email regarding " + member.firstName + " " + member.lastName + "'s supervisor update as the supervisor was unable to be pulled up correctly")
+      console.warn(
+        'Unable to send email regarding ' +
+          member.firstName +
+          ' ' +
+          member.lastName +
+          "'s supervisor update as the supervisor was unable to be pulled up correctly"
+      );
     }
   } else {
-    console.warn("Unable to send email regarding as member was not valid and missing required fields", member)
+    console.warn(
+      'Unable to send email regarding as member was not valid and missing required fields',
+      member
+    );
   }
-}
+};
 export const emailGuildLeaders = async (members, guild, cookie) => {
   members.forEach(member => {
     if (!member.workEmail || !guild?.name) {
-      console.warn("Unable to send guild leader email as member is missing required fields", member);
+      console.warn(
+        'Unable to send guild leader email as member is missing required fields',
+        member
+      );
       return;
     }
 
@@ -95,4 +137,4 @@ export const emailGuildLeaders = async (members, guild, cookie) => {
     const body = `Congratulations, you have been assigned as a guild leader of ${guild.name}`;
     sendEmail(subject, body, false, [member.workEmail], cookie);
   });
-}
+};
