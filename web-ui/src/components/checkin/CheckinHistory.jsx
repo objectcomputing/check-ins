@@ -31,15 +31,11 @@ const CheckinsHistory = () => {
       const [year, month, day, hour, minute] = checkins[index].checkInDate;
       return new Date(year, month - 1, day, hour, minute, 0);
     }
-    // return new date unless you are running a Jest test
-    let currentDate = null;
-    try {
-      currentDate = process?.env?.VITEST_WORKER_ID
-        ? new Date(2020, 9, 21)
-        : new Date();
-    } catch (e) {
-      currentDate = new Date();
-    }
+
+    // Mock the date if under test so the snapshot stays consistent
+    const currentDate = import.meta.env.VITEST_WORKER_ID
+      ? new Date(2020, 9, 21)
+      : new Date();
 
     return currentDate;
   };
