@@ -19,7 +19,9 @@ import java.util.List;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CertificationControllerTest extends TestContainersSuite implements MemberProfileFixture, CertificationFixture {
@@ -77,6 +79,36 @@ class CertificationControllerTest extends TestContainersSuite implements MemberP
 
         List<Certification> list = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(Certification.class));
         assertEquals(1, list.size());
+    }
+
+    @Test
+    void certificationsDefaultToEnabled() {
+        Certification nameAndUrlActive = certificationClient.toBlocking().retrieve(
+                HttpRequest.POST("/", """
+                                {"name":"a","badgeUrl":"badge"}""")
+                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE), Certification.class);
+
+        assertEquals("a", nameAndUrlActive.getName());
+        assertEquals("badge", nameAndUrlActive.getBadgeUrl());
+        assertTrue(nameAndUrlActive.isActive());
+
+        Certification nameNoUrlActive = certificationClient.toBlocking().retrieve(
+                HttpRequest.POST("/", """
+                                {"name":"b"}""")
+                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE), Certification.class);
+
+        assertEquals("b", nameNoUrlActive.getName());
+        assertNull(nameNoUrlActive.getBadgeUrl());
+        assertTrue(nameNoUrlActive.isActive());
+
+        Certification nameNoUrlInactive = certificationClient.toBlocking().retrieve(
+                HttpRequest.POST("/", """
+                                {"name":"c","active":"false"}""")
+                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE), Certification.class);
+
+        assertEquals("c", nameNoUrlInactive.getName());
+        assertNull(nameNoUrlInactive.getBadgeUrl());
+        assertFalse(nameNoUrlInactive.isActive());
     }
 
     @Test

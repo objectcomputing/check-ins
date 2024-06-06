@@ -46,9 +46,11 @@ class CertificationController {
      */
     @Post
     Certification create(@Body @Valid CertificationDTO certification) {
-        return certificationService.saveCertification(
-                new Certification(certification.getName(), certification.getBadgeUrl())
-        );
+        return certificationService.saveCertification(new Certification(
+                certification.getName(),
+                certification.getBadgeUrl(),
+                !Boolean.FALSE.equals(certification.getActive())
+        ));
     }
 
     /**
@@ -60,9 +62,12 @@ class CertificationController {
      */
     @Put("/{id}")
     Certification update(@NotNull UUID id, @Body @Valid CertificationDTO certification) {
-        return certificationService.updateCertification(
-                new Certification(id, certification.getName(), certification.getBadgeUrl(), certification.isActive())
-        );
+        return certificationService.updateCertification(new Certification(
+                id,
+                certification.getName(),
+                certification.getBadgeUrl(),
+                !Boolean.FALSE.equals(certification.getActive())
+        ));
     }
 
     /**

@@ -57,4 +57,8 @@ public class Certification {
     public Certification(String name, @Nullable String badgeUrl) {
         this(null, name, badgeUrl, true);
     }
+
+    Certification(String name, String badgeUrl, boolean active) {
+        this(null, name, badgeUrl, active);
+    }
 }
