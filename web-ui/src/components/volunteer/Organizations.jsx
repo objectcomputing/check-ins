@@ -95,6 +95,11 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
     }
   }, []);
 
+  const editOrganization = useCallback(org => {
+    setSelectedOrganization(org);
+    setOrganizationDialogOpen(true);
+  }, []);
+
   const organizationRow = useCallback(
     organization => (
       <tr key={organization.id}>
@@ -250,11 +255,6 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
     [sortColumn]
   );
 
-  const editOrganization = useCallback(org => {
-    setSelectedOrganization(org);
-    setOrganizationDialogOpen(true);
-  }, []);
-
   const saveOrganization = useCallback(async () => {
     const { id } = selectedOrganization;
     const url = id ? `${organizationBaseUrl}/${id}` : organizationBaseUrl;
@@ -266,7 +266,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
       const newOrg = await res.json();
 
       if (id) {
-        const index = orgs.findIndex(org => org.id === id);
+        const index = organizations.findIndex(org => org.id === id);
         organizations[index] = newOrg;
       } else {
         organizations.push(newOrg);

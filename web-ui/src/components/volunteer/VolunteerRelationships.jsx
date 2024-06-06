@@ -134,8 +134,8 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const editRelationship = useCallback(
-    org => {
-      setSelectedRelationship(org);
+    relationship => {
+      setSelectedRelationship(relationship);
       setRelationshipDialogOpen(true);
     },
     [relationshipMap]
@@ -176,6 +176,11 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
                 label="Team Member"
               />
             )}
+            value={
+              selectedRelationship?.memberId
+                ? profileMap[selectedRelationship.memberId]
+                : null
+            }
           />
           <Autocomplete
             disableClearable
@@ -195,6 +200,11 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
                 label="Organization"
               />
             )}
+            value={
+              selectedRelationship?.organizationId
+                ? organizationMap[selectedRelationship.organizationId]
+                : null
+            }
           />
           <DatePickerField
             date={getDate(selectedRelationship?.startDate)}
