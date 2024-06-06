@@ -103,12 +103,11 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, [sortAscending, sortColumn]);
 
   const addRelationship = useCallback(() => {
-    const today = formatDate(new Date());
     setSelectedRelationship({
       memberId: '',
       organizationId: '',
-      startDate: today,
-      endDate: today
+      startDate: '',
+      endDate: ''
     });
     setRelationshipDialogOpen(true);
   }, []);
@@ -142,7 +141,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   );
 
   const getDate = dateString => {
-    if (!dateString) return new Date();
+    if (!dateString) return null;
     const [year, month, day] = dateString.split('-');
     return new Date(Number(year), Number(month) - 1, Number(day));
   };
@@ -212,7 +211,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
             setDate={date => {
               const startDate = formatDate(date);
               let { endDate } = selectedRelationship;
-              if (startDate > endDate) endDate = startDate;
+              if (endDate && startDate > endDate) endDate = startDate;
               setSelectedRelationship({
                 ...selectedRelationship,
                 startDate,
@@ -224,9 +223,11 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
             date={getDate(selectedRelationship?.endDate)}
             label="End Date"
             setDate={date => {
-              const endDate = formatDate(date);
+              const endDate = date ? formatDate(date) : '';
               let { startDate } = selectedRelationship;
-              if (endDate < startDate) startDate = endDate;
+              if (endDate && (!startDate || endDate < startDate)) {
+                startDate = endDate;
+              }
               setSelectedRelationship({
                 ...selectedRelationship,
                 startDate,
