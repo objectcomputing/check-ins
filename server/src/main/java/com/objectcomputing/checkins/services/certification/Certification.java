@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.certification;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -34,21 +35,21 @@ class Certification {
     @Schema(description = "name of the certification")
     private String name;
 
+    @Nullable
     @Column(name = "badge_url")
-    @NotBlank
     @Schema(description = "url of the badge")
     private String badgeUrl;
 
     public Certification() {
     }
 
-    Certification(UUID id, String name, String badgeUrl) {
+    Certification(UUID id, String name, @Nullable String badgeUrl) {
         this.id = id;
         this.name = name;
         this.badgeUrl = badgeUrl;
     }
 
-    Certification(String name, String badgeUrl) {
+    Certification(String name, @Nullable String badgeUrl) {
         this(null, name, badgeUrl);
     }
 }
