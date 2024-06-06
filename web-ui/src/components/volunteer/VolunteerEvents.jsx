@@ -161,11 +161,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
         <DialogContent>
           <Autocomplete
             disableClearable
-            getOptionLabel={relationship => {
-              const member = profileMap[relationship.memberId];
-              const org = organizationMap[relationship.organizationId];
-              return `${member?.name} - ${org?.name}`;
-            }}
+            getOptionLabel={relationshipName}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(event, relationship) => {
               setSelectedEvent({
@@ -319,21 +315,28 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const isEmpty = map => Object.keys(map).length === 0;
 
-  const relationshipValue = useCallback(
-    relationship => {
+  const eventValue = useCallback(
+    event => {
       switch (sortColumn) {
-        case 'Member':
-          return profileMap[relationship.memberId]?.name ?? '';
-        case 'Organization':
-          return organizationMap[relationship.organizationId]?.name ?? '';
-        case 'Start Date':
-          return relationship.startDate || '';
-        case 'End Date':
-          return relationship.endDate || '';
+        case 'Relationship':
+          const relationship = relationshipMap[event.relationshipId];
+          return relationshipName(relationship);
+        case 'Date':
+          return event.date || '';
+        case 'Hours':
+          return event.hours || 0;
+        case 'Notes':
+          return event.notes || '';
       }
     },
     [relationshipMap, sortColumn]
   );
+
+  const relationshipName = relationship => {
+    const member = profileMap[relationship.memberId];
+    const org = organizationMap[relationship.organizationId];
+    return `${member?.name} - ${org?.name}`;
+  };
 
   const saveEvent = useCallback(async () => {
     const { id } = selectedEvent;
@@ -362,11 +365,15 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, [selectedEvent]);
 
   const sortEvents = useCallback(
-    orgs => {
-      orgs.sort((org1, org2) => {
-        const v1 = relationshipValue(org1);
-        const v2 = relationshipValue(org2);
-        return sortAscending ? v1.localeCompare(v2) : v2.localeCompare(v1);
+    events => {
+      events.sort((event1, event2) => {
+        const v1 = eventValue(event1);
+        const v2 = eventValue(event2);
+        if (typeof v1 === 'number' && typeof v2 === 'number') {
+          return sortAscending ? v1 - v2 : v2 - v1;
+        } else {
+          return sortAscending ? v1.localeCompare(v2) : v2.localeCompare(v1);
+        }
       });
     },
     [sortAscending, sortColumn]
