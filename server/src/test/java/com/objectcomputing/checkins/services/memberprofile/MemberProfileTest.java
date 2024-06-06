@@ -196,10 +196,12 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, times(1)).sendEmail(eq(any()), any(),
-                eq("You have been assigned as the PDL of John Smith"),
-                eq("John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com"),
-                eq("jane.doe@example.com"));
+        verify(emailSender, times(1)).sendEmail(
+                any(), // from email
+                any(), // reply-to email
+                eq("You have been assigned as the PDL of John Smith"), // subject
+                eq("John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com"), // body
+                eq("jane.doe@example.com")); // recipient
     }
 
     @Test
@@ -215,7 +217,9 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, false);
 
-        verify(emailSender, times(1)).sendEmail(any(), any(),
+        verify(emailSender, times(1)).sendEmail(
+                any(), // from email
+                any(), // reply-to email
                 eq("You have been assigned as the supervisor of John Smith"),
                 eq("John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com"),
                 eq("jane.doe@example.com"));
@@ -240,12 +244,16 @@ class MemberProfileTest extends TestContainersSuite {
         memberProfileServices.emailAssignment(member, true); // for PDL
         memberProfileServices.emailAssignment(member, false); // for supervisor
 
-        verify(emailSender, times(1)).sendEmail(any(), any(),
+        verify(emailSender, times(1)).sendEmail(
+                any(), // from email
+                any(), // reply-to email
                 eq("You have been assigned as the PDL of John Smith"),
                 eq("John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com"),
                 eq("jane.doe@example.com"));
 
-        verify(emailSender, times(1)).sendEmail(any(), any(),
+        verify(emailSender, times(1)).sendEmail(
+                any(), // from email
+                any(), // reply-to email
                 eq("You have been assigned as the supervisor of John Smith"),
                 eq("John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com"),
                 eq("janine.doe@example.com"));
@@ -262,7 +270,7 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -276,7 +284,7 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -287,7 +295,7 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -298,6 +306,6 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
     }
 }
