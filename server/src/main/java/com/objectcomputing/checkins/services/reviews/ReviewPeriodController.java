@@ -7,14 +7,11 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
@@ -24,7 +21,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Set;
@@ -65,6 +61,7 @@ public class ReviewPeriodController {
      * @return a streamable response containing the found {@link ReviewPeriod} with the given ID
      */
     @Get("/{id}")
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
     public ReviewPeriod getById(@NotNull UUID id) {
         ReviewPeriod result = reviewPeriodServices.findById(id);
         if (result == null) {
@@ -81,6 +78,7 @@ public class ReviewPeriodController {
      * @return a streamable response containing a {@link Set} of {@link ReviewPeriod}s that match the given criteria
      */
     @Get("/{?name,reviewStatus}")
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
     public Set<ReviewPeriod> findByValue(@Nullable String name, @Nullable ReviewStatus reviewStatus) {
         return reviewPeriodServices.findByValue(name, reviewStatus);
     }

@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.opportunities;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -17,7 +16,6 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 
@@ -39,7 +37,7 @@ public class OpportunitiesController {
      * @param name {@link String}
      * @param description {@link String}
      * @param submittedBy {@link UUID} of member
-     * @return {@link Set <Opportunities > list of opportunities
+     * @return list of opportunities
      */
     @Get("/{?name,description,submittedBy}")
     public Mono<HttpResponse<List<Opportunities>>> findOpportunities(@Nullable String name,

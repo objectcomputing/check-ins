@@ -40,14 +40,15 @@ public enum Permission {
   CAN_VIEW_REVIEW_ASSIGNMENTS("View review assignments", "Reviews"),
   CAN_UPDATE_REVIEW_ASSIGNMENTS("Update review assignments", "Reviews"),
   CAN_DELETE_REVIEW_ASSIGNMENTS("Delete review assignments", "Reviews"),
-  CAN_CREATE_REVIEW_PERIOD("Create review period", "Review Period"),
-  CAN_UPDATE_REVIEW_PERIOD("Update review period", "Review Period"),
-  CAN_LAUNCH_REVIEW_PERIOD("Launch review period", "Review Period"),
-  CAN_CLOSE_REVIEW_PERIOD("Close review period", "Review Period"),
-  CAN_DELETE_REVIEW_PERIOD("Delete review period", "Review Period"),
+  CAN_VIEW_REVIEW_PERIOD("View review periods", "Review Periods"),
+  CAN_CREATE_REVIEW_PERIOD("Create review periods", "Review Periods"),
+  CAN_UPDATE_REVIEW_PERIOD("Update review periods", "Review Periods"),
+  CAN_LAUNCH_REVIEW_PERIOD("Launch review periods", "Review Periods"),
+  CAN_CLOSE_REVIEW_PERIOD("Close review periods", "Review Periods"),
+  CAN_DELETE_REVIEW_PERIOD("Delete review periods", "Review Periods"),
   CAN_ADMINISTER_SETTINGS("Add or edit settings", "Settings"),
   CAN_VIEW_SETTINGS("View settings", "Settings"),
-  CAN_VIEW_ALL_PULSE_RESPONSES("View all pulse responses", "Pulse");
+  CAN_VIEW_ALL_PULSE_RESPONSES("View pulse responses", "Reporting");
 
   private final String description;
   private final String category;
@@ -76,4 +77,3 @@ public enum Permission {
     throw new UnsupportedOperationException(String.format("Unknown permission: '%s'", name));
   }
 }
-
