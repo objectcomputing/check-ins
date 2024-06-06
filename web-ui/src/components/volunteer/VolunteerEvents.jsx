@@ -182,13 +182,13 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
               />
             )}
             value={
-              selectedEvent?.memberId
-                ? profileMap[selectedEvent.memberId]
+              selectedEvent?.relationshipId
+                ? relationshipMap[selectedEvent.relationshipId]
                 : null
             }
           />
           <DatePickerField
-            date={getDate(selectedEvent?.startDate)}
+            date={getDate(selectedEvent?.date)}
             label="Date"
             setDate={date => {
               setSelectedEvent({
@@ -204,6 +204,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
               if (hours >= 0) setSelectedEvent({ ...selectedEvent, hours });
             }}
             type="number"
+            value={selectedEvent?.hours ?? 0}
           />
           <TextField
             label="Notes"
@@ -405,7 +406,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       <ConfirmationDialog
         open={confirmDeleteOpen}
         onYes={() => deleteEvent(selectedEvent)}
-        question="Are you sure you want to delete this relationship?"
+        question="Are you sure you want to delete this event?"
         setOpen={setConfirmDeleteOpen}
         title="Delete Event"
       />
