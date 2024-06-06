@@ -60,11 +60,12 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       let res = await fetch(eventBaseUrl);
       const events = await res.json();
       events.sort((event1, event2) => event1.date.localeCompare(event2.date));
+      console.log('VolunteerEvents.jsx loadEvents: events =', events);
       setEvents(events);
     } catch (err) {
       console.error(err);
     }
-  }, [organizationMap]);
+  }, []);
 
   const loadOrganizations = useCallback(async () => {
     try {
@@ -88,10 +89,12 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     } catch (err) {
       console.error(err);
     }
-  }, [organizationMap]);
+  }, []);
 
   useEffect(() => {
+    loadEvents();
     loadOrganizations();
+    loadRelationships();
   }, []);
 
   useEffect(() => {
@@ -250,28 +253,25 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     [eventDialogOpen, selectedEvent]
   );
 
-  const relationshipRow = useCallback(
-    relationship => {
-      const org = organizationMap[relationship.organizationId];
+  const eventRow = useCallback(
+    event => {
+      const member = profileMap[event.memberId];
+      const organization = organizationMap[event.organizationId];
       return (
-        <tr key={relationship.id}>
-          <td>{profileMap[relationship.memberId].name}</td>
-          <td>{org.name}</td>
-          <td>{relationship.startDate}</td>
-          <td>{relationship.endDate}</td>
+        <tr key={event.id}>
+          <td>{member.name + ' - ' + organization.name}</td>
+          <td>{event.date}</td>
+          <td>{event.hours}</td>
           <td>
             <Tooltip title="Edit">
-              <IconButton
-                aria-label="Edit"
-                onClick={() => editEvent(relationship)}
-              >
+              <IconButton aria-label="Edit" onClick={() => editEvent(event)}>
                 <Edit />
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete">
               <IconButton
                 aria-label="Delete"
-                onClick={() => confirmDelete(relationship)}
+                onClick={() => confirmDelete(event)}
               >
                 <Delete />
               </IconButton>
@@ -311,7 +311,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
                   </th>
                 </tr>
               </thead>
-              <tbody>{relationships.map(relationshipRow)}</tbody>
+              <tbody>{events.map(eventRow)}</tbody>
             </table>
             <IconButton
               aria-label="Add Volunteer Event"
