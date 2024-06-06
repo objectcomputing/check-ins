@@ -264,15 +264,16 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
         body: JSON.stringify(selectedOrganization)
       });
       const newOrg = await res.json();
-      setOrganizations(orgs => {
-        if (id) {
-          const index = orgs.findIndex(org => org.id === id);
-          orgs[index] = newOrg;
-        } else {
-          orgs.push(newOrg);
-        }
-        return [...orgs];
-      });
+
+      if (id) {
+        const index = orgs.findIndex(org => org.id === id);
+        organizations[index] = newOrg;
+      } else {
+        organizations.push(newOrg);
+      }
+      sortOrganizations(organizations);
+      setOrganizations(organizations);
+
       setSelectedOrganization(null);
     } catch (err) {
       console.error(err);

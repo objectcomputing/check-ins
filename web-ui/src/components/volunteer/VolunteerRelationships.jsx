@@ -337,16 +337,17 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         method: id ? 'PUT' : 'POST',
         body: JSON.stringify(selectedRelationship)
       });
-      const newOrg = await res.json();
-      setRelationships(orgs => {
-        if (id) {
-          const index = orgs.findIndex(org => org.id === id);
-          orgs[index] = newOrg;
-        } else {
-          orgs.push(newOrg);
-        }
-        return [...orgs];
-      });
+      const newRel = await res.json();
+
+      if (id) {
+        const index = relationships.findIndex(rel => rel.id === id);
+        relationships[index] = newRel;
+      } else {
+        relationships.push(newRel);
+      }
+      sortRelationships(relationships);
+      setRelationships(relationships);
+
       setSelectedRelationship(null);
     } catch (err) {
       console.error(err);
