@@ -33,10 +33,9 @@ const formatDate = date => {
   return format(date, 'yyyy-MM-dd');
 };
 
-const tableColumns = [
+const sortableTableColumns = [
   'Member',
   'Organization',
-  'Website',
   'Start Date',
   'End Date'
 ];
@@ -80,11 +79,9 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       let res = await fetch(relationshipBaseUrl);
       const relationships = await res.json();
       relationships.sort((rel1, rel2) => {
-        const org1 = organizationMap[rel1.organizationId];
-        const org2 = organizationMap[rel2.organizationId];
-        const name1 = org1.name;
-        const name2 = org2.name;
-        return name1.localeCompare(name2);
+        const member1 = profileMap[rel1.memberId];
+        const member2 = profileMap[rel2.memberId];
+        return member1.name.localeCompare(member2.name);
       });
       setRelationships(relationships);
     } catch (err) {
@@ -100,12 +97,16 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     if (Object.keys(organizationMap).length > 0) loadRelationships();
   }, [organizationMap]);
 
+  useEffect(() => {
+    sortRelationships(relationships);
+    setRelationships([...relationships]);
+  }, [sortAscending, sortColumn]);
+
   const addRelationship = useCallback(() => {
     const today = formatDate(new Date());
     setSelectedRelationship({
       memberId: '',
       organizationId: '',
-      website: '',
       startDate: today,
       endDate: today
     });
@@ -195,17 +196,6 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
               />
             )}
           />
-          <TextField
-            className="fullWidth"
-            label="Website URL"
-            onChange={e =>
-              setSelectedRelationship({
-                ...selectedRelationship,
-                website: e.target.value
-              })
-            }
-            value={selectedRelationship?.website ?? ''}
-          />
           <DatePickerField
             date={getDate(selectedRelationship?.startDate)}
             label="Start Date"
@@ -253,11 +243,6 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         <tr key={relationship.id}>
           <td>{profileMap[relationship.memberId].name}</td>
           <td>{org.name}</td>
-          <td>
-            <a alt="website" href={org.website} target="_blank">
-              website
-            </a>
-          </td>
           <td>{relationship.startDate}</td>
           <td>{relationship.endDate}</td>
           <td>
@@ -297,7 +282,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
             <table>
               <thead>
                 <tr>
-                  {tableColumnsToUse.map(column => (
+                  {sortableTableColumns.map(column => (
                     <th
                       key={column}
                       onClick={() => sortTable(column)}
@@ -331,12 +316,14 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const relationshipValue = useCallback(
     relationship => {
       switch (sortColumn) {
-        case 'Name':
-          return relationship.name;
-        case 'Description':
-          return relationship.description;
-        case 'Website':
-          return relationship.website || '';
+        case 'Member':
+          return profileMap[relationship.memberId]?.name ?? '';
+        case 'Organization':
+          return organizationMap[relationship.organizationId]?.name ?? '';
+        case 'Start Date':
+          return relationship.startDate || '';
+        case 'End Date':
+          return relationship.endDate || '';
       }
     },
     [relationshipMap, sortColumn]
@@ -372,11 +359,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       orgs.sort((org1, org2) => {
         const v1 = relationshipValue(org1);
         const v2 = relationshipValue(org2);
-        const compare = sortAscending
-          ? v1.localeCompare(v2)
-          : v2.localeCompare(v1);
-        // console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
-        return compare;
+        return sortAscending ? v1.localeCompare(v2) : v2.localeCompare(v1);
       });
     },
     [sortAscending, sortColumn]
@@ -401,8 +384,6 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     },
     [sortAscending, sortColumn]
   );
-
-  const tableColumnsToUse = onlyMe ? tableColumns.slice(1) : tableColumns;
 
   const validRelationship = useCallback(() => {
     const rel = selectedRelationship;

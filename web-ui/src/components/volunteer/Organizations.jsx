@@ -34,7 +34,7 @@ const formatDate = date => {
       : `${date.$y}-${date.$M + 1}-${date.$D}`;
 };
 
-const tableColumns = ['Name', 'Description', 'Website'];
+const sortableTableColumns = ['Name', 'Description'];
 
 const propTypes = { forceUpdate: PropTypes.func };
 
@@ -47,7 +47,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [selectedOrganization, setSelectedOrganization] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [sortAscending, setSortAscending] = useState(true);
-  const [sortColumn, setSortColumn] = useState('Member');
+  const [sortColumn, setSortColumn] = useState('Name');
 
   const loadOrganizations = useCallback(async () => {
     try {
@@ -64,6 +64,11 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
   useEffect(() => {
     loadOrganizations();
   }, []);
+
+  useEffect(() => {
+    sortOrganizations(organizations);
+    setOrganizations([...organizations]);
+  }, [sortAscending, sortColumn]);
 
   const addOrganization = useCallback(() => {
     setSelectedOrganization({ name: '', description: '', website: '' });
@@ -186,8 +191,6 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
     [organizationDialogOpen, selectedOrganization]
   );
 
-  const tableColumnsToUse = onlyMe ? tableColumns.slice(1) : tableColumns;
-
   const organizationsTable = useCallback(
     () => (
       <Card>
@@ -201,7 +204,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
             <table>
               <thead>
                 <tr>
-                  {tableColumnsToUse.map(column => (
+                  {sortableTableColumns.map(column => (
                     <th
                       key={column}
                       onClick={() => sortTable(column)}
@@ -211,6 +214,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
                       {sortIndicator(column)}
                     </th>
                   ))}
+                  <th key="website">Website</th>
                   <th className="actions-th" key="actions">
                     Actions
                   </th>
@@ -281,11 +285,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
       orgs.sort((org1, org2) => {
         const v1 = organizationValue(org1);
         const v2 = organizationValue(org2);
-        const compare = sortAscending
-          ? v1.localeCompare(v2)
-          : v2.localeCompare(v1);
-        // console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
-        return compare;
+        return sortAscending ? v1.localeCompare(v2) : v2.localeCompare(v1);
       });
     },
     [sortAscending, sortColumn]
