@@ -182,6 +182,7 @@ class PulseResponseTest extends TestContainersSuite {
     }
 
     @Test
+    @Tag("mocked")
     void testSaveWithNonNullId() {
         UUID currentUserId = UUID.randomUUID();
         UUID memberId = UUID.randomUUID();
@@ -206,6 +207,7 @@ class PulseResponseTest extends TestContainersSuite {
     }
 
     @Test
+    @Tag("mocked")
     void testSaveWithNonExistentMember() {
         UUID currentUserId = UUID.randomUUID();
         UUID memberId = UUID.randomUUID();
@@ -231,6 +233,7 @@ class PulseResponseTest extends TestContainersSuite {
     }
 
     @Test
+    @Tag("mocked")
     void testSaveWithInvalidDate() {
         UUID currentUserId = UUID.randomUUID();
         UUID memberId = UUID.randomUUID();
@@ -262,6 +265,7 @@ class PulseResponseTest extends TestContainersSuite {
     }
 
     @Test
+    @Tag("mocked")
     void testSaveWithoutPermission() {
         UUID currentUserId = UUID.randomUUID();
         UUID memberId = UUID.randomUUID();
