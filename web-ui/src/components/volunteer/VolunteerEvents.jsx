@@ -79,6 +79,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const loadRelationships = useCallback(async () => {
+    if (isEmpty(profileMap)) return;
     try {
       let res = await fetch(relationshipBaseUrl);
       const relationships = await res.json();
@@ -94,29 +95,29 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     } catch (err) {
       console.error(err);
     }
-  }, []);
+  }, [profileMap]);
 
   useEffect(() => {
     loadEvents();
     loadOrganizations();
     loadRelationships();
-  }, []);
+  }, [profileMap]);
 
   useEffect(() => {
     if (!isEmpty(organizationMap)) loadEvents();
   }, [organizationMap]);
 
   useEffect(() => {
-    sortEvents(relationships);
-    setEvents([...relationships]);
+    sortEvents(events);
+    setEvents([...events]);
   }, [sortAscending, sortColumn]);
 
   const addEvent = useCallback(() => {
     setSelectedEvent({
-      memberId: '',
-      organizationId: '',
-      startDate: '',
-      endDate: ''
+      relationshipId: '',
+      date: '',
+      hours: 0,
+      notes: ''
     });
     setEventDialogOpen(true);
   }, []);
@@ -132,7 +133,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const deleteEvent = useCallback(async relationship => {
-    const url = relationshipBaseUrl + '/' + relationship.id;
+    const url = eventBaseUrl + '/' + event.id;
     try {
       const res = await fetch(url, { method: 'DELETE' });
       setEvents(orgs => orgs.filter(org => org.id !== relationship.id));
@@ -192,16 +193,24 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
             setDate={date => {
               setSelectedEvent({
                 ...selectedEvent,
-                date: formatDate
+                date: formatDate(date)
               });
             }}
           />
           <TextField
-            label="Note"
+            label="Hours"
+            onChange={e => {
+              const hours = Number(e.target.value);
+              if (hours >= 0) setSelectedEvent({ ...selectedEvent, hours });
+            }}
+            type="number"
+          />
+          <TextField
+            label="Notes"
             onChange={e =>
-              setSelectedEvent({ ...selectedEvent, note: e.target.value })
+              setSelectedEvent({ ...selectedEvent, notes: e.target.value })
             }
-            value={selectedEvent?.note ?? ''}
+            value={selectedEvent?.notes ?? ''}
           />
         </DialogContent>
         <DialogActions>
@@ -327,7 +336,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const saveEvent = useCallback(async () => {
     const { id } = selectedEvent;
-    const url = id ? `${relationshipBaseUrl}/${id}` : relationshipBaseUrl;
+    const url = id ? `${eventBaseUrl}/${id}` : eventBaseUrl;
     try {
       const res = await fetch(url, {
         method: id ? 'PUT' : 'POST',
@@ -336,13 +345,13 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       const newRel = await res.json();
 
       if (id) {
-        const index = relationships.findIndex(rel => rel.id === id);
-        relationships[index] = newRel;
+        const index = events.findIndex(rel => rel.id === id);
+        events[index] = newRel;
       } else {
-        relationships.push(newRel);
+        events.push(newRel);
       }
-      sortEvents(relationships);
-      setEvents(relationships);
+      sortEvents(events);
+      setEvents(events);
 
       setSelectedEvent(null);
     } catch (err) {
