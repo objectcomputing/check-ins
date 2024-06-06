@@ -28,11 +28,9 @@ const organizationBaseUrl = 'http://localhost:3000/organization';
 const relationshipBaseUrl = 'http://localhost:3000/volunteer-relationship';
 
 const formatDate = date => {
-  return !date
-    ? ''
-    : date instanceof Date
-      ? format(date, 'yyyy-MM-dd')
-      : `${date.$y}-${date.$M + 1}-${date.$D}`;
+  if (!date) return '';
+  if (!(date instanceof Date)) date = new Date(date.$y, date.$M, date.$D);
+  return format(date, 'yyyy-MM-dd');
 };
 
 const tableColumns = [
@@ -54,8 +52,6 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
   const [relationshipMap, setRelationshipMap] = useState({});
   const [relationships, setRelationships] = useState([]);
-  const [selectedOrganization, setSelectedOrganization] = useState(null);
-  const [selectedProfile, setSelectedProfile] = useState(null);
   const [selectedRelationship, setSelectedRelationship] = useState(null);
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Member');
@@ -105,7 +101,14 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, [organizationMap]);
 
   const addRelationship = useCallback(() => {
-    setSelectedRelationship({ name: '', description: '', website: '' });
+    const today = formatDate(new Date());
+    setSelectedRelationship({
+      memberId: '',
+      organizationId: '',
+      website: '',
+      startDate: today,
+      endDate: today
+    });
     setRelationshipDialogOpen(true);
   }, []);
 
@@ -167,6 +170,12 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     [organizationMap, profileMap]
   );
 
+  const getDate = dateString => {
+    if (!dateString) return new Date();
+    const [year, month, day] = dateString.split('-');
+    return new Date(Number(year), Number(month) - 1, Number(day));
+  };
+
   const relationshipDialog = useCallback(
     () => (
       <Dialog
@@ -180,10 +189,13 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         <DialogContent>
           <Autocomplete
             disableClearable
-            getOptionLabel={profile => profile.name || ''}
+            getOptionLabel={profile => profile.name ?? ''}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(event, profile) => {
-              setSelectedProfile({ ...profile });
+              setSelectedRelationship({
+                ...selectedRelationship,
+                memberId: profile.id
+              });
             }}
             options={profiles}
             renderInput={params => (
@@ -193,14 +205,16 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
                 label="Team Member"
               />
             )}
-            value={selectedProfile}
           />
           <Autocomplete
             disableClearable
-            getOptionLabel={organization => organization.name || ''}
+            getOptionLabel={organization => organization.name ?? ''}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(event, organization) => {
-              setSelectedOrganization({ ...organization });
+              setSelectedRelationship({
+                ...selectedRelationship,
+                organizationId: organization.id
+              });
             }}
             options={organizations}
             renderInput={params => (
@@ -210,7 +224,6 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
                 label="Organization"
               />
             )}
-            value={selectedOrganization}
           />
           <TextField
             className="fullWidth"
@@ -224,22 +237,30 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
             value={selectedRelationship?.website ?? ''}
           />
           <DatePickerField
-            date={new Date(selectedRelationship?.startDate)}
+            date={getDate(selectedRelationship?.startDate)}
             label="Start Date"
             setDate={date => {
+              const startDate = formatDate(date);
+              let { endDate } = selectedRelationship;
+              if (startDate > endDate) endDate = startDate;
               setSelectedRelationship({
                 ...selectedRelationship,
-                startDate: formatDate(date)
+                startDate,
+                endDate
               });
             }}
           />
           <DatePickerField
-            date={new Date(selectedRelationship?.endDate)}
+            date={getDate(selectedRelationship?.endDate)}
             label="End Date"
             setDate={date => {
+              const endDate = formatDate(date);
+              let { startDate } = selectedRelationship;
+              if (endDate < startDate) startDate = endDate;
               setSelectedRelationship({
                 ...selectedRelationship,
-                endDate: formatDate(date)
+                startDate,
+                endDate
               });
             }}
           />
