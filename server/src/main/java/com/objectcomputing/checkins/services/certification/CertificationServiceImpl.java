@@ -28,7 +28,7 @@ class CertificationServiceImpl implements CertificationService {
 
     @Override
     public List<Certification> findAllCertifications() {
-        return certificationRepository.findAll();
+        return certificationRepository.findAllOrderByNameAsc();
     }
 
     @Override
@@ -52,13 +52,13 @@ class CertificationServiceImpl implements CertificationService {
     @Override
     public List<EarnedCertification> findAllEarnedCertifications(@Nullable UUID memberId, @Nullable UUID certificationId) {
         if (memberId == null && certificationId == null) {
-            return earnedCertificationRepository.findAll();
+            return earnedCertificationRepository.findAllOrderByEarnedDateDesc();
         } else if (memberId != null && certificationId != null) {
-            return earnedCertificationRepository.findByMemberIdAndCertificationId(memberId, certificationId);
+            return earnedCertificationRepository.findByMemberIdAndCertificationIdOrderByEarnedDateDesc(memberId, certificationId);
         } else if (memberId != null) {
-            return earnedCertificationRepository.findByMemberId(memberId);
+            return earnedCertificationRepository.findByMemberIdOrderByEarnedDateDesc(memberId);
         } else {
-            return earnedCertificationRepository.findByCertificationId(certificationId);
+            return earnedCertificationRepository.findByCertificationIdOrderByEarnedDateDesc(certificationId);
         }
     }
 

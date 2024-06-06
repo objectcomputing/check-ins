@@ -11,9 +11,13 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 interface EarnedCertificationRepository extends CrudRepository<EarnedCertification, UUID> {
 
+    List<EarnedCertification> findAllOrderByEarnedDateDesc();
+
     List<EarnedCertification> findByCertificationId(@NotNull UUID certificationId);
 
-    List<EarnedCertification> findByMemberId(@NotNull UUID memberId);
+    List<EarnedCertification> findByCertificationIdOrderByEarnedDateDesc(@NotNull UUID certificationId);
 
-    List<EarnedCertification> findByMemberIdAndCertificationId(@NotNull UUID memberId, @NotNull UUID certificationId);
+    List<EarnedCertification> findByMemberIdOrderByEarnedDateDesc(@NotNull UUID memberId);
+
+    List<EarnedCertification> findByMemberIdAndCertificationIdOrderByEarnedDateDesc(@NotNull UUID memberId, @NotNull UUID certificationId);
 }

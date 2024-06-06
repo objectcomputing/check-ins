@@ -1532,7 +1532,7 @@ VALUES
 INSERT INTO earned_certification
     (earned_certification_id, member_id, certification_id, description, earned_date)
 VALUES -- Michael Kimberlin, Java
-    ('d946dfaa-4bae-4a4e-a3c3-9378ce1cae37', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2021-06-01');
+    ('d946dfaa-4bae-4a4e-a3c3-9378ce1cae37', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2024-04-01');
 
 INSERT INTO earned_certification
     (earned_certification_id, member_id, certification_id, description, earned_date)
