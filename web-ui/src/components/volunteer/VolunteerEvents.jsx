@@ -60,7 +60,6 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       let res = await fetch(eventBaseUrl);
       const events = await res.json();
       events.sort((event1, event2) => event1.date.localeCompare(event2.date));
-      console.log('VolunteerEvents.jsx loadEvents: events =', events);
       setEvents(events);
     } catch (err) {
       console.error(err);
@@ -83,6 +82,12 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     try {
       let res = await fetch(relationshipBaseUrl);
       const relationships = await res.json();
+      relationships.sort((rel1, rel2) => {
+        const member1 = profileMap[rel1.memberId];
+        const member2 = profileMap[rel2.memberId];
+        return member1.name.localeCompare(member2.name);
+      });
+      setRelationships(relationships);
       setRelationshipMap(
         relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {})
       );
@@ -98,7 +103,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(organizationMap).length > 0) loadEvents();
+    if (!isEmpty(organizationMap)) loadEvents();
   }, [organizationMap]);
 
   useEffect(() => {
@@ -144,16 +149,10 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     [relationshipMap]
   );
 
-  const getDate = dateString => {
-    if (!dateString) return null;
-    const [year, month, day] = dateString.split('-');
-    return new Date(Number(year), Number(month) - 1, Number(day));
-  };
-
   const eventDialog = useCallback(
     () => (
       <Dialog
-        classes={{ root: 'relationship-dialog' }}
+        classes={{ root: 'volunteer-event-dialog' }}
         open={eventDialogOpen}
         onClose={cancelEvent}
       >
@@ -161,20 +160,24 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
         <DialogContent>
           <Autocomplete
             disableClearable
-            getOptionLabel={profile => profile.name ?? ''}
+            getOptionLabel={relationship => {
+              const member = profileMap[relationship.memberId];
+              const org = organizationMap[relationship.organizationId];
+              return `${member?.name} - ${org?.name}`;
+            }}
             isOptionEqualToValue={(option, value) => option.id === value.id}
-            onChange={(event, profile) => {
+            onChange={(event, relationship) => {
               setSelectedEvent({
                 ...selectedEvent,
-                memberId: profile.id
+                relationshipId: relationship.id
               });
             }}
-            options={profiles}
+            options={relationships}
             renderInput={params => (
               <TextField
                 {...params}
                 className="fullWidth"
-                label="Team Member"
+                label="Volunteer Relationship"
               />
             )}
             value={
@@ -183,63 +186,22 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
                 : null
             }
           />
-          <Autocomplete
-            disableClearable
-            getOptionLabel={event => {
-              const member = profileMap[event.memberId];
-              const organization = organizationMap[event.organizationId];
-              return `${member.name} - ${organization.name}`;
-            }}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            onChange={(event, organization) => {
-              setSelectedEvent({
-                ...selectedEvent,
-                organizationId: organization.id
-              });
-            }}
-            options={events}
-            renderInput={params => (
-              <TextField
-                {...params}
-                className="fullWidth"
-                label="Organization"
-              />
-            )}
-            value={
-              selectedEvent?.organizationId
-                ? organizationMap[selectedEvent.organizationId]
-                : null
-            }
-          />
           <DatePickerField
             date={getDate(selectedEvent?.startDate)}
-            label="Start Date"
+            label="Date"
             setDate={date => {
-              const startDate = formatDate(date);
-              let { endDate } = selectedEvent;
-              if (endDate && startDate > endDate) endDate = startDate;
               setSelectedEvent({
                 ...selectedEvent,
-                startDate,
-                endDate
+                date: formatDate
               });
             }}
           />
-          <DatePickerField
-            date={getDate(selectedEvent?.endDate)}
-            label="End Date"
-            setDate={date => {
-              const endDate = date ? formatDate(date) : '';
-              let { startDate } = selectedEvent;
-              if (endDate && (!startDate || endDate < startDate)) {
-                startDate = endDate;
-              }
-              setSelectedEvent({
-                ...selectedEvent,
-                startDate,
-                endDate
-              });
-            }}
+          <TextField
+            label="Note"
+            onChange={e =>
+              setSelectedEvent({ ...selectedEvent, note: e.target.value })
+            }
+            value={selectedEvent?.note ?? ''}
           />
         </DialogContent>
         <DialogActions>
@@ -255,13 +217,15 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const eventRow = useCallback(
     event => {
-      const member = profileMap[event.memberId];
-      const organization = organizationMap[event.organizationId];
+      const relationship = relationshipMap[event.relationshipId];
+      const member = profileMap[relationship.memberId];
+      const organization = organizationMap[relationship.organizationId];
       return (
         <tr key={event.id}>
           <td>{member.name + ' - ' + organization.name}</td>
           <td>{event.date}</td>
           <td>{event.hours}</td>
+          <td>{event.notes}</td>
           <td>
             <Tooltip title="Edit">
               <IconButton aria-label="Edit" onClick={() => editEvent(event)}>
@@ -280,11 +244,15 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
         </tr>
       );
     },
-    [organizationMap, profileMap]
+    [organizationMap, profileMap, relationshipMap]
   );
 
-  const eventsTable = useCallback(
-    () => (
+  const eventsTable = useCallback(() => {
+    if (isEmpty(profileMap)) return null;
+    if (isEmpty(organizationMap)) return null;
+    if (isEmpty(relationshipMap)) return null;
+
+    return (
       <Card>
         <CardHeader
           avatar={<FoodBank />}
@@ -323,9 +291,23 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           </div>
         </CardContent>
       </Card>
-    ),
-    [relationships, sortAscending, sortColumn]
-  );
+    );
+  }, [
+    events,
+    organizationMap,
+    profileMap,
+    relationshipMap,
+    sortAscending,
+    sortColumn
+  ]);
+
+  const getDate = dateString => {
+    if (!dateString) return null;
+    const [year, month, day] = dateString.split('-');
+    return new Date(Number(year), Number(month) - 1, Number(day));
+  };
+
+  const isEmpty = map => Object.keys(map).length === 0;
 
   const relationshipValue = useCallback(
     relationship => {
@@ -401,8 +383,8 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   );
 
   const validEvent = useCallback(() => {
-    const rel = selectedEvent;
-    return rel?.memberId && rel?.organizationId;
+    const event = selectedEvent;
+    return event?.relationshipId && event?.date && event?.hours;
   });
 
   return (

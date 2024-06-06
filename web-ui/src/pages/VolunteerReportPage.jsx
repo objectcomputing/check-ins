@@ -44,8 +44,8 @@ const VolunteerReportPage = () => {
         variant="fullWidth"
       >
         <Tab label="Organizations" {...a11yProps(0)} />
-        <Tab label="Members" {...a11yProps(1)} />
-        <Tab label="Hours" {...a11yProps(2)} />
+        <Tab label="Relationships" {...a11yProps(1)} />
+        <Tab label="Events" {...a11yProps(2)} />
       </Tabs>
       <TabPanel index={0} value={tabIndex}>
         <Organizations forceUpdate={forceUpdate} key={'org' + n} />
