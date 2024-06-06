@@ -15,6 +15,8 @@ import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -36,6 +38,7 @@ public class GuildServicesImpl implements GuildServices {
     private final Environment environment;
     private final String webAddress;
     public static final String WEB_ADDRESS = "check-ins.web-address";
+    private static final Logger LOG = LoggerFactory.getLogger(GuildServicesImpl.class);;
 
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo, GuildMemberHistoryRepository guildMemberHistoryRepository,
@@ -93,7 +96,18 @@ public class GuildServicesImpl implements GuildServices {
             }
         }
 
-        return fromEntity(newGuildEntity, newMembers);
+        GuildResponseDTO guildResponse = fromEntity(newGuildEntity, newMembers);
+
+        Set<String> emailsOfNewGuildLeads = newMembers
+                .stream()
+                .filter(GuildMemberResponseDTO::isLead)
+                .map(lead -> memberProfileServices.getById(lead.getMemberId()).getWorkEmail())
+                .collect(Collectors.toSet());
+        if (!emailsOfNewGuildLeads.isEmpty()) {
+            emailGuildLeaders(emailsOfNewGuildLeads, newGuildEntity);
+        }
+
+        return guildResponse;
     }
 
     public GuildResponseDTO read(@NotNull UUID guildId) {
@@ -135,8 +149,11 @@ public class GuildServicesImpl implements GuildServices {
                     // track membership changes for email notification
                     List<MemberProfile> addedMembers = new ArrayList<>();
                     List<MemberProfile> removedMembers = new ArrayList<>();
+                    Set<GuildMember> guildLeaders = new HashSet<>(guildMemberServices.findByFields(guildDTO.getId(), null, true));
+                    System.out.println(guildLeaders);
+
                     // emails of guild leads excluding the one making the change request
-                    Set<String> emailsOfGuildLeads = guildMemberServices.findByFields(guildDTO.getId(), null, true)
+                    Set<String> emailsOfGuildLeadsExcludingChanger = guildLeaders
                             .stream()
                             .filter(lead -> !lead.getMemberId().equals(currentUser.getId()))
                             .map(lead -> memberProfileServices.getById(lead.getMemberId()).getWorkEmail())
@@ -149,7 +166,7 @@ public class GuildServicesImpl implements GuildServices {
                     guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
                         Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
-                        if(!first.isPresent()) {
+                        if(first.isEmpty()) {
                             newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                             addedMembers.add(existingMember);
                         } else {
@@ -166,8 +183,24 @@ public class GuildServicesImpl implements GuildServices {
                     });
                     updated = fromEntity(newGuildEntity, newMembers);
 
-                    if (!emailsOfGuildLeads.isEmpty() && (!addedMembers.isEmpty() || !removedMembers.isEmpty())){
-                        sendGuildMemberChangeNotification(addedMembers, removedMembers, newGuildEntity.getName(), emailsOfGuildLeads);
+                    if (!emailsOfGuildLeadsExcludingChanger.isEmpty() && (!addedMembers.isEmpty() || !removedMembers.isEmpty())){
+                        sendGuildMemberChangeNotification(addedMembers, removedMembers, newGuildEntity.getName(), emailsOfGuildLeadsExcludingChanger);
+                    }
+
+                    // Calculate the new set of guild leaders
+                    Set<GuildMember> newGuildLeaders = new HashSet<>(guildMemberServices.findByFields(guildDTO.getId(), null, true));
+                    System.out.println(newGuildLeaders);
+                    // Determine the newly added guild leaders
+                    newGuildLeaders.removeAll(guildLeaders);
+                    System.out.println(newGuildLeaders);
+
+                    if (!newGuildLeaders.isEmpty()) {
+                        Set<String> emailsOfNewGuildLeads = newGuildLeaders.stream()
+                                .map(lead -> memberProfileServices.getById(lead.getMemberId()).getWorkEmail())
+                                .collect(Collectors.toSet());
+                        if (!emailsOfNewGuildLeads.isEmpty()) {
+                            emailGuildLeaders(emailsOfNewGuildLeads, newGuildEntity);
+                        }
                     }
 
                 } else {
@@ -294,5 +327,16 @@ public class GuildServicesImpl implements GuildServices {
         }
         emailHtml += "<a href=\"" + webAddress + "/guilds\">Click here</a> to view the changes in the Check-Ins app.";
         return emailHtml;
+    }
+
+   public void emailGuildLeaders(Set<String> guildLeadersEmails, Guild guild) {
+        System.out.println(guildLeadersEmails);
+        if (guild == null || guild.getName() == null || guild.getName().isEmpty()) {
+            LOG.warn("Guild name is missing or invalid");
+            return;
+        }
+       String subject = "You have been assigned as a guild leader of " + guild.getName();
+       String body = "Congratulations, you have been assigned as a guild leader of " + guild.getName();
+       emailSender.sendEmail("HR", "mckiernanc@objectcomputing.com", subject, body, guildLeadersEmails.toArray(new String[0]));
     }
 }

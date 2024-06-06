@@ -264,14 +264,6 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
         open={open}
         onClose={handleClose}
         onSave={async editedGuild => {
-          const resGetOldGuildLeader = await getGuildLeaders(
-            editedGuild.id,
-            csrf
-          );
-          const oldGuildLeaders =
-            resGetOldGuildLeader.payload?.data && !resGetOldGuildLeader.error
-              ? resGetOldGuildLeader.payload.data
-              : null;
           const res = await updateGuild(editedGuild, csrf);
           const data =
             res.payload?.data && !res.error ? res.payload.data : null;
@@ -282,29 +274,6 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
               type: UPDATE_GUILDS,
               payload: copy
             });
-            const resGetGuildLeaders = await getGuildLeaders(
-              editedGuild.id,
-              csrf
-            );
-            const guildLeaders =
-              resGetGuildLeaders.payload?.data && !resGetGuildLeaders.error
-                ? resGetGuildLeaders.payload.data
-                : null;
-            if (guildLeaders && oldGuildLeaders) {
-              // Filter out the new leaders that were not in the old leaders
-              const newLeaders = guildLeaders.filter(
-                newLeader =>
-                  !oldGuildLeaders.some(
-                    oldLeader => oldLeader.id === newLeader.id
-                  )
-              );
-              try {
-                newLeaders.length > 0 &&
-                  (await emailGuildLeaders(newLeaders, guild, csrf).then());
-              } catch (e) {
-                console.error('Unable to email guild leader assignment(s)', e);
-              }
-            }
           }
         }}
         headerText="Edit Your Guild"

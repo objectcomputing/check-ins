@@ -64,32 +64,6 @@ public class GuildController {
     }
 
     /**
-     * Get guild leader based on guild id
-     *
-     * @param id of guild
-     * @return {@link GuildResponseDTO guild leader matching id}
-     */
-
-    @Get("/leaders/{id}")
-    public Mono<HttpResponse<Set<MemberProfile>>> getGuildLeaders(@NotNull UUID id) {
-        return Mono.fromCallable(() -> {
-                    GuildResponseDTO guild = guildService.read(id);
-                    List<GuildMemberResponseDTO> members = guild.getGuildMembers();
-                    Set<MemberProfile> newLeaders = new HashSet<>();
-                    for (GuildMemberResponseDTO member : members) {
-                        if (member.isLead()) {
-                            MemberProfile memberProfile = profileServices.getById(member.getMemberId());
-                            if (memberProfile != null) {
-                                newLeaders.add(memberProfile);
-                            }
-                        }
-                    }
-                    return newLeaders;
-                })
-                .map(HttpResponse::ok);
-    }
-
-    /**
      * Find guild(s) given a combination of the following parameters
      *
      * @param name,     name of the guild
