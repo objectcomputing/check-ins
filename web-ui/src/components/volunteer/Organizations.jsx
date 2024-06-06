@@ -43,7 +43,6 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [badgeUrl, setBadgeUrl] = useState('');
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [organizationDialogOpen, setOrganizationDialogOpen] = useState(false);
-  const [organizationMap, setOrganizationMap] = useState({});
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrganization, setSelectedOrganization] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
@@ -52,7 +51,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const loadOrganizations = useCallback(async () => {
     try {
-      let res = await fetch(organizationBaseUrl);
+      const res = await fetch(organizationBaseUrl);
       const organizations = await res.json();
       setOrganizations(
         organizations.sort((org1, org2) => org1.name.localeCompare(org2.name))
@@ -121,7 +120,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
         </td>
       </tr>
     ),
-    [organizationMap]
+    []
   );
 
   const organizationDialog = useCallback(
@@ -244,16 +243,13 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
           return organization.website || '';
       }
     },
-    [organizationMap, sortColumn]
+    [sortColumn]
   );
 
-  const editOrganization = useCallback(
-    org => {
-      setSelectedOrganization(org);
-      setOrganizationDialogOpen(true);
-    },
-    [organizationMap]
-  );
+  const editOrganization = useCallback(org => {
+    setSelectedOrganization(org);
+    setOrganizationDialogOpen(true);
+  }, []);
 
   const saveOrganization = useCallback(async () => {
     const { id } = selectedOrganization;

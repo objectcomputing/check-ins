@@ -3,6 +3,7 @@ import React, { useReducer, useState } from 'react';
 import { Box, Button, Tab, Tabs } from '@mui/material';
 
 import Organizations from '../components/volunteer/Organizations';
+import VolunteerRelationships from '../components/volunteer/VolunteerRelationships';
 import './VolunteerReportPage.css';
 
 const a11yProps = index => ({
@@ -46,10 +47,10 @@ const VolunteerReportPage = () => {
         <Tab label="Hours" {...a11yProps(2)} />
       </Tabs>
       <TabPanel index={0} value={tabIndex}>
-        <Organizations forceUpdate={forceUpdate} key={n + 1} />
+        <Organizations forceUpdate={forceUpdate} key={'org' + n} />
       </TabPanel>
       <TabPanel index={1} value={tabIndex}>
-        <div>Members are coming soon!</div>
+        <VolunteerRelationships forceUpdate={forceUpdate} key={'vr' + n} />
       </TabPanel>
       <TabPanel index={2} value={tabIndex}>
         <div>Hours are coming soon!</div>
