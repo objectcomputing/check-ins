@@ -9,7 +9,6 @@ import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.pulseresponse.PulseResponseServicesImpl;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
@@ -138,7 +137,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                         String subject = "You have been assigned as the " + role + " of " + member.getFirstName() + " " + member.getLastName();
                         String body = member.getFirstName() + " " + member.getLastName() + " will now report to you as their " + role + ". Please engage with them: " + member.getWorkEmail();
 
-                        emailSender.sendEmail("bacon", "mckiernanc@objectcomputing.com", subject, body, roleProfile.getWorkEmail());
+                        emailSender.sendEmail(null, null, subject, body, roleProfile.getWorkEmail());
                     } else {
                         LOG.warn("Unable to send email regarding {} {}'s {} update as the {} was unable to be pulled up correctly",
                                 member.getFirstName(), member.getLastName(), role, role);
