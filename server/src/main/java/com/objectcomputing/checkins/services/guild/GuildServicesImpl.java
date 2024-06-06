@@ -150,7 +150,6 @@ public class GuildServicesImpl implements GuildServices {
                     List<MemberProfile> addedMembers = new ArrayList<>();
                     List<MemberProfile> removedMembers = new ArrayList<>();
                     Set<GuildMember> guildLeaders = new HashSet<>(guildMemberServices.findByFields(guildDTO.getId(), null, true));
-                    System.out.println(guildLeaders);
 
                     // emails of guild leads excluding the one making the change request
                     Set<String> emailsOfGuildLeadsExcludingChanger = guildLeaders
@@ -189,10 +188,8 @@ public class GuildServicesImpl implements GuildServices {
 
                     // Calculate the new set of guild leaders
                     Set<GuildMember> newGuildLeaders = new HashSet<>(guildMemberServices.findByFields(guildDTO.getId(), null, true));
-                    System.out.println(newGuildLeaders);
                     // Determine the newly added guild leaders
                     newGuildLeaders.removeAll(guildLeaders);
-                    System.out.println(newGuildLeaders);
 
                     if (!newGuildLeaders.isEmpty()) {
                         Set<String> emailsOfNewGuildLeads = newGuildLeaders.stream()
@@ -330,13 +327,12 @@ public class GuildServicesImpl implements GuildServices {
     }
 
    public void emailGuildLeaders(Set<String> guildLeadersEmails, Guild guild) {
-        System.out.println(guildLeadersEmails);
         if (guild == null || guild.getName() == null || guild.getName().isEmpty()) {
             LOG.warn("Guild name is missing or invalid");
             return;
         }
        String subject = "You have been assigned as a guild leader of " + guild.getName();
        String body = "Congratulations, you have been assigned as a guild leader of " + guild.getName();
-       emailSender.sendEmail("HR", "mckiernanc@objectcomputing.com", subject, body, guildLeadersEmails.toArray(new String[0]));
+       emailSender.sendEmail(null, null, subject, body, guildLeadersEmails.toArray(new String[0]));
     }
 }

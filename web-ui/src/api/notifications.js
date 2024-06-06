@@ -47,18 +47,3 @@ export const sendEmail = async (subject, content, html, recipients, cookie) => {
     }
   });
 };
-export const emailGuildLeaders = async (members, guild, cookie) => {
-  members.forEach(member => {
-    if (!member.workEmail || !guild?.name) {
-      console.warn(
-        'Unable to send guild leader email as member is missing required fields',
-        member
-      );
-      return;
-    }
-
-    const subject = `You have been assigned as a guild leader of ${guild.name}`;
-    const body = `Congratulations, you have been assigned as a guild leader of ${guild.name}`;
-    sendEmail(subject, body, false, [member.workEmail], cookie);
-  });
-};

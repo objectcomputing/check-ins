@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
@@ -9,7 +10,6 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -52,12 +52,6 @@ class MemberProfileTest extends TestContainersSuite {
                 memberSkillServices,
                 teamMemberServices,
                 emailSender);
-    }
-
-    @AfterEach
-    @Tag("mocked")
-    void tearDown() {
-        Mockito.reset(memberRepo, emailSender);
     }
 
     @Test
@@ -182,6 +176,120 @@ class MemberProfileTest extends TestContainersSuite {
         assertTrue(toString.contains(excluded.toString()));
         assertTrue(toString.contains(lastSeen.toString()));
     }
+
+    @Test
+    @Tag("mocked")
+    void testSaveProfileWithExistingEmail() {
+        String workEmail = "existing@example.com";
+        MemberProfile existingProfile = new MemberProfile(UUID.randomUUID(), "Jane", null, "Doe", null, null, null, null, workEmail, null, null, null, null, null, null, null, null, null);
+        MemberProfile newProfile = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, null, null, workEmail, null, null, null, null, null, null, null, null, null);
+
+        when(memberRepo.findByWorkEmail(workEmail)).thenReturn(Optional.of(existingProfile));
+
+        assertThrows(AlreadyExistsException.class, () -> memberProfileServices.saveProfile(newProfile));
+    }
+
+    @Test
+    @Tag("mocked")
+    void testSaveProfileWithNewEmail() {
+        UUID pdlId = UUID.randomUUID();
+        UUID supervisorId = UUID.randomUUID();
+
+        MemberProfile pdlProfile = new MemberProfile(pdlId,"Jane", null, "Smith", null, null, null, null, "jane.smith@example.com", null, null, null, null, null, null, null, null, null);
+        MemberProfile supervisorProfile = new MemberProfile(supervisorId, "Janine", null, "Smith", null, null, null, null, "janine.smith@example.com", null, null, null, null, null, null, null, null, null);
+        MemberProfile newProfile = new MemberProfile("John", null, "Smith", null, null, pdlId, null, "john.smith@example.com", null, null, null, supervisorId, null, null, null, null, null);
+
+
+        // Mocking findByWorkEmail to return an empty Optional indicating no existing profile with the email
+        when(memberRepo.findByWorkEmail(newProfile.getWorkEmail())).thenReturn(Optional.empty());
+
+        // Mocking save to return the profile that is being saved
+        when(memberRepo.save(newProfile)).thenReturn(newProfile);
+
+        // Mocking findById to return the profile after saving
+        when(memberRepo.findById(newProfile.getId())).thenReturn(Optional.of(newProfile));
+        when(memberRepo.findById(pdlId)).thenReturn(Optional.of(pdlProfile));
+        when(memberRepo.findById(supervisorId)).thenReturn(Optional.of(supervisorProfile));
+
+        MemberProfile savedProfile = memberProfileServices.saveProfile(newProfile);
+
+        // Assertions to verify the saved profile is not null and is equal to the newProfile
+        assertNotNull(savedProfile, "The saved profile should not be null");
+        assertEquals(newProfile, savedProfile);
+
+        // Verifying that email was sent for PDL assignment
+        verify(emailSender, times(1)).sendEmail(
+                any(), any(),
+                eq("You have been assigned as the PDL of John Smith"),
+                eq("John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com"),
+                any()
+        );
+
+        // Verifying that email was sent for Supervisor assignment
+        verify(emailSender, times(1)).sendEmail(
+                any(), any(),
+                eq("You have been assigned as the supervisor of John Smith"),
+                eq("John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com"),
+                any()
+        );
+    }
+
+    @Test
+    @Tag("mocked")
+    void testUpdateProfileWithChangedPDL() {
+        UUID id = UUID.randomUUID();
+        UUID pdlId = UUID.randomUUID();
+        MemberProfile existingProfile = new MemberProfile(id, "John", null, "Smith", null, null, null, null, "john.smith@example.com", null, null, null, null, null, null, null, null, null);
+        MemberProfile updatedProfile = new MemberProfile(id, "John", null, "Smith", null, null, pdlId, null, "john.smith@example.com", null, null, null, null, null, null, null, null, null);
+        MemberProfile pdlProfile = new MemberProfile(pdlId, "Jane", null, "Doe", null, null, null, null, "jane.doe@example.com", null, null, null, null, null, null, null, null, null);
+
+        when(memberRepo.findById(id)).thenReturn(Optional.of(existingProfile));
+        when(memberRepo.findByWorkEmail(updatedProfile.getWorkEmail())).thenReturn(Optional.of(updatedProfile));
+        when(memberRepo.findById(pdlId)).thenReturn(Optional.of(pdlProfile));
+        when(memberRepo.update(updatedProfile)).thenReturn(updatedProfile);
+
+        MemberProfile result = memberProfileServices.saveProfile(updatedProfile);
+
+        assertEquals(updatedProfile, result);
+        verify(emailSender, times(1)).sendEmail(any(), any(), contains("You have been assigned as the PDL of"), contains("Please engage with them: john.smith@example.com"), eq("jane.doe@example.com"));
+    }
+
+    @Test
+    @Tag("mocked")
+    void testUpdateProfileWithChangedSupervisor() {
+        UUID id = UUID.randomUUID();
+        UUID supervisorId = UUID.randomUUID();
+        MemberProfile existingProfile = new MemberProfile(id, "John", null, "Smith", null, null, null, null, "john.smith@example.com", null, null, null, null, null, null, null, null, null);
+        MemberProfile updatedProfile = new MemberProfile(id, "John", null, "Smith", null, null, null, null, "john.smith@example.com", null, null, null, supervisorId, null, null, null, null, null);
+        MemberProfile supervisorProfile = new MemberProfile(supervisorId, "Jane", null, "Doe", null, null, null, null, "jane.doe@example.com", null, null, null, null, null, null, null, null, null);
+
+        when(memberRepo.findById(id)).thenReturn(Optional.of(existingProfile));
+        when(memberRepo.findByWorkEmail(updatedProfile.getWorkEmail())).thenReturn(Optional.of(updatedProfile));
+        when(memberRepo.findById(supervisorId)).thenReturn(Optional.of(supervisorProfile));
+        when(memberRepo.update(updatedProfile)).thenReturn(updatedProfile);
+
+        MemberProfile result = memberProfileServices.saveProfile(updatedProfile);
+
+        assertEquals(updatedProfile, result);
+        verify(emailSender, times(1)).sendEmail(any(), any(), contains("You have been assigned as the supervisor of"), contains("Please engage with them: john.smith@example.com"), eq("jane.doe@example.com"));
+    }
+
+    @Test
+    @Tag("mocked")
+    void testUpdateProfileWithNoChange() {
+        UUID id = UUID.randomUUID();
+        MemberProfile existingProfile = new MemberProfile(id, "John", null, "Smith", null, null, null, null, "john.smith@example.com", null, null, null, null, null, null, null, null, null);
+
+        when(memberRepo.findById(id)).thenReturn(Optional.of(existingProfile));
+        when(memberRepo.findByWorkEmail(existingProfile.getWorkEmail())).thenReturn(Optional.of(existingProfile));
+        when(memberRepo.update(existingProfile)).thenReturn(existingProfile);
+
+        MemberProfile result = memberProfileServices.saveProfile(existingProfile);
+
+        assertEquals(existingProfile, result);
+        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+    }
+
 
     @Test
     @Tag("mocked")

@@ -125,7 +125,6 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public void emailAssignment(MemberProfile member, boolean isPDL) {
         UUID roleId = isPDL ? member.getPdlId() : member.getSupervisorid();
         String role = isPDL ? "PDL" : "supervisor";
-        System.out.println(roleId);
         if (roleId != null) {
             if (member.getLastName() != null && member.getFirstName() != null && member.getWorkEmail() != null) {
                 Optional<MemberProfile> roleProfileOptional = memberProfileRepository.findById(roleId);
