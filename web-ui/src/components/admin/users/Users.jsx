@@ -23,7 +23,10 @@ import {
 import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import './Users.css';
-import { emailPDLAssignment, emailSupervisorAssignment } from "../../../api/notifications.js";
+import {
+  emailPDLAssignment,
+  emailSupervisorAssignment
+} from '../../../api/notifications.js';
 
 const PREFIX = 'Users';
 const classes = {
@@ -186,14 +189,22 @@ const Users = () => {
                           payload: [...memberProfiles, data]
                         });
                         try {
-                          member.pdlId && await emailPDLAssignment(member, csrf)
+                          member.pdlId &&
+                            (await emailPDLAssignment(member, csrf));
                         } catch (e) {
-                          console.error("Unable to send PDL assignment email", e)
+                          console.error(
+                            'Unable to send PDL assignment email',
+                            e
+                          );
                         }
                         try {
-                          member.supervisorid && await emailSupervisorAssignment(member, csrf)
+                          member.supervisorid &&
+                            (await emailSupervisorAssignment(member, csrf));
                         } catch (e) {
-                          console.error("Unable to send supervisor assignment email", e)
+                          console.error(
+                            'Unable to send supervisor assignment email',
+                            e
+                          );
                         }
                       }
                       handleClose();
