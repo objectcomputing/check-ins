@@ -126,7 +126,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const csrf = selectCsrfToken(state);
   const periods = selectReviewPeriods(state);
   const userProfile = selectUserProfile(state);
-  const isAdmin = userProfile?.role?.includes('ADMIN');
 
   useQueryParameters([
     {
