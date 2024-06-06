@@ -1,4 +1,4 @@
-#volunteer-relationships {
+#volunteer-events {
   .MuiCardHeader-root {
     padding-bottom: 0;
   }
@@ -40,7 +40,7 @@
   }
 }
 
-.volunteer-relationship-dialog {
+.volunteer-hours-dialog {
   [role='dialog'] {
     width: 30rem;
   }

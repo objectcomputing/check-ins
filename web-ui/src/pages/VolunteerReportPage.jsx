@@ -3,6 +3,7 @@ import React, { useReducer, useState } from 'react';
 import { Box, Button, Tab, Tabs } from '@mui/material';
 
 import Organizations from '../components/volunteer/Organizations';
+import VolunteerEvents from '../components/volunteer/VolunteerEvents';
 import VolunteerRelationships from '../components/volunteer/VolunteerRelationships';
 import './VolunteerReportPage.css';
 
@@ -53,7 +54,7 @@ const VolunteerReportPage = () => {
         <VolunteerRelationships forceUpdate={forceUpdate} key={'vr' + n} />
       </TabPanel>
       <TabPanel index={2} value={tabIndex}>
-        <div>Hours are coming soon!</div>
+        <VolunteerEvents forceUpdate={forceUpdate} key={'vh' + n} />
       </TabPanel>
     </div>
   );
