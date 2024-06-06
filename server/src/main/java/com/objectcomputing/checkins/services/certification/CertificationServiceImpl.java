@@ -45,20 +45,19 @@ class CertificationServiceImpl implements CertificationService {
     }
 
     @Override
-    public void deleteCertification(UUID id) {
-        certificationRepository.deleteById(id);
-    }
-
-    @Override
-    public List<EarnedCertification> findAllEarnedCertifications(@Nullable UUID memberId, @Nullable UUID certificationId) {
+    public List<EarnedCertification> findAllEarnedCertifications(
+            @Nullable UUID memberId,
+            @Nullable UUID certificationId,
+            boolean includeInactive
+    ) {
         if (memberId == null && certificationId == null) {
-            return earnedCertificationRepository.findAllOrderByEarnedDateDesc();
+            return earnedCertificationRepository.findAllOrderByEarnedDateDesc(includeInactive);
         } else if (memberId != null && certificationId != null) {
-            return earnedCertificationRepository.findByMemberIdAndCertificationIdOrderByEarnedDateDesc(memberId, certificationId);
+            return earnedCertificationRepository.findByMemberIdAndCertificationIdOrderByEarnedDateDesc(memberId, certificationId, includeInactive);
         } else if (memberId != null) {
-            return earnedCertificationRepository.findByMemberIdOrderByEarnedDateDesc(memberId);
+            return earnedCertificationRepository.findByMemberIdOrderByEarnedDateDesc(memberId, includeInactive);
         } else {
-            return earnedCertificationRepository.findByCertificationIdOrderByEarnedDateDesc(certificationId);
+            return earnedCertificationRepository.findByCertificationIdOrderByEarnedDateDesc(certificationId, includeInactive);
         }
     }
 
@@ -85,7 +84,7 @@ class CertificationServiceImpl implements CertificationService {
     public Certification mergeCertifications(UUID sourceId, UUID targetId) {
         Certification targetCertification = certificationRepository
                 .findById(targetId)
-                .orElseThrow(() ->new BadArgException("Target certification not found"));
+                .orElseThrow(() -> new BadArgException("Target certification not found"));
 
         List<EarnedCertification> sourceCertifications = earnedCertificationRepository.findByCertificationId(sourceId);
         LOG.info("Merging {} certifications from sourceId: {}, to {}", sourceCertifications.size(), sourceId, targetId);

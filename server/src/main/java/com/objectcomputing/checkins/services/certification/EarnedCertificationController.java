@@ -37,14 +37,16 @@ class EarnedCertificationController {
      * List all earned certifications.
      * If memberId is provided, restrict to earned certifications for that member.
      * If certificationId is provided, restrict to earned certifications for that certification.
+     * If includeInactive is true, include inactive certifications in the results.
      *
      * @param memberId        the id of the member to list earned certifications for
      * @param certificationId the id of the certification to list earned certifications for
+     * @param includeInactive whether to include inactive certifications in the results (defalts to false)
      * @return a List of {@link EarnedCertification}
      */
-    @Get("{?memberId,certificationId}")
-    List<EarnedCertification> findAll(@Nullable UUID memberId, @Nullable UUID certificationId) {
-        return certificationService.findAllEarnedCertifications(memberId, certificationId);
+    @Get("{?memberId,certificationId,includeInactive}")
+    List<EarnedCertification> findAll(@Nullable UUID memberId, @Nullable UUID certificationId, @Nullable Boolean includeInactive) {
+        return certificationService.findAllEarnedCertifications(memberId, certificationId, Boolean.TRUE.equals(includeInactive));
     }
 
     /**

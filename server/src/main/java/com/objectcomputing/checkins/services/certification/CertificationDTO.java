@@ -21,4 +21,11 @@ class CertificationDTO {
     @Nullable
     @Schema(description = "badge url of the certification")
     private String badgeUrl;
+
+    @Schema(description = "whether the Certification is active")
+    private boolean active = true;
+
+    CertificationDTO(String name, String badgeUrl) {
+        this(name, badgeUrl, true);
+    }
 }

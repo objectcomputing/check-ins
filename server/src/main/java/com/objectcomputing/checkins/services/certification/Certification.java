@@ -40,16 +40,21 @@ public class Certification {
     @Schema(description = "url of the badge")
     private String badgeUrl;
 
+    @Column(name = "is_active")
+    @Schema(description = "whether the Certification is active")
+    private boolean active = true;
+
     public Certification() {
     }
 
-    Certification(UUID id, String name, @Nullable String badgeUrl) {
+    Certification(UUID id, String name, @Nullable String badgeUrl, boolean active) {
         this.id = id;
         this.name = name;
         this.badgeUrl = badgeUrl;
+        this.active = active;
     }
 
     public Certification(String name, @Nullable String badgeUrl) {
-        this(null, name, badgeUrl);
+        this(null, name, badgeUrl, true);
     }
 }

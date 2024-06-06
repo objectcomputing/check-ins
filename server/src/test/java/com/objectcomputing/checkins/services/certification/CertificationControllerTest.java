@@ -65,21 +65,6 @@ class CertificationControllerTest extends TestContainersSuite implements MemberP
     }
 
     @Test
-    void canDelete() {
-        createCertification("To keep");
-        Certification certification = createCertification("To delete");
-
-        List<Certification> list = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(Certification.class));
-        assertEquals(2, list.size());
-
-        certificationClient.toBlocking().exchange(HttpRequest.DELETE("/" + certification.getId()).basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-
-        list = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(Certification.class));
-        assertEquals(1, list.size());
-        assertEquals("To keep", list.getFirst().getName());
-    }
-
-    @Test
     void canUpdate() {
         Certification certification = createCertification("To update");
 
