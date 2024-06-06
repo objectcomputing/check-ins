@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.guild.member;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -14,7 +13,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -81,7 +79,7 @@ public class GuildMemberController {
      * @param guildid   {@link UUID} of guild
      * @param memberid {@link UUID} of member
      * @param lead,    is lead of the guild
-     * @return {@link List <Guild > list of guilds
+     * @return set of guild members
      */
     @Get("/{?guildid,memberid,lead}")
     public Set<GuildMember> findGuildMembers(@Nullable UUID guildid,

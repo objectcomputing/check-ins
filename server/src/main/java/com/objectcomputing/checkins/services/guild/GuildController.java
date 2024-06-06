@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.guild;
 
 import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
