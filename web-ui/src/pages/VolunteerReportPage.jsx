@@ -32,8 +32,7 @@ TabPanel.displayName = 'TabPanel';
 
 const VolunteerReportPage = () => {
   const [n, forceUpdate] = useReducer(n => n + 1, 0);
-  //TODO: Change 2 to 0 after debugging.
-  const [tabIndex, setTabIndex] = useState(2);
+  const [tabIndex, setTabIndex] = useState(0);
 
   return (
     <div className="volunteer-report-page">
