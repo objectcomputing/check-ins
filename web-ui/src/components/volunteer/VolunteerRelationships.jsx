@@ -132,42 +132,12 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     }
   }, []);
 
-  const relationshipRow = useCallback(
-    relationship => {
-      const org = organizationMap[relationship.organizationId];
-      return (
-        <tr key={relationship.id}>
-          <td>{profileMap[relationship.memberId].name}</td>
-          <td>{org.name}</td>
-          <td>
-            <a alt="website" href={org.website} target="_blank">
-              website
-            </a>
-          </td>
-          <td>{relationship.startDate}</td>
-          <td>{relationship.endDate}</td>
-          <td>
-            <Tooltip title="Edit">
-              <IconButton
-                aria-label="Edit"
-                onClick={() => editRelationship(relationship)}
-              >
-                <Edit />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton
-                aria-label="Delete"
-                onClick={() => confirmDelete(relationship)}
-              >
-                <Delete />
-              </IconButton>
-            </Tooltip>
-          </td>
-        </tr>
-      );
+  const editRelationship = useCallback(
+    org => {
+      setSelectedRelationship(org);
+      setRelationshipDialogOpen(true);
     },
-    [organizationMap, profileMap]
+    [relationshipMap]
   );
 
   const getDate = dateString => {
@@ -267,12 +237,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelRelationship}>Cancel</Button>
-          <Button
-            disabled={
-              !selectedRelationship?.name || !selectedRelationship?.description
-            }
-            onClick={saveRelationship}
-          >
+          <Button disabled={!validRelationship()} onClick={saveRelationship}>
             Save
           </Button>
         </DialogActions>
@@ -281,7 +246,43 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     [relationshipDialogOpen, selectedRelationship]
   );
 
-  const tableColumnsToUse = onlyMe ? tableColumns.slice(1) : tableColumns;
+  const relationshipRow = useCallback(
+    relationship => {
+      const org = organizationMap[relationship.organizationId];
+      return (
+        <tr key={relationship.id}>
+          <td>{profileMap[relationship.memberId].name}</td>
+          <td>{org.name}</td>
+          <td>
+            <a alt="website" href={org.website} target="_blank">
+              website
+            </a>
+          </td>
+          <td>{relationship.startDate}</td>
+          <td>{relationship.endDate}</td>
+          <td>
+            <Tooltip title="Edit">
+              <IconButton
+                aria-label="Edit"
+                onClick={() => editRelationship(relationship)}
+              >
+                <Edit />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                aria-label="Delete"
+                onClick={() => confirmDelete(relationship)}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </td>
+        </tr>
+      );
+    },
+    [organizationMap, profileMap]
+  );
 
   const relationshipsTable = useCallback(
     () => (
@@ -339,14 +340,6 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       }
     },
     [relationshipMap, sortColumn]
-  );
-
-  const editRelationship = useCallback(
-    org => {
-      setSelectedRelationship(org);
-      setRelationshipDialogOpen(true);
-    },
-    [relationshipMap]
   );
 
   const saveRelationship = useCallback(async () => {
@@ -408,6 +401,13 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     },
     [sortAscending, sortColumn]
   );
+
+  const tableColumnsToUse = onlyMe ? tableColumns.slice(1) : tableColumns;
+
+  const validRelationship = useCallback(() => {
+    const rel = selectedRelationship;
+    return rel?.memberId && rel?.organizationId;
+  });
 
   return (
     <div id="volunteer-relationships">
