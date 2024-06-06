@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-interface EarnedCertificationRepository extends CrudRepository<EarnedCertification, UUID> {
+public interface EarnedCertificationRepository extends CrudRepository<EarnedCertification, UUID> {
 
     List<EarnedCertification> findAllOrderByEarnedDateDesc();
 

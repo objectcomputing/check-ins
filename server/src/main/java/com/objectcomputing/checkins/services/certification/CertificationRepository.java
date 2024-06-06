@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-interface CertificationRepository extends CrudRepository<Certification, UUID> {
+public interface CertificationRepository extends CrudRepository<Certification, UUID> {
 
     List<Certification> findAllOrderByNameAsc();
 }

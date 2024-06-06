@@ -21,7 +21,7 @@ import java.util.UUID;
 @Entity
 @Introspected
 @Table(name = "certification")
-class Certification {
+public class Certification {
 
     @Id
     @Column(name = "certification_id")
@@ -49,7 +49,7 @@ class Certification {
         this.badgeUrl = badgeUrl;
     }
 
-    Certification(String name, @Nullable String badgeUrl) {
+    public Certification(String name, @Nullable String badgeUrl) {
         this(null, name, badgeUrl);
     }
 }

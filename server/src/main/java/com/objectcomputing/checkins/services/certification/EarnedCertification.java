@@ -26,7 +26,7 @@ import java.util.UUID;
 @Entity
 @Introspected
 @Table(name = "earned_certification")
-class EarnedCertification {
+public class EarnedCertification {
 
     @Id
     @Column(name = "earned_certification_id")
@@ -76,11 +76,11 @@ class EarnedCertification {
     public EarnedCertification() {
     }
 
-    EarnedCertification(UUID memberId, UUID certificationId, String description, LocalDate earnedDate, LocalDate expirationDate, String certificateImageUrl) {
+    public EarnedCertification(UUID memberId, UUID certificationId, String description, LocalDate earnedDate, LocalDate expirationDate, String certificateImageUrl) {
         this(null, memberId, certificationId, description, earnedDate, expirationDate, certificateImageUrl);
     }
 
-    EarnedCertification(UUID id, UUID memberId, UUID certificationId, String description, LocalDate earnedDate, LocalDate expirationDate, String certificateImageUrl) {
+    public EarnedCertification(UUID id, UUID memberId, UUID certificationId, String description, LocalDate earnedDate, LocalDate expirationDate, String certificateImageUrl) {
         this.id = id;
         this.memberId = memberId;
         this.certificationId = certificationId;
