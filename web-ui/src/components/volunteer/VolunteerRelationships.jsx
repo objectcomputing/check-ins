@@ -50,11 +50,13 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [badgeUrl, setBadgeUrl] = useState('');
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [organizationMap, setOrganizationMap] = useState({});
+  const [organizations, setOrganizations] = useState([]);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
   const [relationshipMap, setRelationshipMap] = useState({});
   const [relationships, setRelationships] = useState([]);
-  const [selectedRelationship, setSelectedRelationship] = useState(null);
+  const [selectedOrganization, setSelectedOrganization] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [selectedRelationship, setSelectedRelationship] = useState(null);
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Member');
 
@@ -67,6 +69,8 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     try {
       let res = await fetch(organizationBaseUrl);
       const organizations = await res.json();
+      organizations.sort((org1, org2) => org1.name.localeCompare(org2.name));
+      setOrganizations(organizations);
       setOrganizationMap(
         organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
       );
@@ -174,29 +178,39 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           {selectedRelationship?.id ? 'Edit' : 'Add'} Relationship
         </DialogTitle>
         <DialogContent>
-          <TextField
-            className="fullWidth"
-            label="Name"
-            required
-            onChange={e =>
-              setSelectedRelationship({
-                ...selectedRelationship,
-                name: e.target.value
-              })
-            }
-            value={selectedRelationship?.name ?? ''}
+          <Autocomplete
+            disableClearable
+            getOptionLabel={profile => profile.name || ''}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            onChange={(event, profile) => {
+              setSelectedProfile({ ...profile });
+            }}
+            options={profiles}
+            renderInput={params => (
+              <TextField
+                {...params}
+                className="fullWidth"
+                label="Team Member"
+              />
+            )}
+            value={selectedProfile}
           />
-          <TextField
-            className="fullWidth"
-            label="Description"
-            required
-            onChange={e =>
-              setSelectedRelationship({
-                ...selectedRelationship,
-                description: e.target.value
-              })
-            }
-            value={selectedRelationship?.description ?? ''}
+          <Autocomplete
+            disableClearable
+            getOptionLabel={organization => organization.name || ''}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            onChange={(event, organization) => {
+              setSelectedOrganization({ ...organization });
+            }}
+            options={organizations}
+            renderInput={params => (
+              <TextField
+                {...params}
+                className="fullWidth"
+                label="Organization"
+              />
+            )}
+            value={selectedOrganization}
           />
           <TextField
             className="fullWidth"
@@ -208,6 +222,26 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
               })
             }
             value={selectedRelationship?.website ?? ''}
+          />
+          <DatePickerField
+            date={new Date(selectedRelationship?.startDate)}
+            label="Start Date"
+            setDate={date => {
+              setSelectedRelationship({
+                ...selectedRelationship,
+                startDate: formatDate(date)
+              });
+            }}
+          />
+          <DatePickerField
+            date={new Date(selectedRelationship?.endDate)}
+            label="End Date"
+            setDate={date => {
+              setSelectedRelationship({
+                ...selectedRelationship,
+                endDate: formatDate(date)
+              });
+            }}
           />
         </DialogContent>
         <DialogActions>
@@ -259,7 +293,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
               <tbody>{relationships.map(relationshipRow)}</tbody>
             </table>
             <IconButton
-              aria-label="Add Relationship"
+              aria-label="Add Volunteer Relationship"
               classes={{ root: 'add-button' }}
               onClick={addRelationship}
             >
