@@ -38,7 +38,7 @@ import { AppContext } from '../context/AppContext.jsx';
 import {
   selectCsrfToken,
   selectCurrentUser,
-  selectHasPulseReportPermission,
+  selectHasViewPulseReportPermission,
   selectProfileMap
 } from '../context/selectors.js';
 import ExpandMore from '../components/expand-more/ExpandMore';
@@ -88,10 +88,14 @@ const PulseReportPage = () => {
   const csrf = selectCsrfToken(state);
   const memberMap = selectProfileMap(state);
 
-  const initialDateFrom = new Date();
+  // Mock the date if under test so the snapshot stays consistent
+  const today = import.meta.env.VITEST_WORKER_ID
+    ? new Date(2024, 5, 4)
+    : new Date();
+  const initialDateFrom = new Date(today);
   initialDateFrom.setMonth(initialDateFrom.getMonth() - 3);
   const [dateFrom, setDateFrom] = useState(initialDateFrom);
-  const [dateTo, setDateTo] = useState(new Date());
+  const [dateTo, setDateTo] = useState(today);
 
   const [averageData, setAverageData] = useState({});
   const [barChartData, setBarChartData] = useState([]);
@@ -250,10 +254,10 @@ const PulseReportPage = () => {
   };
 
   useEffect(() => {
-    //TODO: Skipping the permission check during testing
-    //      because this permission has not been implemented yet.
-    // if (selectHasPulseReportPermission(state)) loadPulses();
+    // TODO: Uncomment this check after PR #2429 is merged.
+    // if (selectHasViewPulseReportPermission(state)) {
     loadPulses();
+    // }
   }, [csrf, dateFrom, dateTo]);
 
   useEffect(() => {

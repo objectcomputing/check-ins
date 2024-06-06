@@ -26,7 +26,7 @@ export const getGuildLeaders = async (id, cookie) => {
     url: `${guildLeadersUrl}/${id}`,
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
-}
+};
 
 export const updateGuild = async (guild, cookie) => {
   return resolve({

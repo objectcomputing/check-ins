@@ -1,9 +1,10 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
+    id 'java-library'
+    id 'maven-publish'
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.3.8"
-    id "idea"
     id "jacoco"
     id("org.openrewrite.rewrite") version "latest.release"
 }
@@ -29,9 +30,13 @@ micronaut {
 }
 
 configurations {
-    // for dependencies that are needed for development only
-    developmentOnly
-    publicResources
+    yarnBuildElements {
+        canBeResolved = true
+        canBeConsumed = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "yarnBuild-elements"))
+        }
+    }
 }
 
 dependencies {
@@ -50,6 +55,8 @@ dependencies {
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+
+    yarnBuildElements(project(":web-ui"))
 
     implementation("io.micronaut:micronaut-jackson-databind")
     implementation("io.micronaut:micronaut-http-client")
@@ -119,7 +126,8 @@ test {
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
     reports {
-        xml.required.set(true)
+        xml.required = true
+        csv.required = false
     }
 }
 
@@ -139,10 +147,9 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "false") {
-    evaluationDependsOn(":web-ui")
     processResources {
         into('public') {
-            from tasks.getByPath(':web-ui:yarnBuild').outputs
+            from configurations.named('yarnBuildElements')
         }
     }
 }
@@ -150,10 +157,38 @@ if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "fals
 application {
     mainClass.set("com.objectcomputing.checkins.Application")
 }
+
+sonarqube {
+    properties {
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile
+        property "sonar.cpd.exclusions", "**/*DTO.java"
+    }
+}
+
+publishing {
+    publications {
+        checkInsProject(MavenPublication) { publication ->
+            artifactId = 'check-ins'
+            project.shadow.component(publication)
+        }
+    }
+
+    repositories {
+        maven {
+            name = "CheckInsProject"
+            url = "https://maven.pkg.github.com/objectcomputing/check-ins"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")!=null?System.getenv("GITHUB_ACTOR"):"OCI-LABS"
+                password = System.getenv("GITHUB_TOKEN")!=null?System.getenv("GITHUB_TOKEN"):"OCI-LABS"
+            }
+        }
+    }
+}
+
 java {
     sourceCompatibility = JavaVersion.toVersion("21")
     targetCompatibility = JavaVersion.toVersion("21")
 }
 
-run.classpath += configurations.developmentOnly
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Xdebug',"-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n")
