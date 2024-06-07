@@ -1,4 +1,4 @@
-name: Gradle Build & Deploy - Develop
+name: Gradle Build & Deploy - POC
 on:
   push:
     branches:
