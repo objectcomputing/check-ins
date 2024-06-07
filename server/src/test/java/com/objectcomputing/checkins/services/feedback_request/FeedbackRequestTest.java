@@ -197,7 +197,7 @@ class FeedbackRequestTest extends TestContainersSuite {
         verify(emailSender, times(1)).sendEmail(any(), any(),
                 eq("firstName lastName has finished their self-review for Self-Review Test."),
                 eq("Self-review has been completed by firstName lastName for Self-Review Test.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner."),
-                eq("pdl@example.com"), eq("supervisor@example.com"));
+                eq("supervisor@example.com"), eq("pdl@example.com"));
     }
 
     @Test
