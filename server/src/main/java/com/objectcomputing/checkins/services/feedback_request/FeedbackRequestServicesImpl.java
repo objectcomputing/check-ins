@@ -371,6 +371,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         String body = bodyBuilder.toString();
 
-        emailSender.sendEmail("HR", "mckiernanc@objectcomputing.com", subject, body, recipients.toArray(new String[0]));
+        if (pdlProfile != null || supervisorProfile != null) {
+            try {
+                emailSender.sendEmail(null, null, subject, body, recipients.toArray(new String[0]));
+            } catch (Exception e) {
+                LOG.error("Unable to send self-review completion email to PDL/Supervisor", e);
+            }
+        }
     }
 }
