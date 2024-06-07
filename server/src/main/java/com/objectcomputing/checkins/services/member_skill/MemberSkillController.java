@@ -4,7 +4,6 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -16,7 +15,6 @@ import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -80,7 +78,7 @@ public class MemberSkillController {
      *
      * @param memberid {@link UUID} of member profile
      * @param skillid  {@link UUID} of skills
-     * @return {@link List <MemberSkill > list of Member Skills
+     * @return set of Member Skills
      */
     @Get("/{?memberid,skillid}")
     public Mono<HttpResponse<Set<MemberSkill>>> findMemberSkills(@Nullable UUID memberid, @Nullable UUID skillid) {

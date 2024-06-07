@@ -9,7 +9,6 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.security.authentication.Authentication;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterAll;

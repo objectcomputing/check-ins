@@ -398,6 +398,13 @@ INSERT INTO action_items
 Values('0ead3434-82e7-47b4-a0ef-d1f44d01732b', '1343411e-26bf-4274-81ca-1b46ba3f0cb0', '6884ab96-2275-4af9-89d8-ad84254d8759', PGP_SYM_ENCRYPT('Action Item for Pramukh Bagur','${aeskey}'));
 
 
+-- Function to generate a random time between 9 AM and 5 PM
+CREATE OR REPLACE FUNCTION random_workday_time() RETURNS time AS $$
+BEGIN
+  RETURN '09:00:00'::time + (random() * (interval '8 hours'));
+END;
+$$ LANGUAGE plpgsql;
+
 -- Mohit Bhatia Check-ins
 ---- 2020-09-29 - Active
 INSERT INTO checkins
@@ -411,7 +418,7 @@ VALUES (
   'ce666f85-4289-4fcd-b3c2-365ab965e30a',
   'b2d35288-7f1e-4549-aa2b-68396b162490',
   '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', -- pdl: Geetika Sharma
-  CURRENT_DATE - INTERVAL '2 weeks', -- 2 weeks ago
+  (CURRENT_DATE - INTERVAL '2 weeks') + random_workday_time(), -- 2 weeks ago with random time
   true
 );
 
@@ -421,7 +428,7 @@ VALUES (
   '13d76100-a6a4-4d87-82e3-9faac4ea1a09',
   'b2d35288-7f1e-4549-aa2b-68396b162490',
   '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', -- pdl: Geetika Sharma
-  CURRENT_DATE - INTERVAL '3 months', -- 3 months ago
+  (CURRENT_DATE - INTERVAL '3 months') + random_workday_time(), -- 3 months ago with random time
   true
 );
 
@@ -480,7 +487,7 @@ VALUES (
   '34a48fe2-7db9-4e39-927c-ffe32467df71',
   '1b4f99da-ef70-4a76-9b37-8bb783b749ad',
   '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', -- pdl: Geetika Sharma
-  CURRENT_DATE - INTERVAL '2 days', -- 2 days ago
+  (CURRENT_DATE - INTERVAL '2 days') + random_workday_time(), -- 2 days ago with random time
   true
 );
 
@@ -490,7 +497,7 @@ VALUES (
   'e70524e2-3f81-4f94-afae-a638aca0d3b5',
   '1b4f99da-ef70-4a76-9b37-8bb783b749ad',
   '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', -- pdl: Geetika Sharma
-  CURRENT_DATE - INTERVAL '5 months', -- 5 months ago
+  (CURRENT_DATE - INTERVAL '5 months') + random_workday_time(), -- 5 months ago with random time
   true
 );
 
@@ -502,7 +509,7 @@ VALUES (
   'b19a00d4-0225-412a-9456-d349ca293cdd',
   '59b790d2-fabc-11eb-9a03-0242ac130003',
   '6207b3fd-042d-49aa-9e28-dcc04f537c2d', -- pdl: Michael Kimberlin
-  CURRENT_DATE + INTERVAL '1 week', -- 1 week from current date
+  (CURRENT_DATE + INTERVAL '1 week') + random_workday_time(), -- 1 week from current date with random time
   false
 );
 
@@ -512,7 +519,7 @@ VALUES (
   '30026234-c228-48f5-aa93-53eab4b4dcef',
   '59b790d2-fabc-11eb-9a03-0242ac130003',
   '6207b3fd-042d-49aa-9e28-dcc04f537c2d', -- pdl: Michael Kimberlin
-  CURRENT_DATE - INTERVAL '3 months', -- 3 months ago from current date
+  (CURRENT_DATE - INTERVAL '3 months') + random_workday_time(), -- 3 months ago from current date with random time
   true
 );
 
@@ -574,7 +581,7 @@ VALUES (
   'f5254f0d-97ba-4e5b-9c16-9a83bb545124',
   '066b186f-1425-45de-89f2-4ddcc6ebe237',
   '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', -- pdl: Mark Volkmann
-  CURRENT_DATE - INTERVAL '1 day', -- 1 day ago
+  (CURRENT_DATE - INTERVAL '1 day') + random_workday_time(), -- 1 day ago with random time
   true
 );
 
@@ -584,7 +591,7 @@ VALUES (
   '962fa088-cf7d-476f-8d8d-625ce190de84',
   '066b186f-1425-45de-89f2-4ddcc6ebe237',
   '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', -- pdl: Mark Volkmann
-  CURRENT_DATE - INTERVAL '3 months', -- 3 months ago
+  (CURRENT_DATE - INTERVAL '3 months') + random_workday_time(), -- 3 months ago with random time
   true
 );
 
@@ -596,7 +603,7 @@ VALUES (
   '1490caa7-1856-4c08-b287-5aa3684952e6',
   '8fa673c0-ca19-4271-b759-41cb9db2e83a',
   '802cb1f5-a255-4236-8719-773fa53d79d9', -- pdl: John Meyerin
-  CURRENT_DATE + INTERVAL '1 month', -- 1 month from now
+  (CURRENT_DATE + INTERVAL '1 month') + random_workday_time(), -- 1 month from now with random time
   false
 );
 
@@ -606,7 +613,7 @@ VALUES (
   'a41d9472-69b7-412a-9f76-8d41dae2b165',
   '8fa673c0-ca19-4271-b759-41cb9db2e83a', -- Holly Williams
   '802cb1f5-a255-4236-8719-773fa53d79d9', -- pdl: John Meyerin
-  CURRENT_DATE - INTERVAL '3 months', -- 3 months ago
+  (CURRENT_DATE - INTERVAL '3 months') + random_workday_time(), -- 3 months ago with random time
   true
 );
 
