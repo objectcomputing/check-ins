@@ -47,7 +47,7 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
         variant="fullWidth"
       >
         <Tab label="Organizations" {...a11yProps(0)} />
-        <Tab label="Relationships" {...a11yProps(1)} />
+        <Tab label={onlyMe ? 'My Orgs' : 'Relationships'} {...a11yProps(1)} />
         <Tab label="Events" {...a11yProps(2)} />
       </Tabs>
       <TabPanel index={0} value={tabIndex}>

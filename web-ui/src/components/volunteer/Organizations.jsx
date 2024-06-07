@@ -240,7 +240,8 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
           </div>
           {onlyMe && (
             <p className="warning">
-              Organizations can only be edited and deleted by an admin user.
+              You can add organizations, but they can only be edited and deleted
+              by an admin user.
             </p>
           )}
         </CardContent>

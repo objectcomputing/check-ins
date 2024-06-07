@@ -33,8 +33,6 @@ const formatDate = date => {
   return format(date, 'yyyy-MM-dd');
 };
 
-const sortableTableColumns = ['Relationship', 'Date', 'Hours', 'Notes'];
-
 const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
 
 const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
@@ -53,6 +51,9 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const profileMap = selectProfileMap(state);
   const profiles = Object.values(profileMap);
   profiles.sort((a, b) => a.name.localeCompare(b.name));
+
+  let sortableTableColumns = ['Date', 'Hours', 'Notes'];
+  sortableTableColumns.unshift(onlyMe ? 'Organization' : 'Relationship');
 
   const loadEvents = useCallback(async () => {
     try {
@@ -233,10 +234,10 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     event => {
       const relationship = relationshipMap[event.relationshipId];
       const member = profileMap[relationship.memberId];
-      const organization = organizationMap[relationship.organizationId];
+      const org = organizationMap[relationship.organizationId];
       return (
         <tr key={event.id}>
-          <td>{member.name + ' - ' + organization.name}</td>
+          <td>{onlyMe ? org.name : member.name + ' - ' + org.name}</td>
           <td>{event.date}</td>
           <td>{event.hours}</td>
           <td>{event.notes}</td>
