@@ -23,15 +23,15 @@ jobs:
       - id: 'auth_with_gcp'
         uses: 'google-github-actions/auth@v2'
         with:
-          project_id: '${{env.PROJECT_ID}}'
+          project_id: '${{secrets.PROJECT_ID}}'
           workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'  
           service_account: '${{secrets.GCLOUD_SERVICEACCOUNT}}'
       - id: 'secrets'
         uses: 'google-github-actions/get-secretmanager-secrets@v2'
         with:
           secrets: |-
-            cloud_run_address:${{env.PROJECT_ID}}/CLOUD_RUN_ADDRESS
-            cloud_db_connection_name:${{env.PROJECT_ID}}/CLOUD_DB_CONNECTION_NAME
+            cloud_run_address:${{secrets.PROJECT_ID}}/CLOUD_RUN_ADDRESS
+            cloud_db_connection_name:${{secrets.PROJECT_ID}}/CLOUD_DB_CONNECTION_NAME
       - name: Set up Node LTS
         uses: actions/setup-node@v4
         with:
