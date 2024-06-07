@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,25 +32,27 @@ class PulseResponseTest extends TestContainersSuite {
     private MemberProfileServices memberProfileServices;
     private MemberProfileRepository memberRepo;
     private EmailSender emailSender;
-
+    private CurrentUserServices currentUserServices;
+    private RolePermissionServices rolePermissionServices;
     private PulseResponseServicesImpl pulseResponseService;
+    private PulseResponseRepository pulseResponseRepo;
 
     @BeforeEach
     @Tag("mocked")
     void setUp() {
-        PulseResponseRepository pulseResponseRepo = Mockito.mock(PulseResponseRepository.class);
+        pulseResponseRepo = Mockito.mock(PulseResponseRepository.class);
         memberProfileServices = Mockito.mock(MemberProfileServices.class);
         memberRepo = Mockito.mock(MemberProfileRepository.class);
-        CurrentUserServices currentUserServices = Mockito.mock(CurrentUserServices.class);
-        RolePermissionServices rolePermissionServices = Mockito.mock(RolePermissionServices.class);
+        currentUserServices = Mockito.mock(CurrentUserServices.class);
+        rolePermissionServices = Mockito.mock(RolePermissionServices.class);
         emailSender = Mockito.mock(EmailSender.class);
 
-        pulseResponseService = new PulseResponseServicesImpl(pulseResponseRepo,
+        pulseResponseService = Mockito.spy(new PulseResponseServicesImpl(pulseResponseRepo,
                 memberProfileServices,
                 memberRepo,
                 currentUserServices,
                 rolePermissionServices,
-                emailSender);
+                emailSender));
     }
 
     @AfterEach
@@ -139,6 +144,156 @@ class PulseResponseTest extends TestContainersSuite {
         assertTrue(toString.contains(id.toString()));
         assertTrue(toString.contains(internalFeelings));
         assertTrue(toString.contains(externalFeelings));
+    }
+
+    @Test
+    @Tag("mocked")
+    void testSaveWithValidPulseResponse() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID memberId = UUID.randomUUID();
+        LocalDate pulseSubDate = LocalDate.now();
+
+        PulseResponse pulseResponse = new PulseResponse();
+        pulseResponse.setTeamMemberId(memberId);
+        pulseResponse.setSubmissionDate(pulseSubDate);
+
+        MemberProfile memberProfile = new MemberProfile(currentUserId, "John", null, "Doe",
+                null, null, null, null, "john@oci.com",
+                null, null, null, null,
+                null, null, null, null, null);
+
+        MemberProfile memberProfile2 = new MemberProfile(memberId, "Jane", null, "Doe",
+                null, null, null, null, "jane@oci.com",
+                null, null, null, currentUserId,
+                null, null, null, null, null);
+
+        when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
+        when(memberRepo.findById(memberId)).thenReturn(Optional.of(memberProfile2));
+        when(memberProfileServices.getSubordinatesForId(currentUserId)).thenReturn(Collections.singletonList(memberProfile2));
+
+        PulseResponse savedResponse = new PulseResponse(); // Assuming this is a valid saved response
+        when(pulseResponseRepo.save(pulseResponse)).thenReturn(savedResponse);
+
+        PulseResponse result = pulseResponseService.save(pulseResponse);
+
+        assertEquals(savedResponse, result);
+        verify(pulseResponseRepo, times(1)).save(pulseResponse);
+        verify(pulseResponseService, times(1)).sendPulseLowScoreEmail(savedResponse);
+    }
+
+    @Test
+    @Tag("mocked")
+    void testSaveWithNonNullId() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID memberId = UUID.randomUUID();
+        LocalDate pulseSubDate = LocalDate.now();
+
+        PulseResponse pulseResponse = new PulseResponse();
+        pulseResponse.setId(UUID.randomUUID()); // Non-null ID
+        pulseResponse.setTeamMemberId(memberId);
+        pulseResponse.setSubmissionDate(pulseSubDate);
+        MemberProfile memberProfile = new MemberProfile(currentUserId, "John", null, "Doe",
+                null, null, null, null, "john@oci.com",
+                null, null, null, null,
+                null, null, null, null, null);
+        when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
+
+        BadArgException exception = assertThrows(BadArgException.class, () -> {
+            pulseResponseService.save(pulseResponse);
+        });
+
+        assertEquals(String.format("Found unexpected id for pulseresponse %s", pulseResponse.getId()), exception.getMessage());
+        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    @Tag("mocked")
+    void testSaveWithNonExistentMember() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID memberId = UUID.randomUUID();
+        LocalDate pulseSubDate = LocalDate.now();
+
+        PulseResponse pulseResponse = new PulseResponse();
+        pulseResponse.setTeamMemberId(memberId);
+        pulseResponse.setSubmissionDate(pulseSubDate);
+
+        MemberProfile memberProfile = new MemberProfile(currentUserId, "John", null, "Doe",
+                null, null, null, null, "john@oci.com",
+                null, null, null, null,
+                null, null, null, null, null);
+        when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
+        when(memberRepo.findById(memberId)).thenReturn(Optional.empty()); // Member doesn't exist
+
+        BadArgException exception = assertThrows(BadArgException.class, () -> {
+            pulseResponseService.save(pulseResponse);
+        });
+
+        assertEquals(String.format("Member %s doesn't exists", memberId), exception.getMessage());
+        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    @Tag("mocked")
+    void testSaveWithInvalidDate() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID memberId = UUID.randomUUID();
+        LocalDate pulseSubDate = LocalDate.of(0000,1,1);
+
+        PulseResponse pulseResponse = new PulseResponse();
+        pulseResponse.setTeamMemberId(memberId);
+        pulseResponse.setSubmissionDate(pulseSubDate);
+
+        MemberProfile memberProfile = new MemberProfile(currentUserId, "John", null, "Doe",
+                null, null, null, null, "john@oci.com",
+                null, null, null, null,
+                null, null, null, null, null);
+
+        MemberProfile memberProfile2 = new MemberProfile(memberId, "Jane", null, "Doe",
+                null, null, null, null, "jane@oci.com",
+                null, null, null, currentUserId,
+                null, null, null, null, null);
+        when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
+        when(memberRepo.findById(memberId)).thenReturn(Optional.of(memberProfile2));
+        when(memberProfileServices.getSubordinatesForId(currentUserId)).thenReturn(Collections.singletonList(memberProfile2));
+
+        BadArgException exception = assertThrows(BadArgException.class, () -> {
+            pulseResponseService.save(pulseResponse);
+        });
+
+        assertEquals(String.format("Invalid date for pulseresponse submission date %s", memberId), exception.getMessage());
+        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    @Tag("mocked")
+    void testSaveWithoutPermission() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID memberId = UUID.randomUUID();
+        LocalDate pulseSubDate = LocalDate.now();
+
+        PulseResponse pulseResponse = new PulseResponse();
+        pulseResponse.setTeamMemberId(memberId);
+        pulseResponse.setSubmissionDate(pulseSubDate);
+
+        MemberProfile memberProfile = new MemberProfile(currentUserId, "John", null, "Doe",
+                null, null, null, null, "john@oci.com",
+                null, null, null, null,
+                null, null, null, null, null);
+
+        MemberProfile memberProfile2 = new MemberProfile(memberId, "Jane", null, "Doe",
+                null, null, null, null, "jane@oci.com",
+                null, null, null, currentUserId,
+                null, null, null, null, null);
+        when(currentUserServices.getCurrentUser()).thenReturn(memberProfile);
+        when(memberRepo.findById(memberId)).thenReturn(Optional.of(memberProfile2));
+        when(memberProfileServices.getSubordinatesForId(currentUserId)).thenReturn(Collections.emptyList()); // No subordinates
+
+        BadArgException exception = assertThrows(BadArgException.class, () -> {
+            pulseResponseService.save(pulseResponse);
+        });
+
+        assertEquals(String.format("User %s does not have permission to create pulse response for user %s", currentUserId, memberId), exception.getMessage());
+        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
     }
 
     @Test
