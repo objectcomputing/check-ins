@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AddCircleOutline, Delete, Edit, FoodBank } from '@mui/icons-material';
+import { AddCircleOutline, Delete, Edit, Handshake } from '@mui/icons-material';
 import {
   Autocomplete,
   Button,
@@ -22,7 +22,6 @@ import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
 import { selectCurrentUser, selectProfileMap } from '../../context/selectors';
-import './VolunteerRelationships.css';
 
 const organizationBaseUrl = 'http://localhost:3000/organization';
 const relationshipBaseUrl = 'http://localhost:3000/volunteer-relationship';
@@ -148,7 +147,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const relationshipDialog = useCallback(
     () => (
       <Dialog
-        classes={{ root: 'volunteer-relationship-dialog' }}
+        classes={{ root: 'volunteer-dialog' }}
         open={relationshipDialogOpen}
         onClose={cancelRelationship}
       >
@@ -283,7 +282,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     () => (
       <Card>
         <CardHeader
-          avatar={<FoodBank />}
+          avatar={<Handshake />}
           title="Relationships"
           titleTypographyProps={{ variant: 'h5', component: 'h2' }}
         />

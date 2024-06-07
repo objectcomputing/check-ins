@@ -22,7 +22,6 @@ import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
 import { selectCurrentUser, selectProfileMap } from '../../context/selectors';
-import './Organizations.css';
 
 const organizationBaseUrl = 'http://localhost:3000/organization';
 
@@ -136,7 +135,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const organizationDialog = useCallback(
     () => (
       <Dialog
-        classes={{ root: 'organization-dialog' }}
+        classes={{ root: 'volunteer-dialog' }}
         open={organizationDialogOpen}
         onClose={cancelOrganization}
       >
