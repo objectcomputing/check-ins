@@ -3,7 +3,7 @@ on:
   push:
     branches:
       # - 'develop'
-      - 'feature/2486-create-new-pipeline-for-updated-build-deployment'
+      - '2486-create-new-pipeline-for-updated-build-deployment'
 env:
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
