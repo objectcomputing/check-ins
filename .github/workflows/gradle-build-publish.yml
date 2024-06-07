@@ -11,9 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node LTS
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
