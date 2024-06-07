@@ -17,7 +17,8 @@ CREATE TABLE volunteering_relationship
     member_id       varchar REFERENCES member_profile (id),
     organization_id varchar REFERENCES volunteering_organization (organization_id),
     start_date      timestamp NOT NULL,
-    end_date        timestamp
+    end_date        timestamp,
+    is_active       boolean NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE volunteering_event

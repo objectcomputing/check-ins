@@ -58,4 +58,8 @@ public class VolunteeringRelationship {
     @Schema(description = "(optionally) when the relationship ended")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
+
+    @Column(name = "is_active")
+    @Schema(description = "whether the Volunteering Relationship is active")
+    private boolean active = true;
 }
