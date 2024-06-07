@@ -1,24 +1,20 @@
-name: Gradle Build & Deploy - POC
+name: Gradle Build & Deploy - Develop
 on:
   push:
     branches:
       # - 'develop'
-      - '2486-create-new-pipeline-for-updated-build-deployment'
-
+      - 'feature/2486-create-new-pipeline-for-updated-build-deployment'
+env:
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+  RUN_REGION: us-central1
+  SERVICE_NAME: checkins-develop
 jobs:
   build:
-    permissions:
-     id-token: 'write'
     runs-on: ubuntu-latest
     environment:
       name: DEV-POC
       # url: ${{ env.CLOUD_RUN_ADDRESS }}/
-    env:
-      PROJECT_NUMBER : ${{ secrets.PROJECT_NUM }}
-      PROJECT_ID: ${{ secrets.PROJECT_ID }}
-      PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
-      RUN_REGION: us-central1
-      SERVICE_NAME: checkins-develop
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,15 +22,15 @@ jobs:
       - id: 'auth_with_gcp'
         uses: 'google-github-actions/auth@v2'
         with:
-          project_id: '${{secrets.PROJECT_NUM}}'
+          project_id: '${{env.PROJECT_ID}}'
           workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'  
-          service_account: '${{secrets.AUTOMATION_SERVICE_ACCOUNT}}'
+          service_account: '${{secrets.GCLOUD_SERVICEACCOUNT}}'
       - id: 'secrets'
         uses: 'google-github-actions/get-secretmanager-secrets@v2'
         with:
           secrets: |-
-            cloud_run_address:${{secrets.PROJECT_NUM}}/CLOUD_RUN_ADDRESS
-            cloud_db_connection_name:${{secrets.PROJECT_NUM}}/CLOUD_DB_CONNECTION_NAME
+            cloud_run_address:${{env.PROJECT_ID}}/CLOUD_RUN_ADDRESS
+            cloud_db_connection_name:${{env.PROJECT_ID}}/CLOUD_DB_CONNECTION_NAME
       - name: Set up Node LTS
         uses: actions/setup-node@v4
         with:
@@ -101,9 +97,9 @@ jobs:
       - name: Deploy image to Cloud Run
         run: |-
           gcloud run deploy "$SERVICE_NAME" \
-            --project "$PROJECT_ID" \
+            --project "$PROJECT_NAME" \
             --region "$RUN_REGION" \
-            --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --image "gcr.io/$PROJECT_NAME/$SERVICE_NAME:$GITHUB_SHA" \
             --memory 1Gi \
             --add-cloudsql-instances ${{steps.secrets.outputs.cloud_db_connection_name }} \
             --set-secrets "CLOUD_DB_CONNECTION_NAME=CLOUD_DB_CONNECTION_NAME:latest" \
