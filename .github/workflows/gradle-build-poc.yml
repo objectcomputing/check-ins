@@ -4,21 +4,17 @@ on:
     branches:
       # - 'develop'
       - '2486-create-new-pipeline-for-updated-build-deployment'
-
+env:
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+  RUN_REGION: us-central1
+  SERVICE_NAME: checkins-develop
 jobs:
   build:
-    permissions:
-     id-token: 'write'
     runs-on: ubuntu-latest
     environment:
       name: DEV-POC
       # url: ${{ env.CLOUD_RUN_ADDRESS }}/
-    env:
-      PROJECT_NUMBER : ${{ secrets.PROJECT_NUM }}
-      PROJECT_ID: ${{ secrets.PROJECT_ID }}
-      PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
-      RUN_REGION: us-central1
-      SERVICE_NAME: checkins-develop
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,16 +22,15 @@ jobs:
       - id: 'auth_with_gcp'
         uses: 'google-github-actions/auth@v2'
         with:
-          project_id: '${{secrets.PROJECT_NUM}}'
-          workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'
-          service_account: '${{secrets.AUTOMATION_SERVICE_ACCOUNT}}'
+          project_id: '${{env.PROJECT_ID}}'
+          workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'  
+          service_account: '${{secrets.GCLOUD_SERVICEACCOUNT}}'
       - id: 'secrets'
         uses: 'google-github-actions/get-secretmanager-secrets@v2'
         with:
           secrets: |-
-            cloud_run_address:${{secrets.PROJECT_NUM}}/CLOUD_RUN_ADDRESS
-            cloud_db_connection_name:${{secrets.PROJECT_NUM}}/CLOUD_DB_CONNECTION_NAME
-            connector_id:${{secrets.PROJECT_NUM}}/CONNECTOR_ID
+            cloud_run_address:${{env.PROJECT_ID}}/CLOUD_RUN_ADDRESS
+            cloud_db_connection_name:${{env.PROJECT_ID}}/CLOUD_DB_CONNECTION_NAME
       - name: Set up Node LTS
         uses: actions/setup-node@v4
         with:
@@ -102,12 +97,11 @@ jobs:
       - name: Deploy image to Cloud Run
         run: |-
           gcloud run deploy "$SERVICE_NAME" \
-            --project "$PROJECT_ID" \
+            --project "$PROJECT_NAME" \
             --region "$RUN_REGION" \
-            --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --image "gcr.io/$PROJECT_NAME/$SERVICE_NAME:$GITHUB_SHA" \
             --memory 1Gi \
             --add-cloudsql-instances ${{steps.secrets.outputs.cloud_db_connection_name }} \
-            --vpc-connector ${{steps.secrets.outputs.connector_id}} \
             --set-secrets "CLOUD_DB_CONNECTION_NAME=CLOUD_DB_CONNECTION_NAME:latest" \
             --set-secrets "DB_NAME=DB_NAME:latest" \
             --set-secrets "DATASOURCES_DEFAULT_PASSWORD=DATASOURCES_DEFAULT_PASSWORD:latest" \
@@ -116,16 +110,23 @@ jobs:
             --set-secrets "OAUTH_CLIENT_ID=OAUTH_CLIENT_ID:latest" \
             --set-secrets "OAUTH_CLIENT_SECRET=OAUTH_CLIENT_SECRET:latest" \
             --set-secrets "OAUTH_CALLBACK_URI=OAUTH_CALLBACK_URI:latest" \
+            --set-secrets "DIRECTORY_ID=DIRECTORY_ID:latest" \
+            --set-secrets "TYPE=SA_KEY_TYPE:latest" \
             --set-secrets "PROJECT_ID=PROJECT_ID:latest" \
             --set-secrets "PRIVATE_KEY_ID=PRIVATE_KEY_ID:latest" \
             --set-secrets "PRIVATE_KEY=PRIVATE_KEY:latest" \
             --set-secrets "CLIENT_EMAIL=CLIENT_EMAIL:latest" \
             --set-secrets "CLIENT_ID=CLIENT_ID:latest" \
+            --set-secrets "AUTH_URI=AUTH_URI:latest" \
+            --set-secrets "TOKEN_URI=TOKEN_URI:latest" \
+            --set-secrets "AUTH_PROVIDER_X509_CERT_URL=AUTH_PROVIDER_X509_CERT_URL:latest" \
             --set-secrets "CLIENT_X509_CERT_URL=CLIENT_X509_CERT_URL:latest" \
             --set-secrets "GSUITE_SUPER_ADMIN=GSUITE_SUPER_ADMIN:latest" \
             --set-secrets "MJ_APIKEY_PUBLIC=MJ_APIKEY_PUBLIC:latest" \
             --set-secrets "MJ_APIKEY_PRIVATE=MJ_APIKEY_PRIVATE:latest" \
             --set-secrets "WEB_ADDRESS=CLOUD_RUN_ADDRESS:latest" \
+            --set-secrets "FROM_ADDRESS=FROM_ADDRESS:latest" \
+            --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
             --set-secrets "MICRONAUT_ENVIRONMENTS=MICRONAUT_ENVIRONMENTS:latest" \
             --platform "managed" \
             --max-instances 2 \
