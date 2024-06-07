@@ -7,11 +7,11 @@ import java.util.UUID;
 
 public interface VolunteeringService {
 
-    List<VolunteeringOrganization> listOrganizations(boolean showInactive);
+    List<VolunteeringOrganization> listOrganizations(boolean includeDeactivated);
 
-    List<VolunteeringRelationship> listRelationships(@Nullable UUID memberId, @Nullable UUID organizationId, boolean showInactive);
+    List<VolunteeringRelationship> listRelationships(@Nullable UUID memberId, @Nullable UUID organizationId, boolean includeDeactivated);
 
-    List<VolunteeringEvent> listEvents(@Nullable UUID relationshipId, @Nullable UUID memberId, @Nullable UUID organizationId, boolean showInactive);
+    List<VolunteeringEvent> listEvents(@Nullable UUID memberId, @Nullable UUID relationshipId, boolean includeDeactivated);
 
     VolunteeringOrganization create(VolunteeringOrganization organization);
 
