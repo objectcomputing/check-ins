@@ -57,13 +57,17 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const loadEvents = useCallback(async () => {
     try {
       const res = await fetch(eventBaseUrl);
-      const events = await res.json();
+      let events = await res.json();
+      if (onlyMe) {
+        // Only keep the events for my relationships.
+        events = events.filter(e => Boolean(relationshipMap[e.relationshipId]));
+      }
       events.sort((event1, event2) => event1.date.localeCompare(event2.date));
       setEvents(events);
     } catch (err) {
       console.error(err);
     }
-  }, []);
+  }, [relationshipMap]);
 
   const loadOrganizations = useCallback(async () => {
     try {
@@ -79,8 +83,10 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const loadRelationships = useCallback(async () => {
     if (isEmpty(profileMap)) return;
+    let url = relationshipBaseUrl;
+    if (onlyMe) url += '/' + currentUser.id;
     try {
-      const res = await fetch(relationshipBaseUrl);
+      const res = await fetch(url);
       const relationships = await res.json();
       relationships.sort((rel1, rel2) => {
         const member1 = profileMap[rel1.memberId];
@@ -97,10 +103,13 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, [profileMap]);
 
   useEffect(() => {
-    loadEvents();
     loadOrganizations();
     loadRelationships();
   }, [profileMap]);
+
+  useEffect(() => {
+    if (!isEmpty(relationshipMap)) loadEvents();
+  }, [relationshipMap]);
 
   useEffect(() => {
     if (!isEmpty(organizationMap)) loadEvents();

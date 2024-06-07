@@ -69,9 +69,9 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const loadRelationships = useCallback(async () => {
+    let url = relationshipBaseUrl;
+    if (onlyMe) url += '/' + currentUser.id;
     try {
-      let url = relationshipBaseUrl;
-      if (onlyMe) url += '/' + currentUser.id;
       const res = await fetch(url);
       const relationships = await res.json();
       relationships.sort((rel1, rel2) => {
