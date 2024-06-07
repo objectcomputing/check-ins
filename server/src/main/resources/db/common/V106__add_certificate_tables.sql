@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS certification;
 CREATE TABLE certification
 (
     certification_id varchar PRIMARY KEY,
-    name             varchar NOT NULL,
+    name             varchar NOT NULL UNIQUE,
     badge_url        varchar,
     is_active        boolean NOT NULL DEFAULT TRUE
 );
