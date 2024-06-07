@@ -60,7 +60,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const loadOrganizations = useCallback(async () => {
     try {
-      let res = await fetch(organizationBaseUrl);
+      const res = await fetch(organizationBaseUrl);
       const organizations = await res.json();
       organizations.sort((org1, org2) => org1.name.localeCompare(org2.name));
       setOrganizations(organizations);
@@ -74,7 +74,9 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const loadRelationships = useCallback(async () => {
     try {
-      let res = await fetch(relationshipBaseUrl);
+      let url = relationshipBaseUrl;
+      if (onlyMe) url += '/' + currentUser.id;
+      const res = await fetch(url);
       const relationships = await res.json();
       relationships.sort((rel1, rel2) => {
         const member1 = profileMap[rel1.memberId];

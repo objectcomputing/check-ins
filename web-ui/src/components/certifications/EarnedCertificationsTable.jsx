@@ -83,7 +83,7 @@ const EarnedCertificationsTable = ({
 
   const loadCertifications = useCallback(async () => {
     try {
-      let res = await fetch(certificationBaseUrl);
+      const res = await fetch(certificationBaseUrl);
       const certs = await res.json();
       setCertifications(certs.sort((c1, c2) => c1.name.localeCompare(c2.name)));
 

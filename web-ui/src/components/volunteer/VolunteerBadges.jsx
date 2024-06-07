@@ -16,7 +16,7 @@ const VolunteerBadges = ({ memberId }) => {
 
   const loadOrganizations = useCallback(async () => {
     try {
-      let res = await fetch(organizationBaseUrl);
+      const res = await fetch(organizationBaseUrl);
       const organizations = await res.json();
       setOrganizationMap(
         organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
@@ -28,7 +28,7 @@ const VolunteerBadges = ({ memberId }) => {
 
   const loadRelationships = useCallback(async () => {
     try {
-      let res = await fetch(relationshipBaseUrl + '/' + memberId);
+      const res = await fetch(relationshipBaseUrl + '/' + memberId);
       const relationships = await res.json();
       setRelationships(relationships);
     } catch (err) {
