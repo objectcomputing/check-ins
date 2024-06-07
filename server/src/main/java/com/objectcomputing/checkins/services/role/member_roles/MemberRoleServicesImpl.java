@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
 import jakarta.inject.Singleton;
-import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
