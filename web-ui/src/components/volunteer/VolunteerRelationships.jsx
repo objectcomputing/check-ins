@@ -100,7 +100,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const addRelationship = useCallback(() => {
     setSelectedRelationship({
-      memberId: '',
+      memberId: onlyMe ? currentUser.id : '',
       organizationId: '',
       startDate: '',
       endDate: ''
@@ -153,30 +153,32 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           {selectedRelationship?.id ? 'Edit' : 'Add'} Relationship
         </DialogTitle>
         <DialogContent>
-          <Autocomplete
-            disableClearable
-            getOptionLabel={profile => profile.name ?? ''}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            onChange={(event, profile) => {
-              setSelectedRelationship({
-                ...selectedRelationship,
-                memberId: profile.id
-              });
-            }}
-            options={profiles}
-            renderInput={params => (
-              <TextField
-                {...params}
-                className="fullWidth"
-                label="Team Member"
-              />
-            )}
-            value={
-              selectedRelationship?.memberId
-                ? profileMap[selectedRelationship.memberId]
-                : null
-            }
-          />
+          {!onlyMe && (
+            <Autocomplete
+              disableClearable
+              getOptionLabel={profile => profile.name ?? ''}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(event, profile) => {
+                setSelectedRelationship({
+                  ...selectedRelationship,
+                  memberId: profile.id
+                });
+              }}
+              options={profiles}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  className="fullWidth"
+                  label="Team Member"
+                />
+              )}
+              value={
+                selectedRelationship?.memberId
+                  ? profileMap[selectedRelationship.memberId]
+                  : null
+              }
+            />
+          )}
           <Autocomplete
             disableClearable
             getOptionLabel={organization => organization.name ?? ''}
