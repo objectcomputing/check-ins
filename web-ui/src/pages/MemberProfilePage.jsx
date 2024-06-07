@@ -15,6 +15,7 @@ import { getGuildsForMember } from '../api/guild';
 import { getAvatarURL } from '../api/api.js';
 import ProfilePage from './ProfilePage';
 import CertificationBadges from '../components/certifications/CertificationBadges';
+import VolunteerBadges from '../components/volunteer/VolunteerBadges';
 import { levelList } from '../context/util';
 import {
   selectOrderedPdls,
@@ -311,7 +312,9 @@ const MemberProfilePage = () => {
                 </div>
               </CardContent>
             </Card>
-            <CertificationBadges memberId={memberId} />
+            {/* TODO: Uncomment this after testing VolunteerBadges. */}
+            {/* <CertificationBadges memberId={memberId} /> */}
+            <VolunteerBadges memberId={memberId} />
           </Grid>
         </Grid>
       )}
