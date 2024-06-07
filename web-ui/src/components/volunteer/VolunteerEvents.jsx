@@ -35,7 +35,7 @@ const formatDate = date => {
 
 const sortableTableColumns = ['Relationship', 'Date', 'Hours', 'Notes'];
 
-const propTypes = { forceUpdate: PropTypes.func };
+const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
 
 const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const { state } = useContext(AppContext);

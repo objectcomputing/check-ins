@@ -39,7 +39,7 @@ const sortableTableColumns = [
   'End Date'
 ];
 
-const propTypes = { forceUpdate: PropTypes.func };
+const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
 
 const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const { state } = useContext(AppContext);

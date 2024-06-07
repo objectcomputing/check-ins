@@ -16,6 +16,7 @@ import EarnedCertificationsTable from '../components/certifications/EarnedCertif
 import Profile from '../components/profile/Profile';
 import SkillSection from '../components/skills/SkillSection';
 import ProgressBar from '../components/contribution_hours/ProgressBar';
+import VolunteerTables from '../components/volunteer/VolunteerTables';
 
 import { Info } from '@mui/icons-material';
 import { Card, CardContent, CardHeader, Chip, TextField } from '@mui/material';
@@ -243,7 +244,9 @@ const ProfilePage = () => {
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
-      <EarnedCertificationsTable onlyMe />
+      {/* TODO: Uncomment this when finished testing use of VolunteerTable.
+      <EarnedCertificationsTable onlyMe /> */}
+      <VolunteerTables onlyMe />
     </div>
   );
 };

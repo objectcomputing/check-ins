@@ -30,7 +30,10 @@ TabPanel.propTypes = {
 };
 TabPanel.displayName = 'TabPanel';
 
-const VolunteerReportPage = () => {
+const propTypes = {
+  onlyMe: PropTypes.bool
+};
+const VolunteerReportPage = ({ onlyMe = false }) => {
   const [n, forceUpdate] = useReducer(n => n + 1, 0);
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -48,16 +51,30 @@ const VolunteerReportPage = () => {
         <Tab label="Events" {...a11yProps(2)} />
       </Tabs>
       <TabPanel index={0} value={tabIndex}>
-        <Organizations forceUpdate={forceUpdate} key={'org' + n} />
+        <Organizations
+          forceUpdate={forceUpdate}
+          key={'org' + n}
+          onlyMe={onlyMe}
+        />
       </TabPanel>
       <TabPanel index={1} value={tabIndex}>
-        <VolunteerRelationships forceUpdate={forceUpdate} key={'vr' + n} />
+        <VolunteerRelationships
+          forceUpdate={forceUpdate}
+          key={'vr' + n}
+          onlyMe={onlyMe}
+        />
       </TabPanel>
       <TabPanel index={2} value={tabIndex}>
-        <VolunteerEvents forceUpdate={forceUpdate} key={'vh' + n} />
+        <VolunteerEvents
+          forceUpdate={forceUpdate}
+          key={'vh' + n}
+          onlyMe={onlyMe}
+        />
       </TabPanel>
     </div>
   );
 };
+
+VolunteerReportPage.propTypes = propTypes;
 
 export default VolunteerReportPage;

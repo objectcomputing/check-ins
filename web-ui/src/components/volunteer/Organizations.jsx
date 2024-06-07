@@ -35,7 +35,7 @@ const formatDate = date => {
 
 const sortableTableColumns = ['Name', 'Description'];
 
-const propTypes = { forceUpdate: PropTypes.func };
+const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
 
 const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const { state } = useContext(AppContext);
@@ -109,24 +109,26 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
             website
           </a>
         </td>
-        <td>
-          <Tooltip title="Edit">
-            <IconButton
-              aria-label="Edit"
-              onClick={() => editOrganization(organization)}
-            >
-              <Edit />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete">
-            <IconButton
-              aria-label="Delete"
-              onClick={() => confirmDelete(organization)}
-            >
-              <Delete />
-            </IconButton>
-          </Tooltip>
-        </td>
+        {!onlyMe && (
+          <td>
+            <Tooltip title="Edit">
+              <IconButton
+                aria-label="Edit"
+                onClick={() => editOrganization(organization)}
+              >
+                <Edit />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                aria-label="Delete"
+                onClick={() => confirmDelete(organization)}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </td>
+        )}
       </tr>
     ),
     []
@@ -219,9 +221,11 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
                     </th>
                   ))}
                   <th key="website">Website</th>
-                  <th className="actions-th" key="actions">
-                    Actions
-                  </th>
+                  {!onlyMe && (
+                    <th className="actions-th" key="actions">
+                      Actions
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody>{organizations.map(organizationRow)}</tbody>
@@ -234,6 +238,11 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
               <AddCircleOutline />
             </IconButton>
           </div>
+          {onlyMe && (
+            <p className="warning">
+              Organizations can only be edited and deleted by an admin user.
+            </p>
+          )}
         </CardContent>
       </Card>
     ),
