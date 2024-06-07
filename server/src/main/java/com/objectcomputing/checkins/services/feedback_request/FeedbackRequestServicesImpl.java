@@ -371,7 +371,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s%s.<br>",
                 currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString));
 
-        List<String> recipients = new ArrayList<>();
+        Set<String> recipients = new HashSet<>();
         if (pdlProfile != null) {
             bodyBuilder.append(String.format("PDL: %s %s<br>", pdlProfile.getFirstName(), pdlProfile.getLastName()));
             recipients.add(pdlProfile.getWorkEmail());
