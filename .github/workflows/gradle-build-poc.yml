@@ -4,17 +4,18 @@ on:
     branches:
       # - 'develop'
       - '2486-create-new-pipeline-for-updated-build-deployment'
-env:
-  PROJECT_ID: ${{ secrets.PROJECT_ID }}
-  PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
-  RUN_REGION: us-central1
-  SERVICE_NAME: checkins-develop
+
 jobs:
   build:
     runs-on: ubuntu-latest
     environment:
       name: DEV-POC
       # url: ${{ env.CLOUD_RUN_ADDRESS }}/
+    env:
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+      RUN_REGION: us-central1
+      SERVICE_NAME: checkins-develop
     steps:
       - uses: actions/checkout@v4
         with:
