@@ -32,13 +32,6 @@ const formatDate = date => {
   return format(date, 'yyyy-MM-dd');
 };
 
-const sortableTableColumns = [
-  'Member',
-  'Organization',
-  'Start Date',
-  'End Date'
-];
-
 const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
 
 const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
@@ -57,6 +50,9 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const profileMap = selectProfileMap(state);
   const profiles = Object.values(profileMap);
   profiles.sort((a, b) => a.name.localeCompare(b.name));
+
+  const sortableTableColumns = ['Organization', 'Start Date', 'End Date'];
+  if (!onlyMe) sortableTableColumns.unshift('Member');
 
   const loadOrganizations = useCallback(async () => {
     try {
@@ -252,7 +248,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       const org = organizationMap[relationship.organizationId];
       return (
         <tr key={relationship.id}>
-          <td>{profileMap[relationship.memberId].name}</td>
+          {!onlyMe && <td>{profileMap[relationship.memberId].name}</td>}
           <td>{org.name}</td>
           <td>{relationship.startDate}</td>
           <td>{relationship.endDate}</td>
