@@ -8,6 +8,8 @@ import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Named;
@@ -30,6 +32,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
+    private final ReviewPeriodRepository reviewPeriodRepository;
     private EmailSender emailSender;
     private final String notificationSubject;
     private final String webURL;
@@ -37,6 +40,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
                                        MemberProfileServices memberProfileServices,
+                                       ReviewPeriodRepository reviewPeriodRepository,
                                        @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
                                        @Property(name = WEB_UI_URL) String webURL
@@ -44,6 +48,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
+        this.reviewPeriodRepository = reviewPeriodRepository;
         this.emailSender = emailSender;
         this.notificationSubject = notificationSubject;
         this.webURL = webURL;
@@ -198,7 +203,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         // Send self-review completion email to supervisor and pdl if appropriate
         if (currentUserServices.getCurrentUser().getId().equals(requestee.getId())) {
-            sendSelfReviewCompletionEmail();
+            sendSelfReviewCompletionEmail(feedbackRequest);
         }
 
         return storedRequest;
@@ -330,7 +335,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return feedbackRequest;
     }
 
-    public void sendSelfReviewCompletionEmail() {
+    public void sendSelfReviewCompletionEmail(FeedbackRequest feedbackRequest) {
         MemberProfile currentUserProfile = currentUserServices.getCurrentUser();
         MemberProfile pdlProfile = null;
         MemberProfile supervisorProfile = null;
@@ -351,10 +356,20 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             LOG.error("Supervisor could not be found for self-review completion email");
         }
 
-        String subject = String.format("%s %s has finished their self-review.",
-                currentUserProfile.getFirstName(), currentUserProfile.getLastName());
-        StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s<br>",
-                currentUserProfile.getFirstName(), currentUserProfile.getLastName()));
+        String reviewPeriodString = "";
+        if (feedbackRequest.getReviewPeriodId() != null) {
+            Optional<ReviewPeriod> reviewPeriodOpt = reviewPeriodRepository.findById(feedbackRequest.getReviewPeriodId());
+            if (reviewPeriodOpt.isPresent()) {
+                ReviewPeriod reviewPeriod = reviewPeriodOpt.get();
+                reviewPeriodString = String.format(" for %s", reviewPeriod.getName());
+            }
+        }
+
+        String subject = String.format("%s %s has finished their self-review%s.",
+                currentUserProfile.getFirstName(), currentUserProfile.getLastName(),
+                reviewPeriodString);
+        StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s%s.<br>",
+                currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString));
 
         List<String> recipients = new ArrayList<>();
         if (pdlProfile != null) {
@@ -367,7 +382,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             recipients.add(supervisorProfile.getWorkEmail());
         }
 
-        bodyBuilder.append("<br>It is now your turn in their review process, please complete your portion in a timely manner.");
+        bodyBuilder.append("<br>It is now your turn in their review process. Please complete your portion in a timely manner.");
 
         String body = bodyBuilder.toString();
 

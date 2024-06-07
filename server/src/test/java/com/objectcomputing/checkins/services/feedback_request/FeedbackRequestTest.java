@@ -7,6 +7,8 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,8 @@ class FeedbackRequestTest extends TestContainersSuite {
 
     private MemberProfileServices memberProfileServices;
 
+    private ReviewPeriodRepository reviewPeriodRepository;
+
     private EmailSender emailSender;
 
     private FeedbackRequestServicesImpl feedbackRequestServices;
@@ -39,9 +43,12 @@ class FeedbackRequestTest extends TestContainersSuite {
         feedbackReqRepository = Mockito.mock(FeedbackRequestRepository.class);
         currentUserServices = Mockito.mock(CurrentUserServices.class);
         memberProfileServices = Mockito.mock(MemberProfileServices.class);
+        reviewPeriodRepository = Mockito.mock(ReviewPeriodRepository.class);
         emailSender = Mockito.mock(EmailSender.class);
 
-        feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices, memberProfileServices, emailSender, "DNC", "http://localhost:8080");
+
+        feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices,
+                memberProfileServices, reviewPeriodRepository, emailSender, "DNC", "http://localhost:8080");
     }
 
     @Test
@@ -167,22 +174,29 @@ class FeedbackRequestTest extends TestContainersSuite {
         currentUser.setPdlId(pdlProfile.getId());
         currentUser.setSupervisorid(supervisorProfile.getId());
 
+        ReviewPeriod reviewPeriod = new ReviewPeriod();
+        reviewPeriod.setName("Self-Review Test");
+
         String firstName = "firstName";
         String lastName = "lastName";
 
         currentUser.setFirstName(firstName);
         currentUser.setLastName(lastName);
 
+        UUID reviewPeriodId = UUID.randomUUID();
+        FeedbackRequest feedbackRequest = new FeedbackRequest();
+        feedbackRequest.setReviewPeriodId(reviewPeriodId);
+
         when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
         when(memberProfileServices.getById(pdlProfile.getId())).thenReturn(pdlProfile);
         when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
+        when(reviewPeriodRepository.findById(reviewPeriodId)).thenReturn(Optional.of(reviewPeriod));
 
-        feedbackRequestServices.sendSelfReviewCompletionEmail();
+        feedbackRequestServices.sendSelfReviewCompletionEmail(feedbackRequest);
 
         verify(emailSender, times(1)).sendEmail(any(), any(),
-                eq("firstName lastName has finished their self-review."),
-                eq("Self-review has been completed by firstName lastName<br>PDL: PDL Profile<br>Supervisor:" +
-                        " Supervisor Profile<br><br>It is now your turn in their review process, please complete your portion in a timely manner."),
+                eq("firstName lastName has finished their self-review for Self-Review Test."),
+                eq("Self-review has been completed by firstName lastName for Self-Review Test.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner."),
                 eq("pdl@example.com"), eq("supervisor@example.com"));
     }
 
@@ -210,11 +224,11 @@ class FeedbackRequestTest extends TestContainersSuite {
         when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
         when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
 
-        feedbackRequestServices.sendSelfReviewCompletionEmail();
+        feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest());
 
         verify(emailSender, times(1)).sendEmail(any(), any(),
                 eq("firstName lastName has finished their self-review."),
-                eq("Self-review has been completed by firstName lastName<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process, please complete your portion in a timely manner."),
+                eq("Self-review has been completed by firstName lastName.<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner."),
                 eq("supervisor@example.com"));
     }
 
@@ -242,11 +256,11 @@ class FeedbackRequestTest extends TestContainersSuite {
         when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
         when(memberProfileServices.getById(pdlProfile.getId())).thenReturn(pdlProfile);
 
-        feedbackRequestServices.sendSelfReviewCompletionEmail();
+        feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest());
 
         verify(emailSender, times(1)).sendEmail(any(), any(),
                 eq("firstName lastName has finished their self-review."),
-                eq("Self-review has been completed by firstName lastName<br>PDL: PDL Profile<br><br>It is now your turn in their review process, please complete your portion in a timely manner."),
+                eq("Self-review has been completed by firstName lastName.<br>PDL: PDL Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner."),
                 eq("pdl@example.com"));
     }
 
@@ -265,7 +279,7 @@ class FeedbackRequestTest extends TestContainersSuite {
 
         when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
 
-        feedbackRequestServices.sendSelfReviewCompletionEmail();
+        feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest());
 
         verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
     }
