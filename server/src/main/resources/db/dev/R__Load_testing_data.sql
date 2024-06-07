@@ -1520,4 +1520,43 @@ INSERT INTO skillcategory_skills -- Tools CSS
 values
 ('0778a8e7-21d8-4ca3-a0dc-cad676aac417', '6b56f0aa-09aa-4b09-bb81-03481af7e49f');
 
+-- Volunteering
+
+INSERT INTO volunteering_organization
+    (organization_id, name, description, website)
+VALUES ('c3381858-9745-4084-928e-ddbc44275f92', 'Lift for Life', 'Educate, Empower, Uplift',
+        'https://www.liftforlifeacademy.org/');
+
+INSERT INTO volunteering_organization
+    (organization_id, name, description, website)
+VALUES ('fbb31840-a247-4524-ae35-1c84263849bf', 'St. Louis Area Foodbank',
+        'Works with over 600 partners in 26 counties across the bi-state area to provide options for those in need of food',
+        'https://stlfoodbank.org/find-food/');
+
+INSERT INTO volunteering_relationship
+    (relationship_id, member_id, organization_id, start_date, end_date)
+VALUES -- Michael Kimberlin to Lift for Life
+       ('b2ffbfb0-efd2-4305-b741-b95db5ee36a8', '6207b3fd-042d-49aa-9e28-dcc04f537c2d',
+        'c3381858-9745-4084-928e-ddbc44275f92', '2021-01-01', '2022-01-01');
+
+INSERT INTO volunteering_relationship
+    (relationship_id, member_id, organization_id, start_date)
+VALUES -- Mark Volkmann to St. Louis Area Foodbank
+       ('7c945589-48c4-4474-8298-74b343de34ec', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d',
+        'fbb31840-a247-4524-ae35-1c84263849bf', '2024-04-16');
+
+INSERT INTO volunteering_event
+    (event_id, relationship_id, event_date, hours, notes)
+VALUES
+        ('12a45a85-7c67-4f9f-9b1c-672acb38411a', 'b2ffbfb0-efd2-4305-b741-b95db5ee36a8', '2024-02-14', 4, 'first event');
+
+INSERT INTO volunteering_event
+    (event_id, relationship_id, event_date, hours, notes)
+VALUES
+        ('8969ad87-a299-4ae8-b10d-d7e3b6072a09', 'b2ffbfb0-efd2-4305-b741-b95db5ee36a8', '2024-05-01', 8, 'second event');
+
+INSERT INTO volunteering_event
+    (event_id, relationship_id, event_date, hours, notes)
+VALUES
+        ('2afba083-8d42-429f-a90f-8992d1685bd0', 'b2ffbfb0-efd2-4305-b741-b95db5ee36a8', '2024-05-02', 4, 'third event');
 
