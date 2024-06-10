@@ -5,18 +5,16 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.VolunteeringFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import io.micronaut.core.type.Argument;
-import io.micronaut.http.HttpRequest;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.client.BlockingHttpClient;
-import io.micronaut.http.client.HttpClient;
-import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
@@ -26,28 +24,32 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class VolunteeringControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, VolunteeringFixture {
+@Property(name = VolunteeringOrganizationClient.ENABLED, value = "true")
+class VolunteeringOrganizationControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, VolunteeringFixture {
 
     @Inject
-    @Client("/services/volunteer")
-    HttpClient httpClient;
-
-    BlockingHttpClient client;
+    VolunteeringOrganizationClient organizationClient;
 
     @BeforeEach
     void makeRoles() {
-        client = httpClient.toBlocking();
         createAndAssignRoles();
+    }
+
+    static private String auth(String email, String role) {
+        return "Basic " + Base64.getEncoder().encodeToString((email + ":" + role).getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
     void testCreateOrganization() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        List<VolunteeringOrganization> list = client.retrieve(HttpRequest.GET("/organization").basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE), Argument.listOf(VolunteeringOrganization.class));
+        String memberAuth = auth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
+
+        List<VolunteeringOrganization> list = organizationClient.getAllOrganizations(memberAuth);
         assertEquals(0, list.size());
 
         VolunteeringOrganizationDTO org = new VolunteeringOrganizationDTO("name", "description", "website");
-        HttpResponse<VolunteeringOrganization> response = client.exchange(HttpRequest.POST("/organization", org).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE), VolunteeringOrganization.class);
+        HttpResponse<VolunteeringOrganization> response = organizationClient.createOrganization(adminAuth, org);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.body().getId());
         assertEquals("name", response.body().getName());
@@ -55,7 +57,7 @@ class VolunteeringControllerTest extends TestContainersSuite implements MemberPr
         assertEquals("website", response.body().getWebsite());
 
         // List works as member without the profile
-        list = client.retrieve(HttpRequest.GET("/organization").basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE), Argument.listOf(VolunteeringOrganization.class));
+        list = organizationClient.getAllOrganizations(memberAuth);
         assertEquals(1, list.size());
         assertEquals("name", list.getFirst().getName());
         assertEquals("description", list.getFirst().getDescription());
@@ -66,47 +68,64 @@ class VolunteeringControllerTest extends TestContainersSuite implements MemberPr
     @Test
     void organizationsCanBeInactive() {
         MemberProfile memberProfile = createADefaultMemberProfile();
+        String memberAuth = auth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         createVolunteeringOrganization("alpha", "alpha desc", "https://alpha.com");
         createVolunteeringOrganization("gamma", "gamma desc", "https://gamma.com");
         createVolunteeringOrganization("epsilon", "epsilon desc", "https://epsilon.com");
         createVolunteeringOrganization("beta", "beta desc", "https://beta.com", false);
 
         // List by default hides inactive (and they're ordered by name)
-        List<VolunteeringOrganization> list = client.retrieve(HttpRequest.GET("/organization").basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE), Argument.listOf(VolunteeringOrganization.class));
+        List<VolunteeringOrganization> list = organizationClient.getAllOrganizations(memberAuth);
         assertEquals(3, list.size());
         assertEquals(List.of("alpha", "epsilon", "gamma"), list.stream().map(VolunteeringOrganization::getName).toList());
 
         // List with includeDeactivated shows all (and they're ordered by name)
-        list = client.retrieve(HttpRequest.GET("/organization?includeDeactivated=true").basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE), Argument.listOf(VolunteeringOrganization.class));
+        list = organizationClient.getAllOrganizations(memberAuth, true);
         assertEquals(4, list.size());
         assertEquals(List.of("alpha", "beta", "epsilon", "gamma"), list.stream().map(VolunteeringOrganization::getName).toList());
     }
 
     @Test
     void testCreateOrganizationWithoutRole() {
+        String memberAuth = auth(MEMBER_ROLE, MEMBER_ROLE);
         VolunteeringOrganizationDTO org = new VolunteeringOrganizationDTO("name", "description", "website");
 
-        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> client.exchange(HttpRequest.POST("/organization", org).basicAuth(MEMBER_ROLE, MEMBER_ROLE)));
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> organizationClient.createOrganization(memberAuth, org));
         assertEquals(HttpStatus.FORBIDDEN, e.getStatus());
     }
 
     @Test
     void testCreateOrganizationWithoutDuplicateName() {
         MemberProfile memberProfile = createADefaultMemberProfile();
+        String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         createVolunteeringOrganization("name", "description", "website");
         VolunteeringOrganizationDTO org = new VolunteeringOrganizationDTO("name", "description", "website");
 
-        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> client.exchange(HttpRequest.POST("/organization", org).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE)));
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> organizationClient.createOrganization(adminAuth, org));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         assertEquals("Volunteering Organization with name name already exists", e.getMessage());
     }
 
     @Test
+    void cannotRenameAsDuplicateName() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
+
+        createVolunteeringOrganization("first", "desc", "web");
+        VolunteeringOrganization second = createVolunteeringOrganization("second", "description", "website");
+
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> organizationClient.updateOrganization(adminAuth, second.getId(), new VolunteeringOrganizationDTO("first", "desc", "web")));
+        assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+        assertEquals("Volunteering Organization with name first already exists", e.getMessage());
+    }
+
+    @Test
     void testCreateOrganizationWithoutName() {
         MemberProfile memberProfile = createADefaultMemberProfile();
+        String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         VolunteeringOrganizationDTO org = new VolunteeringOrganizationDTO(null, "description", "website");
 
-        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> client.exchange(HttpRequest.POST("/organization", org).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE)));
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> organizationClient.createOrganization(adminAuth, org));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         String body = e.getResponse().getBody(String.class).get();
         assertTrue(body.contains("organization.name: must not be blank"), body + " should contain 'organization.name: must not be blank'");
@@ -115,9 +134,10 @@ class VolunteeringControllerTest extends TestContainersSuite implements MemberPr
     @Test
     void testCreateOrganizationWithoutDescription() {
         MemberProfile memberProfile = createADefaultMemberProfile();
+        String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         VolunteeringOrganizationDTO org = new VolunteeringOrganizationDTO("name", null, "website");
 
-        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> client.exchange(HttpRequest.POST("/organization", org).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE)));
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> organizationClient.createOrganization(adminAuth, org));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         String body = e.getResponse().getBody(String.class).get();
         assertTrue(body.contains("organization.description: must not be blank"), body + " should contain 'organization.description: must not be blank'");
@@ -126,9 +146,10 @@ class VolunteeringControllerTest extends TestContainersSuite implements MemberPr
     @Test
     void testCreateOrganizationWithoutWebsite() {
         MemberProfile memberProfile = createADefaultMemberProfile();
+        String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         VolunteeringOrganizationDTO org = new VolunteeringOrganizationDTO("name", "description", null);
 
-        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> client.exchange(HttpRequest.POST("/organization", org).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE)));
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> organizationClient.createOrganization(adminAuth, org));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         String body = e.getResponse().getBody(String.class).get();
         assertTrue(body.contains("organization.website: must not be blank"), body + " should contain 'organization.website: must not be blank'");
