@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("services/earned-certification")
+@Controller("/services/earned-certification")
 @Tag(name = "earned-certification")
 class EarnedCertificationController {
 
