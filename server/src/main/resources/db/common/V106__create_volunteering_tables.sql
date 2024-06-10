@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS volunteering_organization;
 CREATE TABLE volunteering_organization
 (
     organization_id varchar PRIMARY KEY,
-    name            varchar NOT NULL,
+    name            varchar NOT NULL UNIQUE,
     description     varchar NOT NULL,
     website         varchar NOT NULL,
     is_active       boolean NOT NULL DEFAULT TRUE

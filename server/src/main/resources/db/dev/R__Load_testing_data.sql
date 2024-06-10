@@ -980,6 +980,20 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_REVIEW_PERIOD');
 
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_ADMINISTER_VOLUNTEERING_HOURS');
 
 -- Member permissions
 insert into role_permissions

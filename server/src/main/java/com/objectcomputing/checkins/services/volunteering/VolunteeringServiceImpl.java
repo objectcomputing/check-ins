@@ -1,13 +1,19 @@
 package com.objectcomputing.checkins.services.volunteering;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.UUID;
 
 @Singleton
 class VolunteeringServiceImpl implements VolunteeringService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(VolunteeringServiceImpl.class);
+    private static final String ORG_NAME_ALREADY_EXISTS_MESSAGE = "Volunteering Organization with name %s already exists";
 
     private final VolunteeringOrganizationRepository organizationRepo;
     private final VolunteeringRelationshipRepository relationshipRepo;
@@ -54,7 +60,14 @@ class VolunteeringServiceImpl implements VolunteeringService {
 
     @Override
     public VolunteeringOrganization create(VolunteeringOrganization organization) {
-        return null;
+        if (organization.getId() != null) {
+            return update(organization);
+        }
+        // Fail if a certification with the same name already exists
+        validate(organizationRepo.getByName(organization.getName()).isPresent(),
+                ORG_NAME_ALREADY_EXISTS_MESSAGE,
+                organization.getName());
+        return organizationRepo.save(organization);
     }
 
     @Override
@@ -69,7 +82,12 @@ class VolunteeringServiceImpl implements VolunteeringService {
 
     @Override
     public VolunteeringOrganization update(VolunteeringOrganization organization) {
-        return null;
+        // Fail if a certification with the same name already exists (but it's not this one)
+        validate(organizationRepo.getByName(organization.getName())
+                        .map(c -> !c.getId().equals(organization.getId())).orElse(false),
+                ORG_NAME_ALREADY_EXISTS_MESSAGE,
+                organization.getName());
+        return organizationRepo.update(organization);
     }
 
     @Override
@@ -80,5 +98,11 @@ class VolunteeringServiceImpl implements VolunteeringService {
     @Override
     public VolunteeringEvent update(VolunteeringEvent organization) {
         return null;
+    }
+
+    private void validate(boolean isError, String message, Object... args) {
+        if (isError) {
+            throw new BadArgException(String.format(message, args));
+        }
     }
 }

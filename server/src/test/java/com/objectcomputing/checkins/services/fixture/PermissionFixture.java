@@ -85,7 +85,10 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_LAUNCH_REVIEW_PERIOD,
         Permission.CAN_CLOSE_REVIEW_PERIOD,
         Permission.CAN_DELETE_REVIEW_PERIOD,
-        Permission.CAN_VIEW_ALL_PULSE_RESPONSES
+        Permission.CAN_VIEW_ALL_PULSE_RESPONSES,
+        Permission.CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS,
+        Permission.CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS,
+        Permission.CAN_ADMINISTER_VOLUNTEERING_HOURS
     );
 
     default void setPermissionsForAdmin(UUID roleID) {

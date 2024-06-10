@@ -15,13 +15,13 @@ public interface VolunteeringService {
 
     VolunteeringOrganization create(VolunteeringOrganization organization);
 
-    VolunteeringRelationship create(VolunteeringRelationship organization);
+    VolunteeringRelationship create(VolunteeringRelationship relationship);
 
-    VolunteeringEvent create(VolunteeringEvent organization);
+    VolunteeringEvent create(VolunteeringEvent event);
 
     VolunteeringOrganization update(VolunteeringOrganization organization);
 
-    VolunteeringRelationship update(VolunteeringRelationship organization);
+    VolunteeringRelationship update(VolunteeringRelationship relationship);
 
-    VolunteeringEvent update(VolunteeringEvent organization);
+    VolunteeringEvent update(VolunteeringEvent event);
 }
