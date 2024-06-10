@@ -25,7 +25,7 @@ jobs:
         with:
           project_id: '${{secrets.PROJECT_ID}}'
           workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'  
-          service_account: '${{secrets.GCLOUD_SERVICEACCOUNT}}'
+          # service_account: '${{secrets.GCLOUD_SERVICEACCOUNT}}'
       - id: 'secrets'
         uses: 'google-github-actions/get-secretmanager-secrets@v2'
         with:
