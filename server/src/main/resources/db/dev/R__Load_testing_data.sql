@@ -982,6 +982,15 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_REVIEW_PERIOD');
 
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_MANAGE_CERTIFICATIONS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_MANAGE_EARNED_CERTIFICATIONS');
 
 -- Member permissions
 insert into role_permissions

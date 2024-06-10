@@ -2,6 +2,9 @@ package com.objectcomputing.checkins.services.certification;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import jakarta.inject.Singleton;
@@ -19,15 +22,21 @@ class CertificationServiceImpl implements CertificationService {
     private static final String NAME_ALREADY_EXISTS_MESSAGE = "Certification with name %s already exists";
 
     private final MemberProfileRepository memberProfileRepository;
+    private final CurrentUserServices currentUserServices;
+    private final RolePermissionServices rolePermissionServices;
     private final CertificationRepository certificationRepository;
     private final EarnedCertificationRepository earnedCertificationRepository;
 
     CertificationServiceImpl(
             MemberProfileRepository memberProfileRepository,
+            CurrentUserServices currentUserServices,
+            RolePermissionServices rolePermissionServices,
             CertificationRepository certificationRepository,
             EarnedCertificationRepository earnedCertificationRepository
     ) {
         this.memberProfileRepository = memberProfileRepository;
+        this.currentUserServices = currentUserServices;
+        this.rolePermissionServices = rolePermissionServices;
         this.certificationRepository = certificationRepository;
         this.earnedCertificationRepository = earnedCertificationRepository;
     }
@@ -81,23 +90,20 @@ class CertificationServiceImpl implements CertificationService {
         if (earnedCertification.getId() != null) {
             return updateEarnedCertification(earnedCertification);
         }
-        validateEarnedCertificate(earnedCertification);
+        validateEarnedCertificate(earnedCertification, "create");
         return earnedCertificationRepository.save(earnedCertification);
     }
 
     @Override
     public EarnedCertification updateEarnedCertification(EarnedCertification earnedCertification) {
-        validateEarnedCertificate(earnedCertification);
+        validateEarnedCertificate(earnedCertification, "update");
         return earnedCertificationRepository.update(earnedCertification);
-    }
-
-    private void validateEarnedCertificate(EarnedCertification earnedCertification) {
-        validate(memberProfileRepository.findById(earnedCertification.getMemberId()).isEmpty(), "Member %s doesn't exist", earnedCertification.getMemberId());
-        validate(certificationRepository.findById(earnedCertification.getCertificationId()).isEmpty(), "Certification %s doesn't exist", earnedCertification.getCertificationId());
     }
 
     @Override
     public void deleteEarnedCertification(UUID id) {
+        EarnedCertification earnedCertification = earnedCertificationRepository.findById(id).orElseThrow(() -> new BadArgException(String.format("Earned Certificate %s not found", id)));
+        validatePermission(earnedCertification, "delete");
         earnedCertificationRepository.deleteById(id);
     }
 
@@ -121,6 +127,19 @@ class CertificationServiceImpl implements CertificationService {
         // Delete the source certification
         certificationRepository.deleteById(sourceId);
         return targetCertification;
+    }
+
+    private void validateEarnedCertificate(EarnedCertification earnedCertification, String action) {
+        validate(memberProfileRepository.findById(earnedCertification.getMemberId()).isEmpty(), "Member %s doesn't exist", earnedCertification.getMemberId());
+        validate(certificationRepository.findById(earnedCertification.getCertificationId()).isEmpty(), "Certification %s doesn't exist", earnedCertification.getCertificationId());
+        validatePermission(earnedCertification, action);
+    }
+
+    private void validatePermission(EarnedCertification earnedCertification, String action) {
+        // Fail if the user doesn't have permission to modify the earned certification
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_VIEW_ALL_PULSE_RESPONSES);
+        validate(!hasPermission && !earnedCertification.getMemberId().equals(currentUserId), "User %s does not have permission to %s Earned Certificate for user %s", currentUserId, action, earnedCertification.getMemberId());
     }
 
     private void validate(boolean isError, String message, Object... args) {

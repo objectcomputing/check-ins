@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.certification;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.CertificationFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
@@ -10,13 +11,14 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,15 +26,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CertificationControllerTest extends TestContainersSuite implements MemberProfileFixture, CertificationFixture {
+class CertificationControllerTest extends TestContainersSuite implements RoleFixture, MemberProfileFixture, CertificationFixture {
 
     @Inject
     @Client("/services/certification")
     private HttpClient certificationClient;
 
-    @Inject
-    @Client("/services/earned-certification")
-    private HttpClient earnedCertificationClient;
+    @BeforeEach
+    void createRolesAndPermissions() {
+        createAndAssignRoles();
+    }
 
     @Test
     void testStartsEmpty() {
@@ -50,7 +53,7 @@ class CertificationControllerTest extends TestContainersSuite implements MemberP
         assertEquals(newCertification.getName(), createdCertification.getName());
         assertEquals(newCertification.getBadgeUrl(), createdCertification.getBadgeUrl());
 
-        List<Certification> retrieve = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(Certification.class));
+        List<Certification> retrieve = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(Certification.class));
         assertEquals(2, retrieve.size());
     }
 
@@ -165,14 +168,14 @@ class CertificationControllerTest extends TestContainersSuite implements MemberP
     }
 
     private List<Certification> list() {
-        return certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(Certification.class));
+        return certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(Certification.class));
     }
 
     private <T> Certification create(T body) {
-        return certificationClient.toBlocking().retrieve(HttpRequest.POST("/", body).basicAuth(MEMBER_ROLE, MEMBER_ROLE), Certification.class);
+        return certificationClient.toBlocking().retrieve(HttpRequest.POST("/", body).basicAuth(ADMIN_ROLE, ADMIN_ROLE), Certification.class);
     }
 
     private <T> Certification update(UUID uuid, T body) {
-        return certificationClient.toBlocking().retrieve(HttpRequest.PUT("/%s".formatted(uuid), body).basicAuth(MEMBER_ROLE, MEMBER_ROLE), Certification.class);
+        return certificationClient.toBlocking().retrieve(HttpRequest.PUT("/%s".formatted(uuid), body).basicAuth(ADMIN_ROLE, ADMIN_ROLE), Certification.class);
     }
 }
