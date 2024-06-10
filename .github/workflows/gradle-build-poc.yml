@@ -101,7 +101,7 @@ jobs:
       - name: Deploy image to Cloud Run
         run: |-
           gcloud run deploy "$SERVICE_NAME" \
-            --project "$PROJECT_NAME" \
+            --project "$PROJECT_ID" \
             --region "$RUN_REGION" \
             --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
             --memory 1Gi \
