@@ -14,6 +14,8 @@ delete from member_roles;
 delete from role_permissions;
 delete from permissions;
 delete from role;
+delete from kudos_recipient;
+delete from kudos;
 delete from team_member;
 delete from team;
 delete from feedback_answers;
