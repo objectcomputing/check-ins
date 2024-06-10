@@ -138,7 +138,7 @@ class CertificationServiceImpl implements CertificationService {
     private void validatePermission(EarnedCertification earnedCertification, String action) {
         // Fail if the user doesn't have permission to modify the earned certification
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_VIEW_ALL_PULSE_RESPONSES);
+        boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_MANAGE_EARNED_CERTIFICATIONS);
         validate(!hasPermission && !earnedCertification.getMemberId().equals(currentUserId), "User %s does not have permission to %s Earned Certificate for user %s", currentUserId, action, earnedCertification.getMemberId());
     }
 
