@@ -103,6 +103,17 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
     }
 
     @Test
+    void cannotUpdateWithoutThePermission() {
+        MemberProfile tim = createASecondDefaultMemberProfile();
+        Certification certification = createCertification("To update");
+
+        CertificationDTO update = new CertificationDTO("Updated", "https://badge.url");
+
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> update(certification.getId(), update, tim.getWorkEmail(), MEMBER_ROLE));
+        assertEquals(HttpStatus.FORBIDDEN, e.getStatus());
+    }
+
+    @Test
     void certificationNameRequired() {
         HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> create("""
                 {"badgeUrl":"badge"}"""));
@@ -197,6 +208,10 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
     }
 
     private <T> Certification update(UUID uuid, T body) {
-        return certificationClient.toBlocking().retrieve(HttpRequest.PUT("/%s".formatted(uuid), body).basicAuth(ADMIN_ROLE, ADMIN_ROLE), Certification.class);
+        return update(uuid, body, ADMIN_ROLE, ADMIN_ROLE);
+    }
+
+    private <T> Certification update(UUID uuid, T body, String user, String password) {
+        return certificationClient.toBlocking().retrieve(HttpRequest.PUT("/%s".formatted(uuid), body).basicAuth(user, password), Certification.class);
     }
 }
