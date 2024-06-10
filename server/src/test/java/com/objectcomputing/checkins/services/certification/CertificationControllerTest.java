@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.CertificationFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,6 +50,21 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
         createDefaultCertification();
         CertificationDTO newCertification = new CertificationDTO("New Certification", "https://badge.url");
         Certification createdCertification = create(newCertification);
+
+        assertNotNull(createdCertification.getId());
+        assertEquals(newCertification.getName(), createdCertification.getName());
+        assertEquals(newCertification.getBadgeUrl(), createdCertification.getBadgeUrl());
+
+        List<Certification> retrieve = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(Certification.class));
+        assertEquals(2, retrieve.size());
+    }
+
+    @Test
+    void canCreateCertificationWithoutThePermission() {
+        MemberProfile tim = createASecondDefaultMemberProfile();
+        createDefaultCertification();
+        CertificationDTO newCertification = new CertificationDTO("New Certification", "https://badge.url");
+        Certification createdCertification = create(newCertification, tim.getWorkEmail(), MEMBER_ROLE);
 
         assertNotNull(createdCertification.getId());
         assertEquals(newCertification.getName(), createdCertification.getName());
@@ -172,7 +189,11 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
     }
 
     private <T> Certification create(T body) {
-        return certificationClient.toBlocking().retrieve(HttpRequest.POST("/", body).basicAuth(ADMIN_ROLE, ADMIN_ROLE), Certification.class);
+        return create(body, ADMIN_ROLE, ADMIN_ROLE);
+    }
+
+    private <T> Certification create(T body, String user, String password) {
+        return certificationClient.toBlocking().retrieve(HttpRequest.POST("/", body).basicAuth(user, password), Certification.class);
     }
 
     private <T> Certification update(UUID uuid, T body) {

@@ -50,7 +50,6 @@ class CertificationController {
      */
     @Post
     @Status(HttpStatus.CREATED)
-    @RequiredPermission(Permission.CAN_MANAGE_CERTIFICATIONS)
     Certification create(@Body @Valid CertificationDTO certification) {
         return certificationService.saveCertification(new Certification(
                 certification.getName(),
