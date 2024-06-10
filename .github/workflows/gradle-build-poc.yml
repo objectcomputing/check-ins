@@ -27,8 +27,8 @@ jobs:
         with:
           # project_id: '${{secrets.PROJECT_ID}}'
           project_id: '243947551054'
-          workload_identity_provider: 'projects/243947551054/locations/global/workloadIdentityPools/github-wif-pool/providers/github-provider'  
-          # service_account: '${{secrets.GCLOUD_SERVICEACCOUNT}}'
+          workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'  
+          service_account: '${{secrets.GCLOUD_SERVICEACCOUNT}}'
       - id: 'secrets'
         uses: 'google-github-actions/get-secretmanager-secrets@v2'
         with:
