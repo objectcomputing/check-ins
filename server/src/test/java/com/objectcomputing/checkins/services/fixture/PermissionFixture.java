@@ -88,7 +88,7 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_VIEW_ALL_PULSE_RESPONSES,
         Permission.CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS,
         Permission.CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS,
-        Permission.CAN_ADMINISTER_VOLUNTEERING_HOURS
+        Permission.CAN_ADMINISTER_VOLUNTEERING_EVENTS
     );
 
     default void setPermissionsForAdmin(UUID roleID) {

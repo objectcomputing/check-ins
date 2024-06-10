@@ -993,7 +993,7 @@ values
 insert into role_permissions
 (roleid, permission)
 values
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_ADMINISTER_VOLUNTEERING_HOURS');
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_ADMINISTER_VOLUNTEERING_EVENTS');
 
 -- Member permissions
 insert into role_permissions
