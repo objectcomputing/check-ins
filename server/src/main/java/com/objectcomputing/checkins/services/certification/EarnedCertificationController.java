@@ -57,6 +57,7 @@ class EarnedCertificationController {
      * @return the newly created {@link EarnedCertification}
      */
     @Post
+    @Status(HttpStatus.CREATED)
     EarnedCertification create(@Body @Valid EarnedCertificationDTO certification, HttpRequest<?> request) {
         return certificationService.saveEarnedCertification(
                 new EarnedCertification(

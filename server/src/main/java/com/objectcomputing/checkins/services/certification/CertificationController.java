@@ -2,11 +2,13 @@ package com.objectcomputing.checkins.services.certification;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -47,6 +49,7 @@ class CertificationController {
      * @return the created {@link Certification}
      */
     @Post
+    @Status(HttpStatus.CREATED)
     @RequiredPermission(Permission.CAN_MANAGE_CERTIFICATIONS)
     Certification create(@Body @Valid CertificationDTO certification) {
         return certificationService.saveCertification(new Certification(
