@@ -117,6 +117,69 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
     }
 
     @Test
+    void memberCanUpdateTheirOwnEvents() {
+        LocalDate now = LocalDate.now();
+        MemberProfile tim = createADefaultMemberProfile();
+        String timAuth = auth(tim.getWorkEmail(), MEMBER_ROLE);
+        VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
+        VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+
+        var updated = eventClient.update(timAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, 5, "New notes"));
+        assertEquals(event.getId(), updated.getId());
+        assertEquals("New notes", updated.getNotes());
+    }
+
+    @Test
+    void memberCannotUpdateOthersEvents() {
+        LocalDate now = LocalDate.now();
+        MemberProfile tim = createADefaultMemberProfile();
+        VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
+        VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+
+        MemberProfile bob = memberWithoutBoss("bob");
+        String bobAuth = auth(bob.getWorkEmail(), MEMBER_ROLE);
+
+        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, 5, "New notes")));
+        assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+        assertEquals("Member %s does not have permission to update Volunteering event for relationship %s".formatted(bob.getId(), relationship.getId()), e.getMessage());
+    }
+
+    @Test
+    void memberCannotHackUpdateOthersEventsWithTheirOwnRelationship() {
+        LocalDate now = LocalDate.now();
+        MemberProfile tim = createADefaultMemberProfile();
+        VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
+        VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+
+        MemberProfile bob = memberWithoutBoss("bob");
+        String bobAuth = auth(bob.getWorkEmail(), MEMBER_ROLE);
+        VolunteeringRelationship bobsRelationship = createVolunteeringRelationship(bob.getId(), organization.getId(), now);
+
+        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(bobsRelationship.getId(), now, 5, "New notes")));
+        assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+        assertEquals("Member %s does not have permission to update Volunteering event for relationship %s".formatted(bob.getId(), relationship.getId()), e.getMessage());
+    }
+
+    @Test
+    void memberCanUpdateOthersEventsWithProperPermission() {
+        LocalDate now = LocalDate.now();
+        MemberProfile tim = createADefaultMemberProfile();
+        VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
+        VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+
+        MemberProfile bob = memberWithoutBoss("bob");
+        String bobAuth = auth(bob.getWorkEmail(), ADMIN_ROLE);
+
+        var updated = eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, 5, "New notes"));
+        assertEquals(event.getId(), updated.getId());
+        assertEquals("New notes", updated.getNotes());
+    }
+
+    @Test
     void memberCanDeleteTheirOwnEvents() {
         LocalDate now = LocalDate.now();
         MemberProfile tim = createADefaultMemberProfile();

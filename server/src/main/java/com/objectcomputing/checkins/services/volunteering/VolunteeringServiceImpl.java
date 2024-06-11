@@ -148,15 +148,26 @@ class VolunteeringServiceImpl implements VolunteeringService {
         // Fail if the user doesn't have permission to modify the relationship
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS);
-        validate(!hasPermission && !relationship.getMemberId().equals(currentUserId), "Member %s does not have permission to %s Volunteering relationship for member %s", currentUserId, action, relationship.getMemberId());
+        // Be sure to go and check the member id from the relationship in the DB, not the one passed in here
+        UUID memberId = relationship.getId() == null
+                ? relationship.getMemberId()
+                : relationshipRepo.findById(relationship.getId()).map(VolunteeringRelationship::getMemberId).orElseThrow(() -> new BadArgException("Unknown member %s".formatted(relationship.getMemberId())));
+        boolean ownersRelationship = memberId.equals(currentUserId);
+        validate(!hasPermission && !ownersRelationship, "Member %s does not have permission to %s Volunteering relationship for member %s", currentUserId, action, memberId);
     }
 
     private void validatePermission(VolunteeringEvent event, String action) {
         // Fail if the user doesn't have permission to modify the event
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_ADMINISTER_VOLUNTEERING_EVENTS);
-        boolean ownersRelationship = relationshipRepo.findById(event.getRelationshipId()).map(r -> r.getMemberId().equals(currentUserId)).orElse(false);
-        validate(!hasPermission && !ownersRelationship, "Member %s does not have permission to %s Volunteering event for relationship %s", currentUserId, action, event.getRelationshipId());
+        // Be sure to go and check the event in the DB, not the one passed in here
+        UUID relationshipId = event.getId() == null
+                ? event.getRelationshipId()
+                : eventRepo.findById(event.getId()).map(VolunteeringEvent::getRelationshipId).orElseThrow(() -> new BadArgException("Unknown relationship %s".formatted(event.getRelationshipId())));
+        boolean ownersRelationship = relationshipRepo.findById(relationshipId)
+                .map(r -> r.getMemberId().equals(currentUserId))
+                .orElse(false);
+        validate(!hasPermission && !ownersRelationship, "Member %s does not have permission to %s Volunteering event for relationship %s", currentUserId, action, relationshipId);
     }
 
     private void validate(boolean isError, String message, Object... args) {
