@@ -124,7 +124,6 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   const deleteCertification = useCallback(async () => {
     selectedCertification.active = false;
     const { id } = selectedCertification;
-    //TODO: What should we do if the certification has some earned certifications?
     try {
       const res = await resolve({
         method: 'PUT',

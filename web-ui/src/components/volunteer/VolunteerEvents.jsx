@@ -21,22 +21,27 @@ import {
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
-import { selectCurrentUser, selectProfileMap } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectProfileMap
+} from '../../context/selectors';
 
-const eventBaseUrl = 'http://localhost:3000/volunteer-event';
-const organizationBaseUrl = 'http://localhost:3000/organization';
-const relationshipBaseUrl = 'http://localhost:3000/volunteer-relationship';
+const eventBaseUrl = '/services/volunteer-event';
+const organizationBaseUrl = '/services/organization';
+const relationshipBaseUrl = '/services/volunteer-relationship';
 
 const formatDate = date => {
   if (!date) return '';
-  if (!(date instanceof Date)) date = new Date(date.$y, date.$M, date.$D);
-  return format(date, 'yyyy-MM-dd');
+  if (date instanceof Date) return format(date, 'yyyy-MM-dd');
+  const paddedMonth = (date.$M + 1).toString().padStart(2, '0');
+  const paddedYear = date.$D.toString().padStart(2, '0');
+  return `${date.$y}-${paddedMonth}-${paddedYear}`;
 };
 
 const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
 
 const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
-  const { state } = useContext(AppContext);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [eventDialogOpen, setEventDialogOpen] = useState(false);
   const [events, setEvents] = useState([]);
@@ -46,6 +51,9 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Member');
+
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
 
   const currentUser = selectCurrentUser(state);
   const profileMap = selectProfileMap(state);
@@ -57,8 +65,18 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const loadEvents = useCallback(async () => {
     try {
-      const res = await fetch(eventBaseUrl);
-      let events = await res.json();
+      const res = await resolve({
+        method: 'GET',
+        url: eventBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+
+      let events = res.payload.data;
       if (onlyMe) {
         // Only keep the events for my relationships.
         events = events.filter(e => Boolean(relationshipMap[e.relationshipId]));
@@ -72,8 +90,18 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const loadOrganizations = useCallback(async () => {
     try {
-      const res = await fetch(organizationBaseUrl);
-      const organizations = await res.json();
+      const res = await resolve({
+        method: 'GET',
+        url: organizationBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+
+      const organizations = res.payload.data;
       setOrganizationMap(
         organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
       );
@@ -87,8 +115,18 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     let url = relationshipBaseUrl;
     if (onlyMe) url += '/' + currentUser.id;
     try {
-      const res = await fetch(url);
-      const relationships = await res.json();
+      const res = await resolve({
+        method: 'GET',
+        url,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+
+      const relationships = res.payload.data;
       relationships.sort((rel1, rel2) => {
         const member1 = profileMap[rel1.memberId];
         const member2 = profileMap[rel2.memberId];
@@ -142,9 +180,14 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const deleteEvent = useCallback(async relationship => {
-    const url = eventBaseUrl + '/' + event.id;
     try {
-      const res = await fetch(url, { method: 'DELETE' });
+      const res = await resolve({
+        method: 'DELETE',
+        url: eventBaseUrl + '/' + selectedEvent.id,
+        headers: { 'X-CSRF-Header': csrf }
+      });
+      if (res.error) throw new Error(res.error.message);
+
       setEvents(orgs => orgs.filter(org => org.id !== relationship.id));
     } catch (err) {
       console.error(err);
@@ -349,13 +392,20 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const saveEvent = useCallback(async () => {
     const { id } = selectedEvent;
-    const url = id ? `${eventBaseUrl}/${id}` : eventBaseUrl;
     try {
-      const res = await fetch(url, {
+      const res = await resolve({
         method: id ? 'PUT' : 'POST',
-        body: JSON.stringify(selectedEvent)
+        url: id ? `${eventBaseUrl}/${id}` : eventBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: selectedEvent
       });
-      const newRel = await res.json();
+      if (res.error) throw new Error(res.error.message);
+
+      const newRel = res.payload.data;
 
       if (id) {
         const index = events.findIndex(rel => rel.id === id);

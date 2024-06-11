@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Card, CardContent, CardHeader, Tooltip } from '@mui/material';
+import { Card, CardContent, CardHeader } from '@mui/material';
 
-const organizationBaseUrl = 'http://localhost:3000/organization';
-const relationshipBaseUrl = 'http://localhost:3000/volunteer-relationship';
+import { resolve } from '../../api/api.js';
+import { AppContext } from '../../context/AppContext';
+import { selectCsrfToken } from '../../context/selectors';
+
+const organizationBaseUrl = '/services/organization';
+const relationshipBaseUrl = '/services/volunteer-relationship';
 
 const propTypes = {
   memberId: PropTypes.string
@@ -14,10 +18,23 @@ const VolunteerBadges = ({ memberId }) => {
   const [organizationMap, setOrganizationMap] = useState({});
   const [relationships, setRelationships] = useState([]);
 
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+
   const loadOrganizations = useCallback(async () => {
     try {
-      const res = await fetch(organizationBaseUrl);
-      const organizations = await res.json();
+      const res = await resolve({
+        method: 'GET',
+        url: organizationBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+
+      const organizations = res.payload.data;
       setOrganizationMap(
         organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
       );
@@ -28,8 +45,17 @@ const VolunteerBadges = ({ memberId }) => {
 
   const loadRelationships = useCallback(async () => {
     try {
-      const res = await fetch(relationshipBaseUrl + '/' + memberId);
-      const relationships = await res.json();
+      const res = await resolve({
+        method: 'GET',
+        url: relationshipBaseUrl + '/' + memberId,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+      const relationships = res.payload.data;
       setRelationships(relationships);
     } catch (err) {
       console.error(err);

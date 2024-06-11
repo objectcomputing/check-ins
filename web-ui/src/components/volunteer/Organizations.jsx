@@ -4,7 +4,6 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AddCircleOutline, Delete, Edit, FoodBank } from '@mui/icons-material';
 import {
-  Autocomplete,
   Button,
   Card,
   CardContent,
@@ -18,27 +17,17 @@ import {
   Tooltip
 } from '@mui/material';
 
-import DatePickerField from '../date-picker-field/DatePickerField';
+import { resolve } from '../../api/api.js';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
-import { selectCurrentUser, selectProfileMap } from '../../context/selectors';
 
-const organizationBaseUrl = 'http://localhost:3000/organization';
-
-const formatDate = date => {
-  return !date
-    ? ''
-    : date instanceof Date
-      ? format(date, 'yyyy-MM-dd')
-      : `${date.$y}-${date.$M + 1}-${date.$D}`;
-};
+const organizationBaseUrl = '/services/organization';
 
 const sortableTableColumns = ['Name', 'Description'];
 
 const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
 
 const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
-  const { state } = useContext(AppContext);
   const [badgeUrl, setBadgeUrl] = useState('');
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [organizationDialogOpen, setOrganizationDialogOpen] = useState(false);
@@ -48,10 +37,23 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Name');
 
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+
   const loadOrganizations = useCallback(async () => {
     try {
-      const res = await fetch(organizationBaseUrl);
-      const organizations = await res.json();
+      const res = await resolve({
+        method: 'GET',
+        url: organizationBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+
+      const organizations = res.payload.data;
       setOrganizations(
         organizations.sort((org1, org2) => org1.name.localeCompare(org2.name))
       );
@@ -85,9 +87,20 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const deleteOrganization = useCallback(async organization => {
-    const url = organizationBaseUrl + '/' + organization.id;
+    selectedOrganization.active = false;
     try {
-      const res = await fetch(url, { method: 'DELETE' });
+      const res = await resolve({
+        method: 'PUT',
+        url: organizationBaseUrl + '/' + organization.id,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: selectedOrganization
+      });
+      if (res.error) throw new Error(res.error.message);
+
       setOrganizations(orgs => orgs.filter(org => org.id !== organization.id));
     } catch (err) {
       console.error(err);
@@ -268,12 +281,19 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
     const { id } = selectedOrganization;
     const url = id ? `${organizationBaseUrl}/${id}` : organizationBaseUrl;
     try {
-      const res = await fetch(url, {
+      const res = await resolve({
         method: id ? 'PUT' : 'POST',
-        body: JSON.stringify(selectedOrganization)
+        url,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: selectedOrganization
       });
-      const newOrg = await res.json();
+      if (res.error) throw new Error(res.error.message);
 
+      const newOrg = res.payload.data;
       if (id) {
         const index = organizations.findIndex(org => org.id === id);
         organizations[index] = newOrg;
@@ -282,7 +302,6 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
       }
       sortOrganizations(organizations);
       setOrganizations(organizations);
-
       setSelectedOrganization(null);
     } catch (err) {
       console.error(err);
