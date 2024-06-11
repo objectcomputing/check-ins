@@ -5,7 +5,6 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;

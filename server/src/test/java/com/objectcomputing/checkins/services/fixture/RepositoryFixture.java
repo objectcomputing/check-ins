@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 
+import com.objectcomputing.checkins.services.certification.CertificationRepository;
+import com.objectcomputing.checkins.services.certification.EarnedCertificationRepository;
 import com.objectcomputing.checkins.services.email.EmailRepository;
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
@@ -192,5 +194,13 @@ public interface RepositoryFixture {
 
     default MemberProfileReportRepository getMemberProfileReportRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(MemberProfileReportRepository.class);
+    }
+
+    default CertificationRepository getCertificationRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(CertificationRepository.class);
+    }
+
+    default EarnedCertificationRepository getEarnedCertificationRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(EarnedCertificationRepository.class);
     }
 }

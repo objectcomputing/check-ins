@@ -3,9 +3,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Card, CardContent, CardHeader, Tooltip } from '@mui/material';
 
+import { resolve } from '../../api/api.js';
+
 import './CertificationBadges.css';
 
-const certificationBaseUrl = 'http://localhost:3000/certification';
+const certificationBaseUrl = '/services/certification';
 
 const propTypes = {
   memberId: PropTypes.string
@@ -15,8 +17,18 @@ const CertificationBadges = ({ memberId }) => {
 
   const loadCertifications = useCallback(async () => {
     try {
-      const res = await fetch(certificationBaseUrl + '/' + memberId);
-      const certifications = await res.json();
+      const res = await resolve({
+        method: 'GET',
+        url: certificationBaseUrl + '/' + memberId,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+
+      const certifications = res.payload.data;
       setCertifications(certifications);
     } catch (err) {
       console.error(err);

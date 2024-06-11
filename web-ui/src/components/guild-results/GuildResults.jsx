@@ -12,7 +12,6 @@ import GuildSummaryCard from './GuildSummaryCard';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 import { useQueryParameters } from '../../helpers/query-parameters';
 import './GuildResults.css';
-import { emailGuildLeaders } from '../../api/notifications.js';
 
 const PREFIX = 'GuildResults';
 const classes = {
@@ -103,23 +102,6 @@ const GuildResults = () => {
                         data.id,
                         csrf
                       );
-                      const guildLeaders =
-                        resGuildLeader.payload?.data && !resGuildLeader.error
-                          ? resGuildLeader.payload.data
-                          : null;
-                      try {
-                        guildLeaders &&
-                          (await emailGuildLeaders(
-                            guildLeaders,
-                            data,
-                            csrf
-                          ).then());
-                      } catch (e) {
-                        console.error(
-                          'Unable to email guild leader assignment(s)',
-                          e
-                        );
-                      }
                     }
                     handleClose();
                   }

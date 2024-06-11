@@ -78,34 +78,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         return newContent;
     }
 
-    private FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
-        FeedbackTemplate template = createFeedbackTemplate(creator.getId());
-        getFeedbackTemplateRepository().save(template);
-        return createSampleFeedbackRequest(creator, requestee, recipient, template.getId());
-    }
-
-    private FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
-        FeedbackTemplate template = createAnotherFeedbackTemplate(creator.getId());
-        getFeedbackTemplateRepository().save(template);
-        return createSampleFeedbackRequest(creator, requestee, recipient, template.getId(), reviewPeriod);
-    }
-
-    private FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
-        return saveSampleFeedbackRequest(creator, requestee, recipient, feedbackRequest.getTemplateId());
-    }
-
-    private FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient, reviewPeriod);
-        return saveSampleFeedbackRequest(creator, requestee, recipient, feedbackRequest.getTemplateId(), reviewPeriod);
-    }
-
-    private FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, LocalDate sendDate) {
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
-        feedbackRequest.setSendDate(sendDate);
-        return getFeedbackRequestRepository().save(feedbackRequest);
-    }
-
     /**
      * Converts a {@link FeedbackRequest} to a {@link FeedbackRequestCreateDTO}
      * @param feedbackRequest {@link FeedbackRequest}

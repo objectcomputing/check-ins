@@ -23,21 +23,26 @@ import {
   Tooltip
 } from '@mui/material';
 
+import { resolve } from '../../api/api.js';
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
-import { selectCurrentUser, selectProfileMap } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectProfileMap
+} from '../../context/selectors';
 import './EarnedCertificationsTable.css';
 
-const certificationBaseUrl = 'http://localhost:3000/certification';
-const earnedCertificationBaseUrl = 'http://localhost:3000/earned-certification';
+const certificationBaseUrl = '/services/certification';
+const earnedCertificationBaseUrl = '/services/earned-certification';
 
 const formatDate = date => {
-  return !date
-    ? ''
-    : date instanceof Date
-      ? format(date, 'yyyy-MM-dd')
-      : `${date.$y}-${date.$M + 1}-${date.$D}`;
+  if (!date) return '';
+  if (date instanceof Date) return format(date, 'yyyy-MM-dd');
+  const paddedMonth = (date.$M + 1).toString().padStart(2, '0');
+  const paddedYear = date.$D.toString().padStart(2, '0');
+  return `${date.$y}-${paddedMonth}-${paddedYear}`;
 };
 
 const newEarned = { earnedDate: formatDate(new Date()) };
@@ -76,6 +81,7 @@ const EarnedCertificationsTable = ({
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Member');
 
+  const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);
   const profileMap = selectProfileMap(state);
   const profiles = Object.values(profileMap);
@@ -83,8 +89,18 @@ const EarnedCertificationsTable = ({
 
   const loadCertifications = useCallback(async () => {
     try {
-      let res = await fetch(certificationBaseUrl);
-      const certs = await res.json();
+      let res = await resolve({
+        method: 'GET',
+        url: certificationBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+
+      const certs = res.payload.data;
       setCertifications(certs.sort((c1, c2) => c1.name.localeCompare(c2.name)));
 
       const certMap = certs.reduce((map, cert) => {
@@ -93,8 +109,18 @@ const EarnedCertificationsTable = ({
       }, {});
       setCertificationMap(certMap);
 
-      res = await fetch(earnedCertificationBaseUrl);
-      let earned = await res.json();
+      res = await resolve({
+        method: 'GET',
+        url: earnedCertificationBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+
+      let earned = res.payload.data;
       if (onlyMe) {
         earned = earned.filter(cert => cert.memberId === currentUser.id);
       }
@@ -181,9 +207,14 @@ const EarnedCertificationsTable = ({
   }, []);
 
   const deleteEarnedCertification = useCallback(async cert => {
-    const url = earnedCertificationBaseUrl + '/' + cert.id;
     try {
-      const res = await fetch(url, { method: 'DELETE' });
+      const res = await resolve({
+        method: 'DELETE',
+        url: earnedCertificationBaseUrl + '/' + cert.id,
+        headers: { 'X-CSRF-Header': csrf }
+      });
+      if (res.error) throw new Error(res.error.message);
+
       setEarnedCertifications(earned => earned.filter(c => c.id !== cert.id));
     } catch (err) {
       console.error(err);
@@ -450,11 +481,19 @@ const EarnedCertificationsTable = ({
 
   const saveCertification = useCallback(async () => {
     try {
-      const res = await fetch(certificationBaseUrl, {
+      const res = await resolve({
         method: 'POST',
-        body: JSON.stringify({ badgeUrl, name: certificationName })
+        url: certificationBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: { name: certificationName, badgeUrl }
       });
-      const newCert = await res.json();
+      if (res.error) throw new Error(res.error.message);
+
+      const newCert = res.payload.data;
       setCertifications(certs =>
         [...certs, newCert].sort((c1, c2) => c1.name.localeCompare(c2.name))
       );
@@ -472,18 +511,26 @@ const EarnedCertificationsTable = ({
   }, [certificationName, certifications, selectedCertification]);
 
   const saveEarnedCertification = useCallback(async () => {
+    selectedEarned.memberId = selectedProfile?.id || currentUser.id;
+    selectedEarned.certificationId = selectedCertification.id;
     const { id } = selectedEarned;
     const url = id
       ? `${earnedCertificationBaseUrl}/${id}`
       : earnedCertificationBaseUrl;
-    selectedEarned.memberId = selectedProfile?.id || currentUser.id;
-    selectedEarned.certificationId = selectedCertification.id;
     try {
-      const res = await fetch(url, {
+      const res = await resolve({
         method: id ? 'PUT' : 'POST',
-        body: JSON.stringify(selectedEarned)
+        url,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: selectedEarned
       });
-      const newEarned = await res.json();
+      if (res.error) throw new Error(res.error.message);
+
+      const newEarned = res.payload.data;
       setEarnedCertifications(earned => {
         if (id) {
           const index = earned.findIndex(c => c.id === id);
@@ -515,7 +562,6 @@ const EarnedCertificationsTable = ({
         const compare = sortAscending
           ? v1.localeCompare(v2)
           : v2.localeCompare(v1);
-        // console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
         return compare;
       });
     },

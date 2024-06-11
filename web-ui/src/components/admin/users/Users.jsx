@@ -1,5 +1,5 @@
 import fileDownload from 'js-file-download';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import DownloadIcon from '@mui/icons-material/FileDownload';
 import PersonIcon from '@mui/icons-material/Person';
@@ -23,10 +23,6 @@ import {
 import { useQueryParameters } from '../../../helpers/query-parameters';
 
 import './Users.css';
-import {
-  emailPDLAssignment,
-  emailSupervisorAssignment
-} from '../../../api/notifications.js';
 
 const PREFIX = 'Users';
 const classes = {
@@ -188,24 +184,6 @@ const Users = () => {
                           type: UPDATE_MEMBER_PROFILES,
                           payload: [...memberProfiles, data]
                         });
-                        try {
-                          member.pdlId &&
-                            (await emailPDLAssignment(member, csrf));
-                        } catch (e) {
-                          console.error(
-                            'Unable to send PDL assignment email',
-                            e
-                          );
-                        }
-                        try {
-                          member.supervisorid &&
-                            (await emailSupervisorAssignment(member, csrf));
-                        } catch (e) {
-                          console.error(
-                            'Unable to send supervisor assignment email',
-                            e
-                          );
-                        }
                       }
                       handleClose();
                     }
