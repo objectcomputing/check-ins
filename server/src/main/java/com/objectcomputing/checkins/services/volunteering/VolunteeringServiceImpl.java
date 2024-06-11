@@ -134,12 +134,12 @@ class VolunteeringServiceImpl implements VolunteeringService {
 
     private void validateRelationship(VolunteeringRelationship relationship, String action) {
         validate(memberProfileRepository.findById(relationship.getMemberId()).isEmpty(), "Member %s doesn't exist", relationship.getMemberId());
-        validate(organizationRepo.findById(relationship.getOrganizationId()).isEmpty(), "Organization %s doesn't exist", relationship.getOrganizationId());
+        validate(organizationRepo.findById(relationship.getOrganizationId()).isEmpty(), "Volunteering organization %s doesn't exist", relationship.getOrganizationId());
         validatePermission(relationship, action);
     }
 
     private void validateEvent(VolunteeringEvent event, String action) {
-        validate(relationshipRepo.findById(event.getRelationshipId()).isEmpty(), "Relationship %s doesn't exist", event.getRelationshipId());
+        validate(relationshipRepo.findById(event.getRelationshipId()).isEmpty(), "Volunteering relationship %s doesn't exist", event.getRelationshipId());
         validate(event.getHours() < 0, "Hours must be non-negative");
         validatePermission(event, action);
     }

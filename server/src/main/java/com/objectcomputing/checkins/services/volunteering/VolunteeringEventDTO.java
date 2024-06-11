@@ -36,14 +36,15 @@ public class VolunteeringEventDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate eventDate;
 
+    @NotNull
     @Schema(description = "number of hours spent volunteering")
-    private int hours;
+    private Integer hours;
 
     @Nullable
     @Schema(description = "notes about the volunteering event")
     private String notes;
 
-    public VolunteeringEventDTO(@NotNull UUID relationshipId, @NotNull LocalDate eventDate, int hours) {
+    public VolunteeringEventDTO(@NotNull UUID relationshipId, @NotNull LocalDate eventDate, Integer hours) {
         this(relationshipId, eventDate, hours, null);
     }
 }
