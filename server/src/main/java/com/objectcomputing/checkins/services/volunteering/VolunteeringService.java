@@ -11,7 +11,7 @@ public interface VolunteeringService {
 
     List<VolunteeringRelationship> listRelationships(@Nullable UUID memberId, @Nullable UUID organizationId, boolean includeDeactivated);
 
-    List<VolunteeringEvent> listEvents(@Nullable UUID memberId, @Nullable UUID relationshipId, boolean includeDeactivated);
+    List<VolunteeringEvent> listEvents(@Nullable UUID memberId, @Nullable UUID organizationId, boolean includeDeactivated);
 
     VolunteeringOrganization create(VolunteeringOrganization organization);
 
@@ -24,4 +24,6 @@ public interface VolunteeringService {
     VolunteeringRelationship update(VolunteeringRelationship relationship);
 
     VolunteeringEvent update(VolunteeringEvent event);
+
+    void deleteEvent(UUID id);
 }

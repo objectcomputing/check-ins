@@ -23,52 +23,27 @@ import java.util.UUID;
 
 @Setter
 @Getter
-@Entity
 @AllArgsConstructor
-@NoArgsConstructor
 @Introspected
-@Table(name = "volunteering_event")
-public class VolunteeringEvent {
+public class VolunteeringEventDTO {
 
-    @Id
-    @Column(name = "event_id")
-    @AutoPopulated
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the volunteering event")
-    private UUID id;
-
-    @Column(name = "relationship_id")
     @NotNull
     @Schema(description = "id of the Volunteering relationship")
     private UUID relationshipId;
 
     @NotNull
-    @Column(name = "event_date")
-    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     @Schema(description = "when the volunteering event occurred")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate eventDate;
 
-    @Column(name = "hours")
     @Schema(description = "number of hours spent volunteering")
-    @TypeDef(type = DataType.INTEGER)
     private int hours;
 
     @Nullable
-    @Column(name = "notes")
-    @TypeDef(type = DataType.STRING)
     @Schema(description = "notes about the volunteering event")
     private String notes;
 
-    public VolunteeringEvent(UUID relationshipId, LocalDate eventDate, int hours) {
-        this(null, relationshipId, eventDate, hours, null);
-    }
-
-    public VolunteeringEvent(UUID relationshipId, LocalDate eventDate) {
-        this(null, relationshipId, eventDate, 0, null);
-    }
-
-    public VolunteeringEvent(UUID relationshipId, LocalDate eventDate, int hours, String notes) {
-        this(null, relationshipId, eventDate, hours, notes);
+    public VolunteeringEventDTO(@NotNull UUID relationshipId, @NotNull LocalDate eventDate, int hours) {
+        this(relationshipId, eventDate, hours, null);
     }
 }

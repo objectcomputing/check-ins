@@ -27,11 +27,23 @@ public interface VolunteeringEventRepository extends CrudRepository<Volunteering
                 FROM volunteering_event AS event
                     LEFT JOIN volunteering_relationship AS rel USING(relationship_id)
                     LEFT JOIN volunteering_organization AS org USING(organization_id)
-                WHERE rel.relationship_id = :relationshipId
+                WHERE org.organization_id = :organizationId
                   AND (rel.is_active = TRUE OR :includeDeactivated = TRUE)
                   AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
                 ORDER BY event.event_date, org.name""")
-    List<VolunteeringEvent> findByRelationshipId(UUID relationshipId, boolean includeDeactivated);
+    List<VolunteeringEvent> findByOrganizationId(UUID organizationId, boolean includeDeactivated);
+
+    @Query("""
+            SELECT event.*
+                FROM volunteering_event AS event
+                    LEFT JOIN volunteering_relationship AS rel USING(relationship_id)
+                    LEFT JOIN volunteering_organization AS org USING(organization_id)
+                WHERE rel.member_id = :memberId
+                  AND org.organization_id = :organizationId
+                  AND (rel.is_active = TRUE OR :includeDeactivated = TRUE)
+                  AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
+                ORDER BY event.event_date, org.name""")
+    List<VolunteeringEvent> findByMemberIdAndOrganizationId(UUID memberId, UUID organizationId, boolean includeDeactivated);
 
     @Query("""
             SELECT event.*

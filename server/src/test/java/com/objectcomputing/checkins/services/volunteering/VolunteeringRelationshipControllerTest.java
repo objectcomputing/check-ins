@@ -33,7 +33,6 @@ class VolunteeringRelationshipControllerTest extends TestContainersSuite impleme
     VolunteeringClients.Relationship relationshipClient;
 
     private final static String MEMBER_AUTH = auth(MEMBER_ROLE, MEMBER_ROLE);
-    private final static String ADMIN_AUTH = auth(ADMIN_ROLE, ADMIN_ROLE);
 
     static private String auth(String email, String role) {
         return "Basic " + Base64.getEncoder().encodeToString((email + ":" + role).getBytes(StandardCharsets.UTF_8));

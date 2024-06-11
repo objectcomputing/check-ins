@@ -7,8 +7,6 @@ import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +14,6 @@ import java.util.UUID;
 @Singleton
 class VolunteeringServiceImpl implements VolunteeringService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(VolunteeringServiceImpl.class);
     private static final String ORG_NAME_ALREADY_EXISTS_MESSAGE = "Volunteering Organization with name %s already exists";
 
     private final MemberProfileRepository memberProfileRepository;
@@ -61,11 +58,13 @@ class VolunteeringServiceImpl implements VolunteeringService {
     }
 
     @Override
-    public List<VolunteeringEvent> listEvents(@Nullable UUID memberId, @Nullable UUID relationshipId, boolean includeDeactivated) {
-        if (memberId != null) {
+    public List<VolunteeringEvent> listEvents(@Nullable UUID memberId, @Nullable UUID organizationId, boolean includeDeactivated) {
+        if (memberId != null && organizationId != null) {
+            return eventRepo.findByMemberIdAndOrganizationId(memberId, organizationId, includeDeactivated);
+        } else if (memberId != null) {
             return eventRepo.findByMemberId(memberId, includeDeactivated);
-        } else if (relationshipId != null) {
-            return eventRepo.findByRelationshipId(relationshipId, includeDeactivated);
+        } else if (organizationId != null) {
+            return eventRepo.findByOrganizationId(organizationId, includeDeactivated);
         } else {
             return eventRepo.findAll(includeDeactivated);
         }
@@ -119,7 +118,18 @@ class VolunteeringServiceImpl implements VolunteeringService {
 
     @Override
     public VolunteeringEvent update(VolunteeringEvent event) {
-        return null;
+        validateEvent(event, "update");
+        return eventRepo.update(event);
+    }
+
+    @Override
+    public void deleteEvent(UUID id) {
+        VolunteeringEvent event = eventRepo.findById(id).orElse(null);
+        if (event == null) {
+            return;
+        }
+        validateEvent(event, "delete");
+        eventRepo.deleteById(id);
     }
 
     private void validateRelationship(VolunteeringRelationship relationship, String action) {
@@ -144,7 +154,7 @@ class VolunteeringServiceImpl implements VolunteeringService {
     private void validatePermission(VolunteeringEvent event, String action) {
         // Fail if the user doesn't have permission to modify the event
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_VIEW_ALL_PULSE_RESPONSES);
+        boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_ADMINISTER_VOLUNTEERING_EVENTS);
         boolean ownersRelationship = relationshipRepo.findById(event.getRelationshipId()).map(r -> r.getMemberId().equals(currentUserId)).orElse(false);
         validate(!hasPermission && !ownersRelationship, "Member %s does not have permission to %s Volunteering event for relationship %s", currentUserId, action, event.getRelationshipId());
     }
