@@ -95,7 +95,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
         String status = feedbackRequest.getSendDate().isAfter(LocalDate.now()) ? "pending" : "sent";
         feedbackRequest.setStatus(status);
-        System.out.println(currentUserServices.getCurrentUser().equals(feedbackRequest.getRequesteeId()));
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
         if (feedbackRequest.getSendDate().equals(LocalDate.now())) {
             sendNewRequestEmail(storedRequest);
