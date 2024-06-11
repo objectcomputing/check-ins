@@ -4,6 +4,7 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
@@ -49,5 +50,27 @@ class VolunteeringClients {
 
         @Put("/{id}")
         VolunteeringRelationship update(@Header String authorization, @NotNull UUID id, @Body VolunteeringRelationshipDTO relationship);
+    }
+
+    @Client("/services/volunteer/event")
+    @Requires(property = VolunteeringClients.Event.ENABLED, value = "true")
+    interface Event {
+
+        String ENABLED = "enable.volunteering.event.client";
+
+        @Get("/")
+        List<VolunteeringEvent> list(@Header String authorization);
+
+        @Get("/{?memberId,organizationId,includeDeactivated}")
+        List<VolunteeringEvent> list(@Header String authorization, @Nullable UUID memberId, @Nullable UUID organizationId, @Nullable Boolean includeDeactivated);
+
+        @Post
+        HttpResponse<VolunteeringEvent> create(@Header String authorization, @Body VolunteeringEventDTO organization);
+
+        @Put("/{id}")
+        VolunteeringEvent update(@Header String authorization, @NotNull UUID id, @Body VolunteeringEventDTO organization);
+
+        @Delete("/{id}")
+        HttpResponse<Void> delete(@Header String authorization, @NotNull UUID id);
     }
 }

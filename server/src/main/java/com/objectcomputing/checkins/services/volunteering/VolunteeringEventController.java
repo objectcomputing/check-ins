@@ -46,7 +46,7 @@ class VolunteeringEventController {
      * @param includeDeactivated whether to include deactivated relationships or organizations
      * @return list of {@link VolunteeringEvent}
      */
-    @Get("/{?memberId,relationshipId,includeDeactivated}")
+    @Get("/{?memberId,organizationId,includeDeactivated}")
     List<VolunteeringEvent> findEvents(@Nullable UUID memberId, @Nullable UUID organizationId, @Nullable Boolean includeDeactivated) {
         return volunteeringService.listEvents(memberId, organizationId, Boolean.TRUE.equals(includeDeactivated));
     }

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 
+import com.objectcomputing.checkins.services.volunteering.VolunteeringEvent;
 import com.objectcomputing.checkins.services.volunteering.VolunteeringOrganization;
 import com.objectcomputing.checkins.services.volunteering.VolunteeringRelationship;
 
@@ -38,5 +39,9 @@ public interface VolunteeringFixture extends RepositoryFixture {
 
     default VolunteeringRelationship createVolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, LocalDate endDate, boolean active) {
         return getVolunteeringRelationshipRepository().save(new VolunteeringRelationship(memberId, organizationId, startDate, endDate, active));
+    }
+
+    default VolunteeringEvent createVolunteeringEvent(UUID relationshipId, LocalDate now, int i, String notes) {
+        return getVolunteeringEventRepository().save(new VolunteeringEvent(relationshipId, now, i, notes));
     }
 }
