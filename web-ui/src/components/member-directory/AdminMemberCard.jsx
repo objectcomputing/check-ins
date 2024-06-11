@@ -214,11 +214,6 @@ const AdminMemberCard = ({ member, index }) => {
               open={open}
               onClose={handleClose}
               onSave={async member => {
-                const resGetMember = await getMember(member.id, csrf);
-                const oldMember =
-                  resGetMember.payload?.data && !resGetMember.error
-                    ? resGetMember.payload.data
-                    : null;
                 const res = await updateMember(member, csrf);
                 const data =
                   res.payload?.data && !res.error ? res.payload.data : null;
@@ -232,18 +227,6 @@ const AdminMemberCard = ({ member, index }) => {
                     type: UPDATE_MEMBER_PROFILES,
                     payload: copy
                   });
-                  try {
-                    oldMember.pdlId !== member.pdlId &&
-                      (await emailPDLAssignment(member, csrf));
-                  } catch (e) {
-                    console.error('Unable to email PDL assignment', e);
-                  }
-                  try {
-                    oldMember.supervisorid !== member.supervisorid &&
-                      (await emailSupervisorAssignment(member, csrf));
-                  } catch {
-                    console.error('Unable to email supervisor assignment', e);
-                  }
                   handleClose();
                 }
               }}
