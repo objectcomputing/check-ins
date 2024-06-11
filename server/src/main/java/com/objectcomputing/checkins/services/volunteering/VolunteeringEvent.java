@@ -14,13 +14,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Setter
@@ -29,7 +29,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Introspected
-@EqualsAndHashCode
 @ToString
 @Table(name = "volunteering_event")
 public class VolunteeringEvent {
@@ -64,15 +63,20 @@ public class VolunteeringEvent {
     @Schema(description = "notes about the volunteering event")
     private String notes;
 
-    public VolunteeringEvent(UUID relationshipId, LocalDate eventDate, int hours) {
-        this(null, relationshipId, eventDate, hours, null);
-    }
-
-    public VolunteeringEvent(UUID relationshipId, LocalDate eventDate) {
-        this(null, relationshipId, eventDate, 0, null);
-    }
-
     public VolunteeringEvent(UUID relationshipId, LocalDate eventDate, int hours, String notes) {
         this(null, relationshipId, eventDate, hours, notes);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VolunteeringEvent that = (VolunteeringEvent) o;
+        return hours == that.hours && Objects.equals(id, that.id) && Objects.equals(relationshipId, that.relationshipId) && Objects.equals(eventDate, that.eventDate) && Objects.equals(notes, that.notes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, relationshipId, eventDate, hours, notes);
     }
 }

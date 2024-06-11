@@ -17,13 +17,16 @@ import java.util.UUID;
 
 class VolunteeringClients {
 
+    private VolunteeringClients() {
+    }
+
     @Client("/services/volunteer/organization")
     @Requires(property = VolunteeringClients.Organization.ENABLED, value = "true")
     interface Organization {
 
         String ENABLED = "enable.volunteering.organization.client";
 
-        @Get("/")
+        @Get
         List<VolunteeringOrganization> list(@Header String authorization);
 
         @Get("/{?includeDeactivated}")
@@ -58,7 +61,7 @@ class VolunteeringClients {
 
         String ENABLED = "enable.volunteering.event.client";
 
-        @Get("/")
+        @Get
         List<VolunteeringEvent> list(@Header String authorization);
 
         @Get("/{?memberId,organizationId,includeDeactivated}")
