@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import {
   Button,
@@ -10,11 +10,14 @@ import {
 } from '@mui/material';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
+import { resolve } from '../../api/api.js';
+import { AppContext } from '../../context/AppContext';
+import { selectCsrfToken } from '../../context/selectors';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 
 import './Certifications.css';
 
-const certificationBaseUrl = '/certification';
+const certificationBaseUrl = '/services/certification';
 
 const propTypes = {
   forceUpdate: PropTypes.func,
@@ -33,6 +36,9 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   const [selectedCertification, setSelectedCertification] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
 
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+
   const close = () => {
     reset();
     onClose();
@@ -48,8 +54,18 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
 
   const loadCertifications = useCallback(async () => {
     try {
-      let res = await fetch(certificationBaseUrl);
-      const certs = await res.json();
+      const res = await resolve({
+        method: 'GET',
+        url: certificationBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+      });
+      if (res.error) throw new Error(res.error.message);
+
+      const certs = await res.payload.data;
       setCertifications(certs.sort((c1, c2) => c1.name.localeCompare(c2.name)));
 
       const certMap = certs.reduce((map, cert) => {
@@ -110,10 +126,13 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
     //TODO: What should we do if the certification has some earned certifications?
     const url = certificationBaseUrl + '/' + id;
     try {
-      const res = await fetch(url, { method: 'DELETE' });
-      if (!res.ok) {
-        throw new Error(`Failed to delete certification ${name}`);
-      }
+      const res = await resolve({
+        method: 'DELETE',
+        url: certificationBaseUrl,
+        headers: { 'X-CSRF-Header': csrf }
+      });
+      if (res.error) throw new Error(res.error.message);
+
       setCertificationMap(map => {
         delete map[id];
         return map;
@@ -131,10 +150,18 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
     const sourceId = selectedCertification.id;
     const targetId = selectedTarget.id;
     try {
-      const res = await fetch(url, {
+      const res = await resolve({
         method: 'POST',
-        body: JSON.stringify({ sourceId, targetId })
+        url: certificationBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: { sourceId, targetId }
       });
+      if (res.error) throw new Error(res.error.message);
+
       setCertifications(certs => certs.filter(cert => cert.id !== sourceId));
       setCertificationMap(map => {
         delete map[sourceId];
@@ -152,11 +179,22 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
       ? certificationBaseUrl
       : certificationBaseUrl + '/' + selectedCertification.id;
     try {
-      const res = await fetch(url, {
+      console.log('Certifications.jsx saveCertification: csrf =', csrf);
+      const res = await resolve({
         method: adding ? 'POST' : 'PUT',
-        body: JSON.stringify({ name, badgeUrl })
+        method: 'POST',
+        url,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: { name, badgeUrl }
       });
-      const newCert = await res.json();
+      console.log('Certifications.jsx saveCertification: res =', res);
+      if (res.error) throw new Error(res.error.message);
+
+      const newCert = res.payload.data;
       certificationMap[newCert.id] = newCert;
       setCertificationMap(certificationMap);
       setCertifications(
