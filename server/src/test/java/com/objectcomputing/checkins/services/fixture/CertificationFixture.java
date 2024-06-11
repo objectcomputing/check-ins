@@ -17,7 +17,11 @@ public interface CertificationFixture extends RepositoryFixture {
     }
 
     default Certification createCertification(String name, String badgeUrl) {
-        return getCertificationRepository().save(new Certification(name, badgeUrl));
+        return createCertification(name, badgeUrl, true);
+    }
+
+    default Certification createCertification(String name, String badgeUrl, boolean active) {
+        return getCertificationRepository().save(new Certification(name, badgeUrl, active));
     }
 
     default EarnedCertification createEarnedCertification(MemberProfile member, Certification certification) {
