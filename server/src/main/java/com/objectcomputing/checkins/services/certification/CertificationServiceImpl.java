@@ -42,8 +42,8 @@ class CertificationServiceImpl implements CertificationService {
     }
 
     @Override
-    public List<Certification> findAllCertifications() {
-        return certificationRepository.findAllOrderByNameAsc();
+    public List<Certification> findAllCertifications(boolean includeInactive) {
+        return certificationRepository.findAllOrderByNameAsc(includeInactive);
     }
 
     @Override
