@@ -29,8 +29,8 @@ import { AppContext } from '../../context/AppContext';
 import { selectCurrentUser, selectProfileMap } from '../../context/selectors';
 import './EarnedCertificationsTable.css';
 
-const certificationBaseUrl = 'http://localhost:3000/certification';
-const earnedCertificationBaseUrl = 'http://localhost:3000/earned-certification';
+const certificationBaseUrl = '/certification';
+const earnedCertificationBaseUrl = '/earned-certification';
 
 const formatDate = date => {
   return !date

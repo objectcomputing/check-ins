@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, Tooltip } from '@mui/material';
 
 import './CertificationBadges.css';
 
-const certificationBaseUrl = 'http://localhost:3000/certification';
+const certificationBaseUrl = '/certification';
 
 const propTypes = {
   memberId: PropTypes.string

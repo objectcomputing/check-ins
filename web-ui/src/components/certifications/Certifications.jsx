@@ -14,7 +14,7 @@ import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 
 import './Certifications.css';
 
-const certificationBaseUrl = 'http://localhost:3000/certification';
+const certificationBaseUrl = '/certification';
 
 const propTypes = {
   forceUpdate: PropTypes.func,
