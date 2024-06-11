@@ -76,11 +76,11 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
     } catch (err) {
       console.error(err);
     }
-  }, []);
+  }, [csrf]);
 
   useEffect(() => {
-    loadCertifications();
-  }, []);
+    if (csrf) loadCertifications();
+  }, [csrf]);
 
   const certificationSelect = useCallback(
     (label, setSelected) => (

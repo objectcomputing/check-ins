@@ -33,11 +33,11 @@ const CertificationBadges = ({ memberId }) => {
     } catch (err) {
       console.error(err);
     }
-  }, []);
+  }, [csrf]);
 
   useEffect(() => {
-    loadCertifications();
-  }, []);
+    if (csrf) loadCertifications();
+  }, [csrf]);
 
   if (certifications.length === 0) return null;
 

@@ -18,6 +18,7 @@ import {
   Tooltip
 } from '@mui/material';
 
+import { resolve } from '../../api/api.js';
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
@@ -27,9 +28,9 @@ import {
   selectProfileMap
 } from '../../context/selectors';
 
-const eventBaseUrl = '/services/volunteer-event';
-const organizationBaseUrl = '/services/organization';
-const relationshipBaseUrl = '/services/volunteer-relationship';
+const eventBaseUrl = '/services/volunteer/event';
+const organizationBaseUrl = '/services/volunteer/organization';
+const relationshipBaseUrl = '/services/volunteer/relationship';
 
 const formatDate = date => {
   if (!date) return '';
@@ -81,12 +82,14 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
         // Only keep the events for my relationships.
         events = events.filter(e => Boolean(relationshipMap[e.relationshipId]));
       }
-      events.sort((event1, event2) => event1.date.localeCompare(event2.date));
+      events.sort((event1, event2) =>
+        event1.eventDate.localeCompare(event2.eventDate)
+      );
       setEvents(events);
     } catch (err) {
       console.error(err);
     }
-  }, [relationshipMap]);
+  }, [csrf, relationshipMap]);
 
   const loadOrganizations = useCallback(async () => {
     try {
@@ -108,7 +111,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     } catch (err) {
       console.error(err);
     }
-  }, []);
+  }, [csrf]);
 
   const loadRelationships = useCallback(async () => {
     if (isEmpty(profileMap)) return;
@@ -139,20 +142,20 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     } catch (err) {
       console.error(err);
     }
-  }, [profileMap]);
+  }, [csrf, onlyMe, profileMap]);
 
   useEffect(() => {
-    loadOrganizations();
-    loadRelationships();
-  }, [profileMap]);
+    if (csrf) {
+      loadOrganizations();
+      loadRelationships();
+    }
+  }, [csrf, profileMap]);
 
   useEffect(() => {
-    if (!isEmpty(relationshipMap)) loadEvents();
-  }, [relationshipMap]);
-
-  useEffect(() => {
-    if (!isEmpty(organizationMap)) loadEvents();
-  }, [organizationMap]);
+    if (csrf && !isEmpty(organizationMap) && !isEmpty(relationshipMap)) {
+      loadEvents();
+    }
+  }, [csrf, organizationMap, relationshipMap]);
 
   useEffect(() => {
     sortEvents(events);
@@ -162,7 +165,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const addEvent = useCallback(() => {
     setSelectedEvent({
       relationshipId: '',
-      date: '',
+      eventDate: '',
       hours: 0,
       notes: ''
     });
@@ -179,16 +182,16 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     setConfirmDeleteOpen(true);
   }, []);
 
-  const deleteEvent = useCallback(async relationship => {
+  const deleteEvent = useCallback(async event => {
     try {
       const res = await resolve({
         method: 'DELETE',
-        url: eventBaseUrl + '/' + selectedEvent.id,
+        url: eventBaseUrl + '/' + event.id,
         headers: { 'X-CSRF-Header': csrf }
       });
       if (res.error) throw new Error(res.error.message);
 
-      setEvents(orgs => orgs.filter(org => org.id !== relationship.id));
+      setEvents(events => events.filter(e => e.id !== event.id));
     } catch (err) {
       console.error(err);
     }
@@ -236,12 +239,12 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
             }
           />
           <DatePickerField
-            date={getDate(selectedEvent?.date)}
+            date={getDate(selectedEvent?.eventDate)}
             label="Date"
             setDate={date => {
               setSelectedEvent({
                 ...selectedEvent,
-                date: formatDate(date)
+                eventDate: formatDate(date)
               });
             }}
           />
@@ -281,7 +284,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       return (
         <tr key={event.id}>
           <td>{onlyMe ? org.name : member.name + ' - ' + org.name}</td>
-          <td>{event.date}</td>
+          <td>{event.eventDate}</td>
           <td>{event.hours}</td>
           <td>{event.notes}</td>
           <td>
@@ -374,7 +377,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           const relationship = relationshipMap[event.relationshipId];
           return relationshipName(relationship);
         case 'Date':
-          return event.date || '';
+          return event.eventDate || '';
         case 'Hours':
           return event.hours || 0;
         case 'Notes':
@@ -427,7 +430,9 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     events => {
       events.sort((event1, event2) => {
         const v1 = eventValue(event1);
+        console.log('VolunteerEvents.jsx sortEvents: v1 =', v1);
         const v2 = eventValue(event2);
+        console.log('VolunteerEvents.jsx sortEvents: v2 =', v2);
         if (typeof v1 === 'number' && typeof v2 === 'number') {
           return sortAscending ? v1 - v2 : v2 - v1;
         } else {
@@ -460,7 +465,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const validEvent = useCallback(() => {
     const event = selectedEvent;
-    return event?.relationshipId && event?.date && event?.hours;
+    return event?.relationshipId && event?.eventDate && event?.hours;
   });
 
   return (

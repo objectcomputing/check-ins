@@ -7,8 +7,8 @@ import { resolve } from '../../api/api.js';
 import { AppContext } from '../../context/AppContext';
 import { selectCsrfToken } from '../../context/selectors';
 
-const organizationBaseUrl = '/services/organization';
-const relationshipBaseUrl = '/services/volunteer-relationship';
+const organizationBaseUrl = '/services/volunteer/organization';
+const relationshipBaseUrl = '/services/volunteer/relationship';
 
 const propTypes = {
   memberId: PropTypes.string
@@ -41,7 +41,7 @@ const VolunteerBadges = ({ memberId }) => {
     } catch (err) {
       console.error(err);
     }
-  }, []);
+  }, [csrf]);
 
   const loadRelationships = useCallback(async () => {
     try {
@@ -60,12 +60,14 @@ const VolunteerBadges = ({ memberId }) => {
     } catch (err) {
       console.error(err);
     }
-  }, [organizationMap]);
+  }, [csrf, organizationMap]);
 
   useEffect(() => {
-    loadOrganizations();
-    loadRelationships();
-  }, []);
+    if (csrf) {
+      loadOrganizations();
+      loadRelationships();
+    }
+  }, [csrf]);
 
   const relationshipRow = useCallback(
     relationship => {

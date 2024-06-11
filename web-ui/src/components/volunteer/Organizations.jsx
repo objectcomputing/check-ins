@@ -20,20 +20,19 @@ import {
 import { resolve } from '../../api/api.js';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
+import { selectCsrfToken } from '../../context/selectors';
 
-const organizationBaseUrl = '/services/organization';
+const organizationBaseUrl = '/services/volunteer/organization';
 
 const sortableTableColumns = ['Name', 'Description'];
 
-const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
+const propTypes = { onlyMe: PropTypes.bool };
 
-const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
-  const [badgeUrl, setBadgeUrl] = useState('');
+const Organizations = ({ onlyMe = false }) => {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [organizationDialogOpen, setOrganizationDialogOpen] = useState(false);
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrganization, setSelectedOrganization] = useState(null);
-  const [selectedProfile, setSelectedProfile] = useState(null);
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Name');
 
@@ -60,11 +59,11 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
     } catch (err) {
       console.error(err);
     }
-  }, []);
+  }, [csrf]);
 
   useEffect(() => {
-    loadOrganizations();
-  }, []);
+    if (csrf) loadOrganizations();
+  }, [csrf]);
 
   useEffect(() => {
     sortOrganizations(organizations);
@@ -87,7 +86,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const deleteOrganization = useCallback(async organization => {
-    selectedOrganization.active = false;
+    organization.active = false;
     try {
       const res = await resolve({
         method: 'PUT',
@@ -97,7 +96,7 @@ const Organizations = ({ forceUpdate = () => {}, onlyMe = false }) => {
           Accept: 'application/json',
           'Content-Type': 'application/json;charset=UTF-8'
         },
-        data: selectedOrganization
+        data: organization
       });
       if (res.error) throw new Error(res.error.message);
 

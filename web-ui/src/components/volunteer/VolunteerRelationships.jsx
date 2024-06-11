@@ -18,6 +18,7 @@ import {
   Tooltip
 } from '@mui/material';
 
+import { resolve } from '../../api/api.js';
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
@@ -27,8 +28,8 @@ import {
   selectProfileMap
 } from '../../context/selectors';
 
-const organizationBaseUrl = '/services/organization';
-const relationshipBaseUrl = '/services/volunteer-relationship';
+const organizationBaseUrl = '/services/volunteer/organization';
+const relationshipBaseUrl = '/services/volunteer/relationship';
 
 const formatDate = date => {
   if (!date) return '';
@@ -146,11 +147,17 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const deleteRelationship = useCallback(async relationship => {
+    relationship.active = false;
     try {
       const res = await resolve({
-        method: 'DELETE',
+        method: 'PUT',
         url: relationshipBaseUrl + '/' + relationship.id,
-        headers: { 'X-CSRF-Header': csrf }
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: relationship
       });
       if (res.error) throw new Error(res.error.message);
 
