@@ -992,6 +992,21 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_MANAGE_EARNED_CERTIFICATIONS');
 
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_ADMINISTER_VOLUNTEERING_EVENTS');
+
 -- Member permissions
 insert into role_permissions
     (roleid, permission)
@@ -1534,28 +1549,68 @@ values
 --- CERTIFICATIONS
 
 INSERT INTO certification
-    (certification_id, name, badge_url)
+(certification_id, name, badge_url)
 VALUES
     ('23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java', 'https://images.credly.com/images/235d5b25-d41e-48c2-9c0e-63b373e78fc8/image.png');
 
 INSERT INTO certification
-    (certification_id, name, badge_url)
+(certification_id, name, badge_url)
 VALUES
     ('68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python', 'https://pythoninstitute.org/assets/61f11f7719dd3800707549.png');
 
 --- MEMBER CERTIFICATIONS
 
 INSERT INTO earned_certification
-    (earned_certification_id, member_id, certification_id, description, earned_date)
+(earned_certification_id, member_id, certification_id, description, earned_date)
 VALUES -- Michael Kimberlin, Java
-    ('d946dfaa-4bae-4a4e-a3c3-9378ce1cae37', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2024-04-01');
+       ('d946dfaa-4bae-4a4e-a3c3-9378ce1cae37', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2024-04-01');
 
 INSERT INTO earned_certification
-    (earned_certification_id, member_id, certification_id, description, earned_date)
+(earned_certification_id, member_id, certification_id, description, earned_date)
 VALUES -- Mark Volkmann, Java
-    ('42471a8c-8851-42a0-8cc2-bc42cb1020cc', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2022-06-01');
+       ('42471a8c-8851-42a0-8cc2-bc42cb1020cc', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2022-06-01');
 
 INSERT INTO earned_certification
-    (earned_certification_id, member_id, certification_id, description, earned_date)
+(earned_certification_id, member_id, certification_id, description, earned_date)
 VALUES -- Mark Volkmann, Python
-    ('1f4272da-6ecb-4c15-b4a8-28739405bd1c', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python certification', '2024-03-01');
+       ('1f4272da-6ecb-4c15-b4a8-28739405bd1c', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python certification', '2024-03-01');
+
+-- Volunteering
+
+INSERT INTO volunteering_organization
+    (organization_id, name, description, website)
+VALUES ('c3381858-9745-4084-928e-ddbc44275f92', 'Lift for Life', 'Educate, Empower, Uplift',
+        'https://www.liftforlifeacademy.org/');
+
+INSERT INTO volunteering_organization
+    (organization_id, name, description, website)
+VALUES ('fbb31840-a247-4524-ae35-1c84263849bf', 'St. Louis Area Foodbank',
+        'Works with over 600 partners in 26 counties across the bi-state area to provide options for those in need of food',
+        'https://stlfoodbank.org/find-food/');
+
+INSERT INTO volunteering_relationship
+    (relationship_id, member_id, organization_id, start_date, end_date)
+VALUES -- Michael Kimberlin to Lift for Life
+       ('b2ffbfb0-efd2-4305-b741-b95db5ee36a8', '6207b3fd-042d-49aa-9e28-dcc04f537c2d',
+        'c3381858-9745-4084-928e-ddbc44275f92', '2021-01-01', '2022-01-01');
+
+INSERT INTO volunteering_relationship
+    (relationship_id, member_id, organization_id, start_date)
+VALUES -- Mark Volkmann to St. Louis Area Foodbank
+       ('7c945589-48c4-4474-8298-74b343de34ec', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d',
+        'fbb31840-a247-4524-ae35-1c84263849bf', '2024-04-16');
+
+INSERT INTO volunteering_event
+    (event_id, relationship_id, event_date, hours, notes)
+VALUES
+        ('12a45a85-7c67-4f9f-9b1c-672acb38411a', 'b2ffbfb0-efd2-4305-b741-b95db5ee36a8', '2024-02-14', 4, 'first event');
+
+INSERT INTO volunteering_event
+    (event_id, relationship_id, event_date, hours, notes)
+VALUES
+        ('8969ad87-a299-4ae8-b10d-d7e3b6072a09', 'b2ffbfb0-efd2-4305-b741-b95db5ee36a8', '2024-05-01', 8, 'second event');
+
+INSERT INTO volunteering_event
+    (event_id, relationship_id, event_date, hours, notes)
+VALUES
+        ('2afba083-8d42-429f-a90f-8992d1685bd0', 'b2ffbfb0-efd2-4305-b741-b95db5ee36a8', '2024-05-02', 4, 'third event');
