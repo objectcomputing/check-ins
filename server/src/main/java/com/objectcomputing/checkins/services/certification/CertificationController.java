@@ -14,6 +14,7 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -37,9 +38,9 @@ class CertificationController {
      *
      * @return a List of {@link Certification}
      */
-    @Get
-    List<Certification> findAll() {
-        return certificationService.findAllCertifications();
+    @Get("{?includeInactive}")
+    List<Certification> findAll(@Nullable Boolean includeInactive) {
+        return certificationService.findAllCertifications(Boolean.TRUE.equals(includeInactive));
     }
 
     /**

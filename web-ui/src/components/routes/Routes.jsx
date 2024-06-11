@@ -5,6 +5,7 @@ import { AppContext } from '../../context/AppContext';
 
 import AnniversaryReportPage from '../../pages/AnniversaryReportPage';
 import BirthdayReportPage from '../../pages/BirthdayReportPage';
+import CertificationReportPage from '../../pages/CertificationReportPage';
 import CheckinsPage from '../../pages/CheckinsPage';
 import CheckinsReportPage from '../../pages/CheckinsReportPage';
 import EditSkillsPage from '../../pages/EditSkillsPage';
@@ -148,6 +149,10 @@ export default function Routes() {
           <Route path="/birthday-reports">
             <Header title="Birthday Report" />
             <BirthdayReportPage />
+          </Route>
+          <Route path="/certification-reports">
+            <Header title="Certification Report" />
+            <CertificationReportPage />
           </Route>
           <Route path="/annual-review-reports">
             <Header title="Annual Review Report" />

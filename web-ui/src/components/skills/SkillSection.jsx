@@ -180,16 +180,36 @@ const SkillSection = ({ userId }) => {
 
   const SkillSelector = () => (
     <Autocomplete
+      blurOnSelect
+      className="skill-search-autocomplete"
+      clearOnBlur
+      filterOptions={(options, params) => {
+        const filtered = filter(options, params);
+        const name = params.inputValue;
+        if (name !== '') {
+          filtered.push({ name, displayLabel: `Add "${name}"` });
+        }
+        return filtered;
+      }}
+      getOptionLabel={option => option.displayLabel || ''}
+      handleHomeEndKeys
+      id="skillSearchAutocomplete"
       isOptionEqualToValue={(option, value) =>
         value ? value.id === option.id : false
       }
-      value={skillToAdd}
-      id="skillSearchAutocomplete"
-      className="skill-search-autocomplete"
-      selectOnFocus
-      clearOnBlur={true}
-      handleHomeEndKeys
-      blurOnSelect
+      onChange={(event, value) => {
+        if (value === null) return;
+        const inSkillsList = skills.find(
+          skill =>
+            skill && skill.name.toUpperCase() === value.name.toUpperCase()
+        );
+        if (inSkillsList) {
+          addSkill(value.name);
+        } else {
+          setSkillToAdd({ name: value.name, description: '' });
+          handleOpen();
+        }
+      }}
       options={skills
         .filter(skill => !mySkills.map(mSkill => mSkill.id).includes(skill.id))
         .map(skill => {
@@ -198,20 +218,6 @@ const SkillSection = ({ userId }) => {
             name: skill.name
           };
         })}
-      renderOption={(props, option) => (
-        <li {...props}>{option.displayLabel}</li>
-      )}
-      filterOptions={(options, params) => {
-        const filtered = filter(options, params);
-
-        if (params.inputValue !== '') {
-          filtered.push({
-            name: params.inputValue,
-            displayLabel: `Add "${params.inputValue}"`
-          });
-        }
-        return filtered;
-      }}
       renderInput={params => (
         <TextField
           {...params}
@@ -221,20 +227,18 @@ const SkillSection = ({ userId }) => {
           variant="standard"
         />
       )}
-      onChange={(event, value) => {
-        if (value === null) return;
-        const inSkillsList = skills.find(
-          skill =>
-            skill && skill.name.toUpperCase() === value.name.toUpperCase()
+      renderOption={(props, option) => {
+        // React keys must be passed directly to JSX without using spread.
+        const { key } = props;
+        delete props.key;
+        return (
+          <li key={key} {...props}>
+            {option.displayLabel}
+          </li>
         );
-        if (!inSkillsList) {
-          setSkillToAdd({ name: value.name, description: '' });
-          handleOpen();
-        } else {
-          addSkill(value.name);
-        }
       }}
-      getOptionLabel={option => option.displayLabel || ''}
+      selectOnFocus
+      value={skillToAdd}
     />
   );
 

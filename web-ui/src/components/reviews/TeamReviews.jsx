@@ -19,23 +19,13 @@ import {
 import {
   Alert,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   FormControlLabel,
   IconButton,
   InputAdornment,
   List,
   ListItem,
   ListItemText,
-  Modal,
   Switch,
   TextField,
   Tooltip,
@@ -43,6 +33,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { resolve } from '../../api/api.js';
 import {
   findReviewRequestsByPeriodAndTeamMembers,
@@ -77,8 +68,8 @@ import {
 import MemberSelector from '../member_selector/MemberSelector';
 import MemberSelectorDialog from '../member_selector/member_selector_dialog/MemberSelectorDialog';
 
-import DatePickerField from './periods/DatePickerField.jsx';
-import './periods/DatePickerField.css';
+import DatePickerField from '../date-picker-field/DatePickerField.jsx';
+import '../date-picker-field/DatePickerField.css';
 import './TeamReviews.css';
 
 const propTypes = {
@@ -374,11 +365,15 @@ const TeamReviews = ({ onBack, periodId }) => {
       if (!reviewee) return [];
       const { id } = reviewee;
       const as = assignments.filter(a => a.revieweeId === id) ?? [];
+      const reviewerIdSet = new Set();
       const reviewers = [];
       for (const as of assignments) {
         if (as.revieweeId === id) {
           const member = { ...memberMap[as.reviewerId], approved: as.approved };
-          reviewers.push(member);
+          if (!reviewerIdSet.has(member.id)) {
+            reviewerIdSet.add(member.id);
+            reviewers.push(member);
+          }
         }
       }
       return sortMembers(reviewers);
@@ -1023,78 +1018,27 @@ const TeamReviews = ({ onBack, periodId }) => {
           closeReviewerDialog();
         }}
       />
-      <Dialog
+      <ConfirmationDialog
         open={confirmDeleteOpen}
-        onClose={handleConfirmDeleteClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {'Delete this review period?'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure that you would like to delete period{' '}
-            {selectReviewPeriod(state, toDelete)?.name}?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirmDeleteClose}>No</Button>
-          <Button onClick={deleteReviewPeriod} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
+        onYes={deleteReviewPeriod}
+        question={`Are you sure you want to delete the review period ${selectReviewPeriod(state, toDelete)?.name}?`}
+        setOpen={setConfirmDeleteOpen}
+        title="Delete this review period?"
+      />
+      <ConfirmationDialog
         open={confirmApproveAllOpen}
-        onClose={handleConfirmApproveAllClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {'Approve Visible Review Assignments'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure that you want to approve all the visible review
-            assignments?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirmApproveAllClose}>No</Button>
-          <Button onClick={approveAll} autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Modal
-        onClose={() => setConfirmationDialogOpen(false)}
+        onYes={approveAll}
+        question={`Are you sure you want to approve all the visible review assignments?`}
+        setOpen={setConfirmApproveAllOpen}
+        title="Approve Visible Review Assignments"
+      />
+      <ConfirmationDialog
         open={confirmationDialogOpen}
-      >
-        <Card>
-          <CardHeader
-            title={
-              <Typography variant="h5" fontWeight="bold">
-                Approve and Launch
-              </Typography>
-            }
-          />
-          <CardContent>
-            <Typography variant="body1">{confirmationText}</Typography>
-          </CardContent>
-          <CardActions>
-            <Button
-              color="primary"
-              onClick={() => setConfirmationDialogOpen(false)}
-            >
-              No
-            </Button>
-            <Button color="primary" onClick={approveAllAndLaunch}>
-              Yes
-            </Button>
-          </CardActions>
-        </Card>
-      </Modal>
+        onYes={approveAllAndLaunch}
+        question={confirmationText}
+        setOpen={setConfirmationDialogOpen}
+        title="Approve and Launch"
+      />
     </Root>
   );
 };

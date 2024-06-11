@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.certification;
 
+import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
@@ -13,5 +14,9 @@ public interface CertificationRepository extends CrudRepository<Certification, U
 
     Optional<Certification> getByName(String name);
 
-    List<Certification> findAllOrderByNameAsc();
+    @Query("""
+            SELECT * FROM certification
+              WHERE is_active = TRUE OR :includeDeactivated = TRUE
+              ORDER BY name""")
+    List<Certification> findAllOrderByNameAsc(boolean includeDeactivated);
 }

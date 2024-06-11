@@ -136,6 +136,8 @@ function Menu({ children }) {
       links.push(['/birthday-reports', 'Birthdays']);
     }
 
+    links.push(['/certification-reports', 'Certifications']);
+
     if (selectHasCheckinsReportPermission(state)) {
       links.push(['/checkins-reports', 'Check-ins']);
     }
