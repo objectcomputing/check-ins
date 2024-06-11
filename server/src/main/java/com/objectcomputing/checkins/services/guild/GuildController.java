@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.guild;
 
 import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
@@ -60,32 +59,6 @@ public class GuildController {
     @Get("/{id}")
     public Mono<HttpResponse<GuildResponseDTO>> readGuild(@NotNull UUID id) {
         return Mono.fromCallable(() -> guildService.read(id))
-                .map(HttpResponse::ok);
-    }
-
-    /**
-     * Get guild leader based on guild id
-     *
-     * @param id of guild
-     * @return {@link GuildResponseDTO guild leader matching id}
-     */
-
-    @Get("/leaders/{id}")
-    public Mono<HttpResponse<Set<MemberProfile>>> getGuildLeaders(@NotNull UUID id) {
-        return Mono.fromCallable(() -> {
-                    GuildResponseDTO guild = guildService.read(id);
-                    List<GuildMemberResponseDTO> members = guild.getGuildMembers();
-                    Set<MemberProfile> newLeaders = new HashSet<>();
-                    for (GuildMemberResponseDTO member : members) {
-                        if (member.isLead()) {
-                            MemberProfile memberProfile = profileServices.getById(member.getMemberId());
-                            if (memberProfile != null) {
-                                newLeaders.add(memberProfile);
-                            }
-                        }
-                    }
-                    return newLeaders;
-                })
                 .map(HttpResponse::ok);
     }
 

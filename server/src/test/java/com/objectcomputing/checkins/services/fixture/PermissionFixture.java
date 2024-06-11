@@ -18,7 +18,8 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_CREATE_CHECKINS,
         Permission.CAN_UPDATE_CHECKINS,
         Permission.CAN_ADMINISTER_SETTINGS,
-        Permission.CAN_VIEW_SETTINGS
+        Permission.CAN_VIEW_SETTINGS,
+        Permission.CAN_VIEW_REVIEW_PERIOD
     );
 
     // Add PDL Permissions here
@@ -38,8 +39,8 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_VIEW_CHECKIN_DOCUMENT,
         Permission.CAN_UPDATE_CHECKIN_DOCUMENT,
         Permission.CAN_ADMINISTER_SETTINGS,
-        Permission.CAN_VIEW_SETTINGS
-
+        Permission.CAN_VIEW_SETTINGS,
+        Permission.CAN_VIEW_REVIEW_PERIOD
     );
 
     // Add ADMIN Permissions here
@@ -78,12 +79,15 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_DELETE_REVIEW_ASSIGNMENTS,
         Permission.CAN_ADMINISTER_SETTINGS,
         Permission.CAN_VIEW_SETTINGS,
+        Permission.CAN_VIEW_REVIEW_PERIOD,
         Permission.CAN_CREATE_REVIEW_PERIOD,
         Permission.CAN_UPDATE_REVIEW_PERIOD,
         Permission.CAN_LAUNCH_REVIEW_PERIOD,
         Permission.CAN_CLOSE_REVIEW_PERIOD,
         Permission.CAN_DELETE_REVIEW_PERIOD,
-        Permission.CAN_VIEW_ALL_PULSE_RESPONSES
+        Permission.CAN_VIEW_ALL_PULSE_RESPONSES,
+        Permission.CAN_MANAGE_CERTIFICATIONS,
+        Permission.CAN_MANAGE_EARNED_CERTIFICATIONS
     );
 
     default void setPermissionsForAdmin(UUID roleID) {

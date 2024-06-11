@@ -196,7 +196,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                         null,
                         null,
                         name + "@work.com",
-                        null,
+                        name + "-employee-id",
                         null,
                         null,
                         supervisor != null ? supervisor.getId() : null,

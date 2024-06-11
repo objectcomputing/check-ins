@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services;
 
 import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
-import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -11,9 +10,6 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +30,8 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
 
     private void deleteAllEntities() {
         // Note order can matter here.
+        getEarnedCertificationRepository().deleteAll();
+        getCertificationRepository().deleteAll();
         getEntityTagRepository().deleteAll();
         getTagRepository().deleteAll();
         getPulseResponseRepository().deleteAll();

@@ -6,15 +6,14 @@ import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -22,7 +21,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Set;
@@ -48,12 +46,12 @@ public class ReviewPeriodController {
      */
     @Post
     @RequiredPermission(Permission.CAN_CREATE_REVIEW_PERIOD)
-    public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> reviewPeriodServices.save(period.convertToEntity()))
-                .map(reviewPeriod -> HttpResponse.created(reviewPeriod)
-                        .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), reviewPeriod.getId())))));
-
+    public HttpResponse<ReviewPeriod> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<?> request) {
+        ReviewPeriod reviewPeriod = reviewPeriodServices.save(period.convertToEntity());
+        return HttpResponse.created(reviewPeriod)
+                        .headers(headers -> headers
+                                .location(URI.create(String.format("%s/%s", request.getPath(), reviewPeriod.getId())))
+                        );
     }
 
     /**
@@ -62,16 +60,14 @@ public class ReviewPeriodController {
      * @param id {@link UUID} of the review entry
      * @return a streamable response containing the found {@link ReviewPeriod} with the given ID
      */
-
     @Get("/{id}")
-    public Mono<HttpResponse<ReviewPeriod>> getById(@NotNull UUID id) {
-        return Mono.fromCallable(() -> {
-            ReviewPeriod result = reviewPeriodServices.findById(id);
-            if (result == null) {
-                throw new NotFoundException("No review period for UUID");
-            }
-            return result;
-        }).map(HttpResponse::ok);
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
+    public ReviewPeriod getById(@NotNull UUID id) {
+        ReviewPeriod result = reviewPeriodServices.findById(id);
+        if (result == null) {
+            throw new NotFoundException("No review period for UUID");
+        }
+        return result;
     }
 
     /**
@@ -81,11 +77,10 @@ public class ReviewPeriodController {
      * @param reviewStatus, the current {@link ReviewStatus} of the review (
      * @return a streamable response containing a {@link Set} of {@link ReviewPeriod}s that match the given criteria
      */
-
     @Get("/{?name,reviewStatus}")
-    public Mono<HttpResponse<Set<ReviewPeriod>>> findByValue(@Nullable String name, @Nullable ReviewStatus reviewStatus) {
-        return Mono.fromCallable(() -> reviewPeriodServices.findByValue(name, reviewStatus))
-                .map(HttpResponse::ok);
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
+    public Set<ReviewPeriod> findByValue(@Nullable String name, @Nullable ReviewStatus reviewStatus) {
+        return reviewPeriodServices.findByValue(name, reviewStatus);
     }
 
     /**
@@ -96,12 +91,12 @@ public class ReviewPeriodController {
      */
     @Put
     @RequiredPermission(Permission.CAN_UPDATE_REVIEW_PERIOD)
-    public Mono<HttpResponse<ReviewPeriod>> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<?> request) {
-
-        return Mono.fromCallable(() -> reviewPeriodServices.update(reviewPeriod))
-                .map(updatedReviewPeriod -> HttpResponse.ok(updatedReviewPeriod)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),
-                                updatedReviewPeriod.getId())))));
+    public HttpResponse<ReviewPeriod> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<?> request) {
+        ReviewPeriod updatedReviewPeriod = reviewPeriodServices.update(reviewPeriod);
+        return HttpResponse.ok(updatedReviewPeriod)
+                        .headers(headers -> headers
+                                .location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewPeriod.getId())))
+                        );
     }
 
     /**
@@ -111,9 +106,8 @@ public class ReviewPeriodController {
      */
     @Delete("/{id}")
     @RequiredPermission(Permission.CAN_DELETE_REVIEW_PERIOD)
-    public Mono<HttpResponse<?>> deleteReviewPeriod(@NotNull UUID id) {
-        return Mono.fromRunnable(() -> reviewPeriodServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void deleteReviewPeriod(@NotNull UUID id) {
+        reviewPeriodServices.delete(id);
     }
-
 }

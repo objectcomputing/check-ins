@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import React, {
-  useEffect,
-  useContext,
   useCallback,
-  useState,
-  useRef
+  useContext,
+  useEffect,
+  useRef,
+  useState
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -60,6 +60,9 @@ import {
   selectCurrentMembers,
   selectCurrentUser,
   selectCurrentUserSubordinates,
+  selectHasDeleteReviewPeriodPermission,
+  selectHasLaunchReviewPeriodPermission,
+  selectHasUpdateReviewPeriodPermission,
   selectIsAdmin,
   selectReviewPeriod,
   selectSupervisors,
@@ -122,6 +125,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const [approvalMode, setApprovalMode] = useState(false);
   const [assignments, setAssignments] = useState([]);
+  const [canUpdate, setCanUpdate] = useState(false);
   const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
@@ -169,6 +173,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         isManager && period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
       );
     }
+    setCanUpdate(selectHasUpdateReviewPeriodPermission(state));
   }, [state]);
 
   useEffect(() => {
@@ -734,7 +739,7 @@ const TeamReviews = ({ onBack, periodId }) => {
             key={reviewer.id}
             label={reviewer.name}
             variant="outlined"
-            onDelete={() => deleteReviewer(member, reviewer)}
+            onDelete={canUpdate ? () => deleteReviewer(member, reviewer) : null}
             style={{
               backgroundColor: reviewer.approved
                 ? 'var(--checkins-palette-action-green)'
@@ -752,7 +757,9 @@ const TeamReviews = ({ onBack, periodId }) => {
       case ReviewStatus.PLANNING:
         return <Button onClick={requestApproval}>Request Approval</Button>;
       case ReviewStatus.AWAITING_APPROVAL:
-        return <Button onClick={requestApproval}>Launch Review</Button>;
+        return selectHasLaunchReviewPeriodPermission(state) ? (
+          <Button onClick={requestApproval}>Launch Review</Button>
+        ) : null;
       default:
         return null;
     }
@@ -842,37 +849,43 @@ const TeamReviews = ({ onBack, periodId }) => {
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
         {period && isAdmin && (
           <div>
-            <Tooltip
-              title={
-                period.reviewStatus === ReviewStatus.OPEN
-                  ? 'Archive'
-                  : 'Unarchive'
-              }
-            >
-              <IconButton
-                onClick={toggleReviewPeriod}
-                aria-label={
+            {canUpdate && (
+              <Tooltip
+                title={
                   period.reviewStatus === ReviewStatus.OPEN
                     ? 'Archive'
                     : 'Unarchive'
                 }
               >
-                {period.reviewStatus === ReviewStatus.OPEN ? (
-                  <Archive />
-                ) : (
-                  <Unarchive />
-                )}
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton
-                onClick={confirmDelete}
-                edge="end"
-                aria-label="Delete"
-              >
-                <Delete />
-              </IconButton>
-            </Tooltip>
+                <IconButton
+                  onClick={toggleReviewPeriod}
+                  aria-label={
+                    period.reviewStatus === ReviewStatus.OPEN
+                      ? 'Archive'
+                      : 'Unarchive'
+                  }
+                >
+                  {period.reviewStatus === ReviewStatus.OPEN ? (
+                    <Archive />
+                  ) : (
+                    <Unarchive />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
+
+            {selectHasDeleteReviewPeriodPermission(state) && (
+              <Tooltip title="Delete">
+                <IconButton
+                  onClick={confirmDelete}
+                  edge="end"
+                  aria-label="Delete"
+                >
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            )}
+
             {approvalMode && (
               <FormControlLabel
                 control={
@@ -895,20 +908,20 @@ const TeamReviews = ({ onBack, periodId }) => {
               date={period.launchDate}
               setDate={val => handleLaunchDateChange(val, period)}
               label="Launch Date"
-              disabled={!isAdmin}
+              disabled={!canUpdate}
               open={period?.reviewStatus === ReviewStatus?.PLANNING}
             />
             <DatePickerField
               date={period.selfReviewCloseDate}
               setDate={val => handleSelfReviewDateChange(val, period)}
               label="Self-Review Date"
-              disabled={!isAdmin}
+              disabled={!canUpdate}
             />
             <DatePickerField
               date={period.closeDate}
               setDate={val => handleCloseDateChange(val, period)}
               label="Close Date"
-              disabled={!isAdmin}
+              disabled={!canUpdate}
             />
           </div>
           {approvalButton()}
@@ -937,22 +950,25 @@ const TeamReviews = ({ onBack, periodId }) => {
               )
             }}
           />
-          <div>
-            <Button onClick={() => setConfirmApproveAllOpen(true)}>
-              Approve All
-            </Button>
-            <Button onClick={unapproveAll}>Unapprove All</Button>
-          </div>
+          {canUpdate && (
+            <div>
+              <Button onClick={() => setConfirmApproveAllOpen(true)}>
+                Approve All
+              </Button>
+              <Button onClick={unapproveAll}>Unapprove All</Button>
+            </div>
+          )}
         </div>
       )}
 
-      {/* TODO: Only render this if the user has a specific permission. */}
-      <MemberSelector
-        className="team-skill-member-selector"
-        exportable
-        onChange={updateTeamMembers}
-        selected={teamMembers}
-      />
+      {canUpdate && (
+        <MemberSelector
+          className="team-skill-member-selector"
+          exportable
+          onChange={updateTeamMembers}
+          selected={teamMembers}
+        />
+      )}
 
       <List dense role="list">
         {visibleTeamMembers().map(member => (
@@ -969,13 +985,17 @@ const TeamReviews = ({ onBack, periodId }) => {
             <div className="chip-row">
               <Typography>Reviewers:</Typography>
               {renderReviewers(member)}
-              <IconButton
-                aria-label="Edit Reviewers"
-                onClick={() => editReviewers(member)}
-              >
-                <AddCircle />
-              </IconButton>
-              {approvalMode && (
+
+              {canUpdate && (
+                <IconButton
+                  aria-label="Edit Reviewers"
+                  onClick={() => editReviewers(member)}
+                >
+                  <AddCircle />
+                </IconButton>
+              )}
+
+              {canUpdate && approvalMode && (
                 <Button onClick={() => toggleApproval(member)}>
                   {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
                 </Button>

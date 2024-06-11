@@ -8,7 +8,6 @@ import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
-import com.objectcomputing.checkins.services.team.member.TeamMemberUpdateDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;

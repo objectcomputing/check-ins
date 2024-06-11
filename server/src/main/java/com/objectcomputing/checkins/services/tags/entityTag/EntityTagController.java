@@ -5,7 +5,6 @@ import com.objectcomputing.checkins.services.tags.entityTag.EntityTag.EntityType
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -17,7 +16,6 @@ import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -82,7 +80,7 @@ public class EntityTagController {
      *
      * @param entityId {@link UUID} of entity tag
      * @param tagId  {@link UUID} of tags
-     * @return {@link List <EntityTag > list of Entity Tags
+     * @return set of Entity Tags
      */
     @Get("/{?entityId,tagId}")
     public Mono<HttpResponse<Set<EntityTag>>> findEntityTag(@Nullable UUID entityId, @Nullable UUID tagId, @Nullable EntityType type) {

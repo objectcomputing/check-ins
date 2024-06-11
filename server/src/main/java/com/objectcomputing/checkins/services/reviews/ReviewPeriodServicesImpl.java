@@ -5,9 +5,9 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetConfig;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.context.annotation.Property;
-import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -31,6 +31,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     private final ReviewPeriodRepository reviewPeriodRepository;
     private final ReviewAssignmentRepository reviewAssignmentRepository;
     private final MemberProfileRepository memberProfileRepository;
+    private final FeedbackRequestServices feedbackRequestServices;
     private final ReviewStatusTransitionValidator reviewStatusTransitionValidator;
     private EmailSender emailSender;
     private final Environment environment;
@@ -40,6 +41,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     public ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository,
                                     ReviewAssignmentRepository reviewAssignmentRepository,
                                     MemberProfileRepository memberProfileRepository,
+                                    FeedbackRequestServices feedbackRequestServices,
                                     ReviewStatusTransitionValidator reviewStatusTransitionValidator,
                                     @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                     Environment environment,
@@ -47,6 +49,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         this.reviewPeriodRepository = reviewPeriodRepository;
         this.reviewAssignmentRepository = reviewAssignmentRepository;
         this.memberProfileRepository = memberProfileRepository;
+        this.feedbackRequestServices = feedbackRequestServices;
         this.reviewStatusTransitionValidator = reviewStatusTransitionValidator;
         this.emailSender = emailSender;
         this.environment = environment;
@@ -94,6 +97,9 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     }
 
     public void delete(@NotNull UUID id) {
+        if (!feedbackRequestServices.findByValues(null, null, null, null, id, null, null).isEmpty()) {
+            throw new BadArgException(String.format("Review Period %s has associated feedback requests and cannot be deleted", id));
+        }
         reviewPeriodRepository.deleteById(id);
     }
 
