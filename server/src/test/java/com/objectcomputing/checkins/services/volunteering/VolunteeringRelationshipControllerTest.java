@@ -6,7 +6,6 @@ import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.VolunteeringFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.context.annotation.Property;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
@@ -173,5 +172,62 @@ class VolunteeringRelationshipControllerTest extends TestContainersSuite impleme
         assertEquals(startDate.plusDays(1), updated.getStartDate());
         assertEquals(startDate.plusDays(3), updated.getEndDate());
         assertTrue(updated.isActive());
+    }
+
+    @Test
+    void canListAndFilterRelationships() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        String memberAuth = auth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        MemberProfile sarah = memberWithoutBoss("sarah");
+        MemberProfile tim = memberWithoutBoss("tim");
+
+        VolunteeringOrganization liftForLife = createVolunteeringOrganization("Lift for Life", "Educate, empower, uplift", "https://www.liftforlifeacademy.org");
+        VolunteeringOrganization foodbank = createVolunteeringOrganization("St. Louis Area Foodbank", "Works with over 600 partners", "https://stlfoodbank.org/find-food/");
+
+        VolunteeringRelationship sarahLiftForLife = createVolunteeringRelationship(sarah.getId(), liftForLife.getId(), LocalDate.now().minusDays(2));
+        VolunteeringRelationship timLiftForLife = createVolunteeringRelationship(tim.getId(), liftForLife.getId(), LocalDate.now());
+        VolunteeringRelationship timFoodbankInactive = createVolunteeringRelationship(tim.getId(), foodbank.getId(), LocalDate.now().minusDays(3), null, false);
+        VolunteeringRelationship sarahFoodbank = createVolunteeringRelationship(sarah.getId(), foodbank.getId(), LocalDate.now().minusDays(10), LocalDate.now());
+
+        // Can find all relationships in correct order
+        List<VolunteeringRelationship> allRelationships = relationshipClient.list(memberAuth, null, null, null);
+        assertEquals(3, allRelationships.size());
+        assertEquals(List.of(sarahFoodbank.getId(), sarahLiftForLife.getId(), timLiftForLife.getId()), allRelationships.stream().map(VolunteeringRelationship::getId).toList());
+
+        // Can include inactive relationships
+        List<VolunteeringRelationship> allWithInactiveRelationships = relationshipClient.list(memberAuth, null, null, true);
+        assertEquals(4, allWithInactiveRelationships.size());
+        assertEquals(List.of(sarahFoodbank.getId(), timFoodbankInactive.getId(), sarahLiftForLife.getId(), timLiftForLife.getId()), allWithInactiveRelationships.stream().map(VolunteeringRelationship::getId).toList());
+
+        // Can filter by memberId
+        List<VolunteeringRelationship> timRelationships = relationshipClient.list(memberAuth, tim.getId(), null, null);
+        assertEquals(1, timRelationships.size());
+        assertEquals(List.of(timLiftForLife.getId()), timRelationships.stream().map(VolunteeringRelationship::getId).toList());
+
+        // Can filter by organization
+        List<VolunteeringRelationship> liftRelationships = relationshipClient.list(memberAuth, null, liftForLife.getId(), null);
+        assertEquals(2, liftRelationships.size());
+        assertEquals(List.of(sarahLiftForLife.getId(), timLiftForLife.getId()), liftRelationships.stream().map(VolunteeringRelationship::getId).toList());
+
+        // Can filter by organization and inactive
+        List<VolunteeringRelationship> foodRelationships = relationshipClient.list(memberAuth, null, foodbank.getId(), null);
+        assertEquals(1, foodRelationships.size());
+        assertEquals(List.of(sarahFoodbank.getId()), foodRelationships.stream().map(VolunteeringRelationship::getId).toList());
+        foodRelationships = relationshipClient.list(memberAuth, null, foodbank.getId(), true);
+        assertEquals(2, foodRelationships.size());
+        assertEquals(List.of(sarahFoodbank.getId(), timFoodbankInactive.getId()), foodRelationships.stream().map(VolunteeringRelationship::getId).toList());
+
+        // Can filter by member and organization
+        List<VolunteeringRelationship> sarahLiftRelationships = relationshipClient.list(memberAuth, sarah.getId(), liftForLife.getId(), null);
+        assertEquals(1, sarahLiftRelationships.size());
+        assertEquals(List.of(sarahLiftForLife.getId()), sarahLiftRelationships.stream().map(VolunteeringRelationship::getId).toList());
+
+        // Can filter by member and organization and inactive
+        List<VolunteeringRelationship> timFood = relationshipClient.list(memberAuth, tim.getId(), foodbank.getId(), null);
+        assertEquals(0, timFood.size());
+        timFood = relationshipClient.list(memberAuth, tim.getId(), foodbank.getId(), true);
+        assertEquals(1, timFood.size());
+        assertEquals(List.of(timFoodbankInactive.getId()), timFood.stream().map(VolunteeringRelationship::getId).toList());
     }
 }

@@ -25,10 +25,18 @@ public interface VolunteeringFixture extends RepositoryFixture {
     }
 
     default VolunteeringRelationship createVolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate) {
-        return createVolunteeringRelationship(memberId, organizationId, startDate, null);
+        return createVolunteeringRelationship(memberId, organizationId, startDate, null, true);
+    }
+
+    default VolunteeringRelationship createVolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, boolean active) {
+        return createVolunteeringRelationship(memberId, organizationId, startDate, null, active);
     }
 
     default VolunteeringRelationship createVolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, LocalDate endDate) {
-        return getVolunteeringRelationshipRepository().save(new VolunteeringRelationship(memberId, organizationId, startDate, endDate));
+        return createVolunteeringRelationship(memberId, organizationId, startDate, endDate, true);
+    }
+
+    default VolunteeringRelationship createVolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, LocalDate endDate, boolean active) {
+        return getVolunteeringRelationshipRepository().save(new VolunteeringRelationship(memberId, organizationId, startDate, endDate, active));
     }
 }

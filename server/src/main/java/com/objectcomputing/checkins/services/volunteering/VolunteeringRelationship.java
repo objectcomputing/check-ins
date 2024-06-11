@@ -70,4 +70,8 @@ public class VolunteeringRelationship {
     public VolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, @Nullable LocalDate endDate) {
         this(null, memberId, organizationId, startDate, endDate, true);
     }
+
+    public VolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, @Nullable LocalDate endDate, boolean active) {
+        this(null, memberId, organizationId, startDate, endDate, active);
+    }
 }
