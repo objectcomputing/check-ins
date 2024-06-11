@@ -70,7 +70,7 @@ class VolunteeringOrganizationController {
      * @return the updated {@link VolunteeringOrganization}
      */
     @Put("/{id}")
-//    @RequiredPermission(Permission.CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS)
+    @RequiredPermission(Permission.CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS)
     VolunteeringOrganization update(@NotNull UUID id, @Valid @Body VolunteeringOrganizationDTO organization) {
         return volunteeringService.update(new VolunteeringOrganization(
                 id,
