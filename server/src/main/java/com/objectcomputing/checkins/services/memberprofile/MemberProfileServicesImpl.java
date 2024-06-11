@@ -4,6 +4,8 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -13,8 +15,11 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -23,6 +28,7 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 @CacheConfig("member-cache")
 public class MemberProfileServicesImpl implements MemberProfileServices {
+    private static final Logger LOG = LoggerFactory.getLogger(MemberProfileServicesImpl.class);
 
     private final MemberProfileRepository memberProfileRepository;
     private final CurrentUserServices currentUserServices;
@@ -30,19 +36,22 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     private final CheckInServices checkInServices;
     private final MemberSkillServices memberSkillServices;
     private final TeamMemberServices teamMemberServices;
+    private final EmailSender emailSender;
 
     public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository,
                                      CurrentUserServices currentUserServices,
                                      RoleServices roleServices,
                                      CheckInServices checkInServices,
                                      MemberSkillServices memberSkillServices,
-                                     TeamMemberServices teamMemberServices) {
+                                     TeamMemberServices teamMemberServices,
+                                     @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender) {
         this.memberProfileRepository = memberProfileRepository;
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
         this.checkInServices = checkInServices;
         this.memberSkillServices = memberSkillServices;
         this.teamMemberServices = teamMemberServices;
+        this.emailSender = emailSender;
     }
 
     @Override
@@ -86,10 +95,60 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         }
 
         if (memberProfile.getId() == null) {
-            return memberProfileRepository.save(memberProfile);
+            MemberProfile createdMemberProfile = memberProfileRepository.save(memberProfile);
+            emailAssignment(createdMemberProfile, true); // PDL
+            emailAssignment(createdMemberProfile, false); // Supervisor
+            return createdMemberProfile;
         }
 
-        return memberProfileRepository.update(memberProfile);
+        Optional<MemberProfile> existingProfileOpt = memberProfileRepository.findById(memberProfile.getId());
+        MemberProfile updatedMemberProfile = memberProfileRepository.update(memberProfile);
+        if (existingProfileOpt.isEmpty()) {
+            LOG.error(String.format("MemberProfile with id %s not found", memberProfile.getId()));
+        } else {
+            MemberProfile existingProfile = existingProfileOpt.get();
+
+            boolean pdlChanged = !Objects.equals(existingProfile.getPdlId(), memberProfile.getPdlId());
+            boolean supervisorChanged = !Objects.equals(existingProfile.getSupervisorid(), memberProfile.getSupervisorid());
+
+            if (pdlChanged) {
+                emailAssignment(updatedMemberProfile, true); // PDL
+            }
+            if (supervisorChanged) {
+                emailAssignment(updatedMemberProfile, false); // Supervisor
+            }
+        }
+
+        return updatedMemberProfile;
+    }
+
+    public void emailAssignment(MemberProfile member, boolean isPDL) {
+        UUID roleId = isPDL ? member.getPdlId() : member.getSupervisorid();
+        String role = isPDL ? "PDL" : "supervisor";
+        if (roleId != null) {
+            if (member.getLastName() != null && member.getFirstName() != null && member.getWorkEmail() != null) {
+                Optional<MemberProfile> roleProfileOptional = memberProfileRepository.findById(roleId);
+
+                if (roleProfileOptional.isPresent()) {
+                    MemberProfile roleProfile = roleProfileOptional.get();
+
+                    if (roleProfile.getWorkEmail() != null) {
+                        String subject = "You have been assigned as the " + role + " of " + member.getFirstName() + " " + member.getLastName();
+                        String body = member.getFirstName() + " " + member.getLastName() + " will now report to you as their " + role + ". Please engage with them: " + member.getWorkEmail();
+
+                        emailSender.sendEmail(null, null, subject, body, roleProfile.getWorkEmail());
+                    } else {
+                        LOG.warn("Unable to send email regarding {} {}'s {} update as the {} was unable to be pulled up correctly",
+                                member.getFirstName(), member.getLastName(), role, role);
+                    }
+                } else {
+                    LOG.warn("Unable to send email regarding {} {}'s {} update as the {} was not found",
+                            member.getFirstName(), member.getLastName(), role, role);
+                }
+            } else {
+                LOG.warn("Unable to send email regarding as member was not valid and missing required fields: {}", member);
+            }
+        }
     }
 
     @Override

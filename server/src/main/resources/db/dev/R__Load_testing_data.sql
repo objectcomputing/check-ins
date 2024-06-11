@@ -27,6 +27,8 @@ delete from member_profile;
 delete from skillcategory_skills;
 delete from skills;
 delete from skillcategories;
+delete from earned_certification;
+delete from certification;
 
 -- Member Profiles
 INSERT INTO member_profile -- Gina Bremehr
@@ -980,6 +982,15 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_REVIEW_PERIOD');
 
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_MANAGE_CERTIFICATIONS');
+
+insert into role_permissions
+(roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_MANAGE_EARNED_CERTIFICATIONS');
 
 -- Member permissions
 insert into role_permissions
@@ -1520,4 +1531,31 @@ INSERT INTO skillcategory_skills -- Tools CSS
 values
 ('0778a8e7-21d8-4ca3-a0dc-cad676aac417', '6b56f0aa-09aa-4b09-bb81-03481af7e49f');
 
+--- CERTIFICATIONS
 
+INSERT INTO certification
+    (certification_id, name, badge_url)
+VALUES
+    ('23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java', 'https://images.credly.com/images/235d5b25-d41e-48c2-9c0e-63b373e78fc8/image.png');
+
+INSERT INTO certification
+    (certification_id, name, badge_url)
+VALUES
+    ('68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python', 'https://pythoninstitute.org/assets/61f11f7719dd3800707549.png');
+
+--- MEMBER CERTIFICATIONS
+
+INSERT INTO earned_certification
+    (earned_certification_id, member_id, certification_id, description, earned_date)
+VALUES -- Michael Kimberlin, Java
+    ('d946dfaa-4bae-4a4e-a3c3-9378ce1cae37', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2024-04-01');
+
+INSERT INTO earned_certification
+    (earned_certification_id, member_id, certification_id, description, earned_date)
+VALUES -- Mark Volkmann, Java
+    ('42471a8c-8851-42a0-8cc2-bc42cb1020cc', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2022-06-01');
+
+INSERT INTO earned_certification
+    (earned_certification_id, member_id, certification_id, description, earned_date)
+VALUES -- Mark Volkmann, Python
+    ('1f4272da-6ecb-4c15-b4a8-28739405bd1c', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python certification', '2024-03-01');
