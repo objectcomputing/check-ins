@@ -8,7 +8,7 @@ import {
   DialogTitle,
   TextField
 } from '@mui/material';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import { resolve } from '../../api/api.js';
 import { AppContext } from '../../context/AppContext';
@@ -122,14 +122,19 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   );
 
   const deleteCertification = useCallback(async () => {
-    const { id, name } = selectedCertification;
+    selectedCertification.active = false;
+    const { id } = selectedCertification;
     //TODO: What should we do if the certification has some earned certifications?
-    const url = certificationBaseUrl + '/' + id;
     try {
       const res = await resolve({
-        method: 'DELETE',
-        url: certificationBaseUrl,
-        headers: { 'X-CSRF-Header': csrf }
+        method: 'PUT',
+        url: certificationBaseUrl + '/' + id,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: selectedCertification
       });
       if (res.error) throw new Error(res.error.message);
 
@@ -146,13 +151,12 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   }, [certificationMap, certifications, selectedCertification]);
 
   const mergeCertification = useCallback(async () => {
-    const url = certificationBaseUrl + '/merge';
     const sourceId = selectedCertification.id;
     const targetId = selectedTarget.id;
     try {
       const res = await resolve({
         method: 'POST',
-        url: certificationBaseUrl,
+        url: certificationBaseUrl + '/merge',
         headers: {
           'X-CSRF-Header': csrf,
           Accept: 'application/json',
@@ -179,10 +183,8 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
       ? certificationBaseUrl
       : certificationBaseUrl + '/' + selectedCertification.id;
     try {
-      console.log('Certifications.jsx saveCertification: csrf =', csrf);
       const res = await resolve({
         method: adding ? 'POST' : 'PUT',
-        method: 'POST',
         url,
         headers: {
           'X-CSRF-Header': csrf,

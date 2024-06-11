@@ -38,11 +38,11 @@ const certificationBaseUrl = '/services/certification';
 const earnedCertificationBaseUrl = '/services/earned-certification';
 
 const formatDate = date => {
-  return !date
-    ? ''
-    : date instanceof Date
-      ? format(date, 'yyyy-MM-dd')
-      : `${date.$y}-${date.$M + 1}-${date.$D}`;
+  if (!date) return '';
+  if (date instanceof Date) return format(date, 'yyyy-MM-dd');
+  const paddedMonth = (date.$M + 1).toString().padStart(2, '0');
+  const paddedYear = date.$D.toString().padStart(2, '0');
+  return `${date.$y}-${paddedMonth}-${paddedYear}`;
 };
 
 const newEarned = { earnedDate: formatDate(new Date()) };
@@ -562,7 +562,6 @@ const EarnedCertificationsTable = ({
         const compare = sortAscending
           ? v1.localeCompare(v2)
           : v2.localeCompare(v1);
-        // console.log('v1 =', v1, 'v2 =', v2, 'compare =', compare);
         return compare;
       });
     },
