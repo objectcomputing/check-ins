@@ -193,7 +193,6 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
         },
         data: { name, badgeUrl }
       });
-      console.log('Certifications.jsx saveCertification: res =', res);
       if (res.error) throw new Error(res.error.message);
 
       const newCert = res.payload.data;
