@@ -60,6 +60,18 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
     }
 
     @Test
+    void inactiveCerificatesAreHidden() {
+        createCertification("Certificate");
+        createCertification("Another Certificate", "https://badge.url", false);
+
+        List<Certification> list = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(Certification.class));
+        assertEquals(List.of("Certificate"), list.stream().map(Certification::getName).toList());
+
+        list = certificationClient.toBlocking().retrieve(HttpRequest.GET("/?includeInactive=true").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(Certification.class));
+        assertEquals(List.of("Another Certificate", "Certificate"), list.stream().map(Certification::getName).toList());
+    }
+
+    @Test
     void canCreateCertificationWithoutThePermission() {
         MemberProfile tim = createASecondDefaultMemberProfile();
         createDefaultCertification();

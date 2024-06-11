@@ -7,7 +7,7 @@ import java.util.UUID;
 
 interface CertificationService {
 
-    List<Certification> findAllCertifications();
+    List<Certification> findAllCertifications(boolean includeInactive);
 
     Certification saveCertification(Certification certification);
 
