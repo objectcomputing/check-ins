@@ -1,6 +1,10 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.volunteering.VolunteeringOrganization;
+import com.objectcomputing.checkins.services.volunteering.VolunteeringRelationship;
+
+import java.time.LocalDate;
+import java.util.UUID;
 
 public interface VolunteeringFixture extends RepositoryFixture {
 
@@ -18,5 +22,13 @@ public interface VolunteeringFixture extends RepositoryFixture {
 
     default VolunteeringOrganization createVolunteeringOrganization(String name, String description, String website, boolean active) {
         return getVolunteeringOrganizationRepository().save(new VolunteeringOrganization(name, description, website, active));
+    }
+
+    default VolunteeringRelationship createVolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate) {
+        return createVolunteeringRelationship(memberId, organizationId, startDate, null);
+    }
+
+    default VolunteeringRelationship createVolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, LocalDate endDate) {
+        return getVolunteeringRelationshipRepository().save(new VolunteeringRelationship(memberId, organizationId, startDate, endDate));
     }
 }

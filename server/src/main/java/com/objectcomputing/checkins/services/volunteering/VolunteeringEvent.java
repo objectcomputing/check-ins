@@ -3,11 +3,11 @@ package com.objectcomputing.checkins.services.volunteering;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -51,7 +51,7 @@ public class VolunteeringEvent {
     private int hours;
 
     @Nullable
-    @Column(name = "hours")
+    @Column(name = "notes")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "notes about the volunteering event")
     private String notes;

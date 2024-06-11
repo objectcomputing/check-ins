@@ -24,32 +24,37 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Property(name = VolunteeringOrganizationClient.ENABLED, value = "true")
+@Property(name = VolunteeringClients.Organization.ENABLED, value = "true")
 class VolunteeringOrganizationControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, VolunteeringFixture {
 
     @Inject
-    VolunteeringOrganizationClient organizationClient;
+    VolunteeringClients.Organization organizationClient;
+
+    static private String auth(String email, String role) {
+        return "Basic " + Base64.getEncoder().encodeToString((email + ":" + role).getBytes(StandardCharsets.UTF_8));
+    }
 
     @BeforeEach
     void makeRoles() {
         createAndAssignRoles();
     }
 
-    static private String auth(String email, String role) {
-        return "Basic " + Base64.getEncoder().encodeToString((email + ":" + role).getBytes(StandardCharsets.UTF_8));
+    @Test
+    void startsEmpty() {
+        var list = organizationClient.list(auth(MEMBER_ROLE, MEMBER_ROLE));
+        assertTrue(list.isEmpty());
     }
 
     @Test
     void testCreateOrganization() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         String memberAuth = auth(memberProfile.getWorkEmail(), MEMBER_ROLE);
-        String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
 
-        List<VolunteeringOrganization> list = organizationClient.getAllOrganizations(memberAuth);
+        List<VolunteeringOrganization> list = organizationClient.list(memberAuth);
         assertEquals(0, list.size());
 
         VolunteeringOrganizationDTO org = new VolunteeringOrganizationDTO("name", "description", "website");
-        HttpResponse<VolunteeringOrganization> response = organizationClient.createOrganization(adminAuth, org);
+        HttpResponse<VolunteeringOrganization> response = organizationClient.createOrganization(memberAuth, org);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.body().getId());
         assertEquals("name", response.body().getName());
@@ -57,7 +62,7 @@ class VolunteeringOrganizationControllerTest extends TestContainersSuite impleme
         assertEquals("website", response.body().getWebsite());
 
         // List works as member without the profile
-        list = organizationClient.getAllOrganizations(memberAuth);
+        list = organizationClient.list(memberAuth);
         assertEquals(1, list.size());
         assertEquals("name", list.getFirst().getName());
         assertEquals("description", list.getFirst().getDescription());
@@ -75,27 +80,28 @@ class VolunteeringOrganizationControllerTest extends TestContainersSuite impleme
         createVolunteeringOrganization("beta", "beta desc", "https://beta.com", false);
 
         // List by default hides inactive (and they're ordered by name)
-        List<VolunteeringOrganization> list = organizationClient.getAllOrganizations(memberAuth);
+        List<VolunteeringOrganization> list = organizationClient.list(memberAuth);
         assertEquals(3, list.size());
         assertEquals(List.of("alpha", "epsilon", "gamma"), list.stream().map(VolunteeringOrganization::getName).toList());
 
         // List with includeDeactivated shows all (and they're ordered by name)
-        list = organizationClient.getAllOrganizations(memberAuth, true);
+        list = organizationClient.list(memberAuth, true);
         assertEquals(4, list.size());
         assertEquals(List.of("alpha", "beta", "epsilon", "gamma"), list.stream().map(VolunteeringOrganization::getName).toList());
     }
 
     @Test
-    void testCreateOrganizationWithoutRole() {
-        String memberAuth = auth(MEMBER_ROLE, MEMBER_ROLE);
-        VolunteeringOrganizationDTO org = new VolunteeringOrganizationDTO("name", "description", "website");
-
-        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> organizationClient.createOrganization(memberAuth, org));
+    void cannotUpdateWithoutPermission() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        String memberAuth = auth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        var org = createVolunteeringOrganization("name", "description", "website");
+        var update = new VolunteeringOrganizationDTO(org.getName(), "new description", "new website");
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> organizationClient.updateOrganization(memberAuth, org.getId(), update));
         assertEquals(HttpStatus.FORBIDDEN, e.getStatus());
     }
 
     @Test
-    void testCreateOrganizationWithoutDuplicateName() {
+    void cannotCreateDuplicateNamedOrganization() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         createVolunteeringOrganization("name", "description", "website");
@@ -107,7 +113,7 @@ class VolunteeringOrganizationControllerTest extends TestContainersSuite impleme
     }
 
     @Test
-    void cannotRenameAsDuplicateName() {
+    void cannotRenameWithDuplicateName() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
 

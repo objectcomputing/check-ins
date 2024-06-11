@@ -3,11 +3,11 @@ package com.objectcomputing.checkins.services.volunteering;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -67,7 +67,7 @@ public class VolunteeringRelationship {
     @Schema(description = "whether the Volunteering Relationship is active")
     private boolean active = true;
 
-    VolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, LocalDate endDate) {
+    public VolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, @Nullable LocalDate endDate) {
         this(null, memberId, organizationId, startDate, endDate, true);
     }
 }

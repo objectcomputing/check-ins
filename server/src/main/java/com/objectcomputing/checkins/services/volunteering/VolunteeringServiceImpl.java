@@ -138,7 +138,7 @@ class VolunteeringServiceImpl implements VolunteeringService {
         // Fail if the user doesn't have permission to modify the relationship
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS);
-        validate(!hasPermission && !relationship.getMemberId().equals(currentUserId), "User %s does not have permission to %s Volunteering relationship for user %s", currentUserId, action, relationship.getMemberId());
+        validate(!hasPermission && !relationship.getMemberId().equals(currentUserId), "Member %s does not have permission to %s Volunteering relationship for member %s", currentUserId, action, relationship.getMemberId());
     }
 
     private void validatePermission(VolunteeringEvent event, String action) {
@@ -146,7 +146,7 @@ class VolunteeringServiceImpl implements VolunteeringService {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_VIEW_ALL_PULSE_RESPONSES);
         boolean ownersRelationship = relationshipRepo.findById(event.getRelationshipId()).map(r -> r.getMemberId().equals(currentUserId)).orElse(false);
-        validate(!hasPermission && !ownersRelationship, "User %s does not have permission to %s Volunteering event for relationship %s", currentUserId, action, event.getRelationshipId());
+        validate(!hasPermission && !ownersRelationship, "Member %s does not have permission to %s Volunteering event for relationship %s", currentUserId, action, event.getRelationshipId());
     }
 
     private void validate(boolean isError, String message, Object... args) {

@@ -28,7 +28,7 @@ public class VolunteeringOrganizationDTO {
     @Schema(description = "whether the Volunteering Organization is active")
     private Boolean active;
 
-    public VolunteeringOrganizationDTO(String name, String description, String website) {
+    public VolunteeringOrganizationDTO(@NotBlank String name, @NotBlank String description, @NotBlank String website) {
         this(name, description, website, true);
     }
 }

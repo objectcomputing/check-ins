@@ -1,18 +1,11 @@
 package com.objectcomputing.checkins.services.volunteering;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +14,7 @@ import java.util.UUID;
 
 @Setter
 @Getter
+@AllArgsConstructor
 @Introspected
 public class VolunteeringRelationshipDTO {
 
@@ -42,6 +36,11 @@ public class VolunteeringRelationshipDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
+    @Nullable
     @Schema(description = "whether the Volunteering Relationship is active")
-    private Boolean active = true;
+    private Boolean active;
+
+    public VolunteeringRelationshipDTO(@NotNull UUID memberId, @NotNull UUID organizationId, @NotNull LocalDate startDate, @Nullable LocalDate endDate) {
+        this(memberId, organizationId, startDate, endDate, true);
+    }
 }
