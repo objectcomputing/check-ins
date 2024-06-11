@@ -4,9 +4,11 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
@@ -26,68 +28,45 @@ import java.util.concurrent.ExecutorService;
 
 @Controller("/services/kudos")
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Tag(name = "kudos")
 public class KudosController {
 
     private final KudosServices kudosServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
     private static final Logger LOG = LoggerFactory.getLogger(KudosController.class);
 
-    public KudosController(KudosServices kudosServices,
-                           EventLoopGroup eventLoopGroup,
-                           @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public KudosController(KudosServices kudosServices) {
         this.kudosServices = kudosServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
-    @Post()
-    public Mono<HttpResponse<Kudos>> create(@Body @Valid KudosCreateDTO kudos, HttpRequest<KudosCreateDTO> request) {
-        return Mono.fromCallable(() -> kudosServices.save(kudos))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(createdKudos -> (HttpResponse<Kudos>) HttpResponse
-                        .created(createdKudos)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdKudos.getId()))))
-                ).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    @Post
+    @Status(HttpStatus.CREATED)
+    public Kudos create(@Body @Valid KudosCreateDTO kudos) {
+        return kudosServices.save(kudos);
     }
 
-    @Put()
+    @Put
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<Kudos>> approve(@Body @Valid Kudos kudos, HttpRequest<Kudos> request) {
-        return Mono.fromCallable(() -> kudosServices.approve(kudos))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedKudos -> (HttpResponse<Kudos>) HttpResponse
-                        .ok(updatedKudos)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedKudos.getId()))))
-                ).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public Kudos approve(@Body @Valid Kudos kudos) {
+        return kudosServices.approve(kudos);
     }
 
     @Get("/{id}")
-    public Mono<HttpResponse<KudosResponseDTO>> getById(@NotNull UUID id) {
-        return Mono.fromCallable(() -> kudosServices.getById(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(kudos -> (HttpResponse<KudosResponseDTO>) HttpResponse.ok(kudos))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public KudosResponseDTO getById(@NotNull UUID id) {
+        return kudosServices.getById(id);
     }
 
     @Get("/{?recipientId,?senderId,?isPending,?Public}")
-    public Mono<HttpResponse<List<KudosResponseDTO>>> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean Public) {
-        return Mono.fromCallable(() -> kudosServices.findByValues(recipientId, senderId, isPending, Public))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(kudosList -> (HttpResponse<List<KudosResponseDTO>>) HttpResponse.ok(kudosList))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public List<KudosResponseDTO> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean Public) {
+        return kudosServices.findByValues(recipientId, senderId, isPending, Public);
     }
 
     @Delete("/{id}")
+    @Status(HttpStatus.NO_CONTENT)
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<? extends HttpResponse<?>> delete(@NotNull UUID id) {
-        return Mono.fromCallable(() -> kudosServices.delete(id))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(deleted -> (HttpResponse<?>) HttpResponse.noContent())
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public void delete(@NotNull UUID id) {
+        kudosServices.delete(id);
     }
 
 }
