@@ -30,6 +30,9 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
 
     private void deleteAllEntities() {
         // Note order can matter here.
+        getVolunteeringEventRepository().deleteAll();
+        getVolunteeringRelationshipRepository().deleteAll();
+        getVolunteeringOrganizationRepository().deleteAll();
         getEarnedCertificationRepository().deleteAll();
         getCertificationRepository().deleteAll();
         getEntityTagRepository().deleteAll();

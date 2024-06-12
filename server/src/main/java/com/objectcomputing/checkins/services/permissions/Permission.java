@@ -50,7 +50,10 @@ public enum Permission {
   CAN_VIEW_SETTINGS("View settings", "Settings"),
   CAN_VIEW_ALL_PULSE_RESPONSES("View pulse responses", "Reporting"),
   CAN_MANAGE_CERTIFICATIONS("Manage certifications", "Certifications"),
-  CAN_MANAGE_EARNED_CERTIFICATIONS("Manage earned certifications", "Certifications");
+  CAN_MANAGE_EARNED_CERTIFICATIONS("Manage earned certifications", "Certifications"),
+  CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS("Update volunteering organizations", "Volunteering"),
+  CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS("Update volunteering relationships", "Volunteering"),
+  CAN_ADMINISTER_VOLUNTEERING_EVENTS("Update volunteering events", "Volunteering");
 
   private final String description;
   private final String category;
