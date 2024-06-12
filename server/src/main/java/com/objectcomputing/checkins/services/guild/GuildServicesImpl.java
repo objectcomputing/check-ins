@@ -132,7 +132,7 @@ class GuildServicesImpl implements GuildServices {
         boolean isAdmin = currentUserServices.isAdmin();
         if (isAdmin || (currentUser != null &&
                 !guildMemberServices.findByFields(guildDTO.getId(), currentUser.getId(), true).isEmpty())) {
-            // Guild newGuildEntity = null;
+
             GuildResponseDTO updated= null;
             List<GuildMemberResponseDTO> newMembers = new ArrayList<>();
             if (guildDTO != null) {
