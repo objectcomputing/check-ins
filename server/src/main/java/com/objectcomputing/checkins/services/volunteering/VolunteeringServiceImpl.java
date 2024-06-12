@@ -9,6 +9,7 @@ import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Singleton
@@ -75,7 +76,7 @@ class VolunteeringServiceImpl implements VolunteeringService {
         if (organization.getId() != null) {
             return update(organization);
         }
-        // Fail if a certification with the same name already exists
+        // Fail if an organization with the same name already exists
         validate(organizationRepo.getByName(organization.getName()).isPresent(),
                 ORG_NAME_ALREADY_EXISTS_MESSAGE,
                 organization.getName());
@@ -102,7 +103,7 @@ class VolunteeringServiceImpl implements VolunteeringService {
 
     @Override
     public VolunteeringOrganization update(VolunteeringOrganization organization) {
-        // Fail if a certification with the same name already exists (but it's not this one)
+        // Fail if an organization with the same name already exists (but it's not this one)
         validate(organizationRepo.getByName(organization.getName())
                         .map(c -> !c.getId().equals(organization.getId())).orElse(false),
                 ORG_NAME_ALREADY_EXISTS_MESSAGE,
@@ -148,26 +149,40 @@ class VolunteeringServiceImpl implements VolunteeringService {
         // Fail if the user doesn't have permission to modify the relationship
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS);
-        // Be sure to go and check the member id from the relationship in the DB, not the one passed in here
-        UUID memberId = relationship.getId() == null
-                ? relationship.getMemberId()
-                : relationshipRepo.findById(relationship.getId()).map(VolunteeringRelationship::getMemberId).orElseThrow(() -> new BadArgException("Unknown member %s".formatted(relationship.getMemberId())));
-        boolean ownersRelationship = memberId.equals(currentUserId);
-        validate(!hasPermission && !ownersRelationship, "Member %s does not have permission to %s Volunteering relationship for member %s", currentUserId, action, memberId);
+        if (hasPermission) {
+            return;
+        }
+
+        // Check the member in the request
+        if (!relationship.getMemberId().equals(currentUserId)) {
+            throw new BadArgException("Member %s does not have permission to %s Volunteering relationship for member %s".formatted(currentUserId, action, relationship.getMemberId()));
+        }
+
+        // And check the owner in the database
+        Optional<VolunteeringRelationship> fromDb = relationshipRepo.findById(relationship.getId());
+        if (fromDb.map(r -> !r.getMemberId().equals(currentUserId)).orElse(false)) {
+            throw new BadArgException("Member %s does not have permission to %s Volunteering relationship for member %s".formatted(currentUserId, action, fromDb.map(VolunteeringRelationship::getMemberId).orElse(null)));
+        }
     }
 
     private void validatePermission(VolunteeringEvent event, String action) {
         // Fail if the user doesn't have permission to modify the event
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_ADMINISTER_VOLUNTEERING_EVENTS);
-        // Be sure to go and check the event in the DB, not the one passed in here
-        UUID relationshipId = event.getId() == null
-                ? event.getRelationshipId()
-                : eventRepo.findById(event.getId()).map(VolunteeringEvent::getRelationshipId).orElseThrow(() -> new BadArgException("Unknown relationship %s".formatted(event.getRelationshipId())));
-        boolean ownersRelationship = relationshipRepo.findById(relationshipId)
-                .map(r -> r.getMemberId().equals(currentUserId))
-                .orElse(false);
-        validate(!hasPermission && !ownersRelationship, "Member %s does not have permission to %s Volunteering event for relationship %s", currentUserId, action, relationshipId);
+        if (hasPermission) {
+            return;
+        }
+
+        // Check the owner of the relationship in the request
+        if (!relationshipRepo.findById(event.getRelationshipId()).map(r -> r.getMemberId().equals(currentUserId)).orElse(false)) {
+            throw new BadArgException("Member %s does not have permission to %s Volunteering event for relationship %s".formatted(currentUserId, action, event.getRelationshipId()));
+        }
+
+        // And check the owner in the database
+        Optional<VolunteeringRelationship> relationshipMemberForEvent = relationshipRepo.getRelationshipForEvent(event.getId());
+        if (relationshipMemberForEvent.map(i -> !i.getMemberId().equals(currentUserId)).orElse(false)) {
+            throw new BadArgException("Member %s does not have permission to %s Volunteering event for relationship %s".formatted(currentUserId, action, relationshipMemberForEvent.map(VolunteeringRelationship::getId).orElse(null)));
+        }
     }
 
     private void validate(boolean isError, String message, Object... args) {
