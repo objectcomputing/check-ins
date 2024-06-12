@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
-public class GuildServicesImpl implements GuildServices {
+class GuildServicesImpl implements GuildServices {
 
     private final GuildRepository guildsRepo;
     private final GuildMemberRepository guildMemberRepo;
@@ -40,7 +40,7 @@ public class GuildServicesImpl implements GuildServices {
     public static final String WEB_ADDRESS = "check-ins.web-address";
     private static final Logger LOG = LoggerFactory.getLogger(GuildServicesImpl.class);
 
-    public GuildServicesImpl(GuildRepository guildsRepo,
+    GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo, GuildMemberHistoryRepository guildMemberHistoryRepository,
                              CurrentUserServices currentUserServices,
                              MemberProfileServices memberProfileServices,
