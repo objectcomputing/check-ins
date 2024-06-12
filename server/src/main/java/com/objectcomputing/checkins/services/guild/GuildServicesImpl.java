@@ -253,10 +253,6 @@ class GuildServicesImpl implements GuildServices {
         return new GuildMember(null, guildId, memberDTO.getMemberId(), memberDTO.getLead());
     }
 
-    private GuildMember fromMemberDTO(GuildMemberResponseDTO memberDTO, UUID guildId, MemberProfile savedMember) {
-        return new GuildMember(memberDTO.getId() == null ? null : memberDTO.getId(), guildId, savedMember.getId(), memberDTO.isLead());
-    }
-
     private GuildMember fromMemberDTO(GuildUpdateDTO.GuildMemberUpdateDTO memberDTO, UUID guildId) {
         return new GuildMember(memberDTO.getId(), guildId, memberDTO.getMemberId(), memberDTO.getLead());
     }
