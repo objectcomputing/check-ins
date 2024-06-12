@@ -26,6 +26,7 @@ import java.util.UUID;
 @Singleton
 public class GuildMemberServicesImpl implements GuildMemberServices {
 
+    public static final String NOT_AUTHORIZED_MESSAGE = "You are not authorized to perform this operation";
     private final GuildRepository guildRepo;
     private final GuildMemberRepository guildMemberRepo;
     private final MemberProfileRepository memberRepo;
@@ -75,12 +76,12 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new BadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
         }
         // only allow admins to create guild leads
-        else if (!currentUserServices.isAdmin() && guildMember.getLead()) {
-            throw new BadArgException("You are not authorized to perform this operation");
+        else if (!currentUserServices.isAdmin() && Boolean.TRUE.equals(guildMember.getLead())) {
+            throw new BadArgException(NOT_AUTHORIZED_MESSAGE);
         }
         // only admins and leads can add members to guilds unless a user adds themself
         else if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead){
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MESSAGE);
         }
 
         emailSender
@@ -120,7 +121,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of guild %s", memberId, guildId));
         } else if (!isAdmin && guildLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
-            throw new BadArgException("You are not authorized to perform this operation");
+            throw new BadArgException(NOT_AUTHORIZED_MESSAGE);
         }
         GuildMember guildMemberUpdate = guildMemberRepo.update(guildMember);
         guildMemberHistoryRepository.save(buildGuildMemberHistory(guildId,memberId,"Updated", LocalDateTime.now()));
@@ -154,12 +155,12 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         boolean currentUserIsLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
 
         // don't allow guild lead to be removed if they are the only lead
-        if (guildMember.getLead() && guildLeads.size() == 1){
+        if (Boolean.TRUE.equals(guildMember.getLead()) && guildLeads.size() == 1){
             throw new BadArgException("At least one guild lead must be present in the guild at all times");
         }
         // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild -> don't delete
         if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !currentUserIsLead) {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MESSAGE);
         }
 
         Guild guild = guildRepo.findById(guildMember.getGuildId())
@@ -177,24 +178,22 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     private Set<String> getGuildLeadsEmails(Set<GuildMember> guildLeads, GuildMember guildMember){
         // remove email from set of guildleads so they aren't included in email
-        if (guildMember.getLead()){
+        if (Boolean.TRUE.equals(guildMember.getLead())){
             guildLeads.remove(guildMember);
         }
         Set<String> guildLeadEmails = new HashSet<>();
-        guildLeads.forEach(o -> {
-            memberRepo.findById(o.getMemberId()).ifPresent(memberProfile -> guildLeadEmails.add(memberProfile.getWorkEmail()));
-        });
+        guildLeads.forEach(o -> memberRepo.findById(o.getMemberId()).ifPresent(memberProfile -> guildLeadEmails.add(memberProfile.getWorkEmail())));
         return guildLeadEmails;
     }
 
 
-    private String constructEmailContent (GuildMember guildMember, Boolean isAdded){
+    private String constructEmailContent (GuildMember guildMember, boolean isAdded){
         MemberProfile memberProfile = memberRepo.findById(guildMember.getMemberId())
                 .orElseThrow(() -> new NotFoundException("No member profile found for guild member with memberid " + guildMember.getMemberId()));
         Guild guild = guildRepo.findById(guildMember.getGuildId())
                 .orElseThrow(() -> new NotFoundException("No guild found for guild id " + guildMember.getGuildId()));
 
-        String joinedOrLeft = (isAdded) ? "joined" : "left";
+        String joinedOrLeft = isAdded ? "joined" : "left";
         String emailHtml =
                 "<h3>" + memberProfile.getFirstName() + " " + memberProfile.getLastName() + " has " + joinedOrLeft + " the " + guild.getName() + " guild.</h3>";
 
