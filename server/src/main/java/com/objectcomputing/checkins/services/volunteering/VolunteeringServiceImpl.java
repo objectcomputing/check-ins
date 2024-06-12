@@ -76,7 +76,7 @@ class VolunteeringServiceImpl implements VolunteeringService {
         if (organization.getId() != null) {
             return update(organization);
         }
-        // Fail if a certification with the same name already exists
+        // Fail if an organization with the same name already exists
         validate(organizationRepo.getByName(organization.getName()).isPresent(),
                 ORG_NAME_ALREADY_EXISTS_MESSAGE,
                 organization.getName());
@@ -103,7 +103,7 @@ class VolunteeringServiceImpl implements VolunteeringService {
 
     @Override
     public VolunteeringOrganization update(VolunteeringOrganization organization) {
-        // Fail if a certification with the same name already exists (but it's not this one)
+        // Fail if an organization with the same name already exists (but it's not this one)
         validate(organizationRepo.getByName(organization.getName())
                         .map(c -> !c.getId().equals(organization.getId())).orElse(false),
                 ORG_NAME_ALREADY_EXISTS_MESSAGE,
