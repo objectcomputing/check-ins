@@ -38,7 +38,7 @@ public class GuildServicesImpl implements GuildServices {
     private final Environment environment;
     private final String webAddress;
     public static final String WEB_ADDRESS = "check-ins.web-address";
-    private static final Logger LOG = LoggerFactory.getLogger(GuildServicesImpl.class);;
+    private static final Logger LOG = LoggerFactory.getLogger(GuildServicesImpl.class);
 
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo, GuildMemberHistoryRepository guildMemberHistoryRepository,
