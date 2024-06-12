@@ -25,7 +25,6 @@ import {
 import PropTypes from 'prop-types';
 import { deleteGuild, getGuildLeaders, updateGuild } from '../../api/guild.js';
 import SplitButton from '../split-button/SplitButton';
-import { emailGuildLeaders } from '../../api/notifications.js';
 
 const PREFIX = 'GuildSummaryCard';
 const classes = {

@@ -36,15 +36,15 @@ export default function DatePickerField({
     <div className="date-picker-field">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
-          label={label}
-          value={date ? dayjs(date) : null}
+          disabled={disabled}
           format="YYYY-MM-DD"
+          label={label}
           onChange={setDate}
+          ref={launchDatePickerRef}
           slotProps={{
             field: { clearable: true, onClear: () => setCleared(true) }
           }}
-          disabled={disabled}
-          ref={launchDatePickerRef}
+          value={date ? dayjs(date) : null}
         />
       </LocalizationProvider>
     </div>
