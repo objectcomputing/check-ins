@@ -25,12 +25,12 @@ delete from review_periods;
 delete from feedback_templates;
 delete from emails;
 delete from member_history;
+delete from earned_certification;
+delete from certification;
 delete from member_profile;
 delete from skillcategory_skills;
 delete from skills;
 delete from skillcategories;
-delete from earned_certification;
-delete from certification;
 
 -- Member Profiles
 INSERT INTO member_profile -- Gina Bremehr
