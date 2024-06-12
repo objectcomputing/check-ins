@@ -211,7 +211,6 @@ class GuildServicesImpl implements GuildServices {
         }
     }
 
-
     public Set<GuildResponseDTO> findByFields(String name, UUID memberId) {
         Set<GuildResponseDTO> foundGuilds = guildsRepo.search(name, nullSafeUUIDToString(memberId)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
@@ -301,21 +300,19 @@ class GuildServicesImpl implements GuildServices {
     private String constructEmailContent (List<MemberProfile> addedMembers, List<MemberProfile> removedMembers, String guildName){
         String emailHtml = "<h3>Changes have been made to the " + guildName + " guild.</h3>";
         if (!addedMembers.isEmpty()){
-            String addedMembersHtml = "<h4>The following members have been added:</h4><ul>";
+            StringBuilder addedMembersHtml = new StringBuilder("<h4>The following members have been added:</h4><ul>");
             for (MemberProfile member : addedMembers) {
-                String li = "<li>" + member.getFirstName() + " " + member.getLastName() + "</li>";
-                addedMembersHtml += li;
+                addedMembersHtml.append("<li>").append(member.getFirstName()).append(" ").append(member.getLastName()).append("</li>");
             }
-            addedMembersHtml += "</ul>";
+            addedMembersHtml.append("</ul>");
             emailHtml += addedMembersHtml;
         }
         if (!removedMembers.isEmpty()){
-            String removedMembersHtml = "<h4>The following members have been removed:</h4><ul>";
+            StringBuilder removedMembersHtml = new StringBuilder("<h4>The following members have been removed:</h4><ul>");
             for (MemberProfile member : removedMembers) {
-                String li = "<li>" + member.getFirstName() + " " + member.getLastName() + "</li>";
-                removedMembersHtml += li;
+                removedMembersHtml.append("<li>").append(member.getFirstName()).append(" ").append(member.getLastName()).append("</li>");
             }
-            removedMembersHtml += "</ul>";
+            removedMembersHtml.append("</ul>");
             emailHtml += removedMembersHtml;
         }
         emailHtml += "<a href=\"" + webAddress + "/guilds\">Click here</a> to view the changes in the Check-Ins app.";
