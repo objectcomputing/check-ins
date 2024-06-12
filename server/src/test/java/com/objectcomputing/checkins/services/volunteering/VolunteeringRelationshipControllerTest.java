@@ -149,6 +149,25 @@ class VolunteeringRelationshipControllerTest extends TestContainersSuite impleme
     }
 
     @Test
+    void cannotHackUpdateMyRelationshipsToOtherPeopleWithoutPermission() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        String memberAuth = auth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        MemberProfile sarah = memberWithoutBoss("sarah");
+
+        LocalDate startDate = LocalDate.now();
+
+        VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
+        VolunteeringRelationship relationship = createVolunteeringRelationship(memberProfile.getId(), organization.getId(), startDate);
+
+        VolunteeringRelationshipDTO updateDto = new VolunteeringRelationshipDTO(sarah.getId(), relationship.getOrganizationId(), startDate.plusDays(1), LocalDate.now());
+
+        var update = assertThrows(HttpClientResponseException.class, () -> relationshipClient.update(memberAuth, relationship.getId(), updateDto));
+        assertEquals(HttpStatus.BAD_REQUEST, update.getStatus());
+        assertEquals("Member %s does not have permission to update Volunteering relationship for member %s".formatted(memberProfile.getId(), sarah.getId()), update.getMessage());
+    }
+
+    @Test
     void canUpdateOtherMembersRelationshipsWithPermission() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);

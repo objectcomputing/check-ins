@@ -121,6 +121,7 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         LocalDate now = LocalDate.now();
         MemberProfile tim = createADefaultMemberProfile();
         String timAuth = auth(tim.getWorkEmail(), MEMBER_ROLE);
+
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
         VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
@@ -134,6 +135,7 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
     void memberCannotUpdateOthersEvents() {
         LocalDate now = LocalDate.now();
         MemberProfile tim = createADefaultMemberProfile();
+
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
         VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
@@ -142,6 +144,44 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         String bobAuth = auth(bob.getWorkEmail(), MEMBER_ROLE);
 
         var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, 5, "New notes")));
+        assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+        assertEquals("Member %s does not have permission to update Volunteering event for relationship %s".formatted(bob.getId(), relationship.getId()), e.getMessage());
+    }
+
+    @Test
+    void memberCannotUpdateTheirEventToSomeoneElse() {
+        LocalDate now = LocalDate.now();
+
+        MemberProfile tim = createADefaultMemberProfile();
+        String timAuth = auth(tim.getWorkEmail(), MEMBER_ROLE);
+
+        VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
+        VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+
+        MemberProfile bob = memberWithoutBoss("bob");
+        VolunteeringRelationship bobRelationship = createVolunteeringRelationship(bob.getId(), organization.getId(), now);
+
+        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(timAuth, event.getId(), new VolunteeringEventDTO(bobRelationship.getId(), now, 5, "New notes")));
+        assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+        assertEquals("Member %s does not have permission to update Volunteering event for relationship %s".formatted(tim.getId(), bobRelationship.getId()), e.getMessage());
+    }
+
+    @Test
+    void memberCannotUpdateSomeoneElseEventToTheirs() {
+        LocalDate now = LocalDate.now();
+
+        MemberProfile tim = createADefaultMemberProfile();
+
+        VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
+        VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+
+        MemberProfile bob = memberWithoutBoss("bob");
+        String bobAuth = auth(bob.getWorkEmail(), MEMBER_ROLE);
+        VolunteeringRelationship bobRelationship = createVolunteeringRelationship(bob.getId(), organization.getId(), now);
+
+        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(bobRelationship.getId(), now, 5, "New notes")));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         assertEquals("Member %s does not have permission to update Volunteering event for relationship %s".formatted(bob.getId(), relationship.getId()), e.getMessage());
     }
