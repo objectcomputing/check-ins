@@ -121,8 +121,8 @@ class GuildServicesImpl implements GuildServices {
                     LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
-                .map(guildMember ->
-                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()))).collect(Collectors.toList());
+                .map(guildMember -> fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId())))
+                .toList();
 
         return fromEntity(foundGuild, guildMembers);
     }
