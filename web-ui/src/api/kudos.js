@@ -55,7 +55,10 @@ export const approveKudos = async (kudos, cookie) => {
     url: kudosUrl,
     data: kudos,
     responseType: "json",
-    headers: { "X-CSRF-Header": cookie, Accept: 'application/json' }
+    headers: {
+      "X-CSRF-Header": cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'}
   });
 };
 
