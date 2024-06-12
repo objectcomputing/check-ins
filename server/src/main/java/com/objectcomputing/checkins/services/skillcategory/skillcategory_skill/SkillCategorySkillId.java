@@ -20,14 +20,14 @@ public class SkillCategorySkillId {
 
     @TypeDef(type = DataType.STRING)
     @Column(name = "skillcategory_id")
-    @Schema(description = "The id of the skill category", required = true)
+    @Schema(description = "The id of the skill category")
     @NotNull
     @JsonProperty(required = true)
     private UUID skillCategoryId;
 
     @TypeDef(type = DataType.STRING)
     @Column(name = "skill_id")
-    @Schema(description = "The id of the skill", required = true)
+    @Schema(description = "The id of the skill")
     @NotNull
     @JsonProperty(required = true)
     private UUID skillId;

@@ -18,7 +18,7 @@ import java.util.UUID;
 public class GuildCreateDTO {
     @Setter
     @NotBlank
-    @Schema(required = true, description = "name of the guild")
+    @Schema(description = "name of the guild")
     private String name;
 
     @Nullable

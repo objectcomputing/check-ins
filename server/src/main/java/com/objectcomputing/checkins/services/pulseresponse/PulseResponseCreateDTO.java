@@ -16,7 +16,7 @@ import java.util.UUID;
 public class PulseResponseCreateDTO {
 
     @NotNull
-    @Schema(required = true, description = "integer value of internal score")
+    @Schema(description = "integer value of internal score")
     private Integer internalScore;
 
     @Nullable

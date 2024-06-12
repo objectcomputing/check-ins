@@ -36,12 +36,12 @@ public class PulseResponse {
 
     @Column(name="internal_score")
     @NotNull
-    @Schema(description = "integer for internalScore", required = true)
+    @Schema(description = "integer for internalScore")
     private Integer internalScore;
 
     @Column(name="external_score")
     @Nullable
-    @Schema(description = "integer for externalScore", required = true)
+    @Schema(description = "integer for externalScore")
     private Integer externalScore;
 
     @Column(name="submissiondate")
