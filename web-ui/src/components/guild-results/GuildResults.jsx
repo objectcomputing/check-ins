@@ -12,7 +12,6 @@ import GuildSummaryCard from './GuildSummaryCard';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 import { useQueryParameters } from '../../helpers/query-parameters';
 import './GuildResults.css';
-import { emailGuildLeaders } from '../../api/notifications.js';
 
 const PREFIX = 'GuildResults';
 const classes = {

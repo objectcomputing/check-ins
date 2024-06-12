@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 
@@ -7,7 +8,7 @@ import java.time.LocalDate;
 
 import java.util.UUID;
 
-public interface FeedbackRequestFixture extends RepositoryFixture {
+public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTemplateFixture {
 
     /**
      * Creates a sample feedback request
@@ -83,4 +84,31 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
                 null, null, null, false, false, null));
     }
 
+    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
+        FeedbackTemplate template = createFeedbackTemplate(creator.getId());
+        getFeedbackTemplateRepository().save(template);
+        return createSampleFeedbackRequest(creator, requestee, recipient, template.getId());
+    }
+
+    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
+        FeedbackTemplate template = createAnotherFeedbackTemplate(creator.getId());
+        getFeedbackTemplateRepository().save(template);
+        return createSampleFeedbackRequest(creator, requestee, recipient, template.getId(), reviewPeriod);
+    }
+
+    default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
+        return saveSampleFeedbackRequest(creator, requestee, recipient, feedbackRequest.getTemplateId());
+    }
+
+    default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient, reviewPeriod);
+        return saveSampleFeedbackRequest(creator, requestee, recipient, feedbackRequest.getTemplateId(), reviewPeriod);
+    }
+
+    default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, LocalDate sendDate) {
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
+        feedbackRequest.setSendDate(sendDate);
+        return getFeedbackRequestRepository().save(feedbackRequest);
+    }
 }

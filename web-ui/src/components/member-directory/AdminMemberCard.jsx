@@ -15,7 +15,7 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import './MemberSummaryCard.css';
 import SplitButton from '../split-button/SplitButton';
 
-import { updateMember, deleteMember, getMember } from '../../api/member.js';
+import { updateMember, deleteMember } from '../../api/member.js';
 import { DELETE_MEMBER_PROFILE, UPDATE_TOAST } from '../../context/actions.js';
 
 import {
@@ -30,10 +30,6 @@ import {
   DialogTitle,
   Typography
 } from '@mui/material';
-import {
-  emailPDLAssignment,
-  emailSupervisorAssignment
-} from '../../api/notifications.js';
 
 const PREFIX = 'AdminMemberCard';
 const classes = {
