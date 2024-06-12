@@ -25,7 +25,7 @@ import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class AnniversaryReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class AnniversaryReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/reports/anniversaries")
@@ -41,7 +41,7 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
     }
 
     @Test
-    public void testGETFindByMonthReturnsEmptyBody() throws UnsupportedEncodingException {
+    void testGETFindByMonthReturnsEmptyBody() throws UnsupportedEncodingException {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
 
@@ -55,7 +55,7 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
     }
 
     @Test
-    public void testGETFindByMonthNotAuthorized() throws UnsupportedEncodingException {
+    void testGETFindByMonthNotAuthorized() throws UnsupportedEncodingException {
         MemberProfile memberProfile = createAnUnrelatedUser();
         assignMemberRole(memberProfile);
 
@@ -72,8 +72,7 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
     }
 
     @Test
-    public void testGETFindByNoValue() {
-
+    void testGETFindByNoValue() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
 
