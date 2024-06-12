@@ -39,6 +39,9 @@ import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.MemberHistoryRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
+import com.objectcomputing.checkins.services.volunteering.VolunteeringEventRepository;
+import com.objectcomputing.checkins.services.volunteering.VolunteeringOrganizationRepository;
+import com.objectcomputing.checkins.services.volunteering.VolunteeringRelationshipRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.survey.SurveyRepository;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
@@ -212,5 +215,17 @@ public interface RepositoryFixture {
 
     default EarnedCertificationRepository getEarnedCertificationRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EarnedCertificationRepository.class);
+    }
+
+    default VolunteeringOrganizationRepository getVolunteeringOrganizationRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(VolunteeringOrganizationRepository.class);
+    }
+
+    default VolunteeringRelationshipRepository getVolunteeringRelationshipRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(VolunteeringRelationshipRepository.class);
+    }
+
+    default VolunteeringEventRepository getVolunteeringEventRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(VolunteeringEventRepository.class);
     }
 }
