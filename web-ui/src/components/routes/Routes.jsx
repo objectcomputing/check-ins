@@ -4,27 +4,28 @@ import { Switch, Route } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 
 import AnniversaryReportPage from '../../pages/AnniversaryReportPage';
+import AnnualReviewReportPage from '../../pages/AnnualReviewReportPage';
 import BirthdayReportPage from '../../pages/BirthdayReportPage';
 import CertificationReportPage from '../../pages/CertificationReportPage';
 import CheckinsPage from '../../pages/CheckinsPage';
 import CheckinsReportPage from '../../pages/CheckinsReportPage';
-import EditSkillsPage from '../../pages/EditSkillsPage';
-import SettingsPage from '../../pages/SettingsPage';
 import EditPermissionsPage from '../../pages/PermissionsPage';
+import EditSkillsPage from '../../pages/EditSkillsPage';
 import GroupIcon from '@mui/icons-material/Group';
 import GuildsPage from '../../pages/GuildsPage';
 import Header from '../header/Header';
 import HomePage from '../../pages/HomePage';
+import MemberProfilePage from '../../pages/MemberProfilePage';
 import PeoplePage from '../../pages/PeoplePage';
 import PulsePage from '../../pages/PulsePage';
 import PulseReportPage from '../../pages/PulseReportPage';
-import MemberProfilePage from '../../pages/MemberProfilePage';
 import Roles from '../admin/roles/Roles';
+import SettingsPage from '../../pages/SettingsPage';
 import SkillReportPage from '../../pages/SkillReportPage';
-import TeamsPage from '../../pages/TeamsPage';
 import TeamSkillReportPage from '../../pages/TeamSkillReportPage';
-import AnnualReviewReportPage from '../../pages/AnnualReviewReportPage';
+import TeamsPage from '../../pages/TeamsPage';
 import Users from '../admin/users/Users';
+import VolunteerReportPage from '../../pages/VolunteerReportPage';
 
 import { selectIsAdmin } from '../../context/selectors';
 import FeedbackRequestConfirmation from '../feedback_request_confirmation/FeedbackRequestConfirmation';
@@ -152,6 +153,10 @@ export default function Routes() {
           <Route path="/annual-review-reports">
             <Header title="Annual Review Report" />
             <AnnualReviewReportPage />
+          </Route>
+          <Route path="/volunteer-reports">
+            <Header title="Volunteering Report" />
+            <VolunteerReportPage />
           </Route>
           <Route path="/pulse-reports">
             <Header title="Pulse Report" />
