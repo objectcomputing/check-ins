@@ -21,23 +21,19 @@ const CertificationBadges = ({ memberId }) => {
   const csrf = selectCsrfToken(state);
 
   const loadCertifications = useCallback(async () => {
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: certificationBaseUrl + '?memberId=' + memberId,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'GET',
+      url: certificationBaseUrl + '?memberId=' + memberId,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
 
-      const certifications = res.payload.data;
-      setCertifications(certifications);
-    } catch (err) {
-      console.error(err);
-    }
+    const certifications = res.payload.data;
+    setCertifications(certifications);
   }, [csrf]);
 
   useEffect(() => {

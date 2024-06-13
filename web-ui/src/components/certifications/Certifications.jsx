@@ -53,29 +53,25 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   };
 
   const loadCertifications = useCallback(async () => {
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: certificationBaseUrl,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'GET',
+      url: certificationBaseUrl,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
 
-      const certs = await res.payload.data;
-      setCertifications(certs.sort((c1, c2) => c1.name.localeCompare(c2.name)));
+    const certs = await res.payload.data;
+    setCertifications(certs.sort((c1, c2) => c1.name.localeCompare(c2.name)));
 
-      const certMap = certs.reduce((map, cert) => {
-        map[cert.id] = cert;
-        return map;
-      }, {});
-      setCertificationMap(certMap);
-    } catch (err) {
-      console.error(err);
-    }
+    const certMap = certs.reduce((map, cert) => {
+      map[cert.id] = cert;
+      return map;
+    }, {});
+    setCertificationMap(certMap);
   }, [csrf]);
 
   useEffect(() => {
@@ -124,89 +120,77 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   const deleteCertification = useCallback(async () => {
     selectedCertification.active = false;
     const { id } = selectedCertification;
-    try {
-      const res = await resolve({
-        method: 'PUT',
-        url: certificationBaseUrl + '/' + id,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        data: selectedCertification
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'PUT',
+      url: certificationBaseUrl + '/' + id,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: selectedCertification
+    });
+    if (res.error) return;
 
-      setCertificationMap(map => {
-        delete map[id];
-        return map;
-      });
-      setCertifications(certs => certs.filter(c => c.id !== id));
-      forceUpdate();
-      close();
-    } catch (err) {
-      console.error(err);
-    }
+    setCertificationMap(map => {
+      delete map[id];
+      return map;
+    });
+    setCertifications(certs => certs.filter(c => c.id !== id));
+    forceUpdate();
+    close();
   }, [certificationMap, certifications, selectedCertification]);
 
   const mergeCertification = useCallback(async () => {
     const sourceId = selectedCertification.id;
     const targetId = selectedTarget.id;
-    try {
-      const res = await resolve({
-        method: 'POST',
-        url: certificationBaseUrl + '/merge',
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        data: { sourceId, targetId }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'POST',
+      url: certificationBaseUrl + '/merge',
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: { sourceId, targetId }
+    });
+    if (res.error) return;
 
-      setCertifications(certs => certs.filter(cert => cert.id !== sourceId));
-      setCertificationMap(map => {
-        delete map[sourceId];
-        return map;
-      });
-      forceUpdate();
-      close();
-    } catch (err) {
-      console.error(err);
-    }
+    setCertifications(certs => certs.filter(cert => cert.id !== sourceId));
+    setCertificationMap(map => {
+      delete map[sourceId];
+      return map;
+    });
+    forceUpdate();
+    close();
   }, [selectedCertification, selectedTarget]);
 
   const saveCertification = useCallback(async () => {
     const url = adding
       ? certificationBaseUrl
       : certificationBaseUrl + '/' + selectedCertification.id;
-    try {
-      const res = await resolve({
-        method: adding ? 'POST' : 'PUT',
-        url,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        data: { name, badgeUrl }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: adding ? 'POST' : 'PUT',
+      url,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: { name, badgeUrl }
+    });
+    if (res.error) return;
 
-      const newCert = res.payload.data;
-      certificationMap[newCert.id] = newCert;
-      setCertificationMap(certificationMap);
-      setCertifications(
-        Object.values(certificationMap).sort((c1, c2) =>
-          c1.name.localeCompare(c2.name)
-        )
-      );
-      close();
-      forceUpdate();
-    } catch (err) {
-      console.error(err);
-    }
+    const newCert = res.payload.data;
+    certificationMap[newCert.id] = newCert;
+    setCertificationMap(certificationMap);
+    setCertifications(
+      Object.values(certificationMap).sort((c1, c2) =>
+        c1.name.localeCompare(c2.name)
+      )
+    );
+    close();
+    forceUpdate();
   }, [badgeUrl, certificationMap, name, selectedCertification]);
 
   return (

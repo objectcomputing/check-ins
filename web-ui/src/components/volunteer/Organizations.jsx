@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -40,25 +39,21 @@ const Organizations = ({ onlyMe = false }) => {
   const csrf = selectCsrfToken(state);
 
   const loadOrganizations = useCallback(async () => {
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: organizationBaseUrl,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'GET',
+      url: organizationBaseUrl,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
 
-      const organizations = res.payload.data;
-      setOrganizations(
-        organizations.sort((org1, org2) => org1.name.localeCompare(org2.name))
-      );
-    } catch (err) {
-      console.error(err);
-    }
+    const organizations = res.payload.data;
+    setOrganizations(
+      organizations.sort((org1, org2) => org1.name.localeCompare(org2.name))
+    );
   }, [csrf]);
 
   useEffect(() => {
@@ -87,23 +82,19 @@ const Organizations = ({ onlyMe = false }) => {
 
   const deleteOrganization = useCallback(async organization => {
     organization.active = false;
-    try {
-      const res = await resolve({
-        method: 'PUT',
-        url: organizationBaseUrl + '/' + organization.id,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        data: organization
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'PUT',
+      url: organizationBaseUrl + '/' + organization.id,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: organization
+    });
+    if (res.error) return;
 
-      setOrganizations(orgs => orgs.filter(org => org.id !== organization.id));
-    } catch (err) {
-      console.error(err);
-    }
+    setOrganizations(orgs => orgs.filter(org => org.id !== organization.id));
   }, []);
 
   const editOrganization = useCallback(org => {
@@ -279,32 +270,28 @@ const Organizations = ({ onlyMe = false }) => {
   const saveOrganization = useCallback(async () => {
     const { id } = selectedOrganization;
     const url = id ? `${organizationBaseUrl}/${id}` : organizationBaseUrl;
-    try {
-      const res = await resolve({
-        method: id ? 'PUT' : 'POST',
-        url,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        data: selectedOrganization
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: id ? 'PUT' : 'POST',
+      url,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: selectedOrganization
+    });
+    if (res.error) return;
 
-      const newOrg = res.payload.data;
-      if (id) {
-        const index = organizations.findIndex(org => org.id === id);
-        organizations[index] = newOrg;
-      } else {
-        organizations.push(newOrg);
-      }
-      sortOrganizations(organizations);
-      setOrganizations(organizations);
-      setSelectedOrganization(null);
-    } catch (err) {
-      console.error(err);
+    const newOrg = res.payload.data;
+    if (id) {
+      const index = organizations.findIndex(org => org.id === id);
+      organizations[index] = newOrg;
+    } else {
+      organizations.push(newOrg);
     }
+    sortOrganizations(organizations);
+    setOrganizations(organizations);
+    setSelectedOrganization(null);
     setOrganizationDialogOpen(false);
   }, [selectedOrganization]);
 

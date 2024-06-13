@@ -77,52 +77,49 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
   const handleExpandClick = () => setExpanded(!expanded);
 
   const loadApprovalStats = async () => {
-    try {
-      // Get all the review assignments for this period.
-      const res = await resolve({
-        method: 'GET',
-        url: `/services/review-assignments/period/${periodId}`,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
-      const assignments = res.payload.data;
-      const approvedCount = assignments.filter(a => a.approved).length;
-      setOverallApprovalPercentage((100 * approvedCount) / assignments.length);
-
-      // Get a list of all the reviewers in this period.
-      const reviewerIds = new Set();
-      for (const assignment of assignments) {
-        reviewerIds.add(assignment.reviewerId);
+    // Get all the review assignments for this period.
+    const res = await resolve({
+      method: 'GET',
+      url: `/services/review-assignments/period/${periodId}`,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
       }
-      const reviewers = [...reviewerIds].map(id =>
-        currentMembers.find(m => m.id === id)
-      );
-      reviewers.sort((a, b) => a.name.localeCompare(b.name));
+    });
+    if (res.error) return;
 
-      // Build an array containing statistics for each reviewer.
-      const stats = reviewers.map(reviewer => {
-        const { id } = reviewer;
-        const assignmentsForReviewer = assignments.filter(
-          assignment => assignment.reviewerId === id
-        );
-        const approved = assignmentsForReviewer.filter(
-          assignment => assignment.approved
-        ).length;
-        return {
-          name: reviewer.name,
-          percent:
-            ((100 * approved) / assignmentsForReviewer.length).toFixed(0) + '%'
-        };
-      });
+    const assignments = res.payload.data;
+    const approvedCount = assignments.filter(a => a.approved).length;
+    setOverallApprovalPercentage((100 * approvedCount) / assignments.length);
 
-      setApprovalStats(stats);
-    } catch (err) {
-      console.error('ReviewPeriods.jsx getApprovalStats:', err);
+    // Get a list of all the reviewers in this period.
+    const reviewerIds = new Set();
+    for (const assignment of assignments) {
+      reviewerIds.add(assignment.reviewerId);
     }
+    const reviewers = [...reviewerIds].map(id =>
+      currentMembers.find(m => m.id === id)
+    );
+    reviewers.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Build an array containing statistics for each reviewer.
+    const stats = reviewers.map(reviewer => {
+      const { id } = reviewer;
+      const assignmentsForReviewer = assignments.filter(
+        assignment => assignment.reviewerId === id
+      );
+      const approved = assignmentsForReviewer.filter(
+        assignment => assignment.approved
+      ).length;
+      return {
+        name: reviewer.name,
+        percent:
+          ((100 * approved) / assignmentsForReviewer.length).toFixed(0) + '%'
+      };
+    });
+
+    setApprovalStats(stats);
   };
 
   useEffect(() => {

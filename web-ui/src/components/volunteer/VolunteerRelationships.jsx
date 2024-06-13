@@ -55,54 +55,46 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   if (!onlyMe) sortableTableColumns.unshift('Member');
 
   const loadOrganizations = useCallback(async () => {
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: organizationBaseUrl,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'GET',
+      url: organizationBaseUrl,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
 
-      const organizations = res.payload.data;
-      organizations.sort((org1, org2) => org1.name.localeCompare(org2.name));
-      setOrganizations(organizations);
-      setOrganizationMap(
-        organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
-      );
-    } catch (err) {
-      console.error(err);
-    }
+    const organizations = res.payload.data;
+    organizations.sort((org1, org2) => org1.name.localeCompare(org2.name));
+    setOrganizations(organizations);
+    setOrganizationMap(
+      organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
+    );
   }, []);
 
   const loadRelationships = useCallback(async () => {
     let url = relationshipBaseUrl;
     if (onlyMe) url += '?memberId=' + currentUser.id;
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'GET',
+      url,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
 
-      const relationships = res.payload.data;
-      relationships.sort((rel1, rel2) => {
-        const member1 = profileMap[rel1.memberId];
-        const member2 = profileMap[rel2.memberId];
-        return member1.name.localeCompare(member2.name);
-      });
-      setRelationships(relationships);
-    } catch (err) {
-      console.error(err);
-    }
+    const relationships = res.payload.data;
+    relationships.sort((rel1, rel2) => {
+      const member1 = profileMap[rel1.memberId];
+      const member2 = profileMap[rel2.memberId];
+      return member1.name.localeCompare(member2.name);
+    });
+    setRelationships(relationships);
   }, [organizationMap]);
 
   useEffect(() => {
@@ -140,23 +132,19 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const deleteRelationship = useCallback(async relationship => {
     relationship.active = false;
-    try {
-      const res = await resolve({
-        method: 'PUT',
-        url: relationshipBaseUrl + '/' + relationship.id,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        data: relationship
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'PUT',
+      url: relationshipBaseUrl + '/' + relationship.id,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: relationship
+    });
+    if (res.error) return;
 
-      setRelationships(orgs => orgs.filter(org => org.id !== relationship.id));
-    } catch (err) {
-      console.error(err);
-    }
+    setRelationships(orgs => orgs.filter(org => org.id !== relationship.id));
   }, []);
 
   const editRelationship = useCallback(
@@ -371,34 +359,30 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const saveRelationship = useCallback(async () => {
     const { id } = selectedRelationship;
-    try {
-      const res = await resolve({
-        method: id ? 'PUT' : 'POST',
-        url: id ? `${relationshipBaseUrl}/${id}` : relationshipBaseUrl,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        data: selectedRelationship
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: id ? 'PUT' : 'POST',
+      url: id ? `${relationshipBaseUrl}/${id}` : relationshipBaseUrl,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: selectedRelationship
+    });
+    if (res.error) return;
 
-      const newRel = res.payload.data;
+    const newRel = res.payload.data;
 
-      if (id) {
-        const index = relationships.findIndex(rel => rel.id === id);
-        relationships[index] = newRel;
-      } else {
-        relationships.push(newRel);
-      }
-      sortRelationships(relationships);
-      setRelationships(relationships);
-
-      setSelectedRelationship(null);
-    } catch (err) {
-      console.error(err);
+    if (id) {
+      const index = relationships.findIndex(rel => rel.id === id);
+      relationships[index] = newRel;
+    } else {
+      relationships.push(newRel);
     }
+    sortRelationships(relationships);
+    setRelationships(relationships);
+
+    setSelectedRelationship(null);
     setRelationshipDialogOpen(false);
   }, [selectedRelationship]);
 

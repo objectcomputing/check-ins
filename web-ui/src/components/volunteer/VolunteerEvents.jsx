@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -58,83 +57,71 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   sortableTableColumns.unshift(onlyMe ? 'Organization' : 'Relationship');
 
   const loadEvents = useCallback(async () => {
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: eventBaseUrl,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
-
-      let events = res.payload.data;
-      if (onlyMe) {
-        // Only keep the events for my relationships.
-        events = events.filter(e => Boolean(relationshipMap[e.relationshipId]));
+    const res = await resolve({
+      method: 'GET',
+      url: eventBaseUrl,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
       }
-      events.sort((event1, event2) =>
-        event1.eventDate.localeCompare(event2.eventDate)
-      );
-      setEvents(events);
-    } catch (err) {
-      console.error(err);
+    });
+    if (res.error) return;
+
+    let events = res.payload.data;
+    if (onlyMe) {
+      // Only keep the events for my relationships.
+      events = events.filter(e => Boolean(relationshipMap[e.relationshipId]));
     }
+    events.sort((event1, event2) =>
+      event1.eventDate.localeCompare(event2.eventDate)
+    );
+    setEvents(events);
   }, [csrf, relationshipMap]);
 
   const loadOrganizations = useCallback(async () => {
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: organizationBaseUrl,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'GET',
+      url: organizationBaseUrl,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
 
-      const organizations = res.payload.data;
-      setOrganizationMap(
-        organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
-      );
-    } catch (err) {
-      console.error(err);
-    }
+    const organizations = res.payload.data;
+    setOrganizationMap(
+      organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
+    );
   }, [csrf]);
 
   const loadRelationships = useCallback(async () => {
     if (isEmpty(profileMap)) return;
     let url = relationshipBaseUrl;
     if (onlyMe) url += '?memberId=' + currentUser.id;
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'GET',
+      url,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
 
-      const relationships = res.payload.data;
-      relationships.sort((rel1, rel2) => {
-        const member1 = profileMap[rel1.memberId];
-        const member2 = profileMap[rel2.memberId];
-        return member1.name.localeCompare(member2.name);
-      });
-      setRelationships(relationships);
-      setRelationshipMap(
-        relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {})
-      );
-    } catch (err) {
-      console.error(err);
-    }
+    const relationships = res.payload.data;
+    relationships.sort((rel1, rel2) => {
+      const member1 = profileMap[rel1.memberId];
+      const member2 = profileMap[rel2.memberId];
+      return member1.name.localeCompare(member2.name);
+    });
+    setRelationships(relationships);
+    setRelationshipMap(
+      relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {})
+    );
   }, [csrf, onlyMe, profileMap]);
 
   useEffect(() => {
@@ -176,18 +163,14 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const deleteEvent = useCallback(async event => {
-    try {
-      const res = await resolve({
-        method: 'DELETE',
-        url: eventBaseUrl + '/' + event.id,
-        headers: { 'X-CSRF-Header': csrf }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'DELETE',
+      url: eventBaseUrl + '/' + event.id,
+      headers: { 'X-CSRF-Header': csrf }
+    });
+    if (res.error) return;
 
-      setEvents(events => events.filter(e => e.id !== event.id));
-    } catch (err) {
-      console.error(err);
-    }
+    setEvents(events => events.filter(e => e.id !== event.id));
   }, []);
 
   const editEvent = useCallback(
@@ -389,34 +372,30 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const saveEvent = useCallback(async () => {
     const { id } = selectedEvent;
-    try {
-      const res = await resolve({
-        method: id ? 'PUT' : 'POST',
-        url: id ? `${eventBaseUrl}/${id}` : eventBaseUrl,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        data: selectedEvent
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: id ? 'PUT' : 'POST',
+      url: id ? `${eventBaseUrl}/${id}` : eventBaseUrl,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: selectedEvent
+    });
+    if (res.error) return;
 
-      const newRel = res.payload.data;
+    const newRel = res.payload.data;
 
-      if (id) {
-        const index = events.findIndex(rel => rel.id === id);
-        events[index] = newRel;
-      } else {
-        events.push(newRel);
-      }
-      sortEvents(events);
-      setEvents(events);
-
-      setSelectedEvent(null);
-    } catch (err) {
-      console.error(err);
+    if (id) {
+      const index = events.findIndex(rel => rel.id === id);
+      events[index] = newRel;
+    } else {
+      events.push(newRel);
     }
+    sortEvents(events);
+    setEvents(events);
+
+    setSelectedEvent(null);
     setEventDialogOpen(false);
   }, [relationshipMap, selectedEvent]);
 

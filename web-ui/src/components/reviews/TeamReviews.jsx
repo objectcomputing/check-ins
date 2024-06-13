@@ -185,23 +185,20 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const loadAssignments = async () => {
     const myId = currentUser?.id;
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: `${reviewAssignmentsUrl}/period/${periodId}`,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
-      const assignments = res.payload.data;
-      // logAssignments(assignments); // for debugging
-      setAssignments(assignments);
-    } catch (err) {
-      console.error('TeamReviews.jsx loadAssignments:', err);
-    }
+    const res = await resolve({
+      method: 'GET',
+      url: `${reviewAssignmentsUrl}/period/${periodId}`,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
+
+    const assignments = res.payload.data;
+    // logAssignments(assignments); // for debugging
+    setAssignments(assignments);
   };
 
   const loadTeamMembers = () => {
@@ -229,21 +226,19 @@ const TeamReviews = ({ onBack, periodId }) => {
       approved: true
     }));
 
-    try {
-      const res = await resolve({
-        method: 'POST',
-        url: reviewAssignmentsUrl + '/' + periodId,
-        data,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      setTeamMembers(teamMembers);
-    } catch (err) {
-      console.error('TeamReviews.jsx updateTeamMembers:', err);
-    }
+    const res = await resolve({
+      method: 'POST',
+      url: reviewAssignmentsUrl + '/' + periodId,
+      data,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
+
+    setTeamMembers(teamMembers);
   };
 
   const getReviewStatus = useCallback(
@@ -571,18 +566,15 @@ const TeamReviews = ({ onBack, periodId }) => {
     );
     if (!assignment) return;
 
-    try {
-      const { id } = assignment;
-      const res = await resolve({
-        method: 'DELETE',
-        url: `${reviewAssignmentsUrl}/${id}`,
-        headers: { 'X-CSRF-Header': csrf }
-      });
-      if (res.error) throw new Error(res.error.message);
-      setAssignments(assignments.filter(a => a.id !== id));
-    } catch (err) {
-      console.error('TeamReviews.jsx deleteReviewer:', err);
-    }
+    const { id } = assignment;
+    const res = await resolve({
+      method: 'DELETE',
+      url: `${reviewAssignmentsUrl}/${id}`,
+      headers: { 'X-CSRF-Header': csrf }
+    });
+    if (res.error) return;
+
+    setAssignments(assignments.filter(a => a.id !== id));
   };
 
   const validateReviewPeriod = period => {
@@ -600,25 +592,22 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const updateReviewPeriodStatus = async reviewStatus => {
-    try {
-      const res = await resolve({
-        method: 'PUT',
-        url: '/services/review-periods',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8',
-          'X-CSRF-Header': csrf
-        },
-        data: {
-          ...period,
-          reviewStatus
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
-      onBack();
-    } catch (err) {
-      console.error('TeamReviews.jsx updateReviewPeriodStatus:', err);
-    }
+    const res = await resolve({
+      method: 'PUT',
+      url: '/services/review-periods',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8',
+        'X-CSRF-Header': csrf
+      },
+      data: {
+        ...period,
+        reviewStatus
+      }
+    });
+    if (res.error) return;
+
+    onBack();
   };
 
   // This is only used for debugging.
@@ -692,23 +681,20 @@ const TeamReviews = ({ onBack, periodId }) => {
       }
     }
 
-    try {
-      const res = await resolve({
-        method: 'POST',
-        url: `${reviewAssignmentsUrl}/${periodId}`,
-        data: newAssignments,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
-      newAssignments = sortMembers(res.payload.data);
-      setAssignments(newAssignments);
-    } catch (err) {
-      console.error('TeamReviews.jsx updateTeamMembers:', err);
-    }
+    const res = await resolve({
+      method: 'POST',
+      url: `${reviewAssignmentsUrl}/${periodId}`,
+      data: newAssignments,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
+
+    newAssignments = sortMembers(res.payload.data);
+    setAssignments(newAssignments);
   };
 
   const closeReviewerDialog = () => {
@@ -810,24 +796,16 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const approveReviewAssignment = async (assignment, approved) => {
-    try {
-      const res = await resolve({
-        method: assignment.id === null ? 'POST' : 'PUT',
-        url: '/services/review-assignments',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8',
-          'X-CSRF-Header': csrf
-        },
-        data: {
-          ...assignment,
-          approved
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
-    } catch (err) {
-      console.error('TeamReviews.jsx approveReviewAssignment:', err);
-    }
+    const res = await resolve({
+      method: assignment.id === null ? 'POST' : 'PUT',
+      url: '/services/review-assignments',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8',
+        'X-CSRF-Header': csrf
+      },
+      data: { ...assignment, approved }
+    });
   };
 
   const visibleTeamMembers = () => {

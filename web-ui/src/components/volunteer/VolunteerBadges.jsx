@@ -22,45 +22,37 @@ const VolunteerBadges = ({ memberId }) => {
   const csrf = selectCsrfToken(state);
 
   const loadOrganizations = useCallback(async () => {
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: organizationBaseUrl,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'GET',
+      url: organizationBaseUrl,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
 
-      const organizations = res.payload.data;
-      setOrganizationMap(
-        organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
-      );
-    } catch (err) {
-      console.error(err);
-    }
+    const organizations = res.payload.data;
+    setOrganizationMap(
+      organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
+    );
   }, [csrf]);
 
   const loadRelationships = useCallback(async () => {
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: relationshipBaseUrl + '?=memberId=' + memberId,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'GET',
+      url: relationshipBaseUrl + '?=memberId=' + memberId,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
 
-      const relationships = res.payload.data;
-      setRelationships(relationships);
-    } catch (err) {
-      console.error(err);
-    }
+    const relationships = res.payload.data;
+    setRelationships(relationships);
   }, [csrf]);
 
   useEffect(() => {
