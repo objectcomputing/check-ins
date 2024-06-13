@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Requires(property = MailJetSender.FROM_ADDRESS)
 @Requires(property = MailJetSender.FROM_NAME)
@@ -58,7 +57,7 @@ public class MailJetSender implements EmailSender {
             // Get only the first n elements limited by MailJet's API
             List<String> limitedRecipients = recipientList.stream()
                     .limit(MAILJET_RECIPIENT_LIMIT)
-                    .collect(Collectors.toList());
+                    .toList();
 
             // Add each recipient to a JSON array to be sent in a MailJet request
             JSONArray recipientArray = new JSONArray();
@@ -98,7 +97,7 @@ public class MailJetSender implements EmailSender {
                 .put("Email", fromAddress)
                 .put("Name", fromName);
 
-        emailBatches.forEach((recipientList) -> {
+        emailBatches.forEach(recipientList -> {
             MailjetRequest request = new MailjetRequest(Emailv31.resource)
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
