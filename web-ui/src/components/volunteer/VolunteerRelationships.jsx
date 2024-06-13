@@ -88,7 +88,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const loadRelationships = useCallback(async () => {
     let url = relationshipBaseUrl;
-    if (onlyMe) url += '/' + currentUser.id;
+    if (onlyMe) url += '?memberId=' + currentUser.id;
     try {
       const res = await resolve({
         method: 'GET',
@@ -322,7 +322,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       <Card>
         <CardHeader
           avatar={<Handshake />}
-          title="Relationships"
+          title={onlyMe ? 'Organizations' : 'Relationships'}
           titleTypographyProps={{ variant: 'h5', component: 'h2' }}
         />
         <CardContent>

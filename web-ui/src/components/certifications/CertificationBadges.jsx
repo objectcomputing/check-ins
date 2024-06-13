@@ -54,7 +54,7 @@ const CertificationBadges = ({ memberId }) => {
       />
       <CardContent>
         {certifications.map(cert => (
-          <Tooltip title={cert.name}>
+          <Tooltip key={cert.id} title={cert.name}>
             <img alt={cert.name} key={cert.id} src={cert.badgeUrl} />
           </Tooltip>
         ))}

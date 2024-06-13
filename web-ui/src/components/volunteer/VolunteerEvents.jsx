@@ -51,7 +51,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [relationships, setRelationships] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [sortAscending, setSortAscending] = useState(true);
-  const [sortColumn, setSortColumn] = useState('Member');
+  const [sortColumn, setSortColumn] = useState('Relationship');
 
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
@@ -116,7 +116,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const loadRelationships = useCallback(async () => {
     if (isEmpty(profileMap)) return;
     let url = relationshipBaseUrl;
-    if (onlyMe) url += '/' + currentUser.id;
+    if (onlyMe) url += '?memberId=' + currentUser.id;
     try {
       const res = await resolve({
         method: 'GET',
@@ -229,7 +229,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
               <TextField
                 {...params}
                 className="fullWidth"
-                label="Volunteer Relationship"
+                label={onlyMe ? 'Organization' : 'Volunteer Relationship'}
               />
             )}
             value={
@@ -373,6 +373,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const eventValue = useCallback(
     event => {
       switch (sortColumn) {
+        case 'Organization':
         case 'Relationship':
           const relationship = relationshipMap[event.relationshipId];
           return relationshipName(relationship);
@@ -390,7 +391,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const relationshipName = relationship => {
     const member = profileMap[relationship.memberId];
     const org = organizationMap[relationship.organizationId];
-    return `${member?.name} - ${org?.name}`;
+    return onlyMe ? org?.name : `${member?.name} - ${org?.name}`;
   };
 
   const saveEvent = useCallback(async () => {
@@ -430,13 +431,11 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     events => {
       events.sort((event1, event2) => {
         const v1 = eventValue(event1);
-        console.log('VolunteerEvents.jsx sortEvents: v1 =', v1);
         const v2 = eventValue(event2);
-        console.log('VolunteerEvents.jsx sortEvents: v2 =', v2);
         if (typeof v1 === 'number' && typeof v2 === 'number') {
           return sortAscending ? v1 - v2 : v2 - v1;
         } else {
-          return sortAscending ? v1.localeCompare(v2) : v2.localeCompare(v1);
+          return sortAscending ? v1?.localeCompare(v2) : v2?.localeCompare(v1);
         }
       });
     },

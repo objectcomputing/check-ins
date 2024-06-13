@@ -244,8 +244,7 @@ const ProfilePage = () => {
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
-      {/* TODO: Uncomment this when finished testing use of VolunteerTable.
-      <EarnedCertificationsTable onlyMe /> */}
+      <EarnedCertificationsTable onlyMe />
       <VolunteerTables onlyMe />
     </div>
   );
