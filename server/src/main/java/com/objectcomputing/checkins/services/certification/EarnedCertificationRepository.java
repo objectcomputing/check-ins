@@ -14,39 +14,39 @@ public interface EarnedCertificationRepository extends CrudRepository<EarnedCert
 
     List<EarnedCertification> findByCertificationId(@NotNull UUID certificationId);
 
-    @Query("""
+    @Query(value = """
             SELECT earned.*
                 FROM earned_certification AS earned
                     LEFT JOIN certification AS cert USING(certification_id)
                 WHERE cert.is_active = TRUE OR :includeDeactivated = TRUE
-                ORDER BY earned.earned_date DESC, earned.description""")
+                ORDER BY earned.earned_date DESC, earned.description""", nativeQuery = true)
     List<EarnedCertification> findAllOrderByEarnedDateDesc(boolean includeDeactivated);
 
-    @Query("""
+    @Query(value = """
             SELECT earned.*
                 FROM earned_certification AS earned
                     LEFT JOIN certification AS cert USING(certification_id)
                 WHERE earned.certification_id = :certificationId
                   AND (cert.is_active = TRUE OR :includeDeactivated = TRUE)
-                ORDER BY earned.earned_date DESC, earned.description""")
+                ORDER BY earned.earned_date DESC, earned.description""", nativeQuery = true)
     List<EarnedCertification> findByCertificationIdOrderByEarnedDateDesc(@NotNull UUID certificationId, boolean includeDeactivated);
 
-    @Query("""
+    @Query(value = """
             SELECT earned.*
                 FROM earned_certification AS earned
                     LEFT JOIN certification AS cert USING(certification_id)
                 WHERE earned.member_id = :memberId
                   AND (cert.is_active = TRUE OR :includeDeactivated = TRUE)
-                ORDER BY earned.earned_date DESC, earned.description""")
+                ORDER BY earned.earned_date DESC, earned.description""", nativeQuery = true)
     List<EarnedCertification> findByMemberIdOrderByEarnedDateDesc(@NotNull UUID memberId, boolean includeDeactivated);
 
-    @Query("""
+    @Query(value = """
             SELECT earned.*
                 FROM earned_certification AS earned
                     LEFT JOIN certification AS cert USING(certification_id)
                 WHERE earned.certification_id = :certificationId
                   AND earned.member_id = :memberId
                   AND (cert.is_active = TRUE OR :includeDeactivated = TRUE)
-                ORDER BY earned.earned_date DESC, earned.description""")
+                ORDER BY earned.earned_date DESC, earned.description""", nativeQuery = true)
     List<EarnedCertification> findByMemberIdAndCertificationIdOrderByEarnedDateDesc(@NotNull UUID memberId, @NotNull UUID certificationId, boolean includeDeactivated);
 }
