@@ -26,7 +26,8 @@ import java.util.stream.Collectors;
 @Singleton
 public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
 
-    final Logger LOG = LoggerFactory.getLogger(CustomRefreshTokenPersistence.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CustomRefreshTokenPersistence.class);
+
     final MemberProfileRepository memberProfileRepo;
     final RefreshTokenRepository refreshTokenRepo;
     final PermissionServices permissionServices;
