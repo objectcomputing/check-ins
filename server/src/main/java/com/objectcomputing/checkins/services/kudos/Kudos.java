@@ -172,7 +172,7 @@ public class Kudos {
     @Override
     public int hashCode() {
         return Objects.hash(id, message, senderId, dateCreated, dateApproved, publiclyVisible);
-    }   
+    }
 
     @Override
     public String toString() {
