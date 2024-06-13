@@ -1512,12 +1512,12 @@ VALUES
 INSERT INTO member_skills -- Faux Freddy, Java
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
-    ('722c3545-4f5d-459a-b66c-3ff98d5de11b', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '06c03df3-85fe-4fc3-979e-9f1f6ba74a03', '2', '2022-07-01');
+('722c3545-4f5d-459a-b66c-3ff98d5de11b', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '06c03df3-85fe-4fc3-979e-9f1f6ba74a03', '2', '2022-07-01');
 
 INSERT INTO member_skills -- Revolver Ocelot, Java
 (id, memberid, skillid, skilllevel, lastuseddate)
 VALUES
-    ('d27b679c-3aa8-4c4d-b08e-4eda63cea23f', '105f2968-a182-45a3-892c-eeff76383fe0', '06c03df3-85fe-4fc3-979e-9f1f6ba74a03', '5', '2022-08-01');
+('d27b679c-3aa8-4c4d-b08e-4eda63cea23f', '105f2968-a182-45a3-892c-eeff76383fe0', '06c03df3-85fe-4fc3-979e-9f1f6ba74a03', '5', '2022-08-01');
 
 INSERT INTO kudos
 (id, message, senderid, teamid, datecreated, dateapproved)

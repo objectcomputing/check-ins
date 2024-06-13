@@ -27,7 +27,7 @@ public interface KudosRepository extends CrudRepository<Kudos, UUID> {
                         "PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message, " +
                         "senderid, teamid, datecreated, dateapproved, publiclyVisible " +
                         "FROM kudos " +
-                        "WHERE dateapproved IS NOT NULL " + 
+                        "WHERE dateapproved IS NOT NULL " +
                         "AND publiclyVisible IS TRUE")
         List<Kudos> getAllApproved();
 

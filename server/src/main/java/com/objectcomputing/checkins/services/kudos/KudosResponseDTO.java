@@ -29,7 +29,7 @@ public class KudosResponseDTO {
 
     @Nullable
     private LocalDate dateApproved;
-    
+
     @Nullable
     private Boolean publiclyVisible;
 
