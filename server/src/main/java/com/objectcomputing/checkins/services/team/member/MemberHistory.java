@@ -61,7 +61,8 @@ public class MemberHistory {
         this.change = change;
         this.date = date;
     }
-    public MemberHistory(@NotNull UUID Id, @NotNull UUID teamId, @NotNull UUID memberId, @Nullable String change, @Nullable LocalDateTime date) {
+
+    public MemberHistory(@NotNull UUID id, @NotNull UUID teamId, @NotNull UUID memberId, @Nullable String change, @Nullable LocalDateTime date) {
         this.id = id;
         this.teamId = teamId;
         this.memberId = memberId;
