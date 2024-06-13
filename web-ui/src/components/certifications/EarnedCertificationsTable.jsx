@@ -32,18 +32,11 @@ import {
   selectCurrentUser,
   selectProfileMap
 } from '../../context/selectors';
+import { formatDate } from '../../helpers/datetime';
 import './EarnedCertificationsTable.css';
 
 const certificationBaseUrl = '/services/certification';
 const earnedCertificationBaseUrl = '/services/earned-certification';
-
-const formatDate = date => {
-  if (!date) return '';
-  if (date instanceof Date) return format(date, 'yyyy-MM-dd');
-  const paddedMonth = (date.$M + 1).toString().padStart(2, '0');
-  const paddedYear = date.$D.toString().padStart(2, '0');
-  return `${date.$y}-${paddedMonth}-${paddedYear}`;
-};
 
 const newEarned = { earnedDate: formatDate(new Date()) };
 const tableColumns = [

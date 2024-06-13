@@ -1,17 +1,18 @@
+import { debounce } from 'lodash/function';
 import React, { useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
-import './SkillSlider.css';
+import Typography from '@mui/material/Typography';
 import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  IconButton
+  IconButton,
+  TextField
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import TextField from '@mui/material/TextField';
-import { debounce } from 'lodash/function';
 import DiscreteSlider from '../discrete_slider/DiscreteSlider';
-import Typography from '@mui/material/Typography';
+
+import './SkillSlider.css';
 
 const PREFIX = 'SkillSlider';
 const classes = {
@@ -55,9 +56,7 @@ const SkillSlider = ({
   }, 1500);
 
   const formatDate = date => {
-    if (!date) {
-      return;
-    }
+    if (!date) return;
     let dateString = date[0] + '-';
     dateString = dateString + (date[1] < 10 ? '0' + date[1] : date[1]) + '-';
     dateString = dateString + (date[2] < 10 ? '0' + date[2] : date[2]);

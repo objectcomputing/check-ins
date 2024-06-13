@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -27,17 +26,10 @@ import {
   selectCurrentUser,
   selectProfileMap
 } from '../../context/selectors';
+import { formatDate } from '../../helpers/datetime';
 
 const organizationBaseUrl = '/services/volunteer/organization';
 const relationshipBaseUrl = '/services/volunteer/relationship';
-
-const formatDate = date => {
-  if (!date) return '';
-  if (date instanceof Date) return format(date, 'yyyy-MM-dd');
-  const paddedMonth = (date.$M + 1).toString().padStart(2, '0');
-  const paddedYear = date.$D.toString().padStart(2, '0');
-  return `${date.$y}-${paddedMonth}-${paddedYear}`;
-};
 
 const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
 

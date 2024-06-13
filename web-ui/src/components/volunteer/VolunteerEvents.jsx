@@ -27,18 +27,11 @@ import {
   selectCurrentUser,
   selectProfileMap
 } from '../../context/selectors';
+import { formatDate } from '../../helpers/datetime';
 
 const eventBaseUrl = '/services/volunteer/event';
 const organizationBaseUrl = '/services/volunteer/organization';
 const relationshipBaseUrl = '/services/volunteer/relationship';
-
-const formatDate = date => {
-  if (!date) return '';
-  if (date instanceof Date) return format(date, 'yyyy-MM-dd');
-  const paddedMonth = (date.$M + 1).toString().padStart(2, '0');
-  const paddedYear = date.$D.toString().padStart(2, '0');
-  return `${date.$y}-${paddedMonth}-${paddedYear}`;
-};
 
 const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
 
@@ -160,7 +153,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   useEffect(() => {
     sortEvents(events);
     setEvents([...events]);
-  }, [sortAscending, sortColumn]);
+  }, [relationshipMap, sortAscending, sortColumn]);
 
   const addEvent = useCallback(() => {
     setSelectedEvent({
@@ -425,7 +418,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       console.error(err);
     }
     setEventDialogOpen(false);
-  }, [selectedEvent]);
+  }, [relationshipMap, selectedEvent]);
 
   const sortEvents = useCallback(
     events => {
@@ -439,7 +432,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
         }
       });
     },
-    [sortAscending, sortColumn]
+    [relationshipMap, sortAscending, sortColumn]
   );
 
   const sortIndicator = useCallback(
