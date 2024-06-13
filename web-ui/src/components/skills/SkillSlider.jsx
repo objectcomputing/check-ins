@@ -1,15 +1,15 @@
 import { debounce } from 'lodash/function';
 import React, { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import {
   Checkbox,
   FormControl,
   FormControlLabel,
   IconButton,
-  TextField
+  TextField,
+  Typography
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import DiscreteSlider from '../discrete_slider/DiscreteSlider';
 
 import './SkillSlider.css';
