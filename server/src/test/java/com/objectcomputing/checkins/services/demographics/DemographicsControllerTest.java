@@ -30,7 +30,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DemographicsControllerTest extends TestContainersSuite implements DemographicsFixture, MemberProfileFixture, RoleFixture {
+class DemographicsControllerTest extends TestContainersSuite implements DemographicsFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/demographics")
@@ -41,7 +41,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testGetAllDemographicsUnauthorized() {
+    void testGetAllDemographicsUnauthorized() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET("/");
@@ -53,7 +53,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testPostUnauthorized() {
+    void testPostUnauthorized() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         DemographicsCreateDTO newDemographics = new DemographicsCreateDTO();
         newDemographics.setMemberId(alice.getId());
@@ -69,7 +69,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testGetAllDemographics() {
+    void testGetAllDemographics() {
 
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         createAndAssignAdminRole(alice);
@@ -95,7 +95,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testGETFindByValidGender() {
+    void testGETFindByValidGender() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         createAndAssignAdminRole(alice);
         Demographics demographic = createDefaultDemographics(alice.getId());
@@ -113,10 +113,10 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testGETFindByWrongNameReturnsEmptyBody() {
+    void testGETFindByWrongNameReturnsEmptyBody() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         createAndAssignAdminRole(alice);
-        Demographics demographic = createDefaultDemographics(alice.getId());
+        createDefaultDemographics(alice.getId());
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?gender=%s", encodeValue("random")))
                 .basicAuth(alice.getWorkEmail(), ADMIN_ROLE);
@@ -130,7 +130,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testPOSTCreateADemographics() {
+    void testPOSTCreateADemographics() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         createAndAssignAdminRole(alice);
 
@@ -149,7 +149,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testPOSTCreateADemographicsNoName() {
+    void testPOSTCreateADemographicsNoName() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         createAndAssignAdminRole(alice);
 
@@ -166,7 +166,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testPUTSuccessfulUpdate() {
+    void testPUTSuccessfulUpdate() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
         createAndAssignAdminRole(lucy);
 
@@ -186,7 +186,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testPUTWrongId() {
+    void testPUTWrongId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
         createAndAssignAdminRole(lucy);
 
@@ -207,7 +207,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testPUTNoId() {
+    void testPUTNoId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
         createAndAssignAdminRole(lucy);
 
@@ -220,11 +220,11 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals(responseException.getMessage(), "Bad Request");
+        assertEquals("Bad Request", responseException.getMessage());
     }
 
     @Test
-    public void testDELETEDemographics() {
+    void testDELETEDemographics() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
         createAndAssignAdminRole(lucy);
 
@@ -239,11 +239,11 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testDELETEDemographicsWrongId() {
+    void testDELETEDemographicsWrongId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
         createAndAssignAdminRole(lucy);
 
-        Demographics demographic = createDefaultDemographics(lucy.getId());
+        createDefaultDemographics(lucy.getId());
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", UUID.randomUUID())).basicAuth(lucy.getWorkEmail(), ADMIN_ROLE);
@@ -256,7 +256,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     }
 
     @Test
-    public void testDELETEDemographicsNoPermission() {
+    void testDELETEDemographicsNoPermission() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
         createAndAssignRole(RoleType.MEMBER, lucy);
 

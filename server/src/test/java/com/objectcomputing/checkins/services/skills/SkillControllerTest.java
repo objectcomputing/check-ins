@@ -25,7 +25,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SkillControllerTest extends TestContainersSuite implements SkillFixture, MemberProfileFixture, RoleFixture {
+class SkillControllerTest extends TestContainersSuite implements SkillFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/skills")
@@ -36,7 +36,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETNonExistingEndpointReturns404() {
+    void testGETNonExistingEndpointReturns404() {
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.GET("/12345678-9123-4567-abcd-123456789abc")
@@ -48,7 +48,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETFindByNameReturnsEmptyBody() {
+    void testGETFindByNameReturnsEmptyBody() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?name=%s", encodeValue("dnc"))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -60,7 +60,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETFindByValueName() {
+    void testGETFindByValueName() {
 
         Skill skill = createADefaultSkill();
         final HttpRequest<Object> request = HttpRequest.
@@ -74,7 +74,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETFindByValuePending() {
+    void testGETFindByValuePending() {
 
         Skill skill = createADefaultSkill();
         final HttpRequest<Object> request = HttpRequest.
@@ -88,7 +88,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETGetByIdHappyPath() {
+    void testGETGetByIdHappyPath() {
 
         Skill skill = createADefaultSkill();
 
@@ -103,7 +103,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETGetByIdNotFound() {
+    void testGETGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -117,7 +117,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPOSTCreateASkill() {
+    void testPOSTCreateASkill() {
 
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
         skillCreateDTO.setName("reincarnation");
@@ -138,7 +138,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPOSTCreateASkillAlreadyExists() {
+    void testPOSTCreateASkillAlreadyExists() {
 
         Skill skill = createADefaultSkill();
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
@@ -156,7 +156,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPOSTCreateASkillAlreadyExistsWhenPending() {
+    void testPOSTCreateASkillAlreadyExistsWhenPending() {
 
         Skill skill = createADefaultSkill();
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
@@ -174,7 +174,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPOSTCreateANullSkill() {
+    void testPOSTCreateANullSkill() {
 
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
 
@@ -207,7 +207,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPUTUpdateSkillNonAdmin() {
+    void testPUTUpdateSkillNonAdmin() {
 
         Skill skill = createADefaultSkill();
 
@@ -221,7 +221,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPUTUpdateNonexistentSkill() {
+    void testPUTUpdateNonexistentSkill() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         createAndAssignAdminRole(memberProfileOfAdmin);
@@ -241,7 +241,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPUTUpdateNullSkill() {
+    void testPUTUpdateNullSkill() {
 
         final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,

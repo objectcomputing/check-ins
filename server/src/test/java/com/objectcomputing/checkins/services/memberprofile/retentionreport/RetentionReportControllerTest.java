@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RetentionReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class RetentionReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/reports/retention")

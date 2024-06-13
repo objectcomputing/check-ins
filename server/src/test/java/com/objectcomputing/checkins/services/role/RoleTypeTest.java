@@ -5,11 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class RoleTypeTest {
+class RoleTypeTest {
 
     @Test
     void testConstants() {
-        RoleType.Constants dnc = new RoleType.Constants(); // Test coverage hack to get to 100%
         assertEquals(RoleType.Constants.PDL_ROLE, RoleType.PDL.name());
         assertEquals(RoleType.Constants.MEMBER_ROLE, RoleType.MEMBER.name());
         assertEquals(RoleType.Constants.ADMIN_ROLE, RoleType.ADMIN.name());

@@ -28,7 +28,7 @@ import static com.objectcomputing.checkins.services.memberprofile.MemberProfileT
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MemberProfileControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture,
+class MemberProfileControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture,
     SkillFixture, MemberSkillFixture, TeamFixture, TeamMemberFixture, RoleFixture {
 
     @Inject
@@ -53,7 +53,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGETNonExistingEndpointReturns404() {
+    void testGETNonExistingEndpointReturns404() {
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.GET(String.valueOf(UUID.randomUUID()))
@@ -65,7 +65,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteThrowsExceptionWhenUserDoesNotExist() {
+    void testDeleteThrowsExceptionWhenUserDoesNotExist() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
@@ -87,7 +87,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteThrowsExceptionIfCheckinDataExists() {
+    void testDeleteThrowsExceptionIfCheckinDataExists() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -110,7 +110,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteThrowsExceptionIfMemberSkillExists() {
+    void testDeleteThrowsExceptionIfMemberSkillExists() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -136,7 +136,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteThrowsExceptionIfMemberIsPartOfATeam() {
+    void testDeleteThrowsExceptionIfMemberIsPartOfATeam() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -162,7 +162,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteThrowsExceptionIfMemberHasPDLRole() {
+    void testDeleteThrowsExceptionIfMemberHasPDLRole() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         assignPdlRole(memberProfileOfPDL);
@@ -186,7 +186,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteHappyPath() {
+    void testDeleteHappyPath() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -218,7 +218,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteNotAuthorized() {
+    void testDeleteNotAuthorized() {
         final HttpRequest<?> request = HttpRequest.DELETE("/01b7d769-9fa2-43ff-95c7-f3b950a27bf9")
             .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
@@ -228,7 +228,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteNoPermission() {
+    void testDeleteNoPermission() {
         MemberProfile pdlMember = createAnUnrelatedUser();
         assignPdlRole(pdlMember);
 
@@ -242,7 +242,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
     // Find By id - when no user data exists
     @Test
-    public void testGETFindByNameReturnsEmptyBody() throws UnsupportedEncodingException {
+    void testGETFindByNameReturnsEmptyBody() throws UnsupportedEncodingException {
 
         final HttpRequest<Object> request = HttpRequest.
             GET(String.format("/?name=%s", encodeValue("dnc"))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -253,7 +253,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGETFindByValueName() throws UnsupportedEncodingException {
+    void testGETFindByValueName() throws UnsupportedEncodingException {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         final HttpRequest<Object> request = HttpRequest.
@@ -266,7 +266,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGETGetByIdHappyPath() {
+    void testGETGetByIdHappyPath() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -280,7 +280,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGETGetByIdNotFound() {
+    void testGETGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
             GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -341,7 +341,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testPOSTCreateAMemberProfileAdmin() {
+    void testPOSTCreateAMemberProfileAdmin() {
 
         MemberProfile admin = createADefaultMemberProfile();
         assignAdminRole(admin);
@@ -360,7 +360,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testPOSTCreateAMemberProfileMemberUnauthorized() {
+    void testPOSTCreateAMemberProfileMemberUnauthorized() {
 
         MemberProfile member = createADefaultMemberProfile();
         assignMemberRole(member);
@@ -376,7 +376,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testPOSTCreateAMemberProfilePdlUnauthorized() {
+    void testPOSTCreateAMemberProfilePdlUnauthorized() {
 
         MemberProfile pdl = createADefaultMemberProfile();
         assignPdlRole(pdl);
@@ -397,7 +397,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testPOSTCreateANullMemberProfile() {
+    void testPOSTCreateANullMemberProfile() {
         MemberProfile admin = createADefaultMemberProfile();
         assignAdminRole(admin);
 
@@ -414,7 +414,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
     // Find By id - when no user data exists for POST
     @Test
-    public void testPostValidationFailures() {
+    void testPostValidationFailures() {
         MemberProfile admin = createADefaultMemberProfile();
         assignAdminRole(admin);
 
@@ -431,7 +431,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testPOSTSaveMemberSameEmailThrowsException() {
+    void testPOSTSaveMemberSameEmailThrowsException() {
         MemberProfile admin = createADefaultMemberProfile();
         assignAdminRole(admin);
 
@@ -461,7 +461,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testPUTUpdateMemberProfile() {
+    void testPUTUpdateMemberProfile() {
 
         MemberProfileUpdateDTO profileUpdateDTO = mkUpdateMemberProfileDTO();
 
@@ -476,7 +476,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testPUTUpdateNonexistentMemberProfile() {
+    void testPUTUpdateNonexistentMemberProfile() {
 
         MemberProfileCreateDTO memberProfileCreateDTO = new MemberProfileCreateDTO();
         memberProfileCreateDTO.setFirstName("reincarnation");
@@ -492,7 +492,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testPUTUpdateNullMemberProfile() {
+    void testPUTUpdateNullMemberProfile() {
 
         final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -504,7 +504,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
     // POST - Future Start Date
     @Test
-    public void testPostForFutureStartDate() {
+    void testPostForFutureStartDate() {
         MemberProfile admin = createADefaultMemberProfile();
         assignAdminRole(admin);
 
@@ -525,7 +525,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
     // POST - NotBlank MemberProfile first name (and last name)
     @Test
-    public void testPostWithNullName() {
+    void testPostWithNullName() {
         MemberProfile admin = createADefaultMemberProfile();
         assignAdminRole(admin);
 
@@ -542,7 +542,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
     // Find By id - when no user data exists for PUT
     @Test
-    public void testPutValidationFailures() {
+    void testPutValidationFailures() {
 
         final HttpRequest<MemberProfileUpdateDTO> request = HttpRequest.PUT("", new MemberProfileUpdateDTO())
             .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -558,7 +558,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
     // PUT - Future Start Date
     @Test
-    public void testPutFutureStartDate() {
+    void testPutFutureStartDate() {
 
         MemberProfileUpdateDTO requestBody = mkUpdateMemberProfileDTO();
         requestBody.setStartDate(maxDate);
@@ -574,7 +574,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
     // PUT - Request with empty body
     @Test
-    public void testPutUpdateForEmptyInput() {
+    void testPutUpdateForEmptyInput() {
         MemberProfileUpdateDTO testMemberProfile = mkUpdateMemberProfileDTO();
         testMemberProfile.setId(null);
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("", testMemberProfile)
@@ -586,7 +586,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testMemberProfileWithNullTerminationDate() {
+    void testMemberProfileWithNullTerminationDate() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         final HttpResponse<List < MemberProfileResponseDTO >> response = client
             .toBlocking()
@@ -600,7 +600,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testMemberProfileWithUpcomingTerminationDate() {
+    void testMemberProfileWithUpcomingTerminationDate() {
         MemberProfile memberProfile = createAFutureTerminatedMemberProfile();
 
         final HttpResponse<List < MemberProfileResponseDTO >> response = client
@@ -615,7 +615,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testMemberProfileWithPreviousTerminationDate() {
+    void testMemberProfileWithPreviousTerminationDate() {
         MemberProfile memberProfile = createAPastTerminatedMemberProfile();
 
         final HttpResponse<List <MemberProfileResponseDTO >> response = client
@@ -629,7 +629,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testMemberProfileWithPreviousTerminationDateReturnsWhenTerminatedTrue() {
+    void testMemberProfileWithPreviousTerminationDateReturnsWhenTerminatedTrue() {
         MemberProfile memberProfile = createAPastTerminatedMemberProfile();
 
         final HttpResponse<List <MemberProfileResponseDTO >> response = client
@@ -642,5 +642,4 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals(1, body.size());
         assertProfilesEqual(memberProfile, Objects.requireNonNull(body.get(0)));
     }
-
 }

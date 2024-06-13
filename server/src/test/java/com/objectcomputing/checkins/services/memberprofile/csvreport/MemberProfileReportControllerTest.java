@@ -23,7 +23,8 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MemberProfileReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class MemberProfileReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+
     @Inject
     @Client("/services/reports/member")
     private HttpClient client;
@@ -34,7 +35,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
     }
 
     @Test
-    public void testGetReportWithAllMemberProfiles() {
+    void testGetReportWithAllMemberProfiles() {
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
         MemberProfile member3 = createADefaultMemberProfileForPdl(member1);
@@ -50,7 +51,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
     }
 
     @Test
-    public void testGetReportWithSelectedMemberProfiles() {
+    void testGetReportWithSelectedMemberProfiles() {
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
         MemberProfile member3 = createADefaultMemberProfileForPdl(member1);
@@ -69,7 +70,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
     }
 
     @Test
-    public void testGetReportNotAuthorized() {
+    void testGetReportNotAuthorized() {
         HttpRequest<?> request = HttpRequest
                 .POST("/", null)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -80,7 +81,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
     }
 
     @Test
-    public void testGetAllMemberProfileRecords() {
+    void testGetAllMemberProfileRecords() {
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
         MemberProfile member3 = createADefaultMemberProfileForPdl(member1);
@@ -96,7 +97,7 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
     }
 
     @Test
-    public void testGetSelectedMemberProfileRecords() {
+    void testGetSelectedMemberProfileRecords() {
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
         MemberProfile member3 = createADefaultMemberProfileForPdl(member1);
@@ -139,5 +140,4 @@ public class MemberProfileReportControllerTest extends TestContainersSuite imple
             assertEquals(supervisor.getWorkEmail(), record.getSupervisorEmail());
         }
     }
-
 }
