@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -25,9 +26,11 @@ import java.util.UUID;
 public class ActionItemController {
 
     private ActionItemServices actionItemServices;
+
     public ActionItemController(ActionItemServices actionItemServices) {
         this.actionItemServices = actionItemServices;
     }
+
     /**
      * Create and save a new actionItem.
      *
@@ -54,14 +57,12 @@ public class ActionItemController {
      */
     @Put
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
-    public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<?> request) {
+    public HttpResponse<ActionItem> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<?> request) {
         ActionItem updatedActionItem = actionItemServices.update(actionItem);
         return HttpResponse
-                .ok()
+                .ok(updatedActionItem)
                 .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), updatedActionItem.getId()))))
-                .body(updatedActionItem);
-
+                        URI.create(String.format("%s/%s", request.getPath(), updatedActionItem.getId()))));
     }
 
     /**
@@ -71,10 +72,9 @@ public class ActionItemController {
      */
     @Delete("/{id}")
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
-    public HttpResponse<?> deleteActionItem(UUID id) {
+    @Status(HttpStatus.OK)
+    public void deleteActionItem(UUID id) {
         actionItemServices.delete(id);
-        return HttpResponse
-                .ok();
     }
 
     /**

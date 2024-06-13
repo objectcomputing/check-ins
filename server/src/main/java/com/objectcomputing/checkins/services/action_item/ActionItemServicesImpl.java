@@ -13,13 +13,13 @@ import java.util.UUID;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
-public class ActionItemServicesImpl implements ActionItemServices {
+class ActionItemServicesImpl implements ActionItemServices {
 
     private final ActionItemRepository actionItemRepo;
     private final CRUDValidator<ActionItem> crudValidator;
 
-    public ActionItemServicesImpl(ActionItemRepository actionItemRepo,
-                                  @Named("ActionItem") CRUDValidator<ActionItem> crudValidator) {
+    ActionItemServicesImpl(ActionItemRepository actionItemRepo,
+                           @Named("ActionItem") CRUDValidator<ActionItem> crudValidator) {
         this.actionItemRepo = actionItemRepo;
         this.crudValidator = crudValidator;
     }
@@ -42,18 +42,15 @@ public class ActionItemServicesImpl implements ActionItemServices {
         actionItemRet = actionItemRepo.save(actionItem);
 
         return actionItemRet;
-
     }
 
     public ActionItem read(@NotNull UUID id) {
-
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
         crudValidator.validateArgumentsRead(actionItemResult);
         if (actionItemResult != null) crudValidator.validatePermissionsRead(actionItemResult);
 
         return actionItemResult;
-
     }
 
     public ActionItem update(@Valid @NotNull ActionItem actionItem) {
@@ -69,14 +66,11 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-
         crudValidator.validatePermissionsFindByFields(checkinid, createdbyid);
 
-        Set<ActionItem> actionItems = new LinkedHashSet<>(
-                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
-
-        return actionItems;
-
+        return new LinkedHashSet<>(
+                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid))
+        );
     }
 
     public void delete(@NotNull UUID id) {
@@ -86,9 +80,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         crudValidator.validatePermissionsDelete(actionItemResult);
 
         actionItemRepo.deleteById(id);
-
     }
-
 }
 
 
