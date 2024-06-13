@@ -150,7 +150,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         List<TeamMember> teamMembers = teamMemberRepo.findByTeamId(id);
         if (teamMembers != null) {
-            List<TeamMember> teamLeads = teamMembers.stream().filter((member) -> member.isLead()).collect(Collectors.toList());
+            List<TeamMember> teamLeads = teamMembers.stream().filter(TeamMember::isLead).toList();
 
             if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
                 throw new PermissionException("You are not authorized to perform this operation");

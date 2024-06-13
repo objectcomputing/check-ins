@@ -98,7 +98,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
                 .stream()
                 .filter(template -> template.getIsPublic() || isAdmin || template.getCreatorId().equals(currentUserId))
                 .filter(template -> !template.getIsReview() || isAdmin)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

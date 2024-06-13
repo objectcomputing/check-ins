@@ -70,7 +70,8 @@ public class TeamServicesImpl implements TeamServices {
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(teamMember ->
-                        fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberId()))).collect(Collectors.toList());
+                        fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberId())))
+                .toList();
 
         return fromEntity(foundTeam, teamMembers);
     }

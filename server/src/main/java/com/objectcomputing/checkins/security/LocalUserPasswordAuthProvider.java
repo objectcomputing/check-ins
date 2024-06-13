@@ -77,10 +77,10 @@ public class LocalUserPasswordAuthProvider implements ReactiveAuthenticationProv
         }
 
         List<Permission> permissions = rolePermissionServices.findUserPermissions(memberProfile.getId());
-        List<String> permissionsAsString = permissions.stream().map(Enum::name).collect(Collectors.toList());
+        List<String> permissionsAsString = permissions.stream().map(Enum::name).toList();
 
         Set<Role> userRoles = roleServices.findUserRoles(memberProfile.getId());
-        List<String> rolesAsString = userRoles.stream().map(Role::getRole).collect(Collectors.toList());
+        List<String> rolesAsString = userRoles.stream().map(Role::getRole).toList();
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("roles", rolesAsString);

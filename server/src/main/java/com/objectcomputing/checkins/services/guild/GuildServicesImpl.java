@@ -6,7 +6,11 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetConfig;
-import com.objectcomputing.checkins.services.guild.member.*;
+import com.objectcomputing.checkins.services.guild.member.GuildMember;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -20,7 +24,12 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
@@ -122,7 +131,7 @@ public class GuildServicesImpl implements GuildServices {
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(guildMember ->
-                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()))).collect(Collectors.toList());
+                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()))).toList();
 
         return fromEntity(foundGuild, guildMembers);
     }

@@ -13,15 +13,17 @@ import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.token.event.RefreshTokenGeneratedEvent;
 import io.micronaut.security.token.refresh.RefreshTokenPersistence;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.inject.Singleton;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @Singleton
 public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
@@ -71,10 +73,10 @@ public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
 
     public Authentication createAuthentication(MemberProfile memberProfile) {
         List<Permission> permissions = rolePermissionServices.findUserPermissions(memberProfile.getId());
-        List<String> permissionsAsString = permissions.stream().map(Permission::name).collect(Collectors.toList());
+        List<String> permissionsAsString = permissions.stream().map(Permission::name).toList();
 
         Set<Role> userRoles = roleServices.findUserRoles(memberProfile.getId());
-        List<String> rolesAsString = userRoles.stream().map(Role::getRole).collect(Collectors.toList());
+        List<String> rolesAsString = userRoles.stream().map(Role::getRole).toList();
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("permissions", permissionsAsString);
