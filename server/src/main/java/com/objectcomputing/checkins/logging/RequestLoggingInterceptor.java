@@ -42,7 +42,7 @@ public class RequestLoggingInterceptor implements HttpServerFilter {
         request.getAttribute(HttpAttributes.ROUTE_INFO, MethodBasedRouteInfo.class).ifPresent(routeBuilder -> {
             String username = auth.map(Principal::getName).map(n -> n.isBlank() ? null : n).orElse("not authenticated");
             String requestVerb = request.getMethodName();
-            ExecutableMethod targetMethod = routeBuilder.getTargetMethod().getExecutableMethod();
+            ExecutableMethod<?, ?> targetMethod = routeBuilder.getTargetMethod().getExecutableMethod();
             String params = request.getParameters().asMap().entrySet().stream()
                     .map(e -> e.getKey() + ":" + e.getValue())
                     .collect(Collectors.joining(","));
