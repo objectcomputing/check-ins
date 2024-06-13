@@ -17,7 +17,7 @@ class RoleTypeTest {
     @Test
     void testValues() {
         RoleType[] roles = RoleType.values();
-        assertEquals(roles.length, 3);
+        assertEquals(3, roles.length);
         for (RoleType roleType : roles) {
             switch (roleType) {
                 case PDL:

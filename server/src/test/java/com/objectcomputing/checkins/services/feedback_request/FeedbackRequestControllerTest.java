@@ -624,7 +624,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
-        assertEquals(response.getBody().get().size(), 2);
+        assertEquals(2, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
     }

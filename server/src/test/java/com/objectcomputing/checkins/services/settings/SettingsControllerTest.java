@@ -74,8 +74,8 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
                 .exchange(request, Argument.listOf(SettingsResponseDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.body().get(0).getId(), setting.getId());
-        assertEquals(response.body().size(), 1);
+        assertEquals(setting.getId(), response.body().get(0).getId());
+        assertEquals(1, response.body().size());
     }
 
     @Test
@@ -241,7 +241,7 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals(responseException.getMessage(), "Bad Request");
+        assertEquals("Bad Request", responseException.getMessage());
     }
 
     @Test

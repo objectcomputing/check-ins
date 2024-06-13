@@ -84,9 +84,9 @@ class DemographicsControllerTest extends TestContainersSuite implements Demograp
 
         StepVerifier.create(response)
                         .thenConsumeWhile(resp -> {
-                            assertEquals(resp.getStatus(), HttpStatus.OK);
-                            assertEquals(resp.body().get(0).getId(), demographic.getId());
-                            assertEquals(resp.body().size(), 1);
+                            assertEquals(HttpStatus.OK, resp.getStatus());
+                            assertEquals(demographic.getId(), resp.body().get(0).getId());
+                            assertEquals(1, resp.body().size());
                             return true;
                         })
                 .expectComplete()
@@ -108,8 +108,8 @@ class DemographicsControllerTest extends TestContainersSuite implements Demograp
 
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.body().get(0).getId(), demographic.getId());
-        assertEquals(response.body().size(), 1);
+        assertEquals(demographic.getId(), response.body().get(0).getId());
+        assertEquals(1, response.body().size());
     }
 
     @Test
@@ -125,8 +125,7 @@ class DemographicsControllerTest extends TestContainersSuite implements Demograp
                 .exchange(request, Argument.listOf(DemographicsResponseDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.body());
-        assertEquals(response.body(), new ArrayList<>());
+        assertTrue(response.body().isEmpty(), "Should return an empty list");
     }
 
     @Test
@@ -144,7 +143,7 @@ class DemographicsControllerTest extends TestContainersSuite implements Demograp
         final HttpResponse<DemographicsResponseDTO> response = client.toBlocking().exchange(request,DemographicsResponseDTO.class);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.CREATED,response.getStatus());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(newDemographics.getGender(), response.body().getGender());
     }
 
@@ -181,8 +180,7 @@ class DemographicsControllerTest extends TestContainersSuite implements Demograp
         final HttpResponse<DemographicsResponseDTO> response = client.toBlocking().exchange(request, DemographicsResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), updatedDemographics.getId()),
-                response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), updatedDemographics.getId()), response.getHeaders().get("location"));
     }
 
     @Test
