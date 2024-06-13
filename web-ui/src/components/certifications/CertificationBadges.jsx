@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { Card, CardContent, CardHeader, Tooltip } from '@mui/material';
 
 import { resolve } from '../../api/api.js';
+import { AppContext } from '../../context/AppContext';
+import { selectCsrfToken } from '../../context/selectors';
 
 import './CertificationBadges.css';
 
@@ -15,11 +17,14 @@ const propTypes = {
 const CertificationBadges = ({ memberId }) => {
   const [certifications, setCertifications] = useState([]);
 
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+
   const loadCertifications = useCallback(async () => {
     try {
       const res = await resolve({
         method: 'GET',
-        url: certificationBaseUrl + '/' + memberId,
+        url: certificationBaseUrl + '?memberId=' + memberId,
         headers: {
           'X-CSRF-Header': csrf,
           Accept: 'application/json',

@@ -312,8 +312,7 @@ const MemberProfilePage = () => {
                 </div>
               </CardContent>
             </Card>
-            {/* TODO: Uncomment this after testing VolunteerBadges. */}
-            {/* <CertificationBadges memberId={memberId} /> */}
+            <CertificationBadges memberId={memberId} />
             <VolunteerBadges memberId={memberId} />
           </Grid>
         </Grid>

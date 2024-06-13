@@ -47,7 +47,7 @@ const VolunteerBadges = ({ memberId }) => {
     try {
       const res = await resolve({
         method: 'GET',
-        url: relationshipBaseUrl + '/' + memberId,
+        url: relationshipBaseUrl + '?=memberId=' + memberId,
         headers: {
           'X-CSRF-Header': csrf,
           Accept: 'application/json',
@@ -55,12 +55,13 @@ const VolunteerBadges = ({ memberId }) => {
         }
       });
       if (res.error) throw new Error(res.error.message);
+
       const relationships = res.payload.data;
       setRelationships(relationships);
     } catch (err) {
       console.error(err);
     }
-  }, [csrf, organizationMap]);
+  }, [csrf]);
 
   useEffect(() => {
     if (csrf) {
