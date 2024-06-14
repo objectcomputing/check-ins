@@ -12,7 +12,7 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface VolunteeringEventRepository extends CrudRepository<VolunteeringEvent, UUID> {
 
-    @Query("""
+    @Query(value = """
             SELECT event.*
                 FROM volunteering_event AS event
                     JOIN volunteering_relationship AS rel USING(relationship_id)
@@ -20,10 +20,10 @@ public interface VolunteeringEventRepository extends CrudRepository<Volunteering
                 WHERE rel.member_id::uuid = :memberId
                   AND (rel.is_active = TRUE OR :includeDeactivated = TRUE)
                   AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
-                ORDER BY event.event_date, org.name, event.hours DESC""")
+                ORDER BY event.event_date, org.name, event.hours DESC""", nativeQuery = true)
     List<VolunteeringEvent> findByMemberId(@NotNull UUID memberId, boolean includeDeactivated);
 
-    @Query("""
+    @Query(value = """
             SELECT event.*
                 FROM volunteering_event AS event
                     JOIN volunteering_relationship AS rel USING(relationship_id)
@@ -31,10 +31,10 @@ public interface VolunteeringEventRepository extends CrudRepository<Volunteering
                 WHERE org.organization_id::uuid = :organizationId
                   AND (rel.is_active = TRUE OR :includeDeactivated = TRUE)
                   AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
-                ORDER BY event.event_date, org.name, event.hours DESC""")
+                ORDER BY event.event_date, org.name, event.hours DESC""", nativeQuery = true)
     List<VolunteeringEvent> findByOrganizationId(@NotNull UUID organizationId, boolean includeDeactivated);
 
-    @Query("""
+    @Query(value = """
             SELECT event.*
                 FROM volunteering_event AS event
                     JOIN volunteering_relationship AS rel USING(relationship_id)
@@ -43,16 +43,16 @@ public interface VolunteeringEventRepository extends CrudRepository<Volunteering
                   AND org.organization_id::uuid = :organizationId
                   AND (rel.is_active = TRUE OR :includeDeactivated = TRUE)
                   AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
-                ORDER BY event.event_date, org.name, event.hours DESC""")
+                ORDER BY event.event_date, org.name, event.hours DESC""", nativeQuery = true)
     List<VolunteeringEvent> findByMemberIdAndOrganizationId(@NotNull UUID memberId, @NotNull UUID organizationId, boolean includeDeactivated);
 
-    @Query("""
+    @Query(value = """
             SELECT event.*
                 FROM volunteering_event AS event
                     JOIN volunteering_relationship AS rel USING(relationship_id)
                     JOIN volunteering_organization AS org USING(organization_id)
                 WHERE (rel.is_active = TRUE OR :includeDeactivated = TRUE)
                   AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
-                ORDER BY event.event_date, org.name, event.hours DESC""")
+                ORDER BY event.event_date, org.name, event.hours DESC""", nativeQuery = true)
     List<VolunteeringEvent> findAll(boolean includeDeactivated);
 }

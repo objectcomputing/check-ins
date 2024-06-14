@@ -14,10 +14,10 @@ public interface VolunteeringOrganizationRepository extends CrudRepository<Volun
 
     Optional<VolunteeringOrganization> getByName(String name);
 
-    @Query("""
-           SELECT org.*
-             FROM volunteering_organization AS org
-               WHERE org.is_active = TRUE OR :includeDeactivated = TRUE
-             ORDER BY org.name""")
+    @Query(value = """
+            SELECT org.*
+              FROM volunteering_organization AS org
+                WHERE org.is_active = TRUE OR :includeDeactivated = TRUE
+              ORDER BY org.name""", nativeQuery = true)
     List<VolunteeringOrganization> findAll(boolean includeDeactivated);
 }
