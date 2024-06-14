@@ -172,6 +172,54 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
     }
 
     @Test
+    void cannotUpdateEarnedCertificationToSomeoneElse() {
+        MemberProfile tim = memberWithoutBoss("Tim");
+        MemberProfile sarah = memberWithoutBoss("Sarah");
+
+        Certification certification = createDefaultCertification();
+        EarnedCertification sarahsCertification = createEarnedCertification(sarah, certification, "Description", LocalDate.now());
+
+        // Try to change the owner to me
+        EarnedCertificationDTO update = new EarnedCertificationDTO(
+                tim.getId(),
+                sarahsCertification.getCertificationId(),
+                sarahsCertification.getDescription(),
+                sarahsCertification.getEarnedDate()
+        );
+        HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () ->
+                earnedCertificationClient.toBlocking()
+                        .retrieve(HttpRequest.PUT("/%s".formatted(sarahsCertification.getId()), update)
+                                .basicAuth(sarah.getWorkEmail(), MEMBER_ROLE))
+        );
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("User %s does not have permission to update Earned Certificate for user %s".formatted(sarah.getId(), tim.getId()), exception.getMessage());
+    }
+
+    @Test
+    void cannotUpdateSomeoneElsesEarnedCertificateToMe() {
+        MemberProfile tim = memberWithoutBoss("Tim");
+        MemberProfile sarah = memberWithoutBoss("Sarah");
+
+        Certification certification = createDefaultCertification();
+        EarnedCertification sarahsCertification = createEarnedCertification(sarah, certification, "Description", LocalDate.now());
+
+        // Try to change the owner to me
+        EarnedCertificationDTO update = new EarnedCertificationDTO(
+                tim.getId(),
+                sarahsCertification.getCertificationId(),
+                sarahsCertification.getDescription(),
+                sarahsCertification.getEarnedDate()
+        );
+        HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () ->
+                earnedCertificationClient.toBlocking()
+                        .retrieve(HttpRequest.PUT("/%s".formatted(sarahsCertification.getId()), update)
+                        .basicAuth(tim.getWorkEmail(), MEMBER_ROLE))
+        );
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("User %s does not have permission to update Earned Certificate for user %s".formatted(tim.getId(), sarah.getId()), exception.getMessage());
+    }
+
+    @Test
     void canDeleteEarnedCertificationWithRole() {
         MemberProfile member = createADefaultMemberProfile();
         Certification certification = createDefaultCertification();

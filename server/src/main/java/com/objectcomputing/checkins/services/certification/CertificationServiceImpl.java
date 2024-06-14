@@ -136,10 +136,24 @@ class CertificationServiceImpl implements CertificationService {
     }
 
     private void validatePermission(EarnedCertification earnedCertification, String action) {
-        // Fail if the user doesn't have permission to modify the earned certification
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
+
+        // Check if they have the admin permission
         boolean hasPermission = rolePermissionServices.findUserPermissions(currentUserId).contains(Permission.CAN_MANAGE_EARNED_CERTIFICATIONS);
-        validate(!hasPermission && !earnedCertification.getMemberId().equals(currentUserId), "User %s does not have permission to %s Earned Certificate for user %s", currentUserId, action, earnedCertification.getMemberId());
+        if (hasPermission) {
+            return;
+        }
+
+        // Verify the userId in the request matches the current user
+        if (!earnedCertification.getMemberId().equals(currentUserId)) {
+            throw new BadArgException("User %s does not have permission to %s Earned Certificate for user %s".formatted(currentUserId, action, earnedCertification.getMemberId()));
+        }
+
+        // Verify the current user owns the earned certification they are trying to modify (if it exists in the db)
+        Optional<UUID> dbUuid = earnedCertificationRepository.findById(earnedCertification.getId()).map(EarnedCertification::getMemberId);
+        if (dbUuid.map(id -> !id.equals(currentUserId)).orElse(false)) {
+            throw new BadArgException("User %s does not have permission to %s Earned Certificate for user %s".formatted(currentUserId, action, dbUuid.orElse(null)));
+        }
     }
 
     private void validate(boolean isError, String message, Object... args) {
