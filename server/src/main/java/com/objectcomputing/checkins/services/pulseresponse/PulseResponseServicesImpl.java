@@ -176,7 +176,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             bodyBuilder.append(String.format("External Feelings: %s<br>", pulseResponse.getExternalFeelings()));
         }
 
-        List<String> recipients = new ArrayList<>();
+        Set<String> recipients = new HashSet<>();
         UUID pdlId = surveyTakerMemberProfile.getPdlId();
         if (pdlId != null && memberRepo.existsById(pdlId)) {
             recipients.add(memberProfileServices.getById(pdlId).getWorkEmail());
