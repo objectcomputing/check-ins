@@ -269,7 +269,6 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
                   control={<Checkbox value={publicKudos} />}
                   label="Public"
                   onChange={e => {
-                    console.log({ e });
                     setPublicKudos(e.target.checked);
                   }}
                 />
