@@ -35,7 +35,7 @@ const SnackBarWithContext = () => {
           elevation={6}
           variant="filled"
         >
-          {toast}
+          {toast.message || toast}
         </MuiAlert>
       )}
     </Snackbar>

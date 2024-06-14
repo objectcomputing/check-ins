@@ -32,6 +32,9 @@ delete from member_profile;
 delete from skillcategory_skills;
 delete from skills;
 delete from skillcategories;
+delete from volunteering_event;
+delete from volunteering_relationship;
+delete from volunteering_organization;
 
 -- Member Profiles
 INSERT INTO member_profile -- Gina Bremehr

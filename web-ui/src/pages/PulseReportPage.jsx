@@ -226,31 +226,28 @@ const PulseReportPage = () => {
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
 
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: `/services/pulse-responses?${queryString}`,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
-      const pulses = res.payload.data;
-      // Sort the pulses on their submission date.
-      pulses.sort((p1, p2) => {
-        const [year1, month1, day1] = p1.submissionDate;
-        const [year2, month2, day2] = p2.submissionDate;
-        let compare = year1 - year2;
-        if (compare === 0) compare = month1 - month2;
-        if (compare === 0) compare = day1 - day2;
-        return compare;
-      });
-      setPulses(pulses);
-    } catch (err) {
-      console.error('PulseReportPage.jsx loadPulses:', err);
-    }
+    const res = await resolve({
+      method: 'GET',
+      url: `/services/pulse-responses?${queryString}`,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
+
+    const pulses = res.payload.data;
+    // Sort the pulses on their submission date.
+    pulses.sort((p1, p2) => {
+      const [year1, month1, day1] = p1.submissionDate;
+      const [year2, month2, day2] = p2.submissionDate;
+      let compare = year1 - year2;
+      if (compare === 0) compare = month1 - month2;
+      if (compare === 0) compare = day1 - day2;
+      return compare;
+    });
+    setPulses(pulses);
   };
 
   useEffect(() => {
