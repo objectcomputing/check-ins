@@ -7,9 +7,7 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-  Modal,
-  Typography
+  DialogTitle
 } from '@mui/material';
 
 const propTypes = {
@@ -27,7 +25,7 @@ const ConfirmationDialog = ({
   open,
   question,
   setOpen,
-  title
+  title = 'Confirm'
 }) => {
   const handleNo = useCallback(() => {
     setOpen(false);
@@ -41,7 +39,7 @@ const ConfirmationDialog = ({
 
   return (
     <Dialog open={open} onClose={handleNo}>
-      <DialogTitle>{title || 'Confirm'}</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{question}</DialogContentText>
       </DialogContent>
