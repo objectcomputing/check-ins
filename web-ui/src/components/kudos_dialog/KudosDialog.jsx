@@ -1,5 +1,7 @@
-import React, { useCallback, useContext, useState } from "react";
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import React, { useCallback, useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   Alert,
   AppBar,
@@ -17,23 +19,21 @@ import {
   TextField,
   Toolbar,
   Tooltip,
-  Typography,
-} from "@mui/material";
+  Typography
+} from '@mui/material';
 
-import "./KudosDialog.css";
-import { AppContext } from "../../context/AppContext";
+import { getAvatarURL } from '../../api/api';
+import { createKudos } from '../../api/kudos';
+import { UPDATE_TOAST } from '../../context/actions';
+import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
   selectCurrentUser,
   selectNormalizedTeams,
   selectOrderedCurrentMemberProfiles,
-  selectProfile,
-} from "../../context/selectors";
-import { createKudos } from "../../api/kudos";
-import { UPDATE_TOAST } from "../../context/actions";
-import { Link } from "react-router-dom";
-import CloseIcon from "@mui/icons-material/Close";
-import { getAvatarURL } from "../../api/api";
+  selectProfile
+} from '../../context/selectors';
+import './KudosDialog.css';
 
 const Transition = React.forwardRef((props, ref) => {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -43,10 +43,10 @@ const propTypes = {
   open: PropTypes.bool.isRequired,
   recipient: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
   }),
   teamId: PropTypes.string,
-  onClose: PropTypes.func,
+  onClose: PropTypes.func
 };
 
 const KudosDialog = ({ open, recipient, teamId, onClose }) => {
@@ -54,9 +54,9 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
   const csrf = selectCsrfToken(state);
 
   const [recipientType, setRecipientType] = useState(
-    teamId ? "TEAM" : "MEMBERS"
+    teamId ? 'TEAM' : 'MEMBERS'
   );
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [created, setCreated] = useState(false);
   const [publicKudos, setPublicKudos] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(null);
@@ -65,20 +65,20 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
   );
 
   const currentUser = selectCurrentUser(state);
-  const teams = selectNormalizedTeams(state, "");
+  const teams = selectNormalizedTeams(state, '');
   const memberProfiles = selectOrderedCurrentMemberProfiles(state);
 
   const handleSubmit = useCallback(() => {
-    const saveKudos = async (kudos) => {
+    const saveKudos = async kudos => {
       const res = await createKudos(kudos, csrf);
       const data = res?.payload?.data;
       if (!data || res.error) {
         dispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "error",
-            toast: "Failed to give kudos",
-          },
+            severity: 'error',
+            toast: 'Failed to give kudos'
+          }
         });
       }
 
@@ -87,8 +87,8 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
 
     if (message.trim().length > 0 && csrf) {
       let recipients;
-      if (recipientType === "TEAM") {
-        recipients = selectedTeam.teamMembers.map((teamMember) => {
+      if (recipientType === 'TEAM') {
+        recipients = selectedTeam.teamMembers.map(teamMember => {
           return selectProfile(state, teamMember.memberId);
         });
       } else {
@@ -98,12 +98,12 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
         const kudos = {
           message: message,
           senderId: currentUser.id,
-          teamId: recipientType === "TEAM" ? selectedTeam.id : null,
+          teamId: recipientType === 'TEAM' ? selectedTeam.id : null,
           recipientMembers: recipients,
-          public: publicKudos,
+          public: publicKudos
         };
 
-        saveKudos(kudos).then((res) => {
+        saveKudos(kudos).then(res => {
           if (res) {
             setCreated(true);
           }
@@ -112,9 +112,9 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
         dispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "error",
-            toast: "You must select a recipient",
-          },
+            severity: 'error',
+            toast: 'You must select a recipient'
+          }
         });
       }
     }
@@ -126,10 +126,10 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
     currentUser,
     recipientType,
     selectedMembers,
-    selectedTeam,
+    selectedTeam
   ]);
 
-  const handleMessageChange = useCallback((event) => {
+  const handleMessageChange = useCallback(event => {
     setMessage(event.target.value);
   }, []);
 
@@ -142,14 +142,14 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
         }
         return a.lead ? -1 : 1;
       })
-      .map((teamMember) => {
+      .map(teamMember => {
         const profile = selectProfile(state, teamMember?.memberId);
         const chip = (
           <Chip
             key={profile?.id}
             label={profile?.name}
             avatar={<Avatar src={getAvatarURL(profile?.workEmail)} />}
-            style={{ border: teamMember?.lead ? "1px solid gray" : "none" }}
+            style={{ border: teamMember?.lead ? '1px solid gray' : 'none' }}
           />
         );
         return teamMember?.lead ? (
@@ -166,7 +166,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
     if (created) {
       onClose();
       setCreated(false);
-      setMessage("");
+      setMessage('');
     } else {
       onClose();
     }
@@ -194,11 +194,11 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
         {created ? (
           <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%'
             }}
           >
             <Typography variant="h1">🎉</Typography>
@@ -207,18 +207,18 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
             </Typography>
             <div
               style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "1rem",
-                margin: "2rem",
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '1rem',
+                margin: '2rem'
               }}
             >
               <Button variant="outlined" onClick={handleClose}>
                 Close
               </Button>
-              <Link to="/kudos" style={{ textDecoration: "none" }}>
+              <Link to="/kudos" style={{ textDecoration: 'none' }}>
                 <Button variant="outlined">View Kudos</Button>
               </Link>
             </div>
@@ -226,16 +226,16 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
         ) : (
           <div className="kudos-dialog-form">
             <div className="kudos-recipient-container">
-              {recipientType === "TEAM" && (
+              {recipientType === 'TEAM' && (
                 <Autocomplete
                   options={teams ? teams : []}
-                  getOptionLabel={(option) =>
-                    option.name || "Team name not found"
+                  getOptionLabel={option =>
+                    option.name || 'Team name not found'
                   }
                   value={selectedTeam}
                   onChange={(event, newValue) => setSelectedTeam(newValue)}
                   fullWidth
-                  renderInput={(params) => (
+                  renderInput={params => (
                     <TextField
                       {...params}
                       variant="outlined"
@@ -244,22 +244,22 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
                   )}
                 />
               )}
-              {recipientType === "MEMBERS" && (
+              {recipientType === 'MEMBERS' && (
                 <Autocomplete
                   multiple
                   options={memberProfiles}
-                  getOptionLabel={(member) => member?.name}
+                  getOptionLabel={member => member?.name}
                   value={selectedMembers}
                   onChange={(event, members) => {
                     setSelectedMembers(members);
                   }}
                   fullWidth
-                  renderInput={(params) => (
+                  renderInput={params => (
                     <TextField
                       {...params}
                       variant="outlined"
                       label="Select Members"
-                      value={(member) => member.name}
+                      value={member => member.name}
                     />
                   )}
                 />
@@ -268,7 +268,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
                 <FormControlLabel
                   control={<Checkbox value={publicKudos} />}
                   label="Public"
-                  onChange={(e) => {
+                  onChange={e => {
                     console.log({ e });
                     setPublicKudos(e.target.checked);
                   }}
@@ -279,7 +279,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
                 variant="outlined"
                 label="Recipient Type"
                 value={recipientType}
-                onChange={(event) => {
+                onChange={event => {
                   setSelectedTeam(null);
                   setSelectedMembers([]);
                   setRecipientType(event.target.value);
@@ -292,10 +292,10 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
             {selectedTeam && (
               <div
                 style={{
-                  marginTop: "1rem",
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: "0.5rem",
+                  marginTop: '1rem',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '0.5rem'
                 }}
               >
                 {getTeamMembers()}
@@ -305,22 +305,22 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
               variant="outlined"
               label="Message"
               placeholder={`Write a message discussing how ${
-                recipientType === "TEAM"
-                  ? "this team has"
+                recipientType === 'TEAM'
+                  ? 'this team has'
                   : selectedMembers.length === 1
-                  ? "this member has"
-                  : "these members have"
+                    ? 'this member has'
+                    : 'these members have'
               } earned some kudos!`}
               multiline
               fullWidth
               rows={7}
-              style={{ marginTop: "2rem" }}
+              style={{ marginTop: '2rem' }}
               value={message}
               onChange={handleMessageChange}
             />
             <Alert
               severity="info"
-              style={{ marginTop: "1rem", marginBottom: "2rem" }}
+              style={{ marginTop: '1rem', marginBottom: '2rem' }}
             >
               Kudos will be visible to admins for approval, then sent to the
               recipient.

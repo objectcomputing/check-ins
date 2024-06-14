@@ -1,10 +1,10 @@
 .kudos-page {
-  margin: 3rem 4rem 3rem 4rem;
+  margin-top: 3rem;
 }
 
 .kudos-page .kudos-title {
   display: flex;
-  justify-content: flex-end;
+  gap: 1rem;
 }
 
 .kudos-page .kudos-title div {
