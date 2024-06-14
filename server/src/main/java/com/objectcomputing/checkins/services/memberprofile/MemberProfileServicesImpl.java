@@ -75,7 +75,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable String workEmail,
                                            @Nullable UUID supervisorId,
                                            @Nullable Boolean terminated) {
-        HashSet<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
+        Set<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
                 nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId), terminated));
         if (!currentUserServices.isAdmin()) {
             for (MemberProfile memberProfile : memberProfiles) {

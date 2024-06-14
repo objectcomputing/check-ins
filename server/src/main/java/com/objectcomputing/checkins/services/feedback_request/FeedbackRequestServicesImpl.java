@@ -8,6 +8,8 @@ import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Named;
@@ -30,6 +32,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
+    private final ReviewPeriodRepository reviewPeriodRepository;
     private EmailSender emailSender;
     private final String notificationSubject;
     private final String webURL;
@@ -37,14 +40,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
                                        MemberProfileServices memberProfileServices,
+                                       ReviewPeriodRepository reviewPeriodRepository,
                                        @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
                                        @Property(name = WEB_UI_URL) String webURL
-    )
-            {
+    ) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
+        this.reviewPeriodRepository = reviewPeriodRepository;
         this.emailSender = emailSender;
         this.notificationSubject = notificationSubject;
         this.webURL = webURL;
@@ -86,7 +90,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
 
-        if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
+        if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())) {
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
         String status = feedbackRequest.getSendDate().isAfter(LocalDate.now()) ? "pending" : "sent";
@@ -105,12 +109,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         String newContent = "<h1>You have received a feedback request.</h1>" +
                 "<p><b>" + senderName + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
         if (storedRequest.getDueDate() != null) {
-            newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " + storedRequest.getDueDate().getYear() + ".";
+            newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth() + ", " + storedRequest.getDueDate().getYear() + ".";
         }
         newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
 
 //        LOG.warn("Pretending to send an email about the new request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
-        if(!storedRequest.getRecipientId().equals(storedRequest.getRequesteeId())) {
+        if (!storedRequest.getRecipientId().equals(storedRequest.getRequesteeId())) {
             emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         }
     }
@@ -142,13 +146,13 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         // If a status update is made to anything other than submitted by the requestee, throw an error.
         if (!feedbackRequest.getStatus().equals("submitted") && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())) {
-            if(currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
+            if (currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
                 throw new PermissionException("You are not authorized to do this operation");
             }
         }
 
         if (reassignAttempted) {
-            if(!reassignIsPermitted(originalFeedback)) {
+            if (!reassignIsPermitted(originalFeedback)) {
                 throw new PermissionException("You are not authorized to do this operation");
             }
             feedbackRequest.setStatus("sent");
@@ -170,16 +174,16 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        if (feedbackRequest.getDueDate() != null && originalFeedback.getSendDate().isAfter(feedbackRequest.getDueDate())){
+        if (feedbackRequest.getDueDate() != null && originalFeedback.getSendDate().isAfter(feedbackRequest.getDueDate())) {
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
-
+        MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         // Send email if the feedback request has been reopened for edits
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
             MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
-            MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
+
             String senderName = creator.getFirstName() + " " + creator.getLastName();
             String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
                     "<p><b>" + senderName +
@@ -194,6 +198,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         // Send email if the feedback request has been reassigned
         if (reassignAttempted) {
             sendNewRequestEmail(storedRequest);
+        }
+
+        // Send self-review completion email to supervisor and pdl if appropriate
+        if (currentUserServices.getCurrentUser().getId().equals(requestee.getId())) {
+            sendSelfReviewCompletionEmail(feedbackRequest);
         }
 
         return storedRequest;
@@ -237,7 +246,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
-        if(requesteeIds != null && !requesteeIds.isEmpty()) {
+        if (requesteeIds != null && !requesteeIds.isEmpty()) {
             LOG.debug("Finding feedback requests for {} requesteeIds.", requesteeIds.size());
             feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDListToStringList(requesteeIds)));
         } else {
@@ -247,12 +256,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         feedbackReqList = feedbackReqList.stream().filter((FeedbackRequest request) -> {
             boolean visible = false;
-            if(currentUserServices.isAdmin()){
+            if (currentUserServices.isAdmin()) {
                 visible = true;
-            } else if(request != null) {
-                if(currentUserId.equals(request.getCreatorId())) visible = true;
-                if(isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
-                if(currentUserId.equals(request.getRecipientId())) visible = true;
+            } else if (request != null) {
+                if (currentUserId.equals(request.getCreatorId())) visible = true;
+                if (isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
+                if (currentUserId.equals(request.getRecipientId())) visible = true;
             }
             return visible;
         }).collect(Collectors.toList());
@@ -323,5 +332,65 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setRecipientId(dto.getRecipientId());
 
         return feedbackRequest;
+    }
+
+    public void sendSelfReviewCompletionEmail(FeedbackRequest feedbackRequest) {
+        MemberProfile currentUserProfile = currentUserServices.getCurrentUser();
+        MemberProfile pdlProfile = null;
+        MemberProfile supervisorProfile = null;
+
+        try {
+            if (currentUserProfile.getPdlId() != null) {
+                pdlProfile = memberProfileServices.getById(currentUserProfile.getPdlId());
+            }
+        } catch (NullPointerException e) {
+            LOG.error("PDL could not be found for self-review completion email");
+        }
+
+        try {
+            if (currentUserProfile.getSupervisorid() != null) {
+                supervisorProfile = memberProfileServices.getById(currentUserProfile.getSupervisorid());
+            }
+        } catch (NullPointerException e) {
+            LOG.error("Supervisor could not be found for self-review completion email");
+        }
+
+        String reviewPeriodString = "";
+        if (feedbackRequest.getReviewPeriodId() != null) {
+            Optional<ReviewPeriod> reviewPeriodOpt = reviewPeriodRepository.findById(feedbackRequest.getReviewPeriodId());
+            if (reviewPeriodOpt.isPresent()) {
+                ReviewPeriod reviewPeriod = reviewPeriodOpt.get();
+                reviewPeriodString = String.format(" for %s", reviewPeriod.getName());
+            }
+        }
+
+        String subject = String.format("%s %s has finished their self-review%s.",
+                currentUserProfile.getFirstName(), currentUserProfile.getLastName(),
+                reviewPeriodString);
+        StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s%s.<br>",
+                currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString));
+
+        Set<String> recipients = new HashSet<>();
+        if (pdlProfile != null) {
+            bodyBuilder.append(String.format("PDL: %s %s<br>", pdlProfile.getFirstName(), pdlProfile.getLastName()));
+            recipients.add(pdlProfile.getWorkEmail());
+        }
+
+        if (supervisorProfile != null) {
+            bodyBuilder.append(String.format("Supervisor: %s %s<br>", supervisorProfile.getFirstName(), supervisorProfile.getLastName()));
+            recipients.add(supervisorProfile.getWorkEmail());
+        }
+
+        bodyBuilder.append("<br>It is now your turn in their review process. Please complete your portion in a timely manner.");
+
+        String body = bodyBuilder.toString();
+
+        if (pdlProfile != null || supervisorProfile != null) {
+            try {
+                emailSender.sendEmail(null, null, subject, body, recipients.toArray(new String[0]));
+            } catch (Exception e) {
+                LOG.error("Unable to send self-review completion email to PDL/Supervisor", e);
+            }
+        }
     }
 }

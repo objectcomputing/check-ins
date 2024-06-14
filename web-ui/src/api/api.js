@@ -82,7 +82,7 @@ export const resolve = async payload => {
       resolved.error = await resolved.payload.json();
     } catch (error) {
       resolved.error = resolved.payload.statusText;
-      console.log(error);
+      console.error(error);
     }
 
     if (window.snackDispatch) {

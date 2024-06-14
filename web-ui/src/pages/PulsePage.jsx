@@ -54,22 +54,19 @@ const PulsePage = () => {
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
 
-    try {
-      const res = await resolve({
-        method: 'GET',
-        url: `/services/pulse-responses?${queryString}`,
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      });
-      if (res.error) throw new Error(res.error.message);
-      const pulses = res.payload.data;
-      setPulse(pulses.at(-1)); // last element is most recent
-    } catch (err) {
-      console.error('PulsePage.jsx loadTodayPulse:', err);
-    }
+    const res = await resolve({
+      method: 'GET',
+      url: `/services/pulse-responses?${queryString}`,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    if (res.error) return;
+
+    const pulses = res.payload.data;
+    setPulse(pulses.at(-1)); // last element is most recent
   };
 
   useEffect(() => {
@@ -87,24 +84,20 @@ const PulsePage = () => {
       updatedDate: today,
       teamMemberId: myId
     };
-    try {
-      const res = await resolve({
-        method: 'POST',
-        url: '/services/pulse-responses',
-        headers: {
-          'X-CSRF-Header': csrf,
-          Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        data
-      });
-      if (res.error) throw new Error(res.error.message);
+    const res = await resolve({
+      method: 'POST',
+      url: '/services/pulse-responses',
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data
+    });
+    if (res.error) return;
 
-      // Refresh browser to show that pulses where already submitted today.
-      history.go(0);
-    } catch (err) {
-      console.error('PulsePage.jsx submit:', err);
-    }
+    // Refresh browser to show that pulses where already submitted today.
+    history.go(0);
   };
 
   return (
