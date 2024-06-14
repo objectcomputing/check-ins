@@ -14,9 +14,9 @@ public interface CertificationRepository extends CrudRepository<Certification, U
 
     Optional<Certification> getByName(String name);
 
-    @Query("""
+    @Query(value = """
             SELECT * FROM certification
               WHERE is_active = TRUE OR :includeDeactivated = TRUE
-              ORDER BY name""")
+              ORDER BY name""", nativeQuery = true)
     List<Certification> findAllOrderByNameAsc(boolean includeDeactivated);
 }
