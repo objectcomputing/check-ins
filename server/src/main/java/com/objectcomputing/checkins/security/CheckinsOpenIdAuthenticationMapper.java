@@ -92,7 +92,7 @@ public class CheckinsOpenIdAuthenticationMapper implements OpenIdAuthenticationM
     protected List<String> getRoles(OpenIdClaims openIdClaims) {
         List<String> roles = new ArrayList<>();
         memberProfileRepository.findByWorkEmail(openIdClaims.getEmail())
-                .ifPresent((memberProfile) -> {
+                .ifPresent(memberProfile -> {
                         LOG.info("MemberProfile of the user: {}", memberProfile);
                         roles.addAll(roleRepository.findUserRoles(memberProfile.getId())
                                 .stream()

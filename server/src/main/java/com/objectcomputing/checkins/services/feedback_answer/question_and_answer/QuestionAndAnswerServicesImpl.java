@@ -107,7 +107,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter(profile -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
         final UUID requesteePDL = requestee.getPdlId();
 
         return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId);
