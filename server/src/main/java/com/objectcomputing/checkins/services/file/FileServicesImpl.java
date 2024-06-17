@@ -225,7 +225,7 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public Boolean deleteFile(@NotNull String uploadDocId) {
+    public boolean deleteFile(@NotNull String uploadDocId) {
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();

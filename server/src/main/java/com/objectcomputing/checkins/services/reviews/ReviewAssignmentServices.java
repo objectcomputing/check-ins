@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ReviewAssignmentServices {
     ReviewAssignment save(ReviewAssignment reviewAssignment);
-    List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, Boolean deleteExisting);
+    List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, boolean deleteExisting);
     ReviewAssignment findById(UUID id);
 
     ReviewAssignment update(ReviewAssignment reviewAssignment);

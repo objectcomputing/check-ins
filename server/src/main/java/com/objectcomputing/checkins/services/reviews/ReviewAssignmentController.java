@@ -62,7 +62,7 @@ public class ReviewAssignmentController {
     public Mono<HttpResponse<List<ReviewAssignment>>> createReviewAssignment(@NotNull UUID reviewPeriodId,
                                                                              @Body List<@Valid ReviewAssignmentDTO> assignments) {
         return Mono.fromCallable(() -> reviewAssignmentServices.saveAll(reviewPeriodId,
-                assignments.stream().map(ReviewAssignmentDTO::convertToEntity).collect(Collectors.toList()), Boolean.TRUE)
+                assignments.stream().map(ReviewAssignmentDTO::convertToEntity).collect(Collectors.toList()), true)
                 ).map(HttpResponse::created);
 
     }

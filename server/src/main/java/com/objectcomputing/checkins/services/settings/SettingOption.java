@@ -32,7 +32,7 @@ public enum SettingOption {
                 .collect(Collectors.toList());
     }
 
-    public static Boolean isValidOption(String name){
+    public static boolean isValidOption(String name){
         return Stream.of(SettingOption.values())
                 .anyMatch(option -> option.name().equalsIgnoreCase(name));
     }

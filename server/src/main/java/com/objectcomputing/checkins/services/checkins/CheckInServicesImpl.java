@@ -41,7 +41,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
-    public Boolean hasPermission(@NotNull UUID memberId, @NotNull Permission permission) {
+    public boolean hasPermission(@NotNull UUID memberId, @NotNull Permission permission) {
         boolean hasPermission = false;
         List<Permission> userPermissions = rolePermissionServices.findUserPermissions(memberId);
         if (!userPermissions.isEmpty()) {
@@ -52,7 +52,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
-    public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
+    public boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
         memberRepo.findById(memberId).orElseThrow(() -> new NotFoundException(String.format("Member %s not found", memberId)));
 
         if(!canViewAllCheckins(memberId)) {
@@ -76,7 +76,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
-    public Boolean doesUserHaveViewAccess(UUID currentUserId, UUID checkinId, UUID createdById) {
+    public boolean doesUserHaveViewAccess(UUID currentUserId, UUID checkinId, UUID createdById) {
         if (canViewAllCheckins(currentUserId)) {
             return true;
         } else if (checkinId != null) {
@@ -200,12 +200,12 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
-    public Boolean canViewAllCheckins(UUID memberId) {
+    public boolean canViewAllCheckins(UUID memberId) {
         return hasPermission(memberId, Permission.CAN_VIEW_ALL_CHECKINS);
     }
 
     @Override
-    public Boolean canUpdateAllCheckins(UUID memberId) {
+    public boolean canUpdateAllCheckins(UUID memberId) {
         return hasPermission(memberId, Permission.CAN_UPDATE_ALL_CHECKINS);
     }
 }

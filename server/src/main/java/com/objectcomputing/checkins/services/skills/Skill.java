@@ -57,14 +57,14 @@ public class Skill {
         this(name, true, description, false);
     }
 
-    public Skill(String name, Boolean pending, String description, Boolean extraneous) {
+    public Skill(String name, boolean pending, String description, boolean extraneous) {
         this.name = name;
         this.pending = pending;
         this.description = description;
         this.extraneous = extraneous;
     }
 
-    public Skill(UUID id, String name, Boolean pending, String description, Boolean extraneous) {
+    public Skill(UUID id, String name, boolean pending, String description, boolean extraneous) {
         this.id = id;
         this.name = name;
         this.pending = pending;
