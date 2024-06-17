@@ -2,7 +2,14 @@ package com.objectcomputing.checkins.services.feedback_template.template_questio
 
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -11,12 +18,10 @@ import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Controller("/services/feedback/template_questions")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -38,10 +43,10 @@ public class TemplateQuestionController {
      * @return {@link TemplateQuestionResponseDTO}
      */
     @Post
-    public Mono<HttpResponse<TemplateQuestionResponseDTO>> save(@Body @Valid @NotNull TemplateQuestionCreateDTO requestBody) {
-        return Mono.fromCallable(() -> templateQuestionServices.save(fromDTO(requestBody)))
-                .map(savedFeedbackQuestion -> HttpResponse.created(fromEntity(savedFeedbackQuestion))
-                        .headers(headers -> headers.location(URI.create("/template_questions/" + savedFeedbackQuestion.getId()))));
+    public HttpResponse<TemplateQuestionResponseDTO> save(@Body @Valid @NotNull TemplateQuestionCreateDTO requestBody) {
+        TemplateQuestion savedFeedbackQuestion = templateQuestionServices.save(fromDTO(requestBody));
+        return HttpResponse.created(fromEntity(savedFeedbackQuestion))
+                .headers(headers -> headers.location(URI.create("/template_questions/" + savedFeedbackQuestion.getId())));
     }
 
     /**
@@ -51,10 +56,10 @@ public class TemplateQuestionController {
      * @return {@link TemplateQuestionResponseDTO}
      */
     @Put
-    public Mono<HttpResponse<TemplateQuestionResponseDTO>> update(@Body @Valid @NotNull TemplateQuestionUpdateDTO requestBody) {
-        return Mono.fromCallable(() -> templateQuestionServices.update(fromDTO(requestBody)))
-                .map(savedFeedbackTemplateQ -> HttpResponse.ok(fromEntity(savedFeedbackTemplateQ))
-                        .headers(headers -> headers.location(URI.create("/template_questions/" + savedFeedbackTemplateQ.getId()))));
+    public HttpResponse<TemplateQuestionResponseDTO> update(@Body @Valid @NotNull TemplateQuestionUpdateDTO requestBody) {
+        TemplateQuestion savedFeedbackTemplateQ = templateQuestionServices.update(fromDTO(requestBody));
+        return HttpResponse.ok(fromEntity(savedFeedbackTemplateQ))
+                .headers(headers -> headers.location(URI.create("/template_questions/" + savedFeedbackTemplateQ.getId())));
     }
 
     /**
@@ -64,9 +69,9 @@ public class TemplateQuestionController {
      * @return {Boolean}
      */
     @Delete("/{id}")
-    public Mono<HttpResponse<?>> deleteTemplateQuestion(@NotNull UUID id) {
-        return Mono.fromRunnable(() -> templateQuestionServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void deleteTemplateQuestion(@NotNull UUID id) {
+        templateQuestionServices.delete(id);
     }
 
     /**
@@ -76,10 +81,10 @@ public class TemplateQuestionController {
      * @return {@link TemplateQuestionResponseDTO}
      */
     @Get("/{id}")
-    public Mono<HttpResponse<TemplateQuestionResponseDTO>> getById(UUID id) {
-        return Mono.fromCallable(() -> templateQuestionServices.getById(id))
-                .map(feedbackQuestion -> HttpResponse.ok(fromEntity(feedbackQuestion))
-                        .headers(headers -> headers.location(URI.create("/template_questions/" + feedbackQuestion.getId()))));
+    public HttpResponse<TemplateQuestionResponseDTO> getById(UUID id) {
+        TemplateQuestion feedbackQuestion = templateQuestionServices.getById(id);
+        return feedbackQuestion == null ? HttpResponse.notFound() : HttpResponse.ok(fromEntity(feedbackQuestion))
+                .headers(headers -> headers.location(URI.create("/template_questions/" + feedbackQuestion.getId())));
     }
 
     /**
@@ -89,14 +94,15 @@ public class TemplateQuestionController {
      * @return list of {@link TemplateQuestionResponseDTO}
      */
     @Get("/{?templateId}")
-    public Mono<HttpResponse<List<TemplateQuestionResponseDTO>>> findByValues(@Nullable UUID templateId) {
-        return Mono.fromCallable(() -> templateQuestionServices.findByFields(templateId))
-                .map(entities -> entities.stream().map(this::fromEntity).collect(Collectors.toList()))
-                .map(HttpResponse::ok);
+    public List<TemplateQuestionResponseDTO> findByValues(@Nullable UUID templateId) {
+        return templateQuestionServices.findByFields(templateId)
+                .stream()
+                .map(this::fromEntity).toList();
     }
 
     /**
      * Converts a {@link TemplateQuestionCreateDTO} into a {@link TemplateQuestion}
+     *
      * @param dto {@link TemplateQuestionCreateDTO}
      * @return {@link TemplateQuestion}
      */
@@ -106,6 +112,7 @@ public class TemplateQuestionController {
 
     /**
      * Converts a {@link TemplateQuestionUpdateDTO} into a {@link TemplateQuestion}
+     *
      * @param dto {@link TemplateQuestionUpdateDTO}
      * @return {@link TemplateQuestion}
      */
@@ -115,6 +122,7 @@ public class TemplateQuestionController {
 
     /**
      * Converts a {@link TemplateQuestion} into a {@link TemplateQuestionResponseDTO}
+     *
      * @param templateQuestion {@link TemplateQuestion}
      * @return {@link TemplateQuestionResponseDTO}
      */

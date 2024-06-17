@@ -2,7 +2,14 @@ package com.objectcomputing.checkins.services.feedback_template;
 
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -10,12 +17,10 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Controller("/services/feedback/templates")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -35,10 +40,10 @@ public class FeedbackTemplateController {
      * @return {@link FeedbackTemplateResponseDTO}
      */
     @Post
-    public Mono<HttpResponse<FeedbackTemplateResponseDTO>> save(@Body @Valid @NotNull FeedbackTemplateCreateDTO requestBody) {
-        return Mono.fromCallable(() -> feedbackTemplateServices.save(fromDTO(requestBody)))
-                .map(savedTemplate -> HttpResponse.created(fromEntity(savedTemplate))
-                        .headers(headers -> headers.location(URI.create("/feedback_templates/" + savedTemplate.getId()))));
+    public HttpResponse<FeedbackTemplateResponseDTO> save(@Body @Valid @NotNull FeedbackTemplateCreateDTO requestBody) {
+        FeedbackTemplate savedTemplate = feedbackTemplateServices.save(fromDTO(requestBody));
+        return HttpResponse.created(fromEntity(savedTemplate))
+                .headers(headers -> headers.location(URI.create("/feedback_templates/" + savedTemplate.getId())));
     }
 
     /**
@@ -48,33 +53,33 @@ public class FeedbackTemplateController {
      * @return {@link FeedbackTemplateResponseDTO}
      */
     @Put
-    public Mono<HttpResponse<FeedbackTemplateResponseDTO>> update(@Body @Valid @NotNull FeedbackTemplateUpdateDTO requestBody) {
-        return Mono.fromCallable(() -> feedbackTemplateServices.update(fromDTO(requestBody)))
-                .map(savedTemplate -> HttpResponse.ok(fromEntity(savedTemplate))
-                        .headers(headers -> headers.location(URI.create("/feedback_template/" + savedTemplate.getId()))));
+    public HttpResponse<FeedbackTemplateResponseDTO> update(@Body @Valid @NotNull FeedbackTemplateUpdateDTO requestBody) {
+        FeedbackTemplate savedTemplate = feedbackTemplateServices.update(fromDTO(requestBody));
+        return HttpResponse.ok(fromEntity(savedTemplate))
+                .headers(headers -> headers.location(URI.create("/feedback_template/" + savedTemplate.getId())));
     }
 
     /**
      * Delete a feedback template
      *
      * @param id {@link UUID} ID of the feedback template being deleted
-     * @return {@link FeedbackTemplateResponseDTO}
      */
     @Delete("/{id}")
-    public Mono<HttpResponse<?>> delete(@NotNull UUID id) {
-        return Mono.fromRunnable(() -> feedbackTemplateServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void delete(@NotNull UUID id) {
+        feedbackTemplateServices.delete(id);
     }
 
     /**
      * Delete all ad-hoc feedback templates that are created by a specific member
+     *
      * @param creatorId The {@link UUID} of the creator of the ad-hoc template(s)
      * @return {@link FeedbackTemplateResponseDTO}
      */
     @Delete("/creator/{creatorId}")
-    public Mono<? extends HttpResponse<?>> deleteByCreatorId(@Nullable UUID creatorId) {
-        return Mono.fromCallable(() -> feedbackTemplateServices.setAdHocInactiveByCreator(creatorId))
-                .map(success -> (HttpResponse<?>) HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void deleteByCreatorId(@Nullable UUID creatorId) {
+        feedbackTemplateServices.setAdHocInactiveByCreator(creatorId);
     }
 
     /**
@@ -84,27 +89,29 @@ public class FeedbackTemplateController {
      * @return {@link FeedbackTemplateResponseDTO}
      */
     @Get("/{id}")
-    public Mono<HttpResponse<FeedbackTemplateResponseDTO>> getById(UUID id) {
-        return Mono.fromCallable(() -> feedbackTemplateServices.getById(id))
-                .map(template -> HttpResponse.ok(fromEntity(template)));
+    public FeedbackTemplateResponseDTO getById(UUID id) {
+        FeedbackTemplate byId = feedbackTemplateServices.getById(id);
+        return byId == null ? null : fromEntity(byId);
     }
 
     /**
      * Get feedback templates by title or by the creator id, filter by active status
      *
-     * @param title {@link String} Title of feedback template
+     * @param title     {@link String} Title of feedback template
      * @param creatorId {@link UUID} UUID of creator
      * @return {@link List<FeedbackTemplateResponseDTO>} List of feedback templates that match the input parameters
      */
     @Get("/{?creatorId,title}")
-    public Mono<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable String title) {
-        return Mono.fromCallable(() -> feedbackTemplateServices.findByFields(creatorId, title))
-                .map(entities -> entities.stream().map(this::fromEntity).collect(Collectors.toList()))
-                .map(HttpResponse::ok);
+    public List<FeedbackTemplateResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable String title) {
+        return feedbackTemplateServices.findByFields(creatorId, title)
+                .stream()
+                .map(this::fromEntity)
+                .toList();
     }
 
     /**
      * Converts a {@link FeedbackTemplateCreateDTO} into a {@link FeedbackTemplate}
+     *
      * @param dto {@link FeedbackTemplateCreateDTO}
      * @return {@link FeedbackTemplate}
      */
@@ -114,6 +121,7 @@ public class FeedbackTemplateController {
 
     /**
      * Converts a {@link FeedbackTemplateUpdateDTO} into a {@link FeedbackTemplate}
+     *
      * @param dto {@link FeedbackTemplateUpdateDTO}
      * @return {@link FeedbackTemplate}
      */
@@ -123,6 +131,7 @@ public class FeedbackTemplateController {
 
     /**
      * Converts a {@link FeedbackTemplate} into a {@link FeedbackTemplateResponseDTO}
+     *
      * @param feedbackTemplate {@link FeedbackTemplate}
      * @return {@link FeedbackTemplateResponseDTO}
      */
@@ -138,5 +147,4 @@ public class FeedbackTemplateController {
         dto.setIsAdHoc(feedbackTemplate.getIsAdHoc());
         return dto;
     }
-
 }

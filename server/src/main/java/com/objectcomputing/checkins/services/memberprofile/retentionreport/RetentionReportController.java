@@ -5,7 +5,9 @@ import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -13,7 +15,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 
@@ -37,26 +38,26 @@ public class RetentionReportController {
      */
     @Post
     @RequiredPermission(Permission.CAN_VIEW_RETENTION_REPORT)
-    public Mono<HttpResponse<RetentionReportResponseDTO>> reportRetention(@Body @Valid @NotNull RetentionReportRequestDTO requestBody,
-                                                                          HttpRequest<?> request) {
+    public HttpResponse<RetentionReportResponseDTO> reportRetention(@Body @Valid @NotNull RetentionReportRequestDTO requestBody,
+                                                                    HttpRequest<?> request) {
         if (requestBody.getStartDate().isAfter(requestBody.getEndDate()) ||
                 requestBody.getStartDate().isEqual(requestBody.getEndDate())) {
             throw new BadArgException("Start date must be before end date");
         }
 
-        return Mono.fromCallable(() -> retentionReportServices.report(dtoFromRequest(requestBody)))
-                .map(responseBody -> HttpResponse.created(responseBody)
-                        .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))));
+        RetentionReportResponseDTO responseBody = retentionReportServices.report(dtoFromRequest(requestBody));
+        return HttpResponse.created(responseBody)
+                .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath()))));
     }
 
     private RetentionReportDTO dtoFromRequest(RetentionReportRequestDTO request) {
         RetentionReportDTO dto = new RetentionReportDTO();
         dto.setStartDate(request.getStartDate());
         dto.setEndDate(request.getEndDate());
-        if (request.getFrequency()!= null &&
+        if (request.getFrequency() != null &&
                 request.getFrequency().equalsIgnoreCase(FrequencyType.DAILY.toString())) {
             dto.setFrequency(FrequencyType.DAILY);
-        } else if (request.getFrequency()!= null &&
+        } else if (request.getFrequency() != null &&
                 request.getFrequency().equalsIgnoreCase(FrequencyType.WEEKLY.toString())) {
             dto.setFrequency(FrequencyType.WEEKLY);
         } else {

@@ -4,19 +4,24 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
-
 
 @Controller("/services/tags")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -28,7 +33,7 @@ public class TagController {
 
     public TagController(TagServices tagServices) {
         this.tagServices = tagServices;
-        }
+    }
 
     /**
      * Create and save a new tag.
@@ -37,11 +42,10 @@ public class TagController {
      * @return {@link HttpResponse<  Tag  >}
      */
     @Post
-    public Mono<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> tagServices.save(new Tag(tag.getName())))
-                .map(createdTag -> HttpResponse.created(createdTag)
-                        .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createdTag.getId())))));
+    public HttpResponse<Tag> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<?> request) {
+        Tag createdTag = tagServices.save(new Tag(tag.getName()));
+        return HttpResponse.created(createdTag)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdTag.getId()))));
     }
 
     /**
@@ -50,9 +54,9 @@ public class TagController {
      * @param id, id of {@link Tag} to delete
      */
     @Delete("/{id}")
-    public Mono<HttpResponse<?>> deleteTag(UUID id) {
-        return Mono.fromRunnable(() -> tagServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void deleteTag(UUID id) {
+        tagServices.delete(id);
     }
 
     /**
@@ -62,14 +66,12 @@ public class TagController {
      * @return {@link Tag}
      */
     @Get("/{id}")
-    public Mono<HttpResponse<Tag>> readTag(@NotNull UUID id) {
-        return Mono.fromCallable(() -> {
-            Tag result = tagServices.read(id);
-            if (result == null) {
-                throw new NotFoundException("No tag for UUID");
-                }
-                return result;
-        }).map(HttpResponse::ok);
+    public Tag readTag(@NotNull UUID id) {
+        Tag result = tagServices.read(id);
+        if (result == null) {
+            throw new NotFoundException("No tag for UUID");
+        }
+        return result;
     }
 
     /**
@@ -79,9 +81,8 @@ public class TagController {
      * @return {@link Set <tag > set of tags
      */
     @Get("/{?name}")
-    public Mono<HttpResponse<Set<Tag>>> findTags(@Nullable String name) {
-        return Mono.fromCallable(() -> tagServices.findByFields(name))
-                .map(HttpResponse::ok);
+    public Set<Tag> findTags(@Nullable String name) {
+        return tagServices.findByFields(name);
     }
 
     /**
@@ -91,10 +92,9 @@ public class TagController {
      * @return {@link Tag}
      */
     @Put
-    public Mono<HttpResponse<Tag>> update(@Body @Valid Tag tag, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> tagServices.update(tag))
-                .map(tag1 -> HttpResponse.ok(tag1)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), tag1.getId())))));
+    public HttpResponse<Tag> update(@Body @Valid Tag tag, HttpRequest<?> request) {
+        Tag tag1 = tagServices.update(tag);
+        return HttpResponse.ok(tag1)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), tag1.getId()))));
     }
-
 }

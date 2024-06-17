@@ -4,19 +4,21 @@ import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Controller("/services/feedback/answers")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -36,10 +38,10 @@ public class FeedbackAnswerController {
      * @return {@link FeedbackAnswerResponseDTO}
      */
     @Post
-    public Mono<HttpResponse<FeedbackAnswerResponseDTO>> save(@Body @Valid @NotNull FeedbackAnswerCreateDTO requestBody) {
-        return Mono.fromCallable(() -> feedbackAnswerServices.save(fromDTO(requestBody)))
-                .map(savedAnswer -> HttpResponse.created(fromEntity(savedAnswer))
-                        .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId()))));
+    public HttpResponse<FeedbackAnswerResponseDTO> save(@Body @Valid @NotNull FeedbackAnswerCreateDTO requestBody) {
+        FeedbackAnswer savedAnswer = feedbackAnswerServices.save(fromDTO(requestBody));
+        return HttpResponse.created(fromEntity(savedAnswer))
+                .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId())));
     }
 
     /**
@@ -49,10 +51,10 @@ public class FeedbackAnswerController {
      * @return {@link FeedbackAnswerResponseDTO}
      */
     @Put
-    public Mono<HttpResponse<FeedbackAnswerResponseDTO>> update(@Body @Valid @NotNull FeedbackAnswerUpdateDTO requestBody) {
-        return Mono.fromCallable(() -> feedbackAnswerServices.update(fromDTO(requestBody)))
-                .map(savedAnswer -> HttpResponse.ok(fromEntity(savedAnswer))
-                        .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId()))));
+    public HttpResponse<FeedbackAnswerResponseDTO> update(@Body @Valid @NotNull FeedbackAnswerUpdateDTO requestBody) {
+        FeedbackAnswer savedAnswer = feedbackAnswerServices.update(fromDTO(requestBody));
+        return HttpResponse.ok(fromEntity(savedAnswer))
+                .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId())));
     }
 
     /**
@@ -61,12 +63,12 @@ public class FeedbackAnswerController {
      * @param id {@link UUID} ID of the feedback answer
      * @return {@link FeedbackAnswerResponseDTO}
      */
-    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
     @Get("/{id}")
-    public Mono<HttpResponse<FeedbackAnswerResponseDTO>> getById(UUID id) {
-        return Mono.fromCallable(() -> feedbackAnswerServices.getById(id))
-                .map(savedAnswer -> HttpResponse.ok(fromEntity(savedAnswer))
-                        .headers(headers -> headers.location(URI.create("/feedback_answer/" +  savedAnswer.getId()))));
+    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
+    public HttpResponse<FeedbackAnswerResponseDTO> getById(UUID id) {
+        FeedbackAnswer savedAnswer = feedbackAnswerServices.getById(id);
+        return HttpResponse.ok(fromEntity(savedAnswer))
+                .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId())));
     }
 
     /**
@@ -74,15 +76,16 @@ public class FeedbackAnswerController {
      * Any values that are null are not applied to the intersection
      *
      * @param questionId The attached {@link UUID} of the related question
-     * @param requestId The attached {@link UUID} of the request that corresponds with the answer
+     * @param requestId  The attached {@link UUID} of the request that corresponds with the answer
      * @return {@link FeedbackAnswerResponseDTO}
      */
-    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
     @Get("/{?questionId,requestId}")
-    public Mono<HttpResponse<List<FeedbackAnswerResponseDTO>>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
-        return Mono.fromCallable(() -> feedbackAnswerServices.findByValues(questionId, requestId))
-                .map(entities -> entities.stream().map(this::fromEntity).collect(Collectors.toList()))
-                .map(HttpResponse::ok);
+    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
+    public List<FeedbackAnswerResponseDTO> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
+        return feedbackAnswerServices.findByValues(questionId, requestId)
+                .stream()
+                .map(this::fromEntity)
+                .toList();
     }
 
     private FeedbackAnswer fromDTO(FeedbackAnswerCreateDTO dto) {

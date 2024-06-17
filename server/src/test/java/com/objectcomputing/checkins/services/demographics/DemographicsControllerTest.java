@@ -243,7 +243,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
         createAndAssignAdminRole(lucy);
 
-        Demographics demographic = createDefaultDemographics(lucy.getId());
+        createDefaultDemographics(lucy.getId());
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", UUID.randomUUID())).basicAuth(lucy.getWorkEmail(), ADMIN_ROLE);
@@ -253,6 +253,22 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
 
         assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
 
+    }
+
+    @Test
+    void testGETDemographicsWrongId() {
+        MemberProfile lucy = memberWithoutBoss("Lucy");
+        createAndAssignAdminRole(lucy);
+
+        createDefaultDemographics(lucy.getId());
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", UUID.randomUUID())).basicAuth(lucy.getWorkEmail(), ADMIN_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
     }
 
     @Test

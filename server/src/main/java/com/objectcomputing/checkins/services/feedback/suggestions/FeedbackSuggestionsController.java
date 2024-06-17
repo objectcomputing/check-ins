@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback.suggestions;
 
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.scheduling.TaskExecutors;
@@ -8,7 +7,6 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,8 +24,7 @@ public class FeedbackSuggestionsController {
     }
 
     @Get("/{id}")
-    public Mono<HttpResponse<List<FeedbackSuggestionDTO>>> getSuggestionsByProfileId(UUID id) {
-        return Mono.fromCallable(() -> suggestionsService.getSuggestionsByProfileId(id))
-                .map(HttpResponse::ok);
+    public List<FeedbackSuggestionDTO> getSuggestionsByProfileId(UUID id) {
+        return suggestionsService.getSuggestionsByProfileId(id);
     }
 }
