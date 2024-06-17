@@ -12,7 +12,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 
@@ -36,10 +35,10 @@ public class CombineSkillController {
      */
 
     @Post
-    public Mono<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> combineSkillServices.combine(skill))
-                .map(createdSkill -> HttpResponse.created(createdSkill)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId())))));
+    public HttpResponse<Skill> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<?> request) {
+        Skill createdSkill = combineSkillServices.combine(skill);
+        return HttpResponse.created(createdSkill)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId()))));
     }
 
 }

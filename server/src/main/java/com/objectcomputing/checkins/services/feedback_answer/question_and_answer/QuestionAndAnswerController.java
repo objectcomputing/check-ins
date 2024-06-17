@@ -1,14 +1,12 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
 
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,14 +23,12 @@ public class QuestionAndAnswerController {
     }
 
     @Get("/{?requestId,questionId}")
-    public Mono<HttpResponse<QuestionAndAnswerServices.Tuple>> getQuestionAndAnswer(@Nullable UUID requestId, @Nullable UUID questionId) {
-        return Mono.fromCallable(() -> questionAndAnswerServices.getQuestionAndAnswer(requestId, questionId))
-                .map(HttpResponse::ok);
+    public QuestionAndAnswerServices.Tuple getQuestionAndAnswer(@Nullable UUID requestId, @Nullable UUID questionId) {
+        return questionAndAnswerServices.getQuestionAndAnswer(requestId, questionId);
     }
 
     @Get("/{requestId}")
-    public Mono<HttpResponse<List<QuestionAndAnswerServices.Tuple>>> getAllQuestionsAndAnswers(@Nullable UUID requestId) {
-        return Mono.fromCallable(() -> questionAndAnswerServices.getAllQuestionsAndAnswers(requestId))
-                .map(HttpResponse::ok);
+    public List<QuestionAndAnswerServices.Tuple> getAllQuestionsAndAnswers(@Nullable UUID requestId) {
+        return questionAndAnswerServices.getAllQuestionsAndAnswers(requestId);
     }
 }

@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -29,17 +30,16 @@ public class SkillCategorySkillController {
 
     @Post
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
-    public Mono<HttpResponse<SkillCategorySkill>> create(@Body @Valid SkillCategorySkillId dto, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> skillCategorySkillServices.save(dto))
-                .map(skillCategorySkill -> HttpResponse.created(skillCategorySkill)
-                        .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath())))));
+    public HttpResponse<SkillCategorySkill> create(@Body @Valid SkillCategorySkillId dto, HttpRequest<?> request) {
+        SkillCategorySkill skillCategorySkill = skillCategorySkillServices.save(dto);
+        return HttpResponse.created(skillCategorySkill)
+                        .headers(headers -> headers.location(URI.create(String.format("%s", request.getPath()))));
     }
 
     @Delete
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
-    public Mono<HttpResponse<?>> delete(@Body @Valid SkillCategorySkillId dto) {
-        return Mono.fromRunnable(() -> skillCategorySkillServices.delete(dto))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void delete(@Body @Valid SkillCategorySkillId dto) {
+        skillCategorySkillServices.delete(dto);
     }
-
 }
