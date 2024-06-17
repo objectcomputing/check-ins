@@ -39,9 +39,8 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
             throw new BadArgException("KudosRecipient id must be null");
         }
 
-        Kudos kudos = kudosRepository.findById(kudosRecipient.getKudosId()).orElseThrow(() -> {
-            throw new NotFoundException("No kudos with id %s");
-        });
+        Kudos kudos = kudosRepository.findById(kudosRecipient.getKudosId()).orElseThrow(() ->
+                new NotFoundException("No kudos with id %s"));
 
         boolean isKudosCreator = currentUserServices.getCurrentUser().getId().equals(kudos.getSenderId());
         boolean isAdmin = currentUserServices.isAdmin();
@@ -49,9 +48,8 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElseThrow(() -> {
-            throw new BadArgException("Cannot save KudosRecipient: member %s does not exist");
-        });
+        MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElseThrow(() ->
+                new BadArgException("Cannot save KudosRecipient: member %s does not exist"));
 
         if (member.getTerminationDate() != null && member.getTerminationDate().isBefore(LocalDate.now())) {
             throw new BadArgException("Cannot save KudosRecipient for terminated member %s");
