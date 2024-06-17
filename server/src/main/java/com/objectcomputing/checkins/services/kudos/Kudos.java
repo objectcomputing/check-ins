@@ -29,24 +29,24 @@ public class Kudos {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the id of the kudos", required = true)
+    @Schema(description = "the id of the kudos")
     private UUID id;
 
     @NotBlank
     @Column(name = "message")
     @ColumnTransformer(read = "pgp_sym_decrypt(message::bytea, '${aes.key}')", write = "pgp_sym_encrypt(?, '${aes.key}')")
-    @Schema(description = "message describing the kudos", required = true)
+    @Schema(description = "message describing the kudos")
     private String message;
 
     @Nullable
     @Column(name = "publiclyvisible")
-    @Schema(description = "true if the kudos is public", required = true)
+    @Schema(description = "true if the kudos is public")
     private Boolean publiclyVisible;
 
     @NotNull
     @Column(name = "senderid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the user who gave the kudos", required = true)
+    @Schema(description = "id of the user who gave the kudos")
     private UUID senderId;
 
     @Nullable
@@ -58,7 +58,7 @@ public class Kudos {
     @Column(name = "datecreated")
     @DateCreated
     @TypeDef(type = DataType.DATE)
-    @Schema(description = "date the kudos were created", required = true)
+    @Schema(description = "date the kudos were created")
     private LocalDate dateCreated;
 
     @Nullable

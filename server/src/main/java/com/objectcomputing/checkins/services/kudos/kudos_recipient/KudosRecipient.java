@@ -23,7 +23,7 @@ public class KudosRecipient {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the id of the kudos recipient entity", required = true)
+    @Schema(description = "the id of the kudos recipient entity")
     private UUID id;
 
     @NotNull
