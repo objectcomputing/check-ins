@@ -19,7 +19,7 @@ import java.util.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SkillCategoryControllerTest extends TestContainersSuite
+class SkillCategoryControllerTest extends TestContainersSuite
         implements SkillCategoryFixture, SkillFixture, SkillCategorySkillFixture, RoleFixture {
 
     @Inject
@@ -32,7 +32,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPost() {
+    void testPost() {
         SkillCategoryCreateDTO createDTO = new SkillCategoryCreateDTO();
         createDTO.setName("Languages");
         createDTO.setDescription("Programming Languages");
@@ -52,7 +52,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testCreateSkillCategoryAlreadyExists() {
+    void testCreateSkillCategoryAlreadyExists() {
         SkillCategory existingCategory = createDefaultSkillCategory();
 
         SkillCategoryCreateDTO createDTO = new SkillCategoryCreateDTO();
@@ -68,7 +68,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testCreateNotAllowed() {
+    void testCreateNotAllowed() {
         SkillCategoryCreateDTO createDTO = new SkillCategoryCreateDTO();
 
         final HttpRequest<SkillCategoryCreateDTO> request = HttpRequest
@@ -81,7 +81,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testUpdateSkillCategory() {
+    void testUpdateSkillCategory() {
         SkillCategory existingCategory = createDefaultSkillCategory();
 
         SkillCategoryUpdateDTO updateDTO = new SkillCategoryUpdateDTO();
@@ -98,7 +98,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testUpdateNotAllowed() {
+    void testUpdateNotAllowed() {
         SkillCategoryUpdateDTO updateDTO = new SkillCategoryUpdateDTO();
 
         final HttpRequest<SkillCategoryUpdateDTO> request = HttpRequest
@@ -111,7 +111,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testUpdateSkillCategoryIdDoesNotExist() {
+    void testUpdateSkillCategoryIdDoesNotExist() {
         SkillCategory existingCategory = createDefaultSkillCategory();
         SkillCategoryUpdateDTO updateDTO = new SkillCategoryUpdateDTO();
         updateDTO.setId(UUID.randomUUID());
@@ -128,7 +128,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testUpdateSkillCategory_nameAlreadyExists() {
+    void testUpdateSkillCategory_nameAlreadyExists() {
         SkillCategory existingCategory1 = createDefaultSkillCategory();
         SkillCategory another = createAnotherSkillCategory();
 
@@ -145,7 +145,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testGetByIdHappyPath() {
+    void testGetByIdHappyPath() {
         SkillCategory skillCategory = createDefaultSkillCategory();
         Skill skill = createADefaultSkill();
         Skill skill2 = createASecondarySkill();
@@ -167,7 +167,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testGetByIdNotAllowed() {
+    void testGetByIdNotAllowed() {
         final HttpRequest<Object> request = HttpRequest
                 .GET(String.format("/%s", UUID.randomUUID()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -179,7 +179,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testGetByIdNotFound() {
+    void testGetByIdNotFound() {
         final HttpRequest<?> request = HttpRequest
                 .GET(String.format("/%s", UUID.randomUUID()))
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -191,7 +191,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testFindAllWithSkills() {
+    void testFindAllWithSkills() {
         SkillCategory skillCategory = createDefaultSkillCategory();
         Skill skill = createADefaultSkill();
         createSkillCategorySkill(skillCategory.getId(), skill.getId());
@@ -213,7 +213,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testFindAllWithSkillsAlphabetical() {
+    void testFindAllWithSkillsAlphabetical() {
         // If properly sorted, "Languages" should come before "Libraries" despite having a different order in the database
         SkillCategory librariesCategory = createAnotherSkillCategory();
         SkillCategory languagesCategory = createDefaultSkillCategory();
@@ -237,7 +237,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testFindAllNotAllowed() {
+    void testFindAllNotAllowed() {
         final HttpRequest<Object> request = HttpRequest
                 .GET("/with-skills")
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -249,7 +249,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testFindAllWithoutSkills() {
+    void testFindAllWithoutSkills() {
         SkillCategory skillCategory = createDefaultSkillCategory();
 
         List<SkillCategoryResponseDTO> expectedList = new ArrayList<>();
@@ -269,7 +269,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testDeleteAllInCategory() {
+    void testDeleteAllInCategory() {
         SkillCategory category = createDefaultSkillCategory();
         Skill skill = createADefaultSkill();
         Skill skill2 = createASecondarySkill();
@@ -286,7 +286,7 @@ public class SkillCategoryControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testDeleteNotAllowed() {
+    void testDeleteNotAllowed() {
         final HttpRequest<?> request = HttpRequest
                 .DELETE(String.format("/%s", UUID.randomUUID()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);

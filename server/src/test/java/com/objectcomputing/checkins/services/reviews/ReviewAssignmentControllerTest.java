@@ -25,7 +25,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ReviewAssignmentControllerTest extends TestContainersSuite implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture {
+class ReviewAssignmentControllerTest extends TestContainersSuite implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/review-assignments")
@@ -41,7 +41,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPOSTCreateAReviewAssignment() {
+    void testPOSTCreateAReviewAssignment() {
         ReviewAssignmentDTO reviewAssignmentDTO = new ReviewAssignmentDTO();
         reviewAssignmentDTO.setRevieweeId(UUID.randomUUID());
         reviewAssignmentDTO.setReviewerId(UUID.randomUUID());
@@ -64,7 +64,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPOSTCreateMultipleReviewAssignments() {
+    void testPOSTCreateMultipleReviewAssignments() {
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
 
         ReviewAssignmentDTO reviewAssignmentDTO = new ReviewAssignmentDTO();
@@ -113,7 +113,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testGETGetByIdHappyPath() {
+    void testGETGetByIdHappyPath() {
         ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
 
         final HttpRequest<Object> request = HttpRequest.
@@ -126,7 +126,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testGETFindAssignmentsByPeriodIdDefaultAssignments() {
+    void testGETFindAssignmentsByPeriodIdDefaultAssignments() {
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
         MemberProfile supervisor = createADefaultSupervisor();
         MemberProfile anotherSupervisor = createAnotherSupervisor();
@@ -155,7 +155,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testGETFindAssignmentsByPeriodIdWithoutPermissions() {
+    void testGETFindAssignmentsByPeriodIdWithoutPermissions() {
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
         MemberProfile supervisor = createADefaultSupervisor();
         MemberProfile anotherSupervisor = createAnotherSupervisor();
@@ -166,9 +166,9 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
         MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
         assignPdlRole(pdlMemberProfileTwo);
 
-        MemberProfile memberOne = createAProfileWithSupervisorAndPDL(supervisor, pdlMemberProfile);
-        MemberProfile memberTwo = createAnotherProfileWithSupervisorAndPDL(supervisor, pdlMemberProfileTwo);
-        MemberProfile memberThree = createYetAnotherProfileWithSupervisorAndPDL(anotherSupervisor, pdlMemberProfileTwo);
+        createAProfileWithSupervisorAndPDL(supervisor, pdlMemberProfile);
+        createAnotherProfileWithSupervisorAndPDL(supervisor, pdlMemberProfileTwo);
+        createYetAnotherProfileWithSupervisorAndPDL(anotherSupervisor, pdlMemberProfileTwo);
 
         final HttpRequest<Object> request = HttpRequest.
             GET(String.format("/period/%s", reviewPeriod.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -181,7 +181,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
 
 
     @Test
-    public void testGETFindAssignmentsByPeriodIdNoReviewer() {
+    void testGETFindAssignmentsByPeriodIdNoReviewer() {
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
         MemberProfile supervisor = createADefaultSupervisor();
         MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
@@ -200,9 +200,8 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
-
     @Test
-    public void testGETFindAssignmentsByPeriodIdWithReviewer() {
+    void testGETFindAssignmentsByPeriodIdWithReviewer() {
         ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
         MemberProfile supervisor = createADefaultSupervisor();
         MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
@@ -225,10 +224,8 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
-
-
     @Test
-    public void testPUTUpdateReviewAssignmentWithoutPermissions() {
+    void testPUTUpdateReviewAssignmentWithoutPermissions() {
         ReviewAssignment reviewAssignment = createADefaultReviewAssignment();
 
         final HttpRequest<ReviewAssignment> request = HttpRequest.PUT("/", reviewAssignment)
@@ -241,7 +238,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPUTUpdateNonexistentReviewAssignment() {
+    void testPUTUpdateNonexistentReviewAssignment() {
         ReviewAssignment reviewAssignment = new ReviewAssignment();
         reviewAssignment.setId(UUID.randomUUID());
         reviewAssignment.setRevieweeId(UUID.randomUUID());
@@ -257,7 +254,7 @@ public class ReviewAssignmentControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    public void testPUTUpdateNullReviewAssignment() {
+    void testPUTUpdateNullReviewAssignment() {
         final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
             () -> client.toBlocking().exchange(request, Map.class));

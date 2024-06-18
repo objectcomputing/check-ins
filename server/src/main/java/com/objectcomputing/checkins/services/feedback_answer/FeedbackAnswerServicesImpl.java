@@ -107,7 +107,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         final UUID requestCreatorId = feedbackRequest.getCreatorId();
         final UUID requesteeId = feedbackRequest.getRequesteeId();
         final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter(profile -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
         final UUID requesteePDL = requestee.getPdlId();
         if (currentUserServices.isAdmin() || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId)) {
@@ -148,7 +148,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter((profile) -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter(profile -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
         final UUID requesteePDL = requestee.getPdlId();
 
         return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId);

@@ -27,7 +27,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TagControllerTest extends TestContainersSuite implements TagFixture, RoleFixture, MemberProfileFixture {
+class TagControllerTest extends TestContainersSuite implements TagFixture, RoleFixture, MemberProfileFixture {
 
     @Inject
     @Client("/services/tags")
@@ -58,7 +58,6 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
         createAndAssignAdminRole(user);
 
         Tag tag = createADefaultTag();
-        String name = "";
 
         final HttpRequest<Object> request = HttpRequest.DELETE(tag.getId().toString()).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
@@ -82,7 +81,6 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     @Test
     void testReadTag() {
         Tag tag = createADefaultTag();
-        String name = null;
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?%s", tag.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Tag> response = client.toBlocking().exchange(request, Tag.class);
@@ -103,7 +101,6 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     @Test
     void testFindTag() {
         Tag tag = createADefaultTag();
-        String name = null;
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?tagid=%s", tag.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Tag>> response = client.toBlocking().exchange(request, Argument.setOf(Tag.class));
@@ -116,7 +113,6 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     @Test
     void testFindTagByTagId() {
         Tag tag = createADefaultTag();
-        String name = null;
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?tagid=%s", tag.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Tag>> response = client.toBlocking().exchange(request, Argument.setOf(Tag.class));
@@ -127,11 +123,10 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     }
 
     @Test
-    public void testPUTUpdateTag() {
+    void testPUTUpdateTag() {
         MemberProfile user = createAnUnrelatedUser();
         createAndAssignAdminRole(user);
 
-        String name = null;
         Tag tag = createADefaultTag();
 
         final HttpRequest<?> request = HttpRequest.PUT("/", tag).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
@@ -144,7 +139,7 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     }
 
     @Test
-    public void testPUTUpdateNullTag() {
+    void testPUTUpdateNullTag() {
 
         final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -161,10 +156,9 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     }
 
     @Test
-    public void testPUTUpdateNonexistentTag() {
+    void testPUTUpdateNonexistentTag() {
 
         Tag tag = createADefaultTag();
-        String name = null;
 
         tag.setId(UUID.randomUUID());
 

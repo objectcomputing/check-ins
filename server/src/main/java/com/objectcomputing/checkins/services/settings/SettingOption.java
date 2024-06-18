@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.micronaut.core.annotation.Introspected;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Getter
@@ -28,8 +28,7 @@ public enum SettingOption {
     }
 
     public static List<SettingOption> getOptions(){
-        return Stream.of(SettingOption.values())
-                .collect(Collectors.toList());
+        return Arrays.asList(SettingOption.values());
     }
 
     public static Boolean isValidOption(String name){

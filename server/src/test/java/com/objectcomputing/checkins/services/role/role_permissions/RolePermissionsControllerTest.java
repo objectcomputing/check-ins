@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RolePermissionsControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PermissionFixture {
+class RolePermissionsControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PermissionFixture {
 
     @Inject
     @Client("/services/roles/role-permissions")

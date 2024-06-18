@@ -31,7 +31,7 @@ class SkillRecordControllerTest extends TestContainersSuite implements RoleFixtu
     }
 
     @Test
-    public void testGetSuccess() {
+    void testGetSuccess() {
         HttpRequest<?> request = HttpRequest
                 .GET("/csv")
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -42,7 +42,7 @@ class SkillRecordControllerTest extends TestContainersSuite implements RoleFixtu
     }
 
     @Test
-    public void testGetNotAllowed() {
+    void testGetNotAllowed() {
         HttpRequest<?> request = HttpRequest
                 .GET("/csv")
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);

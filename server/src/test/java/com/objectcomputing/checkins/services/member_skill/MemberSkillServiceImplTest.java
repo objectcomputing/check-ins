@@ -87,9 +87,9 @@ class MemberSkillServiceImplTest extends TestContainersSuite {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
         Skill skill = new Skill();
 
-        when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(skill));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
-        when(memberSkillRepository.save(eq(memberSkill))).thenReturn(memberSkill);
+        when(skillRepository.findById(memberSkill.getSkillid())).thenReturn(Optional.of(skill));
+        when(memberProfileRepository.findById(memberSkill.getMemberid())).thenReturn(Optional.of(new MemberProfile()));
+        when(memberSkillRepository.save(memberSkill)).thenReturn(memberSkill);
 
         assertEquals(memberSkill, memberSkillsServices.save(memberSkill));
 
@@ -147,9 +147,9 @@ class MemberSkillServiceImplTest extends TestContainersSuite {
     void testSaveMemberSkillAlreadyExistingSkill() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
-        when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
-        when(memberSkillRepository.findByMemberidAndSkillid(eq(memberSkill.getMemberid()), eq(memberSkill.getSkillid())))
+        when(skillRepository.findById(memberSkill.getSkillid())).thenReturn(Optional.of(new Skill()));
+        when(memberProfileRepository.findById(memberSkill.getMemberid())).thenReturn(Optional.of(new MemberProfile()));
+        when(memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(), memberSkill.getSkillid()))
         .thenReturn(Optional.of(memberSkill));
 
         AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () -> memberSkillsServices.save(memberSkill));
@@ -166,8 +166,8 @@ class MemberSkillServiceImplTest extends TestContainersSuite {
     void testSaveMemberSkillNonExistingSkill() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
-        when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.empty());
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(skillRepository.findById(memberSkill.getSkillid())).thenReturn(Optional.empty());
+        when(memberProfileRepository.findById(memberSkill.getMemberid())).thenReturn(Optional.of(new MemberProfile()));
 
         BadArgException exception = assertThrows(BadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Skill %s doesn't exist", memberSkill.getSkillid()), exception.getMessage());
@@ -181,8 +181,8 @@ class MemberSkillServiceImplTest extends TestContainersSuite {
     void testSaveMemberSkillNonExistingMember() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
-        when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.empty());
+        when(skillRepository.findById(memberSkill.getSkillid())).thenReturn(Optional.of(new Skill()));
+        when(memberProfileRepository.findById(memberSkill.getMemberid())).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Member Profile %s doesn't exist", memberSkill.getMemberid()), exception.getMessage());

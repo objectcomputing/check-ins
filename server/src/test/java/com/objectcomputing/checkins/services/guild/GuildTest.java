@@ -103,7 +103,7 @@ class GuildTest extends TestContainersSuite {
         guild.setName("");
 
         Set<ConstraintViolation<Guild>> violations = validator.validate(guild);
-        assertEquals(violations.size(), 1);
+        assertEquals(1, violations.size());
         for (ConstraintViolation<Guild> violation : violations) {
             assertEquals("must not be blank", violation.getMessage());
         }

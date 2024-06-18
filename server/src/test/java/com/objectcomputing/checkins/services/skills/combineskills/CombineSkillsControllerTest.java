@@ -139,7 +139,7 @@ class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombineNonExistingSkillNameAdmin() {
+    void testPOSTCombineNonExistingSkillNameAdmin() {
 
         UUID[] newSkillsArray = new UUID[2];
         newSkillsArray[0] = UUID.randomUUID();

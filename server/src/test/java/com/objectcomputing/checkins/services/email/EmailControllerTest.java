@@ -27,7 +27,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class EmailControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class EmailControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/email")

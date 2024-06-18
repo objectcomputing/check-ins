@@ -15,18 +15,18 @@ import org.junit.jupiter.api.Test;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TodayControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class TodayControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/today")
     private HttpClient client;
 
     @Test
-    public void testGET() {
+    void testGET() {
         MemberProfile memberProfile = createAnUnrelatedUser();
 
-        MemberProfile birthdayProfile = createADefaultMemberProfileWithBirthDayToday();
-        MemberProfile anniversaryProfile = createADefaultMemberProfileWithAnniversaryToday();
+        createADefaultMemberProfileWithBirthDayToday();
+        createADefaultMemberProfileWithAnniversaryToday();
 
 
         final HttpRequest<Object> request = HttpRequest.

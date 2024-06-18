@@ -31,7 +31,7 @@ class CurrentUserDtoTest extends TestContainersSuite {
         CurrentUserDTO dto = new CurrentUserDTO();
 
         Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 4);
+        assertEquals(4, violations.size());
         int nullViolations = 0, blankViolations = 0;
         for (ConstraintViolation<CurrentUserDTO> violation : violations) {
             if (violation.getMessage().equals("must not be null")) {

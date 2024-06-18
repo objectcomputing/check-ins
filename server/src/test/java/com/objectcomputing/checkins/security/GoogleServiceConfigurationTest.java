@@ -10,7 +10,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GoogleServiceConfigurationTest extends TestContainersSuite {
+class GoogleServiceConfigurationTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;

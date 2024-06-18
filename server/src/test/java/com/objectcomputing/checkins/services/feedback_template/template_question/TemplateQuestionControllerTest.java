@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import jakarta.inject.Inject;
 import java.util.*;
 
-public class TemplateQuestionControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, TemplateQuestionFixture, RoleFixture {
+class TemplateQuestionControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, TemplateQuestionFixture, RoleFixture {
 
     @Inject
     @Client("/services/feedback/template_questions")

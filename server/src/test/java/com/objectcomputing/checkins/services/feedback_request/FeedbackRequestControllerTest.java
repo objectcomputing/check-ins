@@ -33,7 +33,7 @@ import static com.objectcomputing.checkins.services.memberprofile.MemberProfileT
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class FeedbackRequestControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture, ReviewPeriodFixture {
+class FeedbackRequestControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture, ReviewPeriodFixture {
 
     @Inject
     @Client("/services/feedback/requests")
@@ -56,7 +56,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         feedbackRequestServicesImpl.setEmailSender(emailSender);
         createAndAssignRoles();
     }
-
 
     private String createEmailContent(FeedbackRequest storedRequest, UUID requestId, MemberProfile creator, MemberProfile requestee){
         String newContent = "<h1>You have received a feedback request.</h1>" +
@@ -204,7 +203,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    public void testCreateFeedbackRequestSendsEmailFuture() {
+    void testCreateFeedbackRequestSendsEmailFuture() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
@@ -625,7 +624,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
-        assertEquals(response.getBody().get().size(), 2);
+        assertEquals(2, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
     }
@@ -1397,7 +1396,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         // Create two sample feedback requests by the same PDL
         FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, memberOne, recipient);
         FeedbackRequest feedbackReqTwo = saveFeedbackRequest(pdlMemberProfile, memberTwo, recipient);
-        FeedbackRequest feedbackReqThree = saveFeedbackRequest(pdlMemberProfileTwo, memberThree, recipient);
+        saveFeedbackRequest(pdlMemberProfileTwo, memberThree, recipient);
 
         // Create a feedback request by a different PDL
         saveFeedbackRequest(pdlMemberProfileTwo, memberThree, recipient);

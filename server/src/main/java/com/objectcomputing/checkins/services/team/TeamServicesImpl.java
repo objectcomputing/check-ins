@@ -70,7 +70,8 @@ public class TeamServicesImpl implements TeamServices {
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(teamMember ->
-                        fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberId()))).collect(Collectors.toList());
+                        fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberId())))
+                .toList();
 
         return fromEntity(foundTeam, teamMembers);
     }
@@ -96,8 +97,8 @@ public class TeamServicesImpl implements TeamServices {
 
                     Set<TeamMember> existingTeamMembers = teamMemberServices.findByFields(teamDTO.getId(), null, null);
                     //add any new members & updates
-                    teamDTO.getTeamMembers().stream().forEach((updatedMember) -> {
-                        Optional<TeamMember> first = existingTeamMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
+                    teamDTO.getTeamMembers().stream().forEach(updatedMember -> {
+                        Optional<TeamMember> first = existingTeamMembers.stream().filter(existing -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         if (!first.isPresent()) {
                             MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                             newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updatedMember, newTeamEntity.getId())), existingMember));
@@ -108,8 +109,8 @@ public class TeamServicesImpl implements TeamServices {
                     });
 
                     //delete any removed members
-                    existingTeamMembers.stream().forEach((existingMember) -> {
-                        if (!teamDTO.getTeamMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
+                    existingTeamMembers.stream().forEach(existingMember -> {
+                        if (!teamDTO.getTeamMembers().stream().filter(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
                             teamMemberServices.delete(existingMember.getId());
                         }
                     });
