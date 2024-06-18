@@ -34,7 +34,7 @@ export default function HomePage() {
     doubleCelebration =
       myBirthday && me && myAnniversary && showMyBirthday && showMyAnniversary;
   }, [
-    myBirthday && me && myAnniversary && showMyBirthday && showMyAnniversary,
+    myBirthday, me, myAnniversary, showMyBirthday, showMyAnniversary
   ]);
 
   useEffect(() => {

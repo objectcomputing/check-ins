@@ -55,14 +55,6 @@ const KudosPage = () => {
     if (res?.payload?.data && !res.error) {
       setReceivedKudosLoading(false);
       return res.payload.data;
-    } else {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Failed to retrieve your received kudos",
-        },
-      });
     }
   }, [csrf, dispatch, currentUser.id]);
 
@@ -72,14 +64,6 @@ const KudosPage = () => {
     if (res?.payload?.data && !res.error) {
       setSentKudosLoading(false);
       return res.payload.data;
-    } else {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Failed to retrieve your sent kudos",
-        },
-      });
     }
   }, [csrf, dispatch, currentUser.id]);
 

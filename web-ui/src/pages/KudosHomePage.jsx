@@ -50,16 +50,7 @@ const KudosHomePage = () => {
   const loadKudos = useCallback(async () => {
     setKudosLoading(true);
     const res = await getAllKudos(csrf, true);
-    if (res.error) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'error',
-          toast: 'Failed to retrieve kudos'
-        }
-      });
-      return;
-    }
+    if (res.error) return;
 
     const kudos = res.payload.data;
     setKudos(sortKudos(kudos));

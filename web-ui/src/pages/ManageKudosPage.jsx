@@ -66,14 +66,6 @@ const ManageKudosPage = () => {
     if (res?.payload?.data && !res.error) {
       setPendingKudosLoading(false);
       return res.payload.data;
-    } else {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Failed to retrieve pending kudos"
-        }
-      });
     }
   }, [csrf, dispatch]);
 
@@ -83,14 +75,6 @@ const ManageKudosPage = () => {
     if (res?.payload?.data && !res.error) {
       setApprovedKudosLoading(false);
       return res.payload.data;
-    } else {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Failed to retrieve approved kudos"
-        }
-      });
     }
   }, [csrf, dispatch]);
 
