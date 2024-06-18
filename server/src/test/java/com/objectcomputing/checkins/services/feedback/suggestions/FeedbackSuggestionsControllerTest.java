@@ -60,7 +60,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
 
         assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.getBody().get().size(), 2 );
+        assertEquals(2, response.getBody().get().size());
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
         assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
 
@@ -88,7 +88,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
 
         assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.getBody().get().size(), 2 );
+        assertEquals(2, response.getBody().get().size());
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
         assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
 
@@ -118,7 +118,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
 
         assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.getBody().get().size(), 2 );
+        assertEquals(2, response.getBody().get().size());
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
         assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
 

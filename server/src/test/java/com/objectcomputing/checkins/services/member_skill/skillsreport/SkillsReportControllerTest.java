@@ -31,7 +31,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class SkillsReportControllerTest extends TestContainersSuite
+class SkillsReportControllerTest extends TestContainersSuite
         implements MemberSkillFixture, MemberProfileFixture, SkillFixture, RoleFixture {
 
     @Inject

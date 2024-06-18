@@ -11,8 +11,11 @@ import io.micronaut.cache.annotation.Cacheable;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Singleton
 @CacheConfig("role-permission-cache")
@@ -49,7 +52,7 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
             rolePermissionsResponseDTO.setRoleId(role.getId());
             rolePermissionsResponseDTO.setRole(role.getRole());
             rolePermissionsResponseDTO.setDescription(role.getDescription());
-            rolePermissionsResponseDTO.setPermissions(permissionsAssociatedWithRole.stream().map((Permission permission) -> new PermissionDTO(permission)).collect(Collectors.toList()));
+            rolePermissionsResponseDTO.setPermissions(permissionsAssociatedWithRole.stream().map(PermissionDTO::new).toList());
             roleInfo.add(rolePermissionsResponseDTO);
         }
 
@@ -88,12 +91,10 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
 
         Set<Role> memberRoles = roleServices.findUserRoles(id);
 
-        return memberRoles.stream().map(role ->
+        return memberRoles.stream().flatMap(role ->
                 findByRoleId(role.getId())
                     .stream()
-                    .map(RolePermission::getPermission)
-                    .collect(Collectors.toList()))
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+                    .map(RolePermission::getPermission))
+            .toList();
     }
 }

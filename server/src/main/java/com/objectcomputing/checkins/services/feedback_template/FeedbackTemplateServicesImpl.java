@@ -12,7 +12,6 @@ import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Singleton
 public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
@@ -98,7 +97,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
                 .stream()
                 .filter(template -> template.getIsPublic() || isAdmin || template.getCreatorId().equals(currentUserId))
                 .filter(template -> !template.getIsReview() || isAdmin)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

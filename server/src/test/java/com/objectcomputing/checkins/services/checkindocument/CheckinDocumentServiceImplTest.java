@@ -99,8 +99,8 @@ class CheckinDocumentServiceImplTest extends TestContainersSuite {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), "docId");
         CheckIn checkin = new CheckIn();
 
-        when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.of(checkin));
-        when(checkinDocumentRepository.save(eq(cd))).thenReturn(cd);
+        when(checkinRepository.findById(cd.getCheckinsId())).thenReturn(Optional.of(checkin));
+        when(checkinDocumentRepository.save(cd)).thenReturn(cd);
 
         assertEquals(cd, services.save(cd));
 
@@ -153,7 +153,7 @@ class CheckinDocumentServiceImplTest extends TestContainersSuite {
     void testSaveCheckinDocumentNonExistingCheckIn() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), "docId");
 
-        when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.empty());
+        when(checkinRepository.findById(cd.getCheckinsId())).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("CheckIn %s doesn't exist", cd.getCheckinsId()), exception.getMessage());
@@ -168,8 +168,8 @@ class CheckinDocumentServiceImplTest extends TestContainersSuite {
 
         CheckIn checkin = new CheckIn();
 
-        when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.of(checkin));
-        when(checkinDocumentRepository.findByUploadDocId(eq(cd.getUploadDocId()))).thenReturn(Optional.of(cd));
+        when(checkinRepository.findById(cd.getCheckinsId())).thenReturn(Optional.of(checkin));
+        when(checkinDocumentRepository.findByUploadDocId(cd.getUploadDocId())).thenReturn(Optional.of(cd));
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("CheckinDocument with document ID %s already exists", cd.getUploadDocId()), exception.getMessage());
@@ -233,7 +233,7 @@ class CheckinDocumentServiceImplTest extends TestContainersSuite {
     @Test
     void testUpdateCheckinDocumentDoesNotExist() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "docId");
-        when(checkinDocumentRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.empty());
+        when(checkinDocumentRepository.findById(cd.getCheckinsId())).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("CheckinDocument id %s not found, please try inserting instead", cd.getId()), exception.getMessage());
@@ -246,8 +246,8 @@ class CheckinDocumentServiceImplTest extends TestContainersSuite {
     @Test
     void testUpdateCheckInDoesNotExist() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "docId");
-        when(checkinDocumentRepository.findById(eq(cd.getId()))).thenReturn(Optional.of(cd));
-        when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.empty());
+        when(checkinDocumentRepository.findById(cd.getId())).thenReturn(Optional.of(cd));
+        when(checkinRepository.findById(cd.getCheckinsId())).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("CheckIn %s doesn't exist", cd.getCheckinsId()), exception.getMessage());

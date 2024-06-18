@@ -61,7 +61,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
 
         for(TeamMember currentMembership: teamMemberships){
             Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamId(), null, null);
-            Set<TeamMember> leads = teamMembers.stream().filter((member)-> member.isLead()).collect(Collectors.toSet());
+            Set<TeamMember> leads = teamMembers.stream().filter(member -> member.isLead()).collect(Collectors.toSet());
             leads = filterTerminated(leads);
             for(TeamMember lead: leads) {
                 if(suggestions.size() < maxSuggestions && !lead.getMemberId().equals(id) && !lead.getMemberId().equals(currentUserId)) {
@@ -74,7 +74,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
 
         for(TeamMember currentMembership: teamMemberships){
             Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamId(), null, null);
-            teamMembers = teamMembers.stream().filter((member)-> !member.isLead()).collect(Collectors.toSet());
+            teamMembers = teamMembers.stream().filter(member -> !member.isLead()).collect(Collectors.toSet());
             teamMembers = filterTerminated(teamMembers);
             for(TeamMember teamMember: teamMembers) {
                 if(suggestions.size() < maxSuggestions && !teamMember.getMemberId().equals(id) && !teamMember.getMemberId().equals(currentUserId)) {

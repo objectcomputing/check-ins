@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @MicronautTest(environments = {"prodtest","google"}, transactional = false)
-public class CheckinsOpenIdAuthenticationMapperTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class CheckinsOpenIdAuthenticationMapperTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     OpenIdAuthenticationMapper openIdAuthenticationMapper;

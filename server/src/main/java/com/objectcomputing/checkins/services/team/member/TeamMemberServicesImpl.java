@@ -14,8 +14,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Singleton
 public class TeamMemberServicesImpl implements TeamMemberServices {
@@ -150,7 +153,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         List<TeamMember> teamMembers = teamMemberRepo.findByTeamId(id);
         if (teamMembers != null) {
-            List<TeamMember> teamLeads = teamMembers.stream().filter((member) -> member.isLead()).collect(Collectors.toList());
+            List<TeamMember> teamLeads = teamMembers.stream().filter(TeamMember::isLead).toList();
 
             if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
                 throw new PermissionException("You are not authorized to perform this operation");
