@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.reactivestreams.Publisher;
 import reactor.test.StepVerifier;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,13 +33,12 @@ import static org.mockito.MockitoAnnotations.openMocks;
 
 class SecurityRuleResultTest extends TestContainersSuite {
 
-    List<String> userPermissions = List.of(
+    private static final List<String> USER_PERMISSIONS = List.of(
             "CAN_VIEW_FEEDBACK_REQUEST",
             "CAN_CREATE_FEEDBACK_REQUEST",
             "CAN_DELETE_FEEDBACK_REQUEST"
     );
-
-    List<String> userRoles = List.of("ADMIN");
+    private static final List<String> USER_ROLES = List.of("ADMIN");
 
     @Inject
     PermissionSecurityRule permissionSecurityRule;
@@ -52,7 +50,7 @@ class SecurityRuleResultTest extends TestContainersSuite {
     RoleServices roleServices;
 
     @Mock
-    private MethodBasedRouteMatch mockMethodBasedRouteMatch;
+    private MethodBasedRouteMatch<?, ?> mockMethodBasedRouteMatch;
 
     @Mock
     private AnnotationValue<RequiredPermission> mockRequiredPermissionAnnotation;
@@ -68,26 +66,24 @@ class SecurityRuleResultTest extends TestContainersSuite {
 
     @AfterEach
     void afterEach() throws Exception {
-        reset(mockMethodBasedRouteMatch);
-        reset(mockRequiredPermissionAnnotation);
+        reset(mockMethodBasedRouteMatch, mockRequiredPermissionAnnotation);
         mockFinalizer.close();
     }
 
     @Test
     void allowSecurityRuleResultTest() {
-
         final HttpRequest<?> request = HttpRequest.POST("/", null)
                 .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
                 .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
 
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put("permissions", userPermissions);
-        attributes.put("roles", userRoles);
-        attributes.put("email", "test.email.address");
+        Map<String, Object> attributes = Map.of(
+                "permissions", USER_PERMISSIONS,
+                "roles", USER_ROLES,
+                "email", "test.email.address"
+        );
 
-        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
         when(mockMethodBasedRouteMatch.findAnnotation(RequiredPermission.class)).thenReturn(Optional.of(mockRequiredPermissionAnnotation));
-        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_VIEW_FEEDBACK_REQUEST"));
+        when(mockRequiredPermissionAnnotation.stringValue()).thenReturn(Optional.of("CAN_VIEW_FEEDBACK_REQUEST"));
 
         Authentication auth = Authentication.build("test.email.address", attributes);
 
@@ -95,27 +91,26 @@ class SecurityRuleResultTest extends TestContainersSuite {
 
         assertNotNull(result);
         StepVerifier.create(result)
-                        .expectNext(SecurityRuleResult.ALLOWED)
-                        .expectComplete()
-                        .verify();
+                .expectNext(SecurityRuleResult.ALLOWED)
+                .expectComplete()
+                .verify();
     }
 
 
     @Test
     void rejectSecurityRuleResultTest() {
-
         final HttpRequest<?> request = HttpRequest.POST("/", null)
                 .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
                 .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
 
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put("permissions", userPermissions);
-        attributes.put("roles", userRoles);
-        attributes.put("email", "test.email.address");
+        Map<String, Object> attributes = Map.of(
+                "permissions", USER_PERMISSIONS,
+                "roles", USER_ROLES,
+                "email", "test.email.address"
+        );
 
-        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
         when(mockMethodBasedRouteMatch.findAnnotation(RequiredPermission.class)).thenReturn(Optional.of(mockRequiredPermissionAnnotation));
-        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
+        when(mockRequiredPermissionAnnotation.stringValue()).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
 
         Authentication auth = Authentication.build("test.email.address", attributes);
         Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, auth);
@@ -129,7 +124,6 @@ class SecurityRuleResultTest extends TestContainersSuite {
 
     @Test
     void unknownSecurityRuleResultIfRouteMatchIsNotAnInstance() {
-
         final HttpRequest<?> request = HttpRequest.POST("/", null)
                 .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE);
 
@@ -137,19 +131,18 @@ class SecurityRuleResultTest extends TestContainersSuite {
 
         assertNotNull(result);
         StepVerifier.create(result)
-                        .expectNext(SecurityRuleResult.UNKNOWN)
-                        .expectComplete()
-                        .verify();
+                .expectNext(SecurityRuleResult.UNKNOWN)
+                .expectComplete()
+                .verify();
     }
 
     @Test
     void unknownSecurityRuleResultIfMethodBasedRouteMatchFailsToHaveAnnotation() {
-
         final HttpRequest<?> request = HttpRequest.POST("/", null)
                 .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
                 .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
 
-        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(false);
+        when(mockMethodBasedRouteMatch.findAnnotation(RequiredPermission.class)).thenReturn(Optional.empty());
 
         Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, null);
 
@@ -167,8 +160,8 @@ class SecurityRuleResultTest extends TestContainersSuite {
                 .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
                 .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
 
-        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
-        when(mockMethodBasedRouteMatch.findAnnotation(RequiredPermission.class)).thenReturn(Optional.empty());
+        when(mockMethodBasedRouteMatch.findAnnotation(RequiredPermission.class)).thenReturn(Optional.of(mockRequiredPermissionAnnotation));
+        when(mockRequiredPermissionAnnotation.stringValue()).thenReturn(Optional.empty());
 
         Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, null);
 
@@ -186,9 +179,8 @@ class SecurityRuleResultTest extends TestContainersSuite {
                 .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
                 .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
 
-        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
         when(mockMethodBasedRouteMatch.findAnnotation(RequiredPermission.class)).thenReturn(Optional.of(mockRequiredPermissionAnnotation));
-        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
+        when(mockRequiredPermissionAnnotation.stringValue()).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
 
         Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, null);
 
@@ -206,16 +198,36 @@ class SecurityRuleResultTest extends TestContainersSuite {
                 .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
                 .setAttribute(HttpAttributes.ROUTE_MATCH, mockMethodBasedRouteMatch);
 
-        when(mockMethodBasedRouteMatch.hasAnnotation(RequiredPermission.class)).thenReturn(true);
         when(mockMethodBasedRouteMatch.findAnnotation(RequiredPermission.class)).thenReturn(Optional.of(mockRequiredPermissionAnnotation));
-        when(mockRequiredPermissionAnnotation.stringValue("value")).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
+        when(mockRequiredPermissionAnnotation.stringValue()).thenReturn(Optional.of("CAN_CREATE_ORGANIZATION_MEMBERS"));
 
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put("email", "test.email.address");
+        Map<String, Object> attributes = Map.of("email", "test.email.address");
 
         Authentication auth = Authentication.build("test.email.address", attributes);
 
         Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, auth);
+
+        assertNotNull(result);
+        StepVerifier.create(result)
+                .expectNext(SecurityRuleResult.UNKNOWN)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void unknownWhenRequestIsNull() {
+        Map<String, Object> attributes = Map.of(
+                "permissions", USER_PERMISSIONS,
+                "roles", USER_ROLES,
+                "email", "test.email.address"
+        );
+
+        when(mockMethodBasedRouteMatch.findAnnotation(RequiredPermission.class)).thenReturn(Optional.of(mockRequiredPermissionAnnotation));
+        when(mockRequiredPermissionAnnotation.stringValue()).thenReturn(Optional.of("CAN_VIEW_FEEDBACK_REQUEST"));
+
+        Authentication auth = Authentication.build("test.email.address", attributes);
+
+        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(null, auth);
 
         assertNotNull(result);
         StepVerifier.create(result)
