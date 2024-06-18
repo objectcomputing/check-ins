@@ -42,7 +42,7 @@ public class SettingsServicesImpl implements SettingsServices {
         return settingsRepository.findAll();
     }
 
-    public Boolean delete(@NotNull UUID id) {
+    public boolean delete(@NotNull UUID id) {
         if (!settingsRepository.existsById(id)) {
             throw new NotFoundException("No setting with id " + id);
         }

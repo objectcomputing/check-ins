@@ -233,7 +233,7 @@ class FileServicesImplTest extends TestContainersSuite {
         when(files.get(any(String.class))).thenReturn(get);
         when(get.setSupportsAllDrives(any())).thenReturn(get);
         when(get.execute()).thenReturn(file);
-        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(Boolean.TRUE);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(true);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
@@ -255,7 +255,7 @@ class FileServicesImplTest extends TestContainersSuite {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberProfileId = UUID.randomUUID();
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
-        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(Boolean.TRUE);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(true);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
@@ -274,7 +274,7 @@ class FileServicesImplTest extends TestContainersSuite {
     void testFindByCheckinIdForUnauthorizedUser() {
         UUID testCheckinId = UUID.randomUUID();
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
-        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(Boolean.FALSE);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(false);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
@@ -331,7 +331,7 @@ class FileServicesImplTest extends TestContainersSuite {
 
         when(currentUserServices.isAdmin()).thenReturn(true);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
-        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(Boolean.TRUE);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(true);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(testCheckinDocument);
         when(testCd.getUploadDocId()).thenReturn("some.upload.doc.id");

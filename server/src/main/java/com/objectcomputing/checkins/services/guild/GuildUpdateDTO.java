@@ -45,8 +45,8 @@ public class GuildUpdateDTO {
         this.community = community;
     }
 
-    public GuildUpdateDTO(String id, String name, String description, @Nullable String link, Boolean isCommunity) {
-        this(nullSafeUUIDFromString(id), name, description, link, isCommunity);
+    public GuildUpdateDTO(String id, String name, String description, @Nullable String link, boolean community) {
+        this(nullSafeUUIDFromString(id), name, description, link, community);
     }
 
     public GuildUpdateDTO() {

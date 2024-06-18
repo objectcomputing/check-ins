@@ -9,6 +9,6 @@ public interface QuestionCategoryServices {
     QuestionCategory update(QuestionCategory questionCategory);
     QuestionCategory findByName(String name);
     Set<QuestionCategory> findByValue(String name, UUID id);
-    Boolean delete(UUID id);
+    boolean delete(UUID id);
 
 }

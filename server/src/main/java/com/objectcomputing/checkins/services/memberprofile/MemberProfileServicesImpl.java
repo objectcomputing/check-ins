@@ -152,7 +152,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public Boolean deleteProfile(@NotNull UUID id) {
+    public boolean deleteProfile(@NotNull UUID id) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("Requires admin privileges");
         }

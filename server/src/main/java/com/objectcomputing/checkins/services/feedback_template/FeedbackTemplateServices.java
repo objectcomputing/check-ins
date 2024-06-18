@@ -17,6 +17,6 @@ public interface FeedbackTemplateServices {
 
     List<FeedbackTemplate> findByFields(UUID creatorId, String title);
 
-    Boolean setAdHocInactiveByCreator(@Nullable UUID creatorId);
+    boolean setAdHocInactiveByCreator(@Nullable UUID creatorId);
 
 }

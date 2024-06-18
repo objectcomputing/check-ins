@@ -14,7 +14,7 @@ public interface MemberProfileServices {
 
     MemberProfile saveProfile(MemberProfile memberProfile);
 
-    Boolean deleteProfile(UUID id);
+    boolean deleteProfile(UUID id);
 
     MemberProfile findByName(@NotNull String firstName, @NotNull String lastName);
 
