@@ -40,7 +40,7 @@ public class HomePage {
         String successMsg = this.successMsg.getText();
         System.out.println("Upload File Msg: " + successMsg);
         Thread.sleep(1000);
-        assertEquals(this.successMsg.getText(), "THE FILE APPLICATION.YML WAS UPLOADED");
+        assertEquals("THE FILE APPLICATION.YML WAS UPLOADED", this.successMsg.getText());
         Thread.sleep(5000);
     }
 
@@ -72,7 +72,7 @@ public class HomePage {
         String errorMsg = this.errorMsg.getText();
         System.out.println("Upload File Msg: " + errorMsg);
         Thread.sleep(1000);
-        assertEquals(this.errorMsg.getText(), "Please select a file before uploading.");
+        assertEquals("Please select a file before uploading.", this.errorMsg.getText());
         Thread.sleep(5000);
     }
 

@@ -24,13 +24,13 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class QuestionAndAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, TemplateQuestionFixture, MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture {
+class QuestionAndAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, TemplateQuestionFixture, MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture {
 
     @Inject
     @Client("/services/feedback/questions-and-answers")
     public HttpClient client;
 
-    public void assertTupleEqualsEntity(QuestionAndAnswerServices.Tuple actual, QuestionAndAnswerServices.Tuple response) {
+    void assertTupleEqualsEntity(QuestionAndAnswerServices.Tuple actual, QuestionAndAnswerServices.Tuple response) {
         assertEquals(actual.getQuestion().getQuestion(), response.getQuestion().getQuestion());
         assertEquals(actual.getQuestion().getQuestionNumber(), response.getQuestion().getQuestionNumber());
         assertEquals(actual.getQuestion().getTemplateId(), response.getQuestion().getTemplateId());
@@ -51,7 +51,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
 
     }
 
-    public QuestionAndAnswerServices.Tuple saveSampleTuple(MemberProfile sender, MemberProfile recipient) {
+    QuestionAndAnswerServices.Tuple saveSampleTuple(MemberProfile sender, MemberProfile recipient) {
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createADefaultSupervisor();
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
@@ -63,7 +63,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
         return new QuestionAndAnswerServices.Tuple(question, answer);
     }
 
-    public QuestionAndAnswerServices.Tuple saveAnotherSampleTuple(MemberProfile sender, MemberProfile recipient) {
+    QuestionAndAnswerServices.Tuple saveAnotherSampleTuple(MemberProfile sender, MemberProfile recipient) {
         MemberProfile requestee = createASecondDefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createANewHireProfile();
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
@@ -76,7 +76,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     }
 
     @Test
-    public void testGetExistingQuestionAndAnswerPermitted() {
+    void testGetExistingQuestionAndAnswerPermitted() {
         MemberProfile sender = createADefaultMemberProfile();
         createAndAssignRole(RoleType.PDL, sender);
         MemberProfile recipient = createADefaultRecipient();
@@ -92,7 +92,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     }
 
     @Test
-    public void testGetQuestionAndRequestWhereAnswerNotSavedPermitted() {
+    void testGetQuestionAndRequestWhereAnswerNotSavedPermitted() {
         final MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         createAndAssignRole(RoleType.PDL, sender);
@@ -118,7 +118,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     }
 
     @Test
-    public void testGetQuestionAndAnswerNotPermitted() {
+    void testGetQuestionAndAnswerNotPermitted() {
         MemberProfile sender = createADefaultMemberProfile();
         createAndAssignRole(RoleType.PDL, sender);
         MemberProfile recipient = createADefaultRecipient();
@@ -134,7 +134,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     }
 
     @Test
-    public void testGetAllQuestionsAndAnswersPermitted() {
+    void testGetAllQuestionsAndAnswersPermitted() {
         MemberProfile sender = createADefaultMemberProfile();
         createAndAssignRole(RoleType.PDL, sender);
         MemberProfile recipient = createADefaultRecipient();
@@ -151,7 +151,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     }
 
     @Test
-    public void testGetAllQuestionsAndAnswersNotPermitted() {
+    void testGetAllQuestionsAndAnswersNotPermitted() {
         MemberProfile sender = createADefaultMemberProfile();
         createAndAssignRole(RoleType.PDL, sender);
         MemberProfile recipient = createADefaultRecipient();

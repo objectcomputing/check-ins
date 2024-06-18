@@ -41,8 +41,7 @@ public class QuestionCategory {
     }
 
     public QuestionCategory(@NotBlank String name) {
-        this.id = id;
-        this.name = name;
+        this(null, name);
     }
 
     public QuestionCategory() {}

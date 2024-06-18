@@ -23,7 +23,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BirthDayControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class BirthDayControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/reports/birthdays")
@@ -35,7 +35,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    public void testGETFindByValueNameOfTheMonth() {
+    void testGETFindByValueNameOfTheMonth() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
@@ -52,7 +52,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    public void testGETFindByValueNameOfTheMonthAndDay() {
+    void testGETFindByValueNameOfTheMonthAndDay() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
 
@@ -69,7 +69,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    public void testGETFindByValueNameOfTheMonthNotAuthorized() {
+    void testGETFindByValueNameOfTheMonthNotAuthorized() {
 
         MemberProfile memberProfile = createADefaultMemberProfileWithBirthDay();
         final HttpRequest<Object> request = HttpRequest.

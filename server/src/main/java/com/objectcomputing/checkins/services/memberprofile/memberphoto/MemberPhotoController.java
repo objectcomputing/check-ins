@@ -12,7 +12,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import static io.micronaut.http.HttpHeaders.CACHE_CONTROL;
 
@@ -25,6 +24,7 @@ public class MemberPhotoController {
 
     private final String expiry;
     private final MemberPhotoService memberPhotoService;
+
     public MemberPhotoController(@Property(name = "micronaut.caches.photo-cache.expire-after-write") String expiry,
                                  MemberPhotoService memberPhotoService) {
         this.expiry = expiry;
@@ -34,13 +34,13 @@ public class MemberPhotoController {
     /**
      * Get user photo data from Google Directory API
      *
-     * @param workEmail
-     * @return {@link HttpResponse<String>} StringURL of photo data
+     * @param workEmail {@link String} work email of the user
+     * @return StringURL of photo data
      */
     @Get("/{workEmail}")
-    public Mono<HttpResponse<byte[]>> userImage(@NotNull String workEmail) {
-        return Mono.fromCallable(() -> memberPhotoService.getImageByEmailAddress(workEmail))
-                .map(photoData -> HttpResponse.ok(photoData)
-                        .header(CACHE_CONTROL, String.format("public, max-age=%s", expiry)));
+    public HttpResponse<byte[]> userImage(@NotNull String workEmail) {
+        byte[] photoData = memberPhotoService.getImageByEmailAddress(workEmail);
+        return HttpResponse.ok(photoData)
+                .header(CACHE_CONTROL, String.format("public, max-age=%s", expiry));
     }
 }

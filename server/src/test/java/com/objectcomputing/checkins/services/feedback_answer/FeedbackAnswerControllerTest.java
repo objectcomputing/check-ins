@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FeedbackAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture, FeedbackTemplateFixture, TemplateQuestionFixture {
+class FeedbackAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture, FeedbackTemplateFixture, TemplateQuestionFixture {
 
     @Inject
     @Client("/services/feedback/answers")
@@ -42,7 +42,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         createAndAssignRoles();
     }
 
-    public FeedbackAnswer createSampleAnswer(MemberProfile sender, MemberProfile recipient) {
+    FeedbackAnswer createSampleAnswer(MemberProfile sender, MemberProfile recipient) {
         assignPdlRole(sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createADefaultSupervisor();
@@ -53,7 +53,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         return createSampleFeedbackAnswer(question.getId(), feedbackRequest.getId());
     }
 
-    public FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
+    FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
         FeedbackAnswer answer = createSampleAnswer(sender, recipient);
         return getFeedbackAnswerRepository().save(answer);
     }
@@ -75,13 +75,13 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         return dto;
     }
 
-    public void assertContentEqualsResponse(FeedbackAnswer content, FeedbackAnswerResponseDTO response) {
+    void assertContentEqualsResponse(FeedbackAnswer content, FeedbackAnswerResponseDTO response) {
         assertEquals(content.getAnswer(), response.getAnswer());
         assertEquals(content.getQuestionId(), response.getQuestionId());
         assertEquals(content.getSentiment(), response.getSentiment());
     }
 
-    public void assertUnauthorized(HttpClientResponseException exception) {
+    void assertUnauthorized(HttpClientResponseException exception) {
         assertEquals("You are not authorized to do this operation", exception.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
     }

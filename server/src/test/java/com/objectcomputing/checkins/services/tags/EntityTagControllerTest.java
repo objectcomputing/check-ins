@@ -28,7 +28,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EntityTagControllerTest extends TestContainersSuite implements EntityTagFixture, TagFixture, MemberProfileFixture, RoleFixture {
+class EntityTagControllerTest extends TestContainersSuite implements EntityTagFixture, TagFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/entity-tags")

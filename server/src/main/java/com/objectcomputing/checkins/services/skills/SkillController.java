@@ -4,7 +4,14 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -12,7 +19,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Set;
@@ -36,14 +42,11 @@ public class SkillController {
      * @param skill, {@link SkillCreateDTO}
      * @return {@link HttpResponse< Skill >}
      */
-
     @Post
-    public Mono<HttpResponse<Skill>> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> skillServices.save(new Skill(skill.getName(), skill.isPending(),
-                        skill.getDescription(), skill.isExtraneous())))
-                .map(createdSkill -> HttpResponse.created(createdSkill)
-                        .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId())))));
+    public HttpResponse<Skill> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<?> request) {
+        Skill createdSkill = skillServices.save(new Skill(skill.getName(), skill.isPending(), skill.getDescription(), skill.isExtraneous()));
+        return HttpResponse.created(createdSkill)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId()))));
 
     }
 
@@ -53,16 +56,13 @@ public class SkillController {
      * @param id {@link UUID} of the skill entry
      * @return
      */
-
     @Get("/{id}")
-    public Mono<HttpResponse<Skill>> getById(@NotNull UUID id) {
-        return Mono.fromCallable(() -> {
-            Skill result = skillServices.readSkill(id);
-            if (result == null) {
-                throw new NotFoundException("No skill for UUID");
-            }
-            return result;
-        }).map(HttpResponse::ok);
+    public Skill getById(@NotNull UUID id) {
+        Skill result = skillServices.readSkill(id);
+        if (result == null) {
+            throw new NotFoundException("No skill for UUID");
+        }
+        return result;
     }
 
     /**
@@ -72,11 +72,9 @@ public class SkillController {
      * @param pending, whether the skill has been officially accepted
      * @return {@link Set <Skill > list of Skills
      */
-
     @Get("/{?name,pending}")
-    public Mono<HttpResponse<Set<Skill>>> findByValue(@Nullable String name, @Nullable Boolean pending) {
-        return Mono.fromCallable(() -> skillServices.findByValue(name, pending))
-                .map(HttpResponse::ok);
+    public Set<Skill> findByValue(@Nullable String name, @Nullable Boolean pending) {
+        return skillServices.findByValue(name, pending);
     }
 
     /**
@@ -86,10 +84,10 @@ public class SkillController {
      * @return {@link HttpResponse<Skill>}
      */
     @Put
-    public Mono<HttpResponse<Skill>> update(@Body @Valid Skill skill, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> skillServices.update(skill))
-                .map(updatedSkill -> HttpResponse.ok(updatedSkill)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSkill.getId())))));
+    public HttpResponse<Skill> update(@Body @Valid Skill skill, HttpRequest<?> request) {
+        Skill updatedSkill = skillServices.update(skill);
+        return HttpResponse.ok(updatedSkill)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSkill.getId()))));
     }
 
     /**
@@ -98,9 +96,8 @@ public class SkillController {
      * @param id, id of {@link Skill} to delete
      */
     @Delete("/{id}")
-    public Mono<HttpResponse<?>> deleteSkill(@NotNull UUID id) {
-        return Mono.fromRunnable(() -> skillServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void deleteSkill(@NotNull UUID id) {
+        skillServices.delete(id);
     }
-
 }

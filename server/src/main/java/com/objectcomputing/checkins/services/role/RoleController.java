@@ -3,7 +3,14 @@ package com.objectcomputing.checkins.services.role;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -11,7 +18,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
@@ -37,10 +43,10 @@ public class RoleController {
      */
     @Post
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription())))
-                .map(userRole -> HttpResponse.created(userRole)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), userRole.getId())))));
+    public HttpResponse<Role> create(@Body @Valid RoleCreateDTO role, HttpRequest<?> request) {
+        Role userRole = roleServices.save(new Role(role.getRole(), role.getDescription()));
+        return HttpResponse.created(userRole)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), userRole.getId()))));
     }
 
     /**
@@ -51,10 +57,10 @@ public class RoleController {
      */
     @Put
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> roleServices.update(role))
-                .map(updatedRole -> HttpResponse.ok(updatedRole)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedRole.getId())))));
+    public HttpResponse<Role> update(@Body @Valid @NotNull Role role, HttpRequest<?> request) {
+        Role updatedRole = roleServices.update(role);
+        return HttpResponse.ok(updatedRole)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedRole.getId()))));
     }
 
     /**
@@ -64,16 +70,13 @@ public class RoleController {
      * @return {@link Role}
      */
     @Get("/{id}")
-    public Mono<HttpResponse<Role>> readRole(@NotNull UUID id) {
-        return Mono.fromCallable(() -> {
-            Role result = roleServices.read(id);
-            if (result == null) {
-                throw new NotFoundException("No role item for UUID");
-            }
-            return result;
-        }).map(HttpResponse::ok);
+    public Role readRole(@NotNull UUID id) {
+        Role result = roleServices.read(id);
+        if (result == null) {
+            throw new NotFoundException("No role item for UUID");
+        }
+        return result;
     }
-
 
 
     /**
@@ -82,9 +85,8 @@ public class RoleController {
      * @return {@link Role}
      */
     @Get
-    public Mono<HttpResponse<List<Role>>> findAll() {
-        return Mono.fromCallable(roleServices::findAllRoles)
-                .map(HttpResponse::ok);
+    public List<Role> findAll() {
+        return roleServices.findAllRoles();
     }
 
     /**
@@ -94,9 +96,8 @@ public class RoleController {
      */
     @Delete("/{id}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<?>> deleteRole(UUID id) {
-        return Mono.fromRunnable(() -> roleServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void deleteRole(UUID id) {
+        roleServices.delete(id);
     }
-
 }

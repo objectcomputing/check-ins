@@ -8,7 +8,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MailJetSenderTest extends TestContainersSuite {
+class MailJetSenderTest extends TestContainersSuite {
 
     @Test
     void testCreateBatchesForManyRecipients() {

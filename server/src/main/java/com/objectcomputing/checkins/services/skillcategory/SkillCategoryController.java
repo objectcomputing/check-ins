@@ -5,7 +5,14 @@ import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -13,7 +20,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
@@ -33,50 +39,42 @@ public class SkillCategoryController {
 
     @Post
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
-    public Mono<HttpResponse<SkillCategory>> create(@Body @Valid SkillCategoryCreateDTO dto, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> {
-                    SkillCategory skillCategory = new SkillCategory(dto.getName(), dto.getDescription());
-                    return skillCategoryServices.save(skillCategory);
-                })
-                .map(createdSkillCategory -> HttpResponse.created(createdSkillCategory)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdSkillCategory.getId())))));
+    public HttpResponse<SkillCategory> create(@Body @Valid SkillCategoryCreateDTO dto, HttpRequest<?> request) {
+        SkillCategory skillCategory = new SkillCategory(dto.getName(), dto.getDescription());
+        SkillCategory createdSkillCategory = skillCategoryServices.save(skillCategory);
+        return HttpResponse.created(createdSkillCategory)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdSkillCategory.getId()))));
     }
 
     @Put
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
-    public Mono<HttpResponse<SkillCategory>> update(@Body @Valid SkillCategoryUpdateDTO dto, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> {
-                    SkillCategory skillCategory = new SkillCategory(dto.getId(), dto.getName(), dto.getDescription());
-                    return skillCategoryServices.update(skillCategory);
-                })
-                .map(skillCategory -> HttpResponse.ok(skillCategory)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), skillCategory.getId())))));
+    public HttpResponse<SkillCategory> update(@Body @Valid SkillCategoryUpdateDTO dto, HttpRequest<?> request) {
+        SkillCategory skillCategory = new SkillCategory(dto.getId(), dto.getName(), dto.getDescription());
+        SkillCategory update = skillCategoryServices.update(skillCategory);
+        return HttpResponse.ok(update)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), update.getId()))));
     }
 
     @Get("/{id}")
     @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
-    public Mono<HttpResponse<SkillCategoryResponseDTO>> getById(@NotNull UUID id) {
-        return Mono.fromCallable(() -> {
-            SkillCategoryResponseDTO result = skillCategoryServices.read(id);
-            if (result == null) {
-                throw new NotFoundException("No skill category for UUID");
-            }
-            return result;
-        }).map(HttpResponse::ok);
+    public SkillCategoryResponseDTO getById(@NotNull UUID id) {
+        SkillCategoryResponseDTO result = skillCategoryServices.read(id);
+        if (result == null) {
+            throw new NotFoundException("No skill category for UUID");
+        }
+        return result;
     }
 
     @Get("/with-skills")
     @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
-    public Mono<HttpResponse<List<SkillCategoryResponseDTO>>> findAllWithSkills() {
-        return Mono.fromCallable(skillCategoryServices::findAllWithSkills)
-                .map(HttpResponse::ok);
+    public List<SkillCategoryResponseDTO> findAllWithSkills() {
+        return skillCategoryServices.findAllWithSkills();
     }
 
     @Delete("/{id}")
     @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
-    public Mono<HttpResponse<?>> delete(@NotNull UUID id) {
-        return Mono.fromRunnable(() -> skillCategoryServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void delete(@NotNull UUID id) {
+        skillCategoryServices.delete(id);
     }
-
 }

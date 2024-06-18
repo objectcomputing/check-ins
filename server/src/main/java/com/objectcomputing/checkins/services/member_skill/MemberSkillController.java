@@ -4,7 +4,14 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -12,7 +19,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Set;
@@ -37,12 +43,12 @@ public class MemberSkillController {
      * @return {@link HttpResponse< MemberSkill >}
      */
     @Post
-    public Mono<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(),
-                memberSkill.getSkillid(), memberSkill.getSkilllevel(), memberSkill.getLastuseddate())))
-                .map(createdMemberSkill -> HttpResponse.created(createdMemberSkill)
-                        .headers(headers -> headers.location(
-                            URI.create(String.format("%s/%s", request.getPath(), createdMemberSkill.getId())))));
+    public HttpResponse<MemberSkill> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<?> request) {
+        MemberSkill createdMemberSkill = memberSkillsService.save(
+                new MemberSkill(memberSkill.getMemberid(), memberSkill.getSkillid(), memberSkill.getSkilllevel(), memberSkill.getLastuseddate())
+        );
+        return HttpResponse.created(createdMemberSkill)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdMemberSkill.getId()))));
     }
 
     /**
@@ -51,9 +57,9 @@ public class MemberSkillController {
      * @param id, id of {@link MemberSkill} to delete
      */
     @Delete("/{id}")
-    public Mono<HttpResponse<?>> deleteMemberSkill(@NotNull UUID id) {
-        return Mono.fromRunnable(() -> memberSkillsService.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void deleteMemberSkill(@NotNull UUID id) {
+        memberSkillsService.delete(id);
     }
 
     /**
@@ -63,14 +69,12 @@ public class MemberSkillController {
      * @return {@link MemberSkill}
      */
     @Get("/{id}")
-    public Mono<HttpResponse<MemberSkill>> readMemberSkill(@NotNull UUID id) {
-        return Mono.fromCallable(() -> {
-            MemberSkill result = memberSkillsService.read(id);
-            if (result == null) {
-                throw new NotFoundException("No member skill for UUID");
-            }
-            return result;
-        }).map(HttpResponse::ok);
+    public MemberSkill readMemberSkill(@NotNull UUID id) {
+        MemberSkill result = memberSkillsService.read(id);
+        if (result == null) {
+            throw new NotFoundException("No member skill for UUID");
+        }
+        return result;
     }
 
     /**
@@ -81,11 +85,9 @@ public class MemberSkillController {
      * @return set of Member Skills
      */
     @Get("/{?memberid,skillid}")
-    public Mono<HttpResponse<Set<MemberSkill>>> findMemberSkills(@Nullable UUID memberid, @Nullable UUID skillid) {
-        return Mono.fromCallable(() -> memberSkillsService.findByFields(memberid, skillid))
-                .map(HttpResponse::ok);
+    public Set<MemberSkill> findMemberSkills(@Nullable UUID memberid, @Nullable UUID skillid) {
+        return memberSkillsService.findByFields(memberid, skillid);
     }
-
 
     /**
      * Update a MemberSkill
@@ -94,9 +96,9 @@ public class MemberSkillController {
      * @return {@link MemberSkill}
      */
     @Put
-    public Mono<HttpResponse<MemberSkill>> update(@Body @Valid MemberSkill memberSkill, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> memberSkillsService.update(memberSkill))
-                .map(updatedMemberSkill -> HttpResponse.ok(updatedMemberSkill)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberSkill.getId())))));
+    public HttpResponse<MemberSkill> update(@Body @Valid MemberSkill memberSkill, HttpRequest<?> request) {
+        MemberSkill updatedMemberSkill = memberSkillsService.update(memberSkill);
+        return HttpResponse.ok(updatedMemberSkill)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberSkill.getId()))));
     }
 }

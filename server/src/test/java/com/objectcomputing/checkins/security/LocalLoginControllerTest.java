@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest(environments = {Environments.LOCAL, Environments.LOCALTEST}, transactional = false)
-public class LocalLoginControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class LocalLoginControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Client("/oauth/login/google")
     @Inject

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PermissionControllerTest extends TestContainersSuite implements PermissionFixture, MemberProfileFixture, RoleFixture {
+class PermissionControllerTest extends TestContainersSuite implements PermissionFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/permissions")

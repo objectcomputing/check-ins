@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Singleton
 public class AnniversaryReportServicesImpl implements AnniversaryServices {
@@ -48,7 +47,7 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
                             .filter(member -> member.getStartDate() != null
                                     && month.equalsIgnoreCase(member.getStartDate().getMonth().name())
                                     && member.getTerminationDate() == null)
-                            .collect(Collectors.toList());
+                            .toList();
                 }
                 memberProfileAll.addAll(memberProfile);
             }
@@ -66,7 +65,7 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
                 .stream()
                 .filter(member -> member.getStartDate() != null
                         && today.getMonthValue() == member.getStartDate().getMonthValue())
-                .collect(Collectors.toList());
+                .toList();
         return profileToAnniversaryResponseDto(results);
     }
 

@@ -149,8 +149,8 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request));
 
-        assertEquals(responseException.getMessage(), "At least one guild lead must be present in the guild at all times");
-        assertEquals(responseException.getStatus(), HttpStatus.BAD_REQUEST);
+        assertEquals("At least one guild lead must be present in the guild at all times", responseException.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
@@ -695,7 +695,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         final List<GuildMemberHistory> entries = (List<GuildMemberHistory>) getGuildMemberHistoryRepository().findAll();
 
-        assertEquals(entries.get(0).getChange(),"Added");
+        assertEquals("Added", entries.get(0).getChange());
     }
 
     @Test
@@ -717,7 +717,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         final List<GuildMemberHistory> entries = (List<GuildMemberHistory>) getGuildMemberHistoryRepository().findAll();
 
-        assertEquals(entries.get(0).getChange(),"Updated");
+        assertEquals("Updated", entries.get(0).getChange());
     }
 
     @Test
@@ -737,7 +737,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         final List<GuildMemberHistory> entries = (List<GuildMemberHistory>) getGuildMemberHistoryRepository().findAll();
 
-        assertEquals(entries.get(0).getChange(),"Deleted");
+        assertEquals("Deleted", entries.get(0).getChange());
     }
 
 
