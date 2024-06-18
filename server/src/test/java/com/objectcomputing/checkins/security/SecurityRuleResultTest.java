@@ -14,6 +14,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRuleResult;
 import io.micronaut.web.router.MethodBasedRouteMatch;
+import io.micronaut.web.router.RouteMatch;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +52,9 @@ class SecurityRuleResultTest extends TestContainersSuite {
 
     @Mock
     private MethodBasedRouteMatch<?, ?> mockMethodBasedRouteMatch;
+
+    @Mock
+    private RouteMatch<?> mockNonMethodBasedRouteMatch;
 
     @Mock
     private AnnotationValue<RequiredPermission> mockRequiredPermissionAnnotation;
@@ -96,6 +100,28 @@ class SecurityRuleResultTest extends TestContainersSuite {
                 .verify();
     }
 
+    @Test
+    void unknownResultForNonMethodBasedRouteMatch() {
+        final HttpRequest<?> request = HttpRequest.POST("/", null)
+                .basicAuth("test.email.address", RoleType.Constants.ADMIN_ROLE)
+                .setAttribute(HttpAttributes.ROUTE_MATCH, mockNonMethodBasedRouteMatch);
+
+        Map<String, Object> attributes = Map.of(
+                "permissions", USER_PERMISSIONS,
+                "roles", USER_ROLES,
+                "email", "test.email.address"
+        );
+
+        Authentication auth = Authentication.build("test.email.address", attributes);
+
+        Publisher<SecurityRuleResult> result = permissionSecurityRule.check(request, auth);
+
+        assertNotNull(result);
+        StepVerifier.create(result)
+                .expectNext(SecurityRuleResult.UNKNOWN)
+                .expectComplete()
+                .verify();
+    }
 
     @Test
     void rejectSecurityRuleResultTest() {
