@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.permissions;
 
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.scheduling.TaskExecutors;
@@ -8,7 +7,6 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -29,11 +27,10 @@ public class PermissionController {
      *
      * @return {@link List < Permission > list order by Permissions}
      */
-    @RequiredPermission(Permission.CAN_VIEW_PERMISSIONS)
     @Get("/OrderByPermission")
-    public Mono<HttpResponse<List<Permission>>> listOrderByPermission() {
-        return Mono.fromCallable(permissionServices::listOrderByPermission)
-                .map(HttpResponse::ok);
+    @RequiredPermission(Permission.CAN_VIEW_PERMISSIONS)
+    public List<Permission> listOrderByPermission() {
+        return permissionServices.listOrderByPermission();
     }
 
     /**
@@ -41,10 +38,9 @@ public class PermissionController {
      *
      * @return {@link List < Permission > list of all Permissions}
      */
-    @RequiredPermission(Permission.CAN_VIEW_PERMISSIONS)
     @Get
-    public Mono<HttpResponse<List<Permission>>> getAllPermissions() {
-        return Mono.fromCallable(permissionServices::findAll)
-                .map(HttpResponse::ok);
+    @RequiredPermission(Permission.CAN_VIEW_PERMISSIONS)
+    public List<Permission> getAllPermissions() {
+        return permissionServices.findAll();
     }
 }

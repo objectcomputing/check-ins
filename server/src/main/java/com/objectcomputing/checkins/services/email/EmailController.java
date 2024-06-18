@@ -1,13 +1,13 @@
 package com.objectcomputing.checkins.services.email;
 
-import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -23,9 +23,8 @@ public class EmailController {
     }
 
     @Post
-    public Mono<HttpResponse<List<Email>>> sendEmail(String subject, String content, boolean html, String... recipients) {
-        return Mono.fromCallable(() -> emailServices.sendAndSaveEmail(subject, content, html, recipients))
-                .map(HttpResponse::created);
+    @Status(HttpStatus.CREATED)
+    public List<Email> sendEmail(String subject, String content, boolean html, String... recipients) {
+        return emailServices.sendAndSaveEmail(subject, content, html, recipients);
     }
-
 }

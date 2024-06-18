@@ -47,7 +47,7 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
 
     @Override
     @Cacheable
-    public byte[] getImageByEmailAddress(@NotNull String workEmail) throws IOException {
+    public byte[] getImageByEmailAddress(@NotNull String workEmail) {
 
         byte[] photoData;
 
@@ -62,6 +62,9 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
             } else {
                 LOG.error(String.format("An unexpected error occurred while retrieving photo from Google Directory API for: %s", workEmail), gjse);
             }
+            photoData = defaultPhoto;
+        } catch (IOException e) {
+            LOG.error(String.format("An unexpected error occurred while retrieving photo from Google Directory API for: %s", workEmail), e);
             photoData = defaultPhoto;
         }
 
