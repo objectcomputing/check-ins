@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.today;
 
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.scheduling.TaskExecutors;
@@ -8,7 +7,6 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import reactor.core.publisher.Mono;
 
 @Controller("/services/today")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -28,8 +26,7 @@ public class TodayController {
      * @return {@link TodayResponseDTO today's events}
      */
     @Get
-    public Mono<HttpResponse<TodayResponseDTO>> getTodaysEvents() {
-        return Mono.fromCallable(todayServices::getTodaysEvents)
-                .map(HttpResponse::ok);
+    public TodayResponseDTO getTodaysEvents() {
+        return todayServices.getTodaysEvents();
     }
 }

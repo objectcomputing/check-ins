@@ -3,7 +3,14 @@ package com.objectcomputing.checkins.services.survey;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -11,17 +18,15 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 
-
 @Controller("/services/surveys")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Tag(name="survey")
+@Tag(name = "survey")
 public class SurveyController {
 
     private final SurveyService surveyResponseServices;
@@ -38,14 +43,12 @@ public class SurveyController {
      * @return
      */
     @Get("/{?name,createdBy}")
-    public Mono<HttpResponse<Set<Survey>>> findSurveys(@Nullable String name, @Nullable UUID createdBy) {
-        return Mono.fromCallable(() -> {
-            if (name!=null || createdBy!=null) {
-                return surveyResponseServices.findByFields(name, createdBy);
-            } else {
-                return surveyResponseServices.readAll();
-            }
-        }).map(HttpResponse::ok);
+    public Set<Survey> findSurveys(@Nullable String name, @Nullable UUID createdBy) {
+        if (name != null || createdBy != null) {
+            return surveyResponseServices.findByFields(name, createdBy);
+        } else {
+            return surveyResponseServices.readAll();
+        }
     }
 
     /**
@@ -54,13 +57,12 @@ public class SurveyController {
      * @param surveyResponse, {@link SurveyCreateDTO}
      * @return {@link HttpResponse<Survey>}
      */
-
     @Post
-    public Mono<HttpResponse<Survey>> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(),
-                        surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription())))
-                .map(survey -> HttpResponse.created(survey)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), survey.getId())))));
+    public HttpResponse<Survey> createSurvey(@Body @Valid SurveyCreateDTO surveyResponse, HttpRequest<?> request) {
+        Survey survey = surveyResponseServices.save(new Survey(surveyResponse.getCreatedOn(),
+                surveyResponse.getCreatedBy(), surveyResponse.getName(), surveyResponse.getDescription()));
+        return HttpResponse.created(survey)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), survey.getId()))));
     }
 
     /**
@@ -70,10 +72,10 @@ public class SurveyController {
      * @return {@link HttpResponse<Survey>}
      */
     @Put
-    public Mono<HttpResponse<Survey>> update(@Body @Valid @NotNull Survey surveyResponse, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> surveyResponseServices.update(surveyResponse))
-                .map(updatedSurvey -> HttpResponse.ok(updatedSurvey)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSurvey.getId())))));
+    public HttpResponse<Survey> update(@Body @Valid @NotNull Survey surveyResponse, HttpRequest<?> request) {
+        Survey updatedSurvey = surveyResponseServices.update(surveyResponse);
+        return HttpResponse.ok(updatedSurvey)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSurvey.getId()))));
     }
 
     /**
@@ -82,8 +84,8 @@ public class SurveyController {
      * @param id, id of {@link Survey} to delete
      */
     @Delete("/{id}")
-    public Mono<HttpResponse<?>> deleteSurvey(@NotNull UUID id) {
-        return Mono.fromRunnable(() -> surveyResponseServices.delete(id))
-                .thenReturn(HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void deleteSurvey(@NotNull UUID id) {
+        surveyResponseServices.delete(id);
     }
 }

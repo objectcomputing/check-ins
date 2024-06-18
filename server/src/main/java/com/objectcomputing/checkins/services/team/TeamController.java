@@ -1,10 +1,16 @@
 package com.objectcomputing.checkins.services.team;
 
-
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -12,7 +18,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
@@ -38,10 +43,10 @@ public class TeamController {
      * @return {@link HttpResponse<TeamResponseDTO>}
      */
     @Post
-    public Mono<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> teamService.save(team))
-                .map(createdTeam -> HttpResponse.created(createdTeam)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdTeam.getId())))));
+    public HttpResponse<TeamResponseDTO> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<?> request) {
+        TeamResponseDTO createdTeam = teamService.save(team);
+        return HttpResponse.created(createdTeam)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdTeam.getId()))));
     }
 
     /**
@@ -50,11 +55,9 @@ public class TeamController {
      * @param id of team
      * @return {@link TeamResponseDTO team matching id}
      */
-
     @Get("/{id}")
-    public Mono<HttpResponse<TeamResponseDTO>> readTeam(@NotNull UUID id) {
-        return Mono.fromCallable(() -> teamService.read(id))
-                .map(HttpResponse::ok);
+    public TeamResponseDTO readTeam(@NotNull UUID id) {
+        return teamService.read(id);
     }
 
     /**
@@ -66,9 +69,8 @@ public class TeamController {
      * return all teams that match all the filled in params
      */
     @Get("/{?name,memberId}")
-    public Mono<HttpResponse<Set<TeamResponseDTO>>> findTeams(@Nullable String name, @Nullable UUID memberId) {
-        return Mono.fromCallable(() -> teamService.findByFields(name, memberId))
-                .map(HttpResponse::ok);
+    public Set<TeamResponseDTO> findTeams(@Nullable String name, @Nullable UUID memberId) {
+        return teamService.findByFields(name, memberId);
     }
 
     /**
@@ -78,22 +80,20 @@ public class TeamController {
      * @return {@link HttpResponse<TeamResponseDTO>}
      */
     @Put
-    public Mono<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<?> request) {
-        return Mono.fromCallable(() -> teamService.update(team))
-                .map(updated -> HttpResponse.ok(updated)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getId())))));
-
+    public HttpResponse<TeamResponseDTO> update(@Body @Valid TeamUpdateDTO team, HttpRequest<?> request) {
+        TeamResponseDTO updated = teamService.update(team);
+        return HttpResponse.ok(updated)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getId()))));
     }
 
     /**
      * Delete Team
      *
      * @param id, id of {@link TeamUpdateDTO} to delete
-     * @return
      */
     @Delete("/{id}")
-    public Mono<HttpResponse<Object>> deleteTeam(@NotNull UUID id) {
-        return Mono.fromCallable(() -> teamService.delete(id))
-                .map(success -> HttpResponse.ok());
+    @Status(HttpStatus.OK)
+    public void deleteTeam(@NotNull UUID id) {
+        teamService.delete(id);
     }
 }
