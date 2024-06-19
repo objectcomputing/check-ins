@@ -101,7 +101,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     }
 
     @Override
-    public Boolean setAdHocInactiveByCreator(@Nullable UUID creatorId) {
+    public boolean setAdHocInactiveByCreator(@Nullable UUID creatorId) {
         if (!updateIsPermitted(creatorId)) {
             throw new PermissionException("You are not authorized to do this operation");
         }

@@ -15,8 +15,8 @@ public interface CheckinDocumentRepository extends CrudRepository<CheckinDocumen
     
     Set<CheckinDocument> findByCheckinsId(@NotNull UUID checkinsId);
     Optional<CheckinDocument> findByUploadDocId(@NotBlank String uploadDocId);
-    Boolean existsByCheckinsId(@NotNull UUID checkinsId);
-    Boolean existsByUploadDocId(@NotBlank String uploadDocId);
+    boolean existsByCheckinsId(@NotNull UUID checkinsId);
+    boolean existsByUploadDocId(@NotBlank String uploadDocId);
     void deleteByCheckinsId(@NotNull UUID checkinsId);
     void deleteByUploadDocId(@NotBlank String uploadDocId);
 }

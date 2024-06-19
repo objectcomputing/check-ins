@@ -88,7 +88,7 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
     }
 
     @Override
-    public Boolean delete(@NotNull UUID id) {
+    public boolean delete(@NotNull UUID id) {
         final Optional<QuestionCategory> questionCategory = questionCategoryRepository.findById(id);
         if (questionCategory.isEmpty()) {
             throw new NotFoundException("No question category with id " + id);
