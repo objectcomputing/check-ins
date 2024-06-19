@@ -52,7 +52,7 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     @Override
     public Opportunities update(Opportunities opportunitiesResponse) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         Opportunities opportunitiesResponseRet = null;
         if(opportunitiesResponse!=null){
             final UUID id = opportunitiesResponse.getId();
@@ -76,7 +76,7 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     @Override
     public void delete(@NotNull UUID id) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         opportunitiesResponseRepo.deleteById(id);
     }
 

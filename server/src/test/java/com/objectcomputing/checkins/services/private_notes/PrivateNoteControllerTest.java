@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -86,7 +87,7 @@ class PrivateNoteControllerTest extends TestContainersSuite implements MemberPro
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("User is unauthorized to do this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
     }
 
     @Test
@@ -312,7 +313,7 @@ class PrivateNoteControllerTest extends TestContainersSuite implements MemberPro
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -463,7 +464,7 @@ class PrivateNoteControllerTest extends TestContainersSuite implements MemberPro
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 }

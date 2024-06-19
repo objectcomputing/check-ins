@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+
 @Singleton
 public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
@@ -60,7 +62,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         feedbackTemplate.setIsReview(originalTemplate.get().getIsReview());
 
         if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return feedbackTemplateRepository.update(feedbackTemplate);
@@ -71,7 +73,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         final FeedbackTemplate template = getById(id);
 
         if (!deleteIsPermitted(template.getCreatorId())) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         // delete the template itself
@@ -103,7 +105,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     @Override
     public boolean setAdHocInactiveByCreator(@Nullable UUID creatorId) {
         if (!updateIsPermitted(creatorId)) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         feedbackTemplateRepository.setAdHocInactiveByCreator(Util.nullSafeUUIDToString(creatorId));
         return true;

@@ -13,9 +13,14 @@ import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
@@ -122,7 +127,7 @@ public class TeamServicesImpl implements TeamServices {
             }
             return updated;
         } else {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
     }
 
@@ -150,7 +155,7 @@ public class TeamServicesImpl implements TeamServices {
             teamMemberServices.deleteByTeam(id);
             teamsRepo.deleteById(id);
         } else {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         return true;
     }
