@@ -23,8 +23,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+
 @Singleton
 public class GuildMemberServicesImpl implements GuildMemberServices {
+
+    public static final String WEB_ADDRESS = "check-ins.web-address";
 
     private final GuildRepository guildRepo;
     private final GuildMemberRepository guildMemberRepo;
@@ -33,7 +37,6 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     private final GuildMemberHistoryRepository guildMemberHistoryRepository;
     private EmailSender emailSender;
     private final String webAddress;
-    public static final String WEB_ADDRESS = "check-ins.web-address";
 
     public GuildMemberServicesImpl(GuildRepository guildRepo,
                                    GuildMemberRepository guildMemberRepo,
@@ -76,11 +79,11 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         }
         // only allow admins to create guild leads
         else if (!currentUserServices.isAdmin() && Boolean.TRUE.equals(guildMember.getLead())) {
-            throw new BadArgException("You are not authorized to perform this operation");
+            throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
         // only admins and leads can add members to guilds unless a user adds themself
         else if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead){
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         emailSender
@@ -120,7 +123,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of guild %s", memberId, guildId));
         } else if (!isAdmin && guildLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
-            throw new BadArgException("You are not authorized to perform this operation");
+            throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
         GuildMember guildMemberUpdate = guildMemberRepo.update(guildMember);
         guildMemberHistoryRepository.save(buildGuildMemberHistory(guildId,memberId,"Updated", LocalDateTime.now()));
@@ -159,7 +162,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         }
         // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild -> don't delete
         if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !currentUserIsLead) {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         Guild guild = guildRepo.findById(guildMember.getGuildId())

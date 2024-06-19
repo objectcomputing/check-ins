@@ -28,6 +28,7 @@ import java.util.UUID;
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DemographicsControllerTest extends TestContainersSuite implements DemographicsFixture, MemberProfileFixture, RoleFixture {
@@ -282,7 +283,7 @@ class DemographicsControllerTest extends TestContainersSuite implements Demograp
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals("Requires admin privileges", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
         assertEquals(HttpStatus.FORBIDDEN,responseException.getStatus());
     }
 }

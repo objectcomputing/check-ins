@@ -1,13 +1,12 @@
 package com.objectcomputing.checkins.services.feedback.suggestions;
 
-
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.context.annotation.Property;
-import com.objectcomputing.checkins.exceptions.PermissionException;
 import jakarta.inject.Singleton;
 
 import java.time.LocalDate;
@@ -16,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService {
@@ -45,7 +46,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
         MemberProfile suggestFor = memberProfileServices.getById(id);
 
         if (currentUserId == null) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         List<FeedbackSuggestionDTO> suggestions = new LinkedList<>();

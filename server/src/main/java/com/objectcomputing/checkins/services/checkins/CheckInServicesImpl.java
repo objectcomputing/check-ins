@@ -15,8 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class CheckInServicesImpl implements CheckInServices {
@@ -106,7 +112,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
         if (!canUpdateAllCheckins) {
             boolean currentUserIsCheckinParticipant = currentUserId.equals(checkIn.getTeamMemberId()) || currentUserId.equals(checkIn.getPdlId());
-            validate((!currentUserIsCheckinParticipant), "You are not authorized to perform this operation");
+            validate((!currentUserIsCheckinParticipant), NOT_AUTHORIZED_MSG);
         }
 
         return checkinRepo.save(checkIn);
@@ -116,7 +122,7 @@ public class CheckInServicesImpl implements CheckInServices {
     public CheckIn read(@NotNull UUID checkinId) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
-        validate(!accessGranted(checkinId, currentUserId), "You are not authorized to perform this operation");
+        validate(!accessGranted(checkinId, currentUserId), NOT_AUTHORIZED_MSG);
 
         return checkinRepo.findById(checkinId).orElse(null);
     }
@@ -145,7 +151,7 @@ public class CheckInServicesImpl implements CheckInServices {
             Optional<CheckIn> associatedCheckin = checkinRepo.findById(id);
             validate(associatedCheckin.isEmpty(), "Checkin %s doesn't exist", id);
             // Limit update to subject of check-in, PDL of subject and user with canViewAllCheckins permission
-            validate(!accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
+            validate(!accessGranted(id, currentUser.getId()), NOT_AUTHORIZED_MSG);
             // Update is only allowed if the check in is not completed unless made by user with canUpdateAllCheckins permission
             validate(associatedCheckin.get().isCompleted(), "Checkin with id %s is complete and cannot be updated", checkIn.getId());
         }
@@ -167,14 +173,14 @@ public class CheckInServicesImpl implements CheckInServices {
                 boolean currentUserExists = currentUser != null;
                 boolean currentUserIsCheckinParticipant = currentUserId.equals(teamMemberId) || currentUserId.equals(teamMemberProfile.get().getPdlId());
 
-                validate((currentUserExists && !canViewAllCheckins && !currentUserIsCheckinParticipant), "You are not authorized to perform this operation");
+                validate((currentUserExists && !canViewAllCheckins && !currentUserIsCheckinParticipant), NOT_AUTHORIZED_MSG);
 
                 checkinRepo.findByTeamMemberId(teamMemberId).forEach(checkIns::add);
             }
         } else if (pdlId != null) { // find by pdlId
             boolean currentUserIsPdl = currentUserId.equals(pdlId);
 
-            validate(!canViewAllCheckins && !currentUserIsPdl, "You are not authorized to perform this operation");
+            validate(!canViewAllCheckins && !currentUserIsPdl, NOT_AUTHORIZED_MSG);
 
             checkinRepo.findByPdlId(pdlId).forEach(checkIns::add);
         } else if (completed != null) { // find completed
@@ -186,7 +192,7 @@ public class CheckInServicesImpl implements CheckInServices {
                         .collect(Collectors.toSet());
             }
         } else { // find all
-            validate(!canViewAllCheckins, "You are not authorized to perform this operation");
+            validate(!canViewAllCheckins, NOT_AUTHORIZED_MSG);
             checkinRepo.findAll().forEach(checkIns::add);
         }
 
