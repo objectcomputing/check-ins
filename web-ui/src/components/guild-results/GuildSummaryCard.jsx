@@ -23,7 +23,7 @@ import {
   Tooltip
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { deleteGuild, getGuildLeaders, updateGuild } from '../../api/guild.js';
+import { deleteGuild, updateGuild } from '../../api/guild.js';
 import SplitButton from '../split-button/SplitButton';
 
 const PREFIX = 'GuildSummaryCard';
