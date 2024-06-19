@@ -31,7 +31,7 @@ public enum SettingOption {
         return Arrays.asList(SettingOption.values());
     }
 
-    public static Boolean isValidOption(String name){
+    public static boolean isValidOption(String name){
         return Stream.of(SettingOption.values())
                 .anyMatch(option -> option.name().equalsIgnoreCase(name));
     }

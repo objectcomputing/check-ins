@@ -188,14 +188,6 @@ public class FileServicesImpl implements FileServices {
             //upload file to google drive
             InputStreamContent content = new InputStreamContent(file.getContentType().toString(), file.getInputStream());
 
-            /*
-            PJMII - Get a netty exception if I upload without doing this. Don't know why.
-            Online recommendations for resolving this exception generally revolve around calling the `retain` method
-            on a buffer.  My guess is that whatever is going on in the background of the `reset` method is doing the
-            same thing.
-             */
-            content.getInputStream().reset();
-
             File uploadedFile = drive.files().create(fileMetadata, content)
                                 .setSupportsAllDrives(true)
                                 .setFields("id, size, name")
@@ -225,7 +217,7 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public Boolean deleteFile(@NotNull String uploadDocId) {
+    public boolean deleteFile(@NotNull String uploadDocId) {
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();

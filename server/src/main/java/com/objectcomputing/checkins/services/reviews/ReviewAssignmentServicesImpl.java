@@ -44,7 +44,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
     }
 
     @Override
-    public List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, Boolean deleteExisting) {
+    public List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, boolean deleteExisting) {
 
         if(deleteExisting) {
             LOG.warn(String.format("Deleting all review assignments for review period %s", reviewPeriodId));

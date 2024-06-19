@@ -15,5 +15,5 @@ public interface SettingsServices {
 
     List<Setting> findAllSettings();
 
-    Boolean delete(UUID id);
+    boolean delete(UUID id);
 }

@@ -54,7 +54,7 @@ public class CheckIn {
 
     public CheckIn() {}
 
-    public CheckIn(UUID id,UUID teamMemberId, UUID pdlId, LocalDateTime checkInDate, Boolean completed) {
+    public CheckIn(UUID id,UUID teamMemberId, UUID pdlId, LocalDateTime checkInDate, boolean completed) {
         this.id=id;
         this.teamMemberId= teamMemberId;
         this.pdlId=pdlId;
@@ -62,7 +62,7 @@ public class CheckIn {
         this.completed=completed;
     }
     
-    public CheckIn(UUID teamMemberId, UUID pdlId, LocalDateTime checkInDate, Boolean completed) {
+    public CheckIn(UUID teamMemberId, UUID pdlId, LocalDateTime checkInDate, boolean completed) {
         this(null, teamMemberId, pdlId, checkInDate,completed);
     }
 

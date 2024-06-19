@@ -68,7 +68,7 @@ public class ReviewAssignmentController {
     public List<ReviewAssignment> createReviewAssignment(@NotNull UUID reviewPeriodId,
                                                          @Body List<@Valid ReviewAssignmentDTO> assignments) {
         List<ReviewAssignment> assignmentEntities = assignments.stream().map(ReviewAssignmentDTO::convertToEntity).toList();
-        return reviewAssignmentServices.saveAll(reviewPeriodId, assignmentEntities, Boolean.TRUE);
+        return reviewAssignmentServices.saveAll(reviewPeriodId, assignmentEntities, true);
     }
 
     /**

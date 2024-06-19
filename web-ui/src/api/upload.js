@@ -16,23 +16,21 @@ export const getAllFiles = async cookie => {
   });
 };
 
-export const uploadFile = async (formData, checkinId, cookie) => {
+export const uploadFile = async (data, checkinId, cookie) => {
   return resolve({
     headers: {
-      'Content-Type': 'multipart/form-data',
       'X-CSRF-Header': cookie,
-      Accept: 'application/json'
+      Accept: 'application/json, text/plain, */*'
     },
     method: 'POST',
     url: fileUrl + `/${checkinId}`,
-    data: formData
+    body: data
   });
 };
 
 export const deleteFile = async (fileId, cookie) => {
   return resolve({
     headers: {
-      'Content-Type': 'multipart/form-data',
       'X-CSRF-Header': cookie,
       Accept: 'application/json'
     },
