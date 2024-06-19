@@ -1,5 +1,4 @@
 import { resolve } from './api.js';
-import { getMember } from './member.js';
 
 const emailNotificationURL = '/services/email-notifications';
 const emailURL = '/services/email';

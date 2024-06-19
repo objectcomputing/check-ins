@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import {
   selectCurrentUserId,
   selectIsAdmin,
+  selectOrderedMemberFirstName,
+  selectOrderedPdls,
   selectProfile,
   selectTerminatedMembers,
   selectSupervisorHierarchyIds
@@ -17,12 +19,6 @@ import ProfilePage from './ProfilePage';
 import CertificationBadges from '../components/certifications/CertificationBadges';
 import VolunteerBadges from '../components/volunteer/VolunteerBadges';
 import { levelList } from '../context/util';
-import {
-  selectOrderedPdls,
-  selectOrderedMemberFirstName
-} from '../context/selectors';
-
-import './MemberProfilePage.css';
 
 import {
   Avatar,
@@ -36,7 +32,8 @@ import {
   Tooltip,
   Typography
 } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+
+import './MemberProfilePage.css';
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
