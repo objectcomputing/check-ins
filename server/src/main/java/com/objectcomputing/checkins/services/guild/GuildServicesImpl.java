@@ -32,10 +32,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
 public class GuildServicesImpl implements GuildServices {
+
+    public static final String WEB_ADDRESS = "check-ins.web-address";
+
+    private static final Logger LOG = LoggerFactory.getLogger(GuildServicesImpl.class);;
 
     private final GuildRepository guildsRepo;
     private final GuildMemberRepository guildMemberRepo;
@@ -46,8 +51,6 @@ public class GuildServicesImpl implements GuildServices {
     private EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
-    public static final String WEB_ADDRESS = "check-ins.web-address";
-    private static final Logger LOG = LoggerFactory.getLogger(GuildServicesImpl.class);;
 
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo, GuildMemberHistoryRepository guildMemberHistoryRepository,
@@ -216,7 +219,7 @@ public class GuildServicesImpl implements GuildServices {
 
             return updated;
         } else {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
     }
 
@@ -246,7 +249,7 @@ public class GuildServicesImpl implements GuildServices {
             guildMemberRepo.deleteByGuildId(id.toString());
             guildsRepo.deleteById(id);
         } else {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         return true;
     }

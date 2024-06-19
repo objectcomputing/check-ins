@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+
 @Singleton
 public class FileServicesImpl implements FileServices {
 
@@ -60,7 +62,7 @@ public class FileServicesImpl implements FileServices {
     public Set<FileInfoDTO> findFiles(@Nullable UUID checkInID) {
 
         boolean isAdmin = currentUserServices.isAdmin();
-        validate(checkInID == null && !isAdmin, "You are not authorized to perform this operation");
+        validate(checkInID == null && !isAdmin, NOT_AUTHORIZED_MSG);
 
         try {
             Set<FileInfoDTO> result = new HashSet<>();
@@ -118,7 +120,7 @@ public class FileServicesImpl implements FileServices {
         CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
 
         if(!isAdmin) {
-            validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), "You are not authorized to perform this operation");
+            validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), NOT_AUTHORIZED_MSG);
         }
         try {
             java.io.File file = java.io.File.createTempFile("tmp", ".txt");
@@ -154,7 +156,7 @@ public class FileServicesImpl implements FileServices {
         validate(checkIn == null, "Unable to find checkin record with id %s", checkInID);
         if(!isAdmin) {
             validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
-            validate(checkIn.isCompleted(), "You are not authorized to perform this operation");
+            validate(checkIn.isCompleted(), NOT_AUTHORIZED_MSG);
         }
 
         // create folder for each team member
@@ -227,7 +229,7 @@ public class FileServicesImpl implements FileServices {
 
         CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
         if(!isAdmin) {
-            validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), "You are not authorized to perform this operation");
+            validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), NOT_AUTHORIZED_MSG);
         }
 
         try {

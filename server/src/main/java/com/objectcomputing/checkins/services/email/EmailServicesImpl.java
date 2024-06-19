@@ -6,11 +6,10 @@ import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,10 +18,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+
 @Singleton
 public class EmailServicesImpl implements EmailServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmailServicesImpl.class);
+
     private EmailSender htmlEmailSender;
     private EmailSender textEmailSender;
     private final CurrentUserServices currentUserServices;
@@ -55,7 +57,7 @@ public class EmailServicesImpl implements EmailServices {
         List<Email> sentEmails = new ArrayList<>();
 
         if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();

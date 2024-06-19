@@ -34,7 +34,7 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
 
     public Skill combine(@NotNull @Valid CombineSkillsDTO skillDTO) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
 
         Set<Skill> existingSkills = skillServices.findByValue(skillDTO.getName(), null);
         for (Skill existingSkill : existingSkills) {

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.*;
 
 import jakarta.inject.Inject;
@@ -113,7 +114,7 @@ class TemplateQuestionControllerTest extends TestContainersSuite implements Memb
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
     }
 
     @Test
@@ -271,7 +272,7 @@ class TemplateQuestionControllerTest extends TestContainersSuite implements Memb
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
     }
 
     @Test
@@ -400,7 +401,7 @@ class TemplateQuestionControllerTest extends TestContainersSuite implements Memb
         final JsonNode body = exception.getResponse().getBody(JsonNode.class).orElse(null);
 
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
 
     }
 

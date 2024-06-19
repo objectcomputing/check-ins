@@ -17,9 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices {
+
     private final FeedbackAnswerServices feedbackAnswerServices;
     private final CurrentUserServices currentUserServices;
     private final TemplateQuestionServices templateQuestionServices;
@@ -41,7 +43,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
     public List<Tuple> getAllQuestionsAndAnswers(UUID requestId) {
         FeedbackRequest feedbackRequest = feedbackRequestServices.getById(requestId);
         if (!getIsPermitted(feedbackRequest)) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         List<TemplateQuestion> templateQuestions = templateQuestionServices.findByFields(feedbackRequest.getTemplateId());
         List<FeedbackAnswer> answerList = feedbackAnswerServices.findByValues(null, requestId);
@@ -76,7 +78,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         FeedbackRequest feedbackRequest = feedbackRequestServices.getById(requestId);
 
         if (!getIsPermitted(feedbackRequest)) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (questionId != null) {
