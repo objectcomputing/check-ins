@@ -107,7 +107,7 @@ jobs:
             --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
             --memory 1Gi \
             --add-cloudsql-instances ${{steps.secrets.outputs.cloud_db_connection_name }} \
-            --vpc-connector ${{steps.secrets.outputs.connector_id}}
+            --vpc-connector ${{steps.secrets.outputs.connector_id}} \
             --set-secrets "CLOUD_DB_CONNECTION_NAME=CLOUD_DB_CONNECTION_NAME:latest" \
             --set-secrets "DB_NAME=DB_NAME:latest" \
             --set-secrets "DATASOURCES_DEFAULT_PASSWORD=DATASOURCES_DEFAULT_PASSWORD:latest" \
