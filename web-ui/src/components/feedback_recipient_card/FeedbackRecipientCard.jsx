@@ -3,14 +3,14 @@ import { styled } from '@mui/material/styles';
 import { AppContext } from '../../context/AppContext';
 import { selectProfileMap } from '../../context/selectors';
 import { getAvatarURL } from '../../api/api.js';
-import { Card, CardHeader } from '@mui/material';
+import { Box, Card, CardHeader, CardContent, Container, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { green } from '@mui/material/colors';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Divider from '@mui/material/Divider';
+
 import './FeedbackRecipientCard.css';
-import { Box, CardContent, Container, Typography } from '@mui/material';
 
 const PREFIX = 'FeedbackRecipientCard';
 const classes = {

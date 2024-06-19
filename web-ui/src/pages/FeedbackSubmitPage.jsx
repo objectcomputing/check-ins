@@ -1,7 +1,5 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { useState } from 'react';
-import './FeedbackRequestPage.css';
 import FeedbackSubmissionTips from '../components/feedback_submission_tips/FeedbackSubmissionTips';
 import FeedbackSubmitForm from '../components/feedback_submit_form/FeedbackSubmitForm';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -15,6 +13,8 @@ import { getFeedbackRequestById } from '../api/feedback';
 import Typography from '@mui/material/Typography';
 import { UPDATE_TOAST } from '../context/actions';
 import * as queryString from 'query-string';
+
+import './FeedbackRequestPage.css';
 
 const PREFIX = 'FeedbackSubmitPage';
 const classes = {

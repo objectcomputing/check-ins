@@ -37,8 +37,6 @@ import MemberSelector from '../components/member_selector/MemberSelector';
 import { AppContext } from '../context/AppContext.jsx';
 import {
   selectCsrfToken,
-  selectCurrentUser,
-  selectHasViewPulseReportPermission,
   selectProfileMap
 } from '../context/selectors.js';
 import ExpandMore from '../components/expand-more/ExpandMore';

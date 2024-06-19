@@ -1,18 +1,16 @@
-import './TemplateCard.css';
 import React, { useContext, useEffect, useState } from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import { Card, CardContent, CardHeader } from '@mui/material';
 import PropTypes from 'prop-types';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import './TemplateCard.css';
 import withStyles from '@mui/styles/withStyles';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { green } from '@mui/material/colors';
-import { CardHeader } from '@mui/material';
 import { AppContext } from '../../context/AppContext';
 import { selectCsrfToken } from '../../context/selectors';
 import { getMember } from '../../api/member';
+
+import './TemplateCard.css';
 
 const cutText = (text, maxCharacters) => {
   if (!text) {

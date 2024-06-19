@@ -6,19 +6,21 @@ import { AppContext } from '../../context/AppContext';
 import { selectIsAdmin, selectProfileMap } from '../../context/selectors';
 import { getAvatarURL } from '../../api/api.js';
 
-import { Card, CardHeader } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 
-import './MemberSummaryCard.css';
-
 import {
   Box,
+  Card,
   CardContent,
+  CardHeader,
   Container,
   Tooltip,
   Typography
 } from '@mui/material';
+
+import './MemberSummaryCard.css';
+
 const PREFIX = 'MemberSummaryCard';
 const classes = {
   header: `${PREFIX}-header`

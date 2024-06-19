@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { AppContext } from '../../context/AppContext';
 import {
   selectOrderedPdls,
@@ -6,15 +6,13 @@ import {
   selectCurrentMembers
 } from '../../context/selectors';
 
-import { Modal, TextField } from '@mui/material';
+import { Button, Modal, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import { DatePicker } from '@mui/x-date-pickers';
 import { format } from 'date-fns';
-import { Button } from '@mui/material';
 import { UPDATE_TOAST } from '../../context/actions';
 
 import './MemberModal.css';
-import { useCallback } from 'react';
 
 const emptyMember = {
   employeeId: '',
