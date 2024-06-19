@@ -1,32 +1,27 @@
 import React, { useContext, useState, useCallback } from 'react';
-import { useTheme } from '@mui/material/styles';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import SwipeableViews from 'react-swipeable-views';
 import PropTypes from 'prop-types';
 import { AppContext } from '../../context/AppContext';
-import { selectCurrentUser, selectProfile } from '../../context/selectors';
-import AppBar from '@mui/material/AppBar';
-import Button from '@mui/material/Button';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
+import { selectCsrfToken, selectCurrentUser, selectProfile } from '../../context/selectors';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import Box from '@mui/material/Box';
 import {
+  AppBar,
+  Box,
+  Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
-  Modal
+  Modal,
+  Tab,
+  Tabs,
+  Typography
 } from '@mui/material';
 import FeedbackSubmitForm from '../feedback_submit_form/FeedbackSubmitForm';
 import SelectUserModal from './SelectUserModal';
-import {
-  cancelFeedbackRequest,
-  updateFeedbackRequest
-} from '../../api/feedback';
-import { selectCsrfToken } from '../../context/selectors';
+import { cancelFeedbackRequest, updateFeedbackRequest } from '../../api/feedback';
 import { UPDATE_TOAST } from '../../context/actions';
 
 const propTypes = {

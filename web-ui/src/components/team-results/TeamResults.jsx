@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import TeamSummaryCard from './TeamSummaryCard';
 import { AppContext } from '../../context/AppContext';

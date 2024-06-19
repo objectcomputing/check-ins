@@ -4,32 +4,35 @@ import { Link } from 'react-router-dom';
 
 import MemberModal from './MemberModal';
 import { AppContext } from '../../context/AppContext';
-import { UPDATE_MEMBER_PROFILES } from '../../context/actions';
+import { DELETE_MEMBER_PROFILE, UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../context/actions';
 import { selectProfileMap } from '../../context/selectors';
 import { getAvatarURL } from '../../api/api.js';
 
-import { Card, CardActions, CardHeader, Tooltip } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 
-import './MemberSummaryCard.css';
 import SplitButton from '../split-button/SplitButton';
 
 import { updateMember, deleteMember } from '../../api/member.js';
-import { DELETE_MEMBER_PROFILE, UPDATE_TOAST } from '../../context/actions.js';
 
 import {
   Box,
   Button,
+  Card,
+  CardActions,
   CardContent,
+  CardHeader,
   Container,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Tooltip,
   Typography
 } from '@mui/material';
+
+import './MemberSummaryCard.css';
 
 const PREFIX = 'AdminMemberCard';
 const classes = {
