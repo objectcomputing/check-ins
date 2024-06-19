@@ -22,6 +22,7 @@ import jakarta.inject.Inject;
 import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -221,7 +222,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
         assertEquals(request.getPath(), href);
-        assertEquals("You are not authorized to perform this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
@@ -320,7 +321,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
-        assertEquals("You are not authorized to perform this operation", errors.asText());
+        assertEquals(NOT_AUTHORIZED_MSG, errors.asText());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
@@ -372,7 +373,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
-        assertEquals("You are not authorized to perform this operation", errors.asText());
+        assertEquals(NOT_AUTHORIZED_MSG, errors.asText());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 

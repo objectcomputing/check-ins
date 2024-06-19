@@ -34,7 +34,7 @@ public class SurveyServicesImpl implements SurveyService {
     @Override
     public Survey save(Survey surveyResponse) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         Survey surveyResponseRet = null;
         if(surveyResponse!=null){
             final UUID memberId = surveyResponse.getCreatedBy();
@@ -53,14 +53,14 @@ public class SurveyServicesImpl implements SurveyService {
 
     public Set<Survey> readAll() {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         return new HashSet<>(surveyResponseRepo.findAll());
     }
 
     @Override
     public Survey update(Survey surveyResponse) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         Survey surveyResponseRet = null;
         if(surveyResponse!=null){
             final UUID id = surveyResponse.getId();
@@ -84,14 +84,14 @@ public class SurveyServicesImpl implements SurveyService {
     @Override
     public void delete(@NotNull UUID id) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         surveyResponseRepo.deleteById(id);
     }
 
     @Override
     public Set<Survey> findByFields(String name, UUID createdBy) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
 
         return surveyResponseRepo.findAll().stream()
                 .filter(survey -> (name == null || name.equals(survey.getName())) &&

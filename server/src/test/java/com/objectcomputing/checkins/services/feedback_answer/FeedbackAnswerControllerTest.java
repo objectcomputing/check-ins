@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -82,7 +83,7 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
     }
 
     void assertUnauthorized(HttpClientResponseException exception) {
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
     }
 

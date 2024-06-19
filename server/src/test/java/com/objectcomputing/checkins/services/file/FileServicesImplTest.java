@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -214,7 +215,7 @@ class FileServicesImplTest extends TestContainersSuite {
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.findFiles(null));
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
     }
 
     @Test
@@ -443,7 +444,7 @@ class FileServicesImplTest extends TestContainersSuite {
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.downloadFiles(testUploadDocId));
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
         verify(mockGoogleApiAccess, times(0)).getDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
@@ -573,7 +574,7 @@ class FileServicesImplTest extends TestContainersSuite {
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.deleteFile(uploadDocId));
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(mockGoogleApiAccess, times(0)).getDrive();
@@ -868,7 +869,7 @@ class FileServicesImplTest extends TestContainersSuite {
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.uploadFile(testCheckinId, fileToUpload));
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(0)).getById(any(UUID.class));
         verify(mockGoogleApiAccess, times(0)).getDrive();
