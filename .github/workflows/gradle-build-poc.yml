@@ -132,7 +132,7 @@ jobs:
             --set-secrets "MJ_APIKEY_PRIVATE=MJ_APIKEY_PRIVATE:latest" \
             --set-secrets "WEB_ADDRESS=CLOUD_RUN_ADDRESS:latest" \
             --set-secrets "FROM_ADDRESS=FROM_ADDRESS:latest" \
-            --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
+            --set-secrets "FROM_NAME=FROM_NAME:latest" \
             --set-secrets "MICRONAUT_ENVIRONMENTS=MICRONAUT_ENVIRONMENTS:latest" \
             --platform "managed" \
             --max-instances 2 \
