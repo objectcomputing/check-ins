@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Avatar, Checkbox, Chip, TextField, Typography } from '@mui/material';
-import './ViewFeedbackResponses.css';
+import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography } from '@mui/material';
 import FeedbackResponseCard from './feedback_response_card/FeedbackResponseCard';
 import { getQuestionsAndAnswers } from '../../api/feedbackanswer';
 import { getFeedbackRequestById } from '../../api/feedback';
@@ -12,12 +11,12 @@ import { selectCsrfToken, selectProfile } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Search as SearchIcon } from '@mui/icons-material';
-import { Autocomplete } from '@mui/material';
 import { getAvatarURL } from '../../api/api';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
-import { Button } from '@mui/material';
+
+import './ViewFeedbackResponses.css';
 
 const PREFIX = 'MuiCardContent';
 const classes = {

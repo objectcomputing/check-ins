@@ -19,21 +19,14 @@ import {
 } from '@mui/material';
 
 import { useQueryParameters } from '../../../helpers/query-parameters';
-import { UPDATE_TOAST } from '../../../context/actions';
+import { ADD_REVIEW_PERIOD, UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
 
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
-import {
-  createReviewPeriod,
-  getReviewPeriods
-} from '../../../api/reviewperiods.js';
+import { createReviewPeriod, getReviewPeriods } from '../../../api/reviewperiods.js';
 import { AppContext } from '../../../context/AppContext';
-import {
-  ADD_REVIEW_PERIOD,
-  UPDATE_REVIEW_PERIODS
-} from '../../../context/actions';
 import {
   selectCsrfToken,
   selectCurrentUserId,

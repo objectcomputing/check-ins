@@ -2,7 +2,6 @@ import React, { useContext, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Construction, Groups } from '@mui/icons-material';
-import { Link as StyledLink } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import { AppContext } from '../../context/AppContext';
@@ -20,6 +19,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Link as StyledLink,
   Tooltip
 } from '@mui/material';
 import PropTypes from 'prop-types';

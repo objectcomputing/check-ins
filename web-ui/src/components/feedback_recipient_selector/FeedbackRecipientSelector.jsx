@@ -1,19 +1,20 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { styled } from '@mui/material/styles';
-import './FeedbackRecipientSelector.css';
 import FeedbackRecipientCard from '../feedback_recipient_card/FeedbackRecipientCard';
 import { AppContext } from '../../context/AppContext';
 import {
   selectProfile,
   selectCsrfToken,
+  selectCurrentUser,
   selectNormalizedMembers
 } from '../../context/selectors';
 import { getFeedbackSuggestion } from '../../api/feedback';
-import { selectCurrentUser } from '../../context/selectors';
 import Typography from '@mui/material/Typography';
 import { TextField, Grid, InputAdornment } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import PropTypes from 'prop-types';
+
+import './FeedbackRecipientSelector.css';
 
 const PREFIX = 'FeedbackRecipientSelector';
 const classes = {
