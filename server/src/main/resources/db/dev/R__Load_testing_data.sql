@@ -52,6 +52,12 @@ INSERT INTO member_profile -- Michael Kimberlin
 VALUES
 ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('Michael','${aeskey}'), PGP_SYM_ENCRYPT('Kimberlin','${aeskey}'), PGP_SYM_ENCRYPT('Director of Organizational Development','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('kimberlinm@objectcomputing.com','${aeskey}'), '12312342', '2012-09-29', PGP_SYM_ENCRYPT('Developer of developers and others','${aeskey}'), '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2012-09-29');
 
+INSERT INTO member_profile -- Dave Rodecap
+(id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid, last_seen)
+VALUES
+    ('2b067cbb-45c2-4c3c-a6b2-eea370f9d969', PGP_SYM_ENCRYPT('Dave','${aeskey}'), PGP_SYM_ENCRYPT('Rodecap','${aeskey}'), PGP_SYM_ENCRYPT('Engineer','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('rodecapd@objectcomputing.com','${aeskey}'), '122758121', '2012-09-29', PGP_SYM_ENCRYPT('Does stuff. Sometimes well, sometimes not','${aeskey}'), '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2012-09-29');
+
+
 INSERT INTO member_profile -- Ron Steinkamp
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
@@ -162,6 +168,11 @@ VALUES
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6207b3fd-042d-49aa-9e28-dcc04f537c2d'); -- Michael Kimberlin
 
 INSERT INTO member_roles
+(roleid, memberid)
+VALUES
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2b067cbb-45c2-4c3c-a6b2-eea370f9d969'); -- Dave Rodecap
+
+INSERT INTO member_roles
     (roleid, memberid)
 VALUES
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2559a257-ae84-4076-9ed4-3820c427beeb'); -- Ron Steinkamp
@@ -197,6 +208,11 @@ INSERT INTO member_roles
     (roleid, memberid)
 VALUES
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6207b3fd-042d-49aa-9e28-dcc04f537c2d'); -- Michael Kimberlin
+
+INSERT INTO member_roles
+(roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2b067cbb-45c2-4c3c-a6b2-eea370f9d969'); -- Dave Rodecap
 
 INSERT INTO member_roles
     (roleid, memberid)
@@ -264,6 +280,11 @@ INSERT INTO member_roles
     (roleid, memberid)
 VALUES
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '6207b3fd-042d-49aa-9e28-dcc04f537c2d'); -- Michael Kimberlin
+
+INSERT INTO member_roles
+(roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2b067cbb-45c2-4c3c-a6b2-eea370f9d969'); -- Dave Rodecap
 
 INSERT INTO member_roles
     (roleid, memberid)
