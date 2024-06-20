@@ -18,6 +18,6 @@ public interface KudosServices {
 
     boolean delete(UUID id);
 
-    List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean publiclyVisible);
+    List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean isPublic);
 
 }

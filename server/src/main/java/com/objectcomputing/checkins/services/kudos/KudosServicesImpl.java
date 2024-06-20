@@ -165,7 +165,7 @@ public class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    public List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean Public) {
+    public List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean isPublic) {
 
         if (isPending != null) {
             return findByPending(isPending);
@@ -206,7 +206,7 @@ public class KudosServicesImpl implements KudosServices {
         return kudosList
                 .stream()
                 .map(this::constructKudosResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
@@ -250,7 +250,7 @@ public class KudosServicesImpl implements KudosServices {
         return kudosList
                 .stream()
                 .map(this::constructKudosResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private KudosResponseDTO constructKudosResponseDTO(Kudos kudos) {
@@ -279,7 +279,7 @@ public class KudosServicesImpl implements KudosServices {
                 .stream()
                 .map(recipient -> memberProfileRetrievalServices.getById(recipient.getMemberId()).orElseThrow(() ->
                         new NotFoundException("Member id %s of KudosRecipient %s does not exist")))
-                .collect(Collectors.toList());
+                .toList();
 
         kudosResponseDTO.setRecipientMembers(members);
 

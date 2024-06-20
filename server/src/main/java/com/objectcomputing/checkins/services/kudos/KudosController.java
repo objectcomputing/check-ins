@@ -50,9 +50,9 @@ public class KudosController {
         return kudosServices.getById(id);
     }
 
-    @Get("/{?recipientId,?senderId,?isPending,?Public}")
-    public List<KudosResponseDTO> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean Public) {
-        return kudosServices.findByValues(recipientId, senderId, isPending, Public);
+    @Get("/{?recipientId,?senderId,?isPending,?isPublic}")
+    public List<KudosResponseDTO> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean isPublic) {
+        return kudosServices.findByValues(recipientId, senderId, isPending, isPublic);
     }
 
     @Delete("/{id}")
