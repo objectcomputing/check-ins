@@ -65,6 +65,8 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
         getTeamMemberRepository().deleteAll();
         getTeamRepository().deleteAll();
         getMemberRoleRepository().deleteAll();
+        getRoleDocumentationRepository().deleteAll();
+        getDocumentRepository().deleteAll();
         getRoleRepository().deleteAll();
         getCheckInRepository().deleteAll();
         getFeedbackRequestRepository().deleteAll();
