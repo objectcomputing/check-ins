@@ -35,7 +35,7 @@ public interface DocumentRepository extends CrudRepository<Document, UUID> {
                       , PGP_SYM_DECRYPT(cast(d.url as bytea), '${aes.key}') as url
                       , PGP_SYM_DECRYPT(cast(d.description as bytea), '${aes.key}') as description
                       FROM document d
-                      ORDER BY name, url""",
+                      ORDER BY name""",
             nativeQuery = true
     )
     List<Document> findAllOrderByNameAndUrl();
