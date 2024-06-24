@@ -4,7 +4,13 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -16,7 +22,9 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
@@ -70,9 +78,11 @@ class SkillRecordServicesImplTest extends TestContainersSuite {
 
         String[] headers = { "name", "description", "extraneous", "pending", "category_name" };
         CSVFormat csvFormat = CSVFormat.DEFAULT
-                .withHeader(headers)
-                .withQuote('"')
-                .withSkipHeaderRecord();
+                .builder()
+                .setHeader(headers)
+                .setQuote('"')
+                .setSkipHeaderRecord(true)
+                .build();
 
         CSVParser parser = csvFormat.parse(fileReader);
         List<CSVRecord> records = parser.getRecords();
@@ -88,7 +98,7 @@ class SkillRecordServicesImplTest extends TestContainersSuite {
 
     @Test
     @Order(2)
-    void testNoFileGenerated() throws IOException {
+    void testNoFileGenerated() {
         SkillRecord record1 = new SkillRecord();
         record1.setName("Java");
         record1.setDescription("Various technical skills");
@@ -103,5 +113,4 @@ class SkillRecordServicesImplTest extends TestContainersSuite {
             skillRecordServices.generateFile();
         });
     }
-
 }
