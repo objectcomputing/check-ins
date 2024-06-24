@@ -24,12 +24,7 @@ const initialState = {
         url: '/pdfs/Development_Discussion_Guide_for_PDLs.pdf',
       }
     ],
-    guilds: [],
     teams: [],
-    skills: [],
-    userRoles: [],
-    memberSkills: [],
-    memberProfiles: []
   }
 };
 

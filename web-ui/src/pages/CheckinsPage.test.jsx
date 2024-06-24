@@ -56,11 +56,7 @@ const initialState = {
         url: '/pdfs/Expectations_Worksheet.pdf'
       }
     ],
-    guilds: [],
     teams: [],
-    skills: [],
-    userRoles: [],
-    memberSkills: [],
     index: 0
   }
 };
