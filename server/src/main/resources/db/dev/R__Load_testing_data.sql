@@ -18,6 +18,8 @@ delete from role_permissions;
 delete from permissions;
 delete from role;
 delete from team_member;
+delete from kudos_recipient;
+delete from kudos;
 delete from team;
 delete from feedback_answers;
 delete from feedback_requests;
