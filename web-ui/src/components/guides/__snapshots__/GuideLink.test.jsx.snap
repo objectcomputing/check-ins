@@ -3,7 +3,7 @@
 exports[`renders correctly 1`] = `
 <div>
   <a
-    class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-bshv44-MuiButtonBase-root-MuiListItem-root"
+    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
     href="/pdfs/myFileName.pdf"
     tabindex="0"
     target="_blank"
@@ -19,6 +19,39 @@ exports[`renders correctly 1`] = `
         >
           myFileName
         </span>
+      </div>
+    </li>
+    <span
+      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+    />
+  </a>
+</div>
+`;
+
+exports[`renders descriptions 1`] = `
+<div>
+  <a
+    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+    href="/pdfs/myFileName.pdf"
+    tabindex="0"
+    target="_blank"
+  >
+    <li
+      class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
+    >
+      <div
+        class="MuiListItemText-root MuiListItemText-multiline css-konndc-MuiListItemText-root"
+      >
+        <span
+          class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+        >
+          myFileName
+        </span>
+        <p
+          class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-83ijpv-MuiTypography-root"
+        >
+          My description
+        </p>
       </div>
     </li>
     <span
