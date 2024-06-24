@@ -40,8 +40,8 @@ const initialState = {
       }
     ],
     roles: [
-      {id: 1, role: 'MEMBER'},
-      {id: 2, role: 'PDL'}
+      { id: 1, role: 'MEMBER' },
+      { id: 2, role: 'PDL' }
     ],
     mockuments: [
       {

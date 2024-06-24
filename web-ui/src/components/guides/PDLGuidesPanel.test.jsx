@@ -1,8 +1,8 @@
 import React from 'react';
-import {AppContextProvider} from '../../context/AppContext';
+import { AppContextProvider } from '../../context/AppContext';
 import PDLGuidesPanel from './PDLGuidesPanel';
-import {Router} from 'react-router-dom';
-import {createBrowserHistory} from 'history';
+import { Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 
 const initialState = {
   state: {
@@ -21,10 +21,10 @@ const initialState = {
       {
         id: 'mockument-1',
         name: 'Development Discussion Guide for PDLs',
-        url: '/pdfs/Development_Discussion_Guide_for_PDLs.pdf',
+        url: '/pdfs/Development_Discussion_Guide_for_PDLs.pdf'
       }
     ],
-    teams: [],
+    teams: []
   }
 };
 
@@ -33,8 +33,8 @@ const pdlState = {
     ...initialState.state,
     userProfile: {
       ...initialState.state.userProfile,
-      role: ['MEMBER', 'PDL'],
-    },
+      role: ['MEMBER', 'PDL']
+    }
   }
 };
 
@@ -49,7 +49,7 @@ it('renders correctly', () => {
   );
 });
 
-it("doesn't render for non-pdls", () => {
+it('doesn\'t render for non-pdls', () => {
   const customHistory = createBrowserHistory();
   snapshot(
     <Router history={customHistory}>

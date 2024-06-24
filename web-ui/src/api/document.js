@@ -1,4 +1,4 @@
-import {resolve} from './api.js';
+import { resolve } from './api.js';
 
 const documentUrl = `/services/document`;
 
