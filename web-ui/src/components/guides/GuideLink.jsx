@@ -16,16 +16,14 @@ const propTypes = {
 
 const GuideLink = props => {
     return (
-        <ListItemButton
+        <ListItem
             key={`doc-${props.id}`}
             to={props.url}
             component={Link}
             target="_blank"
         >
-            <ListItem>
-                <ListItemText primary={props.name} secondary={props.description}/>
-            </ListItem>
-        </ListItemButton>
+            <ListItemText primary={props.name} secondary={props.description}/>
+        </ListItem>
     );
 };
 

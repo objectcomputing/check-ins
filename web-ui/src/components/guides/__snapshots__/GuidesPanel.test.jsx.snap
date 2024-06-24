@@ -37,55 +37,39 @@ exports[`renders correctly 1`] = `
       class="MuiList-root MuiList-padding MuiList-dense css-h4y409-MuiList-root"
     >
       <a
-        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-178cqt3-MuiButtonBase-root-MuiListItemButton-root"
+        class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
         href="/pdfs/Expectations_Discussion_Guide_for_Team_Members.pdf"
-        tabindex="0"
         target="_blank"
       >
-        <li
-          class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        <div
+          class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
         >
-          <div
-            class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+          <span
+            class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
           >
-            <span
-              class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
-            >
-              Expectations Discussion Guide for Team Members
-            </span>
-            <p
-              class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-83ijpv-MuiTypography-root"
-            >
-              My description
-            </p>
-          </div>
-        </li>
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-        />
+            Expectations Discussion Guide for Team Members
+          </span>
+          <p
+            class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-83ijpv-MuiTypography-root"
+          >
+            My description
+          </p>
+        </div>
       </a>
       <a
-        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-178cqt3-MuiButtonBase-root-MuiListItemButton-root"
+        class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
         href="/pdfs/Expectations_Worksheet.pdf"
-        tabindex="0"
         target="_blank"
       >
-        <li
-          class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        <div
+          class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
         >
-          <div
-            class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
+          <span
+            class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
           >
-            <span
-              class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
-            >
-              Expectations Worksheet
-            </span>
-          </div>
-        </li>
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-        />
+            Expectations Worksheet
+          </span>
+        </div>
       </a>
     </ul>
   </div>
