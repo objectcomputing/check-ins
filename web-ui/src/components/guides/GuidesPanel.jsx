@@ -41,19 +41,19 @@ export const fetchDocumentsForRole = (roleName, allRoles, csrf, setDocuments, fa
   useEffect(() => {
     async function getDocuments() {
       if (mockuments && mockuments.length > 0) {
-        setDocuments(mockuments);
+        return mockuments;
       } else {
         const memberRoleId = allRoles.find(role => role.role === roleName)?.id;
         const res = await getDocumentsForRoleId(memberRoleId, csrf);
         const responseBody = res.payload?.data && !res.error
           ? res.payload.data
           : undefined;
-        setDocuments(responseBody?.length > 0 ? responseBody : fallback);
+        return responseBody?.length > 0 ? responseBody : fallback;
       }
     }
 
     if (csrf) {
-      getDocuments();
+      getDocuments().then(docs => setDocuments(docs));
     }
   }, [csrf]);
 };
