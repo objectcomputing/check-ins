@@ -59,14 +59,16 @@ export const fetchDocumentsForRole = (roleName, allRoles, csrf, setDocuments, fa
 };
 
 export const generate = (title, documents) => {
-  return <Card>
-    <CardHeader avatar={<PdfIcon />} title={title} />
-    <List dense>
-      {documents.map(doc => (
-        <GuideLink key={doc.id} id={doc.id} name={doc.name} description={doc.description} url={doc.url} />
-      ))}
-    </List>
-  </Card>;
+  return (
+    <Card>
+      <CardHeader avatar={<PdfIcon />} title={title} />
+      <List dense>
+        {documents.map(doc => (
+          <GuideLink key={doc.id} id={doc.id} name={doc.name} description={doc.description} url={doc.url} />
+        ))}
+      </List>
+    </Card>
+  );
 };
 
 const GuidesPanel = () => {
