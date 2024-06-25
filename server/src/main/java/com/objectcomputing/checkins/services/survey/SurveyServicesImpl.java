@@ -36,15 +36,15 @@ public class SurveyServicesImpl implements SurveyService {
         final boolean isAdmin = currentUserServices.isAdmin();
         permissionsValidation.validatePermissions(!isAdmin);
         Survey surveyResponseRet = null;
-        if(surveyResponse!=null){
+        if (surveyResponse != null) {
             final UUID memberId = surveyResponse.getCreatedBy();
             LocalDate surSubDate = surveyResponse.getCreatedOn();
-            if(surveyResponse.getId()!=null){
+            if (surveyResponse.getId() != null) {
                 throw new BadArgException(String.format("Found unexpected id for survey %s", surveyResponse.getId()));
-            } else if(!memberRepo.findById(memberId).isPresent()){
+            } else if (memberRepo.findById(memberId).isEmpty()) {
                 throw new BadArgException(String.format("Member %s doesn't exists", memberId));
-            } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for survey submission date %s",memberId));
+            } else if (surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
+                throw new BadArgException(String.format("Invalid date for survey submission date %s", memberId));
             }
             surveyResponseRet = surveyResponseRepo.save(surveyResponse);
         }
@@ -62,18 +62,18 @@ public class SurveyServicesImpl implements SurveyService {
         final boolean isAdmin = currentUserServices.isAdmin();
         permissionsValidation.validatePermissions(!isAdmin);
         Survey surveyResponseRet = null;
-        if(surveyResponse!=null){
+        if (surveyResponse != null) {
             final UUID id = surveyResponse.getId();
             final UUID memberId = surveyResponse.getCreatedBy();
             LocalDate surSubDate = surveyResponse.getCreatedOn();
-            if(id==null||!surveyResponseRepo.findById(id).isPresent()){
+            if (id == null || surveyResponseRepo.findById(id).isEmpty()) {
                 throw new BadArgException(String.format("Unable to find survey record with id %s", surveyResponse.getId()));
-            }else if(!memberRepo.findById(memberId).isPresent()){
+            } else if (memberRepo.findById(memberId).isEmpty()) {
                 throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-            } else if(memberId==null) {
+            } else if (memberId == null) {
                 throw new BadArgException(String.format("Invalid survey %s", surveyResponse));
-            } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for survey submission date %s",memberId));
+            } else if (surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
+                throw new BadArgException(String.format("Invalid date for survey submission date %s", memberId));
             }
 
             surveyResponseRet = surveyResponseRepo.update(surveyResponse);

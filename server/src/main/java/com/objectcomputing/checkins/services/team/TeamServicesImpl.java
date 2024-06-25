@@ -104,7 +104,7 @@ public class TeamServicesImpl implements TeamServices {
                     //add any new members & updates
                     teamDTO.getTeamMembers().forEach(updatedMember -> {
                         Optional<TeamMember> first = existingTeamMembers.stream().filter(existing -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
-                        if (!first.isPresent()) {
+                        if (first.isEmpty()) {
                             MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                             newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updatedMember, newTeamEntity.getId())), existingMember));
                         } else {

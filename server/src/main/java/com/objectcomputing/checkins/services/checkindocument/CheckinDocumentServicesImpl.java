@@ -51,7 +51,7 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
                 throw new BadArgException(String.format("Invalid CheckinDocument %s", checkinDocument));
             } else if (checkinDocument.getId() != null) {
                 throw new BadArgException(String.format("Found unexpected CheckinDocument id %s, please try updating instead", checkinDocument.getId()));
-            } else if (!checkinRepo.findById(checkinDocument.getCheckinsId()).isPresent()) {
+            } else if (checkinRepo.findById(checkinDocument.getCheckinsId()).isEmpty()) {
                 throw new BadArgException(String.format("CheckIn %s doesn't exist", checkinDocument.getCheckinsId()));
             } else if (checkinDocumentRepo.findByUploadDocId(checkinDocument.getUploadDocId()).isPresent()) {
                 throw new BadArgException(String.format("CheckinDocument with document ID %s already exists", checkinDocument.getUploadDocId()));
@@ -70,10 +70,10 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         if (checkinDocument != null) {
             if (checkinDocument.getCheckinsId() == null || checkinDocument.getUploadDocId() == null) {
                 throw new BadArgException(String.format("Invalid CheckinDocument %s", checkinDocument));
-            } else if (checkinDocument.getId() == null || !checkinDocumentRepo.findById(checkinDocument.getId()).isPresent()) {
+            } else if (checkinDocument.getId() == null || checkinDocumentRepo.findById(checkinDocument.getId()).isEmpty()) {
                 throw new BadArgException(String.format("CheckinDocument id %s not found, please try inserting instead",
                         checkinDocument.getId()));
-            } else if (!checkinRepo.findById(checkinDocument.getCheckinsId()).isPresent()) {
+            } else if (checkinRepo.findById(checkinDocument.getCheckinsId()).isEmpty()) {
                 throw new BadArgException(String.format("CheckIn %s doesn't exist", checkinDocument.getCheckinsId()));
             } else {
                 updatedCheckinDocument = checkinDocumentRepo.update(checkinDocument);
