@@ -50,7 +50,7 @@ export const fetchDocumentsForRole = (roleName, allRoles, csrf, setDocuments, fa
           : undefined;
         setDocuments(responseBody?.length > 0 ? responseBody : fallback);
       }
-    }
+    };
     if (csrf) {
       getDocuments();
     }
