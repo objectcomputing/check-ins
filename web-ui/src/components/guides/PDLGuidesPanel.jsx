@@ -28,9 +28,9 @@ const PDLGuidesPanel = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const isPdl = selectUserProfile(state)?.role?.includes('PDL');
+  const [documents, setDocuments] = useState(fallbackPdfs);
 
   if (isPdl) {
-    const [documents, setDocuments] = useState([]);
     fetchDocumentsForRole('PDL', selectRoles(state), csrf, setDocuments, fallbackPdfs, state.mockuments);
     return generate('Development Lead Guides', documents);
   } else {
