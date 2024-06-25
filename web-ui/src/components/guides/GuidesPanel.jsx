@@ -45,10 +45,10 @@ export const fetchDocumentsForRole = (roleName, allRoles, csrf, setDocuments, fa
       } else {
         const memberRoleId = allRoles.find(role => role.role === roleName)?.id;
         const res = await getDocumentsForRoleId(memberRoleId, csrf);
-        let responseBody = res.payload && res.payload.data && !res.error
+        const responseBody = res.payload?.data && !res.error
           ? res.payload.data
           : undefined;
-        setDocuments(responseBody && responseBody.length > 0 ? responseBody : fallback);
+        setDocuments(responseBody?.length > 0 ? responseBody : fallback);
       }
     }
 
