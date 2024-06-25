@@ -39,21 +39,20 @@ const fallbackPdfs = [
 
 export const fetchDocumentsForRole = (roleName, allRoles, csrf, setDocuments, fallback, mockuments) => {
   useEffect(() => {
-    async function getDocuments() {
+    const getDocuments = async () => {
       if (mockuments && mockuments.length > 0) {
-        return mockuments;
+        setDocuments(mockuments);
       } else {
         const memberRoleId = allRoles.find(role => role.role === roleName)?.id;
         const res = await getDocumentsForRoleId(memberRoleId, csrf);
         const responseBody = res.payload?.data && !res.error
           ? res.payload.data
           : undefined;
-        return responseBody?.length > 0 ? responseBody : fallback;
+        setDocuments(responseBody?.length > 0 ? responseBody : fallback);
       }
     }
-
     if (csrf) {
-      getDocuments().then(docs => setDocuments(docs));
+      getDocuments();
     }
   }, [csrf]);
 };
