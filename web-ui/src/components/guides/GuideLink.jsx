@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { ListItem, ListItemText } from '@mui/material';
 import PropTypes from 'prop-types';
 
 import './GuideLink.css';
