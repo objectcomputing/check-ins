@@ -43,14 +43,14 @@ class MailJetSenderTest extends TestContainersSuite {
         int numRecipients = MailJetSender.MAILJET_RECIPIENT_LIMIT + 10;
 
         for (int i = 1; i <= numRecipients; i++) {
-            recipients.add("recipient" + String.format("%02d", i) + "@objectcomputing.com");
+            recipients.add("recipient%02d@objectcomputing.com".formatted(i));
         }
 
         List<JSONArray> batches = MailJetSender.getEmailBatches(recipients.toArray(String[]::new));
 
         assertEquals(2, batches.size());
 
-        JSONArray firstBatch = batches.get(0);
+        JSONArray firstBatch = batches.getFirst();
         assertEquals(MailJetSender.MAILJET_RECIPIENT_LIMIT, firstBatch.length());
 
         List<String> firstEmailGroup = recipients.subList(0, MailJetSender.MAILJET_RECIPIENT_LIMIT);

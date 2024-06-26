@@ -40,5 +40,4 @@ public class MailJetFactory {
         sender.setEmailFormat(Emailv31.Message.TEXTPART);
         return sender;
     }
-
 }
