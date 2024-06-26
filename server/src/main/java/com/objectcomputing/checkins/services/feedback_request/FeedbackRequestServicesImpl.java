@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -36,7 +37,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
     public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
-    public static final String WEB_UI_URL = "check-ins.web-address";
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
@@ -51,7 +51,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                        ReviewPeriodRepository reviewPeriodRepository,
                                        @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                                       @Property(name = WEB_UI_URL) String webURL
+                                       CheckInsConfiguration checkInsConfiguration
     ) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
@@ -59,7 +59,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         this.reviewPeriodRepository = reviewPeriodRepository;
         this.emailSender = emailSender;
         this.notificationSubject = notificationSubject;
-        this.webURL = webURL;
+        this.webURL = checkInsConfiguration.getWebAddress();
     }
 
     public void setEmailSender(EmailSender emailSender) {

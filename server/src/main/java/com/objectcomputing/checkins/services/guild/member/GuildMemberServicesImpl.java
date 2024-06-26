@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.guild.member;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -10,7 +11,6 @@ import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -28,8 +28,6 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 @Singleton
 public class GuildMemberServicesImpl implements GuildMemberServices {
 
-    public static final String WEB_ADDRESS = "check-ins.web-address";
-
     private final GuildRepository guildRepo;
     private final GuildMemberRepository guildMemberRepo;
     private final MemberProfileRepository memberRepo;
@@ -44,7 +42,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
                                    CurrentUserServices currentUserServices,
                                    GuildMemberHistoryRepository guildMemberHistoryRepository,
                                    @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
-                                   @Property(name = WEB_ADDRESS) String webAddress
+                                   CheckInsConfiguration checkInsConfiguration
     ) {
         this.guildRepo = guildRepo;
         this.guildMemberRepo = guildMemberRepo;
@@ -52,7 +50,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         this.currentUserServices = currentUserServices;
         this.guildMemberHistoryRepository=guildMemberHistoryRepository;
         this.emailSender = emailSender;
-        this.webAddress = webAddress;
+        this.webAddress = checkInsConfiguration.getWebAddress();
     }
 
     public void setEmailSender(EmailSender emailSender) {
