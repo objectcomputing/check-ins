@@ -8,6 +8,7 @@ import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 
 import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
 @Factory
 public class MailJetFactory {
@@ -26,14 +27,14 @@ public class MailJetFactory {
         );
     }
 
-    @Bean
+    @Singleton
     @Named(HTML_FORMAT)
     EmailSender getHtmlSender(MailJetSender sender) {
         sender.setEmailFormat(Emailv31.Message.HTMLPART);
         return sender;
     }
 
-    @Bean
+    @Singleton
     @Named(TEXT_FORMAT)
     EmailSender getTextSender(MailJetSender sender) {
         sender.setEmailFormat(Emailv31.Message.TEXTPART);
