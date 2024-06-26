@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.notifications.email.MailJetConfig;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
@@ -57,7 +57,7 @@ public class GuildServicesImpl implements GuildServices {
                              CurrentUserServices currentUserServices,
                              MemberProfileServices memberProfileServices,
                              GuildMemberServices guildMemberServices,
-                             @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
+                             @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                              Environment environment,
                              @Property(name = WEB_ADDRESS) String webAddress
     ) {

@@ -10,7 +10,7 @@ import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Named;
 
 @Factory
-public class MailJetConfig {
+public class MailJetFactory {
 
     public static final String HTML_FORMAT = "html";
     public static final String TEXT_FORMAT = "text";
