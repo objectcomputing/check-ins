@@ -13,6 +13,7 @@ import java.util.UUID;
 
 @Named("Guild")
 public class GuildCRUDValidator implements CRUDValidator<Guild> {
+
     private final ArgumentsValidation argumentsValidation;
     private final PermissionsValidation permissionsValidation;
     private final CurrentUserServices currentUserServices;
@@ -87,7 +88,6 @@ public class GuildCRUDValidator implements CRUDValidator<Guild> {
     }
 
     private void validatePermissionCommon() {
-        permissionsValidation.validatePermissions(!currentUserServices.isAdmin(),
-                "You are not authorized to perform this operation");
+        permissionsValidation.validatePermissions(!currentUserServices.isAdmin());
     }
 }

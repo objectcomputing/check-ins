@@ -10,14 +10,10 @@ import {
 } from '../../context/selectors';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 
-import { Card, CardHeader } from '@mui/material';
+import { Card, CardHeader, Grid, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 
-import { Grid } from '@mui/material';
-
 import './Anniversaries.css';
-
-import { Typography } from '@mui/material';
 
 const PREFIX = 'MemberSummaryCard';
 const classes = {

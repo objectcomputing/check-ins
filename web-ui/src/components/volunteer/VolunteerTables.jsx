@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { useReducer, useState } from 'react';
-import { Box, Button, Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs } from '@mui/material';
 
 import Organizations from './Organizations';
 import VolunteerEvents from './VolunteerEvents';
 import VolunteerRelationships from './VolunteerRelationships';
+
 import './VolunteerTables.css';
 
 const a11yProps = index => ({

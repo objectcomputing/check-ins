@@ -17,7 +17,6 @@ import queryString from 'query-string';
 import FeedbackTemplateSelector from '../components/feedback_template_selector/FeedbackTemplateSelector';
 import FeedbackRecipientSelector from '../components/feedback_recipient_selector/FeedbackRecipientSelector';
 import SelectDate from '../components/feedback_date_selector/SelectDate';
-import './FeedbackRequestPage.css';
 import { AppContext } from '../context/AppContext';
 import { createFeedbackRequest } from '../api/feedback';
 import {
@@ -27,8 +26,9 @@ import {
   selectCurrentMemberIds
 } from '../context/selectors';
 import DateFnsUtils from '@date-io/date-fns';
-import { getFeedbackTemplate } from '../api/feedbacktemplate';
-import { softDeleteAdHocTemplates } from '../api/feedbacktemplate';
+import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbacktemplate';
+
+import './FeedbackRequestPage.css';
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = 'FeedbackRequestPage';

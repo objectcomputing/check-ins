@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import {
   AddCircle,

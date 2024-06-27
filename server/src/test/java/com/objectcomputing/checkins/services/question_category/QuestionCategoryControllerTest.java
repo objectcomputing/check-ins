@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -126,7 +127,7 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("You do not have permission to access this resource", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
 
     }
 
@@ -193,7 +194,7 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("You do not have permission to access this resource", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
     }
 
     @Test
@@ -254,7 +255,7 @@ class QuestionCategoryControllerTest extends TestContainersSuite implements Ques
                 () -> client.toBlocking().exchange(request, Map.class)
         );
 
-        assertEquals("You do not have permission to access this resource", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 

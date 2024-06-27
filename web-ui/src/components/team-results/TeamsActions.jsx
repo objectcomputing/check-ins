@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 
 import AddTeamModal from './EditTeamModal';
 import { createTeam } from '../../api/team';

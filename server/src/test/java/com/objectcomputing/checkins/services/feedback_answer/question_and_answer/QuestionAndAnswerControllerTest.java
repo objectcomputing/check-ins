@@ -22,6 +22,7 @@ import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuestionAndAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, TemplateQuestionFixture, MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture {
@@ -129,7 +130,7 @@ class QuestionAndAnswerControllerTest extends TestContainersSuite implements Fee
                 .basicAuth(random.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
     }
 
@@ -163,7 +164,7 @@ class QuestionAndAnswerControllerTest extends TestContainersSuite implements Fee
                 .basicAuth(random.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
     }
 
