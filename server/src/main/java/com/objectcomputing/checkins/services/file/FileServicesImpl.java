@@ -69,7 +69,7 @@ public class FileServicesImpl implements FileServices {
             Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
 
-            String rootDirId = googleServiceConfiguration.getDirectory_id();
+            String rootDirId = googleServiceConfiguration.getDirectoryId();
             validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
 
             if (checkInID == null && isAdmin) {
@@ -166,7 +166,7 @@ public class FileServicesImpl implements FileServices {
             Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
 
-            String rootDirId = googleServiceConfiguration.getDirectory_id();
+            String rootDirId = googleServiceConfiguration.getDirectoryId();
             validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
 
             // Check if folder already exists on google drive. If exists, return folderId and name

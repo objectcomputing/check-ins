@@ -1,37 +1,29 @@
 package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.core.type.Argument;
+import io.micronaut.json.JsonMapper;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class GoogleServiceConfigurationTest extends TestContainersSuite {
 
     @Inject
-    private Validator validator;
+    JsonMapper jsonMapper;
 
-    @Test
-    void testInstantiation() {
-        GoogleServiceConfiguration googleServiceConfiguration = new GoogleServiceConfiguration();
-        assertNull(googleServiceConfiguration.getDirectory_id());
-        assertNull(googleServiceConfiguration.getType());
-        assertNull(googleServiceConfiguration.getProject_id());
-        assertNull(googleServiceConfiguration.getPrivate_key_id());
-        assertNull(googleServiceConfiguration.getPrivate_key());
-        assertNull(googleServiceConfiguration.getClient_email());
-        assertNull(googleServiceConfiguration.getClient_id());
-        assertNull(googleServiceConfiguration.getAuth_uri());
-        assertNull(googleServiceConfiguration.getToken_uri());
-        assertNull(googleServiceConfiguration.getAuth_provider_x509_cert_url());
-        assertNull(googleServiceConfiguration.getClient_x509_cert_url());
-        assertNull(googleServiceConfiguration.getOauth_client_id());
-        assertNull(googleServiceConfiguration.getOauth_client_secret());
-    }
+    @Inject
+    private Validator validator;
 
     @Test
     void testConstraintViolation() {
@@ -45,64 +37,92 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
     }
 
     @Test
-    void testPopulate() {
-        GoogleServiceConfiguration googleServiceConfiguration = new GoogleServiceConfiguration();
+    void testConfigurationLoadedCorrectlyFromConfiguration() throws IOException {
+        assertConfig((values, cfg) -> {
+            notNullAndEquals(values.get("directory"), cfg.getDirectoryId());
+            notNullAndEquals(values.get("type"), cfg.getType());
+            notNullAndEquals(values.get("project"), cfg.getProjectId());
+            notNullAndEquals(values.get("keyId"), cfg.getPrivateKeyId());
+            notNullAndEquals(values.get("key"), cfg.getPrivateKey());
+            notNullAndEquals(values.get("clientEmail"), cfg.getClientEmail());
+            notNullAndEquals(values.get("clientId"), cfg.getClientId());
+            notNullAndEquals(values.get("authUri"), cfg.getAuthUri());
+            notNullAndEquals(values.get("tokenUri"), cfg.getTokenUri());
+            notNullAndEquals(values.get("authProvider"), cfg.getAuthProviderX509CertUrl());
+            notNullAndEquals(values.get("certUrl"), cfg.getClientX509CertUrl());
+            notNullAndEquals(values.get("oauthClientId"), cfg.getOauthClientId());
+            notNullAndEquals(values.get("oauthClient"), cfg.getOauthClientSecret());
+        });
+    }
 
-        googleServiceConfiguration.setDirectory_id("some.directory.id");
-        assertEquals("some.directory.id", googleServiceConfiguration.getDirectory_id());
+    @Test
+    void testConfigurationSerializedCorrectlyFromConfiguration() throws IOException {
+        assertConfig((values, cfg) -> {
+            Map<String, String> map = asStringyMap(cfg);
+            notNullAndEquals(values.get("directory"), map.get("directory_id"));
+            notNullAndEquals(values.get("type"), map.get("type"));
+            notNullAndEquals(values.get("project"), map.get("project_id"));
+            notNullAndEquals(values.get("keyId"), map.get("private_key_id"));
+            notNullAndEquals(values.get("key"), map.get("private_key"));
+            notNullAndEquals(values.get("clientEmail"), map.get("client_email"));
+            notNullAndEquals(values.get("clientId"), map.get("client_id"));
+            notNullAndEquals(values.get("authUri"), map.get("auth_uri"));
+            notNullAndEquals(values.get("tokenUri"), map.get("token_uri"));
+            notNullAndEquals(values.get("authProvider"), map.get("auth_provider_x509_cert_url"));
+            notNullAndEquals(values.get("certUrl"), map.get("client_x509_cert_url"));
+            notNullAndEquals(values.get("oauthClientId"), map.get("oauth_client_id"));
+            notNullAndEquals(values.get("oauthClient"), map.get("oauth_client_secret"));
+        });
+    }
 
-        googleServiceConfiguration.setType("some.type");
-        assertEquals("some.type", googleServiceConfiguration.getType());
+    private Map<String, String> asStringyMap(GoogleServiceConfiguration cfg) {
+        try {
+            return jsonMapper.readValue(jsonMapper.writeValueAsString(cfg), Argument.mapOf(String.class, String.class));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        googleServiceConfiguration.setProject_id("some.project.id");
-        assertEquals("some.project.id", googleServiceConfiguration.getProject_id());
+    private void notNullAndEquals(String expected, String actual) {
+        assertNotNull(expected);
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+    }
 
-        googleServiceConfiguration.setPrivate_key_id("some.private.key.id");
-        assertEquals("some.private.key.id", googleServiceConfiguration.getPrivate_key_id());
-
-        googleServiceConfiguration.setPrivate_key("some.private.key");
-        assertEquals("some.private.key", googleServiceConfiguration.getPrivate_key());
-
-        googleServiceConfiguration.setClient_email("some.client.email");
-        assertEquals("some.client.email", googleServiceConfiguration.getClient_email());
-
-        googleServiceConfiguration.setClient_id("some.client.id");
-        assertEquals("some.client.id", googleServiceConfiguration.getClient_id());
-
-        googleServiceConfiguration.setAuth_uri("some.auth.uri");
-        assertEquals("some.auth.uri", googleServiceConfiguration.getAuth_uri());
-
-        googleServiceConfiguration.setToken_uri("some.token.uri");
-        assertEquals("some.token.uri", googleServiceConfiguration.getToken_uri());
-
-        googleServiceConfiguration.setAuth_provider_x509_cert_url("some.auth.provider");
-        assertEquals("some.auth.provider", googleServiceConfiguration.getAuth_provider_x509_cert_url());
-
-        googleServiceConfiguration.setClient_x509_cert_url("some.cert.url");
-        assertEquals("some.cert.url", googleServiceConfiguration.getClient_x509_cert_url());
-
-        googleServiceConfiguration.setOauth_client_id("some.client.id");
-        assertEquals("some.client.id", googleServiceConfiguration.getClient_id());
-
-        googleServiceConfiguration.setOauth_client_secret("some.client.secret");
-        assertEquals("some.client.secret", googleServiceConfiguration.getOauth_client_secret());
-
-        String toString = googleServiceConfiguration.toString();
-        assertTrue(toString.contains("some.directory.id"));
-        assertTrue(toString.contains("some.type"));
-        assertTrue(toString.contains("some.project.id"));
-        assertTrue(toString.contains("some.private.key.id"));
-        assertTrue(toString.contains("some.private.key"));
-        assertTrue(toString.contains("some.client.email"));
-        assertTrue(toString.contains("some.client.id"));
-        assertTrue(toString.contains("some.auth.uri"));
-        assertTrue(toString.contains("some.token.uri"));
-        assertTrue(toString.contains("some.auth.provider"));
-        assertTrue(toString.contains("some.cert.url"));
-        assertTrue(toString.contains("some.client.id"));
-        assertTrue(toString.contains("some.client.secret"));
-
-        Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
-        assertTrue(violations.isEmpty());
+    private void assertConfig(BiConsumer<Map<String, String>, GoogleServiceConfiguration> test) {
+        var values = Map.ofEntries(
+                Map.entry("directory", "some.directory.id"),
+                Map.entry("type", "some.type"),
+                Map.entry("project", "some.project.id"),
+                Map.entry("keyId", "some.private.key.id"),
+                Map.entry("key", "some.private.key"),
+                Map.entry("clientEmail", "some.client.email"),
+                Map.entry("clientId", "some.client.id"),
+                Map.entry("authUri", "some.auth.uri"),
+                Map.entry("tokenUri", "some.token.uri"),
+                Map.entry("authProvider", "some.auth.provider"),
+                Map.entry("certUrl", "some.cert.url"),
+                Map.entry("oauthClientId", "some.oauth.client.id"),
+                Map.entry("oauthClient", "some.oauth.client")
+        );
+        try (var ctx = ApplicationContext.run(Map.ofEntries(
+                Map.entry("datasources.enabled", false),
+                Map.entry("service-account-credentials.directory-id", values.get("directory")),
+                Map.entry("service-account-credentials.type", values.get("type")),
+                Map.entry("service-account-credentials.project-id", values.get("project")),
+                Map.entry("service-account-credentials.private-key_id", values.get("keyId")),
+                Map.entry("service-account-credentials.private-key", values.get("key")),
+                Map.entry("service-account-credentials.client-email", values.get("clientEmail")),
+                Map.entry("service-account-credentials.client-id", values.get("clientId")),
+                Map.entry("service-account-credentials.auth-uri", values.get("authUri")),
+                Map.entry("service-account-credentials.token-uri", values.get("tokenUri")),
+                Map.entry("service-account-credentials.auth-provider-x509-cert-url", values.get("authProvider")),
+                Map.entry("service-account-credentials.client-x509-cert-url", values.get("certUrl")),
+                Map.entry("service-account-credentials.oauth-client-id", values.get("oauthClientId")),
+                Map.entry("service-account-credentials.oauth-client-secret", values.get("oauthClient"))
+        ))) {
+            var cfg = ctx.getBean(GoogleServiceConfiguration.class);
+            test.accept(values, cfg);
+        }
     }
 }
