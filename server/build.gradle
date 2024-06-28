@@ -37,8 +37,13 @@ graalvmNative {
             // See https://github.com/micronaut-projects/micronaut-core/issues/10771
             buildArgs.add("--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons")
 
-            // This lets Graal see the migrations for local dev TODO: We need to be able to configure this to not add db/dev in prod
-            buildArgs.add("-Dflyway.locations=db/common,db/dev")
+            // TODO: We need to set the CI environment variable in the Github Actions workflow
+            def isCI = System.getenv("CI") != null
+            def migrationLocations = isCI ? "db/common" : "db/common,db/dev"
+            logger.lifecycle("ℹ️ Building with the migrations from: $migrationLocations")
+
+            // This lets Graal see the migrations for local dev
+            buildArgs.add("-Dflyway.locations=$migrationLocations")
         }
     }
 }
