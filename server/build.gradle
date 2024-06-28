@@ -28,6 +28,21 @@ micronaut {
     }
 }
 
+graalvmNative {
+    toolchainDetection = false
+    binaries {
+        all {
+            imageName.set('check-ins')
+
+            // See https://github.com/micronaut-projects/micronaut-core/issues/10771
+            buildArgs.add("--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons")
+
+            // This lets Graal see the migrations for local dev TODO: We need to be able to configure this to not add db/dev in prod
+            buildArgs.add("-Dflyway.locations=db/common,db/dev")
+        }
+    }
+}
+
 configurations {
     yarnBuildElements {
         canBeResolved = true
