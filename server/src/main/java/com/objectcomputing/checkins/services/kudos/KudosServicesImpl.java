@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class KudosServicesImpl implements KudosServices {
@@ -99,7 +100,7 @@ public class KudosServicesImpl implements KudosServices {
     public Kudos approve(Kudos kudos) {
 
         if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         UUID kudosId = kudos.getId();
@@ -127,7 +128,7 @@ public class KudosServicesImpl implements KudosServices {
         if (kudos.getDateApproved() == null) {
             // If not yet approved, only admins and the sender can access the kudos
             if (!currentUserServices.isAdmin() && !isSender) {
-                throw new PermissionException("You are not authorized to perform this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
         } else {
             // If approved, admins, the sender, and the recipient can access the kudos
@@ -138,7 +139,7 @@ public class KudosServicesImpl implements KudosServices {
                     .anyMatch(recipient -> recipient.getMemberId().equals(currentUserId));
 
             if (!currentUserServices.isAdmin() && !isSender && !isRecipient) {
-                throw new PermissionException("You are not authorized to perform this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
         }
 

@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static io.micronaut.http.HttpStatus.NO_CONTENT;
 import static io.micronaut.http.HttpStatus.OK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -263,7 +264,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
             client.toBlocking().exchange(request, KudosResponseDTO.class);
         });
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
     }
 
     @Test
@@ -293,7 +294,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
             client.toBlocking().exchange(request, KudosResponseDTO.class);
         });
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
     }
 
     @Test
