@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -215,7 +216,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("You are not authorized to perform this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
@@ -477,7 +478,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("You are not authorized to perform this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 

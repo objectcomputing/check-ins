@@ -25,7 +25,7 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
     }
 
     @Override
-    public File generateFile(MemberProfileReportQueryDTO queryDTO) {
+    public File generateFile(MemberProfileReportQueryDTO queryDTO) throws IOException {
         List<MemberProfileRecord> memberRecords = new ArrayList<>();
         if (queryDTO == null || queryDTO.getMemberIds() == null) {
             List<MemberProfileRecord> allRecords = memberProfileReportRepository.findAll();
@@ -36,33 +36,28 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
             memberRecords.addAll(filteredRecords);
         }
         return createCsv(memberRecords);
-
     }
 
-    private File createCsv(List<MemberProfileRecord> memberRecords) {
-
+    private File createCsv(List<MemberProfileRecord> memberRecords) throws IOException {
         File csvFile = memberProfileFileProvider.provideFile();
         CSVFormat csvFormat = getCsvFormat();
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csvFile, StandardCharsets.UTF_8), csvFormat)) {
-            for (MemberProfileRecord record : memberRecords) {
+            for (MemberProfileRecord memberProfileRecord : memberRecords) {
                 printer.printRecord(
-                        record.getFirstName(),
-                        record.getLastName(),
-                        record.getTitle(),
-                        record.getLocation(),
-                        record.getWorkEmail(),
-                        record.getStartDate(),
-                        record.getTenure(),
-                        record.getPdlName(),
-                        record.getPdlEmail(),
-                        record.getSupervisorName(),
-                        record.getSupervisorEmail()
+                        memberProfileRecord.getFirstName(),
+                        memberProfileRecord.getLastName(),
+                        memberProfileRecord.getTitle(),
+                        memberProfileRecord.getLocation(),
+                        memberProfileRecord.getWorkEmail(),
+                        memberProfileRecord.getStartDate(),
+                        memberProfileRecord.getTenure(),
+                        memberProfileRecord.getPdlName(),
+                        memberProfileRecord.getPdlEmail(),
+                        memberProfileRecord.getSupervisorName(),
+                        memberProfileRecord.getSupervisorEmail()
                 );
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-
         return csvFile;
     }
 
@@ -70,7 +65,9 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
         String[] headers = {"First Name", "Last Name", "Title", "Location", "Work Email", "Start Date", "Tenure",
                 "PDL Name", "PDL Email", "Supervisor Name", "Supervisor Email"};
         return CSVFormat.DEFAULT
-                .withHeader(headers)
-                .withQuote('"');
+                .builder()
+                .setHeader(headers)
+                .setQuote('"')
+                .build();
     }
 }

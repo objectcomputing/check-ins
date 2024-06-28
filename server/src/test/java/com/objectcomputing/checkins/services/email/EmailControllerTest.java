@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -166,7 +167,7 @@ class EmailControllerTest extends TestContainersSuite implements MemberProfileFi
                 client.toBlocking().exchange(request, Argument.listOf(Email.class)));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("You are not authorized to do this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
     }
 
 

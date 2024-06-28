@@ -8,9 +8,8 @@ import React, {
 import TemplateCard from '../template-card/TemplateCard';
 import TemplatePreviewModal from '../template-preview-modal/TemplatePreviewModal';
 import PropTypes from 'prop-types';
-import { InputAdornment, TextField } from '@mui/material';
+import { InputAdornment, TextField, Tooltip } from '@mui/material';
 import Button from '@mui/material/Button';
-import { Tooltip } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import {
   createFeedbackTemplateWithQuestion,
@@ -18,9 +17,10 @@ import {
 } from '../../api/feedbacktemplate';
 import { AppContext } from '../../context/AppContext';
 import { selectCsrfToken, selectCurrentUser } from '../../context/selectors';
-import './FeedbackTemplateSelector.css';
 import { Search } from '@mui/icons-material';
 import { UPDATE_TOAST } from '../../context/actions';
+
+import './FeedbackTemplateSelector.css';
 
 const propTypes = {
   query: PropTypes.string,

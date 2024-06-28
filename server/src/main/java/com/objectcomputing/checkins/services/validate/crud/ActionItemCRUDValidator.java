@@ -16,6 +16,8 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+
 @Named("ActionItem")
 public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
 
@@ -25,7 +27,6 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     private final PermissionsValidation permissionsValidation;
     private final ActionItemRepository actionItemRepo;
     private final CurrentUserServices currentUserServices;
-
 
     @Inject
     public ActionItemCRUDValidator(CheckInServices checkInServices, MemberProfileServices memberServices,
@@ -105,14 +106,13 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
             CheckIn checkinRecord = checkInServices.read(checkinId);
 
             boolean isCompleted = checkinRecord != null && checkinRecord.isCompleted();
-            permissionsValidation.validatePermissions(isCompleted, "User is unauthorized to do this operation");
+            permissionsValidation.validatePermissions(isCompleted);
 
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
             boolean currentUserIsCheckinParticipant = currentUserId.equals(pdlId) || currentUserId.equals(teamMemberId);
-            permissionsValidation.validatePermissions(!currentUserIsCheckinParticipant,
-                    "User is unauthorized to do this operation");
+            permissionsValidation.validatePermissions(!currentUserIsCheckinParticipant);
         }
     }
 
@@ -127,8 +127,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
             final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
             boolean currentUserIsCheckinParticipant = currentUserId.equals(pdlId) || currentUserId.equals(createById);
-            permissionsValidation.validatePermissions(!currentUserIsCheckinParticipant,
-                    "User is unauthorized to do this operation");
+            permissionsValidation.validatePermissions(!currentUserIsCheckinParticipant);
         }
     }
 
@@ -143,13 +142,13 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
                 CheckIn checkinRecord = checkInServices.read(checkinId);
 
                 boolean isCompleted = checkinRecord != null && checkinRecord.isCompleted();
-                permissionsValidation.validatePermissions(isCompleted, "User is unauthorized to do this operation");
+                permissionsValidation.validatePermissions(isCompleted);
 
                 final UUID createdById = actionItem.getCreatedbyid();
                 final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
 
                 boolean currentUserIsCheckinParticipant = currentUserId.equals(pdlId) || currentUserId.equals(createdById);
-                permissionsValidation.validatePermissions(!currentUserIsCheckinParticipant, "User is unauthorized to do this operation");
+                permissionsValidation.validatePermissions(!currentUserIsCheckinParticipant);
             }
         }
     }
@@ -158,7 +157,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     public void validatePermissionsFindByFields(UUID checkinId, UUID createdById) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if(!checkInServices.doesUserHaveViewAccess(currentUserId, checkinId, createdById)){
-            throw new PermissionException("User is unauthorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
     }
 
@@ -172,13 +171,13 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
             CheckIn checkinRecord = checkInServices.read(checkinId);
             boolean isCompleted = checkinRecord != null && checkinRecord.isCompleted();
 
-            permissionsValidation.validatePermissions(isCompleted, "User is unauthorized to do this operation");
+            permissionsValidation.validatePermissions(isCompleted);
 
             final UUID createdById = actionItem.getCreatedbyid();
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             boolean currentUserIsCheckinParticipant = currentUserId.equals(pdlId) || currentUserId.equals(createdById);
 
-            permissionsValidation.validatePermissions(!currentUserIsCheckinParticipant, "User is unauthorized to do this operation");
+            permissionsValidation.validatePermissions(!currentUserIsCheckinParticipant);
         }
     }
 }

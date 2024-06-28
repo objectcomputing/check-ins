@@ -1,4 +1,3 @@
-import qs from 'qs';
 import { resolve } from './api.js';
 import { getFeedbackTemplateWithQuestions } from './feedbacktemplate.js';
 

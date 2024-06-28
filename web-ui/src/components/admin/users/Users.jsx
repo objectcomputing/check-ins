@@ -10,7 +10,6 @@ import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
 import {
   createMember,
-  getMember,
   reportAllMembersCsv
 } from '../../../api/member';
 import { AppContext } from '../../../context/AppContext';

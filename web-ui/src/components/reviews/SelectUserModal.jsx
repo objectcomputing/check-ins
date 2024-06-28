@@ -1,9 +1,8 @@
 import React, { useContext, useState, useCallback } from 'react';
 import { AppContext } from '../../context/AppContext';
 import { selectOrderedMemberFirstName } from '../../context/selectors';
-import { Modal, TextField, Box } from '@mui/material';
+import { Box, Button, Modal, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import { Button } from '@mui/material';
 import { UPDATE_TOAST } from '../../context/actions';
 
 const modalStyles = {

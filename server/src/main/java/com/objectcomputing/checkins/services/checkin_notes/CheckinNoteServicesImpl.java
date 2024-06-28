@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
@@ -57,13 +58,13 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean allowedToView = checkinServices.accessGranted(checkinId, currentUserId);
         if (!allowedToView) {
-            throw new PermissionException("You do not have permission to access this resource");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         boolean canUpdateAllCheckins = checkinServices.canUpdateAllCheckins(currentUserId);
         boolean isCompleted = checkinRecord != null && checkinRecord.isCompleted();
         if (!canUpdateAllCheckins && isCompleted) {
-            validate(true, "User is unauthorized to do this operation");
+            validate(true, NOT_AUTHORIZED_MSG);
         }
         LOG.info("Saving new checkinNote");
         return checkinNoteRepository.save(checkinNote);
@@ -82,7 +83,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
         boolean allowedToView = checkinServices.accessGranted(checkinRecord.getId(), currentUserId);
         if (!allowedToView) {
-            throw new PermissionException("User is unauthorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         LOG.info("Found checkin note with id {}", id);
         return checkInNoteResult;
@@ -107,7 +108,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         boolean allowedToView = checkinServices.accessGranted(checkinRecordId, currentUserId);
         if (!allowedToView) {
             LOG.debug("Access was not granted.");
-            throw new PermissionException("User is unauthorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         boolean canUpdateAllCheckins = checkinServices.canUpdateAllCheckins(currentUserId);
@@ -115,7 +116,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         if (!canUpdateAllCheckins && isCompleted) {
             LOG.debug("User isn't admin and checkin is completed.");
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            validate(!currentUserId.equals(pdlId), "User is unauthorized to do this operation");
+            validate(!currentUserId.equals(pdlId), NOT_AUTHORIZED_MSG);
         }
 
         LOG.info("Updating checkinNote {}", checkinNote.getId());
@@ -126,7 +127,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     public Set<CheckinNote> findByFields(@Nullable UUID checkinId, @Nullable UUID createById) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if(!checkinServices.doesUserHaveViewAccess(currentUserId, checkinId, createById)){
-            throw new PermissionException("User is unauthorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         LOG.info("Finding AgendaItem by checkinId: {}, and createById: {}", checkinId, createById);
         return checkinNoteRepository.search(nullSafeUUIDToString(checkinId), nullSafeUUIDToString(createById));

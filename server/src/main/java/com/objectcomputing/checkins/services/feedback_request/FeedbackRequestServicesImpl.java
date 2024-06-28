@@ -18,8 +18,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
@@ -82,7 +90,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     public FeedbackRequest save(FeedbackRequest feedbackRequest) {
         validateMembers(feedbackRequest);
         if (!createIsPermitted(feedbackRequest.getRequesteeId())) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (feedbackRequest.getId() != null) {
@@ -147,13 +155,13 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         // If a status update is made to anything other than submitted by the requestee, throw an error.
         if (!feedbackRequest.getStatus().equals("submitted") && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())) {
             if (currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
-                throw new PermissionException("You are not authorized to do this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
         }
 
         if (reassignAttempted) {
             if (!reassignIsPermitted(originalFeedback)) {
-                throw new PermissionException("You are not authorized to do this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
             feedbackRequest.setStatus("sent");
         }
@@ -163,15 +171,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         if (dueDateUpdateAttempted && !updateDueDateIsPermitted(originalFeedback)) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (dueDateUpdateAttempted && !updateDueDateIsPermitted(originalFeedback)) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (submitDateUpdateAttempted && !updateSubmitDateIsPermitted(originalFeedback)) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (feedbackRequest.getDueDate() != null && originalFeedback.getSendDate().isAfter(feedbackRequest.getDueDate())) {
@@ -216,7 +224,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         if (!createIsPermitted(feedbackReq.get().getRequesteeId())) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         feedbackReqRepository.deleteById(id);
@@ -232,7 +240,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
         final UUID recipientId = feedbackReq.get().getRecipientId();
         if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return feedbackReq.get();
@@ -242,7 +250,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, List<UUID> requesteeIds) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if (currentUserId == null) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();

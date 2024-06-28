@@ -9,8 +9,7 @@ import { combineSkill } from '../../api/skill';
 import { getMemberSkills } from '../../api/memberskill';
 
 import Autocomplete from '@mui/material/Autocomplete';
-import { Checkbox, Modal, TextField } from '@mui/material';
-import { Button } from '@mui/material';
+import { Button, Checkbox, Modal, TextField } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 

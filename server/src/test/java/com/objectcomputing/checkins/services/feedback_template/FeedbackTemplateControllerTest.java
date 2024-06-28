@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FeedbackTemplateControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, TemplateQuestionFixture, FeedbackTemplateFixture {
@@ -218,7 +219,7 @@ class FeedbackTemplateControllerTest extends TestContainersSuite implements Memb
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
     }
 
@@ -615,7 +616,7 @@ class FeedbackTemplateControllerTest extends TestContainersSuite implements Memb
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
     }
 
     @Test
@@ -677,6 +678,6 @@ class FeedbackTemplateControllerTest extends TestContainersSuite implements Memb
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
     }
 }

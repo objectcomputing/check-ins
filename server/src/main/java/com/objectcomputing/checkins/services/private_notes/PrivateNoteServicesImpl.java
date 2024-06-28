@@ -16,6 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
@@ -57,12 +58,12 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
             boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : false;
             boolean allowedToView = checkinServices.accessGranted(checkinRecord.getId(), currentUserId);
             if (!allowedToView || isCompleted ) {
-                throw new PermissionException("User is unauthorized to do this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
 
             boolean currentUserIsCheckinSubject = currentUserId.equals(checkinRecord.getTeamMemberId());
             if(currentUserIsCheckinSubject) {
-                throw new PermissionException("User is unauthorized to do this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
 
         }
@@ -87,11 +88,11 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
             }
 
             if (!checkinServices.accessGranted(checkinRecord.getId(), currentUserId)) {
-                throw new PermissionException("User is unauthorized to do this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
 
             if(currentUserId.equals(checkinRecord.getTeamMemberId())) {
-                throw new PermissionException("User is unauthorized to do this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
         }
 
@@ -119,12 +120,12 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
             boolean allowedToView = checkinServices.accessGranted(checkinRecord.getId(), currentUserId);
 
             if (!allowedToView || isCompleted ) {
-                throw new PermissionException("User is unauthorized to do this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
 
             boolean currentUserIsCheckinSubject = currentUserId.equals(checkinRecord.getTeamMemberId());
             if(currentUserIsCheckinSubject) {
-                throw new PermissionException("User is unauthorized to do this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
         }
 
@@ -135,7 +136,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     public Set<PrivateNote> findByFields(@Nullable UUID checkinId, @Nullable UUID createById) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if(!checkinServices.doesUserHaveViewAccess(currentUserId, checkinId, createById)){
-            throw new PermissionException("User is unauthorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         return privateNoteRepository.search(nullSafeUUIDToString(checkinId), nullSafeUUIDToString(createById));
     }

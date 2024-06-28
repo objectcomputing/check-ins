@@ -11,15 +11,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
+    private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
+
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
     private final EmployeeHoursRepository employeehourRepo;
-    private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
 
 
 
@@ -39,7 +46,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
         List<EmployeeHours> employeeHoursList = new ArrayList<>();
         Set<EmployeeHours> employeeHours = new HashSet<>();
         EmployeeHoursResponseDTO responseDTO = new EmployeeHoursResponseDTO();
-        validate(!isAdmin, "You are not authorized to perform this operation");
+        validate(!isAdmin, NOT_AUTHORIZED_MSG);
         responseDTO.setRecordCountDeleted(employeehourRepo.count());
         employeehourRepo.deleteAll();
         try {
@@ -72,10 +79,10 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
         if(employeeId !=null) {
             validate((!isAdmin && currentUser!=null&& !currentUser.getEmployeeId().equals(employeeId)),
-                       "You are not authorized to perform this operation");
+                       NOT_AUTHORIZED_MSG);
             employeeHours.retainAll(employeehourRepo.findByEmployeeId(employeeId));
         } else {
-            validate(!isAdmin, "You are not authorized to perform this operation");
+            validate(!isAdmin, NOT_AUTHORIZED_MSG);
         }
 
 

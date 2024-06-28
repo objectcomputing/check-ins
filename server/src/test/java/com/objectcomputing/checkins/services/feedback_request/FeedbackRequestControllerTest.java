@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -111,7 +112,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     private void assertUnauthorized(HttpClientResponseException responseException) {
-        assertEquals("You are not authorized to do this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 

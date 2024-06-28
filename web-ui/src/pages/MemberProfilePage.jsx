@@ -1,12 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import {
   selectCurrentUserId,
   selectIsAdmin,
+  selectOrderedMemberFirstName,
+  selectOrderedPdls,
   selectProfile,
-  selectTerminatedMembers,
-  selectSupervisorHierarchyIds
+  selectSupervisorHierarchyIds,
+  selectTerminatedMembers
 } from '../context/selectors';
 import { AppContext } from '../context/AppContext';
 import { getSelectedMemberSkills } from '../api/memberskill';
@@ -17,12 +19,8 @@ import ProfilePage from './ProfilePage';
 import CertificationBadges from '../components/certifications/CertificationBadges';
 import VolunteerBadges from '../components/volunteer/VolunteerBadges';
 import { levelList } from '../context/util';
-import {
-  selectOrderedPdls,
-  selectOrderedMemberFirstName
-} from '../context/selectors';
-
-import './MemberProfilePage.css';
+import StarIcon from '@mui/icons-material/Star';
+import KudosDialog from '../components/kudos_dialog/KudosDialog';
 
 import {
   Avatar,
@@ -36,9 +34,8 @@ import {
   Tooltip,
   Typography
 } from '@mui/material';
-import StarIcon from '@mui/icons-material/Star';
-import KudosDialog from '../components/kudos_dialog/KudosDialog';
-import { useHistory } from 'react-router-dom';
+
+import './MemberProfilePage.css';
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
@@ -107,6 +104,7 @@ const MemberProfilePage = () => {
         setGuilds(memberGuilds);
       }
     }
+
     if (csrf) {
       getTeamsAndGuilds();
     }
@@ -131,6 +129,7 @@ const MemberProfilePage = () => {
       memberSkills.sort((a, b) => a.name.localeCompare(b.name));
       setSelectedMemberSkills(memberSkills);
     }
+
     if (csrf) {
       getMemberSkills();
     }
@@ -151,7 +150,7 @@ const MemberProfilePage = () => {
               </div>
             )}
             {selectedMember && (
-              <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <Card className="member-profile-card">
                   <CardHeader
                     title={
@@ -185,7 +184,7 @@ const MemberProfilePage = () => {
                         <h4>Bio: {selectedMember.bioText || ''}</h4>
                         <h4>
                           {(supervisorInfo &&
-                            'Supervisor: ' +
+                              'Supervisor: ' +
                               supervisorInfo.firstName +
                               ' ' +
                               supervisorInfo.lastName) ||
@@ -193,7 +192,7 @@ const MemberProfilePage = () => {
                         </h4>
                         <h4>
                           {(pdlInfo &&
-                            'PDL: ' +
+                              'PDL: ' +
                               pdlInfo.firstName +
                               ' ' +
                               pdlInfo.lastName) ||
@@ -227,7 +226,7 @@ const MemberProfilePage = () => {
                 />
                 <Button
                   variant="outlined"
-                  startIcon={<StarIcon/>}
+                  startIcon={<StarIcon />}
                   onClick={() => setKudosDialogOpen(true)}
                 >
                   Give Kudos

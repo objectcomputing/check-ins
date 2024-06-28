@@ -15,24 +15,30 @@ import java.util.List;
 
 public class EmployeeHoursCSVHelper {
 
-    public static List<EmployeeHours> employeeHrsCsv(InputStream inputStream) {
-        try {
-            List<EmployeeHours> employeeHoursList = new ArrayList<>();
+    private EmployeeHoursCSVHelper() {
+    }
 
-            InputStreamReader input = new InputStreamReader(new BOMInputStream(inputStream,false));
-            CSVParser csvParser = CSVFormat.RFC4180.withFirstRecordAsHeader().withIgnoreSurroundingSpaces().withNullString("").parse(input);
+    public static List<EmployeeHours> employeeHrsCsv(InputStream inputStream) throws IOException {
+        try (BOMInputStream bomInputStream = BOMInputStream.builder().setInputStream(inputStream).setInclude(false).get();
+             InputStreamReader input = new InputStreamReader(bomInputStream)) {
+            List<EmployeeHours> employeeHoursList = new ArrayList<>();
+            CSVParser csvParser = CSVFormat.RFC4180
+                    .builder()
+                    .setHeader().setSkipHeaderRecord(true)
+                    .setIgnoreSurroundingSpaces(true)
+                    .setNullString("")
+                    .build()
+                    .parse(input);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
             for (CSVRecord csvRecord : csvParser) {
                 EmployeeHours employeeHours = new EmployeeHours(csvRecord.get("employeeId"),
                         Float.parseFloat(csvRecord.get("contributionHours")),
                         Float.parseFloat(csvRecord.get("billableHours")),
-                         Float.parseFloat(csvRecord.get("ptoHours")), LocalDate.now(),Float.parseFloat(csvRecord.get("targetHours")),
+                        Float.parseFloat(csvRecord.get("ptoHours")), LocalDate.now(), Float.parseFloat(csvRecord.get("targetHours")),
                         LocalDate.parse(csvRecord.get("asOfDate"), formatter));
                 employeeHoursList.add(employeeHours);
             }
             return employeeHoursList;
-        } catch (IOException e) {
-            throw new RuntimeException("unable to read csv file:"+e.getMessage());
         }
     }
 }

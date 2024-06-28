@@ -34,17 +34,17 @@ public class SurveyServicesImpl implements SurveyService {
     @Override
     public Survey save(Survey surveyResponse) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         Survey surveyResponseRet = null;
-        if(surveyResponse!=null){
+        if (surveyResponse != null) {
             final UUID memberId = surveyResponse.getCreatedBy();
             LocalDate surSubDate = surveyResponse.getCreatedOn();
-            if(surveyResponse.getId()!=null){
+            if (surveyResponse.getId() != null) {
                 throw new BadArgException(String.format("Found unexpected id for survey %s", surveyResponse.getId()));
-            } else if(!memberRepo.findById(memberId).isPresent()){
+            } else if (memberRepo.findById(memberId).isEmpty()) {
                 throw new BadArgException(String.format("Member %s doesn't exists", memberId));
-            } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for survey submission date %s",memberId));
+            } else if (surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
+                throw new BadArgException(String.format("Invalid date for survey submission date %s", memberId));
             }
             surveyResponseRet = surveyResponseRepo.save(surveyResponse);
         }
@@ -53,27 +53,27 @@ public class SurveyServicesImpl implements SurveyService {
 
     public Set<Survey> readAll() {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         return new HashSet<>(surveyResponseRepo.findAll());
     }
 
     @Override
     public Survey update(Survey surveyResponse) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         Survey surveyResponseRet = null;
-        if(surveyResponse!=null){
+        if (surveyResponse != null) {
             final UUID id = surveyResponse.getId();
             final UUID memberId = surveyResponse.getCreatedBy();
             LocalDate surSubDate = surveyResponse.getCreatedOn();
-            if(id==null||!surveyResponseRepo.findById(id).isPresent()){
+            if (id == null || surveyResponseRepo.findById(id).isEmpty()) {
                 throw new BadArgException(String.format("Unable to find survey record with id %s", surveyResponse.getId()));
-            }else if(!memberRepo.findById(memberId).isPresent()){
+            } else if (memberRepo.findById(memberId).isEmpty()) {
                 throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-            } else if(memberId==null) {
+            } else if (memberId == null) {
                 throw new BadArgException(String.format("Invalid survey %s", surveyResponse));
-            } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for survey submission date %s",memberId));
+            } else if (surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
+                throw new BadArgException(String.format("Invalid date for survey submission date %s", memberId));
             }
 
             surveyResponseRet = surveyResponseRepo.update(surveyResponse);
@@ -84,14 +84,14 @@ public class SurveyServicesImpl implements SurveyService {
     @Override
     public void delete(@NotNull UUID id) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         surveyResponseRepo.deleteById(id);
     }
 
     @Override
     public Set<Survey> findByFields(String name, UUID createdBy) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
 
         return surveyResponseRepo.findAll().stream()
                 .filter(survey -> (name == null || name.equals(survey.getName())) &&
