@@ -88,7 +88,7 @@ dependencies {
     implementation "com.google.apis:google-api-services-gmail:v1-rev20240422-2.0.0"
     implementation "com.google.apis:google-api-services-admin-directory:directory_v1-rev20240509-2.0.0"
 
-    implementation 'com.google.cloud.sql:postgres-socket-factory:1.18.1'
+    implementation 'com.google.cloud.sql:postgres-socket-factory:1.19.0'
 
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micrometer:context-propagation")
