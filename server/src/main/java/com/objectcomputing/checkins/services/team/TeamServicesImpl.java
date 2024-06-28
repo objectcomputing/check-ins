@@ -102,7 +102,7 @@ public class TeamServicesImpl implements TeamServices {
 
                     Set<TeamMember> existingTeamMembers = teamMemberServices.findByFields(teamDTO.getId(), null, null);
                     //add any new members & updates
-                    teamDTO.getTeamMembers().stream().forEach(updatedMember -> {
+                    teamDTO.getTeamMembers().forEach(updatedMember -> {
                         Optional<TeamMember> first = existingTeamMembers.stream().filter(existing -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         if (first.isEmpty()) {
                             MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
@@ -114,7 +114,7 @@ public class TeamServicesImpl implements TeamServices {
                     });
 
                     //delete any removed members
-                    existingTeamMembers.stream().forEach(existingMember -> {
+                    existingTeamMembers.forEach(existingMember -> {
                         if (!teamDTO.getTeamMembers().stream().filter(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
                             teamMemberServices.delete(existingMember.getId());
                         }
