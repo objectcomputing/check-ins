@@ -174,7 +174,7 @@ public class GuildServicesImpl implements GuildServices {
                     Set<GuildMember> existingGuildMembers = guildMemberServices.findByFields(guildDTO.getId(), null, null);
                   
                     //add new members to the guild
-                    guildDTO.getGuildMembers().stream().forEach(updatedMember -> {
+                    guildDTO.getGuildMembers().forEach(updatedMember -> {
                         Optional<GuildMember> first = existingGuildMembers.stream().filter(existing -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                         if(first.isEmpty()) {
@@ -186,7 +186,7 @@ public class GuildServicesImpl implements GuildServices {
                     });
 
                     //delete any removed members from guild
-                    existingGuildMembers.stream().forEach(existingMember -> {
+                    existingGuildMembers.forEach(existingMember -> {
                         if(!guildDTO.getGuildMembers().stream().filter(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
                             guildMemberServices.delete(existingMember.getId());
                             removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()));
