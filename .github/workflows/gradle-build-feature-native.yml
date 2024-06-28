@@ -1,4 +1,4 @@
-name: Gradle Build - Feature / Bug
+name: Gradle Build Native Image - Feature / Bug
 on:
   push:
     branches:
