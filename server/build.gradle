@@ -37,12 +37,13 @@ graalvmNative {
             // See https://github.com/micronaut-projects/micronaut-core/issues/10771
             buildArgs.add("--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons")
 
-            // TODO: We need to set the CI environment variable in the Github Actions workflow
+            // When we are building on CI, we do not want to include the dev migrations.
             def isCI = System.getenv("CI") != null
             def migrationLocations = isCI ? "db/common" : "db/common,db/dev"
             logger.lifecycle("ℹ️ Building with the migrations from: $migrationLocations")
 
-            // This lets Graal see the migrations for local dev
+            // Graal cannot scan for migrations at run-time, so we use this to specify the locations.
+            // See https://micronaut-projects.github.io/micronaut-flyway/latest/guide/#graalvm
             buildArgs.add("-Dflyway.locations=$migrationLocations")
         }
     }
