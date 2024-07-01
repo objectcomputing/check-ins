@@ -11,9 +11,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Introspected
 @Table(name = "kudos_recipient")
@@ -47,30 +52,6 @@ public class KudosRecipient {
      */
     public KudosRecipient(UUID kudosId, UUID memberId) {
         this.kudosId = kudosId;
-        this.memberId = memberId;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getKudosId() {
-        return kudosId;
-    }
-
-    public void setKudosId(UUID kudosId) {
-        this.kudosId = kudosId;
-    }
-
-    public UUID getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(UUID memberId) {
         this.memberId = memberId;
     }
 

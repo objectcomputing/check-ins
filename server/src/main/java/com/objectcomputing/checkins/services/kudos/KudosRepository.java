@@ -12,32 +12,35 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface KudosRepository extends CrudRepository<Kudos, UUID> {
 
-        @Query(value = "SELECT " +
-                        "id, " +
-                        "PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message, " +
-                        "senderid, teamid, datecreated, dateapproved, publiclyVisible " +
-                        "FROM kudos " +
-                        "WHERE dateapproved IS NULL " +
-                        "AND publiclyVisible IS TRUE " +
-                        "ORDER BY datecreated DESC")
+        @Query(value = """
+                SELECT
+                    id,
+                    PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message,
+                    senderid, teamid, datecreated, dateapproved, publiclyVisible
+                FROM kudos
+                WHERE dateapproved IS NULL
+                  AND publiclyVisible IS TRUE
+                ORDER BY datecreated DESC""", nativeQuery = true)
         List<Kudos> getAllPending();
 
-        @Query(value = "SELECT " +
-                        "id, " +
-                        "PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message, " +
-                        "senderid, teamid, datecreated, dateapproved, publiclyVisible " +
-                        "FROM kudos " +
-                        "WHERE dateapproved IS NOT NULL " +
-                        "AND publiclyVisible IS TRUE")
+        @Query(value = """
+                SELECT
+                    id,
+                    PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message,
+                    senderid, teamid, datecreated, dateapproved, publiclyVisible
+                FROM kudos
+                WHERE dateapproved IS NOT NULL
+                  AND publiclyVisible IS TRUE""", nativeQuery = true)
         List<Kudos> getAllApproved();
 
-        @Query(value = "SELECT " +
-                        "id, " +
-                        "PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message, " +
-                        "senderid, teamid, datecreated, dateapproved, publiclyVisible " +
-                        "FROM kudos " +
-                        "WHERE (:senderId IS NULL OR senderid = :senderId) " +
-                        "AND (:includePending OR dateapproved IS NOT NULL)")
+        @Query(value = """
+                SELECT
+                    id,
+                    PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message,
+                    senderid, teamid, datecreated, dateapproved, publiclyVisible
+                FROM kudos
+                WHERE (:senderId IS NULL OR senderid = :senderId)
+                  AND (:includePending OR dateapproved IS NOT NULL)""", nativeQuery = true)
         List<Kudos> search(@Nullable String senderId, boolean includePending);
 
 }

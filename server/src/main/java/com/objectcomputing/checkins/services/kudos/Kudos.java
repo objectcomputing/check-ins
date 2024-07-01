@@ -100,7 +100,7 @@ public class Kudos {
         this.message = kudosCreateDTO.getMessage();
         this.senderId = kudosCreateDTO.getSenderId();
         this.teamId = kudosCreateDTO.getTeamId();
-        this.publiclyVisible = kudosCreateDTO.getPubliclyVisible();
+        this.publiclyVisible = kudosCreateDTO.isPubliclyVisible();
     }
 
     public UUID getId() {
