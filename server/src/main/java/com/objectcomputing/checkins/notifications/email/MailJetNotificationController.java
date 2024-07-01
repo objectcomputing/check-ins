@@ -20,7 +20,7 @@ public class MailJetNotificationController {
     private final EmailSender emailSender;
 
     public MailJetNotificationController(CurrentUserServices currentUserServices,
-                                         @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender) {
+                                         @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender) {
         this.currentUserServices = currentUserServices;
         this.emailSender = emailSender;
     }

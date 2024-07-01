@@ -92,8 +92,8 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
         properties.put("datasources.default.dialect", "POSTGRES");
         properties.put("datasources.default.driverClassName", "org.postgresql.Driver");
         properties.put("flyway.datasources.default.clean-schema", "true"); // Needed to run Flyway.clean()
-        properties.put("mail-jet.from_address", "someEmail@gmail.com");
-        properties.put("mail-jet.from_name", "John Doe");
+        properties.put("mail-jet.from-address", "someEmail@gmail.com");
+        properties.put("mail-jet.from-name", "John Doe");
         return properties;
     }
 
