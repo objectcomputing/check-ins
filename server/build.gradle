@@ -81,7 +81,7 @@ dependencies {
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-management")
     implementation('io.micronaut:micronaut-runtime')
-    implementation("io.micronaut.cache:micronaut-cache-ehcache")
+    implementation("io.micronaut.cache:micronaut-cache-caffeine")
     implementation("io.micronaut.data:micronaut-data-jdbc")
     implementation("io.micronaut.flyway:micronaut-flyway")
     implementation("io.micronaut.security:micronaut-security")
