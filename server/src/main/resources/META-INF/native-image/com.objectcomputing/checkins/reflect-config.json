@@ -10,11 +10,36 @@
     "allPublicConstructors" : true
   },
   {
+    "name": "com.objectcomputing.checkins.services.settings.SettingOptionDeserializer",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true
+  },
+  {
     "name": "org.flywaydb.database.postgresql.PostgreSQLConfigurationExtension",
     "condition": {
       "typeReachable": "org.flywaydb.core.internal.plugin.PluginRegister"
     },
     "allPublicConstructors": true,
     "allPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.http.hateoas.JsonError",
+    "queryAllDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "logref",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "path",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
   }
 ]
