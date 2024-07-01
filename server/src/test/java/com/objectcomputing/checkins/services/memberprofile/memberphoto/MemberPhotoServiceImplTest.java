@@ -21,7 +21,10 @@ import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class MemberPhotoServiceImplTest extends TestContainersSuite {
 
@@ -47,7 +50,9 @@ class MemberPhotoServiceImplTest extends TestContainersSuite {
     private Environment mockEnvironment;
 
     @InjectMocks
-    private MemberPhotoServiceImpl services;
+    private GooglePhotoAccessorImpl accessor;
+
+    private MemberPhotoServiceImpl service;
 
     private AutoCloseable mockFinalizer;
 
@@ -70,6 +75,7 @@ class MemberPhotoServiceImplTest extends TestContainersSuite {
         reset(mockPhotos);
         reset(mockGet);
         reset(mockEnvironment);
+        service = new MemberPhotoServiceImpl(accessor);
     }
 
     // happy path
@@ -93,7 +99,7 @@ class MemberPhotoServiceImplTest extends TestContainersSuite {
         when(mockPhotos.get(testEmail)).thenReturn(mockGet);
         when(mockGet.execute()).thenReturn(testUserPhoto);
 
-        final byte[] result = services.getImageByEmailAddress(testEmail);
+        final byte[] result = service.getImageByEmailAddress(testEmail);
 
         assertNotNull(result);
         assertEquals(testPhotoData, new String(result, StandardCharsets.UTF_8));
@@ -111,7 +117,7 @@ class MemberPhotoServiceImplTest extends TestContainersSuite {
         when(mockPhotos.get(testEmail)).thenReturn(mockGet);
         when(mockGet.execute()).thenThrow(GoogleJsonResponseException.class);
 
-        final byte[] result = services.getImageByEmailAddress(testEmail);
+        final byte[] result = service.getImageByEmailAddress(testEmail);
 
         assertNotNull(result);
         assertEquals("", new String(result, StandardCharsets.UTF_8));

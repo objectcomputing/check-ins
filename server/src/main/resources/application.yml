@@ -9,13 +9,12 @@ micronaut:
       max-file-size: 100MB
   caches:
     photo-cache:
-      expire-after-write: 86400
+      expire-after-write: 1d # 1 day
     member-cache:
-      expire-after-write: 300
-      heap:
-        max-entries: 600
+      expire-after-write: 300s # 5 minutes
+      maximum-size: 600
     role-permission-cache:
-      expire-after-write: 86400
+      expire-after-write: 1d # 1 day
 
   router:
     static-resources:
@@ -125,15 +124,6 @@ service-account-credentials:
   client_x509_cert_url: ${ CLIENT_X509_CERT_URL }
   oauth_client_id: ${ OAUTH_CLIENT_ID }
   oauth_client_secret: ${ OAUTH_CLIENT_SECRET }
----
-ehcache:
-  caches:
-    photo-cache:
-      enabled: true
-    member-cache:
-      enabled: true
-    role-permission-cache:
-      enabled: true
 ---
 mail-jet:
   from_address: ${ FROM_ADDRESS }
