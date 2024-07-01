@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.email;
 
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.notifications.email.MailJetConfig;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -31,8 +31,8 @@ public class EmailServicesImpl implements EmailServices {
     private final MemberProfileRepository memberProfileRepository;
     private final EmailRepository emailRepository;
 
-    public EmailServicesImpl(@Named(MailJetConfig.HTML_FORMAT) EmailSender htmlEmailSender,
-                             @Named(MailJetConfig.TEXT_FORMAT) EmailSender textEmailSender,
+    public EmailServicesImpl(@Named(MailJetFactory.HTML_FORMAT) EmailSender htmlEmailSender,
+                             @Named(MailJetFactory.TEXT_FORMAT) EmailSender textEmailSender,
                              CurrentUserServices currentUserServices,
                              MemberProfileRepository memberProfileRepository,
                              EmailRepository emailRepository) {

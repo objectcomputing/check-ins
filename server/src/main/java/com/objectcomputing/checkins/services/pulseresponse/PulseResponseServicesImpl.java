@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.notifications.email.MailJetConfig;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -36,7 +36,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             MemberProfileRepository memberRepo,
             CurrentUserServices currentUserServices,
             RolePermissionServices rolePermissionServices,
-            @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender
+            @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender
     ) {
         this.pulseResponseRepo = pulseResponseRepo;
         this.memberProfileServices = memberProfileServices;

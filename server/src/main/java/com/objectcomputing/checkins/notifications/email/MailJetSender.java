@@ -6,7 +6,6 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
@@ -18,28 +17,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Requires(property = MailJetSender.FROM_ADDRESS)
-@Requires(property = MailJetSender.FROM_NAME)
 @Prototype
+@Requires(bean = MailJetConfiguration.class)
 public class MailJetSender implements EmailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
 
-    public static final String FROM_ADDRESS = "mail-jet.from_address";
-    public static final String FROM_NAME = "mail-jet.from_name";
     public static final int MAILJET_RECIPIENT_LIMIT = 49;
 
     private final String fromAddress;
     private final String fromName;
     private String emailFormat;
 
-    public MailJetSender(MailjetClient client,
-                         @Property(name = FROM_ADDRESS) String fromAddress,
-                         @Property(name = FROM_NAME) String fromName) {
+    public MailJetSender(
+            MailjetClient client,
+            MailJetConfiguration configuration
+    ) {
         this.client = client;
-        this.fromAddress = fromAddress;
-        this.fromName = fromName;
+        this.fromAddress = configuration.getFromAddress();
+        this.fromName = configuration.getFromName();
         this.emailFormat = Emailv31.Message.HTMLPART;
     }
 
