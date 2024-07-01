@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.notifications.email.MailJetConfig;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
@@ -57,7 +57,7 @@ public class GuildServicesImpl implements GuildServices {
                              CurrentUserServices currentUserServices,
                              MemberProfileServices memberProfileServices,
                              GuildMemberServices guildMemberServices,
-                             @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
+                             @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                              Environment environment,
                              @Property(name = WEB_ADDRESS) String webAddress
     ) {
@@ -174,7 +174,7 @@ public class GuildServicesImpl implements GuildServices {
                     Set<GuildMember> existingGuildMembers = guildMemberServices.findByFields(guildDTO.getId(), null, null);
                   
                     //add new members to the guild
-                    guildDTO.getGuildMembers().stream().forEach(updatedMember -> {
+                    guildDTO.getGuildMembers().forEach(updatedMember -> {
                         Optional<GuildMember> first = existingGuildMembers.stream().filter(existing -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                         if(first.isEmpty()) {
@@ -186,7 +186,7 @@ public class GuildServicesImpl implements GuildServices {
                     });
 
                     //delete any removed members from guild
-                    existingGuildMembers.stream().forEach(existingMember -> {
+                    existingGuildMembers.forEach(existingMember -> {
                         if(!guildDTO.getGuildMembers().stream().filter(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
                             guildMemberServices.delete(existingMember.getId());
                             removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()));
