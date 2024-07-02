@@ -16,6 +16,8 @@ delete from questions;
 delete from member_roles;
 delete from role_permissions;
 delete from permissions;
+delete from role_documentation;
+delete from document;
 delete from role;
 delete from team_member;
 delete from team;
@@ -1620,3 +1622,85 @@ INSERT INTO volunteering_event
     (event_id, relationship_id, event_date, hours, notes)
 VALUES
         ('2afba083-8d42-429f-a90f-8992d1685bd0', 'b2ffbfb0-efd2-4305-b741-b95db5ee36a8', '2024-05-02', 4, 'third event');
+
+--- Documentation
+
+INSERT INTO document
+(document_id, name, description, url)
+VALUES
+    ('10ff99d8-7c5e-4e5f-9cf6-aa8264bc84f5', PGP_SYM_ENCRYPT('Expectations Discussion Guide for Team Members', '${aeskey}'), PGP_SYM_ENCRYPT('Guide for format and talking points during Check-Ins', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Expectations_Discussion_Guide_for_Team_Members.pdf', '${aeskey}'));
+
+INSERT INTO document
+(document_id, name, description, url)
+VALUES
+    ('dc55df67-f124-469f-9381-914824de7f2d', PGP_SYM_ENCRYPT('Expectations Worksheet', '${aeskey}'), PGP_SYM_ENCRYPT('Define Objectives and Key Results', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Expectations_Worksheet.pdf', '${aeskey}'));
+
+INSERT INTO document
+(document_id, name, description, url)
+VALUES
+    ('34934a9c-8c21-4b29-911b-0b9605ed058e', PGP_SYM_ENCRYPT('Feedback Discussion Guide for Team Members', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for providing and receiving feedback', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Feedback_Discussion_Guide_for_Team_Members.pdf', '${aeskey}'));
+
+INSERT INTO document
+(document_id, name, description, url)
+VALUES
+    ('7bbe19b9-3382-4869-b95f-39350cb9104a', PGP_SYM_ENCRYPT('Development Discussion Guide for Team Members', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for reflecting on career development and aspirations', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Development_Discussion_Guide_for_Team_Members.pdf', '${aeskey}'));
+
+INSERT INTO document
+(document_id, name, description, url)
+VALUES
+    ('07d54d3d-6695-42b7-b493-0ed531882978', PGP_SYM_ENCRYPT('Individual Development Plan', '${aeskey}'), PGP_SYM_ENCRYPT('Create an action plan for your career goals', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Individual_Development_Plan.pdf', '${aeskey}'));
+
+INSERT INTO role_documentation
+(role_id, document_id, display_order)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '10ff99d8-7c5e-4e5f-9cf6-aa8264bc84f5', 1);
+
+INSERT INTO role_documentation
+(role_id, document_id, display_order)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'dc55df67-f124-469f-9381-914824de7f2d', 2);
+
+INSERT INTO role_documentation
+(role_id, document_id, display_order)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '34934a9c-8c21-4b29-911b-0b9605ed058e', 3);
+
+INSERT INTO role_documentation
+(role_id, document_id, display_order)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '7bbe19b9-3382-4869-b95f-39350cb9104a', 4);
+
+INSERT INTO role_documentation
+(role_id, document_id, display_order)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '07d54d3d-6695-42b7-b493-0ed531882978', 5);
+
+INSERT INTO document
+(document_id, name, description, url)
+VALUES
+    ('3c9864a0-7d1b-48f0-9a9a-36b177183dfa', PGP_SYM_ENCRYPT('Development Discussion Guide for PDLs', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for PDLs when discussing professional development', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Development_Discussion_Guide_for_PDLs.pdf', '${aeskey}'));
+
+INSERT INTO document
+(document_id, name, description, url)
+VALUES
+    ('e4b910e7-4844-458d-b92e-5b699837b7e1', PGP_SYM_ENCRYPT('Expectations Discussion Guide for PDLs', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for PDLs when discussing objectives, obstacles, and expectations', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Expectations_Discussion_Guide_for_PDLs.pdf', '${aeskey}'));
+
+INSERT INTO document
+(document_id, name, description, url)
+VALUES
+    ('b553d4c0-9b7a-4691-8fe0-e3bdda4f67ae', PGP_SYM_ENCRYPT('Feedback Discussion Guide for PDLs', '${aeskey}'), PGP_SYM_ENCRYPT('Guidelines for PDLs when providing or receiving feedback', '${aeskey}'), PGP_SYM_ENCRYPT('/pdfs/Feedback_Discussion_Guide_for_PDLs.pdf', '${aeskey}'));
+
+INSERT INTO role_documentation
+(role_id, document_id, display_order)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '3c9864a0-7d1b-48f0-9a9a-36b177183dfa', 1);
+
+INSERT INTO role_documentation
+(role_id, document_id, display_order)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'e4b910e7-4844-458d-b92e-5b699837b7e1', 2);
+
+INSERT INTO role_documentation
+(role_id, document_id, display_order)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'b553d4c0-9b7a-4691-8fe0-e3bdda4f67ae', 3);
