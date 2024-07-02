@@ -5,7 +5,6 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
-import io.micronaut.json.JsonMapper;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -14,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 import java.util.List;
 
 @Requires(notEnv = Environment.TEST)
@@ -21,20 +21,18 @@ import java.util.List;
 public class GoogleAuthenticator {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleAuthenticator.class);
+    private static final Base64.Decoder BASE64_DECODER = Base64.getDecoder();
 
     private final GoogleServiceConfiguration gServiceConfig;
-    private final JsonMapper jsonMapper;
 
     /**
      * Creates a google drive utility for quick access
      * @param gServiceConfig, Google Drive configuration properties
      */
     public GoogleAuthenticator(
-            GoogleServiceConfiguration gServiceConfig,
-            JsonMapper jsonMapper
+            GoogleServiceConfiguration gServiceConfig
     ) {
         this.gServiceConfig = gServiceConfig;
-        this.jsonMapper = jsonMapper;
     }
 
     /**
@@ -44,7 +42,7 @@ public class GoogleAuthenticator {
      * @throws IOException If the service account configurations cannot be found.
      */
     GoogleCredentials setupCredentials(@NotNull final List<String> scopes) throws IOException {
-        InputStream in = new ByteArrayInputStream(jsonMapper.writeValueAsBytes(gServiceConfig));
+        InputStream in = gcpCredentialsStream();
         GoogleCredentials credentials = GoogleCredentials.fromStream(in);
         return scopes.isEmpty() ? credentials : credentials.createScoped(scopes);
     }
@@ -58,13 +56,17 @@ public class GoogleAuthenticator {
     ServiceAccountCredentials setupServiceAccountCredentials(@NotNull final List<String> scopes, @NotNull final String delegatedUser) {
         ServiceAccountCredentials sourceCredentials = null;
         try {
-            InputStream in = new ByteArrayInputStream(jsonMapper.writeValueAsBytes(gServiceConfig));
+            InputStream in = gcpCredentialsStream();
             sourceCredentials = ServiceAccountCredentials.fromStream(in);
             sourceCredentials = (ServiceAccountCredentials) sourceCredentials.createScoped(scopes).createDelegated(delegatedUser);
         } catch (IOException e) {
             LOG.error("An error occurred while reading the service account credentials.", e);
         }
         return sourceCredentials;
+    }
+
+    private ByteArrayInputStream gcpCredentialsStream() {
+        return new ByteArrayInputStream(BASE64_DECODER.decode(gServiceConfig.getEncodedGcpCredentials()));
     }
 }
 
