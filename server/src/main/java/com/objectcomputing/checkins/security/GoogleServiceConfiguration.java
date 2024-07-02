@@ -1,64 +1,89 @@
 package com.objectcomputing.checkins.security;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Factory;
+import io.micronaut.core.type.Argument;
+import io.micronaut.json.JsonMapper;
+import io.micronaut.validation.validator.constraints.ConstraintValidator;
+import jakarta.inject.Singleton;
+import jakarta.validation.Constraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Base64;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
 @ConfigurationProperties("service-account-credentials")
 public class GoogleServiceConfiguration {
 
-    @NotNull
-    @JsonProperty("directory_id")
-    public String directoryId;
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleServiceConfiguration.class);
 
     @NotNull
-    public String type;
+    private String directoryId;
 
-    @NotNull
-    @JsonProperty("project_id")
-    public String projectId;
+    @ValidEncodedGoogleServiceConfiguration
+    private String encodedGcpCredentials;
 
-    @NotNull
-    @JsonProperty("private_key_id")
-    public String privateKeyId;
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @Constraint(validatedBy = {})
+    @interface ValidEncodedGoogleServiceConfiguration {
+    }
 
-    @NotNull
-    @JsonProperty("private_key")
-    public String privateKey;
+    @Factory
+    static class CustomValidationFactory {
 
-    @NotNull
-    @JsonProperty("client_email")
-    public String clientEmail;
+        private final JsonMapper jsonMapper;
+        private static final Base64.Decoder DECODER = Base64.getDecoder();
 
-    @NotNull
-    @JsonProperty("client_id")
-    public String clientId;
+        CustomValidationFactory(JsonMapper jsonMapper) {
+            this.jsonMapper = jsonMapper;
+        }
 
-    @NotNull
-    @JsonProperty("auth_uri")
-    public String authUri;
+        @Singleton
+        ConstraintValidator<ValidEncodedGoogleServiceConfiguration, String> e164Validator() {
+            return (value, annotation, context) -> {
+                if (value == null || !isValid(value)) {
+                    context.buildConstraintViolationWithTemplate("must be a valid encoded Google Service Configuration")
+                            .addConstraintViolation();
+                    return false;
+                }
+                return true;
+            };
+        }
 
-    @NotNull
-    @JsonProperty("token_uri")
-    public String tokenUri;
-
-    @NotNull
-    @JsonProperty("auth_provider_x509_cert_url")
-    public String authProviderX509CertUrl;
-
-    @NotNull
-    @JsonProperty("client_x509_cert_url")
-    public String clientX509CertUrl;
-
-    @NotNull
-    @JsonProperty("oauth_client_id")
-    public String oauthClientId;
-
-    @NotNull
-    @JsonProperty("oauth_client_secret")
-    public String oauthClientSecret;
+        // Check the decoded json string for the required fields
+        private boolean isValid(String value) {
+            try {
+                Map<String, Object> map = jsonMapper.readValue(DECODER.decode(value), Argument.mapOf(String.class, Object.class));
+                return Stream.of(
+                        "type",
+                        "project_id",
+                        "private_key_id",
+                        "private_key",
+                        "client_email",
+                        "client_id",
+                        "auth_uri",
+                        "token_uri",
+                        "auth_provider_x509_cert_url",
+                        "client_x509_cert_url"
+                ).allMatch(map::containsKey);
+            } catch (Exception e) {
+                LOG.error("An error occurred while decoding the Google Service Configuration.", e);
+            }
+            return false;
+        }
+    }
 }

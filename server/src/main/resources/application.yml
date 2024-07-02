@@ -113,18 +113,7 @@ flyway:
 ---
 service-account-credentials:
   directory-id: ${ DIRECTORY_ID }
-  type: ${ TYPE }
-  project-id: ${ PROJECT_ID }
-  private-key_id: ${ PRIVATE_KEY_ID }
-  private-key: ${ PRIVATE_KEY }
-  client-email: ${ CLIENT_EMAIL }
-  client-id: ${ CLIENT_ID }
-  auth-uri: ${ AUTH_URI }
-  token-uri: ${ TOKEN_URI }
-  auth-provider-x509-cert-url: ${ AUTH_PROVIDER_X509_CERT_URL }
-  client-x509-cert-url: ${ CLIENT_X509_CERT_URL }
-  oauth-client-id: ${ OAUTH_CLIENT_ID }
-  oauth-client-secret: ${ OAUTH_CLIENT_SECRET }
+  encoded-gcp-credentials: ${GCP_CREDENTIALS_ENCODED_KEY}
 ---
 ehcache:
   caches:
