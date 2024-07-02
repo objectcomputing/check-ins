@@ -53,6 +53,16 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
     }
 
     @Test
+    void testConstraintViolationPasses() {
+        GoogleServiceConfiguration googleServiceConfiguration = new GoogleServiceConfiguration();
+        googleServiceConfiguration.setDirectoryId("some.directory.id");
+        googleServiceConfiguration.setEncodedGcpCredentials(ENCODED_EXAMPLE_GOOGLE_SERVICE_CONFIGURATION);
+
+        Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
+        assertEquals(0, violations.size());
+    }
+
+    @Test
     void testConfigurationLoadedCorrectlyFromConfiguration() throws IOException {
         var values = Map.ofEntries(
                 Map.entry("directory", "some.directory.id"),

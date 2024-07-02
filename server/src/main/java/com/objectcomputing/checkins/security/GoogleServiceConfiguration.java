@@ -58,7 +58,6 @@ public class GoogleServiceConfiguration {
                 if (value == null || !isValid(value)) {
                     context.buildConstraintViolationWithTemplate("must be a valid encoded Google Service Configuration")
                             .addConstraintViolation();
-                    return false;
                 }
                 return true;
             };
