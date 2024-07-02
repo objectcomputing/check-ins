@@ -4,7 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.notifications.email.MailJetConfig;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -49,7 +49,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                        CurrentUserServices currentUserServices,
                                        MemberProfileServices memberProfileServices,
                                        ReviewPeriodRepository reviewPeriodRepository,
-                                       @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
+                                       @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
                                        @Property(name = WEB_UI_URL) String webURL
     ) {

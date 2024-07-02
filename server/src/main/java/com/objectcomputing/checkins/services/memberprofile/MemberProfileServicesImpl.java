@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.notifications.email.MailJetConfig;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -44,7 +44,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                      CheckInServices checkInServices,
                                      MemberSkillServices memberSkillServices,
                                      TeamMemberServices teamMemberServices,
-                                     @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender) {
+                                     @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender) {
         this.memberProfileRepository = memberProfileRepository;
         this.currentUserServices = currentUserServices;
         this.roleServices = roleServices;
