@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
@@ -13,6 +14,7 @@ import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
@@ -20,11 +22,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import com.objectcomputing.checkins.services.role.RoleServices;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.contains;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
+// Disabled in nativeTest, as we get an exception from Mockito
+//    => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.Mockito
+@DisabledInNativeImage
 class MemberProfileTest extends TestContainersSuite {
     @Inject
     protected Validator validator;

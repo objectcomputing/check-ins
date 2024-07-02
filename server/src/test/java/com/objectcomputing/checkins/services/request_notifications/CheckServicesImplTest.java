@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestSer
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -19,6 +20,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+// Disabled in nativeTest, as we get an exception from Mockito
+//     => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.internal.configuration.plugins.Plugins
+@DisabledInNativeImage
 class CheckServicesImplTest extends TestContainersSuite {
 
     @Mock

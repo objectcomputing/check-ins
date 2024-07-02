@@ -21,17 +21,33 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+// Disabled in nativeTest, as we get an exception from Mockito
+//    => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.Mockito
+@DisabledInNativeImage
 class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfileFixture, RoleFixture, GuildMemberFixture {
 

@@ -9,6 +9,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.annotation.MockBean;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import java.util.Base64;
 
@@ -21,6 +22,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+// Disabled in nativeTest, as we get an exception from Mockito
+//   => Message: Could not initialize class org.mockito.Mockito
+@DisabledInNativeImage
 class MemberPhotoControllerTest extends TestContainersSuite {
 
     @Inject

@@ -20,6 +20,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -45,6 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+// Disabled in nativeTest, as we get an exception from Mockito
+//     => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.Mockito
+@DisabledInNativeImage
 class ReviewPeriodControllerTest
         extends TestContainersSuite
         implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture {

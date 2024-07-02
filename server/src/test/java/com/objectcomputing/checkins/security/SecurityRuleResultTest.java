@@ -19,6 +19,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.Mock;
 import org.reactivestreams.Publisher;
 import reactor.test.StepVerifier;
@@ -32,6 +33,9 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
+// Disabled in nativeTest, as we get an exception from Mockito
+// java.lang.NoClassDefFoundError: Could not initialize class org.mockito.internal.configuration.plugins.Plugins
+@DisabledInNativeImage
 class SecurityRuleResultTest extends TestContainersSuite {
 
     private static final List<String> USER_PERMISSIONS = List.of(
