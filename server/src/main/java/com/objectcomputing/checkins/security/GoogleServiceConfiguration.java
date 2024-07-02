@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.security;
 
+import com.objectcomputing.checkins.services.settings.SettingsLoader;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.core.annotation.Introspected;
 import jakarta.validation.constraints.NotNull;
@@ -9,10 +10,10 @@ import jakarta.validation.constraints.NotNull;
 public class GoogleServiceConfiguration {
 
     @NotNull
-    public String directory_id;
+    public String directory_id = SettingsLoader.getSetting("DIRECTORY_ID").getValue();
 
     @NotNull
-    public String type;
+    public String type  = SettingsLoader.getSetting("SA_KEY_TYPE").getValue();
 
     @NotNull
     public String project_id;
@@ -30,13 +31,13 @@ public class GoogleServiceConfiguration {
     public String client_id;
 
     @NotNull
-    public String auth_uri;
+    public String auth_uri =  SettingsLoader.getSetting("AUTH_URI").getValue();
 
     @NotNull
-    public String token_uri;
+    public String token_uri =  SettingsLoader.getSetting("TOKEN_URI").getValue();
 
     @NotNull
-    public String auth_provider_x509_cert_url;
+    public String auth_provider_x509_cert_url = SettingsLoader.getSetting("AUTH_PROVIDER_X509_CERT_URL").getValue();
 
     @NotNull
     public String client_x509_cert_url;
@@ -50,26 +51,26 @@ public class GoogleServiceConfiguration {
     public String getDirectory_id() {
         return directory_id;
     }
-
-    public void setDirectory_id(String directory_id) {
-        this.directory_id = directory_id;
-    }
+// TODO: cleanup comments
+//    public void setDirectory_id(String directory_id) {
+//        this.directory_id = directory_id;
+//    }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+//    public void setType(String type) {
+//        this.type = type;
+//    }
 
     public String getProject_id() {
         return project_id;
     }
 
-    public void setProject_id(String project_id) {
-        this.project_id = project_id;
-    }
+//    public void setProject_id(String project_id) {
+//        this.project_id = project_id;
+//    }
 
     public String getPrivate_key_id() {
         return private_key_id;
@@ -107,25 +108,25 @@ public class GoogleServiceConfiguration {
         return auth_uri;
     }
 
-    public void setAuth_uri(String auth_uri) {
-        this.auth_uri = auth_uri;
-    }
+//    public void setAuth_uri(String auth_uri) {
+//        this.auth_uri = auth_uri;
+//    }
 
     public String getToken_uri() {
         return token_uri;
     }
 
-    public void setToken_uri(String token_uri) {
-        this.token_uri = token_uri;
-    }
+//    public void setToken_uri(String token_uri) {
+//        this.token_uri = token_uri;
+//    }
 
     public String getAuth_provider_x509_cert_url() {
         return auth_provider_x509_cert_url;
     }
 
-    public void setAuth_provider_x509_cert_url(String auth_provider_x509_cert_url) {
-        this.auth_provider_x509_cert_url = auth_provider_x509_cert_url;
-    }
+//    public void setAuth_provider_x509_cert_url(String auth_provider_x509_cert_url) {
+//        this.auth_provider_x509_cert_url = auth_provider_x509_cert_url;
+//    }
 
     public String getClient_x509_cert_url() {
         return client_x509_cert_url;

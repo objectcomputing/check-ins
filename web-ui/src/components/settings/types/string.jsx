@@ -1,6 +1,10 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import { Input, Typography } from '@mui/material';
 import { createLabelId } from '../../../helpers/strings.js';
+import { AppContext } from '../../../context/AppContext';
+import { updateSetting } from '../../../api/settings';
+import { debounce } from 'lodash/function';
+import {selectCsrfToken} from "../../../context/selectors.js";
 
 /**
  * A component for rendering a number input field in the settings.
@@ -19,9 +23,32 @@ const SettingsString = ({
   description,
   value,
   placeholder,
-  handleChange
 }) => {
+
+  const {state} = useContext(AppContext);
+  const [settingsValue, setSettingsValue] = useState(value)
+  const csrf = selectCsrfToken(state);
+
   const labelId = createLabelId(name);
+
+  const realStoreSetting = (name, value, csrf) => updateSetting(name, value, csrf);
+
+  const storeSetting = debounce(realStoreSetting, 1500);
+
+
+  const handleStringChange = (event) => {
+    if (!csrf) {
+        return;
+    }
+
+    const {value} = event.target;
+    setSettingsValue(value);
+    let name = event.target.id?.toUpperCase();
+
+    storeSetting(name, value, csrf);
+
+  };
+
 
   return (
     <div className="settings-type">
@@ -35,9 +62,9 @@ const SettingsString = ({
         id={labelId}
         className="settings-control"
         type="text"
-        value={value}
+        value={settingsValue ?? value}
         placeholder={placeholder ?? `Enter ${name}`}
-        onChange={handleChange}
+        onChange={() => handleStringChange(event)}
       />
     </div>
   );
