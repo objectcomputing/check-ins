@@ -98,16 +98,7 @@ jobs:
             --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
             --set-env-vars "OAUTH_CALLBACK_URI"=${{ secrets.OAUTH_CALLBACK_URI }} \
             --set-env-vars "DIRECTORY_ID=${{ secrets.DIRECTORY_ID }}" \
-            --set-env-vars "TYPE=${{ secrets.SA_KEY_TYPE }}" \
-            --set-env-vars "PROJECT_ID=${{ secrets.RUN_PROJECT }}" \
-            --set-env-vars "PRIVATE_KEY_ID=${{ secrets.SA_PRIVATE_KEY_ID }}" \
-            --set-env-vars "PRIVATE_KEY=${{ secrets.SA_PRIVATE_KEY }}" \
-            --set-env-vars "CLIENT_EMAIL=${{ secrets.SA_CLIENT_EMAIL }}" \
-            --set-env-vars "CLIENT_ID=${{ secrets.SA_CLIENT_ID }}" \
-            --set-env-vars "AUTH_URI=${{ secrets.SA_AUTH_URI }}" \
-            --set-env-vars "TOKEN_URI=${{ secrets.SA_TOKEN_URI }}" \
-            --set-env-vars "AUTH_PROVIDER_X509_CERT_URL=${{ secrets.SA_AUTH_PROVIDER_X509_CERT_URL }}" \
-            --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.SA_CLIENT_X509_CERT_URL }}" \
+            --set-env-vars "SERVICE_ACCOUNT_CREDENTIALS=${{ secrets.SERVICE_ACCOUNT_CREDENTIALS }}" \
             --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
             --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
             --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
