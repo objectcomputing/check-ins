@@ -80,7 +80,6 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
 
             assertNotNull(cfg.getEncodedGcpCredentials());
             assertEquals(values.get("encoded-gcp-credentials"), cfg.getEncodedGcpCredentials());
-
         }
     }
 }
