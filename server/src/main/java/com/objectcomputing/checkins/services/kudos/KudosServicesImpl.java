@@ -51,13 +51,15 @@ class KudosServicesImpl implements KudosServices {
     public Kudos save(KudosCreateDTO kudosDTO) {
 
         UUID senderId = kudosDTO.getSenderId();
-        memberProfileRetrievalServices.getById(senderId).orElseThrow(() ->
-                new BadArgException(MessageFormat.format("Kudos sender {0} does not exist", senderId)));
+        if (memberProfileRetrievalServices.getById(senderId).isEmpty()) {
+            throw new BadArgException(MessageFormat.format("Kudos sender {0} does not exist", senderId));
+        }
 
         if (kudosDTO.getTeamId() != null) {
             UUID teamId = kudosDTO.getTeamId();
-            teamRepository.findById(teamId).orElseThrow(() ->
-                    new BadArgException(MessageFormat.format("Team {0} does not exist", teamId)));
+            if (teamRepository.findById(teamId).isEmpty()) {
+                throw new BadArgException(MessageFormat.format("Team {0} does not exist", teamId));
+            }
         }
 
         if (kudosDTO.getMessage() == null || kudosDTO.getMessage().isBlank()) {
