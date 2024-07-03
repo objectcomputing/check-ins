@@ -147,7 +147,7 @@ class KudosServicesImpl implements KudosServices {
     @Override
     public void delete(UUID id) {
         if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() ->
@@ -171,7 +171,7 @@ class KudosServicesImpl implements KudosServices {
             return findAllFromMember(senderId);
         } else {
             if (!currentUserServices.isAdmin()) {
-                throw new PermissionException("You are not authorized to do this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
 
             List<KudosResponseDTO> kudosList = new ArrayList<>();
