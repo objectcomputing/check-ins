@@ -24,7 +24,7 @@ import java.util.UUID;
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
-public class KudosServicesImpl implements KudosServices {
+class KudosServicesImpl implements KudosServices {
 
     private final KudosRepository kudosRepository;
     private final KudosRecipientServices kudosRecipientServices;
@@ -33,8 +33,7 @@ public class KudosServicesImpl implements KudosServices {
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
 
-
-    public KudosServicesImpl(KudosRepository kudosRepository,
+    KudosServicesImpl(KudosRepository kudosRepository,
                              KudosRecipientServices kudosRecipientServices,
                              KudosRecipientRepository kudosRecipientRepository,
                              TeamRepository teamRepository,
