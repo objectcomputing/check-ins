@@ -66,7 +66,7 @@ public class GoogleAuthenticator {
     }
 
     private ByteArrayInputStream gcpCredentialsStream() {
-        return new ByteArrayInputStream(BASE64_DECODER.decode(gServiceConfig.getEncodedGcpCredentials()));
+        return new ByteArrayInputStream(BASE64_DECODER.decode(gServiceConfig.getEncodedValue()));
     }
 }
 

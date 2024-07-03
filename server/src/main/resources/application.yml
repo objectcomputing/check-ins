@@ -112,7 +112,7 @@ flyway:
 ---
 service-account-credentials:
   directory-id: ${ DIRECTORY_ID }
-  encoded-gcp-credentials: ${GCP_CREDENTIALS_ENCODED_KEY}
+  encoded-value: ${SERVICE_ACCOUNT_CREDENTIALS}
 ---
 #mail-jet:
 #  from_address: ${ FROM_ADDRESS }
