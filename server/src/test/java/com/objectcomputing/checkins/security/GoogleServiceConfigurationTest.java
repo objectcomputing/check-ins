@@ -47,7 +47,7 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
         Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
         assertEquals(2, violations.size());
         assertEquals(
-                List.of("directoryId:must not be null", "encodedGcpCredentials:must be a valid encoded Google Service Configuration"),
+                List.of("directoryId:must not be null", "encodedValue:must be a valid base64 encoded Google Service Configuration"),
                 violations.stream().map(v -> v.getPropertyPath() + ":" + v.getMessage()).toList()
         );
     }
@@ -56,7 +56,7 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
     void testConstraintViolationPasses() {
         GoogleServiceConfiguration googleServiceConfiguration = new GoogleServiceConfiguration();
         googleServiceConfiguration.setDirectoryId("some.directory.id");
-        googleServiceConfiguration.setEncodedGcpCredentials(ENCODED_EXAMPLE_GOOGLE_SERVICE_CONFIGURATION);
+        googleServiceConfiguration.setEncodedValue(ENCODED_EXAMPLE_GOOGLE_SERVICE_CONFIGURATION);
 
         Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
         assertEquals(0, violations.size());
@@ -71,15 +71,15 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
         try (var ctx = ApplicationContext.run(Map.ofEntries(
                 Map.entry("datasources.enabled", false),
                 Map.entry("service-account-credentials.directory-id", values.get("directory")),
-                Map.entry("service-account-credentials.encoded-gcp-credentials", values.get("encoded-gcp-credentials"))
+                Map.entry("service-account-credentials.encoded-value", values.get("encoded-gcp-credentials"))
         ))) {
             var cfg = ctx.getBean(GoogleServiceConfiguration.class);
 
             assertNotNull(cfg.getDirectoryId());
             assertEquals(values.get("directory"), cfg.getDirectoryId());
 
-            assertNotNull(cfg.getEncodedGcpCredentials());
-            assertEquals(values.get("encoded-gcp-credentials"), cfg.getEncodedGcpCredentials());
+            assertNotNull(cfg.getEncodedValue());
+            assertEquals(values.get("encoded-gcp-credentials"), cfg.getEncodedValue());
         }
     }
 }

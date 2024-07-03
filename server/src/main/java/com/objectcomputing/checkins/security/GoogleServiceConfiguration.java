@@ -33,7 +33,7 @@ public class GoogleServiceConfiguration {
     private String directoryId;
 
     @ValidEncodedGoogleServiceConfiguration
-    private String encodedGcpCredentials;
+    private String encodedValue;
 
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
@@ -56,7 +56,7 @@ public class GoogleServiceConfiguration {
         ConstraintValidator<ValidEncodedGoogleServiceConfiguration, String> e164Validator() {
             return (value, annotation, context) -> {
                 if (value == null || !isValid(value)) {
-                    context.buildConstraintViolationWithTemplate("must be a valid encoded Google Service Configuration")
+                    context.buildConstraintViolationWithTemplate("must be a valid base64 encoded Google Service Configuration")
                             .addConstraintViolation();
                 }
                 return true;
