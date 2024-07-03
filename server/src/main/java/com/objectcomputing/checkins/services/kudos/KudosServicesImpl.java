@@ -14,8 +14,6 @@ import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
@@ -35,7 +33,6 @@ public class KudosServicesImpl implements KudosServices {
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
 
-    public static final Logger LOG = LoggerFactory.getLogger(KudosServicesImpl.class);
 
     public KudosServicesImpl(KudosRepository kudosRepository,
                              KudosRecipientServices kudosRecipientServices,
