@@ -11,7 +11,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
@@ -21,6 +23,8 @@ import java.util.UUID;
 @Setter
 @Entity
 @Introspected
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "kudos_recipient")
 public class KudosRecipient {
 
@@ -43,37 +47,12 @@ public class KudosRecipient {
     @Schema(description = "id of the member receiving the kudos")
     private UUID memberId;
 
-    public KudosRecipient() {}
-
     /**
      * Constructor for creating KudosRecipient
      * @param kudosId id of the kudos being given to this recipient
      * @param memberId id of the member receiving the kudos
      */
     public KudosRecipient(UUID kudosId, UUID memberId) {
-        this.kudosId = kudosId;
-        this.memberId = memberId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        KudosRecipient that = (KudosRecipient) o;
-        return Objects.equals(id, that.id) && Objects.equals(kudosId, that.kudosId) && Objects.equals(memberId, that.memberId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, kudosId, memberId);
-    }
-
-    @Override
-    public String toString() {
-        return "KudosRecipient{" +
-                "id=" + id +
-                ", kudosId=" + kudosId +
-                ", memberId=" + memberId +
-                '}';
+        this(null, kudosId, memberId);
     }
 }

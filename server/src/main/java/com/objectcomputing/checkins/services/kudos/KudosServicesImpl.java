@@ -260,14 +260,14 @@ public class KudosServicesImpl implements KudosServices {
     }
 
     private KudosResponseDTO constructKudosResponseDTO(Kudos kudos) {
-
-        KudosResponseDTO kudosResponseDTO = new KudosResponseDTO();
-        kudosResponseDTO.setId(kudos.getId());
-        kudosResponseDTO.setMessage(kudos.getMessage());
-        kudosResponseDTO.setSenderId(kudos.getSenderId());
-        kudosResponseDTO.setDateCreated(kudos.getDateCreated());
-        kudosResponseDTO.setDateApproved(kudos.getDateApproved());
-        kudosResponseDTO.setPubliclyVisible(kudos.getPubliclyVisible());
+        KudosResponseDTO kudosResponseDTO = new KudosResponseDTO(
+                kudos.getId(),
+                kudos.getMessage(),
+                kudos.getSenderId(),
+                kudos.getDateCreated(),
+                kudos.getDateApproved(),
+                kudos.getPubliclyVisible()
+        );
 
         List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
 
@@ -292,5 +292,4 @@ public class KudosServicesImpl implements KudosServices {
 
         return kudosResponseDTO;
     }
-
 }
