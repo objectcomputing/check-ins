@@ -21,7 +21,6 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
@@ -145,11 +144,6 @@ public class KudosServicesImpl implements KudosServices {
 
         return constructKudosResponseDTO(kudos);
 
-    }
-
-    @Override
-    public Optional<Kudos> findById(UUID id) {
-        return kudosRepository.findById(id);
     }
 
     @Override
