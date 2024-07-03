@@ -153,7 +153,7 @@ public class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    public boolean delete(UUID id) {
+    public void delete(UUID id) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
@@ -166,7 +166,6 @@ public class KudosServicesImpl implements KudosServices {
         kudosRecipientRepository.deleteAll(recipients);
 
         kudosRepository.deleteById(id);
-        return true;
     }
 
     @Override

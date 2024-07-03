@@ -16,8 +16,7 @@ public interface KudosServices {
 
     Optional<Kudos> findById(UUID id);
 
-    boolean delete(UUID id);
+    void delete(UUID id);
 
     List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean isPublic);
-
 }

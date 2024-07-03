@@ -61,5 +61,4 @@ public class KudosController {
     public void delete(@NotNull UUID id) {
         kudosServices.delete(id);
     }
-
 }
