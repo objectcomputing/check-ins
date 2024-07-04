@@ -163,7 +163,7 @@ class KudosServicesImpl implements KudosServices {
     @Override
     public List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending) {
         if (isPending != null) {
-            return findByPending(isPending);
+            return findByPending(Boolean.TRUE.equals(isPending));
         } else if (recipientId != null) {
             return findAllToMember(recipientId);
         } else if (senderId != null) {
@@ -179,17 +179,13 @@ class KudosServicesImpl implements KudosServices {
         }
     }
 
-    private List<KudosResponseDTO> findByPending(Boolean isPending) {
+    private List<KudosResponseDTO> findByPending(boolean isPending) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
-        // By default, find all non-pending kudos
-        if (isPending == null) {
-            isPending = false;
-        }
-
         List<Kudos> kudosList = new ArrayList<>();
+
         if (isPending) {
             kudosList.addAll(kudosRepository.getAllPending());
         } else {
