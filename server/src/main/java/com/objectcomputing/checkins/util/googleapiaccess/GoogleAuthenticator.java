@@ -11,10 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 @Requires(notEnv = Environment.TEST)
@@ -22,14 +21,17 @@ import java.util.List;
 public class GoogleAuthenticator {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleAuthenticator.class);
+    private static final Base64.Decoder BASE64_DECODER = Base64.getDecoder();
 
-    private GoogleServiceConfiguration gServiceConfig;
+    private final GoogleServiceConfiguration gServiceConfig;
 
     /**
      * Creates a google drive utility for quick access
      * @param gServiceConfig, Google Drive configuration properties
      */
-    public GoogleAuthenticator(GoogleServiceConfiguration gServiceConfig) {
+    public GoogleAuthenticator(
+            GoogleServiceConfiguration gServiceConfig
+    ) {
         this.gServiceConfig = gServiceConfig;
     }
 
@@ -40,14 +42,8 @@ public class GoogleAuthenticator {
      * @throws IOException If the service account configurations cannot be found.
      */
     GoogleCredentials setupCredentials(@NotNull final List<String> scopes) throws IOException {
-        InputStream in = new ByteArrayInputStream(gServiceConfig.toString().getBytes(StandardCharsets.UTF_8));
+        InputStream in = gcpCredentialsStream();
         GoogleCredentials credentials = GoogleCredentials.fromStream(in);
-
-        if (credentials == null) {
-            credentials = GoogleCredentials.getApplicationDefault();
-            throw new FileNotFoundException("Credentials not found while using Google default credentials");
-        }
-
         return scopes.isEmpty() ? credentials : credentials.createScoped(scopes);
     }
 
@@ -56,18 +52,21 @@ public class GoogleAuthenticator {
      * @param scopes, the scope(s) of access to request for this application
      * @param delegatedUser, the email of the delegated user
      * @return An authorized ServiceAccountCredentials object.
-     * @throws IOException If the service account configurations cannot be found.
      */
-    ServiceAccountCredentials setupServiceAccountCredentials(@NotNull final List<String> scopes, @NotNull final String delegatedUser) throws IOException {
-
+    ServiceAccountCredentials setupServiceAccountCredentials(@NotNull final List<String> scopes, @NotNull final String delegatedUser) {
         ServiceAccountCredentials sourceCredentials = null;
-        try(InputStream in = new ByteArrayInputStream(gServiceConfig.toString().getBytes(StandardCharsets.UTF_8))) {
+        try {
+            InputStream in = gcpCredentialsStream();
             sourceCredentials = ServiceAccountCredentials.fromStream(in);
             sourceCredentials = (ServiceAccountCredentials) sourceCredentials.createScoped(scopes).createDelegated(delegatedUser);
         } catch (IOException e) {
             LOG.error("An error occurred while reading the service account credentials.", e);
         }
         return sourceCredentials;
+    }
+
+    private ByteArrayInputStream gcpCredentialsStream() {
+        return new ByteArrayInputStream(BASE64_DECODER.decode(gServiceConfig.getEncodedValue()));
     }
 }
 
