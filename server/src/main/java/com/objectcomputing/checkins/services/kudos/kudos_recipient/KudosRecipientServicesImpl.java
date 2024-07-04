@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+
 @Singleton
 public class KudosRecipientServicesImpl implements KudosRecipientServices {
 
@@ -45,7 +47,7 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
         boolean isKudosCreator = currentUserServices.getCurrentUser().getId().equals(kudos.getSenderId());
         boolean isAdmin = currentUserServices.isAdmin();
         if (!isAdmin && !isKudosCreator) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElseThrow(() ->

@@ -189,7 +189,7 @@ class KudosServicesImpl implements KudosServices {
         }
 
         if (!isAdmin) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         List<Kudos> kudosList = new ArrayList<>();
