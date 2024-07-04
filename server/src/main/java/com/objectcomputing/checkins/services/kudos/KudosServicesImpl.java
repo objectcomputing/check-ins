@@ -13,9 +13,9 @@ import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 
-import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,7 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 @Singleton
 class KudosServicesImpl implements KudosServices {
 
+    public static final String KUDOS_DOES_NOT_EXIST_MSG = "Kudos with id %s does not exist";
     private final KudosRepository kudosRepository;
     private final KudosRecipientServices kudosRecipientServices;
     private final KudosRecipientRepository kudosRecipientRepository;
@@ -48,22 +49,18 @@ class KudosServicesImpl implements KudosServices {
     }
 
     @Override
+    @Transactional
     public Kudos save(KudosCreateDTO kudosDTO) {
-
         UUID senderId = kudosDTO.getSenderId();
         if (memberProfileRetrievalServices.getById(senderId).isEmpty()) {
-            throw new BadArgException(MessageFormat.format("Kudos sender {0} does not exist", senderId));
+            throw new BadArgException("Kudos sender %s does not exist".formatted(senderId));
         }
 
         if (kudosDTO.getTeamId() != null) {
             UUID teamId = kudosDTO.getTeamId();
             if (teamRepository.findById(teamId).isEmpty()) {
-                throw new BadArgException(MessageFormat.format("Team {0} does not exist", teamId));
+                throw new BadArgException("Team %s does not exist".formatted(teamId));
             }
-        }
-
-        if (kudosDTO.getMessage() == null || kudosDTO.getMessage().isBlank()) {
-            throw new BadArgException("Kudos message cannot be blank");
         }
 
         if (kudosDTO.getRecipientMembers() == null || kudosDTO.getRecipientMembers().isEmpty()) {
@@ -73,39 +70,27 @@ class KudosServicesImpl implements KudosServices {
         Kudos kudos = new Kudos(kudosDTO);
 
         Kudos savedKudos = kudosRepository.save(kudos);
-        List<KudosRecipient> savedRecipients = new ArrayList<>();
 
-        kudosDTO.getRecipientMembers().forEach(recipient -> {
+        for (MemberProfile recipient : kudosDTO.getRecipientMembers()) {
             KudosRecipient kudosRecipient = new KudosRecipient(savedKudos.getId(), recipient.getId());
-            try {
-                kudosRecipientServices.save(kudosRecipient);
-                savedRecipients.add(kudosRecipient);
-            } catch (RuntimeException e) {
-                // If saving KudosRecipient fails, abort save
-                savedRecipients.forEach(savedRecipient ->
-                        kudosRecipientRepository.delete(kudosRecipient)
-                );
-                kudosRepository.delete(savedKudos);
-                throw e;
-            }
-        });
+            kudosRecipientServices.save(kudosRecipient);
+        }
 
         return savedKudos;
     }
 
     @Override
     public Kudos approve(Kudos kudos) {
-
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         UUID kudosId = kudos.getId();
         Kudos existingKudos = kudosRepository.findById(kudosId).orElseThrow(() ->
-                new BadArgException(MessageFormat.format("Kudos with id {0} does not exist", kudosId)));
+                new BadArgException(KUDOS_DOES_NOT_EXIST_MSG.formatted(kudosId)));
 
         if (existingKudos.getDateApproved() != null) {
-            throw new BadArgException(MessageFormat.format("Kudos with id {0} has already been approved", kudosId));
+            throw new BadArgException("Kudos with id %s has already been approved".formatted(kudosId));
         }
 
         existingKudos.setDateApproved(LocalDate.now());
@@ -117,7 +102,7 @@ class KudosServicesImpl implements KudosServices {
     public KudosResponseDTO getById(UUID id) {
 
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(MessageFormat.format("Kudos with id {0} does not exist", id)));
+                new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(id)));
 
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean isSender = currentUserId.equals(kudos.getSenderId());
@@ -151,7 +136,7 @@ class KudosServicesImpl implements KudosServices {
         }
 
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(MessageFormat.format("Kudos with id {0} does not exist", id)));
+                new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(id)));
 
         // Delete all KudosRecipients associated with this kudos
         List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
@@ -214,7 +199,7 @@ class KudosServicesImpl implements KudosServices {
         kudosRecipients.forEach(kudosRecipient -> {
             UUID kudosId = kudosRecipient.getKudosId();
             Kudos relatedKudos = kudosRepository.findById(kudosId).orElseThrow(() ->
-                    new NotFoundException(MessageFormat.format("Kudos with id {0} does not exist", kudosId)));
+                    new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(kudosId)));
 
             if (relatedKudos.getDateApproved() != null) {
                 kudosList.add(constructKudosResponseDTO(relatedKudos));
@@ -255,20 +240,21 @@ class KudosServicesImpl implements KudosServices {
         List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
 
         if (recipients.isEmpty()) {
-            throw new NotFoundException(MessageFormat.format("Could not find recipients for kudos with id {0}", kudos.getId()));
+            throw new NotFoundException("Could not find recipients for kudos with id %s".formatted(kudos.getId()));
         }
 
         UUID teamId = kudos.getTeamId();
         if (teamId != null) {
             Team recipientTeam = teamRepository.findById(teamId).orElseThrow(() ->
-                    new NotFoundException(MessageFormat.format("Team {0} does not exist", teamId)));
+                    new NotFoundException("Team %s does not exist".formatted(teamId)));
             kudosResponseDTO.setRecipientTeam(recipientTeam);
         }
 
         List<MemberProfile> members = recipients
                 .stream()
                 .map(recipient -> memberProfileRetrievalServices.getById(recipient.getMemberId()).orElseThrow(() ->
-                        new NotFoundException("Member id %s of KudosRecipient %s does not exist")))
+                        new NotFoundException("Member id %s of KudosRecipient %s does not exist".formatted(recipient.getMemberId(), recipient.getId()))
+                ))
                 .toList();
 
         kudosResponseDTO.setRecipientMembers(members);

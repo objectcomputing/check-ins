@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -244,7 +243,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
             client.exchange(request, KudosResponseDTO.class);
         });
 
-        String expectedMessage = MessageFormat.format("Kudos with id {0} does not exist", nonExistentId);
+        String expectedMessage = "Kudos with id %s does not exist".formatted(nonExistentId);
         assertEquals(expectedMessage, responseException.getMessage());
     }
 
