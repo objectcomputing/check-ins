@@ -51,8 +51,8 @@ public class KudosController {
     }
 
     @Get("/{?recipientId,?senderId,?isPending,?isPublic}")
-    public List<KudosResponseDTO> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean isPublic) {
-        return kudosServices.findByValues(recipientId, senderId, isPending, isPublic);
+    public List<KudosResponseDTO> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending) {
+        return kudosServices.findByValues(recipientId, senderId, isPending);
     }
 
     @Delete("/{id}")

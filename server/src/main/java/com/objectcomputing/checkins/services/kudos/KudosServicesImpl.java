@@ -161,8 +161,7 @@ class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    public List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending, @Nullable Boolean isPublic) {
-
+    public List<KudosResponseDTO> findByValues(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending) {
         if (isPending != null) {
             return findByPending(isPending);
         } else if (recipientId != null) {
@@ -181,15 +180,13 @@ class KudosServicesImpl implements KudosServices {
     }
 
     private List<KudosResponseDTO> findByPending(Boolean isPending) {
-        boolean isAdmin = currentUserServices.isAdmin();
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        }
 
         // By default, find all non-pending kudos
         if (isPending == null) {
             isPending = false;
-        }
-
-        if (!isAdmin) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         List<Kudos> kudosList = new ArrayList<>();
@@ -207,7 +204,6 @@ class KudosServicesImpl implements KudosServices {
 
 
     private List<KudosResponseDTO> findAllToMember(UUID memberId) {
-
         boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
 

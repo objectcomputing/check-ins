@@ -338,13 +338,18 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
         MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?senderId=%s", senderId))
                 .basicAuth("", ADMIN_ROLE);
-        final HttpResponse<List> response = client.exchange(request, List.class);
+        final HttpResponse<List<KudosResponseDTO>> response = client.exchange(request, Argument.listOf(KudosResponseDTO.class));
 
         assertEquals(OK, response.getStatus());
-        Optional<List> body = response.getBody();
-        assertTrue(body.isPresent());
-        List list = body.get();
-        assertNotNull(list);
+        assertEquals(1, response.body().size());
+        KudosResponseDTO element = response.body().getFirst();
+        assertEquals(element.getId(), kudos.getId());
+        assertEquals(element.getMessage(), kudos.getMessage());
+        assertEquals(element.getSenderId(), kudos.getSenderId());
+        assertEquals(element.getDateCreated(), kudos.getDateCreated());
+        assertEquals(element.getDateApproved(), kudos.getDateApproved());
+        assertEquals(element.getPubliclyVisible(), kudos.getPubliclyVisible());
+        assertEquals(List.of(recipientMembers.getFirst()), element.getRecipientMembers());
     }
 
     @ParameterizedTest
@@ -354,24 +359,6 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
 
         MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?isPending=%s", isPending))
-                .basicAuth("", ADMIN_ROLE);
-        final HttpResponse<List> response = client.exchange(request, List.class);
-
-        assertEquals(OK, response.getStatus());
-        Optional<List> body = response.getBody();
-        assertTrue(body.isPresent());
-        List list = body.get();
-        assertNotNull(list);
-        assertEquals(1, list.size());
-    }
-
-    @ParameterizedTest
-    @CsvSource({"true", "false"})
-    void testGetKudosWithIsPublic(boolean isPublic) {
-        Kudos kudos = isPublic ? createPublicKudos(senderId) : createADefaultKudos(senderId);
-        createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
-
-        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?isPublic=%s", isPublic))
                 .basicAuth("", ADMIN_ROLE);
         final HttpResponse<List> response = client.exchange(request, List.class);
 
