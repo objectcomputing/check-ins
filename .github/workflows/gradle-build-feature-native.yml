@@ -8,11 +8,12 @@ on:
       - 'doc-**/*'
       - 'hotfix-**/*'
       - 'dependabot/**/*'
+env:
+  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
+  SERVICE_NAME: checkins-pullrequest
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      CI: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,3 +38,7 @@ jobs:
         uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
         with:
           arguments: nativeTest
+      - name: Build a native docker image
+        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+        with:
+          arguments: dockerBuildNative

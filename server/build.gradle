@@ -28,6 +28,14 @@ micronaut {
     }
 }
 
+dockerBuildNative {
+    def imageNameFromGithub = []
+    if (System.getenv('PROJECT_ID') != null && System.getenv('SERVICE_NAME') && System.getenv('GITHUB_SHA')) {
+        imageNameFromGithub = ["ghcr.io/${System.getenv('PROJECT_ID')}/${System.getenv('SERVICE_NAME')}:${System.getenv("GITHUB_SHA")}".toString()]
+    }
+    images = ["checkins:latest"] + imageNameFromGithub
+}
+
 graalvmNative {
     toolchainDetection = false
     binaries {
@@ -37,9 +45,9 @@ graalvmNative {
             // See https://github.com/micronaut-projects/micronaut-core/issues/10771
             buildArgs.add("--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons")
 
-            // When we are building on CI, we do not want to include the dev migrations.
-            def isCI = System.getenv("CI") != null
-            def migrationLocations = isCI ? "db/common" : "db/common,db/dev"
+            // When we are building for production (on CI), we do not want to include the dev migrations.
+            def isProduction = System.getenv('SERVICE_NAME') != null && System.getenv('SERVICE_NAME') == 'checkins-master'
+            def migrationLocations = isProduction ? "db/common" : "db/common,db/dev"
             logger.lifecycle("ℹ️ Building with the migrations from: $migrationLocations")
 
             // Graal cannot scan for migrations at run-time, so we use this to specify the locations.
