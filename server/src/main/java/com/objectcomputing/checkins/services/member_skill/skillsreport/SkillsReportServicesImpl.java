@@ -79,7 +79,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
 
     private List<TeamMemberSkillDTO> getPotentialQualifyingMembers(List<SkillLevelDTO> skills) {
         // Get all member_skill entries that satisfy a requested skill
-        final List<MemberSkill> entries = new ArrayList<>();
+        List<MemberSkill> entries = new ArrayList<>();
 
         for (SkillLevelDTO skill : skills) {
             if (skill.getId() == null) {
@@ -89,8 +89,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
             final List<MemberSkill> temp = memberSkillRepo.findBySkillid(skill.getId());
             if (skill.getLevel() != null && !temp.isEmpty()) {
                 for (MemberSkill memSkill : temp) {
-                    if (memSkill.getSkilllevel() != null
-                            && isSkillLevelSatisfied(memSkill.getSkilllevel(), skill.getLevel())) {
+                    if (memSkill.getSkilllevel() != null && isSkillLevelSatisfied(memSkill.getSkilllevel(), skill.getLevel())) {
                         entries.add(memSkill);
                     }
                 }
@@ -101,33 +100,29 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         }
 
         // Collect all entries belong to each team member
-        final HashMap<UUID, TeamMemberSkillDTO> map = new HashMap<>();
-        for (MemberSkill ms : entries) {
-            final UUID memberId = ms.getMemberid();
-            final SkillLevelDTO skill = new SkillLevelDTO();
-            skill.setId(ms.getSkillid());
-            skill.setLevel(SkillLevel.convertFromString(ms.getSkilllevel()));
-
-            if (map.containsKey(memberId)) {
-                final TeamMemberSkillDTO dto = map.get(memberId);
-                dto.getSkills().add(skill);
-            } else {
-                final TeamMemberSkillDTO dto = new TeamMemberSkillDTO();
-                dto.setId(memberId);
-
-                final MemberProfile memProfile = memberProfileServices.getById(memberId);
-                final String memberName = MemberProfileUtils.getFullName(memProfile);
-                dto.setName(memberName);
-
-                final List<SkillLevelDTO> memberSkills = new ArrayList<>();
-                memberSkills.add(skill);
-                dto.setSkills(memberSkills);
-
-                map.put(memberId, dto);
-            }
-        }
+        final HashMap<UUID, TeamMemberSkillDTO> map = collectEntries(entries);
 
         return new ArrayList<>(map.values());
+    }
+
+    private HashMap<UUID, TeamMemberSkillDTO> collectEntries(List<MemberSkill> entries) {
+        final HashMap<UUID, TeamMemberSkillDTO> map = new HashMap<>();
+
+        for (MemberSkill ms : entries) {
+            final UUID memberId = ms.getMemberid();
+
+            final SkillLevelDTO skill = new SkillLevelDTO(ms.getSkillid(), SkillLevel.convertFromString(ms.getSkilllevel()));
+
+            var dto = map.computeIfAbsent(memberId, mId ->
+                    new TeamMemberSkillDTO(
+                            mId,
+                            MemberProfileUtils.getFullName(memberProfileServices.getById(mId)),
+                            new ArrayList<>()
+                    )
+            );
+            dto.getSkills().add(skill);
+        }
+        return map;
     }
 
     private List<TeamMemberSkillDTO> getMembersSatisfyingAllSkills(List<TeamMemberSkillDTO> potentialMembers,
