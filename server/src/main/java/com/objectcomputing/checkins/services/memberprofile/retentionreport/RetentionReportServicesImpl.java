@@ -227,11 +227,11 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
     public int getNumberOfEmployees(LocalDate dateToStudy, List<MemberProfile> memberProfiles) {
         int numberOfEmployees = 0;
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isBefore(dateToStudy) || mp.getStartDate().isEqual(dateToStudy)) &&
-                        (mp.getTerminationDate() == null || mp.getTerminationDate().isAfter(dateToStudy))) {
-                    numberOfEmployees += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isBefore(dateToStudy) || mp.getStartDate().isEqual(dateToStudy))
+                    && (mp.getTerminationDate() == null || mp.getTerminationDate().isAfter(dateToStudy))) {
+                numberOfEmployees += 1;
             }
         }
         return numberOfEmployees;
@@ -240,10 +240,10 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
     public int getNumberOfNewHires(LocalDate dateToStudy, List<MemberProfile> memberProfiles) {
         int numberOfEmployees = 0;
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isAfter(dateToStudy) || mp.getStartDate().isEqual(dateToStudy))) {
-                    numberOfEmployees += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isAfter(dateToStudy) || mp.getStartDate().isEqual(dateToStudy))) {
+                numberOfEmployees += 1;
             }
         }
 
@@ -254,11 +254,11 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusMonths(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getTerminationDate() != null && mp.getTerminationDate().isAfter(beginningDate) &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getTerminationDate() != null
+                    && mp.getTerminationDate().isAfter(beginningDate)
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -268,12 +268,12 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusMonths(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getTerminationDate() != null && mp.getTerminationDate().isAfter(beginningDate) &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    if (mp.getVoluntary() != null && mp.getVoluntary())
-                    numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getTerminationDate() != null
+                    && mp.getTerminationDate().isAfter(beginningDate)
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))
+                    && Boolean.TRUE.equals(mp.getVoluntary())) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -283,11 +283,11 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getTerminationDate() != null && mp.getTerminationDate().isAfter(beginningDate) &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getTerminationDate() != null
+                    && mp.getTerminationDate().isAfter(beginningDate)
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -297,13 +297,12 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getTerminationDate() != null && mp.getTerminationDate().isAfter(beginningDate) &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    if (mp.getVoluntary() != null && mp.getVoluntary()) {
-                        numberOfTerms += 1;
-                    }
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getTerminationDate() != null
+                    && mp.getTerminationDate().isAfter(beginningDate)
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))
+                    && Boolean.TRUE.equals(mp.getVoluntary())) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -313,12 +312,12 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate)) &&
-                        mp.getTerminationDate() != null &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                   numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate))
+                    && mp.getTerminationDate() != null
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -328,13 +327,12 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if(mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isEqual(beginningDate) ||
-                        mp.getStartDate().isAfter(beginningDate))
-                        && mp.getTerminationDate() != null &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate))
+                    && mp.getTerminationDate() != null
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -344,17 +342,15 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if(mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate))
-                        && mp.getTerminationDate() != null &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    if (mp.getVoluntary() != null && mp.getVoluntary()) {
-                        numberOfTerms += 1;
-                    }
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate))
+                    && mp.getTerminationDate() != null
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))
+                    && Boolean.TRUE.equals(mp.getVoluntary())) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
     }
-
 }
