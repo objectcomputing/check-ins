@@ -158,9 +158,10 @@ class KudosServicesImpl implements KudosServices {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
 
-            List<KudosResponseDTO> kudosList = new ArrayList<>();
-            kudosRepository.findAll().forEach(kudos -> kudosList.add(constructKudosResponseDTO(kudos)));
-            return kudosList;
+            return kudosRepository.findAll()
+                    .stream()
+                    .map(this::constructKudosResponseDTO)
+                    .toList();
         }
     }
 
