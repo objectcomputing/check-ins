@@ -69,12 +69,12 @@ public class FileServicesImpl implements FileServices {
             Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
 
-            String rootDirId = googleServiceConfiguration.getDirectory_id();
+            String rootDirId = googleServiceConfiguration.getDirectoryId();
             validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
 
             if (checkInID == null && isAdmin) {
                 FileList driveIndex = getFoldersInRoot(drive, rootDirId);
-                driveIndex.getFiles().stream().forEach(folder -> {
+                driveIndex.getFiles().forEach(folder -> {
                     try {
                         //find all
                         FileList fileList = drive.files().list().setSupportsAllDrives(true)
@@ -83,7 +83,7 @@ public class FileServicesImpl implements FileServices {
                                 .setSpaces("drive")
                                 .setFields("files(id, name, parents, size)")
                                 .execute();
-                        fileList.getFiles().stream()
+                        fileList.getFiles()
                                 .forEach(file -> result.add(setFileInfo(file, null)));
                     } catch (IOException ioe) {
                         LOG.error("Error occurred while retrieving files from Google Drive.", ioe);
@@ -166,7 +166,7 @@ public class FileServicesImpl implements FileServices {
             Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
 
-            String rootDirId = googleServiceConfiguration.getDirectory_id();
+            String rootDirId = googleServiceConfiguration.getDirectoryId();
             validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
 
             // Check if folder already exists on google drive. If exists, return folderId and name

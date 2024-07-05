@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.notifications.email.MailJetConfig;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.context.env.Environment;
@@ -42,7 +42,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                                     MemberProfileRepository memberProfileRepository,
                                     FeedbackRequestServices feedbackRequestServices,
                                     ReviewStatusTransitionValidator reviewStatusTransitionValidator,
-                                    @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
+                                    @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                                     Environment environment,
                                     CheckInsConfiguration checkInsConfiguration) {
         this.reviewPeriodRepository = reviewPeriodRepository;

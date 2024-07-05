@@ -6,8 +6,8 @@ micronaut:
       enabled: false
 ---
 mail-jet:
-  from_address: "someEmail@test.com"
-  from_name: "John Doe"
+  from-address: "someEmail@test.com"
+  from-name: "John Doe"
 ---
 credentials:
   roles:

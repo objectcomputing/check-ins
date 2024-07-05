@@ -10,6 +10,7 @@ const mockCheckinId = '3a1906df-d45c-4ff5-a6f8-7dacba97ff1a';
 
 const initialState = {
   state: {
+    csrf: 'O_3eLX2-e05qpS_yOeg1ZVAs9nDhspEi',
     checkins: [
       {
         id: mockCheckinId,
@@ -38,6 +39,24 @@ const initialState = {
         name: 'holmes'
       }
     ],
+    roles: [
+      { id: 1, role: 'MEMBER' },
+      { id: 2, role: 'PDL' }
+    ],
+    mockuments: [
+      {
+        id: 'mockument-1',
+        name: 'Expectations Discussion Guide for Team Members',
+        url: '/pdfs/Expectations_Discussion_Guide_for_Team_Members.pdf',
+        description: 'My description'
+      },
+      {
+        id: 'mockument-2',
+        name: 'Expectations Worksheet',
+        url: '/pdfs/Expectations_Worksheet.pdf'
+      }
+    ],
+    teams: [],
     index: 0
   }
 };
