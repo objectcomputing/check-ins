@@ -28,6 +28,9 @@ public class CheckInsConfiguration {
         @NotNull
         private FeedbackConfig feedback;
 
+        @NotNull
+        private GoogleApiConfig googleApi;
+
         @Getter
         @Setter
         @ConfigurationProperties("feedback")
@@ -38,6 +41,30 @@ public class CheckInsConfiguration {
 
             @NotBlank
             private String requestSubject;
+        }
+
+        @Getter
+        @Setter
+        @ConfigurationProperties("google-api")
+        public static class GoogleApiConfig {
+
+            @NotBlank
+            private String delegatedUser;
+
+            @NotNull
+            private ScopeConfig scopes;
+
+            @Getter
+            @Setter
+            @ConfigurationProperties("scopes")
+            public static class ScopeConfig {
+
+                @NotBlank
+                private String scopeForDriveApi;
+
+                @NotBlank
+                private String scopeForDirectoryApi;
+            }
         }
     }
 }
