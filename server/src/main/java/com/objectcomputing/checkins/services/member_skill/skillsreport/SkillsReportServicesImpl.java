@@ -36,7 +36,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         if (request != null) {
             final List<SkillLevelDTO> skills = request.getSkills();
             final Set<UUID> members = request.getMembers();
-            final Boolean inclusive = request.isInclusive();
+            final boolean inclusive = Boolean.TRUE.equals(request.isInclusive());
 
             for (SkillLevelDTO skill : skills) {
                 if (!skillRepo.existsById(skill.getId())) {
@@ -56,19 +56,17 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
 
             final List<TeamMemberSkillDTO> potentialMembers = getPotentialQualifyingMembers(skills);
             if (members == null || members.isEmpty()) {
-                if (inclusive == null || !inclusive) {
-                    response.setTeamMembers(potentialMembers);
+                if (inclusive) {
+                    response.setTeamMembers(getMembersSatisfyingAllSkills(potentialMembers, skills));
                 } else {
-                    final List<TeamMemberSkillDTO> qualifiedMembers = getMembersSatisfyingAllSkills(potentialMembers, skills);
-                    response.setTeamMembers(qualifiedMembers);
+                    response.setTeamMembers(potentialMembers);
                 }
             } else {
                 final List<TeamMemberSkillDTO> membersInList = removeMembersNotRequested(potentialMembers, members);
-                if (inclusive == null || !inclusive) {
-                    response.setTeamMembers(membersInList);
+                if (inclusive) {
+                    response.setTeamMembers(getMembersSatisfyingAllSkills(membersInList, skills));
                 } else {
-                    final List<TeamMemberSkillDTO> qualifiedMembers = getMembersSatisfyingAllSkills(membersInList, skills);
-                    response.setTeamMembers(qualifiedMembers);
+                    response.setTeamMembers(membersInList);
                 }
             }
         }
