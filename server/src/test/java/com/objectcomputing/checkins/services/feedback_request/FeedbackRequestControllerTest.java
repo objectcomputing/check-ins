@@ -1,10 +1,15 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
-import com.objectcomputing.checkins.services.fixture.*;
+import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -31,8 +36,13 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 class FeedbackRequestControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture, ReviewPeriodFixture {
 
@@ -47,9 +57,8 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
 
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject;
 
-    @Property(name = "check-ins.web-address") String submitURL;
-
-    @Property(name = FeedbackRequestServicesImpl.WEB_UI_URL) String emailUrl;
+    @Inject
+    CheckInsConfiguration checkInsConfiguration;
 
     @BeforeEach
     void resetMocks() {
@@ -64,7 +73,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         if (storedRequest.getDueDate() != null) {
             newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " +storedRequest.getDueDate().getYear() + ".";
         }
-        newContent += "<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
+        newContent += "<p>Please go to your unique link at " + checkInsConfiguration.getWebAddress() + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
         return newContent;
     }
 
@@ -74,7 +83,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                 "</b> has reopened the feedback request on <b>" +
                 requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
                 "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
-        newContent += "<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
+        newContent += "<p>Please go to your unique link at " + checkInsConfiguration.getWebAddress() + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
         return newContent;
     }
 
