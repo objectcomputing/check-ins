@@ -96,9 +96,7 @@ check-ins:
         scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
     feedback:
       max-suggestions: 6
-      notifications:
-        subject: "Feedback request"
-        content: "You have received a feedback request. Please go to the "
+      request-subject: "Feedback request"
   web-address: ${ WEB_ADDRESS }
 ---
 flyway:

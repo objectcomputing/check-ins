@@ -24,5 +24,20 @@ public class CheckInsConfiguration {
 
         @NotBlank
         private String name;
+
+        @NotNull
+        private FeedbackConfig feedback;
+
+        @Getter
+        @Setter
+        @ConfigurationProperties("feedback")
+        public static class FeedbackConfig {
+
+            @NotNull
+            private Integer maxSuggestions;
+
+            @NotBlank
+            private String requestSubject;
+        }
     }
 }

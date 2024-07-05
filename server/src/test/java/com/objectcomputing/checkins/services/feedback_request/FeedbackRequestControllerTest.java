@@ -14,7 +14,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -54,8 +53,6 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
 
     @Inject
     private FeedbackRequestServicesImpl feedbackRequestServicesImpl;
-
-    @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject;
 
     @Inject
     CheckInsConfiguration checkInsConfiguration;
@@ -209,7 +206,13 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         String correctContent = createEmailContent(feedbackRequest, response.getBody().get().getId(), pdlMemberProfile, employeeMemberProfile);
-        verify(emailSender).sendEmail(fromName, pdlMemberProfile.getWorkEmail(), notificationSubject, correctContent, recipient.getWorkEmail());
+        verify(emailSender).sendEmail(
+                fromName,
+                pdlMemberProfile.getWorkEmail(),
+                checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
+                correctContent,
+                recipient.getWorkEmail()
+        );
     }
 
     @Test
@@ -1064,7 +1067,13 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         // Verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         String correctContent = updateEmailContent(response.getBody().get().getId(), pdl, requestee);
-        verify(emailSender).sendEmail(fromName, pdl.getWorkEmail(), notificationSubject, correctContent, recipient.getWorkEmail());
+        verify(emailSender).sendEmail(
+                fromName,
+                pdl.getWorkEmail(),
+                checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
+                correctContent,
+                recipient.getWorkEmail()
+        );
     }
 
     @Test
