@@ -119,7 +119,8 @@ mail-jet:
   from-name: ${ FROM_NAME }
 ---
 github-credentials:
-  github_token: ${ GITHUB_TOKEN }
+  github-token: ${ GITHUB_TOKEN }
+  github-url: "https://api.github.com/"
 ---
 jackson:
   serialization-inclusion: ALWAYS
