@@ -278,7 +278,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean isSupervisor(UUID requesteeId, UUID currentUserId) {
-        return requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter(profile -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        return requesteeId != null
+                && memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
     }
 
     private boolean createIsPermitted(UUID requesteeId) {
