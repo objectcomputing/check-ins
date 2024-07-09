@@ -17,12 +17,7 @@ import java.util.stream.Stream;
 public enum SettingOption {
     LOGO_URL("The logo url", Category.THEME, Type.FILE, null),
     FROM_NAME("Email From Name", Category.CHECK_INS, Type.STRING, null),
-    AUTH_PROVIDER_X509_CERT_URL("Auth Provider x508 cert URL", Category.CHECK_INS, Type.STRING, null),
-    AUTH_URI("Auth URI", Category.CHECK_INS, Type.STRING, null),
-    DIRECTORY_ID("Directory ID", Category.CHECK_INS, Type.STRING, null),
     FROM_ADDRESS("From Address", Category.CHECK_INS, Type.STRING, null),
-    SA_KEY_TYPE("SA Key Type", Category.CHECK_INS, Type.STRING, null),
-    TOKEN_URI("Token URI", Category.CHECK_INS, Type.STRING, null)
     ;
 
 

@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.settings;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -10,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,7 +38,7 @@ public class Setting {
     @Schema(description = "the name of the setting")
     private String name;
 
-    @NotNull
+    @Nullable
     @Column(name="value")
     @TypeDef(type= DataType.STRING)
     @Schema(description = "the value of the setting")
@@ -54,6 +56,10 @@ public class Setting {
     public Setting(String name, String value) {
         this.name = name;
         this.value = value;
+    }
+
+    public String getValue() {
+        return this.value == null ? "" : this.value;
     }
 
     @Override

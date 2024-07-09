@@ -27,10 +27,14 @@ public class SettingsServicesImpl implements SettingsServices {
 
     public Setting update(String name, String value) {
         validateSettingOption(name);
-        Setting setting = settingsRepository.findByName(name)
-                .orElseThrow(() -> new NotFoundException("Setting with name " + name + " not found."));
-        setting.setValue(value);
-        return settingsRepository.update(setting);
+        try {
+            Setting setting = settingsRepository.findByName(name).orElseThrow(() -> new NotFoundException("Setting with name " + name + " not found."));
+            setting.setValue(value);
+            return settingsRepository.update(setting);
+
+        } catch (NotFoundException e ){
+            return settingsRepository.save(new Setting(name, value));
+        }
     }
 
     public Setting findByName(@NotNull String name) {

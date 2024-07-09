@@ -18,11 +18,26 @@ public class SettingsLoader {
 
     @EventListener
     public void loadSettingsData(final StartupEvent event) {
+        loadSettings();
+    }
+
+    @EventListener
+    public void loadSettingsData(final SettingsUpdatedEvent event) {
+        loadSettings();
+    }
+
+    private void loadSettings() {
         SettingsServices settingsServices = new SettingsServicesImpl(applicationContext.getBean(SettingsRepository.class));
         allSettings = settingsServices.findAllSettings();
     }
 
     public static Setting getSetting(final String name) {
-        return allSettings.stream().filter(setting -> name.equals(setting.getName())).findFirst().orElse(null);
+        Setting existingSetting = allSettings.stream().filter(s -> s.getName().equals(name)).findFirst().orElse(null);
+        if (existingSetting == null) {
+            Setting newSetting = new Setting(name, "");
+            allSettings.add(newSetting);
+            return newSetting;
+        }
+        return existingSetting;
     }
 }

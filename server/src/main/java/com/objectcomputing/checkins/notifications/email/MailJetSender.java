@@ -6,6 +6,7 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.settings.SettingsLoader;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
@@ -26,17 +27,24 @@ public class MailJetSender implements EmailSender {
 
     public static final int MAILJET_RECIPIENT_LIMIT = 49;
 
-    private final String fromAddress;
-    private final String fromName;
+//    private final String fromAddress;
+//    private final String fromName;
     private String emailFormat;
 
+    private String getFromAddress() {
+        return SettingsLoader.getSetting("FROM_ADDRESS").getValue();
+    }
+
+    private String getFromName() {
+        return SettingsLoader.getSetting("FROM_NAME").getValue();
+    }
     public MailJetSender(
             MailjetClient client,
             MailJetConfiguration configuration
     ) {
         this.client = client;
-        this.fromAddress = configuration.getFromAddress();
-        this.fromName = configuration.getFromName();
+//        this.fromAddress = SettingsLoader.getSetting("FROM_ADDRESS").getValue();
+//        this.fromName = SettingsLoader.getSetting("FROM_NAME").getValue();
         this.emailFormat = Emailv31.Message.HTMLPART;
     }
 
@@ -80,8 +88,8 @@ public class MailJetSender implements EmailSender {
      */
     @Override
     public void sendEmail(String fromName, String fromAddress, String subject, String content, String... recipients) {
-        if(fromName == null) fromName = this.fromName;
-        if(fromAddress == null) fromAddress = this.fromAddress;
+        if(fromName == null) fromName = getFromName();
+        if(fromAddress == null) fromAddress = getFromAddress();
 
         if(System.getenv("MJ_APIKEY_PUBLIC") == null || System.getenv("MJ_APIKEY_PRIVATE") == null) {
             LOG.error("API key(s) are missing for MailJetSender");
