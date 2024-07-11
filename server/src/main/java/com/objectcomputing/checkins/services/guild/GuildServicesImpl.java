@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.guild;
 
 import com.objectcomputing.checkins.Environments;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -14,7 +15,6 @@ import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -38,8 +38,6 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class GuildServicesImpl implements GuildServices {
 
-    public static final String WEB_ADDRESS = "check-ins.web-address";
-
     private static final Logger LOG = LoggerFactory.getLogger(GuildServicesImpl.class);;
 
     private final GuildRepository guildsRepo;
@@ -59,7 +57,7 @@ public class GuildServicesImpl implements GuildServices {
                              GuildMemberServices guildMemberServices,
                              @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                              Environment environment,
-                             @Property(name = WEB_ADDRESS) String webAddress
+                             CheckInsConfiguration checkInsConfiguration
     ) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
@@ -68,7 +66,7 @@ public class GuildServicesImpl implements GuildServices {
         this.memberProfileServices = memberProfileServices;
         this.guildMemberServices = guildMemberServices;
         this.emailSender = emailSender;
-        this.webAddress = webAddress;
+        this.webAddress = checkInsConfiguration.getWebAddress();
         this.environment = environment;
     }
 

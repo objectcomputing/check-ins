@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
@@ -9,6 +10,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,9 @@ class FeedbackRequestTest extends TestContainersSuite {
 
     private FeedbackRequestServicesImpl feedbackRequestServices;
 
+    @Inject
+    CheckInsConfiguration checkInsConfiguration;
+
     @BeforeEach
     @Tag("mocked")
     void setUp() {
@@ -46,9 +51,8 @@ class FeedbackRequestTest extends TestContainersSuite {
         reviewPeriodRepository = Mockito.mock(ReviewPeriodRepository.class);
         emailSender = Mockito.mock(EmailSender.class);
 
-
         feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices,
-                memberProfileServices, reviewPeriodRepository, emailSender, "DNC", "http://localhost:8080");
+                memberProfileServices, reviewPeriodRepository, emailSender, "DNC", checkInsConfiguration);
     }
 
     @Test

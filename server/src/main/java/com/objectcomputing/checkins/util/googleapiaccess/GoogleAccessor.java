@@ -8,11 +8,11 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.directory.Directory;
 import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
-import io.micronaut.context.annotation.Property;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
-
 import jakarta.inject.Singleton;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -29,10 +29,12 @@ public class GoogleAccessor {
     private final GoogleAuthenticator authenticator;
     private final Environment environment;
 
-    public GoogleAccessor(@Property(name = "check-ins.application.name") String applicationName,
-                          GoogleAuthenticator authenticator,
-                          Environment environment) throws GeneralSecurityException, IOException {
-        this.applicationName = applicationName;
+    public GoogleAccessor(
+            GoogleAuthenticator authenticator,
+            Environment environment,
+            CheckInsConfiguration checkInsConfiguration
+    ) throws GeneralSecurityException, IOException {
+        this.applicationName = checkInsConfiguration.getApplication().getName();
         this.authenticator = authenticator;
         this.environment = environment;
     }
