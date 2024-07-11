@@ -7,7 +7,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
-import io.micronaut.context.annotation.Property;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 
 import jakarta.inject.Singleton;
 import java.io.IOException;
@@ -21,10 +21,12 @@ public class GoogleDriveAccessor {
     private final String applicationName;
     private final GoogleAuthenticator authenticator;
 
-    public GoogleDriveAccessor(@Property(name = "check-ins.application.name") String applicationName,
-                               GoogleAuthenticator authenticator) throws GeneralSecurityException, IOException {
+    public GoogleDriveAccessor(
+            GoogleAuthenticator authenticator,
+            CheckInsConfiguration checkInsConfiguration
+    ) throws GeneralSecurityException, IOException {
         this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        this.applicationName = applicationName;
+        this.applicationName = checkInsConfiguration.getApplication().getName();
         this.authenticator = authenticator;
     }
 
