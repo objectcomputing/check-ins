@@ -4,13 +4,17 @@ import com.objectcomputing.checkins.services.skills.Skill;
 
 public interface SkillFixture extends RepositoryFixture {
 
+    default Skill createSkill(String name, boolean isPending, String description, boolean isExtraneous) {
+        return getSkillRepository().save(
+                new Skill(name, isPending, description, isExtraneous)
+        );
+    }
+
     default Skill createADefaultSkill() {
-        return getSkillRepository().save(new Skill("Limb regeneration", true,
-                "Regenerate a lost limb", false));
+        return createSkill("Limb regeneration", true, "Regenerate a lost limb", false);
     }
 
     default Skill createASecondarySkill() {
-        return getSkillRepository().save(new Skill("Limb restoration", true,
-                "Restore a lost limb", false));
+        return createSkill("Limb restoration", true, "Restore a lost limb", false);
     }
 }
