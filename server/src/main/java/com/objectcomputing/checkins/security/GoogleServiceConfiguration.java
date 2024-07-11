@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.security;
 
-import com.objectcomputing.checkins.services.settings.SettingsLoader;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.core.type.Argument;

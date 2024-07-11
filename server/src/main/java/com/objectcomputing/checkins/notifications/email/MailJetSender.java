@@ -6,7 +6,9 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.settings.SettingsLoader;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.settings.SettingOption;
+import com.objectcomputing.checkins.services.settings.SettingsServices;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
@@ -19,11 +21,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Prototype
-@Requires(bean = MailJetConfiguration.class)
+//@Requires(bean = MailJetConfiguration.class)
 public class MailJetSender implements EmailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
+    private final SettingsServices settingsServices;
 
     public static final int MAILJET_RECIPIENT_LIMIT = 49;
 
@@ -32,20 +35,31 @@ public class MailJetSender implements EmailSender {
     private String emailFormat;
 
     private String getFromAddress() {
-        return SettingsLoader.getSetting("FROM_ADDRESS").getValue();
+        try {
+            return settingsServices.findByName(SettingOption.FROM_ADDRESS.name()).getValue();
+        } catch (NotFoundException e) {
+            return "";
+        }
     }
 
     private String getFromName() {
-        return SettingsLoader.getSetting("FROM_NAME").getValue();
+        try {
+            return settingsServices.findByName(SettingOption.FROM_NAME.name()).getValue();
+        } catch (NotFoundException e) {
+            return "";
+        }
     }
+
     public MailJetSender(
             MailjetClient client,
-            MailJetConfiguration configuration
+//            MailJetConfiguration configuration,
+            SettingsServices settingsServices
     ) {
         this.client = client;
 //        this.fromAddress = SettingsLoader.getSetting("FROM_ADDRESS").getValue();
 //        this.fromName = SettingsLoader.getSetting("FROM_NAME").getValue();
         this.emailFormat = Emailv31.Message.HTMLPART;
+        this.settingsServices = settingsServices;
     }
 
     /**

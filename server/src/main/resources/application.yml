@@ -49,7 +49,7 @@ micronaut:
           access-token:
             expiration: 28800
     oauth2:
-      callback-uri: ${ OAUTH_CALLBACK_URI }
+#      callback-uri: ${ OAUTH_CALLBACK_URI }
       clients:
         google:
           client-id: ${ OAUTH_CLIENT_ID }
