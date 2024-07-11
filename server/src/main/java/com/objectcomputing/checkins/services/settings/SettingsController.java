@@ -29,8 +29,8 @@ import java.util.UUID;
 public class SettingsController {
     public static final String PATH = "/services/settings";
 
-    @Inject
-    private ApplicationEventPublisher eventPublisher;
+//    @Inject
+//    private ApplicationEventPublisher eventPublisher;
 
     private final SettingsServices settingsServices;
 
@@ -103,7 +103,7 @@ public class SettingsController {
         Setting savedSetting = settingsServices.update(settingsDTO.getName(), settingsDTO.getValue());
         SettingsResponseDTO settingsResponseDTO = fromEntity(savedSetting);
         URI location = UriBuilder.of(PATH).path(savedSetting.getId().toString()).build();
-        eventPublisher.publishEvent(new SettingsUpdatedEvent(savedSetting));
+//        eventPublisher.publishEvent(new SettingsUpdatedEvent(savedSetting));
         return HttpResponse.ok(settingsResponseDTO).headers(headers ->
             headers.location(location)
         );
