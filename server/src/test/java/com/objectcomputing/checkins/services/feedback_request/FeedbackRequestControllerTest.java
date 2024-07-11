@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
@@ -60,9 +61,8 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
 
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject;
 
-    @Property(name = "check-ins.web-address") String submitURL;
-
-    @Property(name = FeedbackRequestServicesImpl.WEB_UI_URL) String emailUrl;
+    @Inject
+    CheckInsConfiguration checkInsConfiguration;
 
     @BeforeEach
     void resetMocks() {
@@ -77,7 +77,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         if (storedRequest.getDueDate() != null) {
             newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " +storedRequest.getDueDate().getYear() + ".";
         }
-        newContent += "<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
+        newContent += "<p>Please go to your unique link at " + checkInsConfiguration.getWebAddress() + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
         return newContent;
     }
 
@@ -87,7 +87,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                 "</b> has reopened the feedback request on <b>" +
                 requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
                 "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
-        newContent += "<p>Please go to your unique link at " + emailUrl + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
+        newContent += "<p>Please go to your unique link at " + checkInsConfiguration.getWebAddress() + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
         return newContent;
     }
 

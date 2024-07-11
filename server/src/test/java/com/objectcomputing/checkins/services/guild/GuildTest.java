@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
@@ -50,6 +51,9 @@ class GuildTest extends TestContainersSuite {
     @Inject
     private Validator validator;
 
+    @Inject
+    private CheckInsConfiguration checkInsConfiguration;
+
     private GuildRepository guildsRepo;
     private GuildMemberRepository guildMemberRepo;
     private GuildMemberHistoryRepository guildMemberHistoryRepo;
@@ -59,7 +63,6 @@ class GuildTest extends TestContainersSuite {
     private EmailSender emailSender;
     private Environment environment;
     private GuildServicesImpl guildServices;
-    private String webAddress;
 
     @BeforeEach
     @Tag("mocked")
@@ -73,8 +76,6 @@ class GuildTest extends TestContainersSuite {
         emailSender = Mockito.mock(EmailSender.class);
         environment = Mockito.mock(Environment.class);
 
-        webAddress = "http://example.com";
-
         guildServices = Mockito.spy(new GuildServicesImpl(
                 guildsRepo,
                 guildMemberRepo,
@@ -84,7 +85,7 @@ class GuildTest extends TestContainersSuite {
                 guildMemberServices,
                 emailSender,
                 environment,
-                webAddress)
+                checkInsConfiguration)
         );
     }
 
