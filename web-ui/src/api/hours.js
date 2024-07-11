@@ -16,11 +16,10 @@ export const postEmployeeHours = async (cookie, file) => {
   return resolve({
     method: 'POST',
     url: hoursUrl + '/upload',
-    data: file,
+    body: file,
     headers: {
       'X-CSRF-Header': cookie,
-      Accept: 'application/json',
-      'Content-Type': 'multipart/form-data'
+      Accept: 'application/json'
     }
   });
 };
