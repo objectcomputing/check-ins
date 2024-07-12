@@ -32,6 +32,7 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class GuildMemberControllerTest extends TestContainersSuite implements GuildFixture, MemberProfileFixture, RoleFixture, GuildMemberFixture {
 
@@ -70,6 +71,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
                 "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "nobody@objectcomputing.com"
         );
+        verifyNoMoreInteractions(emailSender);
     }
 
     @Test
@@ -90,6 +92,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
                 "<h3>Bill Charles has joined the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "nobody@objectcomputing.com"
         );
+        verifyNoMoreInteractions(emailSender);
     }
 
 
@@ -113,6 +116,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
                 "nobody@objectcomputing.com",
                 "billm@objectcomputing.com"
         );
+        verifyNoMoreInteractions(emailSender);
     }
 
 
@@ -135,6 +139,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
                 "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "nobody@objectcomputing.com"
         );
+        verifyNoMoreInteractions(emailSender);
     }
 
     @Test

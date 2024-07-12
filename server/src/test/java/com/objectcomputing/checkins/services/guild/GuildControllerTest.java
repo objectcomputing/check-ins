@@ -31,6 +31,7 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfileFixture, RoleFixture, GuildMemberFixture {
@@ -86,6 +87,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
                 "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been added:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "billm@objectcomputing.com"
         );
+        verifyNoMoreInteractions(emailSender);
     }
 
     @Test
@@ -115,6 +117,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
                 "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been removed:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "billm@objectcomputing.com"
         );
+        verifyNoMoreInteractions(emailSender);
     }
     
     @Test
