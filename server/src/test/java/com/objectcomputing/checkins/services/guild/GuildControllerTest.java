@@ -98,7 +98,6 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         client.toBlocking().exchange(request, GuildResponseDTO.class);
 
-        // 2 emails are sent, one to the new member and one to the guild lead
         assertEquals(2, emailSender.events.size());
         assertEquals(
                 List.of(
