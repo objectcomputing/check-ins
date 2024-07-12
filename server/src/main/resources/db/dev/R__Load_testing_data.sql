@@ -139,6 +139,11 @@ INSERT INTO member_profile -- Huey Emmerich
 VALUES
 ('8d75c07e-6adc-437a-8659-7dd953ce6600', PGP_SYM_ENCRYPT('Huey','${aeskey}'),  PGP_SYM_ENCRYPT('Emmerich','${aeskey}'), PGP_SYM_ENCRYPT('Head of R&D','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('emmerichh@objectcomputing.com','${aeskey}'), '657483498', '2022-03-29', PGP_SYM_ENCRYPT('Waiting for love to bloom on the battlefield','${aeskey}'), '43ee8e79-b33d-44cd-b23c-e183894ebfef', '1943-07-04', '2022-03-29');
 
+INSERT INTO member_profile -- Tim Yates
+  (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+VALUES
+  ('1c813446-c65a-4f49-b980-0193f7bfff8c', PGP_SYM_ENCRYPT('Tim','${aeskey}'), PGP_SYM_ENCRYPT('Yates','${aeskey}'), PGP_SYM_ENCRYPT('Senior Developer','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('Manchester','${aeskey}'), PGP_SYM_ENCRYPT('yatest@objectcomputing.com','${aeskey}'), 'tim-12345678', '2024-05-08', PGP_SYM_ENCRYPT('Java developer for ages','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1999-12-31', '2024-03-29');
+
 
 -- Roles
 INSERT INTO role
@@ -193,6 +198,10 @@ INSERT INTO member_roles(
 VALUES
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '066b186f-1425-45de-89f2-4ddcc6ebe237'); -- Joe Warner
 
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '1c813446-c65a-4f49-b980-0193f7bfff8c'); -- Tim Yates
 
 -- PDL Role Assigning
 INSERT INTO member_roles
@@ -302,6 +311,10 @@ INSERT INTO member_roles
 VALUES
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '8fa673c0-ca19-4271-b759-41cb9db2e83a'); -- Holly Williams
 
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '1c813446-c65a-4f49-b980-0193f7bfff8c'); -- Tim Yates
 
 -- Teams
 INSERT INTO team -- Checkins Experts
