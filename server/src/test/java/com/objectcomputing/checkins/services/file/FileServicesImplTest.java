@@ -18,6 +18,9 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.settings.Setting;
+import com.objectcomputing.checkins.services.settings.SettingOption;
+import com.objectcomputing.checkins.services.settings.SettingsServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.authentication.Authentication;
@@ -37,13 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -129,8 +126,16 @@ class FileServicesImplTest extends TestContainersSuite {
     @Mock
     private GoogleServiceConfiguration googleServiceConfiguration;
 
+    @Mock
+    private SettingsServices settingsServices;
+
+    @Mock
+    private Setting mockSettings;
+
     @InjectMocks
     private FileServicesImpl services;
+
+
 
     private AutoCloseable mockFinalizer;
 
@@ -172,11 +177,17 @@ class FileServicesImplTest extends TestContainersSuite {
         reset(memberProfileServices);
         reset(completedFileUpload);
         reset(googleServiceConfiguration);
+        reset(settingsServices);
 
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
         when(mockAttributes.toString()).thenReturn("test.email");
         when(currentUserServices.findOrSaveUser(any(), any(), any())).thenReturn(testMemberProfile);
+        when(settingsServices.findByName("DIRECTORY_ID")).thenReturn(mockSettings);
+        when(mockSettings.getValue()).thenReturn("some.directory.id");
+
+
+
     }
 
     @Test
@@ -740,6 +751,8 @@ class FileServicesImplTest extends TestContainersSuite {
         when(create.setSupportsAllDrives(true)).thenReturn(create);
         when(create.setFields(any(String.class))).thenReturn(create);
         when(create.execute()).thenReturn(fileFromDrive);
+//        when(settingsServices.findByName("DIRECTORY_ID")).thenReturn(mockSettings);
+//        when(mockSettings.getValue()).thenReturn("some.directory.id");
 
         //act
         FileInfoDTO result = services.uploadFile(testCheckinId, fileToUpload);

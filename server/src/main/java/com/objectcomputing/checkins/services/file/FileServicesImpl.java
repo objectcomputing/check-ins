@@ -46,7 +46,6 @@ public class FileServicesImpl implements FileServices {
     private final CheckinDocumentServices checkinDocumentServices;
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
-    private final GoogleServiceConfiguration googleServiceConfiguration;
 
     @Inject
     private SettingsServices settingsServices;
@@ -56,13 +55,14 @@ public class FileServicesImpl implements FileServices {
                             CheckinDocumentServices checkinDocumentServices,
                             MemberProfileServices memberProfileServices,
                             CurrentUserServices currentUserServices,
-                            GoogleServiceConfiguration googleServiceConfiguration) {
+                            GoogleServiceConfiguration googleServiceConfiguration,
+                            SettingsServices settingsServices) {
         this.googleApiAccess = googleApiAccess;
         this.checkInServices = checkInServices;
         this.checkinDocumentServices = checkinDocumentServices;
         this.memberProfileServices = memberProfileServices;
         this.currentUserServices = currentUserServices;
-        this.googleServiceConfiguration = googleServiceConfiguration;
+        this.settingsServices = settingsServices;
     }
 
     @Override
