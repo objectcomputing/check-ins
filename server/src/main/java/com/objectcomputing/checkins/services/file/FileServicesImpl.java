@@ -5,6 +5,7 @@ import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
@@ -14,10 +15,13 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.settings.SettingOption;
+import com.objectcomputing.checkins.services.settings.SettingsServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.multipart.CompletedFileUpload;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -44,6 +48,9 @@ public class FileServicesImpl implements FileServices {
     private final CurrentUserServices currentUserServices;
     private final GoogleServiceConfiguration googleServiceConfiguration;
 
+    @Inject
+    private SettingsServices settingsServices;
+
     public FileServicesImpl(GoogleApiAccess googleApiAccess,
                             CheckInServices checkInServices,
                             CheckinDocumentServices checkinDocumentServices,
@@ -69,8 +76,8 @@ public class FileServicesImpl implements FileServices {
             Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
 
-            String rootDirId = googleServiceConfiguration.getDirectoryId();
-            validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
+            String rootDirId = getRootDirId();
+            validate(rootDirId == null || rootDirId == "", "No destination folder has been configured. Contact your administrator for assistance.");
 
             if (checkInID == null && isAdmin) {
                 FileList driveIndex = getFoldersInRoot(drive, rootDirId);
@@ -106,6 +113,18 @@ public class FileServicesImpl implements FileServices {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
             throw new FileRetrievalException(e.getMessage());
         }
+    }
+
+    private String getRootDirId() {
+        String rootDirId;
+        try {
+            rootDirId = settingsServices.findByName(SettingOption.DIRECTORY_ID.name()).getValue();
+        }
+        catch (NotFoundException e ) {
+            rootDirId = "";
+        }
+//            String rootDirId = fileServiceConfiguration.getDirectoryId();
+        return rootDirId;
     }
 
     @Override
@@ -166,7 +185,7 @@ public class FileServicesImpl implements FileServices {
             Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
 
-            String rootDirId = googleServiceConfiguration.getDirectoryId();
+            String rootDirId = getRootDirId();
             validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
 
             // Check if folder already exists on google drive. If exists, return folderId and name

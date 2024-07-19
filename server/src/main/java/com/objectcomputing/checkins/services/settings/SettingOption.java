@@ -18,7 +18,9 @@ public enum SettingOption {
     LOGO_URL("The logo url", Category.THEME, Type.FILE, null),
     FROM_NAME("Email From Name", Category.CHECK_INS, Type.STRING, null),
     FROM_ADDRESS("From Address", Category.CHECK_INS, Type.STRING, null),
-    ;
+    DIRECTORY_ID("Google Drive ID", Category.INTEGRATIONS, Type.STRING, null),
+    MJ_APIKEY_PUBLIC("MailJet Public API Key", Category.INTEGRATIONS, Type.STRING, null ),
+    MJ_APIKEY_PRIVATE("MailJet Private API Key", Category.INTEGRATIONS, Type.STRING, null );
 
 
 

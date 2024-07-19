@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.settings;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
-import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
@@ -13,7 +12,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -28,9 +26,6 @@ import java.util.UUID;
 @Validated
 public class SettingsController {
     public static final String PATH = "/services/settings";
-
-//    @Inject
-//    private ApplicationEventPublisher eventPublisher;
 
     private final SettingsServices settingsServices;
 
@@ -103,7 +98,6 @@ public class SettingsController {
         Setting savedSetting = settingsServices.update(settingsDTO.getName(), settingsDTO.getValue());
         SettingsResponseDTO settingsResponseDTO = fromEntity(savedSetting);
         URI location = UriBuilder.of(PATH).path(savedSetting.getId().toString()).build();
-//        eventPublisher.publishEvent(new SettingsUpdatedEvent(savedSetting));
         return HttpResponse.ok(settingsResponseDTO).headers(headers ->
             headers.location(location)
         );

@@ -111,12 +111,7 @@ flyway:
         aeskey: ${ AES_KEY }
 ---
 service-account-credentials:
-  directory-id: ${ DIRECTORY_ID }
   encoded-value: ${SERVICE_ACCOUNT_CREDENTIALS}
----
-#mail-jet:
-#  from_address: ${ FROM_ADDRESS }
-#  from_name: ${ FROM_NAME }
 ---
 github-credentials:
   github_token: ${ GITHUB_TOKEN }

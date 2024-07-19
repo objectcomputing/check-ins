@@ -7,7 +7,6 @@ import io.micronaut.json.JsonMapper;
 import io.micronaut.validation.validator.constraints.ConstraintValidator;
 import jakarta.inject.Singleton;
 import jakarta.validation.Constraint;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -28,9 +27,6 @@ import java.util.stream.Stream;
 public class GoogleServiceConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleServiceConfiguration.class);
-
-    @NotNull
-    private String directoryId;
 
     @ValidEncodedGoogleServiceConfiguration
     private String encodedValue;

@@ -45,9 +45,9 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
         GoogleServiceConfiguration googleServiceConfiguration = new GoogleServiceConfiguration();
 
         Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
-        assertEquals(2, violations.size());
+        assertEquals(1, violations.size());
         assertEquals(
-                List.of("directoryId:must not be null", "encodedValue:must be a valid base64 encoded Google Service Configuration"),
+                List.of("encodedValue:must be a valid base64 encoded Google Service Configuration"),
                 violations.stream().map(v -> v.getPropertyPath() + ":" + v.getMessage()).toList()
         );
     }
@@ -55,7 +55,6 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
     @Test
     void testConstraintViolationPasses() {
         GoogleServiceConfiguration googleServiceConfiguration = new GoogleServiceConfiguration();
-        googleServiceConfiguration.setDirectoryId("some.directory.id");
         googleServiceConfiguration.setEncodedValue(ENCODED_EXAMPLE_GOOGLE_SERVICE_CONFIGURATION);
 
         Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
@@ -65,18 +64,13 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
     @Test
     void testConfigurationLoadedCorrectlyFromConfiguration() throws IOException {
         var values = Map.ofEntries(
-                Map.entry("directory", "some.directory.id"),
                 Map.entry("encoded-gcp-credentials", ENCODED_EXAMPLE_GOOGLE_SERVICE_CONFIGURATION)
         );
         try (var ctx = ApplicationContext.run(Map.ofEntries(
                 Map.entry("datasources.enabled", false),
-                Map.entry("service-account-credentials.directory-id", values.get("directory")),
                 Map.entry("service-account-credentials.encoded-value", values.get("encoded-gcp-credentials"))
         ))) {
             var cfg = ctx.getBean(GoogleServiceConfiguration.class);
-
-            assertNotNull(cfg.getDirectoryId());
-            assertEquals(values.get("directory"), cfg.getDirectoryId());
 
             assertNotNull(cfg.getEncodedValue());
             assertEquals(values.get("encoded-gcp-credentials"), cfg.getEncodedValue());

@@ -177,7 +177,6 @@ class FileServicesImplTest extends TestContainersSuite {
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
         when(mockAttributes.toString()).thenReturn("test.email");
         when(currentUserServices.findOrSaveUser(any(), any(), any())).thenReturn(testMemberProfile);
-        when(googleServiceConfiguration.getDirectoryId()).thenReturn("testDirectoryId");
     }
 
     @Test
