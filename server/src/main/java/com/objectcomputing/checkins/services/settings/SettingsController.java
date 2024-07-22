@@ -39,7 +39,7 @@ public class SettingsController {
      * @return {@link <List<SettingResponseDTO>>} Returned setting
      */
     @ExecuteOn(TaskExecutors.BLOCKING)
-    @Get
+    @Get("/")
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<SettingsResponseDTO> findAllSettings() {
         return settingsServices.findAllSettings().stream()
