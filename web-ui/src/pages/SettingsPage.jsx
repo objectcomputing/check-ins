@@ -47,8 +47,10 @@ const SettingsPage = () => {
 
 
   const mergeControlValues = (originalSettings, newValues) => {
+    console.log("originalSettings:" + originalSettings);
+    console.log("newValues: " + newValues);
     const mergedSettings = originalSettings.map( originalSetting => {
-      let newValue = newValues.find((element) => element.name == originalSetting.name);
+      let newValue = newValues?.find((element) => element.name == originalSetting.name);
       if (newValue) {
         const combinedObject = {...originalSetting, ...newValue}
         return combinedObject
