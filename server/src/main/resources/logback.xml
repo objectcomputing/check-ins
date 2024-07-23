@@ -15,5 +15,7 @@
 
 <!--    <logger name="com.objectcomputing.checkins.services" level="DEBUG" />-->
 <!--    <logger name="io.micronaut.data.query" level="TRACE"/>-->
+    <logger name="io.micronaut.http.server" level="TRACE" />
+    <logger name="io.micronaut.http.client" level="TRACE" />
 
 </configuration>

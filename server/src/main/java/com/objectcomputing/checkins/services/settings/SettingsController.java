@@ -72,6 +72,8 @@ public class SettingsController {
     @Get("/options")
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<SettingOption> getOptions() {
+
+        LOG.info("In SettingsController.getOptions()");
         return SettingOption.getOptions();
     }
 
