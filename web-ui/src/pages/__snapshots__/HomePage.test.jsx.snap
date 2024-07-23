@@ -8,8 +8,6 @@ exports[`renders correctly 1`] = `
     <div
       class="celebrations"
     >
-      0
-      0
       <div
         class="public-kudos"
       >
@@ -55,12 +53,11 @@ exports[`renders correctly 1`] = `
               class="kudos-list"
             >
               <div
-                class="MuiBox-root css-0"
+                class="MuiBox-root css-1z13ce1"
               >
                 <div
                   class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-12qqhfb-MuiPaper-root-MuiCard-root"
                   padding="0"
-                  width="100"
                 >
                   <div
                     class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
@@ -90,12 +87,11 @@ exports[`renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="MuiBox-root css-0"
+                class="MuiBox-root css-1z13ce1"
               >
                 <div
                   class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-12qqhfb-MuiPaper-root-MuiCard-root"
                   padding="0"
-                  width="100"
                 >
                   <div
                     class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
@@ -125,12 +121,11 @@ exports[`renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="MuiBox-root css-0"
+                class="MuiBox-root css-1z13ce1"
               >
                 <div
                   class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-12qqhfb-MuiPaper-root-MuiCard-root"
                   padding="0"
-                  width="100"
                 >
                   <div
                     class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
@@ -160,12 +155,11 @@ exports[`renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="MuiBox-root css-0"
+                class="MuiBox-root css-1z13ce1"
               >
                 <div
                   class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-12qqhfb-MuiPaper-root-MuiCard-root"
                   padding="0"
-                  width="100"
                 >
                   <div
                     class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
@@ -195,12 +189,11 @@ exports[`renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="MuiBox-root css-0"
+                class="MuiBox-root css-1z13ce1"
               >
                 <div
                   class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-12qqhfb-MuiPaper-root-MuiCard-root"
                   padding="0"
-                  width="100"
                 >
                   <div
                     class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
