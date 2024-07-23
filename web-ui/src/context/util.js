@@ -19,6 +19,18 @@ export const sortAnniversaries = anniversaryData => {
   return anniversaryData.sort((a, b) => b.yearsOfService - a.yearsOfService);
 };
 
+export const sortKudos = (kudos, order = "ASC") => {
+  if (order === "DESC") {
+    return kudos?.sort(
+      (a, b) => new Date(a.dateCreated.join("/")) - new Date(b.dateCreated.join("/"))
+    );
+  } else if (order === "ASC") {
+    return kudos?.sort(
+      (a, b) => new Date(b.dateCreated.join("/")) - new Date(a.dateCreated.join("/"))
+    );
+  }
+};
+
 function monthDayToDayOfYear(monthDayString) {
   if (!monthDayString) return 0;
   const [month, day] = monthDayString.split('/');
