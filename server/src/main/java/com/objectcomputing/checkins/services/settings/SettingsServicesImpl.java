@@ -4,12 +4,16 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.UUID;
 
 @Singleton
 public class SettingsServicesImpl implements SettingsServices {
+    private static final Logger LOG = LoggerFactory.getLogger(SettingsServicesImpl.class);
+
 
     private final SettingsRepository settingsRepository;
 
@@ -43,6 +47,7 @@ public class SettingsServicesImpl implements SettingsServices {
     }
 
     public List<Setting> findAllSettings() {
+        LOG.info("In SettingsServicesImpl.findAllSettigs()");
         return settingsRepository.findAll();
     }
 

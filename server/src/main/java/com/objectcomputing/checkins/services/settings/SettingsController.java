@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.settings;
 
+import com.objectcomputing.checkins.logging.RequestLoggingInterceptor;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
@@ -14,6 +15,8 @@ import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.UUID;
 @Tag(name = "settings")
 @Validated
 public class SettingsController {
+    private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
     public static final String PATH = "/services/settings";
 
     private final SettingsServices settingsServices;
@@ -42,6 +46,7 @@ public class SettingsController {
     @Get("/")
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<SettingsResponseDTO> findAllSettings() {
+        LOG.info("In SettingsController.findAllSettings");
         return settingsServices.findAllSettings().stream()
                 .map(this::fromEntity).toList();
     }
