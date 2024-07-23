@@ -1,11 +1,11 @@
 import { resolve } from './api.js';
 
-const settingsURL = '/services/settings';
+const settingsURL = '/services/settings/';
 
 export const getSettingValue = async (settingName, cookie) => {
   return resolve({
     method: 'GET',
-    url: settingsURL + "/" + settingName,
+    url: settingsURL + settingName,
     headers: {
       'X-CSRF-Header': cookie,
       Accept: 'application/json',
@@ -29,7 +29,7 @@ export const getAll = async cookie => {
 export const getAllOptions = async cookie => {
   return resolve({
     method: 'GET',
-    url: settingsURL + `/options`,
+    url: settingsURL + `options`,
     headers: {
       'X-CSRF-Header': cookie,
       Accept: 'application/json',
