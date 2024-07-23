@@ -1,42 +1,22 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { UPDATE_TOAST } from '../context/actions';
-import { AppContext } from '../context/AppContext';
-import { selectCsrfToken } from '../context/selectors';
-import { sortKudos } from '../context/util';
+import { UPDATE_TOAST } from '../../context/actions';
+import { AppContext } from '../../context/AppContext';
+import { selectCsrfToken } from '../../context/selectors';
+import { sortKudos } from '../../context/util';
 
-import { getAllKudos } from '../api/kudos';
+import { getRecentKudos } from '../../api/kudos';
 
-import KudosCard from '../components/kudos_card/KudosCard';
-import KudosDialog from '../components/kudos_dialog/KudosDialog';
-import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
+import KudosCard from './PublicKudosCard';
+import KudosDialog from '../kudos_dialog/KudosDialog';
+import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 
 import StarIcon from '@mui/icons-material/Star';
 import { Button, Grid, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
 
-import './KudosPage.css';
+import './PublicKudos.css';
 
-const PREFIX = 'KudosPage';
-const classes = {
-  expandOpen: `${PREFIX}-expandOpen`,
-  expandClose: `${PREFIX}-expandClose`
-};
-
-const Root = styled('div')({
-  [`& .${classes.expandOpen}`]: {
-    transform: 'rotate(180deg)',
-    transition: 'transform 0.1s linear',
-    marginLeft: 'auto'
-  },
-  [`& .${classes.expandClose}`]: {
-    transform: 'rotate(0deg)',
-    transition: 'transform 0.1s linear',
-    marginLeft: 'auto'
-  }
-});
-
-const KudosHomePage = () => {
+const PublicKudos = () => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
@@ -49,7 +29,7 @@ const KudosHomePage = () => {
 
   const loadKudos = useCallback(async () => {
     setKudosLoading(true);
-    const res = await getAllKudos(csrf, true);
+    const res = await getRecentKudos(csrf);
     if (res.error) return;
 
     const kudos = res.payload.data;
@@ -62,7 +42,7 @@ const KudosHomePage = () => {
   }, [csrf, dispatch]);
 
   return (
-    <Root className="kudos-page">
+    <div className="public-kudos">
       <div className="kudos-title">
         <h1>Kudos</h1>
         <Button
@@ -78,20 +58,16 @@ const KudosHomePage = () => {
         onClose={() => setKudosDialogOpen(false)}
       />
       <Grid container columns={6} spacing={3}>
-        <Grid item className={classes.members}>
+        <Grid item>
           {kudosLoading ? (
             <div className="kudos-list">
               {Array.from({ length: 5 }).map((_, index) => (
-                <SkeletonLoader key={index} type="kudos" />
+                <SkeletonLoader width={400} key={index} type="kudos" />
               ))}
             </div>
           ) : !kudosLoading && kudos?.length > 0 ? (
             <div className="kudos-list">
-              {kudos.map(k => {
-                if (new Date(k.dateApproved) > lastMonth) {
-                  return <KudosCard key={k.id} kudos={k} />;
-                }
-              })}
+              {kudos.map(k => (<KudosCard key={k.id} kudos={k} />))}
             </div>
           ) : (
             <Typography variant="body2">
@@ -100,8 +76,8 @@ const KudosHomePage = () => {
           )}
         </Grid>
       </Grid>
-    </Root>
+    </div>
   );
 };
 
-export default KudosHomePage;
+export default PublicKudos;

@@ -45,12 +45,17 @@ public class KudosController {
         return kudosServices.approve(kudos);
     }
 
+    @Get("/recent")
+    public List<KudosResponseDTO> getRecent() {
+        return kudosServices.getRecent();
+    }
+
     @Get("/{id}")
     public KudosResponseDTO getById(@NotNull UUID id) {
         return kudosServices.getById(id);
     }
 
-    @Get("/{?recipientId,?senderId,?isPending,?isPublic}")
+    @Get("/{?recipientId,?senderId,?isPending}")
     public List<KudosResponseDTO> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending) {
         return kudosServices.findByValues(recipientId, senderId, isPending);
     }

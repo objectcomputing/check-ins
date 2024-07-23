@@ -71,7 +71,9 @@ const MemberProfilePage = () => {
     if (member) {
       setSelectedMember(member);
       const { lastSeen } = member;
-      setLastSeen(`${lastSeen[1]}/${lastSeen[2]}/${lastSeen[0]}`);
+      if(lastSeen && Array.isArray(lastSeen)) {
+        setLastSeen(`${lastSeen[1]}/${lastSeen[2]}/${lastSeen[0]}`);
+      }
     } else if (terminatedMember) {
       setSelectedMember(terminatedMember[0]);
     }

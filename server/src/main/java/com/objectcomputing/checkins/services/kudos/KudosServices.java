@@ -11,6 +11,8 @@ public interface KudosServices {
 
     Kudos approve(Kudos kudos);
 
+    List<KudosResponseDTO> getRecent();
+
     KudosResponseDTO getById(UUID id);
 
     void delete(UUID id);

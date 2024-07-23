@@ -58,7 +58,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
   );
   const [message, setMessage] = useState('');
   const [created, setCreated] = useState(false);
-  const [publicKudos, setPublicKudos] = useState(false);
+  const [publicKudos, setPublicKudos] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedMembers, setSelectedMembers] = useState(
     recipient ? [recipient] : []
@@ -100,7 +100,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
           senderId: currentUser.id,
           teamId: recipientType === 'TEAM' ? selectedTeam.id : null,
           recipientMembers: recipients,
-          public: publicKudos
+          publiclyVisible: publicKudos
         };
 
         saveKudos(kudos).then(res => {
@@ -266,7 +266,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
               )}
               <FormGroup>
                 <FormControlLabel
-                  control={<Checkbox value={publicKudos} />}
+                  control={<Checkbox checked={publicKudos} />}
                   label="Public"
                   onChange={e => {
                     setPublicKudos(e.target.checked);

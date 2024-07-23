@@ -108,6 +108,7 @@ export default function Routes() {
         <SelfReviewsPage />
       </Route>
       <Route exact path="/kudos">
+        <Header title="Kudos" />
         <KudosPage />
       </Route>
 
@@ -198,6 +199,7 @@ export default function Routes() {
             <FeedbackSubmitPage />
           </Route>
           <Route exact path="/admin/manage-kudos">
+            <Header title="Manage Kudos"></Header>
             <ManageKudosPage />
           </Route>
         </Switch>

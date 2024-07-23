@@ -1,16 +1,7 @@
 .kudos-page {
-  margin-top: 3rem;
-}
-
-.kudos-page .kudos-title {
-  display: flex;
-  gap: 1rem;
-}
-
-.kudos-page .kudos-title div {
-  display: flex;
-  justify-content: space-between;
-  width: 60%;
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0 2rem 0 2rem;
 }
 
 .kudos-page .received-kudos-header,
@@ -27,13 +18,7 @@
 
 .kudos-page .kudos-page-header {
   display: flex;
-  justify-content: space-between;
-}
-
-.kudos-page .kudos-list .members-container .MuiChip-avatar {
-  margin-left: 0;
-  height: 3rem;
-  width: 3rem;
+  justify-content: flex-end;
 }
 
 @media (max-width: 800px) {

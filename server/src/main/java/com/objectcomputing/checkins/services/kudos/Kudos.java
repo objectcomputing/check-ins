@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.kudos;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -60,13 +61,13 @@ public class Kudos {
 
     @Column(name = "datecreated")
     @DateCreated
-    @TypeDef(type = DataType.DATE)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     @Schema(description = "date the kudos were created")
     private LocalDate dateCreated;
 
     @Nullable
     @Column(name = "dateapproved")
-    @TypeDef(type = DataType.DATE)
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     @Schema(description = "date the kudos were approved, null if pending")
     private LocalDate dateApproved;
 
@@ -77,6 +78,6 @@ public class Kudos {
         this.message = kudosCreateDTO.getMessage();
         this.senderId = kudosCreateDTO.getSenderId();
         this.teamId = kudosCreateDTO.getTeamId();
-        this.publiclyVisible = kudosCreateDTO.isPubliclyVisible();
+        this.publiclyVisible = kudosCreateDTO.getPubliclyVisible();
     }
 }

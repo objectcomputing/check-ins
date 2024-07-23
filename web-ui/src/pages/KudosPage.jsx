@@ -112,9 +112,6 @@ const KudosPage = () => {
   return (
     <Root className="kudos-page">
       <div className="kudos-page-header">
-        <Typography fontWeight="bold" variant="h4">
-          Kudos
-        </Typography>
         <KudosDialog
           open={kudosDialogOpen}
           onClose={() => setKudosDialogOpen(false)}

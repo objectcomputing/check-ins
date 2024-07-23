@@ -185,8 +185,8 @@ export default function SkeletonLoader({ type }) {
     );
   } else if (type === "kudos") {
     return (
-      <Box>
-        <StyledCard padding={0} width={100}>
+      <Box width={400}>
+        <StyledCard padding={0}>
           <CardContent style={{ paddingBottom: 0 }}>
             <Box
               display="flex"

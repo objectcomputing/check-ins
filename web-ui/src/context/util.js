@@ -22,11 +22,11 @@ export const sortAnniversaries = anniversaryData => {
 export const sortKudos = (kudos, order = "ASC") => {
   if (order === "DESC") {
     return kudos?.sort(
-      (a, b) => new Date(a.dateApproved) - new Date(b.dateApproved)
+      (a, b) => new Date(a.dateCreated.join("/")) - new Date(b.dateCreated.join("/"))
     );
   } else if (order === "ASC") {
     return kudos?.sort(
-      (a, b) => new Date(b.dateApproved) - new Date(a.dateApproved)
+      (a, b) => new Date(b.dateCreated.join("/")) - new Date(a.dateCreated.join("/"))
     );
   }
 };

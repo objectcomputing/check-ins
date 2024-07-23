@@ -29,8 +29,8 @@ public class KudosCreateDTO {
     @Nullable
     private UUID teamId;
 
-    @JsonProperty("public")
-    private boolean publiclyVisible;
+    @Nullable
+    private Boolean publiclyVisible;
 
     @NotNull
     private List<MemberProfile> recipientMembers;

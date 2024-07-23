@@ -38,6 +38,14 @@ export const getSentKudos = async (memberId, cookie) => {
   });
 };
 
+export const getRecentKudos = async (cookie) => {
+  return resolve({
+    url: `${kudosUrl}/recent`,
+    responseType: "json",
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+};
+
 export const getAllKudos = async (cookie, isPending) => {
   return resolve({
     url: kudosUrl,

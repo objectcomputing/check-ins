@@ -8,15 +8,10 @@ exports[`renders correctly 1`] = `
     <div
       class="celebrations"
     >
-      <h1>
-        No Celebrations today 🤔
-      </h1>
-    </div>
-    <div
-      class="kudos"
-    >
+      0
+      0
       <div
-        class="kudos-page css-177onil"
+        class="public-kudos"
       >
         <div
           class="kudos-title"

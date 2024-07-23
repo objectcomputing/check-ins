@@ -111,9 +111,6 @@ const ManageKudosPage = () => {
 
   return (
     <Root className="manage-kudos-page">
-      <div className="manage-kudos-page-header">
-        <Typography fontWeight="bold" variant="h4">Manage Kudos</Typography>
-      </div>
       <TabContext value={kudosTab}>
         <div className="kudos-tab-container">
           <TabList onChange={handleTabChange}>

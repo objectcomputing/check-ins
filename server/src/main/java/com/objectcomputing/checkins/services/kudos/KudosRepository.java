@@ -18,6 +18,17 @@ public interface KudosRepository extends CrudRepository<Kudos, UUID> {
                     PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message,
                     senderid, teamid, datecreated, dateapproved, publiclyVisible
                 FROM kudos
+                WHERE dateapproved > current_date - interval '1' month
+                  AND publiclyVisible IS TRUE
+                ORDER BY datecreated DESC""", nativeQuery = true)
+        List<Kudos> getRecentPublic();
+
+        @Query(value = """
+                SELECT
+                    id,
+                    PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message,
+                    senderid, teamid, datecreated, dateapproved, publiclyVisible
+                FROM kudos
                 WHERE dateapproved IS NULL
                   AND publiclyVisible IS TRUE
                 ORDER BY datecreated DESC""", nativeQuery = true)

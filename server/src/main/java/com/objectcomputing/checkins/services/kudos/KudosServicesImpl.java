@@ -165,6 +165,13 @@ class KudosServicesImpl implements KudosServices {
         }
     }
 
+    public List<KudosResponseDTO> getRecent() {
+        return kudosRepository.getRecentPublic()
+                .stream()
+                .map(this::constructKudosResponseDTO)
+                .toList();
+    }
+
     private List<KudosResponseDTO> findByPending(boolean isPending) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
