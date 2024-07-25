@@ -1,9 +1,9 @@
-name: Gradle Build & Deploy - Develop
+name: Gradle Build & Deploy - Native - Develop
 on:
   push:
     branches:
       - 'develop'
-
+      - 'feature-2532/graal'
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
