@@ -30,7 +30,7 @@ micronaut {
 
 dockerBuildNative {
     def imageNameFromGithub = []
-    if (System.getenv('PROJECT_ID') != null && System.getenv('SERVICE_NAME') && System.getenv('GITHUB_SHA')) {
+    if (System.getenv('PROJECT_ID') != null && System.getenv('SERVICE_NAME')) {
         imageNameFromGithub = ["ghcr.io/${System.getenv('PROJECT_ID')}/${System.getenv('SERVICE_NAME')}:${System.getenv("GITHUB_SHA")}".toString()]
     }
     images = ["checkins:latest"] + imageNameFromGithub
