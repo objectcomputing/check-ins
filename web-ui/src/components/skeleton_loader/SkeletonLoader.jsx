@@ -183,5 +183,30 @@ export default function SkeletonLoader({ type }) {
         </StyledCard>
       </Box>
     );
+  } else if (type === "kudos") {
+    return (
+      <Box width={400}>
+        <StyledCard padding={0}>
+          <CardContent style={{ paddingBottom: 0 }}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              width={"100%"}
+              justifyContent="center"
+            >
+              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <Skeleton variant="h1" width={"30%"}/>
+                <Skeleton variant="h1" width={"20%"}/>
+              </div>
+              <Skeleton
+                variant="text"
+                height={"6rem"}
+                width={"100%"}
+              />
+            </Box>
+          </CardContent>
+        </StyledCard>
+      </Box>
+    );
   }
 }

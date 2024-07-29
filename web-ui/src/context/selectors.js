@@ -324,6 +324,12 @@ export const selectMappedPdls = createSelector(
       )
 );
 
+export const selectOrderedCurrentMemberProfiles = createSelector(
+  selectCurrentMembers,
+  (mappedMemberProfiles) =>
+    mappedMemberProfiles?.sort((a, b) => a.lastName.localeCompare(b.lastName))
+);
+
 export const selectOrderedPdls = createSelector(selectMappedPdls, mappedPdls =>
   mappedPdls?.sort((a, b) => {
     if (a.lastName < b.lastName) return -1;
