@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.kudos.kudos_recipient;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -8,6 +11,7 @@ import com.objectcomputing.checkins.services.kudos.KudosRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 
 import java.time.LocalDate;
@@ -23,15 +27,21 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
     private final CurrentUserServices currentUserServices;
     private final KudosRepository kudosRepository;
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
+    private final EmailSender emailSender;
+    private final String webAddress;
 
     public KudosRecipientServicesImpl(KudosRecipientRepository kudosRecipientRepository,
                                       CurrentUserServices currentUserServices,
                                       KudosRepository kudosRepository,
-                                      MemberProfileRetrievalServices memberProfileRetrievalServices) {
+                                      MemberProfileRetrievalServices memberProfileRetrievalServices,
+                                      @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
+                                      CheckInsConfiguration checkInsConfiguration) {
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.currentUserServices = currentUserServices;
         this.kudosRepository = kudosRepository;
         this.memberProfileRetrievalServices = memberProfileRetrievalServices;
+        this.emailSender = emailSender;
+        this.webAddress = checkInsConfiguration.getWebAddress();
     }
 
     @Override
@@ -57,11 +67,37 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
             throw new BadArgException("Cannot save KudosRecipient for terminated member %s");
         }
 
-        return kudosRecipientRepository.save(kudosRecipient);
+        KudosRecipient recipient = kudosRecipientRepository.save(kudosRecipient);
+        sendNotification(kudos, member);
+        return recipient;
     }
 
     @Override
     public List<KudosRecipient> getAllByKudosId(UUID kudosId) {
         return kudosRecipientRepository.findByKudosId(kudosId);
+    }
+
+    private void sendNotification(Kudos kudos, MemberProfile member) {
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        String fromEmail = currentUser.getWorkEmail();
+        String fromName = currentUser.getFirstName() + " " + currentUser.getLastName();
+        String subject = "Kudos";
+        String recipient = "";
+        String content = "";
+        if (kudos.getPubliclyVisible()) {
+            // Need to send email to the admins to notify of new public kudos.
+            System.out.println("DEBUG: Public");
+            // TODO: Use admin email addresses instead of the member email.
+            recipient = member.getWorkEmail();
+            content = "There are new kudos to review.<br>\nClick " +
+                      webAddress + "/admin/manage-kudos to review them.";
+        } else {
+            // This is a private kudos, so notify the receiver directly.
+            recipient = member.getWorkEmail();
+            content = kudos.getMessage();
+        }
+        System.out.println("DEBUG: send email to " + recipient);
+        emailSender.sendEmail(fromName, fromEmail, subject, content, recipient);
+        System.out.println("DEBUG: after send email");
     }
 }

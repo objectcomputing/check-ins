@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.kudos;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -14,7 +17,10 @@ import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.transaction.annotation.Transactional;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,7 +31,7 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 
 @Singleton
 class KudosServicesImpl implements KudosServices {
-
+    private static final Logger LOG = LoggerFactory.getLogger(KudosServicesImpl.class);
     public static final String KUDOS_DOES_NOT_EXIST_MSG = "Kudos with id %s does not exist";
     private final KudosRepository kudosRepository;
     private final KudosRecipientServices kudosRecipientServices;
@@ -33,19 +39,25 @@ class KudosServicesImpl implements KudosServices {
     private final TeamRepository teamRepository;
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
+    private final EmailSender emailSender;
+    private final String webAddress;
 
     KudosServicesImpl(KudosRepository kudosRepository,
                              KudosRecipientServices kudosRecipientServices,
                              KudosRecipientRepository kudosRecipientRepository,
                              TeamRepository teamRepository,
                              MemberProfileRetrievalServices memberProfileRetrievalServices,
-                             CurrentUserServices currentUserServices) {
+                             CurrentUserServices currentUserServices,
+                             @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
+                             CheckInsConfiguration checkInsConfiguration) {
         this.kudosRepository = kudosRepository;
         this.kudosRecipientServices = kudosRecipientServices;
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.teamRepository = teamRepository;
         this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
+        this.emailSender = emailSender;
+        this.webAddress = checkInsConfiguration.getWebAddress();
     }
 
     @Override
@@ -95,7 +107,9 @@ class KudosServicesImpl implements KudosServices {
 
         existingKudos.setDateApproved(LocalDate.now());
 
-        return kudosRepository.update(existingKudos);
+        Kudos updated = kudosRepository.update(existingKudos);
+        sendNotification(updated);
+        return updated;
     }
 
     @Override
@@ -268,5 +282,30 @@ class KudosServicesImpl implements KudosServices {
         kudosResponseDTO.setRecipientMembers(members);
 
         return kudosResponseDTO;
+    }
+
+    void sendNotification(Kudos kudos) {
+        // Only public kudos really need approval, but just in case...
+        if (kudos.getPubliclyVisible()) {
+            List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
+            if (!recipients.isEmpty()) {
+                // Send email to receivers of kudos that they have new kudos...
+                MemberProfile currentUser = currentUserServices.getCurrentUser();
+                String fromEmail = currentUser.getWorkEmail();
+                String fromName = currentUser.getFirstName() + " " + currentUser.getLastName();
+                String subject = "Kudos";
+                String content = "You have received new kudos!<br>\nClick " +
+                                 webAddress + "/kudos to view them.";
+                for (KudosRecipient kudosRecipient : recipients) {
+                    MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElse(null);
+                    if (member == null) {
+                        LOG.error(String.format("Unable to locate member %s.", kudosRecipient.getMemberId().toString()));
+                    } else {
+                        String recipient = member.getWorkEmail();
+                        emailSender.sendEmail(fromName, fromEmail, subject, content, recipient);
+                    }
+                }
+            }
+        }
     }
 }
