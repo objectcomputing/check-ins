@@ -41,7 +41,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final ReviewPeriodRepository reviewPeriodRepository;
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
     private final String notificationSubject;
     private final String webURL;
 
@@ -60,10 +60,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         this.emailSender = emailSender;
         this.notificationSubject = notificationSubject;
         this.webURL = checkInsConfiguration.getWebAddress();
-    }
-
-    public void setEmailSender(EmailSender emailSender) {
-        this.emailSender = emailSender;
     }
 
     private void validateMembers(FeedbackRequest feedbackRequest) {

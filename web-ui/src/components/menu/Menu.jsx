@@ -39,6 +39,7 @@ import {
 } from '@mui/material';
 import './Menu.css';
 
+const drawerWidth = 150;
 const PREFIX = 'Menu';
 const classes = {
   root: `${PREFIX}-root`,
@@ -54,6 +55,7 @@ const classes = {
 };
 
 const adminLinks = [
+  ['/admin/manage-kudos', 'Manage Kudos'],
   ['/admin/permissions', 'Permissions'],
   ['/admin/roles', 'Roles'],
   ['/admin/users', 'Users'],
@@ -79,6 +81,7 @@ const getFeedbackLinks = (
   canViewReviewPeriod
 ) => {
   const links = [];
+  links.push(['/kudos', 'Kudos']);
   if (canViewFeedbackAnswer) links.push(['/feedback/view', 'View Feedback']);
   if (canViewFeedbackRequest)
     links.push(['/feedback/received-requests', 'Received Requests']);

@@ -1,54 +1,55 @@
 package com.objectcomputing.checkins.services.email;
 
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
-import jakarta.inject.Inject;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class EmailControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/email")
     private HttpClient client;
 
-    @Mock
-    private final EmailSender htmlEmailSender = mock(EmailSender.class);
-
-    @Mock
-    private final EmailSender textEmailSender = mock(EmailSender.class);
+    @Inject
+    @Named(MailJetFactory.HTML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender htmlEmailSender;
 
     @Inject
-    private EmailServicesImpl emailServicesImpl;
+    @Named(MailJetFactory.TEXT_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender textEmailSender;
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(htmlEmailSender);
-        Mockito.reset(textEmailSender);
-        emailServicesImpl.setHtmlEmailSender(htmlEmailSender);
-        emailServicesImpl.setTextEmailSender(textEmailSender);
+        htmlEmailSender.reset();
+        textEmailSender.reset();
     }
 
     @Test
@@ -77,8 +78,6 @@ class EmailControllerTest extends TestContainersSuite implements MemberProfileFi
         email.put("html", true);
         email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
 
-        when(htmlEmailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(true);
-
         final HttpRequest<?> request = HttpRequest.POST("", email)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<List<Email>> response = client.toBlocking()
@@ -102,8 +101,12 @@ class EmailControllerTest extends TestContainersSuite implements MemberProfileFi
         assertEquals(recipient2.getId(), secondEmailRes.getRecipient());
         assertTrue(secondEmailRes.getTransmissionDate().isAfter(secondEmailRes.getSendDate()));
 
-        verify(htmlEmailSender).sendEmailReceivesStatus(admin.getFirstName()+" "+admin.getLastName(), admin.getWorkEmail(),"Email Subject", "<p>Email content</p>", recipient1.getWorkEmail(), recipient2.getWorkEmail());
-        verify(textEmailSender, never()).sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
+        assertEquals(1, htmlEmailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL_RECEIVES_STATUS", admin.getFirstName()+" "+admin.getLastName(), admin.getWorkEmail(),"Email Subject", "<p>Email content</p>", recipient1.getWorkEmail() + "," + recipient2.getWorkEmail()),
+                htmlEmailSender.events.getFirst()
+        );
+        assertTrue(textEmailSender.events.isEmpty());
     }
 
     @Test
@@ -119,8 +122,6 @@ class EmailControllerTest extends TestContainersSuite implements MemberProfileFi
         email.put("html", false);
         email.put("recipients", List.of(recipient1.getWorkEmail(), recipient2.getWorkEmail()));
 
-        when(textEmailSender.sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(true);
-
         final HttpRequest<?> request = HttpRequest.POST("", email)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<List<Email>> response = client.toBlocking()
@@ -144,8 +145,12 @@ class EmailControllerTest extends TestContainersSuite implements MemberProfileFi
         assertEquals(recipient2.getId(), secondEmailRes.getRecipient());
         assertTrue(secondEmailRes.getTransmissionDate().isAfter(secondEmailRes.getSendDate()));
 
-        verify(textEmailSender).sendEmailReceivesStatus(admin.getFirstName()+" "+admin.getLastName(), admin.getWorkEmail(), "Email Subject", "Email content", recipient1.getWorkEmail(), recipient2.getWorkEmail());
-        verify(htmlEmailSender, never()).sendEmailReceivesStatus(anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
+        assertEquals(1, textEmailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL_RECEIVES_STATUS", admin.getFirstName()+" "+admin.getLastName(), admin.getWorkEmail(),"Email Subject", "Email content", recipient1.getWorkEmail() + "," + recipient2.getWorkEmail()),
+                textEmailSender.events.getFirst()
+        );
+        assertTrue(htmlEmailSender.events.isEmpty());
     }
 
     @Test
@@ -169,6 +174,4 @@ class EmailControllerTest extends TestContainersSuite implements MemberProfileFi
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
         assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
     }
-
-
 }
