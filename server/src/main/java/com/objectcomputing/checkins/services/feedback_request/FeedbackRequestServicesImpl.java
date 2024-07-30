@@ -145,10 +145,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
         // If a status update is made to anything other than submitted by the requestee, throw an error.
-        if (!feedbackRequest.getStatus().equals("submitted") && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())) {
-            if (currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
-                throw new PermissionException(NOT_AUTHORIZED_MSG);
-            }
+        if (!"submitted".equals(feedbackRequest.getStatus())
+                && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())
+                && currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (reassignAttempted) {
@@ -270,7 +270,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean isSupervisor(UUID requesteeId, UUID currentUserId) {
-        return requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter(profile -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        return requesteeId != null
+                && memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
     }
 
     private boolean createIsPermitted(UUID requesteeId) {
@@ -313,12 +314,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
         boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (isAdmin) {
+        if (isAdmin || (currentUserId.equals(feedbackRequest.getCreatorId()) && feedbackRequest.getSubmitDate() != null)) {
             return true;
-        } else if (currentUserId.equals(feedbackRequest.getCreatorId())) {
-            if (feedbackRequest.getSubmitDate() != null) {
-                return true;
-            }
         }
 
         return currentUserId.equals(feedbackRequest.getRecipientId());
