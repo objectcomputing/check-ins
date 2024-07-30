@@ -45,34 +45,21 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
 
     private LocalDate getIntervalStartDate(LocalDate periodStartDate, FrequencyType frequency) {
         LocalDate startDate;
-        if (frequency == FrequencyType.DAILY) {
-            startDate = periodStartDate;
-        } else if (frequency == FrequencyType.WEEKLY) {
-            DayOfWeek day = periodStartDate.getDayOfWeek();
-            switch (day) {
-                case SUNDAY:
-                    startDate = periodStartDate.plusDays(6);
-                    break;
-                case MONDAY:
-                    startDate = periodStartDate.plusDays(5);
-                    break;
-                case TUESDAY:
-                    startDate = periodStartDate.plusDays(4);
-                    break;
-                case WEDNESDAY:
-                    startDate = periodStartDate.plusDays(3);
-                    break;
-                case THURSDAY:
-                    startDate = periodStartDate.plusDays(2);
-                    break;
-                case FRIDAY:
-                    startDate = periodStartDate.plusDays(1);
-                    break;
-                default:
-                    startDate = periodStartDate;
+        switch (frequency) {
+            case FrequencyType.DAILY -> startDate = periodStartDate;
+            case FrequencyType.WEEKLY -> {
+                DayOfWeek day = periodStartDate.getDayOfWeek();
+                startDate = switch (day) {
+                    case SUNDAY -> periodStartDate.plusDays(6);
+                    case MONDAY -> periodStartDate.plusDays(5);
+                    case TUESDAY -> periodStartDate.plusDays(4);
+                    case WEDNESDAY -> periodStartDate.plusDays(3);
+                    case THURSDAY -> periodStartDate.plusDays(2);
+                    case FRIDAY -> periodStartDate.plusDays(1);
+                    default -> periodStartDate;
+                };
             }
-        } else {
-            startDate = periodStartDate.withDayOfMonth(periodStartDate.lengthOfMonth());
+            default -> startDate = periodStartDate.withDayOfMonth(periodStartDate.lengthOfMonth());
         }
 
         return startDate;
@@ -84,28 +71,15 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
             endDate = periodEndDate;
         } else if (frequency == FrequencyType.WEEKLY) {
             DayOfWeek day = periodEndDate.getDayOfWeek();
-            switch (day) {
-                case SUNDAY:
-                    endDate = periodEndDate.minusDays(1);
-                    break;
-                case MONDAY:
-                    endDate = periodEndDate.minusDays(2);
-                    break;
-                case TUESDAY:
-                    endDate = periodEndDate.minusDays(3);
-                    break;
-                case WEDNESDAY:
-                    endDate = periodEndDate.minusDays(4);
-                    break;
-                case THURSDAY:
-                    endDate = periodEndDate.minusDays(5);
-                    break;
-                case FRIDAY:
-                    endDate = periodEndDate.minusDays(6);
-                    break;
-                default:
-                    endDate = periodEndDate.minusDays(7);
-            }
+            endDate = switch (day) {
+                case SUNDAY -> periodEndDate.minusDays(1);
+                case MONDAY -> periodEndDate.minusDays(2);
+                case TUESDAY -> periodEndDate.minusDays(3);
+                case WEDNESDAY -> periodEndDate.minusDays(4);
+                case THURSDAY -> periodEndDate.minusDays(5);
+                case FRIDAY -> periodEndDate.minusDays(6);
+                default -> periodEndDate.minusDays(7);
+            };
         } else {
             LocalDate newDate = periodEndDate.minusMonths(1);
             endDate = newDate.withDayOfMonth(newDate.lengthOfMonth());
@@ -163,12 +137,10 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
 
     public float getTurnoverRate(LocalDate dateToStudy, List<MemberProfile> memberProfiles, FrequencyType frequency) {
         LocalDate beginningDate;
-        if (frequency == FrequencyType.DAILY) {
-            beginningDate = dateToStudy.minusDays(1);
-        } else if (frequency == FrequencyType.WEEKLY) {
-            beginningDate = dateToStudy.minusMonths(1);
-        } else {
-            beginningDate = dateToStudy.minusMonths(1);
+        switch (frequency) {
+            case FrequencyType.DAILY -> beginningDate = dateToStudy.minusDays(1);
+            case FrequencyType.WEEKLY -> beginningDate = dateToStudy.minusMonths(1);
+            default -> beginningDate = dateToStudy.minusMonths(1);
         }
         float beginningEmployees = getNumberOfEmployees(beginningDate, memberProfiles);
         float endingEmployees = getNumberOfEmployees(dateToStudy, memberProfiles);
@@ -178,12 +150,10 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
 
     public float getVoluntaryTurnoverRate(LocalDate dateToStudy, List<MemberProfile> memberProfiles, FrequencyType frequency) {
         LocalDate beginningDate;
-        if (frequency == FrequencyType.DAILY) {
-            beginningDate = dateToStudy.minusDays(1);
-        } else if (frequency == FrequencyType.WEEKLY) {
-            beginningDate = dateToStudy.minusMonths(1);
-        } else {
-            beginningDate = dateToStudy.minusMonths(1);
+        switch (frequency) {
+            case FrequencyType.DAILY -> beginningDate = dateToStudy.minusDays(1);
+            case FrequencyType.WEEKLY -> beginningDate = dateToStudy.minusMonths(1);
+            default -> beginningDate = dateToStudy.minusMonths(1);
         }
         float beginningEmployees = getNumberOfEmployees(beginningDate, memberProfiles);
         float endingEmployees = getNumberOfEmployees(dateToStudy, memberProfiles);
@@ -227,11 +197,11 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
     public int getNumberOfEmployees(LocalDate dateToStudy, List<MemberProfile> memberProfiles) {
         int numberOfEmployees = 0;
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isBefore(dateToStudy) || mp.getStartDate().isEqual(dateToStudy)) &&
-                        (mp.getTerminationDate() == null || mp.getTerminationDate().isAfter(dateToStudy))) {
-                    numberOfEmployees += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isBefore(dateToStudy) || mp.getStartDate().isEqual(dateToStudy))
+                    && (mp.getTerminationDate() == null || mp.getTerminationDate().isAfter(dateToStudy))) {
+                numberOfEmployees += 1;
             }
         }
         return numberOfEmployees;
@@ -240,10 +210,10 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
     public int getNumberOfNewHires(LocalDate dateToStudy, List<MemberProfile> memberProfiles) {
         int numberOfEmployees = 0;
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isAfter(dateToStudy) || mp.getStartDate().isEqual(dateToStudy))) {
-                    numberOfEmployees += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isAfter(dateToStudy) || mp.getStartDate().isEqual(dateToStudy))) {
+                numberOfEmployees += 1;
             }
         }
 
@@ -254,11 +224,11 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusMonths(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getTerminationDate() != null && mp.getTerminationDate().isAfter(beginningDate) &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getTerminationDate() != null
+                    && mp.getTerminationDate().isAfter(beginningDate)
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -268,12 +238,12 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusMonths(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getTerminationDate() != null && mp.getTerminationDate().isAfter(beginningDate) &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    if (mp.getVoluntary() != null && mp.getVoluntary())
-                    numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getTerminationDate() != null
+                    && mp.getTerminationDate().isAfter(beginningDate)
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))
+                    && Boolean.TRUE.equals(mp.getVoluntary())) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -283,11 +253,11 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getTerminationDate() != null && mp.getTerminationDate().isAfter(beginningDate) &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getTerminationDate() != null
+                    && mp.getTerminationDate().isAfter(beginningDate)
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -297,13 +267,12 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getTerminationDate() != null && mp.getTerminationDate().isAfter(beginningDate) &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    if (mp.getVoluntary() != null && mp.getVoluntary()) {
-                        numberOfTerms += 1;
-                    }
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getTerminationDate() != null
+                    && mp.getTerminationDate().isAfter(beginningDate)
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))
+                    && Boolean.TRUE.equals(mp.getVoluntary())) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -313,12 +282,12 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if (mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate)) &&
-                        mp.getTerminationDate() != null &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                   numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate))
+                    && mp.getTerminationDate() != null
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -328,13 +297,12 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if(mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isEqual(beginningDate) ||
-                        mp.getStartDate().isAfter(beginningDate))
-                        && mp.getTerminationDate() != null &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    numberOfTerms += 1;
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate))
+                    && mp.getTerminationDate() != null
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
@@ -344,17 +312,15 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
         int numberOfTerms = 0;
         LocalDate beginningDate = dateToStudy.minusYears(1);
         for (MemberProfile mp : memberProfiles) {
-            if(mp.getExcluded() == null || !mp.getExcluded()) {
-                if (mp.getStartDate() != null && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate))
-                        && mp.getTerminationDate() != null &&
-                        (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))) {
-                    if (mp.getVoluntary() != null && mp.getVoluntary()) {
-                        numberOfTerms += 1;
-                    }
-                }
+            if (!Boolean.TRUE.equals(mp.getExcluded())
+                    && mp.getStartDate() != null
+                    && (mp.getStartDate().isEqual(beginningDate) || mp.getStartDate().isAfter(beginningDate))
+                    && mp.getTerminationDate() != null
+                    && (mp.getTerminationDate().isBefore(dateToStudy) || mp.getTerminationDate().isEqual(dateToStudy))
+                    && Boolean.TRUE.equals(mp.getVoluntary())) {
+                numberOfTerms += 1;
             }
         }
         return numberOfTerms;
     }
-
 }
