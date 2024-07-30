@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { TextField, Grid } from '@mui/material';
+import { TextField, Grid, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import MemberSummaryCard from '../components/member-directory/MemberSummaryCard';
@@ -9,9 +9,10 @@ import {
   selectMemberProfilesLoading,
   selectNormalizedMembers
 } from '../context/selectors';
-import { useQueryParameters } from '../helpers/query-parameters';
-
 import './PeoplePage.css';
+import { useQueryParameters } from '../helpers/query-parameters';
+import KudosDialog from '../components/kudos_dialog/KudosDialog';
+import StarIcon from '@mui/icons-material/Star';
 
 const PREFIX = 'PeoplePage';
 const classes = {
@@ -41,6 +42,7 @@ const PeoplePage = () => {
   const { state } = useContext(AppContext);
   const loading = selectMemberProfilesLoading(state);
 
+  const [kudosDialogOpen, setKudosDialogOpen] = useState(null);
   const [searchText, setSearchText] = useState('');
 
   const normalizedMembers = selectNormalizedMembers(state, searchText);
@@ -70,13 +72,25 @@ const PeoplePage = () => {
         <Grid item xs={12} className={classes.search}>
           <TextField
             className={classes.searchInput}
-            label="Select employees..."
+            label="Search employees..."
             placeholder="Member Name"
             value={searchText}
             onChange={e => {
               setSearchText(e.target.value);
             }}
           />
+          <KudosDialog
+            open={kudosDialogOpen}
+            onClose={() => setKudosDialogOpen(false)}
+          />
+          <Button
+            className="kudos-dialog-open"
+            variant="outlined"
+            startIcon={<StarIcon/>}
+            onClick={() => setKudosDialogOpen(true)}
+          >
+            Give Kudos
+          </Button>
         </Grid>
         <Grid item className={classes.members}>
           {loading

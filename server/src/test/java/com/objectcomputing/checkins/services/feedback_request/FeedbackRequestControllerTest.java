@@ -2,7 +2,8 @@ package com.objectcomputing.checkins.services.feedback_request;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
@@ -15,6 +16,7 @@ import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.type.Argument;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -23,9 +25,9 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,36 +41,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class FeedbackRequestControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture, ReviewPeriodFixture {
 
     @Inject
     @Client("/services/feedback/requests")
     HttpClient client;
 
-    private final EmailSender emailSender = mock(EmailSender.class);
-
-    @Inject
-    private FeedbackRequestServicesImpl feedbackRequestServicesImpl;
-
     @Inject
     CheckInsConfiguration checkInsConfiguration;
 
+    @Inject
+    @Named(MailJetFactory.HTML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
+
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(emailSender);
-        feedbackRequestServicesImpl.setEmailSender(emailSender);
         createAndAssignRoles();
+        emailSender.reset();
     }
 
-    private String createEmailContent(FeedbackRequest storedRequest, UUID requestId, MemberProfile creator, MemberProfile requestee){
+    private String createEmailContent(FeedbackRequest storedRequest, UUID requestId, MemberProfile creator, MemberProfile requestee) {
         String newContent = "<h1>You have received a feedback request.</h1>" +
                 "<p><b>" + creator.getFirstName() + " " + creator.getLastName() + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
         if (storedRequest.getDueDate() != null) {
-            newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth()+ ", " +storedRequest.getDueDate().getYear() + ".";
+            newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth() + ", " + storedRequest.getDueDate().getYear() + ".";
         }
         newContent += "<p>Please go to your unique link at " + checkInsConfiguration.getWebAddress() + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
         return newContent;
@@ -86,6 +84,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
 
     /**
      * Converts a {@link FeedbackRequest} to a {@link FeedbackRequestCreateDTO}
+     *
      * @param feedbackRequest {@link FeedbackRequest}
      * @return {@link FeedbackRequestCreateDTO}
      */
@@ -104,6 +103,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
 
     /**
      * Converts a {@link FeedbackRequest} to a {@link FeedbackRequestUpdateDTO}
+     *
      * @param feedbackRequest {@link FeedbackRequest}
      * @return {@link FeedbackRequestUpdateDTO}
      */
@@ -202,16 +202,19 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
-        String fromName = pdlMemberProfile.getFirstName()+" "+pdlMemberProfile.getLastName();
+        String fromName = pdlMemberProfile.getFirstName() + " " + pdlMemberProfile.getLastName();
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         String correctContent = createEmailContent(feedbackRequest, response.getBody().get().getId(), pdlMemberProfile, employeeMemberProfile);
-        verify(emailSender).sendEmail(
-                fromName,
-                pdlMemberProfile.getWorkEmail(),
-                checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
-                correctContent,
-                recipient.getWorkEmail()
+        assertEquals(List.of(
+                        "SEND_EMAIL",
+                        fromName,
+                        pdlMemberProfile.getWorkEmail(),
+                        checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
+                        correctContent,
+                        recipient.getWorkEmail()
+                ),
+                emailSender.events.getFirst()
         );
     }
 
@@ -233,10 +236,9 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
-
         //verify appropriate email was not sent
         assertTrue(response.getBody().isPresent());
-        verifyNoInteractions(emailSender);
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -688,7 +690,8 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
 
         //search for feedback requests by a specific creator, requestee, and template
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId()))
-                .basicAuth(recipientTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);;
+                .basicAuth(recipientTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        ;
 
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
@@ -1063,16 +1066,19 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                 .basicAuth(pdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
-        String fromName = pdl.getFirstName()+" "+pdl.getLastName();
+        String fromName = pdl.getFirstName() + " " + pdl.getLastName();
         // Verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         String correctContent = updateEmailContent(response.getBody().get().getId(), pdl, requestee);
-        verify(emailSender).sendEmail(
-                fromName,
-                pdl.getWorkEmail(),
-                checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
-                correctContent,
-                recipient.getWorkEmail()
+        assertEquals(List.of(
+                        "SEND_EMAIL",
+                        fromName,
+                        pdl.getWorkEmail(),
+                        checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
+                        correctContent,
+                        recipient.getWorkEmail()
+                ),
+                emailSender.events.getFirst()
         );
     }
 
@@ -1226,7 +1232,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackReq = saveFeedbackRequest(admin, employeeMemberProfile, recipient);
         getFeedbackRequestRepository().save(feedbackReq);
-        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", feedbackReq.getId())).basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE );
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", feedbackReq.getId())).basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
         assertEquals(HttpStatus.OK, response.getStatus());
     }
@@ -1238,7 +1244,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         getFeedbackRequestRepository().save(feedbackReq);
-        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", feedbackReq.getId())).basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE );
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", feedbackReq.getId())).basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -1431,5 +1437,4 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
     }
-
 }
